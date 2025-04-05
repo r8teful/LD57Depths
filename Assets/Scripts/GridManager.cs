@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GridManager : MonoBehaviour {
+public class GridManager : StaticInstance<GridManager> {
     [Header("Random manager stuff")]
     public Transform player; 
     [SerializeField] private Slider progressBar;
@@ -150,7 +150,15 @@ Tile.TileType DetermineTileType(int x, int y)
             return Tile.TileType.Stone;
         }
     }
-
+    public void DamageTileAtGridPosition(Vector2Int gridPosition, float damage) {
+        if (gridPosition.x >= 0 && gridPosition.x < gridWidth && gridPosition.y >= 0 && gridPosition.y < gridHeight) {
+            if (grid[gridPosition.x, gridPosition.y] != null) {
+                grid[gridPosition.x, gridPosition.y].TakeDamage(damage);
+            }
+        } else {
+            Debug.LogWarning("Invalid grid coordinates for tile damage: " + gridPosition);
+        }
+    }
     // Helper function to calculate ore frequency based on depth (y-coordinate)
     float CalculateOreFrequency(int y, float surfaceFrequency, float deepFrequency, float depthStart, float depthEnd) {
         if (y < depthStart) {

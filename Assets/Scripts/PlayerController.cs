@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : StaticInstance<PlayerController> {
     public float moveSpeed = 5f;      // Maximum movement speed
     public float acceleration = 2f;   // How quickly the player accelerates
     public float drag = 0.95f;        // Resistance to simulate water
@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour {
 
         // Apply slight downward force (simulating sinking)
         velocity.y -= downwardForce * Time.deltaTime;
+
     }
 
     void FixedUpdate() {

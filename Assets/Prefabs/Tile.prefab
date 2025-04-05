@@ -101,8 +101,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 497400cb6c2fc3e41875b3ae8c3aa4a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDestroyed: 0
   gridPosition: {x: 0, y: 0}
+  maxHealth: 0
+  resourcePrefab: {fileID: 6579393796666026925, guid: 997e7238e7caa294e98ca3ae16ec411c, type: 3}
 --- !u!61 &4065771177801125646
 BoxCollider2D:
   m_ObjectHideFlags: 0
