@@ -35,7 +35,7 @@ public class Resource : MonoBehaviour {
             // Apply drag (smooth deceleration)
             velocity *= player.drag;
             // Apply slight downward force (simulating sinking)
-            velocity.y -= player.downwardForce;// * Time.deltaTime;
+            velocity.y -= player.downwardForce * Time.deltaTime;
         }
         rb.linearVelocity = velocity;
     }

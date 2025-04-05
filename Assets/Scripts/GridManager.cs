@@ -19,6 +19,10 @@ public class GridManager : StaticInstance<GridManager> {
     public int trenchDepthTrapezoid = 30; // Depth over which trench narrows to bottom width
     public float trenchEdgeNoiseScale = 3f; // Scale for noise on trench edges
     public float trenchEdgeNoiseIntensity = 2f; // Intensity of noise offset for edges
+    [Header("Trench Padding")]
+    public int trenchPaddingTop = 0;     // Stone layers above the trench entrance
+    public int trenchPaddingBottom = 5;  // Stone layers at the bottom of the trench and grid
+    public int trenchPaddingSides = 2;   // Stone layers on each side of the trench
 
     [Header("Noise Settings - General")]
     public float noiseScale = 5f; // Adjust for noise detail
@@ -96,7 +100,7 @@ public class GridManager : StaticInstance<GridManager> {
         } // Place the player at the bottom center
         if (player != null) {
             int centerX = gridWidth / 2;
-            Vector3 playerStartPos = new Vector3(centerX * tileSize + gridOrigin.x, (gridHeight - 1) * -tileSize + gridOrigin.y, 0);
+            Vector3 playerStartPos = new Vector3(centerX * tileSize + gridOrigin.x, (gridHeight  - trenchPaddingBottom - 1) * -tileSize + gridOrigin.y, 0);
             player.position = playerStartPos;
         }
         // Hide progress bar after completion
@@ -104,46 +108,64 @@ public class GridManager : StaticInstance<GridManager> {
             progressBar.gameObject.SetActive(false);
     }
 
-Tile.TileType DetermineTileType(int x, int y)
-    {
-        // 1. Calculate Trapezoidal Trench Width based on depth (y)
-        float normalizedDepth = Mathf.Clamp01((float)y / trenchDepthTrapezoid); // 0 at top, 1 at trenchDepthTrapezoid
-        float currentTrenchWidth = Mathf.Lerp(trenchWidthTop, trenchWidthBottom, normalizedDepth);
-        float trenchCenterX = gridWidth * 0.5f; // Center of the grid horizontally
+    Tile.TileType DetermineTileType(int x, int y) {
+        // Check for Boundary Tiles
+        if (x < 2 || x >= gridWidth - 2 // Sides 
+            || y >= gridHeight - 2) { // Bottom
+            return Tile.TileType.Boundary; // Create boundary tile
+        }
+        // Apply Padding Layers (Stone)
+        // Top Padding
+        if (y < trenchPaddingTop) {
+            return Tile.TileType.Stone;
+        }
 
-        // 2. Apply Noise to Trench Edges
-        float leftEdgeNoise = Mathf.PerlinNoise((y * trenchEdgeNoiseScale) + noiseOffset_Y, noiseOffset_X) - 0.5f; // -0.5 to center noise around 0
-        float rightEdgeNoise = Mathf.PerlinNoise((y * trenchEdgeNoiseScale) + noiseOffset_Y + 100f, noiseOffset_X) - 0.5f; // Offset for different noise
+        // Bottom Padding
+        if (y >= gridHeight - trenchPaddingBottom) {
+            return Tile.TileType.Stone;
+        }
+
+        // Side Padding
+        int paddedGridWidth = gridWidth - (trenchPaddingSides * 2); // Effective grid width after side padding
+        int sidePaddingStartX = trenchPaddingSides;                // Starting X for non-padded area
+        if (x < sidePaddingStartX || x >= sidePaddingStartX + paddedGridWidth) {
+            return Tile.TileType.Stone;
+        }
+
+
+        // Calculate Trapezoidal Trench Shape (within the non-padded area)
+
+        float normalizedDepth = Mathf.Clamp01((float)(y - trenchPaddingTop) / trenchDepthTrapezoid); // Depth adjusted for top padding
+        float currentTrenchWidth = Mathf.Lerp(trenchWidthTop, trenchWidthBottom, normalizedDepth);
+        float trenchCenterX = gridWidth * 0.5f;
+
+        float leftEdgeNoise = Mathf.PerlinNoise((y * trenchEdgeNoiseScale) + noiseOffset_Y, noiseOffset_X) - 0.5f;
+        float rightEdgeNoise = Mathf.PerlinNoise((y * trenchEdgeNoiseScale) + noiseOffset_Y + 100f, noiseOffset_X) - 0.5f;
 
         float noisyTrenchStartX = trenchCenterX - (currentTrenchWidth * 0.5f) + (leftEdgeNoise * trenchEdgeNoiseIntensity);
         float noisyTrenchEndX = trenchCenterX + (currentTrenchWidth * 0.5f) + (rightEdgeNoise * trenchEdgeNoiseIntensity);
 
-        // Convert noisy edges to integer grid coordinates (clamp to grid boundaries)
-        int trenchStartX = Mathf.Clamp(Mathf.RoundToInt(noisyTrenchStartX), 0, gridWidth);
-        int trenchEndX = Mathf.Clamp(Mathf.RoundToInt(noisyTrenchEndX), 0, gridWidth);
+        int trenchStartX = Mathf.Clamp(Mathf.RoundToInt(noisyTrenchStartX), sidePaddingStartX, sidePaddingStartX + paddedGridWidth); // Clamped to padded width
+        int trenchEndX = Mathf.Clamp(Mathf.RoundToInt(noisyTrenchEndX), sidePaddingStartX, sidePaddingStartX + paddedGridWidth); // Clamped to padded width
 
 
-        // 3. Determine Tile Type based on Trench and Ore Noise
+        // Determine Tile Type based on Trench and Ore Noise (within the trench area)
+
         bool isInTrench = (x >= trenchStartX && x < trenchEndX);
 
-        if (isInTrench)
-        {
-            return Tile.TileType.Empty; // Trench area is always empty
-        }
-        else
-        {
-            // Outside the trench - Stone with potential Ore replacement
+        if (isInTrench) {
+            return Tile.TileType.Empty; // Trench area is still empty
+        } else {
+            // Outside the trench (within non-padded area) - Stone with potential Ore replacement
             float noiseValue = Mathf.PerlinNoise((x + noiseOffset_X) / noiseScale, (y + noiseOffset_Y) / noiseScale);
 
             float copperFrequency = CalculateOreFrequency(y, copperOreFrequencySurface, copperOreFrequencyDeep, copperOreDepthStart, copperOreDepthEnd);
             float silverFrequency = CalculateOreFrequency(y, silverOreFrequencySurface, silverOreFrequencyDeep, silverOreDepthStart, silverOreDepthEnd);
 
-            if (noiseValue < copperFrequency)
-            {
+            if (noiseValue < copperFrequency) {
                 return Tile.TileType.Ore_Copper;
             }
-            if (noiseValue < silverFrequency)
-            {
+            if (noiseValue < silverFrequency) {
                 return Tile.TileType.Ore_Silver;
             }
 

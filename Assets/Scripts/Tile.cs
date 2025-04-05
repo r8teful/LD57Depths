@@ -7,7 +7,7 @@ public class Tile : MonoBehaviour {
         Stone,
         Ore_Copper,
         Ore_Silver,
-        // Add more tile types as needed
+        Boundary
     }
 
     private TileType type;
@@ -52,6 +52,9 @@ public class Tile : MonoBehaviour {
             case TileType.Empty: // Empty tiles should be indestructible for mining gun
                 maxHealth = Mathf.Infinity; // Infinite health
                 break;
+            case TileType.Boundary: // Boundary tiles are indestructible
+                maxHealth = Mathf.Infinity;
+                break;
             default:
                 maxHealth = 80f; // Default health value
                 break;
@@ -63,7 +66,7 @@ public class Tile : MonoBehaviour {
         if (type != TileType.Empty) // Only take damage if not destroyed and not empty
         {
             currentHealth -= damage;
-            Debug.Log($"TileHit! {currentHealth}");
+            //Debug.Log($"TileHit! {currentHealth}");
             if (currentHealth <= 0f) {
                 DestroyTile();
             } else {
@@ -102,6 +105,9 @@ public class Tile : MonoBehaviour {
                         break;
                     case TileType.Ore_Silver:
                         sr.color = new Color(0.753f, 0.753f, 0.753f);
+                        break;
+                    case TileType.Boundary: 
+                        sr.color = Color.black;
                         break;
                     default:
                         sr.color = Color.white;

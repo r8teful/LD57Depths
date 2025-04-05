@@ -51,7 +51,7 @@ public class MiningGun : MonoBehaviour {
 
                     // Get Grid Position and Apply Damage through GridManager
                     //Vector2Int gridPosition = GridManager.Instance.GetGridPositionFromWorldPosition(hit.point);
-                    Debug.Log($"Hit: {hitTile.gridPosition} damage: {finalDamage}");
+                    //Debug.Log($"Hit: {hitTile.gridPosition} damage: {finalDamage}");
                     GridManager.Instance.DamageTileAtGridPosition(hitTile.gridPosition, finalDamage);
 
                     // Optional: Visualize rays for debugging - comment out in final game
