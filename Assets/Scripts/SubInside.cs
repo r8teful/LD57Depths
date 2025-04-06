@@ -7,6 +7,7 @@ public class SubInside : StaticInstance<SubInside> {
     public Renderer Workbench;
     public Renderer Exit;
     public Renderer Control;
+    private bool _canInteract;
     private void Start() {
         Workbench.material = new Material(Workbench.material);
         Exit.material = new Material(Exit.material);
@@ -29,6 +30,14 @@ public class SubInside : StaticInstance<SubInside> {
         state = SubInteractionState.None;
         StateChange();
 
+    }
+    public void PlayerEntered() {
+        _canInteract = false;
+        StartCoroutine(ExitCooldown());
+    }
+    private IEnumerator ExitCooldown() {
+        yield return new WaitForSeconds(0.5f);
+        _canInteract = true;
     }
     private void StateChange() {
         switch (state) {
@@ -53,9 +62,11 @@ public class SubInside : StaticInstance<SubInside> {
         Workbench.material.SetInt("_Enabled", 0);
         Exit.material.SetInt("_Enabled", 0);
         UIShopManager.Instance.ShopClose();
+        UIShopManager.Instance.ShipClose();
     }
     private void Update() {
-        if (Input.GetMouseButton(0)) {
+        if (!_canInteract) return;
+        if (Input.GetMouseButtonDown(0)) {
             switch (state) {
                 case SubInteractionState.None:
                     break;
@@ -63,6 +74,7 @@ public class SubInside : StaticInstance<SubInside> {
                     UIShopManager.Instance.ShopOpen();
                     break;
                 case SubInteractionState.Ship:
+                    UIShopManager.Instance.ShipOpen();
                     break;
                 case SubInteractionState.Exit:
                     Submarine.Instance.ExitSub();

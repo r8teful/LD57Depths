@@ -1,4 +1,6 @@
-﻿using Unity.VisualScripting;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -12,6 +14,12 @@ public class MiningGun : MonoBehaviour {
     public float damagePerRay = 10f;     // Base damage per ray
 
     private float timer = 0f;
+    [Header("Visual Settings")]
+    public float startWidth;
+    public float endWidth;
+    public LineRenderer lineRendererPrefab;  // Assign in Inspector
+    private List<LineRenderer> activeLineRenderers = new List<LineRenderer>();
+
     private void Awake() {
         UpgradeManager.UpgradeBought += OnUpgraded;
     }
@@ -30,45 +38,71 @@ public class MiningGun : MonoBehaviour {
     }
 
     void CastRays() {
-        Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition); 
-        mouseWorldPosition.z = 0f;  // Set z to 0 to keep it on the same plane as the player
+        Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorldPosition.z = 0f;
         Vector2 directionToMouse = (mouseWorldPosition - transform.position).normalized;
-        // Number of rays to cast - adjust for performance and spread
-        int numRays = 5; // Increased number for better cone coverage
-        
-        for (int i = 0; i < numRays; i++) {
-            // Calculate ray direction with cone spread
-            Vector2 rayDirection = GetConeRayDirection(directionToMouse);
 
-            // Cast ray 
+        int numRays = 5;
+        ClearPreviousRays(); // Clear old rays before shooting new ones
+
+        for (int i = 0; i < numRays; i++) {
+            Vector2 rayDirection = GetConeRayDirection(directionToMouse);
             RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, range);
-            //RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToMouse, range);
-            //Debug.Log($"shooting ray from {transform.position} in dir {rayDirection}");
+
             if (hit.collider != null) {
                 Tile hitTile = hit.collider.GetComponent<Tile>();
                 if (hitTile != null) {
-                    // Calculate distance falloff
                     float distance = hit.distance;
-                    float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloffStrength); 
-
+                    float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloffStrength);
                     float finalDamage = damagePerRay * falloffFactor;
 
-                    // Get Grid Position and Apply Damage through GridManager
-                    //Vector2Int gridPosition = GridManager.Instance.GetGridPositionFromWorldPosition(hit.point);
-                    //Debug.Log($"Hit: {hitTile.gridPosition} damage: {finalDamage}");
                     GridManager.Instance.DamageTileAtGridPosition(hitTile.gridPosition, finalDamage);
-
-                    // Optional: Visualize rays for debugging - comment out in final game
-                    Debug.DrawRay(transform.position, rayDirection * distance, Color.yellow, 1);
+                    CreateLaserEffect(transform.position, hit.point, Color.red);
                 } else {
-                    // Optional: Debug for hitting non-tile colliders
-                    Debug.DrawRay(transform.position, rayDirection * hit.distance, Color.gray, 1);
+                    CreateLaserEffect(transform.position, hit.point, Color.gray);
                 }
             } else {
-                // Optional: Visualize rays that didn't hit anything
-                Debug.DrawRay(transform.position, rayDirection * range, Color.blue, 1);
+                CreateLaserEffect(transform.position, transform.position + (Vector3)rayDirection * range, Color.blue);
             }
         }
+    }
+    void CreateLaserEffect(Vector3 start, Vector3 end, Color color) {
+        LineRenderer line = Instantiate(lineRendererPrefab, transform);
+        line.SetPosition(0, start);
+        line.SetPosition(1, end);
+        line.startColor = color;
+        line.endColor = new Color(color.r, color.g, color.b, 0.2f); // Fades out at the end
+        line.startWidth = startWidth;
+        line.endWidth = endWidth;
+        activeLineRenderers.Add(line);
+
+        StartCoroutine(FadeAndDestroy(line));
+    }
+    IEnumerator FadeAndDestroy(LineRenderer line) {
+        float duration = 0.2f;
+        float elapsedTime = 0;
+        while (elapsedTime < duration) {
+            if (line == null) yield break; // Exit if the line has been destroyed
+            float alpha = Mathf.Lerp(1f, 0f, elapsedTime / duration);
+            if (line != null) {
+                Color startColor = line.startColor;
+                Color endColor = line.endColor;
+                startColor.a = alpha;
+                endColor.a = alpha;
+                line.startColor = startColor;
+                line.endColor = endColor;
+            }
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        if (line != null)
+            Destroy(line.gameObject);
+    }
+    void ClearPreviousRays() {
+        foreach (var line in activeLineRenderers) {
+            if (line != null) Destroy(line.gameObject);
+        }
+        activeLineRenderers.Clear();
     }
     public void OnUpgraded() {
         frequency = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MiningSpeed);

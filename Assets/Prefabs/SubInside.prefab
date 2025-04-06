@@ -310,11 +310,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ComponentVersion: 2
-  m_LightType: 3
+  m_LightType: 1
   m_BlendStyleIndex: 0
-  m_FalloffIntensity: 0.5
+  m_FalloffIntensity: 0
   m_Color: {r: 0.864, g: 1, b: 1, a: 1}
-  m_Intensity: 0.5
+  m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: 00000000ad208ff6
@@ -333,8 +333,8 @@ MonoBehaviour:
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
   m_LocalBounds:
-    m_Center: {x: 0, y: -0.00000011920929, z: 0}
-    m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
+    m_Center: {x: 0.029003322, y: 0.015550017, z: 0}
+    m_Extent: {x: 1.6785719, y: 0.91195, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 0
@@ -342,13 +342,13 @@ MonoBehaviour:
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
   m_ShapeLightParametricRadius: 1
-  m_ShapeLightFalloffSize: 0.5
+  m_ShapeLightFalloffSize: 0
   m_ShapeLightFalloffOffset: {x: 0, y: 0}
   m_ShapePath:
-  - {x: -0.5, y: -0.5, z: 0}
-  - {x: 0.5, y: -0.5, z: 0}
-  - {x: 0.5, y: 0.5, z: 0}
-  - {x: -0.5, y: 0.5, z: 0}
+  - {x: -1.6495686, y: -0.89549446, z: 0}
+  - {x: 1.6759355, y: -0.89549255, z: 0}
+  - {x: 1.7075752, y: 0.8743992, z: 0}
+  - {x: -1.6284759, y: 0.92713356, z: 0}
 --- !u!1 &2901935548407460176
 GameObject:
   m_ObjectHideFlags: 0
@@ -408,9 +408,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 0
-  Workbench: {fileID: 0}
-  Exit: {fileID: 0}
-  Control: {fileID: 0}
+  Workbench: {fileID: 1882736279950558794}
+  Exit: {fileID: 4527025511398447239}
+  Control: {fileID: 8906077831076868095}
 --- !u!1 &3351775096545394765
 GameObject:
   m_ObjectHideFlags: 0
@@ -718,7 +718,7 @@ GameObject:
   - component: {fileID: 1820236925322635781}
   - component: {fileID: 4527025511398447239}
   m_Layer: 0
-  m_Name: InsideSub3_ladder_0
+  m_Name: exit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

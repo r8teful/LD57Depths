@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4659c9362bb23744698c6988258f25c4
+guid: f20bc7fe37fb429468cca5153a35de80
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7011864635024596410
-    second: Schematics Screen_0
+      213: -5551665731868077230
+    second: UIRuby_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Schematics Screen_0
+      name: UIRuby_0
       rect:
         serializedVersion: 2
-        x: 10
-        y: 10
-        width: 300
-        height: 160
+        x: 0
+        y: 0
+        width: 5
+        height: 5
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6422c30d34ad0be90800000000000000
-      internalID: -7011864635024596410
+      spriteID: 2535b4c4e6584f2b0800000000000000
+      internalID: -5551665731868077230
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Schematics Screen_0: -7011864635024596410
+      UIRuby_0: -5551665731868077230
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

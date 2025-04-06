@@ -191,13 +191,14 @@ public class PlayerController : StaticInstance<PlayerController> {
     internal void SetState(PlayerState state) {
         CurrentState = state;
         if(state == PlayerState.Outside) {
-
-           MainCam.transform.SetParent(insideSubTransform);
+            outsideT = 0.5f;
+            rb.linearVelocity = Vector2.zero;
+            MainCam.transform.SetParent(insideSubTransform);
             MainCam.transform.localPosition = new Vector3(0, 0, -10);
         } else {
             MainCam.transform.SetParent(transform);
             MainCam.transform.localPosition = new Vector3(0, 0, -10);
-
+            rb.linearVelocity = Vector2.zero;
         }
     }
 }

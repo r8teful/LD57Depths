@@ -7,9 +7,9 @@ public class Tile : MonoBehaviour {
         Dirt,
         Ore_Stone,
         Ore_Silver,
-        Ore_Emerald,
-        Ore_Diamond,
+        Ore_Gold,
         Ore_Ruby,
+        Ore_Diamond,
         Boundary
     }
 
@@ -57,7 +57,7 @@ public class Tile : MonoBehaviour {
             case TileType.Ore_Silver:
                 maxHealth = 150f;
                 break;
-            case TileType.Ore_Emerald:
+            case TileType.Ore_Gold:
                 maxHealth = 200f;
                 break;
             case TileType.Ore_Diamond:
@@ -99,7 +99,7 @@ public class Tile : MonoBehaviour {
             var yOffset = Random.Range(-0.015f, 0.015f);
             var pos = new Vector3(transform.position.x + xOffset, transform.position.y + yOffset, transform.position.z);
             if (Type == TileType.Ore_Silver || Type == TileType.Ore_Stone || Type == TileType.Ore_Ruby
-                || Type == TileType.Ore_Diamond || Type == TileType.Ore_Emerald) {
+                || Type == TileType.Ore_Diamond || Type == TileType.Ore_Gold) {
                 Instantiate(resourcePrefab, pos, Quaternion.identity).SetResource(Type);
             }
             Type = TileType.Empty;
@@ -112,6 +112,7 @@ public class Tile : MonoBehaviour {
         var stone = Resources.Load<Sprite>("Ores/Stone");
         var silver = Resources.Load<Sprite>("Ores/Silver");
         var emerald = Resources.Load<Sprite>("Ores/Emerald");
+        var gold = Resources.Load<Sprite>("Ores/Gold");
         var diamond = Resources.Load<Sprite>("Ores/Diamond");
         var ruby = Resources.Load<Sprite>("Ores/ruby");
         if (sr != null) {
@@ -134,8 +135,8 @@ public class Tile : MonoBehaviour {
                     case TileType.Ore_Silver:
                         sr.sprite = silver;
                         break;
-                    case TileType.Ore_Emerald:
-                        sr.sprite = emerald;
+                    case TileType.Ore_Gold:
+                        sr.sprite = gold;
                         break;
                     case TileType.Ore_Diamond:
                         sr.sprite = diamond;

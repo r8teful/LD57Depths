@@ -31,6 +31,7 @@ public class Resource : MonoBehaviour {
 
             // If the resource is close enough to the player, destroy it
             if (distanceToPlayer <= destroyDistance) {
+                UpgradeManager.Instance.AddResource(ResourceType);
                 AudioController.Instance.PlaySound2D("popPickup", 0.5f, pitch: new AudioParams.Pitch(AudioParams.Pitch.Variation.Medium));
                 Destroy(gameObject);
             }
@@ -65,8 +66,8 @@ public class Resource : MonoBehaviour {
                 break;
             case Tile.TileType.Boundary:
                 break;
-            case Tile.TileType.Ore_Emerald:
-                sr.color = new Color(0.172f, 0.788f, 0.305f);
+            case Tile.TileType.Ore_Gold:
+                sr.color = new Color(1f, 0.749f, 0f);
                 break;
             case Tile.TileType.Ore_Diamond:
                 sr.color = new Color(0.352f, 0.858f, 0.98f);

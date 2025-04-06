@@ -143,6 +143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameString: {fileID: 7611884810711351441}
   CostContainer: {fileID: 6782579598699262888}
+  IncreaseString: {fileID: 4492445525042886420}
   ResourceElement: {fileID: 2977361216672033157, guid: db834c5f6fa357b4981aecd45aaa265f, type: 3}
 --- !u!1 &2787245940689488255
 GameObject:
@@ -292,7 +293,7 @@ GameObject:
   - component: {fileID: 7800258486107538385}
   - component: {fileID: 7611884810711351441}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -611,7 +612,7 @@ GameObject:
   - component: {fileID: 8612535974422525949}
   - component: {fileID: 4492445525042886420}
   m_Layer: 5
-  m_Name: Text (TMP) (3)
+  m_Name: Increase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -634,7 +635,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 127.9245, y: 58.6435}
+  m_SizeDelta: {x: 188.6723, y: 58.6435}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &8612535974422525949
 CanvasRenderer:
@@ -664,7 +665,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: +10%
+  m_text: +1230%
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 6e84e3dc070981147ab4e9eccb5384ee, type: 2}
   m_sharedMaterial: {fileID: -5338865807936191436, guid: 6e84e3dc070981147ab4e9eccb5384ee, type: 2}

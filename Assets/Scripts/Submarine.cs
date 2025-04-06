@@ -32,8 +32,9 @@ public class Submarine : StaticInstance<Submarine> {
 
     public void EnterSub() {
         // Position the player inside the submarine and update their state.
-        player.transform.position = insideSubmarinePosition.position;
+        player.transform.position = insideSubmarinePosition.Find("PlayerSpawn").position;
         player.GetComponent<PlayerController>().SetState(PlayerController.PlayerState.Outside);
+        SubInside.Instance.PlayerEntered();
     }
 
     public void ExitSub() {

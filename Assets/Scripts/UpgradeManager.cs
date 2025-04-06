@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mono.Cecil;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +15,9 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
     public UpgradeDataSO[] upgrades; // Assign in Unity Inspector
 
 
+    public UIResourceElement resourceElement;
+    public Transform ElementContainer;
+    private List<UIResourceElement> _instantiatedUIVisual = new List<UIResourceElement>();
 
     protected override void Awake() {
         base.Awake();
@@ -22,9 +26,18 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
             upgradeLevels[upgrade.type] = 0; // Start at level 0
             upgradeValues[upgrade.type] = upgrade.baseValue; // Set base value
         }
-        playerResources.Add(Tile.TileType.Ore_Silver,99999);
+        //playerResources.Add(Tile.TileType.Ore_Silver,99999);
     }
-
+    public void DEBUGMAXResources() {
+        for (int i = 0; i < 1000; i++) {
+            
+        AddResource(Tile.TileType.Ore_Stone);
+        AddResource(Tile.TileType.Ore_Silver);
+        AddResource(Tile.TileType.Ore_Ruby);
+        AddResource(Tile.TileType.Ore_Gold);
+        AddResource(Tile.TileType.Ore_Diamond);
+        }
+    }
     public void BuyUpgrade(UpgradeType type) {
         if (!upgradeLevels.ContainsKey(type)) return;
         UpgradeDataSO upgrade = GetUpgradeData(type);
@@ -55,8 +68,16 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         }
 
         UpgradeBought?.Invoke();
+        UpdateResourceVisual();
         Debug.Log($"{type} upgraded to Level {upgradeLevels[type]}. New Value: {upgradeValues[type]}");
     }
+
+    private void UpdateResourceVisual() {
+        foreach (var item in _instantiatedUIVisual) {
+            item.Init(item.ResourceType, playerResources[item.ResourceType]);
+        }
+    }
+
     public float GetUpgradeValue(UpgradeType type) {
         return upgradeValues.ContainsKey(type) ? upgradeValues[type] : 0f;
     }
@@ -94,12 +115,23 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         return costDict;
     }
     public void AddResource(Tile.TileType resource) {
+        Debug.Log("Adding resource" + resource);
         if (playerResources.ContainsKey(resource)) {
             playerResources[resource]++;
+            foreach(var item in _instantiatedUIVisual) {
+                if(item.ResourceType == resource) {
+                    item.Init(resource, playerResources[resource]);
+                }
+            }
         } else {
             // Cool "new resource found" popup!? 
             playerResources.Add(resource, 1);
+            var i = Instantiate(resourceElement, ElementContainer);
+            i.Init(resource, playerResources[resource]);
+            _instantiatedUIVisual.Add(i);
         }
+       // UIInventoryManager.Instance.UpdateInventory(playerResources);
+        // Pass playersources 
     }
 }
 
@@ -109,7 +141,8 @@ public enum UpgradeType {
     MiningDamange,
     MovementSpeed,
     OxygenCapacity,
-    ResourceCapacity
+    ResourceCapacity,
+    LightRange
 }
 public enum IncreaseType {
     Add,

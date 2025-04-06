@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using static Tile;
 
 public class GridManager : StaticInstance<GridManager> {
     [Header("Random manager stuff")]
@@ -26,21 +27,38 @@ public class GridManager : StaticInstance<GridManager> {
     public int trenchPaddingSides = 2;   // Stone layers on each side of the trench
 
     [Header("Noise Settings - General")]
-    public float noiseScale = 5f; // Adjust for noise detail
+    public float silverNoiseScale = 10f; // Adjust for noise detail
+    public float goldNoiseScale = 7f; // Adjust for noise detail
+    public float rubyNoiseScale = 2f; // Adjust for noise detail
+    public float diamondNoiseScale = 1f; // Adjust for noise detail
     public float noiseOffset_X = 0f; // For different noise patterns each run
     public float noiseOffset_Y = 0f;
 
-    [Header("Ore Settings - Copper")]
-    [Range(0f, 1f)] public float copperOreFrequencySurface = 0.1f; // Frequency near surface
-    [Range(0f, 1f)] public float copperOreFrequencyDeep = 0.05f;   // Frequency deeper down
-    public float copperOreDepthStart = 10f; // Depth where copper frequency starts decreasing
-    public float copperOreDepthEnd = 30f;   // Depth where copper frequency reaches deep value
-
     [Header("Ore Settings - Silver")]
-    [Range(0f, 1f)] public float silverOreFrequencySurface = 0.02f;
-    [Range(0f, 1f)] public float silverOreFrequencyDeep = 0.08f;
-    public float silverOreDepthStart = 20f;
-    public float silverOreDepthEnd = 40f;
+    [Range(0f, 0.4f)] public float silverOreFrequencySurface = 0.02f;
+    [Range(0f, 0.4f)] public float silverOreFrequencyDeep = 0.08f;
+    [Range(0f, 1f)] public float silverDepthStart;
+    [Range(0f, 1f)] public float silverDepthEnd;
+    
+    [Header("Ore Settings - Gold")]
+    [Range(0f, 0.4f)] public float GoldFrequencySurface = 0.1f; // Frequency near surface
+    [Range(0f, 0.4f)] public float GoldFrequencyDeep = 0.05f;   // Frequency deeper down
+    [Range(0f, 1f)] public float GoldDepthStart; 
+    [Range(0f, 1f)] public float GoldDepthEnd;   
+
+    [Header("Ore Settings - Ruby")]
+    [Range(0f, 0.4f)] public float RubyFrequencySurface = 0.1f; // Frequency near surface
+    [Range(0f, 0.4f)] public float RubyFrequencyDeep = 0.05f;   // Frequency deeper down
+    [Range(0f, 1f)] public float RubyDepthStart;
+    [Range(0f, 1f)] public float RubyDepthEnd;   
+
+    [Header("Ore Settings - Diamond")]
+    [Range(0f, 0.4f)] public float DiamondFrequencySurface = 0.1f; // Frequency near surface
+    [Range(0f, 0.4f)] public float DiamondFrequencyDeep = 0.05f;   // Frequency deeper down
+    [Range(0f, 1f)] public float DiamondDepthStart ; 
+    [Range(0f, 1f)] public float DiamondDepthEnd;
+
+
 
 
     private Tile[,] grid;
@@ -159,23 +177,66 @@ public class GridManager : StaticInstance<GridManager> {
         if (isInTrench) {
             return Tile.TileType.Empty; // Trench area is still empty
         } else {
-            // Outside the trench (within non-padded area) - Stone with potential Ore replacement
-            float noiseValue = Mathf.PerlinNoise((x + noiseOffset_X) / noiseScale, (y + noiseOffset_Y) / noiseScale);
+            // Generate separate noise value for each ore
+            // Generate separate noise value for each ore, using its specific noiseScale
+            float diamondNoiseValue = Mathf.PerlinNoise((x + noiseOffset_X) / diamondNoiseScale, (y + noiseOffset_Y) / diamondNoiseScale);
+            float rubyNoiseValue = Mathf.PerlinNoise((x + noiseOffset_X + 100) / rubyNoiseScale, (y + noiseOffset_Y + 100) / rubyNoiseScale);
+            float goldNoiseValue = Mathf.PerlinNoise((x + noiseOffset_X + 200) / goldNoiseScale, (y + noiseOffset_Y + 200) / goldNoiseScale);
+            float silverNoiseValue = Mathf.PerlinNoise((x + noiseOffset_X + 300) / silverNoiseScale, (y + noiseOffset_Y) / silverNoiseScale);
 
-            float copperFrequency = CalculateOreFrequency(y, copperOreFrequencySurface, copperOreFrequencyDeep, copperOreDepthStart, copperOreDepthEnd);
-            float silverFrequency = CalculateOreFrequency(y, silverOreFrequencySurface, silverOreFrequencyDeep, silverOreDepthStart, silverOreDepthEnd);
 
-            if (noiseValue < copperFrequency) {
-                return Tile.TileType.Ore_Ruby;
+            float diamondFrequency = CalculateOreFrequency(x, y, DiamondFrequencySurface, DiamondFrequencyDeep, DiamondDepthStart, DiamondDepthEnd);
+            float rubyFrequency = CalculateOreFrequency(x, y, RubyFrequencySurface, RubyFrequencyDeep, RubyDepthStart, RubyDepthEnd);
+            float goldFrequency = CalculateOreFrequency(x, y, GoldFrequencySurface, GoldFrequencyDeep, GoldDepthStart, GoldDepthEnd);
+            float silverFrequency = CalculateOreFrequency(x, y, silverOreFrequencySurface, silverOreFrequencyDeep, silverDepthStart, silverDepthEnd);
+
+
+            // Check for ores in order of rarity (most rare to least rare)
+            if (diamondNoiseValue < diamondFrequency) {
+                return TileType.Ore_Diamond;
             }
-            if (noiseValue < silverFrequency) {
-                return Tile.TileType.Ore_Silver;
+            if (rubyNoiseValue < rubyFrequency) {
+                return TileType.Ore_Ruby;
+            }
+            if (goldNoiseValue < goldFrequency) {
+                return TileType.Ore_Gold;
+            }
+            if (silverNoiseValue < silverFrequency) {
+                return TileType.Ore_Silver;
             }
 
-            return Tile.TileType.Ore_Stone;
+            return TileType.Ore_Stone; // Default to Stone
         }
     }
-    public void DamageTileAtGridPosition(Vector2Int gridPosition, float damage) {
+
+    float CalculateOreFrequency(int x, int y, float surfaceFrequency, float deepFrequency,
+                               float depthStartPercent, float depthEndPercent) {
+        // ... (CalculateOreFrequency function remains the same) ...
+        // ... (The logic for depth and x-multiplier is unchanged and still good) ...
+        // ... (You don't need to modify this function for this change) ...
+        float depthStart = gridHeight * depthStartPercent;
+        float depthEnd = gridHeight * depthEndPercent;
+
+        float baseFrequency;
+        if (y < depthStart) {
+            baseFrequency = surfaceFrequency;
+        } else if (y >= depthEnd) {
+            baseFrequency = deepFrequency;
+        } else {
+            float t = Mathf.InverseLerp(depthStart, depthEnd, y);
+            baseFrequency = Mathf.Lerp(surfaceFrequency, deepFrequency, t);
+        }
+
+        float centerX = gridWidth / 2.0f;
+        float maxDistance = gridWidth / 2.0f;
+        float xDistance = Mathf.Abs(x - centerX);
+        float xNormalizedDistance = xDistance / maxDistance;
+        float xMultiplier = Mathf.Lerp(1.0f, 1.0f + (xNormalizedDistance * xNormalizedDistance), 1f);
+
+
+        return baseFrequency * xMultiplier;
+    }
+public void DamageTileAtGridPosition(Vector2Int gridPosition, float damage) {
         if (gridPosition.x >= 0 && gridPosition.x < gridWidth && gridPosition.y >= 0 && gridPosition.y < gridHeight) {
             if (grid[gridPosition.x, gridPosition.y] != null) {
                 grid[gridPosition.x, gridPosition.y].TakeDamage(damage);
@@ -184,20 +245,36 @@ public class GridManager : StaticInstance<GridManager> {
             Debug.LogWarning("Invalid grid coordinates for tile damage: " + gridPosition);
         }
     }
-    // Helper function to calculate ore frequency based on depth (y-coordinate)
-    float CalculateOreFrequency(int y, float surfaceFrequency, float deepFrequency, float depthStart, float depthEnd) {
+    /*
+    float CalculateOreFrequency(int x, int y, float surfaceFrequency, float deepFrequency,
+                             float depthStartPercent, float depthEndPercent) {
+        // Convert percentage depths to actual y-values
+        float depthStart = gridHeight* depthStartPercent;
+        float depthEnd = gridHeight * depthEndPercent;
+
+        // Calculate the base frequency based on depth
+        float baseFrequency;
         if (y < depthStart) {
-            return surfaceFrequency; // Surface frequency above depthStart
+            baseFrequency = surfaceFrequency; // If above depthStart, use surface frequency
         } else if (y >= depthEnd) {
-            return deepFrequency;    // Deep frequency below depthEnd
-        } else // Interpolate frequency between depthStart and depthEnd
-          {
-            float t = Mathf.InverseLerp(depthStart, depthEnd, y); // 0 at depthStart, 1 at depthEnd
-            return Mathf.Lerp(surfaceFrequency, deepFrequency, t);
+            baseFrequency = deepFrequency;    // If below depthEnd, use deep frequency
+        } else {
+            float t = Mathf.InverseLerp(depthStart, depthEnd, y);
+            baseFrequency = Mathf.Lerp(surfaceFrequency, deepFrequency, t);
         }
+
+        // Dynamically determine centerX and maxDistance
+        float centerX = gridWidth / 2.0f;  // Middle of the world
+        float maxDistance = gridWidth / 2.0f;  // Maximum possible distance from center
+
+        // Calculate x-based multiplier: higher frequency further from centerX
+        float xDistance = Mathf.Abs(x - centerX);  // Distance from the center
+        float xMultiplier = Mathf.Lerp(1.0f, 2.0f, xDistance / maxDistance);
+        // Multiplier smoothly increases the further we get from center
+
+        return baseFrequency * xMultiplier;
     }
-
-
+    */
     public void DestroyTileAt(int x, int y) {
         if (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight) {
             if (grid[x, y] != null) {
