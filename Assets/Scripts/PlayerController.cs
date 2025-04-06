@@ -13,7 +13,9 @@ public class PlayerController : StaticInstance<PlayerController> {
     private string currentAnimation = "";
     private Rigidbody2D rb;
     private Vector2 velocity;
-    private SpriteRenderer sprite; 
+    private SpriteRenderer sprite;
+    public Camera MainCam;
+    public Transform insideSubTransform;
     #region Movement Parameters
 
     [Header("Movement Parameters")]
@@ -184,5 +186,18 @@ public class PlayerController : StaticInstance<PlayerController> {
         bobbingTimer += Time.deltaTime * bobbingSpeed;
         float bobbingOffset = Mathf.Sin(bobbingTimer) * bobbingAmplitude;
         transform.position = Vector3.up * bobbingOffset;
+    }
+
+    internal void SetState(PlayerState state) {
+        CurrentState = state;
+        if(state == PlayerState.Outside) {
+
+           MainCam.transform.SetParent(insideSubTransform);
+            MainCam.transform.localPosition = new Vector3(0, 0, -10);
+        } else {
+            MainCam.transform.SetParent(transform);
+            MainCam.transform.localPosition = new Vector3(0, 0, -10);
+
+        }
     }
 }

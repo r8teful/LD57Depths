@@ -120,19 +120,19 @@ public class GridManager : StaticInstance<GridManager> {
         // Apply Padding Layers (Stone)
         // Top Padding
         if (y < trenchPaddingTop) {
-            return Tile.TileType.Stone;
+            return Tile.TileType.Ore_Stone;
         }
 
         // Bottom Padding
         if (y >= gridHeight - trenchPaddingBottom) {
-            return Tile.TileType.Stone;
+            return Tile.TileType.Ore_Stone;
         }
 
         // Side Padding
         int paddedGridWidth = gridWidth - (trenchPaddingSides * 2); // Effective grid width after side padding
         int sidePaddingStartX = trenchPaddingSides;                // Starting X for non-padded area
         if (x < sidePaddingStartX || x >= sidePaddingStartX + paddedGridWidth) {
-            return Tile.TileType.Stone;
+            return Tile.TileType.Ore_Stone;
         }
 
 
@@ -166,13 +166,13 @@ public class GridManager : StaticInstance<GridManager> {
             float silverFrequency = CalculateOreFrequency(y, silverOreFrequencySurface, silverOreFrequencyDeep, silverOreDepthStart, silverOreDepthEnd);
 
             if (noiseValue < copperFrequency) {
-                return Tile.TileType.Ore_Copper;
+                return Tile.TileType.Ore_Ruby;
             }
             if (noiseValue < silverFrequency) {
                 return Tile.TileType.Ore_Silver;
             }
 
-            return Tile.TileType.Stone;
+            return Tile.TileType.Ore_Stone;
         }
     }
     public void DamageTileAtGridPosition(Vector2Int gridPosition, float damage) {

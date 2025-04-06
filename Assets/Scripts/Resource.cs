@@ -10,10 +10,13 @@ public class Resource : MonoBehaviour {
     private Vector2 velocity;
     private Rigidbody2D rb;
     private PlayerController player;
+   // private Renderer _renderer;
     void Start() {
         // Get the Rigidbody2D component attached to the resource
         rb = GetComponent<Rigidbody2D>();
         player = PlayerController.Instance;
+        //_renderer = GetComponent<Renderer>();
+        //_renderer.material = new Material(_renderer.material);
     }
 
     void FixedUpdate() {
@@ -42,6 +45,34 @@ public class Resource : MonoBehaviour {
    
     internal void SetResource(Tile.TileType type) {
         ResourceType = type;
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
         // Update visual etc
+        switch (type) {
+            case Tile.TileType.Empty:
+                break;
+            case Tile.TileType.Dirt:
+                break;
+            case Tile.TileType.Ore_Stone:
+                sr.color = Color.gray;
+                //_renderer.material.SetColor("_Color", Color.gray);
+                break;
+            case Tile.TileType.Ore_Ruby:
+                sr.color = new Color(0.725f, 0.05f, 0.29f);
+                //_renderer.material.SetColor("_Color", Color.gray);
+                break;
+            case Tile.TileType.Ore_Silver:
+                sr.color = new Color(0.796f, 0.858f, 0.98f);
+                break;
+            case Tile.TileType.Boundary:
+                break;
+            case Tile.TileType.Ore_Emerald:
+                sr.color = new Color(0.172f, 0.788f, 0.305f);
+                break;
+            case Tile.TileType.Ore_Diamond:
+                sr.color = new Color(0.352f, 0.858f, 0.98f);
+                break;
+            default:
+                break;
+        }
     }
 }

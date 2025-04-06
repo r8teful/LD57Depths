@@ -13,10 +13,10 @@ public class UIResourceElement : MonoBehaviour {
                 break;
             case Tile.TileType.Dirt:
                 break;
-            case Tile.TileType.Stone:
+            case Tile.TileType.Ore_Stone:
                 sprite = Resources.Load<Sprite>("UI/IconStone");
                 break;
-            case Tile.TileType.Ore_Copper:
+            case Tile.TileType.Ore_Ruby:
                 sprite = Resources.Load<Sprite>("UI/IconCopper");
                 break;
             case Tile.TileType.Ore_Silver:

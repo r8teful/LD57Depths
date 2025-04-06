@@ -5,9 +5,11 @@ public class Tile : MonoBehaviour {
     public enum TileType {
         Empty, // New Empty Tile Type
         Dirt,
-        Stone,
-        Ore_Copper,
+        Ore_Stone,
         Ore_Silver,
+        Ore_Emerald,
+        Ore_Diamond,
+        Ore_Ruby,
         Boundary
     }
 
@@ -17,7 +19,8 @@ public class Tile : MonoBehaviour {
     public float maxHealth; // Maximum health of the tile
     private float currentHealth; // Current health of the tile
     public Resource resourcePrefab;
-    private Renderer renderer;
+    private Renderer _renderer;
+    
     public TileType Type { get => type; 
         set { 
             type = value;
@@ -35,10 +38,9 @@ public class Tile : MonoBehaviour {
 
     public void InitializeTile(TileType type, Vector2Int position) {
         _boxCollider = GetComponent<BoxCollider2D>();
-        renderer = gameObject.GetComponent<Renderer>();
-        renderer.material= new Material(renderer.material);
-        renderer.material.SetFloat("_Rand", Random.Range(0,900));
-
+        _renderer = gameObject.GetComponent<Renderer>();
+        _renderer.material= new Material(_renderer.material);
+        _renderer.material.SetFloat("_Rand", Random.Range(0,900));
         this.Type = type;
         this.gridPosition = position;
         // Set Max Health based on Tile Type (customize these values!)
@@ -46,19 +48,25 @@ public class Tile : MonoBehaviour {
             case TileType.Dirt:
                 maxHealth = 50f;
                 break;
-            case TileType.Stone:
+            case TileType.Ore_Stone:
                 maxHealth = 100f;
                 break;
-            case TileType.Ore_Copper:
+            case TileType.Ore_Ruby:
                 maxHealth = 120f;
                 break;
             case TileType.Ore_Silver:
                 maxHealth = 150f;
                 break;
-            case TileType.Empty: // Empty tiles should be indestructible for mining gun
-                maxHealth = Mathf.Infinity; // Infinite health
+            case TileType.Ore_Emerald:
+                maxHealth = 200f;
                 break;
-            case TileType.Boundary: // Boundary tiles are indestructible
+            case TileType.Ore_Diamond:
+                maxHealth = 350f;
+                break;
+            case TileType.Empty: 
+                maxHealth = Mathf.Infinity; 
+                break;
+            case TileType.Boundary: 
                 maxHealth = Mathf.Infinity;
                 break;
             default:
@@ -77,7 +85,7 @@ public class Tile : MonoBehaviour {
                 DestroyTile();
             } else {
                 var healthAmount = currentHealth / maxHealth;
-                renderer.material.SetFloat("_DissolveAmount", 1-healthAmount);
+                _renderer.material.SetFloat("_DissolveAmount", 1-healthAmount);
                 // Optionally, you could add visual feedback for damage here, like a quick color flash
                 // For example, you could call a coroutine to briefly change the sprite color.
             }
@@ -90,7 +98,10 @@ public class Tile : MonoBehaviour {
             var xOffset = Random.Range(-0.015f, 0.015f);
             var yOffset = Random.Range(-0.015f, 0.015f);
             var pos = new Vector3(transform.position.x + xOffset, transform.position.y + yOffset, transform.position.z);
-            Instantiate(resourcePrefab, pos, Quaternion.identity).SetResource(Type);
+            if (Type == TileType.Ore_Silver || Type == TileType.Ore_Stone || Type == TileType.Ore_Ruby
+                || Type == TileType.Ore_Diamond || Type == TileType.Ore_Emerald) {
+                Instantiate(resourcePrefab, pos, Quaternion.identity).SetResource(Type);
+            }
             Type = TileType.Empty;
             UpdateTileVisual();
         }
@@ -98,27 +109,41 @@ public class Tile : MonoBehaviour {
 
     private void UpdateTileVisual() {
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        var stone = Resources.Load<Sprite>("Ores/Stone");
+        var silver = Resources.Load<Sprite>("Ores/Silver");
+        var emerald = Resources.Load<Sprite>("Ores/Emerald");
+        var diamond = Resources.Load<Sprite>("Ores/Diamond");
+        var ruby = Resources.Load<Sprite>("Ores/ruby");
         if (sr != null) {
             if (Type == TileType.Empty) // Handle Empty tiles visually
             {
                 sr.color = new Color(sr.color.r, sr.color.g, sr.color.b, 0f); // Transparent for destroyed or empty
                 // Or sr.enabled = false;
             } else {
+                sr.color = Color.white;
                 switch (Type) {
                     case TileType.Dirt:
                         sr.color = new Color(0.5372f, 0.3176f, 0.161f); // Brown
                         break;
-                    case TileType.Stone:
-                        sr.color = Color.white;
+                    case TileType.Ore_Stone:
+                        sr.sprite = stone;
                         break;
-                    case TileType.Ore_Copper:
-                        sr.color = new Color(1f, 0.5f, 0f);
+                    case TileType.Ore_Ruby:
+                        sr.sprite = ruby;
                         break;
                     case TileType.Ore_Silver:
-                        sr.color = new Color(0.753f, 0.753f, 0.753f);
+                        sr.sprite = silver;
                         break;
-                    case TileType.Boundary: 
+                    case TileType.Ore_Emerald:
+                        sr.sprite = emerald;
+                        break;
+                    case TileType.Ore_Diamond:
+                        sr.sprite = diamond;
+                        break;
+                    case TileType.Boundary:
                         sr.color = Color.black;
+                        break;
+                    case TileType.Empty:
                         break;
                     default:
                         sr.color = Color.white;

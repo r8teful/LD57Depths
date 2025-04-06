@@ -33,7 +33,7 @@ public class Submarine : StaticInstance<Submarine> {
     public void EnterSub() {
         // Position the player inside the submarine and update their state.
         player.transform.position = insideSubmarinePosition.position;
-        player.GetComponent<PlayerController>().CurrentState = PlayerController.PlayerState.Outside;
+        player.GetComponent<PlayerController>().SetState(PlayerController.PlayerState.Outside);
     }
 
     public void ExitSub() {
@@ -43,6 +43,6 @@ public class Submarine : StaticInstance<Submarine> {
         // Otherwise, we use the stored outside position.
         //Debug.Log("Exit! pos:" + outsideSubmarinePosition);
         player.transform.position = outsideSubmarinePosition;
-        player.GetComponent<PlayerController>().CurrentState = PlayerController.PlayerState.Swimming;
+        player.GetComponent<PlayerController>().SetState(PlayerController.PlayerState.Swimming);
     }
 }
