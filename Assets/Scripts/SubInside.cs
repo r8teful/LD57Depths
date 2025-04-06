@@ -45,7 +45,7 @@ public class SubInside : StaticInstance<SubInside> {
                 case SubInteractionState.None:
                     break;
                 case SubInteractionState.Upgrade:
-
+                    UIShopManager.Instance.ShopOpen();
                     break;
                 case SubInteractionState.Ship:
                     break;

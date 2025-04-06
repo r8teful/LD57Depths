@@ -11,39 +11,23 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
     public Dictionary<Tile.TileType, int> playerResources = new Dictionary<Tile.TileType, int>();
     public static event Action UpgradeBought;
 
-    [System.Serializable]
-    public class UpgradeData {
-        public UpgradeType type;
-        public IncreaseType increaseType;
-        public float baseValue;
-        public float increasePerLevel;
-        public UpgradeCostData[] costData; // Array to hold costs for different resource
-    }
+    public UpgradeDataSO[] upgrades; // Assign in Unity Inspector
 
-    public UpgradeData[] upgrades; // Assign in Unity Inspector
-
-    [System.Serializable]
-    public class UpgradeCostData {
-        public Tile.TileType resourceType;
-        public float baseCost;
-        public float increasePerLevel;
-        public IncreaseType increaseType;
-        public int requiredAtLevel; // NEW: Only required at this level and beyond
-    }
 
 
     protected override void Awake() {
         base.Awake();
         // Initialize upgrades
-        foreach (UpgradeData upgrade in upgrades) {
+        foreach (UpgradeDataSO upgrade in upgrades) {
             upgradeLevels[upgrade.type] = 0; // Start at level 0
             upgradeValues[upgrade.type] = upgrade.baseValue; // Set base value
         }
+        playerResources.Add(Tile.TileType.Ore_Silver,99999);
     }
 
     public void BuyUpgrade(UpgradeType type) {
         if (!upgradeLevels.ContainsKey(type)) return;
-        UpgradeData upgrade = GetUpgradeData(type);
+        UpgradeDataSO upgrade = GetUpgradeData(type);
         if (upgrade == null) return;
         
         int currentLevel = upgradeLevels[type];
@@ -53,18 +37,17 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         // Check if the player has enough resources
         foreach (var cost in upgradeCost) {
             if (!playerResources.ContainsKey(cost.Key) || playerResources[cost.Key] < cost.Value) {
-                Debug.Log($"Not enough {cost.Key}! Need {cost.Value}, have {playerResources[cost.Key]}.");
+                //Debug.Log($"Not enough {cost.Key}! Need {cost.Value}, have {playerResources[cost.Key]}.");
                 return;
             }
         }
-
+        
         // Deduct resources & apply upgrade
         foreach (var cost in upgradeCost) {
             playerResources[cost.Key] -= cost.Value;
         }
 
         upgradeLevels[type]++;
-
         if (upgrade.increaseType == IncreaseType.Add) {
             upgradeValues[type] += upgrade.increasePerLevel;
         } else if (upgrade.increaseType == IncreaseType.Multiply) {
@@ -82,23 +65,22 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         return upgradeLevels.ContainsKey(type) ? upgradeLevels[type] : 0;
     }
 
-    private UpgradeData GetUpgradeData(UpgradeType type) {
-        foreach (UpgradeData upgrade in upgrades) {
+    private UpgradeDataSO GetUpgradeData(UpgradeType type) {
+        foreach (UpgradeDataSO upgrade in upgrades) {
             if (upgrade.type == type)
                 return upgrade;
         }
         return null;
     }
     public Dictionary<Tile.TileType, int> GetUpgradeCost(UpgradeType type) {
-        UpgradeData upgrade = GetUpgradeData(type);
+        UpgradeDataSO upgrade = GetUpgradeData(type);
         Dictionary<Tile.TileType, int> costDict = new Dictionary<Tile.TileType, int>();
 
         int currentLevel = upgradeLevels[type];
 
         foreach (var cost in upgrade.costData) {
-            if (currentLevel < cost.requiredAtLevel)
+            if (currentLevel < cost.requiredAtLevel || currentLevel >= cost.stopsAtLevel)
                 continue; // Skip this resource if it isn't needed at this level
-
             float costValue = cost.baseCost;
             if (cost.increaseType == IncreaseType.Add) {
                 costValue += cost.increasePerLevel * currentLevel;
