@@ -6,6 +6,7 @@ public class GridManager : StaticInstance<GridManager> {
     [Header("Random manager stuff")]
     public Transform player; 
     [SerializeField] private Slider progressBar;
+    [SerializeField] private GameObject sub;
     [Header("Grid Settings")]
 
     public int gridWidth = 20;
@@ -102,6 +103,8 @@ public class GridManager : StaticInstance<GridManager> {
             int centerX = gridWidth / 2;
             Vector3 playerStartPos = new Vector3(centerX * tileSize + gridOrigin.x, (gridHeight  - trenchPaddingBottom - 1) * -tileSize + gridOrigin.y, 0);
             player.position = playerStartPos;
+            playerStartPos.y += 1; // submarine above player
+            Instantiate(sub, playerStartPos, Quaternion.identity);
         }
         // Hide progress bar after completion
         if (progressBar != null)

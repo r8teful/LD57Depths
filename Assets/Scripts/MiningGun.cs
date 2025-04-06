@@ -12,8 +12,12 @@ public class MiningGun : MonoBehaviour {
     public float damagePerRay = 10f;     // Base damage per ray
 
     private float timer = 0f;
-
-
+    private void Awake() {
+        UpgradeManager.UpgradeBought += OnUpgraded;
+    }
+    private void OnDestroy() {
+        UpgradeManager.UpgradeBought -= OnUpgraded;
+    }
     void Update() {
         if (Input.GetMouseButton(0)) // Left mouse button held down
         {
@@ -66,7 +70,10 @@ public class MiningGun : MonoBehaviour {
             }
         }
     }
-
+    public void OnUpgraded() {
+        frequency = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MiningSpeed);
+        damagePerRay = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MiningDamange);
+    }
     Vector2 GetConeRayDirection(Vector2 baseDirection) {
         float randomAngle = Random.Range(-outerSpotAngle / 2f, outerSpotAngle / 2f); // Angle variation within outer cone
         float innerAngleThreshold = innerSpotAngle / 2f;

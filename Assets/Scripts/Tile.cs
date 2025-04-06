@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Tile : MonoBehaviour {
     public enum TileType {
@@ -16,6 +17,7 @@ public class Tile : MonoBehaviour {
     public float maxHealth; // Maximum health of the tile
     private float currentHealth; // Current health of the tile
     public Resource resourcePrefab;
+    private Renderer renderer;
     public TileType Type { get => type; 
         set { 
             type = value;
@@ -32,7 +34,11 @@ public class Tile : MonoBehaviour {
     }
 
     public void InitializeTile(TileType type, Vector2Int position) {
-        _boxCollider = GetComponent<BoxCollider2D>(); 
+        _boxCollider = GetComponent<BoxCollider2D>();
+        renderer = gameObject.GetComponent<Renderer>();
+        renderer.material= new Material(renderer.material);
+        renderer.material.SetFloat("_Rand", Random.Range(0,900));
+
         this.Type = type;
         this.gridPosition = position;
         // Set Max Health based on Tile Type (customize these values!)
@@ -67,9 +73,11 @@ public class Tile : MonoBehaviour {
         {
             currentHealth -= damage;
             //Debug.Log($"TileHit! {currentHealth}");
-            if (currentHealth <= 0f) {
+            if (currentHealth <= 10f) {
                 DestroyTile();
             } else {
+                var healthAmount = currentHealth / maxHealth;
+                renderer.material.SetFloat("_DissolveAmount", 1-healthAmount);
                 // Optionally, you could add visual feedback for damage here, like a quick color flash
                 // For example, you could call a coroutine to briefly change the sprite color.
             }
@@ -78,8 +86,11 @@ public class Tile : MonoBehaviour {
     public void DestroyTile() {
         if (Type != TileType.Empty) // Prevent destroying empty tiles
         {
-            // Destruction logic
-            Instantiate(resourcePrefab, transform.position, Quaternion.identity).SetResource(Type);
+            // Block is 0.04
+            var xOffset = Random.Range(-0.015f, 0.015f);
+            var yOffset = Random.Range(-0.015f, 0.015f);
+            var pos = new Vector3(transform.position.x + xOffset, transform.position.y + yOffset, transform.position.z);
+            Instantiate(resourcePrefab, pos, Quaternion.identity).SetResource(Type);
             Type = TileType.Empty;
             UpdateTileVisual();
         }
@@ -98,7 +109,7 @@ public class Tile : MonoBehaviour {
                         sr.color = new Color(0.5372f, 0.3176f, 0.161f); // Brown
                         break;
                     case TileType.Stone:
-                        sr.color = Color.gray;
+                        sr.color = Color.white;
                         break;
                     case TileType.Ore_Copper:
                         sr.color = new Color(1f, 0.5f, 0f);
