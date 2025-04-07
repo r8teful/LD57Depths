@@ -157,9 +157,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3
-        y: 125
+        y: 126
         width: 10
-        height: 9
+        height: 8
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -179,9 +179,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1
-        y: 46
+        y: 44
         width: 124
-        height: 68
+        height: 70
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -200,9 +200,9 @@ TextureImporter:
       name: ButtonSmall
       rect:
         serializedVersion: 2
-        x: 3
-        y: 113
-        width: 44
+        x: 4
+        y: 114
+        width: 58
         height: 12
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -284,6 +284,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: ButtonSmallShort
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 114
+        width: 37
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3f7b26115e5260447b9254a578b18504
+      internalID: -847408354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -301,6 +323,7 @@ TextureImporter:
       ButtonBig: 6182443410152869186
       ButtonClose: -3274239917416431365
       ButtonSmall: 7514338990341422671
+      ButtonSmallShort: -847408354
       MainMenuButtons_4: -6380436368723242459
       PopupBox: -4084990643401607137
       Slider2: -8161154217084563648

@@ -1613,6 +1613,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 733921902}
+  - component: {fileID: 733921903}
   m_Layer: 0
   m_Name: UIMenuManager
   m_TagString: Untagged
@@ -1635,6 +1636,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &733921903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 733921901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48055a9efdbf05d409c059983bbd6020, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CanvasMain: {fileID: 977486443}
 --- !u!1 &788243368
 GameObject:
   m_ObjectHideFlags: 0
@@ -3480,6 +3494,7 @@ MonoBehaviour:
   waitBeforeNext: 0
   activateWhenComplete: {fileID: 0}
   CutscenePrefab: {fileID: 607322386276523454, guid: acbf12e45eb65184d8a73f9a883523a8, type: 3}
+  WinPrefab: {fileID: 607322386276523454, guid: a42293eccbd82ca49b1d7d7f28914ca1, type: 3}
   CanvasMain: {fileID: 977486443}
 --- !u!1 &1519027593
 GameObject:
@@ -4095,6 +4110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loopSources: []
+  SFXMixer: {fileID: 0}
 --- !u!4 &1674985198
 Transform:
   m_ObjectHideFlags: 0

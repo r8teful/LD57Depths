@@ -5,6 +5,7 @@ using System.Collections;
 public class SequenceSubGoingUp : Sequencer {
     private bool _introDone;
     public GameObject CutscenePrefab;
+    public GameObject WinPrefab;
     private GameObject _instantiatedCutscenePrefab;
     public Transform CanvasMain;
     protected override IEnumerator Sequence() {
@@ -21,6 +22,9 @@ public class SequenceSubGoingUp : Sequencer {
         yield return Submarine.Instance.Cutscene(0.40f,20);
         // Ending cretids?
         yield return new WaitUntil(() => ShipManager.Instance.GetRepairProgress() == 3);
+        StartCoroutine(Submarine.Instance.Cutscene(0.2f,20));
+        yield return new WaitForSeconds(15);
+        Instantiate(WinPrefab, CanvasMain);
     }
     private IEnumerator IntroCutscene() {
         _instantiatedCutscenePrefab = Instantiate(CutscenePrefab, CanvasMain);

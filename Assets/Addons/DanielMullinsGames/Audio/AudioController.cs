@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pixelplacement;
 
-public class AudioController : Singleton<AudioController> {
+public class AudioController : PersistentSingleton<AudioController> {
     public AudioSource BaseLoopSource
     {
         get
@@ -18,7 +18,8 @@ public class AudioController : Singleton<AudioController> {
 
     [SerializeField]
     private List<AudioSource> loopSources = default;
-
+    [SerializeField]
+    private AudioMixerGroup SFXMixer;
     private List<AudioClip> sfx = new List<AudioClip>();
     private List<AudioClip> loops = new List<AudioClip>();
 
@@ -56,6 +57,7 @@ public class AudioController : Singleton<AudioController> {
         {
             loops.Add((AudioClip)o);
         }
+        currentSFXMixer = SFXMixer;
     }
 
     public AudioSource GetLoopSource(int index)
