@@ -17,6 +17,7 @@ public class PlayerController : StaticInstance<PlayerController> {
     private CapsuleCollider2D colliderPlayer;
     private Vector2 velocity;
     private SpriteRenderer sprite;
+    private MiningGun miningGun;
     public Camera MainCam;
     public Transform insideSubTransform;
     public Slider oxygenSlider;
@@ -89,6 +90,7 @@ public class PlayerController : StaticInstance<PlayerController> {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
+        miningGun = GetComponentInChildren<MiningGun>();
         colliderPlayer = GetComponent<CapsuleCollider2D>();
         rb.gravityScale = 0; // Disable default gravity
         originalLocalPosition = transform.localPosition; // Store initial position for bobbing
@@ -145,8 +147,10 @@ public class PlayerController : StaticInstance<PlayerController> {
             }
             if (currentInput.x > 0) {
                 sprite.flipX = false;
+                miningGun.Flip(false);
             } else if (currentInput.x < 0) {
                 sprite.flipX = true;
+                miningGun.Flip(true);
             }
             // Optional Bobbing Effect
             if (useBobbingEffect) {
@@ -260,6 +264,10 @@ public class PlayerController : StaticInstance<PlayerController> {
     public void DEBUGPlayerPassOut() {
         currentOxygen = 1;
         playerHealth = 1;
+    }
+    public void DEBUGinfOx() {
+        maxOxygen= 9999999;
+        currentOxygen = 999999;
     }
     private void Resurect() {
         playerHealth = maxHealth;

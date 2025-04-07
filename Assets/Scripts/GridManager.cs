@@ -8,6 +8,7 @@ public class GridManager : StaticInstance<GridManager> {
     public Transform player; 
     [SerializeField] private Slider progressBar;
     [SerializeField] private GameObject sub;
+    [SerializeField] private GameObject background;
     [Header("Grid Settings")]
 
     public int gridWidth = 20;
@@ -126,6 +127,11 @@ public class GridManager : StaticInstance<GridManager> {
             PlayerController.Instance.SetState(PlayerController.PlayerState.Swimming);
             playerStartPos.y += 0.4f; // submarine above player
             Instantiate(sub, playerStartPos, Quaternion.identity).GetComponent<Submarine>().setOutideSubPos(playerStartPos);
+        }
+        if(background != null) {
+            int centerX = gridWidth / 2;
+            var pos = new Vector3(centerX * tileSize + gridOrigin.x, background.transform.position.y, 0);
+            background.transform.position = pos;
         }
         // Hide progress bar after completion
         if (progressBar != null)

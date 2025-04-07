@@ -61,7 +61,8 @@ public class Submarine : StaticInstance<Submarine> {
         var d = transform.position.y + GridManager.Instance.GetWorldHeightFromRatio(distanceRatio);
         transform.DOMoveY(d, length);
         player.CutsceneStart();
-        yield return new WaitForSeconds(length); 
+        yield return new WaitForSeconds(length);
+        SubInside.Instance.IncreaseBackgroundLevel();
         var p = new Vector3(transform.position.x, transform.position.y - 0.3f, transform.position.z);
         outsideSubmarinePosition = p;
         player.CutsceneEnd();

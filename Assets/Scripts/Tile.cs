@@ -52,16 +52,16 @@ public class Tile : MonoBehaviour {
                 maxHealth = 100f;
                 break;
             case TileType.Ore_Ruby:
-                maxHealth = 120f;
+                maxHealth = 500f;
                 break;
             case TileType.Ore_Silver:
-                maxHealth = 150f;
-                break;
-            case TileType.Ore_Gold:
                 maxHealth = 200f;
                 break;
-            case TileType.Ore_Diamond:
+            case TileType.Ore_Gold:
                 maxHealth = 350f;
+                break;
+            case TileType.Ore_Diamond:
+                maxHealth = 1000f;
                 break;
             case TileType.Empty: 
                 maxHealth = Mathf.Infinity; 

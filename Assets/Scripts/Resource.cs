@@ -17,6 +17,7 @@ public class Resource : MonoBehaviour {
         player = PlayerController.Instance;
         //_renderer = GetComponent<Renderer>();
         //_renderer.material = new Material(_renderer.material);
+        Destroy(gameObject, 15);
     }
 
     void FixedUpdate() {

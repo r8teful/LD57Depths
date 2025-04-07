@@ -17,6 +17,7 @@ public class MiningGun : MonoBehaviour {
     [Header("Visual Settings")]
     public float startWidth;
     public float endWidth;
+    public Color rayColor;
     public LineRenderer lineRendererPrefab;  // Assign in Inspector
     private List<LineRenderer> activeLineRenderers = new List<LineRenderer>();
 
@@ -29,12 +30,20 @@ public class MiningGun : MonoBehaviour {
     void Update() {
         if (Input.GetMouseButton(0)) // Left mouse button held down
         {
+            LaserVisual();
             timer += Time.deltaTime;
             if (timer >= 1f / frequency) {
                 timer -= 1f / frequency; // Reset timer, but keep fractional remainder for accuracy
                 CastRays();
             }
         }
+    }
+    private void LaserVisual() {
+        Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorldPosition.z = 0f;
+        Vector2 directionToMouse = (mouseWorldPosition - transform.position).normalized;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToMouse, range);
+        CreateLaserEffect(transform.position, hit.point);
     }
 
     void CastRays() {
@@ -46,7 +55,8 @@ public class MiningGun : MonoBehaviour {
         ClearPreviousRays(); // Clear old rays before shooting new ones
 
         for (int i = 0; i < numRays; i++) {
-            Vector2 rayDirection = GetConeRayDirection(directionToMouse);
+            //Vector2 rayDirection = GetConeRayDirection(directionToMouse);
+            Vector2 rayDirection = directionToMouse;
             RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, range);
 
             if (hit.collider != null) {
@@ -57,21 +67,21 @@ public class MiningGun : MonoBehaviour {
                     float finalDamage = damagePerRay * falloffFactor;
 
                     GridManager.Instance.DamageTileAtGridPosition(hitTile.gridPosition, finalDamage);
-                    CreateLaserEffect(transform.position, hit.point, Color.red);
+                    //CreateLaserEffect(transform.position, hit.point);
                 } else {
-                    CreateLaserEffect(transform.position, hit.point, Color.gray);
+                   // CreateLaserEffect(transform.position, hit.point);
                 }
             } else {
-                CreateLaserEffect(transform.position, transform.position + (Vector3)rayDirection * range, Color.blue);
+               //CreateLaserEffect(transform.position, transform.position + (Vector3)rayDirection * range);
             }
         }
     }
-    void CreateLaserEffect(Vector3 start, Vector3 end, Color color) {
+    void CreateLaserEffect(Vector3 start, Vector3 end) {
         LineRenderer line = Instantiate(lineRendererPrefab, transform);
         line.SetPosition(0, start);
         line.SetPosition(1, end);
-        line.startColor = color;
-        line.endColor = new Color(color.r, color.g, color.b, 0.2f); // Fades out at the end
+        line.startColor = rayColor;
+        line.endColor = new Color(rayColor.r, rayColor.g, rayColor.b, 0.2f); // Fades out at the end
         line.startWidth = startWidth;
         line.endWidth = endWidth;
         activeLineRenderers.Add(line);
@@ -122,5 +132,15 @@ public class MiningGun : MonoBehaviour {
 
         Quaternion rotation = Quaternion.AngleAxis(randomAngle, Vector3.forward);
         return rotation * baseDirection;
+    }
+
+    internal void Flip(bool facingLeft) {
+        Vector3 position = transform.localPosition;
+        if (facingLeft) {
+            position.x = -Mathf.Abs(position.x); // Ensure it moves to the left
+        } else {
+            position.x = Mathf.Abs(position.x); // Ensure it moves to the right
+        }
+        transform.localPosition = position;
     }
 }

@@ -7,6 +7,8 @@ public class SubInside : StaticInstance<SubInside> {
     public Renderer Workbench;
     public Renderer Exit;
     public Renderer Control;
+    public SpriteRenderer Background;
+    public int backgroundLevel;
     private bool _canInteract;
     private void Start() {
         Workbench.material = new Material(Workbench.material);
@@ -98,6 +100,14 @@ public class SubInside : StaticInstance<SubInside> {
                 default:
                     break;
             }
+        }
+    }
+    public void IncreaseBackgroundLevel() {
+        backgroundLevel++;
+        if(backgroundLevel == 1) {
+            Background.sprite = Resources.Load<Sprite>("UI/BackgroundLevel2");
+        } else if(backgroundLevel == 2) {
+            Background.sprite = Resources.Load<Sprite>("UI/BackgroundLevel3");
         }
     }
 }
