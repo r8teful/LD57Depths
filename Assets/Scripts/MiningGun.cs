@@ -104,9 +104,12 @@ public class MiningGun : MonoBehaviour {
         }
         activeLineRenderers.Clear();
     }
-    public void OnUpgraded() {
-        frequency = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MiningSpeed);
-        damagePerRay = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MiningDamange);
+    public void OnUpgraded(UpgradeType t) {
+        if(t == UpgradeType.MiningDamange) {
+            damagePerRay = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MiningDamange);
+        } else if (t == UpgradeType.MiningSpeed) {
+            frequency = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MiningSpeed);
+        }
     }
     Vector2 GetConeRayDirection(Vector2 baseDirection) {
         float randomAngle = Random.Range(-outerSpotAngle / 2f, outerSpotAngle / 2f); // Angle variation within outer cone

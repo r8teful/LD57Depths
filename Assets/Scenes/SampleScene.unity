@@ -1711,8 +1711,8 @@ CanvasGroup:
   m_GameObject: {fileID: 798488645}
   m_Enabled: 1
   m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!114 &798488648
 MonoBehaviour:
@@ -2927,9 +2927,10 @@ MonoBehaviour:
   insideSubTransform: {fileID: 676694617}
   oxygenSlider: {fileID: 179501982}
   blackout: {fileID: 798488647}
+  lightSpot: {fileID: 1687320178}
   swimSpeed: 0.15
   accelerationForce: 0.5
-  decelerationForce: 0.05
+  decelerationForce: 0.07
   directionalChangeSpeed: 0.03
   useBuoyancy: 0
   buoyancyForce: 5
@@ -2940,7 +2941,7 @@ MonoBehaviour:
   outsideTurning: {fileID: 247799006}
   outsideEnd: {fileID: 1568486625}
   outsideSpeed: 0.2
-  maxOxygen: 100
+  maxOxygen: 30
   oxygenDepletionRate: 1
   currentOxygen: 0
 --- !u!95 &1221925331
@@ -3229,6 +3230,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 56520a4d784394342ac47440eefd0559, type: 2}
   - {fileID: 11400000, guid: 5ba114eaed28b6b44bea59604659d986, type: 2}
   - {fileID: 11400000, guid: f9fbc728db3e5c24aa31e1e4e57bec51, type: 2}
+  - {fileID: 11400000, guid: 1337190d3de1d6d438b12090c8484be3, type: 2}
   resourceElement: {fileID: 1218508234979410005, guid: c374be774910d5e47bc54fdbbe4fdcab, type: 3}
   ElementContainer: {fileID: 2092289212}
 --- !u!1 &1384995160
@@ -3971,6 +3973,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1687320178 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7350506263575378538, guid: 9585576598446c14ba528768ff0909e6, type: 3}
+  m_PrefabInstance: {fileID: 1649100625}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1701156154
 GameObject:
   m_ObjectHideFlags: 0

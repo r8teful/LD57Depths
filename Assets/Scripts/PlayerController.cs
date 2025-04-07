@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public class PlayerController : StaticInstance<PlayerController> {
@@ -20,6 +21,7 @@ public class PlayerController : StaticInstance<PlayerController> {
     public Transform insideSubTransform;
     public Slider oxygenSlider;
     public CanvasGroup blackout;
+    public Light2D lightSpot;
     #region Movement Parameters
 
     [Header("Movement Parameters")]
@@ -113,8 +115,19 @@ public class PlayerController : StaticInstance<PlayerController> {
         UpgradeManager.UpgradeBought -= OnUpgraded;
     }
 
-    private void OnUpgraded() {
-        swimSpeed = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MovementSpeed);
+    private void OnUpgraded(UpgradeType type) {
+        if(type == UpgradeType.MovementSpeed) {
+            swimSpeed = UpgradeManager.Instance.GetUpgradeValue(type);
+            // Also increase acceleration slightly
+            accelerationForce += 0.1f;
+        } else if (type == UpgradeType.OxygenCapacity) {
+            maxOxygen = UpgradeManager.Instance.GetUpgradeValue(type);
+            currentOxygen = maxOxygen;
+            UpdateSlider();
+        } else if(type == UpgradeType.Light) {
+            lightSpot.pointLightOuterRadius = UpgradeManager.Instance.GetUpgradeValue(type);
+        }
+        
     }
 
 
@@ -258,6 +271,7 @@ public class PlayerController : StaticInstance<PlayerController> {
         currentOxygen = Mathf.Clamp(currentOxygen, 0, maxOxygen);
         playerHealth = maxHealth;
         UpdateSlider();
+        UpdateFadeOutVisual();
     }
     private void UpdateFadeOutVisual() {
         float healthRatio = playerHealth / maxHealth;

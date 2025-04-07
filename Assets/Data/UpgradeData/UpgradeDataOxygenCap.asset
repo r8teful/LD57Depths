@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce25a1cbe0dc05343940856623019703, type: 3}
+  m_Name: UpgradeDataOxygenCap
+  m_EditorClassIdentifier: 
+  type: 3
+  increaseType: 0
+  baseValue: 30
+  increasePerLevel: 20
+  maxLevel: 3
+  costData:
+  - {fileID: 11400000, guid: 9266540d411696543865a5f9865a8b0d, type: 2}
+  - {fileID: 11400000, guid: 146c505dd96f6dd43a5a46073d6d1ea2, type: 2}
+  - {fileID: 11400000, guid: 6b77f190da04b8e429a64cc1230c1af2, type: 2}
+  - {fileID: 11400000, guid: 25d76140484df0a43955403752f2b238, type: 2}

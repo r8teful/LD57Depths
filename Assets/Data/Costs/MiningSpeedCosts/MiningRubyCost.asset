@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a3ae97ee78ea5c94cbc4e186d26ff141, type: 3}
-  m_Name: SilverCostBasic
+  m_Name: MiningRubyCost
   m_EditorClassIdentifier: 
-  resourceType: 4
+  resourceType: 5
   baseCost: 10
-  increasePerLevel: 0.2
-  increaseType: 1
-  requiredAtLevel: 0
-  stopsAtLevel: 5
+  increasePerLevel: 10
+  increaseType: 0
+  requiredAtLevel: 3
+  stopsAtLevel: 6

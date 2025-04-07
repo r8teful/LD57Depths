@@ -9,13 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce25a1cbe0dc05343940856623019703, type: 3}
-  m_Name: UpgradeDataOxygenCap
+  m_Script: {fileID: 11500000, guid: a3ae97ee78ea5c94cbc4e186d26ff141, type: 3}
+  m_Name: MiningDamageStoneLateCost
   m_EditorClassIdentifier: 
-  type: 3
+  resourceType: 2
+  baseCost: 200
+  increasePerLevel: 50
   increaseType: 0
-  baseValue: 30
-  increasePerLevel: 10
-  costData:
-  - {fileID: 11400000, guid: 8ce35ba52019f654eb2971533110015c, type: 2}
-  - {fileID: 11400000, guid: 4fe91f34308a9f545b275451496a5b19, type: 2}
+  requiredAtLevel: 6
+  stopsAtLevel: 99

@@ -8,5 +8,6 @@ public class UpgradeDataSO : ScriptableObject {
     public IncreaseType increaseType;
     public float baseValue;
     public float increasePerLevel;
+    public int maxLevel;
     public UpgradeCostSO[] costData; // Array to hold costs for different resource
 }

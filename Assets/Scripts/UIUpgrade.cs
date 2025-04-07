@@ -10,7 +10,14 @@ public class UIUpgrade : MonoBehaviour {
     public UIResourceElement ResourceElement;
     internal void Init(UpgradeDataSO upgrade) {
         var name = Regex.Replace(upgrade.type.ToString(), "([a-z])([A-Z])", "$1 $2");
-        nameString.text = $"{name}<color=\"blue\">(lvl{UpgradeManager.Instance.GetUpgradeLevel(upgrade.type)})";
+        var lvl = UpgradeManager.Instance.GetUpgradeLevel(upgrade.type);
+        if(lvl >= upgrade.maxLevel) {
+            GetComponentInChildren<BuyButton>().gameObject.SetActive(false);
+            IncreaseString.text = "";
+            nameString.text = $"{name}<color=\"purple\">(lvl{lvl})";
+            return;
+        }
+        nameString.text = $"{name}<color=\"blue\">(lvl{lvl})";
         if (upgrade.increaseType == IncreaseType.Add) {
             IncreaseString.text = $"+{upgrade.increasePerLevel}";
         } else if (upgrade.increaseType == IncreaseType.Multiply) { 

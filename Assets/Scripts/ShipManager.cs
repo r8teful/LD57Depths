@@ -29,9 +29,13 @@ public class ShipManager : StaticInstance<ShipManager> {
     }
     private void Start() {
         RefreshShop();
+        ShipMenuGroup.interactable = false;
+        ShipMenuGroup.blocksRaycasts = false;
         ShipMenuGroup.alpha = 0;
+        ShopMenuGroup.interactable = false;
+        ShopMenuGroup.blocksRaycasts = false;
     }
-    private void OnUpgradeBought() {
+    private void OnUpgradeBought(UpgradeType t) {
         RefreshShop();
     }
 

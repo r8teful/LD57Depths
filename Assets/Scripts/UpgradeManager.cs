@@ -11,7 +11,7 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
 
     // Public only to see
     public Dictionary<Tile.TileType, int> playerResources = new Dictionary<Tile.TileType, int>();
-    public static event Action UpgradeBought;
+    public static event Action<UpgradeType> UpgradeBought;
 
     public UpgradeDataSO[] upgrades; // Assign in Unity Inspector
 
@@ -68,7 +68,7 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
             upgradeValues[type] *= (1 + upgrade.increasePerLevel);
         }
 
-        UpgradeBought?.Invoke();
+        UpgradeBought?.Invoke(type);
         UpdateResourceVisual();
         Debug.Log($"{type} upgraded to Level {upgradeLevels[type]}. New Value: {upgradeValues[type]}");
     }
@@ -171,7 +171,7 @@ public enum UpgradeType {
     MovementSpeed,
     OxygenCapacity,
     ResourceCapacity,
-    LightRange
+    Light
 }
 public enum IncreaseType {
     Add,
