@@ -12,11 +12,13 @@ public class MiningGun : MonoBehaviour {
     public float damagePerRay = 10f;     // Base damage per ray
     public bool CanShoot { get; set; }
     private float timer = 0f;
+    private AudioSource laser;
     [Header("Visual Settings")]
     public float startWidth;
     public float endWidth;
     public Color rayColor;
     public LineRenderer lineRendererPrefab;  // Assign in Inspector
+    public ParticleSystem Particles;
     private List<LineRenderer> activeLineRenderers = new List<LineRenderer>();
 
     private void Awake() {
@@ -24,6 +26,9 @@ public class MiningGun : MonoBehaviour {
     }
     private void OnDestroy() {
         UpgradeManager.UpgradeBought -= OnUpgraded;
+    }
+    private void Start() {
+        laser = AudioController.Instance.PlaySound2D("Laser", 0.0f, looping: true);
     }
     void Update() {
         if (!CanShoot) return;
@@ -35,14 +40,24 @@ public class MiningGun : MonoBehaviour {
                 timer -= 1f / frequency; // Reset timer, but keep fractional remainder for accuracy
                 CastRays();
             }
+        } else {
+            if (Particles.isPlaying) { 
+                Particles.Stop();
+                laser.volume = 0.0f;
+            }
         }
     }
     private void LaserVisual() {
+        if (!Particles.isPlaying) { 
+            Particles.Play();
+            laser.volume = 0.5f;
+        }
         Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPosition.z = 0f;
         Vector2 directionToMouse = (mouseWorldPosition - transform.position).normalized;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToMouse, range);
         CreateLaserEffect(transform.position, hit.point);
+        Particles.transform.position = hit.point;
     }
 
     void CastRays() {

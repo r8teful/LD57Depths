@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
@@ -85,6 +86,10 @@ public class PlayerController : StaticInstance<PlayerController> {
     public float currentOxygen;
     private float maxHealth = 15; // amount in seconds the player can survive with 0 oxygen 
     private float playerHealth;
+    public GameObject OxygenWarning;
+    private bool peepPlayed;
+    private bool _isFlashing;
+    private Coroutine _flashCoroutine;
 
     void Start() {
         rb = GetComponent<Rigidbody2D>();
@@ -257,6 +262,11 @@ public class PlayerController : StaticInstance<PlayerController> {
         currentOxygen -= oxygenDepletionRate * Time.deltaTime;
         currentOxygen = Mathf.Clamp(currentOxygen, 0, maxOxygen);
         UpdateSlider();
+        if(currentOxygen <= 10 && !peepPlayed) {
+            AudioController.Instance.PlaySound2D("PeepPeep", 1f);
+            peepPlayed = true;
+            SliderFlash(true);
+        }
         if (currentOxygen <= 0) {
             // Slowly fade out and then teleport player back to base?
             playerHealth -= 1 * Time.deltaTime;
@@ -267,6 +277,39 @@ public class PlayerController : StaticInstance<PlayerController> {
                 Resurect();
             }
             UpdateFadeOutVisual();
+        }
+    }
+
+    // Call this function to start or stop the flashing
+    public void SliderFlash(bool shouldFlash) {
+        if (OxygenWarning == null) {
+            Debug.LogError("SliderFlash: sliderToFlash GameObject is not assigned! Please assign it in the Inspector.");
+            return;
+        }
+
+        if (shouldFlash) {
+            if (!_isFlashing) // Don't start a new coroutine if already flashing
+            {
+                _isFlashing = true;
+                _flashCoroutine = StartCoroutine(FlashCoroutine());
+            }
+        } else {
+            if (_isFlashing) // Only stop if currently flashing
+            {
+                _isFlashing = false;
+                StopCoroutine(_flashCoroutine);
+                OxygenWarning.SetActive(false); // Ensure it's visible when stopping the flash
+            }
+        }
+    }
+
+    private IEnumerator FlashCoroutine() {
+        while (_isFlashing) {
+            // Toggle the active state of the GameObject
+            OxygenWarning.SetActive(!OxygenWarning.activeSelf);
+
+            // Wait for the flashSpeed duration
+            yield return new WaitForSeconds(0.2f);
         }
     }
     public void DEBUGSet0Oxygen() {
@@ -286,6 +329,8 @@ public class PlayerController : StaticInstance<PlayerController> {
         UpdateFadeOutVisual();
     }
     void ReplenishOxygen() {
+        peepPlayed = false;
+        SliderFlash(false);
         currentOxygen += oxygenDepletionRate*50 * Time.deltaTime;
         currentOxygen = Mathf.Clamp(currentOxygen, 0, maxOxygen);
         playerHealth = maxHealth;

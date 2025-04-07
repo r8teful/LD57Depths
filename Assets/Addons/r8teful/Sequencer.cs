@@ -21,7 +21,7 @@ public abstract class Sequencer : MonoBehaviour
         yield return Sequence();
 
         yield return new WaitForSeconds(waitBeforeNext);
-        yield return new WaitUntil(() => DialogueManager.Instance.NoDialoguePlaying);
+        //yield return new WaitUntil(() => DialogueManager.Instance.NoDialoguePlaying);
         //yield return new WaitForSeconds(0.5f);
         yield return new WaitForEndOfFrame();
         if (activateWhenComplete != null) {
