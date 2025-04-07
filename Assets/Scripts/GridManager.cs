@@ -113,10 +113,6 @@ public class GridManager : StaticInstance<GridManager> {
                 }
 
                 tilesProcessed++;
-                if (progressBar == null) { 
-                    var p = GameObject.FindGameObjectWithTag("Finish");
-                    if(p != null) progressBar = p.GetComponent<Slider>();
-                } 
                 if (progressBar != null) {
                     progressBar.value = (float)tilesProcessed / totalTiles; // Update progress bar
                 }
@@ -124,27 +120,27 @@ public class GridManager : StaticInstance<GridManager> {
                 if (tilesProcessed % 100 == 0) // Reduce frame stutter
                     yield return null;
             }
-        } 
-        // Grid done, "start" the game
-        // Place the player at the bottom center
+        }
+        _worldGenDone = true;
+    }
+    public void GameStart() {
         if (player != null) {
             int centerX = gridWidth / 2;
-            Vector3 playerStartPos = new Vector3(centerX * tileSize + gridOrigin.x, (gridHeight  - trenchPaddingBottom - 1) * -tileSize + gridOrigin.y, 0);
+            Vector3 playerStartPos = new Vector3(centerX * tileSize + gridOrigin.x, (gridHeight - trenchPaddingBottom - 1) * -tileSize + gridOrigin.y, 0);
             player.position = playerStartPos;
             PlayerController.Instance.SetState(PlayerController.PlayerState.Swimming);
             playerStartPos.y += 0.4f; // submarine above player
             Instantiate(sub, playerStartPos, Quaternion.identity).GetComponent<Submarine>().setOutideSubPos(playerStartPos);
         }
-        if(background != null) {
+        if (background != null) {
             int centerX = gridWidth / 2;
             var pos = new Vector3(centerX * tileSize + gridOrigin.x, background.transform.position.y, 0);
             background.transform.position = pos;
         }
         // Hide progress bar after completion
-        
+
         if (progressBar != null)
             progressBar.gameObject.SetActive(false);
-        _worldGenDone = true;
     }
 
     Tile.TileType DetermineTileType(int x, int y) {
@@ -317,5 +313,9 @@ public void DamageTileAtGridPosition(Vector2Int gridPosition, float damage) {
         int x = Mathf.FloorToInt((worldPosition.x - gridOrigin.x) / tileSize);
         int y = Mathf.FloorToInt((gridOrigin.y - worldPosition.y) / tileSize);
         return new Vector2Int(x, y);
+    }
+
+    internal void SetSlider(Slider slider) {
+        progressBar = slider;
     }
 }

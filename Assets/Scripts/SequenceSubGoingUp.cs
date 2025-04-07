@@ -10,9 +10,10 @@ public class SequenceSubGoingUp : Sequencer {
     public Transform CanvasMain;
     protected override IEnumerator Sequence() {
         // First 
-        StartCoroutine(IntroCutscene());
+        StartIntroCutscene();
         yield return new WaitUntil(() => GridManager.Instance.IsWorldGenDone());
         yield return new WaitUntil(() => _introDone);
+        GridManager.Instance.GameStart(); // so so bad!
         Destroy(_instantiatedCutscenePrefab); // Show the game
         yield return new WaitUntil(() => ShipManager.Instance.GetRepairProgress() == 1);
         Debug.Log("Running first cutscene");
@@ -26,9 +27,9 @@ public class SequenceSubGoingUp : Sequencer {
         yield return new WaitForSeconds(15);
         Instantiate(WinPrefab, CanvasMain);
     }
-    private IEnumerator IntroCutscene() {
+    private void StartIntroCutscene() {
         _instantiatedCutscenePrefab = Instantiate(CutscenePrefab, CanvasMain);
-        yield return new WaitForSeconds(2); // TODO
-        _introDone = true;
+        _instantiatedCutscenePrefab.GetComponent<CutsceneStart>().SetParent(this);
     }
+    public void SetIntroDone() => _introDone = true;
 }

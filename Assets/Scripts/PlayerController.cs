@@ -231,14 +231,25 @@ public class PlayerController : StaticInstance<PlayerController> {
         Debug.Log("Setting state to:" + state);
         _currentState = state;
         if(state == PlayerState.Ship) {
+            SetLights(false);
+            miningGun.CanShoot = false;
             outsideT = 0.5f;
             rb.linearVelocity = Vector2.zero;
             MainCam.transform.SetParent(insideSubTransform);
             MainCam.transform.localPosition = new Vector3(0, 0, -10);
         } else { // Camera should also follow player during the cutscene
+            if(state != PlayerState.Cutscene) miningGun.CanShoot = true;
+            SetLights(true);
             MainCam.transform.SetParent(transform);
             MainCam.transform.localPosition = new Vector3(0, 0, -10);
             rb.linearVelocity = Vector2.zero;
+        }
+    }
+    private void SetLights(bool setOn) {
+        if (setOn) {
+            lightSpot.gameObject.SetActive(true);
+        } else {
+            lightSpot.gameObject.SetActive(false);
         }
     }
 

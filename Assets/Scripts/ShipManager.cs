@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShipManager : StaticInstance<ShipManager> {
     public Transform upgradeContainer;
     public TextMeshProUGUI progressText;
     public CanvasGroup ShopMenuGroup;
     public CanvasGroup ShipMenuGroup;
+    public Image SchematicImage;
     public List<GameObject> _instantiatedShopElements = new List<GameObject>();
     private bool _isShopOpen;
     private bool _isShipOpen;
@@ -83,6 +85,7 @@ public class ShipManager : StaticInstance<ShipManager> {
         foreach (var repair in repairs) {
             repair.SetRepairDataCost(); // each repair holds its own data so we don't need to pass it here
         }
+        SchematicImage.sprite = Resources.Load<Sprite>($"UI/SchematicsScreen{GetRepairProgress()}");
     }
 
     internal void RepairPressed(RepairType type, UpgradeCostSO[] costData) {

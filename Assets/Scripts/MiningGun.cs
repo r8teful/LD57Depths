@@ -10,7 +10,7 @@ public class MiningGun : MonoBehaviour {
     public float falloffStrength = 1.5f; // Higher values = faster falloff
     public float frequency = 10f;        // Rays per second
     public float damagePerRay = 10f;     // Base damage per ray
-
+    public bool CanShoot { get; set; }
     private float timer = 0f;
     [Header("Visual Settings")]
     public float startWidth;
@@ -26,6 +26,7 @@ public class MiningGun : MonoBehaviour {
         UpgradeManager.UpgradeBought -= OnUpgraded;
     }
     void Update() {
+        if (!CanShoot) return;
         if (Input.GetMouseButton(0)) // Left mouse button held down
         {
             LaserVisual();
