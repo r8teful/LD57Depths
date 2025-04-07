@@ -64,11 +64,14 @@ public class GridManager : StaticInstance<GridManager> {
 
     private Tile[,] grid;
     private Vector2 gridOrigin = Vector2.zero;
+    private bool _worldGenDone;
+    public bool IsWorldGenDone() => _worldGenDone;
 
     void Start() {
         // Generate random noise offsets for each game run
         noiseOffset_X = Random.value * 1000f;
         noiseOffset_Y = Random.value * 1000f;
+        _worldGenDone = false;
         StartCoroutine(CreateGridRoutine());
     }
 
@@ -110,6 +113,10 @@ public class GridManager : StaticInstance<GridManager> {
                 }
 
                 tilesProcessed++;
+                if (progressBar == null) { 
+                    var p = GameObject.FindGameObjectWithTag("Finish");
+                    if(p != null) progressBar = p.GetComponent<Slider>();
+                } 
                 if (progressBar != null) {
                     progressBar.value = (float)tilesProcessed / totalTiles; // Update progress bar
                 }
@@ -134,8 +141,10 @@ public class GridManager : StaticInstance<GridManager> {
             background.transform.position = pos;
         }
         // Hide progress bar after completion
+        
         if (progressBar != null)
             progressBar.gameObject.SetActive(false);
+        _worldGenDone = true;
     }
 
     Tile.TileType DetermineTileType(int x, int y) {
