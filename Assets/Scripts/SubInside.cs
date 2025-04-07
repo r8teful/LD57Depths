@@ -83,6 +83,22 @@ public class SubInside : StaticInstance<SubInside> {
                     break;
             }
         }
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            switch (state) {
+                case SubInteractionState.None:
+                    break;
+                case SubInteractionState.Upgrade:
+                    ShipManager.Instance.ShopClose();
+                    break;
+                case SubInteractionState.Ship:
+                    ShipManager.Instance.ShipClose();
+                    break;
+                case SubInteractionState.Exit:
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
 public enum SubInteractionState {

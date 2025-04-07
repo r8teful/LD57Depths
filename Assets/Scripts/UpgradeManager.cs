@@ -1,6 +1,7 @@
 ﻿using Mono.Cecil;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UpgradeManager : StaticInstance<UpgradeManager> {
@@ -154,6 +155,12 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         }
        // UIInventoryManager.Instance.UpdateInventory(playerResources);
         // Pass playersources 
+    }
+    public void RemoveAllResources(float reductionAmount) {
+        foreach(var r in playerResources.ToList()) {
+            playerResources[r.Key] = Mathf.FloorToInt(r.Value * reductionAmount);
+        }
+        UpdateResourceVisual();
     }
 }
 

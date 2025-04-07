@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : StaticInstance<PlayerController> {
    // public float moveSpeed = 5f; // Base speed of swimming
@@ -17,6 +18,8 @@ public class PlayerController : StaticInstance<PlayerController> {
     private SpriteRenderer sprite;
     public Camera MainCam;
     public Transform insideSubTransform;
+    public Slider oxygenSlider;
+    public CanvasGroup blackout;
     #region Movement Parameters
 
     [Header("Movement Parameters")]
@@ -63,8 +66,8 @@ public class PlayerController : StaticInstance<PlayerController> {
     #endregion
 
     private Vector2 currentInput;
-    public enum PlayerState { Swimming, Ship, Cutscene}
-    public PlayerState CurrentState = PlayerState.Swimming;
+    public enum PlayerState { Swimming, Ship, Cutscene, None}
+    private PlayerState _currentState = PlayerState.None;
 
     [Header("Outside")]
     // Outside state curve control points (set these via inspector or during initialization)
@@ -77,6 +80,8 @@ public class PlayerController : StaticInstance<PlayerController> {
     public float maxOxygen = 100f;
     public float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
     public float currentOxygen;
+    private float maxHealth = 15; // amount in seconds the player can survive with 0 oxygen 
+    private float playerHealth;
 
     void Start() {
         rb = GetComponent<Rigidbody2D>();
@@ -85,6 +90,12 @@ public class PlayerController : StaticInstance<PlayerController> {
         colliderPlayer = GetComponent<CapsuleCollider2D>();
         rb.gravityScale = 0; // Disable default gravity
         originalLocalPosition = transform.localPosition; // Store initial position for bobbing
+        
+        // oxygen and slider
+        currentOxygen = maxOxygen;
+        oxygenSlider.maxValue = maxOxygen;
+        oxygenSlider.value = maxOxygen;
+        playerHealth = maxHealth;
     }
     void ChangeAnimation(string animation) {
         if(currentAnimation != animation) {
@@ -111,7 +122,7 @@ public class PlayerController : StaticInstance<PlayerController> {
         // Get input for movement
         currentInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-        if (CurrentState == PlayerState.Swimming) {
+        if (_currentState == PlayerState.Swimming) {
             //if (!rb.simulated) rb.simulated = true; 
             // Swimming animations and sprite flipping
             if (currentInput.magnitude != 0) {
@@ -128,11 +139,13 @@ public class PlayerController : StaticInstance<PlayerController> {
             if (useBobbingEffect) {
                 HandleBobbing();
             }
-        } else if (CurrentState == PlayerState.Ship) {
+            DepleteOxygen();
+        } else if (_currentState == PlayerState.Ship) {
             // Update the parameter along the curve based on horizontal input.
             outsideT += currentInput.x * outsideSpeed * Time.deltaTime;
             outsideT = Mathf.Clamp01(outsideT);
 
+            ReplenishOxygen();
             // Update sprite direction and animation as before.
             if (currentInput.x > 0) {
                 sprite.flipX = false;
@@ -144,17 +157,17 @@ public class PlayerController : StaticInstance<PlayerController> {
     }
 
     void FixedUpdate() {
-        if (CurrentState == PlayerState.Swimming) {
+        if (_currentState == PlayerState.Swimming) {
             HandleMovement();
             // Optional Buoyancy
             if (useBuoyancy) {
                 HandleBuoyancy();
             }
-        } else if (CurrentState == PlayerState.Ship) {
+        } else if (_currentState == PlayerState.Ship) {
             // Snap player to the curve position
             Vector3 newPos = EvaluateBezier(outsideStart.position, outsideTurning.position, outsideEnd.position, outsideT);
             rb.MovePosition(newPos);
-        } else if (CurrentState == PlayerState.Cutscene) {
+        } else if (_currentState == PlayerState.Cutscene) {
             // Follow sub position;
             rb.MovePosition(Submarine.Instance.transform.position);
         }
@@ -199,7 +212,7 @@ public class PlayerController : StaticInstance<PlayerController> {
 
     internal void SetState(PlayerState state) {
         Debug.Log("Setting state to:" + state);
-        CurrentState = state;
+        _currentState = state;
         if(state == PlayerState.Ship) {
             outsideT = 0.5f;
             rb.linearVelocity = Vector2.zero;
@@ -215,13 +228,46 @@ public class PlayerController : StaticInstance<PlayerController> {
     void DepleteOxygen() {
         currentOxygen -= oxygenDepletionRate * Time.deltaTime;
         currentOxygen = Mathf.Clamp(currentOxygen, 0, maxOxygen);
-
+        UpdateSlider();
         if (currentOxygen <= 0) {
             // Slowly fade out and then teleport player back to base?
-            //playerHealth.TakeDamage(damagePerSecond * Time.deltaTime);
+            playerHealth -= 1 * Time.deltaTime;
+            if(playerHealth <= 0) {
+                // Lose some resources and go back to base
+                UpgradeManager.Instance.RemoveAllResources(0.5f);
+                Submarine.Instance.EnterSub(); // Will also set player state
+                Resurect();
+            }
+            UpdateFadeOutVisual();
         }
     }
-
+    public void DEBUGSet0Oxygen() {
+        currentOxygen = 0;
+    }
+    public void DEBUGPlayerPassOut() {
+        currentOxygen = 1;
+        playerHealth = 1;
+    }
+    private void Resurect() {
+        playerHealth = maxHealth;
+        currentOxygen = maxOxygen;
+        UpdateFadeOutVisual();
+    }
+    void ReplenishOxygen() {
+        currentOxygen += oxygenDepletionRate*50 * Time.deltaTime;
+        currentOxygen = Mathf.Clamp(currentOxygen, 0, maxOxygen);
+        playerHealth = maxHealth;
+        UpdateSlider();
+    }
+    private void UpdateFadeOutVisual() {
+        float healthRatio = playerHealth / maxHealth;
+        float easedValue = 1 - Mathf.Pow(healthRatio, 2); // Quadratic ease-out
+        blackout.alpha = easedValue;
+    }
+    private void UpdateSlider() {
+        oxygenSlider.maxValue = maxOxygen;
+        oxygenSlider.value = currentOxygen;
+    }
     internal void CutsceneEnd() {
         colliderPlayer.enabled = true;
         SetState(PlayerState.Swimming);

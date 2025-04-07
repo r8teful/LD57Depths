@@ -111,4 +111,5 @@ public class ShipManager : StaticInstance<ShipManager> {
         }
         return p;
     }
+    public bool IsAnyMenuOpen() => _isShopOpen || _isShipOpen;
 }

@@ -116,13 +116,16 @@ public class GridManager : StaticInstance<GridManager> {
                 if (tilesProcessed % 100 == 0) // Reduce frame stutter
                     yield return null;
             }
-        } // Place the player at the bottom center
+        } 
+        // Grid done, "start" the game
+        // Place the player at the bottom center
         if (player != null) {
             int centerX = gridWidth / 2;
             Vector3 playerStartPos = new Vector3(centerX * tileSize + gridOrigin.x, (gridHeight  - trenchPaddingBottom - 1) * -tileSize + gridOrigin.y, 0);
             player.position = playerStartPos;
-            playerStartPos.y += 1; // submarine above player
-            Instantiate(sub, playerStartPos, Quaternion.identity);
+            PlayerController.Instance.SetState(PlayerController.PlayerState.Swimming);
+            playerStartPos.y += 0.4f; // submarine above player
+            Instantiate(sub, playerStartPos, Quaternion.identity).GetComponent<Submarine>().setOutideSubPos(playerStartPos);
         }
         // Hide progress bar after completion
         if (progressBar != null)
