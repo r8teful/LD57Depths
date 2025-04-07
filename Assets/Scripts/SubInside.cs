@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.UIElements;
 
 public class SubInside : StaticInstance<SubInside> {
     public SubInteractionState state;

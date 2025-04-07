@@ -1,7 +1,6 @@
 using UnityEngine;
 using DG.Tweening;
 //using Sirenix.OdinInspector;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 public class UpDownTween : MonoBehaviour {
     //[InfoBox("Distance in localspace")]
    // [OnValueChanged("Recalculate")]

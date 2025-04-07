@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 public class ExitCollider : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision) {
         Debug.Log("ENTER!");        

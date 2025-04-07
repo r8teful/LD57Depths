@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 [CreateAssetMenu(fileName = "UpgradeCostSO", menuName = "ScriptableObjects/UpgradeCostSO", order = 1)]
 public class UpgradeCostSO : ScriptableObject {

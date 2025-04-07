@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class UIMenuManager : PersistentSingleton<UIMenuManager> {
     public bool IsPaused { get; set; }

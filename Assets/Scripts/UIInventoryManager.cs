@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class UIInventoryManager : StaticInstance<UIInventoryManager> {
     private List<UIResourceElement> _instantitated = new List<UIResourceElement>();
