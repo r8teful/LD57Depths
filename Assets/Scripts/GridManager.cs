@@ -245,6 +245,9 @@ public void DamageTileAtGridPosition(Vector2Int gridPosition, float damage) {
             Debug.LogWarning("Invalid grid coordinates for tile damage: " + gridPosition);
         }
     }
+    public float GetWorldHeightFromRatio(float ratio) {
+        return gridHeight * ratio * tileSize;
+    }
     /*
     float CalculateOreFrequency(int x, int y, float surfaceFrequency, float deepFrequency,
                              float depthStartPercent, float depthEndPercent) {

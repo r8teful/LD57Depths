@@ -12,6 +12,7 @@ public class PlayerController : StaticInstance<PlayerController> {
     private Animator animator;
     private string currentAnimation = "";
     private Rigidbody2D rb;
+    private CapsuleCollider2D colliderPlayer;
     private Vector2 velocity;
     private SpriteRenderer sprite;
     public Camera MainCam;
@@ -62,7 +63,7 @@ public class PlayerController : StaticInstance<PlayerController> {
     #endregion
 
     private Vector2 currentInput;
-    public enum PlayerState { Swimming, Outside }
+    public enum PlayerState { Swimming, Ship, Cutscene}
     public PlayerState CurrentState = PlayerState.Swimming;
 
     [Header("Outside")]
@@ -72,11 +73,16 @@ public class PlayerController : StaticInstance<PlayerController> {
     public Transform outsideEnd;
     public float outsideSpeed = 1f;  // How fast the player moves along the curve
     private float outsideT = 0f;     // Parameter between 0 and 1 for the curve
+    [Header("Oxygen")]
+    public float maxOxygen = 100f;
+    public float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
+    public float currentOxygen;
 
     void Start() {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
+        colliderPlayer = GetComponent<CapsuleCollider2D>();
         rb.gravityScale = 0; // Disable default gravity
         originalLocalPosition = transform.localPosition; // Store initial position for bobbing
     }
@@ -122,7 +128,7 @@ public class PlayerController : StaticInstance<PlayerController> {
             if (useBobbingEffect) {
                 HandleBobbing();
             }
-        } else if (CurrentState == PlayerState.Outside) {
+        } else if (CurrentState == PlayerState.Ship) {
             // Update the parameter along the curve based on horizontal input.
             outsideT += currentInput.x * outsideSpeed * Time.deltaTime;
             outsideT = Mathf.Clamp01(outsideT);
@@ -144,10 +150,13 @@ public class PlayerController : StaticInstance<PlayerController> {
             if (useBuoyancy) {
                 HandleBuoyancy();
             }
-        } else if (CurrentState == PlayerState.Outside) {
+        } else if (CurrentState == PlayerState.Ship) {
             // Snap player to the curve position
             Vector3 newPos = EvaluateBezier(outsideStart.position, outsideTurning.position, outsideEnd.position, outsideT);
             rb.MovePosition(newPos);
+        } else if (CurrentState == PlayerState.Cutscene) {
+            // Follow sub position;
+            rb.MovePosition(Submarine.Instance.transform.position);
         }
     }
     // A helper function to evaluate a quadratic Bézier curve
@@ -189,16 +198,37 @@ public class PlayerController : StaticInstance<PlayerController> {
     }
 
     internal void SetState(PlayerState state) {
+        Debug.Log("Setting state to:" + state);
         CurrentState = state;
-        if(state == PlayerState.Outside) {
+        if(state == PlayerState.Ship) {
             outsideT = 0.5f;
             rb.linearVelocity = Vector2.zero;
             MainCam.transform.SetParent(insideSubTransform);
             MainCam.transform.localPosition = new Vector3(0, 0, -10);
-        } else {
+        } else { // Camera should also follow player during the cutscene
             MainCam.transform.SetParent(transform);
             MainCam.transform.localPosition = new Vector3(0, 0, -10);
             rb.linearVelocity = Vector2.zero;
         }
+    }
+
+    void DepleteOxygen() {
+        currentOxygen -= oxygenDepletionRate * Time.deltaTime;
+        currentOxygen = Mathf.Clamp(currentOxygen, 0, maxOxygen);
+
+        if (currentOxygen <= 0) {
+            // Slowly fade out and then teleport player back to base?
+            //playerHealth.TakeDamage(damagePerSecond * Time.deltaTime);
+        }
+    }
+
+    internal void CutsceneEnd() {
+        colliderPlayer.enabled = true;
+        SetState(PlayerState.Swimming);
+    }
+
+    internal void CutsceneStart() {
+        SetState(PlayerState.Cutscene);
+        colliderPlayer.enabled = false;
     }
 }

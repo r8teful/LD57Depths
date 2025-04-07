@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using DG.Tweening;
 
 
 public class Submarine : StaticInstance<Submarine> {
@@ -7,19 +8,22 @@ public class Submarine : StaticInstance<Submarine> {
 
     private Vector3 outsideSubmarinePosition;
     private bool insideSubmarine = false;
-    private GameObject player;
-
+    private PlayerController player;
+    private bool _isCutscene;
     void Start() {
-        player = GameObject.FindGameObjectWithTag("Player"); // Find the player
+        player = PlayerController.Instance; // Find the player
     }
 
     void OnTriggerEnter2D(Collider2D other) {
+        if (_isCutscene) return;
         if (other.CompareTag("Player")) {
             if (insideSubmarine) {
                 ExitSub();
             } else {
                 // Store the current outside position so we can return to it later.
-                outsideSubmarinePosition = player.transform.position;
+                //outsideSubmarinePosition = player.transform.position;
+                    var p = new Vector3(transform.position.x,transform.position.y-0.1f,transform.position.z);
+                outsideSubmarinePosition = p;
 
                 //Debug.Log("Enter! pos:" + outsideSubmarinePosition);
                 //var p = outsideSubmarinePosition.position;
@@ -33,7 +37,7 @@ public class Submarine : StaticInstance<Submarine> {
     public void EnterSub() {
         // Position the player inside the submarine and update their state.
         player.transform.position = insideSubmarinePosition.Find("PlayerSpawn").position;
-        player.GetComponent<PlayerController>().SetState(PlayerController.PlayerState.Outside);
+        player.GetComponent<PlayerController>().SetState(PlayerController.PlayerState.Ship);
         SubInside.Instance.PlayerEntered();
     }
 
@@ -45,5 +49,22 @@ public class Submarine : StaticInstance<Submarine> {
         //Debug.Log("Exit! pos:" + outsideSubmarinePosition);
         player.transform.position = outsideSubmarinePosition;
         player.GetComponent<PlayerController>().SetState(PlayerController.PlayerState.Swimming);
+    }
+    public void StartCutscene(int distance, int length) {
+        
+    }
+    public IEnumerator Cutscene(float distanceRatio, int length) {
+        _isCutscene = true;
+        // Dissable interactions, close menu etc
+        ShipManager.Instance.ShipClose();
+        ExitSub(); // Sounds counter intuative but we want to see the outside 
+        var d = transform.position.y + GridManager.Instance.GetWorldHeightFromRatio(distanceRatio);
+        transform.DOMoveY(d, length);
+        player.CutsceneStart();
+        yield return new WaitForSeconds(length); 
+        var p = new Vector3(transform.position.x, transform.position.y - 0.1f, transform.position.z);
+        outsideSubmarinePosition = p;
+        player.CutsceneEnd();
+        _isCutscene = false ;
     }
 }

@@ -71,7 +71,29 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         UpdateResourceVisual();
         Debug.Log($"{type} upgraded to Level {upgradeLevels[type]}. New Value: {upgradeValues[type]}");
     }
-
+    public bool HasEnoughResources(Dictionary<Tile.TileType,int> costs) {
+        foreach (var cost in costs) {
+            if (!playerResources.ContainsKey(cost.Key) || playerResources[cost.Key] < cost.Value) {
+                //Debug.Log($"Not enough {cost.Key}! Need {cost.Value}, have {playerResources[cost.Key]}.");
+                return false;
+            }
+        }
+        return true;
+    }
+    public bool TryRemoveResources(Dictionary<Tile.TileType, int> resources, out bool b) {
+        b = false;
+        // Check first 
+        if (HasEnoughResources(resources)) {
+            b = true;
+            foreach (var cost in resources) {
+                playerResources[cost.Key] -= cost.Value; 
+            }
+            UpdateResourceVisual();
+        } else {
+            Debug.Log("NOT enough resources!");
+        }
+        return b;
+    }
     private void UpdateResourceVisual() {
         foreach (var item in _instantiatedUIVisual) {
             item.Init(item.ResourceType, playerResources[item.ResourceType]);

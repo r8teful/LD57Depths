@@ -61,8 +61,8 @@ public class SubInside : StaticInstance<SubInside> {
         Control.material.SetInt("_Enabled", 0);
         Workbench.material.SetInt("_Enabled", 0);
         Exit.material.SetInt("_Enabled", 0);
-        UIShopManager.Instance.ShopClose();
-        UIShopManager.Instance.ShipClose();
+        ShipManager.Instance.ShopClose();
+        ShipManager.Instance.ShipClose();
     }
     private void Update() {
         if (!_canInteract) return;
@@ -71,10 +71,10 @@ public class SubInside : StaticInstance<SubInside> {
                 case SubInteractionState.None:
                     break;
                 case SubInteractionState.Upgrade:
-                    UIShopManager.Instance.ShopOpen();
+                    ShipManager.Instance.ShopOpen();
                     break;
                 case SubInteractionState.Ship:
-                    UIShopManager.Instance.ShipOpen();
+                    ShipManager.Instance.ShipOpen();
                     break;
                 case SubInteractionState.Exit:
                     Submarine.Instance.ExitSub();
