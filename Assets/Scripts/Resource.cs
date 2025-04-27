@@ -13,7 +13,7 @@ public class Resource : MonoBehaviour {
     void Start() {
         // Get the Rigidbody2D component attached to the resource
         rb = GetComponent<Rigidbody2D>();
-        player = PlayerController.Instance;
+        player = PlayerController.LocalInstance;
         //_renderer = GetComponent<Renderer>();
         //_renderer.material = new Material(_renderer.material);
         Destroy(gameObject, 15);

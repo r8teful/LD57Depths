@@ -11,7 +11,7 @@ public class Submarine : StaticInstance<Submarine> {
     private PlayerController player;
     private bool _isCutscene;
     void Start() {
-        player = PlayerController.Instance; // Find the player
+        player = PlayerController.LocalInstance; // Find the player
     }
     public void setOutideSubPos(Vector3 pos) {
         outsideSubmarinePosition = pos;

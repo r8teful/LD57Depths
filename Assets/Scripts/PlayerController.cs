@@ -1,17 +1,17 @@
-﻿using System;
+﻿using FishNet.Object;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
-using UnityEngine.UI;
 
-public class PlayerController : StaticInstance<PlayerController> {
-   // public float moveSpeed = 5f; // Base speed of swimming
-   // public float acceleration = 2f; // How quickly the character reaches full speed
-   // public float deceleration = 2f; // How quickly the character slows down
-   // public float buoyancy = 1f; // Simulates slight downwards force
-   // public float smoothRotation = 5f; // How smoothly the character rotates
-   // public float collisionRadius = 0.2f; // Size of the collision check
-
+public class PlayerController : MonoBehaviour {
+    // public float moveSpeed = 5f; // Base speed of swimming
+    // public float acceleration = 2f; // How quickly the character reaches full speed
+    // public float deceleration = 2f; // How quickly the character slows down
+    // public float buoyancy = 1f; // Simulates slight downwards force
+    // public float smoothRotation = 5f; // How smoothly the character rotates
+    // public float collisionRadius = 0.2f; // Size of the collision check
+    public static PlayerController LocalInstance { get; private set; } // Singleton for local player
     private Animator animator;
     private string currentAnimation = "";
     private Rigidbody2D rb;
@@ -21,9 +21,9 @@ public class PlayerController : StaticInstance<PlayerController> {
     private MiningGun miningGun;
     public Camera MainCam;
     public Transform insideSubTransform;
-    public Slider oxygenSlider;
     public CanvasGroup blackout;
     public Light2D lightSpot;
+    public static event Action<float,float> OnOxygenChanged;
     #region Movement Parameters
 
     [Header("Movement Parameters")]
@@ -71,7 +71,7 @@ public class PlayerController : StaticInstance<PlayerController> {
 
     private Vector2 currentInput;
     public enum PlayerState { Swimming, Ship, Cutscene, None}
-    private PlayerState _currentState = PlayerState.None;
+    private PlayerState _currentState = PlayerState.Swimming;
 
     [Header("Outside")]
     // Outside state curve control points (set these via inspector or during initialization)
@@ -90,8 +90,28 @@ public class PlayerController : StaticInstance<PlayerController> {
     private bool peepPlayed;
     private bool _isFlashing;
     private Coroutine _flashCoroutine;
+    /*
+    public override void OnStartClient() {
+        base.OnStartClient();
+        if (base.IsOwner) // Check if this NetworkObject is owned by the local client
+        {
+            LocalInstance = this;
+            // Enable input, camera controls ONLY for the local player
+            // Example: GetComponent<PlayerInputHandler>().enabled = true;
+            // Example: playerCamera.SetActive(true);
+        } else {
+            // Disable controls for remote players on this client
+            // Example: GetComponent<PlayerInputHandler>().enabled = false;
+        }
 
-    void Start() {
+        // Try to find the WorldGenerator - might need adjustment based on your scene setup
+       // worldGenerator = FindObjectOfType<WorldGenerator>();
+       // if (worldGenerator == null) {
+       //     Debug.LogError("PlayerController could not find WorldGenerator!");
+       // }
+    }
+    */
+    private void Start() {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
@@ -102,8 +122,6 @@ public class PlayerController : StaticInstance<PlayerController> {
         
         // oxygen and slider
         currentOxygen = maxOxygen;
-        oxygenSlider.maxValue = maxOxygen;
-        oxygenSlider.value = maxOxygen;
         playerHealth = maxHealth;
     }
     void ChangeAnimation(string animation) {
@@ -114,8 +132,7 @@ public class PlayerController : StaticInstance<PlayerController> {
     }
 
 
-    protected override void Awake() {
-        base.Awake();
+    private void Awake() {
         UpgradeManager.UpgradeBought += OnUpgraded;
     }
     private void OnDestroy() {
@@ -152,10 +169,10 @@ public class PlayerController : StaticInstance<PlayerController> {
             }
             if (currentInput.x > 0) {
                 sprite.flipX = false;
-                miningGun.Flip(false);
+                if(miningGun!=null) miningGun.Flip(false);
             } else if (currentInput.x < 0) {
                 sprite.flipX = true;
-                miningGun.Flip(true);
+                if (miningGun != null) miningGun.Flip(true);
             }
             // Optional Bobbing Effect
             if (useBobbingEffect) {
@@ -237,13 +254,15 @@ public class PlayerController : StaticInstance<PlayerController> {
         _currentState = state;
         if(state == PlayerState.Ship) {
             SetLights(false);
-            miningGun.CanShoot = false;
+            if (miningGun != null) miningGun.CanShoot = false;
             outsideT = 0.5f;
             rb.linearVelocity = Vector2.zero;
             MainCam.transform.SetParent(insideSubTransform);
             MainCam.transform.localPosition = new Vector3(0, 0, -10);
         } else { // Camera should also follow player during the cutscene
-            if(state != PlayerState.Cutscene) miningGun.CanShoot = true;
+            if (state != PlayerState.Cutscene) {
+                if (miningGun != null) miningGun.CanShoot = true;
+            } 
             SetLights(true);
             MainCam.transform.SetParent(transform);
             MainCam.transform.localPosition = new Vector3(0, 0, -10);
@@ -343,8 +362,7 @@ public class PlayerController : StaticInstance<PlayerController> {
         blackout.alpha = easedValue;
     }
     private void UpdateSlider() {
-        oxygenSlider.maxValue = maxOxygen;
-        oxygenSlider.value = currentOxygen;
+        OnOxygenChanged?.Invoke(currentOxygen,maxOxygen);
     }
     internal void CutsceneEnd() {
         colliderPlayer.enabled = true;
