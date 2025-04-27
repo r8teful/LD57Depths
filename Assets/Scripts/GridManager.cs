@@ -103,6 +103,7 @@ public class GridManager : StaticInstance<GridManager> {
             for (int y = 0; y < gridHeight; y++) {
                 Vector3 worldPosition = new Vector3(x * tileSize + gridOrigin.x, y * -tileSize + gridOrigin.y, 0);
                 GameObject tileObject = Instantiate(tilePrefab, worldPosition, Quaternion.identity, this.transform);
+                tileObject.name = (x + y).ToString();
                 Tile tile = tileObject.GetComponent<Tile>();
                 if (tile != null) {
                     Tile.TileType tileType = DetermineTileType(x, y);

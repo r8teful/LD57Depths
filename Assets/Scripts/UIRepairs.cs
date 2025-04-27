@@ -20,5 +20,6 @@ public class UIRepairs : MonoBehaviour {
     }
     public void RepairPressed() {
         ShipManager.Instance.RepairPressed(repairData.RepairType,repairData.costData);
+        AudioController.Instance.PlaySound2D("Beep");
     }
 }

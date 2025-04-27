@@ -23,8 +23,8 @@ public class SequenceSubGoingUp : Sequencer {
         yield return Submarine.Instance.Cutscene(0.40f,20);
         // Ending cretids?
         yield return new WaitUntil(() => ShipManager.Instance.GetRepairProgress() == 3);
-        StartCoroutine(Submarine.Instance.Cutscene(0.2f,20));
-        yield return new WaitForSeconds(15);
+        StartCoroutine(Submarine.Instance.Cutscene(0.3f,10));
+        yield return new WaitForSeconds(6);
         Instantiate(WinPrefab, CanvasMain);
     }
     private void StartIntroCutscene() {

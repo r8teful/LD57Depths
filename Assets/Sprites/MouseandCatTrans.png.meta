@@ -1,0 +1,546 @@
+fileFormatVersion: 2
+guid: efbc2137032f72e478613cfcb19a0900
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7542068378558865961
+    second: MouseandCatTrans_0
+  - first:
+      213: -1309212306720233795
+    second: MouseandCatTrans_1
+  - first:
+      213: -9150200978984688188
+    second: MouseandCatTrans_2
+  - first:
+      213: -3384491892997790059
+    second: MouseandCatTrans_3
+  - first:
+      213: -8945667988704502281
+    second: MouseandCatTrans_4
+  - first:
+      213: -206467415870424065
+    second: MouseandCatTrans_5
+  - first:
+      213: -5596975385845208407
+    second: MouseandCatTrans_6
+  - first:
+      213: 4490943719143723653
+    second: MouseandCatTrans_7
+  - first:
+      213: -1314116731253935780
+    second: MouseandCatTrans_8
+  - first:
+      213: 1421921847290962329
+    second: MouseandCatTrans_9
+  - first:
+      213: -3127063914445290989
+    second: MouseandCatTrans_10
+  - first:
+      213: -4784809693008033016
+    second: MouseandCatTrans_11
+  - first:
+      213: 9030115872239697552
+    second: MouseandCatTrans_12
+  - first:
+      213: 6878937446559543445
+    second: MouseandCatTrans_13
+  - first:
+      213: 8992374803331325237
+    second: MouseandCatTrans_14
+  - first:
+      213: 5184215003671267267
+    second: MouseandCatTrans_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: MouseandCatTrans_0
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 539
+        width: 140
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92225bf0b3fcaa860800000000000000
+      internalID: 7542068378558865961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_1
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 533
+        width: 62
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db6ee52f75eb4dde0800000000000000
+      internalID: -1309212306720233795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_2
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 539
+        width: 56
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c5af2080b4f30180800000000000000
+      internalID: -9150200978984688188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_3
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 545
+        width: 56
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5966dac1e8ed701d0800000000000000
+      internalID: -3384491892997790059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_4
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 545
+        width: 56
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fd5fa64c5a9ad380800000000000000
+      internalID: -8945667988704502281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_5
+      rect:
+        serializedVersion: 2
+        x: 437
+        y: 539
+        width: 68
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffbb95baafa722df0800000000000000
+      internalID: -206467415870424065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_6
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 539
+        width: 56
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9aa67166a8c8352b0800000000000000
+      internalID: -5596975385845208407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_7
+      rect:
+        serializedVersion: 2
+        x: 599
+        y: 539
+        width: 68
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58255ddb489035e30800000000000000
+      internalID: 4490943719143723653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_8
+      rect:
+        serializedVersion: 2
+        x: 671
+        y: 539
+        width: 104
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c513630abc153cde0800000000000000
+      internalID: -1314116731253935780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_9
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 533
+        width: 80
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 991252ee26eabb310800000000000000
+      internalID: 1421921847290962329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_10
+      rect:
+        serializedVersion: 2
+        x: 899
+        y: 545
+        width: 56
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 312cb8d00ff6a94d0800000000000000
+      internalID: -3127063914445290989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_11
+      rect:
+        serializedVersion: 2
+        x: 953
+        y: 539
+        width: 98
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80b096a6fe0f89db0800000000000000
+      internalID: -4784809693008033016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_12
+      rect:
+        serializedVersion: 2
+        x: 1055
+        y: 545
+        width: 56
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09eb67dca8a615d70800000000000000
+      internalID: 9030115872239697552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_13
+      rect:
+        serializedVersion: 2
+        x: 1115
+        y: 539
+        width: 56
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59070565925e67f50800000000000000
+      internalID: 6878937446559543445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_14
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 11
+        width: 356
+        height: 374
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53d9cbf6d355bcc70800000000000000
+      internalID: 8992374803331325237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MouseandCatTrans_15
+      rect:
+        serializedVersion: 2
+        x: 659
+        y: 23
+        width: 260
+        height: 440
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c78315241802f740800000000000000
+      internalID: 5184215003671267267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      MouseandCatTrans_0: 7542068378558865961
+      MouseandCatTrans_1: -1309212306720233795
+      MouseandCatTrans_10: -3127063914445290989
+      MouseandCatTrans_11: -4784809693008033016
+      MouseandCatTrans_12: 9030115872239697552
+      MouseandCatTrans_13: 6878937446559543445
+      MouseandCatTrans_14: 8992374803331325237
+      MouseandCatTrans_15: 5184215003671267267
+      MouseandCatTrans_2: -9150200978984688188
+      MouseandCatTrans_3: -3384491892997790059
+      MouseandCatTrans_4: -8945667988704502281
+      MouseandCatTrans_5: -206467415870424065
+      MouseandCatTrans_6: -5596975385845208407
+      MouseandCatTrans_7: 4490943719143723653
+      MouseandCatTrans_8: -1314116731253935780
+      MouseandCatTrans_9: 1421921847290962329
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

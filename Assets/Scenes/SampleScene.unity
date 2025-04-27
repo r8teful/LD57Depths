@@ -501,7 +501,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 139011234}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -1378,6 +1378,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 139011235}
     m_Modifications:
+    - target: {fileID: 798281078109403548, guid: c810c087d0f5e1d45a780529fea906e4, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5000009
+      objectReference: {fileID: 0}
+    - target: {fileID: 798281078109403548, guid: c810c087d0f5e1d45a780529fea906e4, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.000045776367
+      objectReference: {fileID: 0}
+    - target: {fileID: 798281078109403548, guid: c810c087d0f5e1d45a780529fea906e4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 3.8999748
+      objectReference: {fileID: 0}
     - target: {fileID: 842602393752248353, guid: c810c087d0f5e1d45a780529fea906e4, type: 3}
       propertyPath: m_Name
       value: Logic
