@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : NetworkBehaviour {
     // public float moveSpeed = 5f; // Base speed of swimming
     // public float acceleration = 2f; // How quickly the character reaches full speed
     // public float deceleration = 2f; // How quickly the character slows down
@@ -19,9 +19,9 @@ public class PlayerController : MonoBehaviour {
     private Vector2 velocity;
     private SpriteRenderer sprite;
     private MiningGun miningGun;
-    public Camera MainCam;
+    private Camera MainCam;
     public Transform insideSubTransform;
-    public CanvasGroup blackout;
+    //public CanvasGroup blackout;
     public Light2D lightSpot;
     public static event Action<float,float> OnOxygenChanged;
     #region Movement Parameters
@@ -90,17 +90,23 @@ public class PlayerController : MonoBehaviour {
     private bool peepPlayed;
     private bool _isFlashing;
     private Coroutine _flashCoroutine;
-    /*
+    
     public override void OnStartClient() {
         base.OnStartClient();
         if (base.IsOwner) // Check if this NetworkObject is owned by the local client
         {
+            Debug.Log("We are the owner!");
             LocalInstance = this;
+            MainCam = Camera.main;
+            MainCam.transform.SetParent(transform);
+            MainCam.transform.localPosition = new Vector3(0,0,-10);
             // Enable input, camera controls ONLY for the local player
             // Example: GetComponent<PlayerInputHandler>().enabled = true;
             // Example: playerCamera.SetActive(true);
         } else {
             // Disable controls for remote players on this client
+            Debug.Log("We are NOT the owner!");
+            GetComponent<PlayerController>().enabled = false;
             // Example: GetComponent<PlayerInputHandler>().enabled = false;
         }
 
@@ -110,8 +116,9 @@ public class PlayerController : MonoBehaviour {
        //     Debug.LogError("PlayerController could not find WorldGenerator!");
        // }
     }
-    */
+    
     private void Start() {
+        //LocalInstance = this;
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
@@ -282,7 +289,8 @@ public class PlayerController : MonoBehaviour {
         currentOxygen = Mathf.Clamp(currentOxygen, 0, maxOxygen);
         UpdateSlider();
         if(currentOxygen <= 10 && !peepPlayed) {
-            AudioController.Instance.PlaySound2D("PeepPeep", 1f);
+
+            if(AudioController.Instance != null) AudioController.Instance.PlaySound2D("PeepPeep", 1f);
             peepPlayed = true;
             SliderFlash(true);
         }
@@ -291,8 +299,10 @@ public class PlayerController : MonoBehaviour {
             playerHealth -= 1 * Time.deltaTime;
             if(playerHealth <= 0) {
                 // Lose some resources and go back to base
-                UpgradeManager.Instance.RemoveAllResources(0.5f);
-                Submarine.Instance.EnterSub(); // Will also set player state
+                if (UpgradeManager.Instance != null)
+                    UpgradeManager.Instance.RemoveAllResources(0.5f);
+                if(Submarine.Instance != null)
+                    Submarine.Instance.EnterSub(); // Will also set player state
                 Resurect();
             }
             UpdateFadeOutVisual();
@@ -302,7 +312,7 @@ public class PlayerController : MonoBehaviour {
     // Call this function to start or stop the flashing
     public void SliderFlash(bool shouldFlash) {
         if (OxygenWarning == null) {
-            Debug.LogError("SliderFlash: sliderToFlash GameObject is not assigned! Please assign it in the Inspector.");
+            Debug.LogWarning("SliderFlash: sliderToFlash GameObject is not assigned! Please assign it in the Inspector.");
             return;
         }
 
@@ -359,7 +369,8 @@ public class PlayerController : MonoBehaviour {
     private void UpdateFadeOutVisual() {
         float healthRatio = playerHealth / maxHealth;
         float easedValue = 1 - Mathf.Pow(healthRatio, 2); // Quadratic ease-out
-        blackout.alpha = easedValue;
+        
+        //blackout.alpha = easedValue;
     }
     private void UpdateSlider() {
         OnOxygenChanged?.Invoke(currentOxygen,maxOxygen);

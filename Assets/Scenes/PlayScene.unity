@@ -119,6 +119,67 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &220458588
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2768452442379641300, guid: 3155aa295a46d564e84ef7c801e0bf3c, type: 3}
+      propertyPath: m_Name
+      value: Main Camera
+      objectReference: {fileID: 0}
+    - target: {fileID: 5422033207299355019, guid: 3155aa295a46d564e84ef7c801e0bf3c, type: 3}
+      propertyPath: orthographic size
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8753529781163229608, guid: 3155aa295a46d564e84ef7c801e0bf3c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8753529781163229608, guid: 3155aa295a46d564e84ef7c801e0bf3c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8753529781163229608, guid: 3155aa295a46d564e84ef7c801e0bf3c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8753529781163229608, guid: 3155aa295a46d564e84ef7c801e0bf3c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8753529781163229608, guid: 3155aa295a46d564e84ef7c801e0bf3c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8753529781163229608, guid: 3155aa295a46d564e84ef7c801e0bf3c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8753529781163229608, guid: 3155aa295a46d564e84ef7c801e0bf3c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8753529781163229608, guid: 3155aa295a46d564e84ef7c801e0bf3c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8753529781163229608, guid: 3155aa295a46d564e84ef7c801e0bf3c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8753529781163229608, guid: 3155aa295a46d564e84ef7c801e0bf3c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3155aa295a46d564e84ef7c801e0bf3c, type: 3}
 --- !u!1 &410588326
 GameObject:
   m_ObjectHideFlags: 0
@@ -144,7 +205,7 @@ Transform:
   m_GameObject: {fileID: 410588326}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 56.38958, y: 31.473751, z: -8.695412}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -177,6 +238,10 @@ PrefabInstance:
     - target: {fileID: 4393252310584637056, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
       propertyPath: _autoStartType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4393252310584637087, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
+      propertyPath: m_BlockingMask.m_Bits
+      value: 55
       objectReference: {fileID: 0}
     - target: {fileID: 7443408887813606049, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -321,63 +386,46 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 1411548940}
   _networkObjectCache: {fileID: 0}
+  useSave: 0
   worldWidth: 2000
   worldHeight: 500
-  chunkSize: 16
+  chunkSize: 50
+  seed: 12345
+  trenchBaseWidth: 20
+  trenchWidenFactor: -0.1
+  trenchEdgeNoiseFrequency: 0.05
+  trenchEdgeNoiseAmplitude: 2
+  biomeLayers: []
+  generateCaves: 1
+  caveFrequency: 0.02
+  caveThreshold: 0.8
+  oreTypes:
+  - name: Silver
+    tile: {fileID: 0}
+    allowedBiomeNames: []
+    frequency: 0
+    threshold: 0
+    clusterFrequency: 0
+    clusterThreshold: 0
+    requireCluster: 0
+  structures: []
   tileAssets:
-  - {fileID: 11400000, guid: 3f4054e29a4cb0f4e9d89b15a41708bb, type: 2}
-  - {fileID: 11400000, guid: f03847475356d1542b09b761b3712c1c, type: 2}
   - {fileID: 11400000, guid: 8fdc4ce88b17cf641a439c858d645a57, type: 2}
+  - {fileID: 11400000, guid: f03847475356d1542b09b761b3712c1c, type: 2}
+  - {fileID: 11400000, guid: 3f4054e29a4cb0f4e9d89b15a41708bb, type: 2}
   - {fileID: 11400000, guid: 051a2880e8ac6a84b9200f3b031eab5b, type: 2}
   - {fileID: 11400000, guid: c21bad96b84cd004da5d5f824c6cfae6, type: 2}
   - {fileID: 11400000, guid: dfcfe746919e02141b6ef23c17cdfd02, type: 2}
   - {fileID: 11400000, guid: 9330e79b59a5c864db59a8765dda96aa, type: 2}
   - {fileID: 11400000, guid: 9a6974348faf46043be52b14df1e21c0, type: 2}
-  groundTilemap: {fileID: 1696825754}
-  water: {fileID: 11400000, guid: 3f4054e29a4cb0f4e9d89b15a41708bb, type: 2}
-  stoneTile: {fileID: 11400000, guid: f03847475356d1542b09b761b3712c1c, type: 2}
-  airTile: {fileID: 11400000, guid: 8fdc4ce88b17cf641a439c858d645a57, type: 2}
-  diamondTile: {fileID: 11400000, guid: 051a2880e8ac6a84b9200f3b031eab5b, type: 2}
-  rubyTile: {fileID: 11400000, guid: c21bad96b84cd004da5d5f824c6cfae6, type: 2}
-  goldTile: {fileID: 11400000, guid: dfcfe746919e02141b6ef23c17cdfd02, type: 2}
-  silverTile: {fileID: 11400000, guid: 9330e79b59a5c864db59a8765dda96aa, type: 2}
-  boundaryTile: {fileID: 11400000, guid: 9a6974348faf46043be52b14df1e21c0, type: 2}
+  mainTilemap: {fileID: 1696825754}
   surfaceLevel: 400
   noiseScale: 0.05
   stoneDepth: 50
   playerTransform: {fileID: 0}
   loadDistance: 3
   checkInterval: 0.5
-  trenchWidthTop: 7
-  trenchWidthBottom: 3
-  trenchDepthTrapezoid: 30
-  trenchEdgeNoiseScale: 3
-  trenchEdgeNoiseIntensity: 2
-  trenchPaddingTop: 0
-  trenchPaddingBottom: 5
-  trenchPaddingSides: 2
-  silverNoiseScale: 10
-  goldNoiseScale: 7
-  rubyNoiseScale: 2
-  diamondNoiseScale: 1
-  noiseOffset_X: 0
-  noiseOffset_Y: 0
-  silverOreFrequencySurface: 0.02
-  silverOreFrequencyDeep: 0.08
-  silverDepthStart: 0
-  silverDepthEnd: 0
-  GoldFrequencySurface: 0.1
-  GoldFrequencyDeep: 0.05
-  GoldDepthStart: 0
-  GoldDepthEnd: 0
-  RubyFrequencySurface: 0.1
-  RubyFrequencyDeep: 0.05
-  RubyDepthStart: 0
-  RubyDepthEnd: 0
-  DiamondFrequencySurface: 0.1
-  DiamondFrequencyDeep: 0.05
-  DiamondDepthStart: 0
-  DiamondDepthEnd: 0
+  saveFileName: world.json
 --- !u!4 &1411548939
 Transform:
   m_ObjectHideFlags: 0
@@ -645,3 +693,4 @@ SceneRoots:
   - {fileID: 988413042}
   - {fileID: 2060891383}
   - {fileID: 410588327}
+  - {fileID: 220458588}
