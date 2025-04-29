@@ -48,10 +48,6 @@ public class ChunkManager : NetworkBehaviour {
         currentPlayerChunkCoord = default;
         DebugForceChunkLoad();
     }
-    public void SetWorldManager(WorldManager parent) {
-        _worldManager = parent;
-        Debug.Log("Chunkmanager");
-    }
     private void DebugForceChunkLoad() {
         Vector2Int newClientChunkCoord = WorldToChunkCoord(PlayerController.LocalInstance.transform.position);
         for (int xOffset = -loadDistance; xOffset <= loadDistance; xOffset++) {
@@ -65,6 +61,7 @@ public class ChunkManager : NetworkBehaviour {
 
     public override void OnStartClient() {
         base.OnStartClient();
+        _worldManager = FindFirstObjectByType<WorldManager>();
         Debug.Log("Start client CHUNKMAN");
         StartCoroutine(ClientChunkLoadingRoutine());
     }

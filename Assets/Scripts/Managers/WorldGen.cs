@@ -47,7 +47,7 @@ public static class WorldGen {
     private static Dictionary<int, TileBase> idToTileAssetMap;
     private static WorldGenSettingSO _settings;
     private static float maxDepth;
-
+    public static float GetDepth() => maxDepth;
     public static void Init(WorldGenSettingSO worldGenSettings, Dictionary<int, TileBase> assetMap) {
         _settings = worldGenSettings;
         idToTileAssetMap = assetMap;

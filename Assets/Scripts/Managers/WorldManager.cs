@@ -10,8 +10,7 @@ using FishNet;
 public class WorldManager : NetworkBehaviour {
     // --- Managers ---
     public WorldDataManager WorldDataManager;
-    [SerializeField] private ChunkManager _chunkManagerPrefab;
-    [HideInInspector] public ChunkManager ChunkManager;
+    public ChunkManager ChunkManager;
     [InlineEditor]
     public WorldGenSettingSO WorldGenSettings;
     // --- Tile ID Mapping ---
@@ -24,7 +23,8 @@ public class WorldManager : NetworkBehaviour {
     [SerializeField] private List<TileBase> tileAssets; // Assign ALL your TileBase assets here in order
     [FoldoutGroup("Tilemap & Tiles")]
     [SerializeField] private Tilemap mainTilemap; // Assign your ground Tilemap GameObject here
-    public bool useSave;
+    public bool useSave; 
+    [SerializeField] Transform playerSpawn;
 
      [Button("NewWorld")]
     private void DEBUGNEWGEN() {
@@ -36,12 +36,10 @@ public class WorldManager : NetworkBehaviour {
         // Server-only initialization
         InitializeTileMapping();
         WorldGen.Init(WorldGenSettings, idToTileAssetMap);
-        ChunkManager = Instantiate(_chunkManagerPrefab);
-        InstanceFinder.ServerManager.Spawn(ChunkManager.gameObject, Owner);
+        //InstanceFinder.ServerManager.Spawn(ChunkManager.gameObject, Owner);
         //ChunkManager.Spawn(ChunkManager.gameObject, Owner);
-        ChunkManager.SetWorldManager(this);
         if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
-
+        playerSpawn.transform.position = new Vector3(0,-WorldGen.GetDepth()*0.1f); // Must be something with tile size or something
         //StartCoroutine(ServerChunkManagementRoutine()); // Not using atm
     }
     public override void OnStartClient() {
