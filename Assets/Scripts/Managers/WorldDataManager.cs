@@ -6,7 +6,7 @@ using UnityEngine.Tilemaps;
 [System.Serializable]
 public class ChunkSaveData {
     public List<int> tileIds; // Flattened list of Tile IDs
-
+    public List<int> tileDurabilities; // Save durability state
     public ChunkSaveData() { tileIds = new List<int>(); }
     public ChunkSaveData(int capacity) { tileIds = new List<int>(capacity); }
 }
@@ -26,6 +26,8 @@ public class WorldDataManager {
     private ChunkManager _chunkManager;
     private WorldManager _worldManager;
     [SerializeField] private string saveFileName = "world.json"; // Name of the save file    
+
+
     public void SaveWorld(Dictionary<Vector2Int, ChunkData> worldChunks, Vector3 playerPos) {
         WorldSaveData saveData = new WorldSaveData();
         var tileAssetToIdMap = _worldManager.GetTileToID();
@@ -44,6 +46,7 @@ public class WorldDataManager {
                         TileBase tile = chunkData.tiles[x, y];
                         if (tileAssetToIdMap.TryGetValue(tile, out int tileId)) {
                             chunkSave.tileIds.Add(tileId);
+                            chunkSave.tileDurabilities.Add(chunkData.tileDurability[x, y]);
                         } else {
                             Debug.LogWarning($"Tile '{tile?.name ?? "NULL"}' at [{x},{y}] in chunk {chunkCoord} has no ID mapping! Saving as air (ID 0).");
                             chunkSave.tileIds.Add(0); // Save as air/null ID
@@ -98,14 +101,18 @@ public class WorldDataManager {
                             Vector2Int chunkCoord = new Vector2Int(x, y);
                             ChunkSaveData chunkSave = savedChunkPair.Value;
 
-                            if (chunkSave.tileIds.Count == chunkSize * chunkSize) {
+                            if (chunkSave.tileIds.Count == chunkSize * chunkSize &&
+                                 chunkSave.tileDurabilities.Count == chunkSize * chunkSize) 
+                             {
                                 ChunkData newChunk = new ChunkData(chunkSize, chunkSize);
                                 int tileIndex = 0;
                                 for (int localY = 0; localY < chunkSize; localY++) {
                                     for (int localX = 0; localX < chunkSize; localX++) {
-                                        int tileId = chunkSave.tileIds[tileIndex++];
+                                        int tileId = chunkSave.tileIds[tileIndex];
                                         if (idToTileAssetMap.TryGetValue(tileId, out TileBase tileAsset)) {
                                             newChunk.tiles[localX, localY] = tileAsset;
+                                            newChunk.tileDurability[localX, localY] = chunkSave.tileDurabilities[tileIndex];
+                                            tileIndex++;
                                         } else {
                                             Debug.LogWarning($"Unknown Tile ID {tileId} found in chunk {chunkCoord} during load. Setting to null/air.");
                                             newChunk.tiles[localX, localY] = null; // Or airTile if not null

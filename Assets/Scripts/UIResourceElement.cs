@@ -5,30 +5,30 @@ using UnityEngine.UI;
 public class UIResourceElement : MonoBehaviour {
     public Image resourceIcon;
     public TextMeshProUGUI resourceAmountText;
-    public Tile.TileType ResourceType;
-    public void Init(Tile.TileType type, int amount) {
+    public TileScript.TileType ResourceType;
+    public void Init(TileScript.TileType type, int amount) {
         ResourceType = type;
         Sprite sprite = null;
         switch (type) {
-            case Tile.TileType.Empty:
+            case TileScript.TileType.Empty:
                 break;
-            case Tile.TileType.Dirt:
+            case TileScript.TileType.Dirt:
                 break;
-            case Tile.TileType.Ore_Stone:
+            case TileScript.TileType.Ore_Stone:
                 sprite = Resources.Load<Sprite>("Ores/UIStone");
                 break;
-            case Tile.TileType.Ore_Ruby:
+            case TileScript.TileType.Ore_Ruby:
                 sprite = Resources.Load<Sprite>("Ores/UIRuby");
                 break;
-            case Tile.TileType.Ore_Silver:
+            case TileScript.TileType.Ore_Silver:
                 sprite = Resources.Load<Sprite>("Ores/UISilver");
                 break;
-            case Tile.TileType.Boundary:
+            case TileScript.TileType.Boundary:
                 break;
-            case Tile.TileType.Ore_Gold:
+            case TileScript.TileType.Ore_Gold:
                 sprite = Resources.Load<Sprite>("Ores/UIGold");
                 break;
-            case Tile.TileType.Ore_Diamond:
+            case TileScript.TileType.Ore_Diamond:
                 sprite = Resources.Load<Sprite>("Ores/UIDiamond");
                 break;
             default:

@@ -4,20 +4,23 @@ using System.Collections;
 using System.Collections.Generic;
 using FishNet.Object;
 using FishNet.Connection;
-using Sirenix.OdinInspector;
-using System;
-
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
     public TileBase[,] tiles; // Store references to TileBase assets
+    public int[,] tileDurability;
     public bool isModified = false; // Flag to track if chunk has changed since load/generation
     public bool hasBeenGenerated = false; // Flag to prevent regenerating loaded chunks
 
     public ChunkData(int chunkSizeX, int chunkSizeY) {
         tiles = new TileBase[chunkSizeX, chunkSizeY];
+        tileDurability = new int[chunkSizeX, chunkSizeY];
+        for (int y = 0; y < chunkSizeY; ++y) {
+            for (int x = 0; x < chunkSizeX; ++x) {
+                tileDurability[x, y] = -1; // Default state
+            }
+        }
     }
 }
-
 
 public class ChunkManager : NetworkBehaviour {
     [SerializeField] private bool useSave = false;
@@ -39,6 +42,7 @@ public class ChunkManager : NetworkBehaviour {
     private Dictionary<Vector2Int, ChunkData> worldChunks = new Dictionary<Vector2Int, ChunkData>(); // Main world data
     private HashSet<Vector2Int> activeChunks = new HashSet<Vector2Int>();
     private Vector2Int currentPlayerChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
+    private Dictionary<Vector2Int, int[,]> clientDurabilityCache = new Dictionary<Vector2Int, int[,]>();
 
     private WorldManager _worldManager;
 
@@ -138,6 +142,7 @@ public class ChunkManager : NetworkBehaviour {
     [ServerRpc(RequireOwnership = false)] // Allow any client to request
     private void ServerRequestChunkData(Vector2Int chunkCoord, NetworkConnection requester = null) // FishNet automatically provides requester
     {
+        if (!IsServerInitialized) return;
         // 1. Check if data exists on server
         if (!worldChunks.TryGetValue(chunkCoord, out ChunkData chunkData)) {
             // 2. If not, generate it (server only)
@@ -152,25 +157,29 @@ public class ChunkManager : NetworkBehaviour {
         // 3. Serialize chunk data into Tile IDs
         if (chunkData.tiles != null) {
             List<int> tileIds = new List<int>(chunkSize * chunkSize);
+            List<int> durabilities = new List<int>(chunkSize * chunkSize);
             for (int y = 0; y < chunkSize; y++) {
                 for (int x = 0; x < chunkSize; x++) {
-                    tileIds.Add(_worldManager.GetTileId(chunkData.tiles[x, y]));
+                    tileIds.Add(_worldManager.GetIDFromTile(chunkData.tiles[x, y]));
+                    durabilities.Add(chunkData.tileDurability[x, y]); 
                 }
             }
 
             // 4. Send data back to the SPECIFIC client who requested it
-            TargetReceiveChunkData(requester, chunkCoord, tileIds);
+            TargetReceiveChunkData(requester, chunkCoord, tileIds, durabilities);
         }
     }
     // --- Target RPC to send chunk data to a specific client ---
     [TargetRpc]
-    private void TargetReceiveChunkData(NetworkConnection conn, Vector2Int chunkCoord, List<int> tileIds) {
+    private void TargetReceiveChunkData(NetworkConnection conn, Vector2Int chunkCoord, List<int> tileIds, List<int> durabilities) {
         // Executed ONLY on the client specified by 'conn'
         if (tileIds == null || tileIds.Count != chunkSize * chunkSize) {
             Debug.LogWarning($"Received invalid tile data for chunk {chunkCoord} from server.");
             return;
         }
 
+        // Store durability locally for effects 
+        ClientCacheChunkDurability(chunkCoord, durabilities); 
         // Apply the received tiles visually
         Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkCoord);
         BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, chunkSize, chunkSize, 1);
@@ -184,6 +193,33 @@ public class ChunkManager : NetworkBehaviour {
     }
 
 
+    private void ClientCacheChunkDurability(Vector2Int chunkCoord, List<int> durabilityList) {
+        if (!clientDurabilityCache.ContainsKey(chunkCoord)) {
+            clientDurabilityCache[chunkCoord] = new int[chunkSize, chunkSize];
+        }
+
+        int[,] chunkDurability = clientDurabilityCache[chunkCoord];
+        int index = 0;
+        for (int y = 0; y < chunkSize; y++) {
+            for (int x = 0; x < chunkSize; x++) {
+                chunkDurability[x, y] = durabilityList[index++];
+            }
+        }
+        // We might want to remove entries from this cache when chunks are visually unloaded
+        // in ClientChunkLoadingRoutine to save client memory.
+    }
+
+    public int GetClientCachedDurability(Vector3Int cellPos) {
+        Vector2Int chunkCoord = CellToChunkCoord(cellPos);
+        if (clientDurabilityCache.TryGetValue(chunkCoord, out int[,] chunkDurability)) {
+            int localX = cellPos.x - chunkCoord.x * chunkSize;
+            int localY = cellPos.y - chunkCoord.y * chunkSize;
+            if (localX >= 0 && localX < chunkSize && localY >= 0 && localY < chunkSize) {
+                return chunkDurability[localX, localY];
+            }
+        }
+        return -1; // Default or error state
+    }
     // --- Helper to generate chunk data ON SERVER ONLY ---
     private ChunkData ServerGenerateChunkData(Vector2Int chunkCoord) {
         // Ensure called only on server
@@ -240,18 +276,145 @@ public class ChunkManager : NetworkBehaviour {
                 // --- Update SERVER data FIRST ---
                 chunk.tiles[localX, localY] = tileToSet;
                 chunk.isModified = true; // Mark chunk as modified for saving
-
+                chunk.tileDurability[localX, localY] = -1; // Reset to default state
                 // --- Update Server's OWN visuals (optional but good for host) ---
                 _worldManager.SetTile(cellPos, tileToSet);
-
                 // --- BROADCAST change to ALL clients ---
+                ObserversUpdateTileDurability(cellPos, -1);
                 _worldManager.ObserversUpdateTile(cellPos, newTileId); // TODO check if this works it might break because we call it in the parent
             }
         } else {
             Debug.LogWarning($"Server: Invalid local coordinates for modification at {cellPos}");
         }
     }
+    // --- RPC to inform clients of durability change ---
+    [ObserversRpc]
+    private void ObserversUpdateTileDurability(Vector3Int cellPos, int newDurability) {
+        // Runs on all clients
+        // Update local cache if you have one
+        Vector2Int chunkCoord = CellToChunkCoord(cellPos);
+        if (clientDurabilityCache.TryGetValue(chunkCoord, out int[,] chunkDurability)) {
+            int localX = cellPos.x - chunkCoord.x * chunkSize;
+            int localY = cellPos.y - chunkCoord.y * chunkSize;
+            if (localX >= 0 && localX < chunkSize && localY >= 0 && localY < chunkSize) {
+                chunkDurability[localX, localY] = newDurability;
+                UpdateTileVisuals(cellPos, newDurability);
+            }
+        }
+    }
+    // New method on server to handle receiving damage requests
+    public void ServerProcessDamageTile(Vector3Int cellPos, int damageAmount, NetworkConnection sourceConnection = null) {
+        if (!IsServerInitialized) return;
+        Vector2Int chunkCoord = CellToChunkCoord(cellPos);
 
+        // Ensure chunk data exists (generate if necessary)
+        if (!worldChunks.TryGetValue(chunkCoord, out ChunkData chunk)) {
+            chunk = ServerGenerateChunkData(chunkCoord);
+            if (chunk == null) { Debug.LogError($"Server failed to get/generate chunk {chunkCoord} for damage."); return; }
+        }
+
+        // Calculate local coordinates
+        int localX = cellPos.x - chunkCoord.x * chunkSize;
+        int localY = cellPos.y - chunkCoord.y * chunkSize;
+
+        if (localX < 0 || localX >= chunkSize || localY < 0 || localY >= chunkSize) { Debug.LogWarning($"Server: Invalid local coordinates {localX},{localY} for damage at {cellPos}"); return; }
+
+
+        // --- Get Tile Type & Properties ---
+        TileBase tileBase = chunk.tiles[localX, localY];
+        if (tileBase == null) return; // Cannot damage air
+
+        if (tileBase is TileSO targetTile) // Check if it's our custom type
+        {
+        Debug.Log("Tile is SO");
+            if (targetTile.maxDurability <= 0) return; // Indestructible tile
+
+            // --- Apply Damage ---
+            int currentDurability = chunk.tileDurability[localX, localY];
+            if (currentDurability < 0) // Was at full health (-1 sentinel)
+            {
+                currentDurability = targetTile.maxDurability;
+            }
+
+            int newDurability = currentDurability - damageAmount;
+
+            // Mark as modified ONLY if durability actually changed
+            if (newDurability != chunk.tileDurability[localX, localY]) {
+                chunk.isModified = true;
+            }
+            chunk.tileDurability[localX, localY] = newDurability;
+
+
+            // --- Check for Destruction ---
+            if (newDurability <= 0) {
+                // Destroy Tile: Set to Air (will broadcast visual change via existing RPC)
+                // Setting durability back to -1 for the (now air) tile in the data is good practice
+                chunk.tileDurability[localX, localY] = -1;
+                ServerRequestModifyTile(cellPos, 0); // Tile ID 0 = Air/Null
+
+                // Spawn Drops (Server-side)
+                SpawnDrops(targetTile, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Drop at cell center
+
+                // Spawn Break Effect (Broadcast to clients)
+                if (targetTile.breakEffectPrefab != null)
+                    ObserversSpawnEffect(targetTile.breakEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Pass prefab path or ID if effects aren't NetworkObjects
+            } else {
+                // Tile Damaged, Not Destroyed: Broadcast new durability
+                ObserversUpdateTileDurability(cellPos, newDurability);
+
+                // Spawn Hit Effect (Broadcast to clients)
+                if (targetTile.hitEffectPrefab != null)
+                    ObserversSpawnEffect(targetTile.hitEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0));
+            }
+        } else {
+            // Tile is not a 'CustomTile' - maybe it's indestructible base Tile?
+            // Decide how to handle - ignore damage, or maybe break immediately if base tile?
+        }
+    }
+    // --- Server-side method to handle spawning drops ---
+    // We might want to move this to WorldManager but eh
+    private void SpawnDrops(TileSO sourceTile, Vector3 position) {
+        if (!IsServerInitialized) return;
+        if (sourceTile.dropTable == null) return;
+
+        foreach (ItemDropInfo dropInfo in sourceTile.dropTable.drops) {
+            if (dropInfo.itemPrefab != null && Random.value <= dropInfo.dropChance) {
+                int amountToDrop = Random.Range(dropInfo.minAmount, dropInfo.maxAmount + 1);
+                for (int i = 0; i < amountToDrop; i++) {
+                    // Slightly randomize drop position
+                    Vector3 spawnPos = position + (Vector3)Random.insideUnitCircle * 0.3f;
+
+                    // Instantiate the PREFAB, then spawn the INSTANCE
+                    GameObject dropInstance = Instantiate(dropInfo.itemPrefab, spawnPos, Quaternion.identity);
+
+                    // Spawn the instantiated object over the network
+                    base.ServerManager.Spawn(dropInstance); // FishNet spawn call
+                                                            // Add initial velocity/physics force if needed
+                                                            // Rigidbody2D rb = dropInstance.GetComponent<Rigidbody2D>();
+                                                            // if(rb != null) rb.AddForce(Random.insideUnitCircle * 1.5f, ForceMode2D.Impulse);
+                }
+            }
+        }
+    }
+
+    // --- RPC to spawn visual effects (non-networked objects usually) ---
+    [ObserversRpc(RunLocally = true)] // RunLocally = true ensures host sees it too without delay
+    private void ObserversSpawnEffect(GameObject effectPrefab, Vector3 position) {
+        // Runs on all clients (and host if RunLocally = true)
+        if (effectPrefab != null) {
+            // Consider using an object pool for effects
+            Instantiate(effectPrefab, position, Quaternion.identity);
+            // Set a self-destruct timer on the effect particle system
+        }
+    }
+
+    // Placeholder for client-side visual updates (e.g., crack overlays)
+    private void UpdateTileVisuals(Vector3Int cellPos, int currentDurability) {
+
+        TileBase crackTile = GetCrackTileForDurability(cellPos, currentDurability); // Find appropriate crack sprite
+
+        _worldManager.SetOverlayTile(cellPos, crackTile);
+    }
     // Activates a chunk (makes it visible), pulling data from ChunkData
     void ActivateChunk(Vector2Int chunkCoord, ChunkData chunkData) {
         // If chunk was loaded but never visually activated yet, ensure tiles are set
@@ -270,7 +433,25 @@ public class ChunkManager : NetworkBehaviour {
         // (No else needed, if already active, do nothing visually)
     }
 
+    private TileBase GetCrackTileForDurability(Vector3Int cellPos, int currentDurability) {
+        var t = _worldManager.GetTileAtCellPos(cellPos);
+        if (t is TileSO tile) {
+            var r = tile.GetDurabilityRatio(currentDurability);
 
+            if (r > 0.75) {
+                return null; // No cracks for high durability.
+            } else if (r > 0.50) {
+                return tile.breakVersions[1];
+            } else if (r > 0.25) {
+                return tile.breakVersions[2];
+            } else if (r > 0) {
+                return tile.breakVersions[3];
+            }
+        }
+        Debug.LogError("Tile is not TileSO");
+        return null;
+
+    }
     // Removes a chunk's tiles from the tilemap (clears visually)
     void DeactivateChunk(Vector2Int chunkCoord) {
         Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkCoord);

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using static Tile;
+using static TileScript;
 
 public class GridManager : StaticInstance<GridManager> {
     [Header("Random manager stuff")]
@@ -62,7 +62,7 @@ public class GridManager : StaticInstance<GridManager> {
 
 
 
-    private Tile[,] grid;
+    private TileScript[,] grid;
     private Vector2 gridOrigin = Vector2.zero;
     private bool _worldGenDone;
     public bool IsWorldGenDone() => _worldGenDone;
@@ -76,15 +76,15 @@ public class GridManager : StaticInstance<GridManager> {
     }
 
     void CreateGrid() {
-        grid = new Tile[gridWidth, gridHeight];
+        grid = new TileScript[gridWidth, gridHeight];
 
         for (int x = 0; x < gridWidth; x++) {
             for (int y = 0; y < gridHeight; y++) {
                 Vector3 worldPosition = new Vector3(x * tileSize + gridOrigin.x, y * -tileSize + gridOrigin.y, 0);
                 GameObject tileObject = Instantiate(tilePrefab, worldPosition, Quaternion.identity, this.transform);
-                Tile tile = tileObject.GetComponent<Tile>();
+                TileScript tile = tileObject.GetComponent<TileScript>();
                 if (tile != null) {
-                    Tile.TileType tileType = DetermineTileType(x, y);
+                    TileScript.TileType tileType = DetermineTileType(x, y);
                     tile.InitializeTile(tileType, new Vector2Int(x, y));
                     grid[x, y] = tile;
                 } else {
@@ -95,7 +95,7 @@ public class GridManager : StaticInstance<GridManager> {
     }
 
     IEnumerator CreateGridRoutine() {
-        grid = new Tile[gridWidth, gridHeight];
+        grid = new TileScript[gridWidth, gridHeight];
         int totalTiles = gridWidth * gridHeight;
         int tilesProcessed = 0;
 
@@ -104,9 +104,9 @@ public class GridManager : StaticInstance<GridManager> {
                 Vector3 worldPosition = new Vector3(x * tileSize + gridOrigin.x, y * -tileSize + gridOrigin.y, 0);
                 GameObject tileObject = Instantiate(tilePrefab, worldPosition, Quaternion.identity, this.transform);
                 tileObject.name = (x + y).ToString();
-                Tile tile = tileObject.GetComponent<Tile>();
+                TileScript tile = tileObject.GetComponent<TileScript>();
                 if (tile != null) {
-                    Tile.TileType tileType = DetermineTileType(x, y);
+                    TileScript.TileType tileType = DetermineTileType(x, y);
                     tile.InitializeTile(tileType, new Vector2Int(x, y));
                     grid[x, y] = tile;
                 } else {
@@ -144,28 +144,28 @@ public class GridManager : StaticInstance<GridManager> {
             progressBar.gameObject.SetActive(false);
     }
 
-    Tile.TileType DetermineTileType(int x, int y) {
+    TileScript.TileType DetermineTileType(int x, int y) {
         // Check for Boundary Tiles
         if (x < 2 || x >= gridWidth - 2 // Sides 
             || y >= gridHeight - 2) { // Bottom
-            return Tile.TileType.Boundary; // Create boundary tile
+            return TileScript.TileType.Boundary; // Create boundary tile
         }
         // Apply Padding Layers (Stone)
         // Top Padding
         if (y < trenchPaddingTop) {
-            return Tile.TileType.Ore_Stone;
+            return TileScript.TileType.Ore_Stone;
         }
 
         // Bottom Padding
         if (y >= gridHeight - trenchPaddingBottom) {
-            return Tile.TileType.Ore_Stone;
+            return TileScript.TileType.Ore_Stone;
         }
 
         // Side Padding
         int paddedGridWidth = gridWidth - (trenchPaddingSides * 2); // Effective grid width after side padding
         int sidePaddingStartX = trenchPaddingSides;                // Starting X for non-padded area
         if (x < sidePaddingStartX || x >= sidePaddingStartX + paddedGridWidth) {
-            return Tile.TileType.Ore_Stone;
+            return TileScript.TileType.Ore_Stone;
         }
 
 
@@ -190,7 +190,7 @@ public class GridManager : StaticInstance<GridManager> {
         bool isInTrench = (x >= trenchStartX && x < trenchEndX);
 
         if (isInTrench) {
-            return Tile.TileType.Empty; // Trench area is still empty
+            return TileScript.TileType.Empty; // Trench area is still empty
         } else {
             // Generate separate noise value for each ore
             // Generate separate noise value for each ore, using its specific noiseScale
@@ -303,7 +303,7 @@ public void DamageTileAtGridPosition(Vector2Int gridPosition, float damage) {
         }
     }
 
-    public Tile GetTileAt(int x, int y) {
+    public TileScript GetTileAt(int x, int y) {
         if (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight) {
             return grid[x, y];
         }

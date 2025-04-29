@@ -89,7 +89,7 @@ public class ShipManager : StaticInstance<ShipManager> {
     }
 
     internal void RepairPressed(RepairType type, UpgradeCostSO[] costData) {
-        var d = new Dictionary<Tile.TileType, int>();
+        var d = new Dictionary<TileScript.TileType, int>();
         foreach(var data in costData) {
             d.Add(data.resourceType,Mathf.FloorToInt(data.baseCost));
         }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Tile : MonoBehaviour {
+public class TileScript : MonoBehaviour {
     public enum TileType {
         Empty, // New Empty Tile Type
         Dirt,

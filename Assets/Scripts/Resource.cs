@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class Resource : MonoBehaviour {
-    public Tile.TileType ResourceType { get; set; }
+    public TileScript.TileType ResourceType { get; set; }
 
     public float attractionRadius = 5f; // The distance at which the resource starts moving towards the player
     public float attractionSpeed = 2f;  // Speed at which the resource moves toward the player
@@ -44,32 +44,32 @@ public class Resource : MonoBehaviour {
         rb.linearVelocity = velocity;
     }
    
-    internal void SetResource(Tile.TileType type) {
+    internal void SetResource(TileScript.TileType type) {
         ResourceType = type;
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         // Update visual etc
         switch (type) {
-            case Tile.TileType.Empty:
+            case TileScript.TileType.Empty:
                 break;
-            case Tile.TileType.Dirt:
+            case TileScript.TileType.Dirt:
                 break;
-            case Tile.TileType.Ore_Stone:
+            case TileScript.TileType.Ore_Stone:
                 sr.color = Color.gray;
                 //_renderer.material.SetColor("_Color", Color.gray);
                 break;
-            case Tile.TileType.Ore_Ruby:
+            case TileScript.TileType.Ore_Ruby:
                 sr.color = new Color(0.725f, 0.05f, 0.29f);
                 //_renderer.material.SetColor("_Color", Color.gray);
                 break;
-            case Tile.TileType.Ore_Silver:
+            case TileScript.TileType.Ore_Silver:
                 sr.color = new Color(0.796f, 0.858f, 0.98f);
                 break;
-            case Tile.TileType.Boundary:
+            case TileScript.TileType.Boundary:
                 break;
-            case Tile.TileType.Ore_Gold:
+            case TileScript.TileType.Ore_Gold:
                 sr.color = new Color(1f, 0.749f, 0f);
                 break;
-            case Tile.TileType.Ore_Diamond:
+            case TileScript.TileType.Ore_Diamond:
                 sr.color = new Color(0.352f, 0.858f, 0.98f);
                 break;
             default:

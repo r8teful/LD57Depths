@@ -21,6 +21,7 @@ public class WorldManager : NetworkBehaviour {
     
     [SerializeField] private List<TileBase> tileAssets; // Assign ALL your TileBase assets here in order
     [SerializeField] private Tilemap mainTilemap; // Main visual grid component for the game
+    [SerializeField] private Tilemap overlayTilemap; // for damaged tiles 
     public float GetVisualTilemapGridSize() => mainTilemap.transform.parent.GetComponent<Grid>().cellSize.x; // Cell size SHOULD be square
     public bool useSave; 
     [SerializeField] Transform playerSpawn;
@@ -83,7 +84,7 @@ public class WorldManager : NetworkBehaviour {
         return null; // Fallback to air/null
     }
     // --- Tile ID Helpers (Ensure these exist and are correct) ---
-    public int GetTileId(TileBase tile) {
+    public int GetIDFromTile(TileBase tile) {
         if (tileAssetToIdMap.TryGetValue(tile, out int id)) {
             return id;
         }
@@ -127,6 +128,11 @@ public class WorldManager : NetworkBehaviour {
     public Vector3 CellToWorld(Vector3Int cellPosition) {
         return mainTilemap.CellToWorld(cellPosition); // Get bottom-left corner
     }
+    public TileBase GetTileAtCellPos(Vector3Int cellPosition) {
+        var world = mainTilemap.CellToWorld(cellPosition);
+        return GetTileAtWorldPos(world);
+
+    }
     public Vector3Int WorldToCell(Vector3 worldPosition) {
         return mainTilemap.WorldToCell(worldPosition);
     }
@@ -138,5 +144,9 @@ public class WorldManager : NetworkBehaviour {
 
     internal void SetChunkManager(ChunkManager chunkManager) {
         _chunkManager = chunkManager;
+    }
+
+    internal void SetOverlayTile(Vector3Int cellPos, TileBase crackTile) {
+        overlayTilemap.SetTile(cellPos, crackTile); // Set tile on overlay layer
     }
 }
