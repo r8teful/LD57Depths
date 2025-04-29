@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41cbcd6f548799048b959be97b09b0c5, type: 3}
+  m_Name: WorldGenSettingSO
+  m_EditorClassIdentifier: 
+  seed: 1242
+  trenchBaseWidth: 139.29
+  trenchWidenFactor: -0.05
+  trenchEdgeNoiseFrequency: 0.03
+  trenchEdgeNoiseAmplitude: 8
+  initialCaveNoiseThreshold: 0.88
+  generateCaves: 1
+  initialCaveNoiseFrequency: 0.005
+  caveCASteps: 4
+  caveBirthThreshold: 6
+  caveSurvivalThreshold: 4
+  biomeLayers:
+  - name: Surface
+    defaultGroundTile: {fileID: 11400000, guid: 8fdc4ce88b17cf641a439c858d645a57, type: 2}
+    startY: 0
+    maxHeight: 100
+    maxHorizontalDistanceFromTrenchCenter: 349
+    verticalBlendPercentage: 0.962
+    horizontalBlendPercentage: 0.992
+  oreTypes: []
