@@ -10,7 +10,7 @@ using FishNet;
 public class WorldManager : NetworkBehaviour {
     // --- Managers ---
     public WorldDataManager WorldDataManager;
-    public ChunkManager ChunkManager;
+    private ChunkManager _chunkManager;
     [InlineEditor]
     public WorldGenSettingSO WorldGenSettings;
     // --- Tile ID Mapping ---
@@ -19,16 +19,15 @@ public class WorldManager : NetworkBehaviour {
     public Dictionary<TileBase, int> GetTileToID() => tileAssetToIdMap;
     public Dictionary<int, TileBase> GetIDToTile() => idToTileAssetMap;
     
-    [FoldoutGroup("Tilemap & Tiles")]
     [SerializeField] private List<TileBase> tileAssets; // Assign ALL your TileBase assets here in order
-    [FoldoutGroup("Tilemap & Tiles")]
-    [SerializeField] private Tilemap mainTilemap; // Assign your ground Tilemap GameObject here
+    [SerializeField] private Tilemap mainTilemap; // Main visual grid component for the game
+    public float GetVisualTilemapGridSize() => mainTilemap.transform.parent.GetComponent<Grid>().cellSize.x; // Cell size SHOULD be square
     public bool useSave; 
     [SerializeField] Transform playerSpawn;
 
      [Button("NewWorld")]
     private void DEBUGNEWGEN() {
-        ChunkManager.DEBUGNewGen();
+        _chunkManager.DEBUGNewGen();
         WorldGen.InitializeNoise();
     }
     public override void OnStartServer() {
@@ -39,7 +38,7 @@ public class WorldManager : NetworkBehaviour {
         //InstanceFinder.ServerManager.Spawn(ChunkManager.gameObject, Owner);
         //ChunkManager.Spawn(ChunkManager.gameObject, Owner);
         if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
-        playerSpawn.transform.position = new Vector3(0,-WorldGen.GetDepth()*0.1f); // Must be something with tile size or something
+        playerSpawn.transform.position = new Vector3(0,-WorldGen.GetDepth()* GetVisualTilemapGridSize()); // Depths is in blocks, so times it with grid size to get world space pos
         //StartCoroutine(ServerChunkManagementRoutine()); // Not using atm
     }
     public override void OnStartClient() {
@@ -96,6 +95,9 @@ public class WorldManager : NetworkBehaviour {
     internal void SetTiles(BoundsInt chunkBounds, TileBase[] tilesToSet) {
         mainTilemap.SetTilesBlock(chunkBounds, tilesToSet);
     }
+    internal void SetTile(Vector3Int cellPos, TileBase tileToSet) {
+        mainTilemap.SetTile(cellPos, tileToSet);
+    }
 
     // =============================================
     // === World Interaction Helper Methods ===
@@ -108,55 +110,16 @@ public class WorldManager : NetworkBehaviour {
         // To check other layers, call GetTile on their respective Tilemaps
     }
 
-    /*
+    
     // Sets a tile at a given world position (modifies the ground layer)
     // IMPORTANT: Also updates the underlying ChunkData!
 
     public void SetTileAtWorldPos(Vector3 worldPos, TileBase tileToSet) {
         Vector3Int cellPos = WorldToCell(worldPos);
-        Vector2Int chunkCoord = ChunkManager.CellToChunkCoord(cellPos);
-
-        // Get the chunk data (might need to generate if modifying an area not loaded yet)
-        if (!worldChunks.TryGetValue(chunkCoord, out ChunkData chunk)) {
-            // If player tries modifying a chunk that doesn't even exist in data yet
-            // (e.g., far away, or just outside loaded range before next update)
-            // Option 1: Disallow modification (simplest)
-            Debug.LogWarning($"Attempted to modify tile in unloaded/non-existent chunk {chunkCoord}. Modification ignored.");
-            return;
-
-            // Option 2: Generate the chunk on the spot (can cause hiccups)
-            // GenerateAndActivateChunk(chunkCoord); // Generate it first
-            // if (!worldChunks.TryGetValue(chunkCoord, out chunk)) { // Try getting it again
-            //     Debug.LogError($"Failed to generate and retrieve chunk {chunkCoord} for modification.");
-            //     return; // Exit if failed
-            // }
-        }
-        // Calculate local coordinates
-        int localX = cellPos.x - chunkCoord.x * chunkSize;
-        int localY = cellPos.y - chunkCoord.y * chunkSize;
-
-        // Boundary check within the chunk
-        if (localX >= 0 && localX < chunkSize && localY >= 0 && localY < chunkSize) {
-            // --- Only proceed if the tile is actually changing ---
-            if (chunk.tiles[localX, localY] != tileToSet) {
-                // --- Update the Data First! ---
-                chunk.tiles[localX, localY] = tileToSet;
-                chunk.isModified = true; // Mark chunk as modified!
-
-                // --- Then update the Tilemap visually ---
-                // Only update visually if the chunk is currently active/rendered
-                if (activeChunks.Contains(chunkCoord)) {
-                    mainTilemap.SetTile(cellPos, tileToSet);
-                    // Optional: Force collider update if needed immediately
-                    // TilemapCollider2D collider = groundTilemap.GetComponent<TilemapCollider2D>();
-                    // if (collider) collider.ProcessTilemapChanges();
-                }
-            }
-        } else {
-            Debug.LogWarning($"Calculated local tile coordinates ({localX},{localY}) outside chunk bounds for cell {cellPos}. Chunk coord: {chunkCoord}. Tile not set.");
-        }
+        // Let chunk manager handle it
+        _chunkManager.ServerRequestModifyTile(cellPos, tileAssetToIdMap[tileToSet]);
     }   
-    */
+    
     // Gets the world coordinate of the center of a specific cell
     public Vector3 GetCellCenterWorld(Vector3Int cellPosition) {
         return mainTilemap.GetCellCenterWorld(cellPosition); // Get center for placing objects
@@ -169,7 +132,11 @@ public class WorldManager : NetworkBehaviour {
     }
 
     internal void ClearAllData() {
-        ChunkManager.ClearWorldChunks();
+        _chunkManager.ClearWorldChunks();
         mainTilemap.ClearAllTiles(); // Clear the visual tilemap
+    }
+
+    internal void SetChunkManager(ChunkManager chunkManager) {
+        _chunkManager = chunkManager;
     }
 }

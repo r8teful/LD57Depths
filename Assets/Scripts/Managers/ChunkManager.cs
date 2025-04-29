@@ -62,7 +62,12 @@ public class ChunkManager : NetworkBehaviour {
     public override void OnStartClient() {
         base.OnStartClient();
         _worldManager = FindFirstObjectByType<WorldManager>();
-        Debug.Log("Start client CHUNKMAN");
+        if(_worldManager != null) {
+            _worldManager.SetChunkManager(this);
+        } else {
+            Debug.LogError("ChunkManager needs a reference to world manager!");
+        }
+            Debug.Log("Start client CHUNKMAN");
         StartCoroutine(ClientChunkLoadingRoutine());
     }
     IEnumerator ServerChunkManagementRoutine() {
@@ -237,7 +242,7 @@ public class ChunkManager : NetworkBehaviour {
                 chunk.isModified = true; // Mark chunk as modified for saving
 
                 // --- Update Server's OWN visuals (optional but good for host) ---
-                // groundTilemap.SetTile(cellPos, tileToSet);
+                _worldManager.SetTile(cellPos, tileToSet);
 
                 // --- BROADCAST change to ALL clients ---
                 _worldManager.ObserversUpdateTile(cellPos, newTileId); // TODO check if this works it might break because we call it in the parent
@@ -311,5 +316,9 @@ public class ChunkManager : NetworkBehaviour {
     internal void ClearWorldChunks() {
         worldChunks.Clear(); // Clear existing runtime chunk data
         activeChunks.Clear(); // Clear active chunks before loading
+    }
+
+    internal bool CanWriteData(Vector2Int chunkCoord) {
+        return worldChunks.ContainsKey(chunkCoord);
     }
 }
