@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f85ffd07f0305da42b0b335ed35e8abe, type: 3}
+  m_Name: SpawnEntityDataPlant0
+  m_EditorClassIdentifier: 
+  entityName: Plant0
+  entityPrefab: {fileID: 272932588081391663, guid: a31bd13c909f824498e178d021189f5d, type: 3}
+  requiredBiomes: 01000000
+  minBiomeRate: 0.75
+  minY: -10000
+  maxY: -10
+  specificSpawnTiles: []
+  placementFrequency: 0.67
+  placementThreshold: 0.395
+  requiredBiomeNames: []
+  requireSolidGroundBelow: 1
+  requireWaterAdjacent: 0
+  requireCeilingSpace: 1
+  minCeilingHeight: 1
+  positionOffset: {x: 0, y: 0, z: 0}
+  randomYRotation: 1
+  scaleVariation: {x: 1, y: 1}

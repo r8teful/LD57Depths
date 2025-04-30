@@ -44,15 +44,16 @@ public static class WorldGen {
     private static float seedOffsetX;
     private static float seedOffsetY;
     private static Dictionary<string, BiomeLayer> biomeLookup = new Dictionary<string, BiomeLayer>();
-    private static Dictionary<int, TileBase> idToTileAssetMap;
     private static WorldGenSettingSO _settings;
     private static float maxDepth;
+    private static WorldManager worldmanager;
+    private static List<WorldSpawnEntitySO> worldSpawnEntities;
     public static float GetDepth() => maxDepth;
-    public static void Init(WorldGenSettingSO worldGenSettings, Dictionary<int, TileBase> assetMap) {
+    public static void Init(WorldGenSettingSO worldGenSettings, WorldManager wm) {
         _settings = worldGenSettings;
-        idToTileAssetMap = assetMap;
+        worldmanager = wm;
         InitializeNoise();
-
+        worldSpawnEntities = _settings.worldSpawnEntities;
         var maxD = -_settings.trenchBaseWidth / _settings.trenchWidenFactor;
         maxDepth = Mathf.Abs(maxD) * 0.90f; // 90% of the max theoretical depth
         biomeLookup.Clear();
@@ -119,28 +120,16 @@ public static class WorldGen {
 
         // --- Pass 3: Ore Generation ---
         // Iterate again, placing ores only on non-cave, non-water tiles
-        for (int y = 0; y < chunkSize; y++) {
-            for (int x = 0; x < chunkSize; x++) {
-                TileBase currentTile = chunkData.tiles[x, y];
-                if (IsRock(currentTile)) // Only place ores in solid rock
-                {
-                    int worldX = chunkOriginCell.x + x;
-                    int worldY = chunkOriginCell.y + y;
-                    string biomeName = GetBiomeNameAt(worldX, worldY); // Need this helper
-
-                    TileBase oreTile = DetermineOre(worldX, worldY, biomeName);
-                    if (oreTile != null) {
-                        chunkData.tiles[x, y] = oreTile;
-                    }
-                }
-            }
-        }
-
+        SpawnOresInChunk(chunkData, chunkOriginCell, chunkSize); // Encapsulate ore logic similar to structures/entities
 
         // --- Pass 4: Structure Placement ---
         // This needs careful design. It checks potential anchor points within the chunk.
         //PlaceStructuresInChunk(chunkData, chunkOriginCell,chunkSize);
-        
+
+        // --- Pass 5: Decorative Entity Spawning ---
+        // Determines WHERE entities should be placed, adds them to chunkData.entitiesToSpawn
+        SpawnEntitiesInChunk(chunkData, chunkOriginCell, chunkSize);
+
         return chunkData;
     }
     // 0 Air, 1 Stone, 
@@ -155,9 +144,9 @@ public static class WorldGen {
         noisyHalfWidth = Mathf.Max(0, noisyHalfWidth);
         // Calculate the theoretical worldY where halfTrenchWidth would be 0
         if (Mathf.Abs(worldX) < noisyHalfWidth && Mathf.Abs(worldY) < maxDepth) {
-            return idToTileAssetMap[0]; // Main trench
+            return worldmanager.GetTileFromID(0); // Main trench
         } else if (worldY > 0) {
-            return idToTileAssetMap[0]; // Surface
+            return worldmanager.GetTileFromID(0); // Surface
         }
 
         // 2. Biome Influence Calculation (Handles multiple overlapping potentials and blending)
@@ -196,9 +185,8 @@ public static class WorldGen {
         }
 
         // Fallback if outside all biome influences
-        return idToTileAssetMap[1];
+        return worldmanager.GetTileFromID(1);
     }
-
 
     // --- Helper: Calculate Influence of a Single Biome ---
     private static float CalculateBiomeInfluence(int worldX, int worldY, BiomeLayer biome) {
@@ -263,7 +251,7 @@ public static class WorldGen {
                     // Keep it as the rock tile it was
                 } else if (!currentWalls[x, y] && IsRock(chunkData.tiles[x, y])) {
                     // Turn rock into cave water if CA removed the wall
-                    chunkData.tiles[x, y] = idToTileAssetMap[2]; // Water cave tile
+                    chunkData.tiles[x, y] = worldmanager.GetTileFromID(2); // Water cave tile
                 }
                 // Else: Don't overwrite main water or already existing cave water
             }
@@ -320,8 +308,25 @@ public static class WorldGen {
         return null;
     }
 
+    // --- Pass 3 Helper 
+    private static void SpawnOresInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
+        for (int y = 0; y < chunkSize; y++) {
+            for (int x = 0; x < chunkSize; x++) {
+                TileBase currentTile = chunkData.tiles[x, y];
+                if (IsRock(currentTile)) // Check if it's a valid tile for ore placement
+                {
+                    int worldX = chunkOriginCell.x + x;
+                    int worldY = chunkOriginCell.y + y;
+                    string biomeName = GetBiomeNameAt(worldX, worldY);
 
-    // --- Pass 3 Helper: Determine Ore ---
+                    TileBase oreTile = DetermineOre(worldX, worldY, biomeName);
+                    if (oreTile != null) {
+                        chunkData.tiles[x, y] = oreTile;
+                    }
+                }
+            }
+        }
+    }
     private static TileBase DetermineOre(int worldX, int worldY, string biomeName) {
         TileBase foundOre = null;
         // Check Ores (consider priority/order)
@@ -342,6 +347,7 @@ public static class WorldGen {
         }
         return foundOre;
     }
+
     /*
     // --- Pass 4: Structure Placement ---
     private static void PlaceStructuresInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
@@ -416,9 +422,148 @@ public static class WorldGen {
             }
         }
     }*/
+
+    // --- Pass 5 Implementation ---
+    private static void SpawnEntitiesInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
+        if (worldSpawnEntities == null || worldSpawnEntities.Count == 0) return;
+        // Use a temporary set for basic overlap check within this chunk pass
+        HashSet<Vector2Int> occupiedAnchors = new HashSet<Vector2Int>();
+
+        // Iterate through potential ANCHOR points in the chunk
+        // An anchor is typically a ground tile surface
+        for (int y = 0; y < chunkSize; y++) // Iterate y from 0 upwards
+        {
+            for (int x = 0; x < chunkSize; x++) {
+                // --- Identify potential anchor tile ---
+                TileBase anchorTile = chunkData.tiles[x, y];
+                if (anchorTile == null || anchorTile == worldmanager.GetTileFromID(0)) {
+                    continue; // Not a valid ground anchor tile type
+                }
+                // Optimization: If this anchor is already used by another entity in this pass, skip
+                if (occupiedAnchors.Contains(new Vector2Int(x, y))) {
+                    continue;
+                }
+
+                int worldX = chunkOriginCell.x + x;
+                int worldY = chunkOriginCell.y + y;
+
+                // --- Check conditions applicable to the anchor point itself ---
+                bool groundBelow = IsRock(anchorTile); // Use your IsRock or similar definition
+
+                // Quick check using first entity's height needs, real check below
+                for (int h = 1; h <= Mathf.Max(1, worldSpawnEntities.Count > 0 ? worldSpawnEntities[0].minCeilingHeight : 1); ++h) {
+                    if (y + h < chunkSize) {
+                        TileBase tileAbove = chunkData.tiles[x, y + h];
+                        if (IsRock(tileAbove)) { // Is there solid ground above?
+                            break;
+                        }
+                    } else {
+                        // Reached top of chunk, assume not clear unless world boundary says otherwise
+                        break;
+                    }
+                }
+
+
+                bool adjacentToWater = false;
+                if (worldSpawnEntities.Exists(def => def.requireWaterAdjacent)) // Optimization: only check if any entity needs it
+                {
+                    adjacentToWater = IsAdjacentWater(chunkData, x, y);
+                }
+
+
+                // --- Iterate through Entity Definitions ---
+                foreach (var entityDef in worldSpawnEntities) {
+                    if (entityDef.entityPrefab == null) continue; // Skip definitions without prefabs
+
+                    // 1. Basic Filters (Position, Biome)
+                    if (worldY < entityDef.minY || worldY > entityDef.maxY) continue;
+                    int distFromTrench = Mathf.Abs(worldX);
+
+                    if (entityDef.requiredBiomeNames != null && entityDef.requiredBiomeNames.Count > 0) {
+                        string biomeName = GetBiomeNameAt(worldX, worldY);
+                        if (biomeName == null || !entityDef.requiredBiomeNames.Contains(biomeName)) continue;
+                    }
+
+                    // 2. Condition Checks
+                    if (entityDef.requireSolidGroundBelow && !groundBelow) continue;
+                    if (entityDef.requireWaterAdjacent && !adjacentToWater) continue; // Reuse the check from above
+
+                    // Check specific ceiling height required by *this* entity definition
+                    if (entityDef.requireCeilingSpace) {
+                        bool specificCeilingClear = true;
+                        for (int h = 1; h <= entityDef.minCeilingHeight; ++h) {
+                            if (y + h < chunkSize) {
+                                TileBase tileAbove = chunkData.tiles[x, y + h];
+                                if (IsRock(tileAbove)) {
+                                    specificCeilingClear = false;
+                                    break;
+                                }
+                            } // else: Assume clear above chunk
+                        }
+                        if (!specificCeilingClear) continue;
+                    }
+
+
+                    // 3. Stochastic Check (Noise/Hashing)
+                    float placementValue = GetNoise(worldX, worldY, entityDef.placementFrequency);
+                    // Could also use GetHash(worldX, worldY) for non-frequency based sparsity
+                    if (placementValue < entityDef.placementThreshold) continue;
+
+
+                    // --- ALL CHECKS PASSED --- Spawn this entity ---
+
+                    // Calculate spawn position (anchor is bottom-left corner of cell)
+                    // Assuming Tilemap cell size is 1x1 world unit. Adjust if necessary.
+                    Vector3 spawnPos = new Vector3(worldX + 0.5f, worldY + 0.5f, 0f) + entityDef.positionOffset;
+
+                    // Calculate rotation
+                    Quaternion spawnRot = entityDef.randomYRotation ?
+                                           Quaternion.Euler(0, noiseRandomGen.NextFloat(0f, 360f), 0) : // Use the seeded random gen
+                                           Quaternion.identity;
+
+                    // Add to the chunk's list
+                    chunkData.entitiesToSpawn.Add(new EntitySpawnInfo(entityDef.entityPrefab, spawnPos, spawnRot,Vector3.one)); // todo add scale
+
+                    // Mark anchor as occupied for this pass to prevent overlap *at the anchor*
+                    occupiedAnchors.Add(new Vector2Int(x, y));
+
+                    // Optional: Implement more robust clearance checking here if needed, potentially
+                    // marking a larger area than just the anchor in occupiedAnchors or a separate grid.
+
+                    // If only one entity type should spawn per valid anchor point, uncomment break:
+                    // break;
+                }
+            }
+        }
+    }
+
     private static bool IsRock(TileBase tile) {
-        return tile != null && tile != idToTileAssetMap[0];
+        return tile != null && tile != worldmanager.GetTileFromID(0);
         // Add checks for air tiles if you have them
+    }
+    // Helper for adjacent water check
+    private static bool IsAdjacentWater(ChunkData chunkData, int x, int y) {
+        int width = chunkData.tiles.GetLength(0);
+        int height = chunkData.tiles.GetLength(0);
+
+
+        int[,] neighbors = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } }; // N, S, E, W
+
+        for (int i = 0; i < neighbors.GetLength(0); ++i) {
+            int nx = x + neighbors[i, 0];
+            int ny = y + neighbors[i, 1];
+
+            // Check bounds (simple version, doesn't check neighbour chunks)
+            if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                TileBase neighborTile = chunkData.tiles[nx, ny];
+                if (neighborTile == worldmanager.GetTileFromID(0)){//|| neighborTile == worldGenerator.caveWaterTile) {
+                    return true;
+                }
+            }
+            // Else: Tile is outside this chunk's data. For perfect checks,
+            // you'd need access to neighbor chunk data here. Often ignored for performance.
+        }
+        return false;
     }
     private static float GetNoise(float x, float y, float frequency) {
         // Apply seed offsets and frequency

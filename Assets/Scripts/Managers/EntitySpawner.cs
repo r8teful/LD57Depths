@@ -10,7 +10,7 @@ public class EntitySpawner : NetworkBehaviour // Needs to be NetworkBehaviour to
     [SerializeField] private ChunkManager chunkManager; 
     [SerializeField] private WorldManager worldManager; 
     [SerializeField] private BiomeManager biomeManager;   
-    [SerializeField] private List<EntitySpawnSO> entitySpawnList; 
+    [SerializeField] private List<RuntimeSpawnEntitySO> entitySpawnList; 
 
     [Header("Spawner Settings")]
     [SerializeField] private float spawnCheckInterval = 2.0f; // How often to check for spawns
@@ -26,6 +26,7 @@ public class EntitySpawner : NetworkBehaviour // Needs to be NetworkBehaviour to
     public override void OnStartServer() {
         base.OnStartServer();
         if (chunkManager == null) chunkManager = FindFirstObjectByType<ChunkManager>();
+        if (biomeManager == null) biomeManager = worldManager.BiomeManager;
         if (chunkManager == null || biomeManager == null) {
             Debug.LogError("EntitySpawner cannot find WorldGenerator or BiomeManager! Disabling.");
             enabled = false; // Disable the spawner component
@@ -96,7 +97,7 @@ public class EntitySpawner : NetworkBehaviour // Needs to be NetworkBehaviour to
 
 
             // Y Level Check
-            if (worldY < data.minYLevel || worldY > data.maxYLevel) continue;
+            if (worldY < data.minY || worldY > data.maxY) continue;
 
             // Biome Check
             bool biomeMatch = false;
@@ -117,7 +118,7 @@ public class EntitySpawner : NetworkBehaviour // Needs to be NetworkBehaviour to
     }
 
 
-    void SpawnEntity(EntitySpawnSO data, Vector3 position) {
+    void SpawnEntity(RuntimeSpawnEntitySO data, Vector3 position) {
         if (!IsServerInitialized) return;
         if (data.entityPrefab == null) return;
 
@@ -154,7 +155,69 @@ public class EntitySpawner : NetworkBehaviour // Needs to be NetworkBehaviour to
             }
         }
     }
+    // NEW public method for spawning specific, pre-defined entities
+    // Called by WorldGenerator after a chunk's data (including entities) is ready on the server.
+    public bool ServerSpawnPredefinedEntity(GameObject prefab, Vector3 position, Quaternion rotation, Vector3 scale) {
+        // --- SERVER ONLY ---
+        if (!IsServerInitialized) {
+            Debug.LogWarning("Client attempted to call ServerSpawnPredefinedEntity!");
+            return false;
+        }
 
+        if (prefab == null) {
+            Debug.LogError("ServerSpawnPredefinedEntity called with null prefab!");
+            return false;
+        }
+
+        // --- Respect Global Spawn Cap ---
+        if (spawnedEntities.Count >= maxTotalEntities) {
+            // Debug.Log($"Global entity cap ({maxTotalEntities}) reached. Cannot spawn predefined {prefab.name}.");
+            return false; // Optionally log less verbosely
+        }
+
+        // --- Respect Concurrent Spawn Cap for THIS Type ---
+        currentEntityCounts.TryGetValue(prefab, out int currentCount);
+        // Find the EntitySpawnData associated with this prefab to get its cap
+        // This assumes the prefab might ALSO be in the dynamic spawn list.
+        // If predefined prefabs are totally separate, you might need another way to define their caps.
+        int maxConcurrentForThis = maxTotalEntities; // Default to global if no specific data found
+
+        if (currentCount >= maxConcurrentForThis) {
+            Debug.Log($"Concurrent cap ({maxConcurrentForThis}) for {prefab.name} reached. Cannot spawn predefined entity.");
+            return false;
+        }
+
+        // --- Spawn the Entity ---
+        GameObject instance = Instantiate(prefab, position, rotation);
+        instance.transform.localScale = scale; // Apply scale *after* instantiation
+        NetworkObject nob = instance.GetComponent<NetworkObject>();
+
+        if (nob != null) {
+            // Spawn over network (server owned by default)
+            InstanceFinder.ServerManager.Spawn(nob);
+            spawnedEntities.Add(nob); // Add to tracking list
+
+            // Increment count for this prefab
+            currentEntityCounts[prefab] = currentCount + 1;
+
+            // Add listener to despawn event to update count
+            //nob.OnStopServer += HandleEntityDespawned; // Ensure this handler exists and works
+
+            // Assign EntityIdentity if needed by HandleEntityDespawned
+            EntityIdentity identity = instance.GetComponent<EntityIdentity>();
+            if (identity != null) {
+                //identity.spawnData = spawnData; // Assign SO if found
+            }
+
+
+            // Debug.Log($"Successfully spawned predefined entity: {prefab.name} at {position}");
+            return true;
+        } else {
+            Debug.LogError($"Predefined entity prefab {prefab.name} is missing NetworkObject component! Destroying instance.");
+            Destroy(instance); // Clean up
+            return false;
+        }
+    }
 
     // Called when a NetworkObject tracked by this spawner is despawned/destroyed on the server
     private void HandleEntityDespawned(NetworkObject nob) {
@@ -223,10 +286,11 @@ public class EntitySpawner : NetworkBehaviour // Needs to be NetworkBehaviour to
             }
         }
     }
+
 }
 
 // --- Helper Component for Entities ---
 // Attach this to your entity PREFABS
 public class EntityIdentity : MonoBehaviour {
-    public EntitySpawnSO spawnData; // Assign the corresponding Spawn Data SO in the prefab inspector
+    public EntityBaseSO spawnData; // Assign the corresponding Spawn Data SO in the prefab inspector
 }

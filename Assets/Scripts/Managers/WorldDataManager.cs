@@ -9,6 +9,7 @@ public class ChunkSaveData {
     public List<int> tileDurabilities; // Save durability state
     public ChunkSaveData() { tileIds = new List<int>(); }
     public ChunkSaveData(int capacity) { tileIds = new List<int>(capacity); }
+    // Todo add entities
 }
 
 // Top-level container for the entire world save data

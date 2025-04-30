@@ -10,7 +10,7 @@ public class ChunkData {
     public int[,] tileDurability;
     public bool isModified = false; // Flag to track if chunk has changed since load/generation
     public bool hasBeenGenerated = false; // Flag to prevent regenerating loaded chunks
-
+    public List<EntitySpawnInfo> entitiesToSpawn; // We don't hold detailed info about entities because why would we?
     public ChunkData(int chunkSizeX, int chunkSizeY) {
         tiles = new TileBase[chunkSizeX, chunkSizeY];
         tileDurability = new int[chunkSizeX, chunkSizeY];
@@ -19,6 +19,7 @@ public class ChunkData {
                 tileDurability[x, y] = -1; // Default state
             }
         }
+        entitiesToSpawn = new List<EntitySpawnInfo>(); // Initialize the list
     }
 }
 
@@ -45,6 +46,7 @@ public class ChunkManager : NetworkBehaviour {
     private Dictionary<Vector2Int, int[,]> clientDurabilityCache = new Dictionary<Vector2Int, int[,]>();
 
     private WorldManager _worldManager;
+    private EntitySpawner _entitySpawner;
 
     public void DEBUGNewGen() {
         worldChunks.Clear();
@@ -71,7 +73,7 @@ public class ChunkManager : NetworkBehaviour {
         } else {
             Debug.LogError("ChunkManager needs a reference to world manager!");
         }
-            Debug.Log("Start client CHUNKMAN");
+        _entitySpawner = FindFirstObjectByType<EntitySpawner>();
         StartCoroutine(ClientChunkLoadingRoutine());
     }
     IEnumerator ServerChunkManagementRoutine() {
@@ -233,6 +235,9 @@ public class ChunkManager : NetworkBehaviour {
 
         ChunkData chunkData = WorldGen.GenerateChunk(chunkSize, chunkOriginCell);
         _worldManager.BiomeManager.CalculateBiomeForChunk(chunkCoord, chunkData);
+        foreach (var info in chunkData.entitiesToSpawn) {
+            _entitySpawner.ServerSpawnPredefinedEntity(info.prefab, info.position, info.rotation, info.scale);
+        }
         // --- Finalization ---
         chunkData.hasBeenGenerated = true;
         worldChunks.Add(chunkCoord, chunkData);

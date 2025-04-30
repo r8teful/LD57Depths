@@ -24,6 +24,7 @@ public class WorldManager : NetworkBehaviour {
     [SerializeField] private List<TileBase> tileAssets; // Assign ALL your TileBase assets here in order
     [SerializeField] private Tilemap mainTilemap; // Main visual grid component for the game
     [SerializeField] private Tilemap overlayTilemap; // for damaged tiles 
+
     public float GetVisualTilemapGridSize() => mainTilemap.transform.parent.GetComponent<Grid>().cellSize.x; // Cell size SHOULD be square
     public bool useSave; 
     [SerializeField] Transform playerSpawn;
@@ -37,11 +38,11 @@ public class WorldManager : NetworkBehaviour {
         base.OnStartServer();
         // Server-only initialization
         InitializeTileMapping();
-        WorldGen.Init(WorldGenSettings, idToTileAssetMap);
+        WorldGen.Init(WorldGenSettings, this);
         //InstanceFinder.ServerManager.Spawn(ChunkManager.gameObject, Owner);
         //ChunkManager.Spawn(ChunkManager.gameObject, Owner);
         if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
-        BiomeManager = gameObject.AddComponent<BiomeManager>(); // No clue if we have to set the owner
+        BiomeManager = gameObject.GetComponent<BiomeManager>(); // No clue if we have to set the owner
         BiomeManager.SetWorldManager(this);
         var offset = GetVisualTilemapGridSize() * 6;
         playerSpawn.transform.position = new Vector3(0,-WorldGen.GetDepth()* GetVisualTilemapGridSize() + offset); // Depths is in blocks, so times it with grid size to get world space pos

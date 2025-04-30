@@ -17,4 +17,7 @@ public class WorldGenSettingSO : ScriptableObject {
     public int caveSurvivalThreshold = 4;// Stay wall if >= N neighbours are walls (Rule: S45678) 4 
     public List<BiomeLayer> biomeLayers;
     public List<OreType> oreTypes;
+
+    // Decorations
+    public List<WorldSpawnEntitySO> worldSpawnEntities;
 }
