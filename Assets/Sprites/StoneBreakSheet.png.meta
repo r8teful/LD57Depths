@@ -1,19 +1,13 @@
 fileFormatVersion: 2
-guid: 22adbec31e3718f4a8e7dcf00264fef5
+guid: c0218b8ce8ef787439c7efd61972cc13
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 437337410001461485
-    second: PlayerSwimSheet_0
+      213: -8428240406631307816
+    second: StoneBreakSheet_0
   - first:
-      213: -6621818594694948841
-    second: PlayerSwimSheet_1
-  - first:
-      213: -6994932810705932148
-    second: PlayerSwimSheet_2
-  - first:
-      213: -6818584169519790570
-    second: PlayerSwimSheet_3
+      213: 4504688706742447968
+    second: StoneBreakSheet_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -110,7 +104,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -122,57 +116,57 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PlayerSwimSheet_0
+      name: StoneBreakSheet_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 8
         y: 0
-        width: 18
-        height: 18
+        width: 8
+        height: 8
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 19ae2cbaf7c5950449d9806d0a6b8725
-      internalID: 774655862
+      spriteID: 8d5a5214100e80b80800000000000000
+      internalID: -8428240406631307816
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PlayerSwimSheet_1
+      name: StoneBreakSheet_1
       rect:
         serializedVersion: 2
-        x: 18
+        x: 16
         y: 0
-        width: 18
-        height: 18
+        width: 8
+        height: 8
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 4adfb1c7b0d5e0842bed8302c0d2ca9d
-      internalID: -1641675039
+      spriteID: 06fe81d038ed38e30800000000000000
+      internalID: 4504688706742447968
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PlayerSwimSheet_2
+      name: StoneBreakSheet_2
       rect:
         serializedVersion: 2
-        x: 36
+        x: 24
         y: 0
-        width: 18
-        height: 18
+        width: 8
+        height: 8
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -181,30 +175,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0c402507fcb521f41b7cbf54b1e489ae
-      internalID: 733216593
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: PlayerSwimSheet_3
-      rect:
-        serializedVersion: 2
-        x: 54
-        y: 0
-        width: 18
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 43eed19547474384c8eff59ef7810918
-      internalID: -2008953581
+      spriteID: 09fd8a2e7e3fe724bb7256bee698e7b6
+      internalID: 1520122334
       vertices: []
       indices: 
       edges: []
@@ -213,7 +185,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 711ec661df3f5cd40b21ca9a6b47819a
+    spriteID: 2bd53d7eee8b1e14a97921d8661eece0
     internalID: 0
     vertices: []
     indices: 
@@ -223,10 +195,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      PlayerSwimSheet_0: 774655862
-      PlayerSwimSheet_1: -1641675039
-      PlayerSwimSheet_2: 733216593
-      PlayerSwimSheet_3: -2008953581
+      StoneBreakSheet_0: -8428240406631307816
+      StoneBreakSheet_1: 4504688706742447968
+      StoneBreakSheet_2: 1520122334
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

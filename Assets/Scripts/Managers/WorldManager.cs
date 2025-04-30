@@ -10,7 +10,8 @@ using FishNet;
 public class WorldManager : NetworkBehaviour {
     // --- Managers ---
     public WorldDataManager WorldDataManager;
-    private ChunkManager _chunkManager;
+    public ChunkManager ChunkManager;
+    public BiomeManager BiomeManager;
     [InlineEditor]
     public WorldGenSettingSO WorldGenSettings;
     // --- Tile ID Mapping ---
@@ -18,6 +19,7 @@ public class WorldManager : NetworkBehaviour {
     private Dictionary<int, TileBase> idToTileAssetMap = new Dictionary<int, TileBase>();
     public Dictionary<TileBase, int> GetTileToID() => tileAssetToIdMap;
     public Dictionary<int, TileBase> GetIDToTile() => idToTileAssetMap;
+    public int GetChunkSize() => ChunkManager.GetChunkSize();
     
     [SerializeField] private List<TileBase> tileAssets; // Assign ALL your TileBase assets here in order
     [SerializeField] private Tilemap mainTilemap; // Main visual grid component for the game
@@ -28,7 +30,7 @@ public class WorldManager : NetworkBehaviour {
 
      [Button("NewWorld")]
     private void DEBUGNEWGEN() {
-        _chunkManager.DEBUGNewGen();
+        ChunkManager.DEBUGNewGen();
         WorldGen.InitializeNoise();
     }
     public override void OnStartServer() {
@@ -39,7 +41,10 @@ public class WorldManager : NetworkBehaviour {
         //InstanceFinder.ServerManager.Spawn(ChunkManager.gameObject, Owner);
         //ChunkManager.Spawn(ChunkManager.gameObject, Owner);
         if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
-        playerSpawn.transform.position = new Vector3(0,-WorldGen.GetDepth()* GetVisualTilemapGridSize()); // Depths is in blocks, so times it with grid size to get world space pos
+        BiomeManager = gameObject.AddComponent<BiomeManager>(); // No clue if we have to set the owner
+        BiomeManager.SetWorldManager(this);
+        var offset = GetVisualTilemapGridSize() * 6;
+        playerSpawn.transform.position = new Vector3(0,-WorldGen.GetDepth()* GetVisualTilemapGridSize() + offset); // Depths is in blocks, so times it with grid size to get world space pos
         //StartCoroutine(ServerChunkManagementRoutine()); // Not using atm
     }
     public override void OnStartClient() {
@@ -118,7 +123,7 @@ public class WorldManager : NetworkBehaviour {
     public void SetTileAtWorldPos(Vector3 worldPos, TileBase tileToSet) {
         Vector3Int cellPos = WorldToCell(worldPos);
         // Let chunk manager handle it
-        _chunkManager.ServerRequestModifyTile(cellPos, tileAssetToIdMap[tileToSet]);
+        ChunkManager.ServerRequestModifyTile(cellPos, tileAssetToIdMap[tileToSet]);
     }   
     
     // Gets the world coordinate of the center of a specific cell
@@ -138,12 +143,12 @@ public class WorldManager : NetworkBehaviour {
     }
 
     internal void ClearAllData() {
-        _chunkManager.ClearWorldChunks();
+        ChunkManager.ClearWorldChunks();
         mainTilemap.ClearAllTiles(); // Clear the visual tilemap
     }
 
     internal void SetChunkManager(ChunkManager chunkManager) {
-        _chunkManager = chunkManager;
+        ChunkManager = chunkManager;
     }
 
     internal void SetOverlayTile(Vector3Int cellPos, TileBase crackTile) {

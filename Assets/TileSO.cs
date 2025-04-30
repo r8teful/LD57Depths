@@ -17,7 +17,7 @@ public class DropTable : ScriptableObject {
 }
 
 [CreateAssetMenu(fileName = "TileSO", menuName = "ScriptableObjects/TileSO")]
-public class TileSO : Tile 
+public class TileSO : RuleTile 
 {
     [Header("Game Properties")]
     public int maxDurability = 10; // How many "hits" it takes to break. 0 or less means indestructible.
@@ -25,6 +25,7 @@ public class TileSO : Tile
     public GameObject breakEffectPrefab; // Optional: particle effect on break
     public GameObject hitEffectPrefab; // Optional: particle effect on hit
     public List<TileBase> breakVersions;
+    public BiomeType associatedBiome = BiomeType.None;
     // We might add other properties here later:
     // public ToolType requiredTool;
     // public int minToolLevel;
@@ -35,4 +36,11 @@ public class TileSO : Tile
             return current / maxDurability;
         return -1; // error
     }
+}
+public enum BiomeType {
+    None, 
+    Trench,
+    Cave,
+    Coral,
+    Ocean
 }

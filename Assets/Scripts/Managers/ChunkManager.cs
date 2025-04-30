@@ -232,7 +232,7 @@ public class ChunkManager : NetworkBehaviour {
         Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkCoord);
 
         ChunkData chunkData = WorldGen.GenerateChunk(chunkSize, chunkOriginCell);
-
+        _worldManager.BiomeManager.CalculateBiomeForChunk(chunkCoord, chunkData);
         // --- Finalization ---
         chunkData.hasBeenGenerated = true;
         worldChunks.Add(chunkCoord, chunkData);
@@ -350,6 +350,7 @@ public class ChunkManager : NetworkBehaviour {
                 // Destroy Tile: Set to Air (will broadcast visual change via existing RPC)
                 // Setting durability back to -1 for the (now air) tile in the data is good practice
                 chunk.tileDurability[localX, localY] = -1;
+                // TODO air tile type should be of the dominant biome of the chunk
                 ServerRequestModifyTile(cellPos, 0); // Tile ID 0 = Air/Null
 
                 // Spawn Drops (Server-side)

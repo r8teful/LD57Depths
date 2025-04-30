@@ -99,7 +99,7 @@ public static class WorldGen {
                 // chunkData.biomeNames[x,y] = biomeName;
 
                 // Mark potential caves using noise (only if the base tile is rock)
-                if (_settings.generateCaves && IsRock(tile)) // Need IsRock helper function
+                if (_settings.generateCaves && IsRock(tile)) 
                 {
                     float caveNoise = GetNoise(worldX, worldY, _settings.initialCaveNoiseFrequency);
                     if (caveNoise < _settings.initialCaveNoiseThreshold) // Use '<' for noise floor as caves
@@ -263,7 +263,7 @@ public static class WorldGen {
                     // Keep it as the rock tile it was
                 } else if (!currentWalls[x, y] && IsRock(chunkData.tiles[x, y])) {
                     // Turn rock into cave water if CA removed the wall
-                    chunkData.tiles[x, y] = idToTileAssetMap[0]; // Empty water tile
+                    chunkData.tiles[x, y] = idToTileAssetMap[2]; // Water cave tile
                 }
                 // Else: Don't overwrite main water or already existing cave water
             }
