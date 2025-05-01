@@ -65,11 +65,6 @@ public class BiomeManager : MonoBehaviour
 
     // Method called by WorldGenerator when a chunk is generated/loaded/modified on server
     public void CalculateBiomeForChunk(Vector2Int chunkCoord, ChunkData chunkData) {
-        // --- SERVER ONLY ---
-        // Ensure this calculation only happens where the authoritative data lives.
-        // If BiomeManager is NOT a NetworkBehaviour, you must ensure it exists only server-side.
-        // If it IS a NetworkBehaviour, add: if (!IsServer) return;
-
         if (chunkData == null || chunkData.tiles == null) {
             Debug.LogWarning($"BiomeManager: Cannot calculate biome for {chunkCoord}, chunk data is null.");
             return;

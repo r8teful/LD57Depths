@@ -13,19 +13,20 @@ MonoBehaviour:
   m_Name: SpawnEntityDataPlant0
   m_EditorClassIdentifier: 
   entityName: Plant0
-  entityPrefab: {fileID: 272932588081391663, guid: a31bd13c909f824498e178d021189f5d, type: 3}
+  entityID: 1
+  entityPrefab: {fileID: 401910264597585571, guid: a31bd13c909f824498e178d021189f5d, type: 3}
   requiredBiomes: 01000000
-  minBiomeRate: 0.75
+  minBiomeRate: 0.76
   minY: -10000
   maxY: -10
   specificSpawnTiles: []
-  placementFrequency: 0.67
-  placementThreshold: 0.395
+  placementFrequency: 0.24
+  placementThreshold: 0.825
   requiredBiomeNames: []
   requireSolidGroundBelow: 1
-  requireWaterAdjacent: 0
+  requireWaterAdjacent: 1
   requireCeilingSpace: 1
-  minCeilingHeight: 1
-  positionOffset: {x: 0, y: 0, z: 0}
-  randomYRotation: 1
+  minCeilingHeight: 3
+  positionOffset: {x: 0, y: 0.5, z: 0}
+  randomYRotation: 0
   scaleVariation: {x: 1, y: 1}

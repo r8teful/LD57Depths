@@ -10,7 +10,7 @@ public class ChunkData {
     public int[,] tileDurability;
     public bool isModified = false; // Flag to track if chunk has changed since load/generation
     public bool hasBeenGenerated = false; // Flag to prevent regenerating loaded chunks
-    public List<EntitySpawnInfo> entitiesToSpawn; // We don't hold detailed info about entities because why would we?
+    public List<PersistentEntityData> entitiesToSpawn; 
     public ChunkData(int chunkSizeX, int chunkSizeY) {
         tiles = new TileBase[chunkSizeX, chunkSizeY];
         tileDurability = new int[chunkSizeX, chunkSizeY];
@@ -19,7 +19,7 @@ public class ChunkData {
                 tileDurability[x, y] = -1; // Default state
             }
         }
-        entitiesToSpawn = new List<EntitySpawnInfo>(); // Initialize the list
+        entitiesToSpawn = new List<PersistentEntityData>(); // Initialize the list
     }
 }
 
@@ -46,7 +46,7 @@ public class ChunkManager : NetworkBehaviour {
     private Dictionary<Vector2Int, int[,]> clientDurabilityCache = new Dictionary<Vector2Int, int[,]>();
 
     private WorldManager _worldManager;
-    private EntitySpawner _entitySpawner;
+    private EntityManager _entitySpawner;
 
     public void DEBUGNewGen() {
         worldChunks.Clear();
@@ -73,7 +73,7 @@ public class ChunkManager : NetworkBehaviour {
         } else {
             Debug.LogError("ChunkManager needs a reference to world manager!");
         }
-        _entitySpawner = FindFirstObjectByType<EntitySpawner>();
+        _entitySpawner = FindFirstObjectByType<EntityManager>();
         StartCoroutine(ClientChunkLoadingRoutine());
     }
     IEnumerator ServerChunkManagementRoutine() {
@@ -166,6 +166,14 @@ public class ChunkManager : NetworkBehaviour {
                     durabilities.Add(chunkData.tileDurability[x, y]); 
                 }
             }
+            // Activate entitys for that chunk, note that this just spawns it for every client, which is 
+            // probably very bad
+            var entityIds =  _entitySpawner.GetEntityIDsByChunkCoord(chunkCoord);
+            if(entityIds != null) {
+                foreach (ulong id in entityIds) {
+                    _entitySpawner.IncrementActivationRef(id);
+                }    
+            }
 
             // 4. Send data back to the SPECIFIC client who requested it
             TargetReceiveChunkData(requester, chunkCoord, tileIds, durabilities);
@@ -233,11 +241,13 @@ public class ChunkManager : NetworkBehaviour {
         // --- Prep ---
         Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkCoord);
 
-        ChunkData chunkData = WorldGen.GenerateChunk(chunkSize, chunkOriginCell);
+        ChunkData chunkData = WorldGen.GenerateChunk(chunkSize, chunkOriginCell, out var enemyList);
         _worldManager.BiomeManager.CalculateBiomeForChunk(chunkCoord, chunkData);
-        foreach (var info in chunkData.entitiesToSpawn) {
-            _entitySpawner.ServerSpawnPredefinedEntity(info.prefab, info.position, info.rotation, info.scale);
+        // --- Add Generated Entities to Persistent Store AND Chunk Map ---
+        if (enemyList != null && enemyList.Count > 0) {
+            _entitySpawner.ServerSpawnGeneratedEntities(chunkCoord, enemyList);
         }
+        
         // --- Finalization ---
         chunkData.hasBeenGenerated = true;
         worldChunks.Add(chunkCoord, chunkData);
@@ -251,6 +261,15 @@ public class ChunkManager : NetworkBehaviour {
         TileBase[] clearTiles = new TileBase[chunkSize * chunkSize]; // Array of nulls
         _worldManager.SetTiles(chunkBounds, clearTiles);
         // Debug.Log($"Client visually deactivated chunk {chunkCoord}");
+
+        // Entities, note this will not work in multiplayer now, 
+        var ids = _entitySpawner.GetEntityIDsByChunkCoord(chunkCoord);
+        if(ids != null) {
+            // Despawn
+            foreach(var id in ids) {
+                _entitySpawner.DecrementActivationRef(id);
+            }
+        }
     }
     // --- Tile Modification ---
     // This is the entry point called by the PlayerController's ServerRpc

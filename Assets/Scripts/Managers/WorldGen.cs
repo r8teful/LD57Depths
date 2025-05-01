@@ -79,10 +79,10 @@ public static class WorldGen {
 
 
 
-    internal static ChunkData GenerateChunk(int chunkSize, Vector3Int chunkOriginCell) {
+    internal static ChunkData GenerateChunk(int chunkSize, Vector3Int chunkOriginCell, out List<EntitySpawnInfo> entitySpawns) {
         Debug.Log("Generating new chunk: " + chunkOriginCell);
         ChunkData chunkData = new ChunkData(chunkSize, chunkSize);
-
+        entitySpawns = new List<EntitySpawnInfo>();
         // Intermediate data for CA (bool could be byte for different initial states)
         bool[,] isPotentialCave = _settings.generateCaves ? new bool[chunkSize, chunkSize] : null;
 
@@ -128,7 +128,7 @@ public static class WorldGen {
 
         // --- Pass 5: Decorative Entity Spawning ---
         // Determines WHERE entities should be placed, adds them to chunkData.entitiesToSpawn
-        SpawnEntitiesInChunk(chunkData, chunkOriginCell, chunkSize);
+        SpawnEntitiesInChunk(chunkData, chunkOriginCell, chunkSize, entitySpawns);
 
         return chunkData;
     }
@@ -424,7 +424,7 @@ public static class WorldGen {
     }*/
 
     // --- Pass 5 Implementation ---
-    private static void SpawnEntitiesInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
+    private static void SpawnEntitiesInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize, List<EntitySpawnInfo> entitySpawns) {
         if (worldSpawnEntities == null || worldSpawnEntities.Count == 0) return;
         // Use a temporary set for basic overlap check within this chunk pass
         HashSet<Vector2Int> occupiedAnchors = new HashSet<Vector2Int>();
@@ -451,18 +451,22 @@ public static class WorldGen {
                 bool groundBelow = IsRock(anchorTile); // Use your IsRock or similar definition
 
                 // Quick check using first entity's height needs, real check below
+                bool clearAbove = true;
                 for (int h = 1; h <= Mathf.Max(1, worldSpawnEntities.Count > 0 ? worldSpawnEntities[0].minCeilingHeight : 1); ++h) {
                     if (y + h < chunkSize) {
                         TileBase tileAbove = chunkData.tiles[x, y + h];
                         if (IsRock(tileAbove)) { // Is there solid ground above?
+                            clearAbove = false;
                             break;
                         }
                     } else {
                         // Reached top of chunk, assume not clear unless world boundary says otherwise
+                        clearAbove = false;
                         break;
                     }
                 }
-
+                if (!clearAbove) continue; // Trying to spawn in a solid block, skip this block
+                Debug.Log($"Valid placement found at x: {worldX} and y: {worldY}");
 
                 bool adjacentToWater = false;
                 if (worldSpawnEntities.Exists(def => def.requireWaterAdjacent)) // Optimization: only check if any entity needs it
@@ -513,7 +517,6 @@ public static class WorldGen {
                     // --- ALL CHECKS PASSED --- Spawn this entity ---
 
                     // Calculate spawn position (anchor is bottom-left corner of cell)
-                    // Assuming Tilemap cell size is 1x1 world unit. Adjust if necessary.
                     Vector3 spawnPos = new Vector3(worldX + 0.5f, worldY + 0.5f, 0f) + entityDef.positionOffset;
 
                     // Calculate rotation
@@ -521,8 +524,8 @@ public static class WorldGen {
                                            Quaternion.Euler(0, noiseRandomGen.NextFloat(0f, 360f), 0) : // Use the seeded random gen
                                            Quaternion.identity;
 
-                    // Add to the chunk's list
-                    chunkData.entitiesToSpawn.Add(new EntitySpawnInfo(entityDef.entityPrefab, spawnPos, spawnRot,Vector3.one)); // todo add scale
+                    // Add to the spawn list
+                    entitySpawns.Add(new EntitySpawnInfo(entityDef.entityPrefab,entityDef.entityID, spawnPos, spawnRot,Vector3.one)); // todo add scale
 
                     // Mark anchor as occupied for this pass to prevent overlap *at the anchor*
                     occupiedAnchors.Add(new Vector2Int(x, y));
@@ -531,7 +534,7 @@ public static class WorldGen {
                     // marking a larger area than just the anchor in occupiedAnchors or a separate grid.
 
                     // If only one entity type should spawn per valid anchor point, uncomment break:
-                    // break;
+                    break;
                 }
             }
         }
