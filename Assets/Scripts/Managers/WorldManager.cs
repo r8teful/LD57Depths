@@ -17,13 +17,18 @@ public class WorldManager : NetworkBehaviour {
     // --- Tile ID Mapping ---
     private Dictionary<TileBase, int> tileAssetToIdMap = new Dictionary<TileBase, int>();
     private Dictionary<int, TileBase> idToTileAssetMap = new Dictionary<int, TileBase>();
+    // --- Ore to ID Mapping
+    private Dictionary<int, TileSO> idToOreAssetMap = new Dictionary<int, TileSO>();
+    private Dictionary<TileSO, int> oreToidAssetMap = new Dictionary<TileSO, int>();
     public Dictionary<TileBase, int> GetTileToID() => tileAssetToIdMap;
     public Dictionary<int, TileBase> GetIDToTile() => idToTileAssetMap;
     public int GetChunkSize() => ChunkManager.GetChunkSize();
     
-    [SerializeField] private List<TileBase> tileAssets; // Assign ALL your TileBase assets here in order
+    [SerializeField] private List<TileSO> tileAssets; // Assign ALL your TileBase assets here in order
+    [SerializeField] private List<TileSO> oreAssets; // Assign ALL your TileBase assets here in order
     [SerializeField] private Tilemap mainTilemap; // Main visual grid component for the game
-    [SerializeField] private Tilemap overlayTilemap; // for damaged tiles 
+    [SerializeField] private Tilemap overlayTilemapOre; // Main visual grid component for the game
+    [SerializeField] private Tilemap overlayTilemapDamage; // for damaged tiles 
 
     public float GetVisualTilemapGridSize() => mainTilemap.transform.parent.GetComponent<Grid>().cellSize.x; // Cell size SHOULD be square
     public bool useSave; 
@@ -58,16 +63,28 @@ public class WorldManager : NetworkBehaviour {
     void InitializeTileMapping() {
         tileAssetToIdMap.Clear();
         idToTileAssetMap.Clear();
+        oreToidAssetMap.Clear();
+        idToOreAssetMap.Clear();
         // Assign IDs based on the order in the tileAssets list
         for (int i = 0; i < tileAssets.Count; i++) {
             if (tileAssets[i] == null) continue; // Skip null entries in the list itself
-            ;
             if (!tileAssetToIdMap.ContainsKey(tileAssets[i])) {
-                tileAssetToIdMap.Add(tileAssets[i], i);
-                idToTileAssetMap.Add(i, tileAssets[i]);
-                Debug.Log($"Mapped Tile: {tileAssets[i].name} to ID: {i}");
+                tileAssetToIdMap.Add(tileAssets[i], tileAssets[i].tileID);
+                idToTileAssetMap.Add(tileAssets[i].tileID, tileAssets[i]);
+                //Debug.Log($"Mapped Tile: {tileAssets[i].name} to ID: {i}");
             } else {
                 Debug.LogWarning($"Duplicate TileBase '{tileAssets[i].name}' detected in tileAssets list. Only the first instance will be used for ID mapping.");
+            }
+        }
+        // Ores
+        for (int i = 0; i < oreAssets.Count; i++) {
+            if (oreAssets[i] == null) continue; // Skip null entries in the list itself
+            if (!oreToidAssetMap.ContainsKey(oreAssets[i])) {
+                oreToidAssetMap.Add(oreAssets[i], oreAssets[i].tileID);
+                idToOreAssetMap.Add(oreAssets[i].tileID, oreAssets[i]);
+                //Debug.Log($"Mapped Tile: {tileAssets[i].name} to ID: {i}");
+            } else {
+                Debug.LogWarning($"Duplicate Ore '{oreAssets[i].name}' detected in oreAssets list. Only the first instance will be used for ID mapping.");
             }
         }
     }
@@ -81,7 +98,18 @@ public class WorldManager : NetworkBehaviour {
         // Optional: Update client-side data cache if you implement one.
         // Optional: Trigger particle effects, sound, etc. on the client here.
     }
-
+    public TileSO GetOreFromID(int id) {
+        if (idToOreAssetMap.TryGetValue(id, out TileSO tile)) {
+            return tile;
+        }
+        return null; // Fallback to air/null
+    }
+    public int GetIDFromOre(TileSO ore) {
+        if (oreToidAssetMap.TryGetValue(ore, out int id)) {
+            return id;
+        }
+        return 0;
+    }
     public TileBase GetTileFromID(int id) {
         if (idToTileAssetMap.TryGetValue(id, out TileBase tile)) {
             return tile;
@@ -153,6 +181,11 @@ public class WorldManager : NetworkBehaviour {
     }
 
     internal void SetOverlayTile(Vector3Int cellPos, TileBase crackTile) {
-        overlayTilemap.SetTile(cellPos, crackTile); // Set tile on overlay layer
+        overlayTilemapDamage.SetTile(cellPos, crackTile); // Set tile on overlay layer
+    }
+
+    internal void SetOres(BoundsInt chunkBounds, TileBase[] oresToSet) {
+        //Debug.Log("Setting ores for chunk " + chunkBounds);
+        overlayTilemapOre.SetTilesBlock(chunkBounds, oresToSet); // Set tile on overlay layer
     }
 }

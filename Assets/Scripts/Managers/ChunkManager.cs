@@ -8,6 +8,7 @@ using FishNet.Connection;
 public class ChunkData {
     public TileBase[,] tiles; // Store references to TileBase assets
     public int[,] tileDurability;
+    public int[,] oreID;
     public bool isModified = false; // Flag to track if chunk has changed since load/generation
     public bool hasBeenGenerated = false; // Flag to prevent regenerating loaded chunks
     public List<PersistentEntityData> entitiesToSpawn; 
@@ -17,6 +18,12 @@ public class ChunkData {
         for (int y = 0; y < chunkSizeY; ++y) {
             for (int x = 0; x < chunkSizeX; ++x) {
                 tileDurability[x, y] = -1; // Default state
+            }
+        }
+        oreID = new int[chunkSizeX, chunkSizeY];
+        for (int y = 0; y < chunkSizeY; ++y) {
+            for (int x = 0; x < chunkSizeX; ++x) {
+                oreID[x, y] = 0; // Default state
             }
         }
         entitiesToSpawn = new List<PersistentEntityData>(); // Initialize the list
@@ -161,22 +168,24 @@ public class ChunkManager : NetworkBehaviour {
         if (chunkData.tiles != null) {
             List<int> tileIds = new List<int>(chunkSize * chunkSize);
             List<int> durabilities = new List<int>(chunkSize * chunkSize);
+            List<int> oreIDs = new List<int>(chunkSize * chunkSize);
             for (int y = 0; y < chunkSize; y++) {
                 for (int x = 0; x < chunkSize; x++) {
                     tileIds.Add(_worldManager.GetIDFromTile(chunkData.tiles[x, y]));
-                    durabilities.Add(chunkData.tileDurability[x, y]); 
+                    durabilities.Add(chunkData.tileDurability[x, y]);
+                    oreIDs.Add(chunkData.oreID[x, y]); 
                 }
             }
             // This entitySpawner gets the ids for the chunk through ServerGenerateChunkData
             var entityIds = _entitySpawner.GetEntityIDsByChunkCoord(chunkCoord);
             // 4. Send data back to the SPECIFIC client who requested it
-            TargetReceiveChunkData(requester, chunkCoord, tileIds, durabilities, entityIds);
+            TargetReceiveChunkData(requester, chunkCoord, tileIds, oreIDs, durabilities, entityIds);
         }
     }
 
     // --- Target RPC to send chunk data to a specific client ---
     [TargetRpc]
-    private void TargetReceiveChunkData(NetworkConnection conn, Vector2Int chunkCoord, List<int> tileIds, List<int> durabilities, List<ulong> entityIds) {
+    private void TargetReceiveChunkData(NetworkConnection conn, Vector2Int chunkCoord, List<int> tileIds, List<int> OreIDs, List<int> durabilities, List<ulong> entityIds) {
         // Executed ONLY on the client specified by 'conn'
         if (tileIds == null || tileIds.Count != chunkSize * chunkSize) {
             Debug.LogWarning($"Received invalid tile data for chunk {chunkCoord} from server.");
@@ -188,11 +197,15 @@ public class ChunkManager : NetworkBehaviour {
         Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkCoord);
         BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, chunkSize, chunkSize, 1);
         TileBase[] tilesToSet = new TileBase[chunkSize * chunkSize];
+        TileBase[] oresToSet = new TileBase[chunkSize * chunkSize];
         for (int i = 0; i < tileIds.Count; i++) {
             tilesToSet[i] = _worldManager.GetTileFromID(tileIds[i]);
         }
-
         _worldManager.SetTiles(chunkBounds, tilesToSet);
+        for (int i = 0; i < OreIDs.Count; i++) {
+            oresToSet[i] = _worldManager.GetOreFromID(OreIDs[i]);
+        }
+        _worldManager.SetOres(chunkBounds, oresToSet);
 
         // Spawn enemies client only
         if (entityIds != null) {
@@ -257,6 +270,7 @@ public class ChunkManager : NetworkBehaviour {
         BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, chunkSize, chunkSize, 1);
         TileBase[] clearTiles = new TileBase[chunkSize * chunkSize]; // Array of nulls
         _worldManager.SetTiles(chunkBounds, clearTiles);
+        _worldManager.SetOres(chunkBounds, clearTiles);
         //Debug.Log($"Client visually deactivated chunk {chunkCoord}");
 
         // Entities, note this will not work in multiplayer now, 
@@ -338,11 +352,10 @@ public class ChunkManager : NetworkBehaviour {
 
         // --- Get Tile Type & Properties ---
         TileBase tileBase = chunk.tiles[localX, localY];
-        if (tileBase == null) return; // Cannot damage air
-
-        if (tileBase is TileSO targetTile) // Check if it's our custom type
-        {
-        Debug.Log("Tile is SO");
+        var ore = _worldManager.GetOreFromID(chunk.oreID[localX, localY]);
+        // if ore use Ore tilebase, not stone
+        if (tileBase is TileSO targetTile) {
+            if (ore != null) targetTile = ore;
             if (targetTile.maxDurability <= 0) return; // Indestructible tile
 
             // --- Apply Damage ---

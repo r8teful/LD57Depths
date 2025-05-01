@@ -31,6 +31,14 @@ MonoBehaviour:
     maxHorizontalDistanceFromTrenchCenter: 349
     verticalBlendPercentage: 0.962
     horizontalBlendPercentage: 0.992
-  oreTypes: []
+  oreTypes:
+  - name: Iron
+    tile: {fileID: 11400000, guid: f4b09cb01edb0244da271b27ca802fa3, type: 2}
+    allowedBiomeNames: []
+    frequency: 0.05
+    threshold: 0.846
+    clusterFrequency: 3.96
+    clusterThreshold: 0.134
+    requireCluster: 1
   worldSpawnEntities:
   - {fileID: 11400000, guid: d43c3f02f91b332498b32a9be1ee129e, type: 2}

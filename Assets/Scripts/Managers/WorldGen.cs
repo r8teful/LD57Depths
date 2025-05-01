@@ -321,7 +321,8 @@ public static class WorldGen {
 
                     TileBase oreTile = DetermineOre(worldX, worldY, biomeName);
                     if (oreTile != null) {
-                        chunkData.tiles[x, y] = oreTile;
+                        Debug.Log($"Generating ore at: X: {worldX} Y: {worldY}");
+                        chunkData.oreID[x, y] = worldmanager.GetIDFromOre(oreTile as TileSO);
                     }
                 }
             }
@@ -331,8 +332,8 @@ public static class WorldGen {
         TileBase foundOre = null;
         // Check Ores (consider priority/order)
         foreach (var ore in _settings.oreTypes) {
-            if (biomeName == null || !ore.allowedBiomeNames.Contains(biomeName)) continue;
-
+            //if (biomeName == null || !ore.allowedBiomeNames.Contains(biomeName)) continue;
+            
             float clusterNoise = 1.0f; // Assume cluster passes if not required
             if (ore.requireCluster) {
                 clusterNoise = GetNoise(worldX, worldY, ore.clusterFrequency);
