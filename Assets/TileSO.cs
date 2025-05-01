@@ -21,6 +21,7 @@ public class TileSO : RuleTile
 {
     [Header("Game Properties")]
     public int maxDurability = 10; // How many "hits" it takes to break. 0 or less means indestructible.
+    public int tileID; 
     public DropTable dropTable;   // Assign the ScriptableObject defining drops
     public GameObject breakEffectPrefab; // Optional: particle effect on break
     public GameObject hitEffectPrefab; // Optional: particle effect on hit
@@ -39,6 +40,7 @@ public class TileSO : RuleTile
 }
 public enum BiomeType {
     None, 
+    Inherit,
     Trench,
     Cave,
     Coral,

@@ -13,16 +13,18 @@ public class WorldManager : NetworkBehaviour {
     public ChunkManager ChunkManager;
     public BiomeManager BiomeManager;
     [InlineEditor]
+    [OnValueChanged("DEBUGNEWGEN")]
     public WorldGenSettingSO WorldGenSettings;
     // --- Tile ID Mapping ---
-    private Dictionary<TileBase, int> tileAssetToIdMap = new Dictionary<TileBase, int>();
-    private Dictionary<int, TileBase> idToTileAssetMap = new Dictionary<int, TileBase>();
-    public Dictionary<TileBase, int> GetTileToID() => tileAssetToIdMap;
-    public Dictionary<int, TileBase> GetIDToTile() => idToTileAssetMap;
+    private Dictionary<TileSO, int> tileAssetToIdMap = new Dictionary<TileSO, int>();
+    private Dictionary<int, TileSO> idToTileAssetMap = new Dictionary<int, TileSO>();
+    public Dictionary<TileSO, int> GetTileToID() => tileAssetToIdMap;
+    public Dictionary<int, TileSO> GetIDToTile() => idToTileAssetMap;
     public int GetChunkSize() => ChunkManager.GetChunkSize();
-    
-    [SerializeField] private List<TileBase> tileAssets; // Assign ALL your TileBase assets here in order
+    [InlineEditor]
+    [SerializeField] private List<TileSO> tileAssets;
     [SerializeField] private Tilemap mainTilemap; // Main visual grid component for the game
+    [SerializeField] private Tilemap overlayTilemapOre; // for damaged tiles 
     [SerializeField] private Tilemap overlayTilemap; // for damaged tiles 
 
     public float GetVisualTilemapGridSize() => mainTilemap.transform.parent.GetComponent<Grid>().cellSize.x; // Cell size SHOULD be square
@@ -61,11 +63,10 @@ public class WorldManager : NetworkBehaviour {
         // Assign IDs based on the order in the tileAssets list
         for (int i = 0; i < tileAssets.Count; i++) {
             if (tileAssets[i] == null) continue; // Skip null entries in the list itself
-            ;
             if (!tileAssetToIdMap.ContainsKey(tileAssets[i])) {
-                tileAssetToIdMap.Add(tileAssets[i], i);
-                idToTileAssetMap.Add(i, tileAssets[i]);
-                Debug.Log($"Mapped Tile: {tileAssets[i].name} to ID: {i}");
+                tileAssetToIdMap.Add(tileAssets[i], tileAssets[i].tileID);
+                idToTileAssetMap.Add(tileAssets[i].tileID, tileAssets[i]);
+                //Debug.Log($"Mapped Tile: {tileAssets[i].name} to ID: {i}");
             } else {
                 Debug.LogWarning($"Duplicate TileBase '{tileAssets[i].name}' detected in tileAssets list. Only the first instance will be used for ID mapping.");
             }
@@ -75,22 +76,22 @@ public class WorldManager : NetworkBehaviour {
     [ObserversRpc(BufferLast = false)] // Don't buffer, could spam late joiners. Consider buffering important static tiles.
     public void ObserversUpdateTile(Vector3Int cellPos, int newTileId) {
         // This runs on ALL clients (including the host)
-        TileBase tileToSet = GetTileFromID(newTileId);
+        TileSO tileToSet = GetTileFromID(newTileId);
         mainTilemap.SetTile(cellPos, tileToSet); // Update local visuals
 
         // Optional: Update client-side data cache if you implement one.
         // Optional: Trigger particle effects, sound, etc. on the client here.
     }
 
-    public TileBase GetTileFromID(int id) {
-        if (idToTileAssetMap.TryGetValue(id, out TileBase tile)) {
+    public TileSO GetTileFromID(int id) {
+        if (idToTileAssetMap.TryGetValue(id, out TileSO tile)) {
             return tile;
         }
         Debug.LogWarning($"Tile ID '{id}' not found in mapping. Returning null.");
         return null; // Fallback to air/null
     }
     // --- Tile ID Helpers (Ensure these exist and are correct) ---
-    public int GetIDFromTile(TileBase tile) {
+    public int GetIDFromTile(TileSO tile) {
         if (tileAssetToIdMap.TryGetValue(tile, out int id)) {
             return id;
         }
@@ -99,10 +100,10 @@ public class WorldManager : NetworkBehaviour {
     }
 
     // Modify the world (visually)
-    internal void SetTiles(BoundsInt chunkBounds, TileBase[] tilesToSet) {
+    internal void SetTiles(BoundsInt chunkBounds, TileSO[] tilesToSet) {
         mainTilemap.SetTilesBlock(chunkBounds, tilesToSet);
     }
-    internal void SetTile(Vector3Int cellPos, TileBase tileToSet) {
+    internal void SetTile(Vector3Int cellPos, TileSO tileToSet) {
         mainTilemap.SetTile(cellPos, tileToSet);
     }
 
@@ -111,9 +112,9 @@ public class WorldManager : NetworkBehaviour {
     // =============================================
 
     // Gets the TileBase asset at a given world position (checks the ground layer)
-    public TileBase GetTileAtWorldPos(Vector3 worldPos) {
+    public TileSO GetTileAtWorldPos(Vector3 worldPos) {
         Vector3Int cellPos = WorldToCell(worldPos);
-        return mainTilemap.GetTile(cellPos);
+        return mainTilemap.GetTile(cellPos) as TileSO;
         // To check other layers, call GetTile on their respective Tilemaps
     }
 
@@ -121,7 +122,7 @@ public class WorldManager : NetworkBehaviour {
     // Sets a tile at a given world position (modifies the ground layer)
     // IMPORTANT: Also updates the underlying ChunkData!
 
-    public void SetTileAtWorldPos(Vector3 worldPos, TileBase tileToSet) {
+    public void SetTileAtWorldPos(Vector3 worldPos, TileSO tileToSet) {
         Vector3Int cellPos = WorldToCell(worldPos);
         // Let chunk manager handle it
         ChunkManager.ServerRequestModifyTile(cellPos, tileAssetToIdMap[tileToSet]);

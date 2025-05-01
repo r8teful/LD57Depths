@@ -9,7 +9,7 @@ using UnityEngine.Tilemaps;
 [System.Serializable]
 public struct BiomeLayer {
     public string name;
-    public TileBase defaultGroundTile;
+    public TileSO defaultGroundTile;
     public int startY; // Center Y of the biome layer
     public int maxHeight; // Max vertical distance from center Y this biome extends
     public int maxHorizontalDistanceFromTrenchCenter; // Max horizontal extent
@@ -18,10 +18,9 @@ public struct BiomeLayer {
 }
 
 [System.Serializable]
-public struct OreType {
-    public string name;
-    public TileBase tile;
-    public List<string> allowedBiomeNames; // Names of biomes where this ore can spawn
+public struct OreRule {
+    public TileSO tile;
+    public List<BiomeType> allowedBiomeNames;
     public float frequency;     // Noise frequency for this ore
     [Range(0f, 1f)] public float threshold; // Noise value above which ore spawns (higher = rarer)
     public float clusterFrequency; // Lower frequency noise for controlling large clusters
@@ -93,14 +92,14 @@ public static class WorldGen {
                 int worldX = chunkOriginCell.x + x;
                 int worldY = chunkOriginCell.y + y;
 
-                TileBase tile = DetermineBaseTerrainAndBiome(worldX, worldY, out string biomeName);
+                TileData tile = DetermineBaseTerrainAndBiome(worldX, worldY, out string biomeName);
                 chunkData.tiles[x, y] = tile; // Assign base tile
 
                 // Store biome info if needed later (optional)
                 // chunkData.biomeNames[x,y] = biomeName;
 
                 // Mark potential caves using noise (only if the base tile is rock)
-                if (_settings.generateCaves && IsRock(tile)) 
+                if (_settings.generateCaves && IsRock(tile.TileSO)) 
                 {
                     float caveNoise = GetNoise(worldX, worldY, _settings.initialCaveNoiseFrequency);
                     if (caveNoise < _settings.initialCaveNoiseThreshold) // Use '<' for noise floor as caves
@@ -134,7 +133,7 @@ public static class WorldGen {
     }
     // 0 Air, 1 Stone, 
     // --- Pass 1 Helper: Determine Base Terrain & Primary Biome ---
-    private static TileBase DetermineBaseTerrainAndBiome(int worldX, int worldY, out string primaryBiomeName) {
+    private static TileData DetermineBaseTerrainAndBiome(int worldX, int worldY, out string primaryBiomeName) {
         primaryBiomeName = null; // Default to no specific biome
 
         // 1. Trench Shape
@@ -144,9 +143,9 @@ public static class WorldGen {
         noisyHalfWidth = Mathf.Max(0, noisyHalfWidth);
         // Calculate the theoretical worldY where halfTrenchWidth would be 0
         if (Mathf.Abs(worldX) < noisyHalfWidth && Mathf.Abs(worldY) < maxDepth) {
-            return worldmanager.GetTileFromID(0); // Main trench
+            return new TileData(worldmanager.GetTileFromID(0)); // Main trench
         } else if (worldY > 0) {
-            return worldmanager.GetTileFromID(0); // Surface
+            return new TileData(worldmanager.GetTileFromID(0)); // Surface
         }
 
         // 2. Biome Influence Calculation (Handles multiple overlapping potentials and blending)
@@ -180,12 +179,12 @@ public static class WorldGen {
                 primaryBiomeName = dominantBiome;
                 // TODO: Implement actual blending here if desired (e.g., using RuleTiles based on neighbours, or lerping colors/properties)
                 // For now, just return the dominant biome's default tile.
-                return chosenBiome.defaultGroundTile;
+                return new TileData(chosenBiome.defaultGroundTile);
             }
         }
 
         // Fallback if outside all biome influences
-        return worldmanager.GetTileFromID(1);
+        return new TileData(worldmanager.GetTileFromID(1));
     }
 
     // --- Helper: Calculate Influence of a Single Biome ---
@@ -247,11 +246,11 @@ public static class WorldGen {
         // Apply the final CA result to the chunk data
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (currentWalls[x, y] && IsRock(chunkData.tiles[x, y])) {
+                if (currentWalls[x, y] && IsRock(chunkData.tiles[x, y].TileSO)) {
                     // Keep it as the rock tile it was
-                } else if (!currentWalls[x, y] && IsRock(chunkData.tiles[x, y])) {
+                } else if (!currentWalls[x, y] && IsRock(chunkData.tiles[x, y].TileSO)) {
                     // Turn rock into cave water if CA removed the wall
-                    chunkData.tiles[x, y] = worldmanager.GetTileFromID(2); // Water cave tile
+                    chunkData.tiles[x, y].TileSO = worldmanager.GetTileFromID(2); // Water cave tile
                 }
                 // Else: Don't overwrite main water or already existing cave water
             }
@@ -312,26 +311,26 @@ public static class WorldGen {
     private static void SpawnOresInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
         for (int y = 0; y < chunkSize; y++) {
             for (int x = 0; x < chunkSize; x++) {
-                TileBase currentTile = chunkData.tiles[x, y];
+                TileSO currentTile = chunkData.tiles[x, y].TileSO;
                 if (IsRock(currentTile)) // Check if it's a valid tile for ore placement
                 {
                     int worldX = chunkOriginCell.x + x;
                     int worldY = chunkOriginCell.y + y;
                     string biomeName = GetBiomeNameAt(worldX, worldY);
 
-                    TileBase oreTile = DetermineOre(worldX, worldY, biomeName);
+                    TileSO oreTile = DetermineOre(worldX, worldY, biomeName);
                     if (oreTile != null) {
-                        chunkData.tiles[x, y] = oreTile;
+                        chunkData.tiles[x,y] = new TileData(oreTile, currentTile);
                     }
                 }
             }
         }
     }
-    private static TileBase DetermineOre(int worldX, int worldY, string biomeName) {
-        TileBase foundOre = null;
+    private static TileSO DetermineOre(int worldX, int worldY, string biomeName) {
+        TileSO foundOre = null;
         // Check Ores (consider priority/order)
         foreach (var ore in _settings.oreTypes) {
-            if (biomeName == null || !ore.allowedBiomeNames.Contains(biomeName)) continue;
+          //  if (biomeName == null || !ore.allowedBiomeNames.Contains(biomeName)) continue;
 
             float clusterNoise = 1.0f; // Assume cluster passes if not required
             if (ore.requireCluster) {
@@ -435,7 +434,7 @@ public static class WorldGen {
         {
             for (int x = 0; x < chunkSize; x++) {
                 // --- Identify potential anchor tile ---
-                TileBase anchorTile = chunkData.tiles[x, y];
+                TileSO anchorTile = chunkData.tiles[x, y].TileSO;
                 if (anchorTile == null || anchorTile == worldmanager.GetTileFromID(0)) {
                     continue; // Not a valid ground anchor tile type
                 }
@@ -454,7 +453,7 @@ public static class WorldGen {
                 bool clearAbove = true;
                 for (int h = 1; h <= Mathf.Max(1, worldSpawnEntities.Count > 0 ? worldSpawnEntities[0].minCeilingHeight : 1); ++h) {
                     if (y + h < chunkSize) {
-                        TileBase tileAbove = chunkData.tiles[x, y + h];
+                        TileSO tileAbove = chunkData.tiles[x, y + h].TileSO;
                         if (IsRock(tileAbove)) { // Is there solid ground above?
                             clearAbove = false;
                             break;
@@ -497,7 +496,7 @@ public static class WorldGen {
                         bool specificCeilingClear = true;
                         for (int h = 1; h <= entityDef.minCeilingHeight; ++h) {
                             if (y + h < chunkSize) {
-                                TileBase tileAbove = chunkData.tiles[x, y + h];
+                                TileSO tileAbove = chunkData.tiles[x, y + h].TileSO;
                                 if (IsRock(tileAbove)) {
                                     specificCeilingClear = false;
                                     break;
@@ -540,7 +539,7 @@ public static class WorldGen {
         }
     }
 
-    private static bool IsRock(TileBase tile) {
+    private static bool IsRock(TileSO tile) {
         return tile != null && tile != worldmanager.GetTileFromID(0);
         // Add checks for air tiles if you have them
     }
@@ -558,7 +557,7 @@ public static class WorldGen {
 
             // Check bounds (simple version, doesn't check neighbour chunks)
             if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                TileBase neighborTile = chunkData.tiles[nx, ny];
+                TileBase neighborTile = chunkData.tiles[nx, ny].TileSO;
                 if (neighborTile == worldmanager.GetTileFromID(0)){//|| neighborTile == worldGenerator.caveWaterTile) {
                     return true;
                 }

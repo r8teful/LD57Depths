@@ -25,12 +25,19 @@ MonoBehaviour:
   caveSurvivalThreshold: 4
   biomeLayers:
   - name: Surface
-    defaultGroundTile: {fileID: 11400000, guid: 8fdc4ce88b17cf641a439c858d645a57, type: 2}
+    defaultGroundTile: {fileID: 0}
     startY: 0
     maxHeight: 100
     maxHorizontalDistanceFromTrenchCenter: 349
     verticalBlendPercentage: 0.962
     horizontalBlendPercentage: 0.992
-  oreTypes: []
+  oreTypes:
+  - tile: {fileID: 11400000, guid: a800a65765ead9c45bbad6627b2da1b8, type: 2}
+    allowedBiomeNames: 00000000
+    frequency: 0.5
+    threshold: 0.547
+    clusterFrequency: 6.4
+    clusterThreshold: 0.259
+    requireCluster: 1
   worldSpawnEntities:
   - {fileID: 11400000, guid: d43c3f02f91b332498b32a9be1ee129e, type: 2}

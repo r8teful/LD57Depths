@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 423f8be762021194ab8448c2967b6ed1, type: 3}
-  m_Name: WaterCaveTile
+  m_Name: IronTile
   m_EditorClassIdentifier: 
-  m_DefaultSprite: {fileID: 0}
+  m_DefaultSprite: {fileID: 3615109535770239713, guid: 7db2f528044fa9943909883aa47d44f4, type: 3}
   m_DefaultGameObject: {fileID: 0}
   m_DefaultColliderType: 2
   m_TilingRules:
   - m_Id: 0
     m_Sprites:
-    - {fileID: 0}
+    - {fileID: 3615109535770239713, guid: 7db2f528044fa9943909883aa47d44f4, type: 3}
     m_GameObject: {fileID: 0}
     m_MinAnimationSpeed: 1
     m_MaxAnimationSpeed: 1
@@ -37,10 +37,10 @@ MonoBehaviour:
     - {x: 0, y: -1, z: 0}
     - {x: 1, y: -1, z: 0}
     m_RuleTransform: 0
-  maxDurability: -1
-  tileID: 2
+  maxDurability: 90
+  tileID: 3
   dropTable: {fileID: 0}
   breakEffectPrefab: {fileID: 0}
   hitEffectPrefab: {fileID: 0}
   breakVersions: []
-  associatedBiome: 3
+  associatedBiome: 1

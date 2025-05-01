@@ -6,19 +6,13 @@ using FishNet.Object;
 using FishNet.Connection;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
-    public TileBase[,] tiles; // Store references to TileBase assets
-    public int[,] tileDurability;
+    public TileData[,] tiles; // Store references to TileBase assets
+    //public int[,] tileDurability;
     public bool isModified = false; // Flag to track if chunk has changed since load/generation
     public bool hasBeenGenerated = false; // Flag to prevent regenerating loaded chunks
     public List<PersistentEntityData> entitiesToSpawn; 
     public ChunkData(int chunkSizeX, int chunkSizeY) {
-        tiles = new TileBase[chunkSizeX, chunkSizeY];
-        tileDurability = new int[chunkSizeX, chunkSizeY];
-        for (int y = 0; y < chunkSizeY; ++y) {
-            for (int x = 0; x < chunkSizeX; ++x) {
-                tileDurability[x, y] = -1; // Default state
-            }
-        }
+        tiles = new TileData[chunkSizeX, chunkSizeY];
         entitiesToSpawn = new List<PersistentEntityData>(); // Initialize the list
     }
 }
@@ -163,8 +157,7 @@ public class ChunkManager : NetworkBehaviour {
             List<int> durabilities = new List<int>(chunkSize * chunkSize);
             for (int y = 0; y < chunkSize; y++) {
                 for (int x = 0; x < chunkSize; x++) {
-                    tileIds.Add(_worldManager.GetIDFromTile(chunkData.tiles[x, y]));
-                    durabilities.Add(chunkData.tileDurability[x, y]); 
+                    tileIds.Add(_worldManager.GetIDFromTile(chunkData.tiles[x, y].TileSO));
                 }
             }
             // This entitySpawner gets the ids for the chunk through ServerGenerateChunkData
@@ -183,11 +176,11 @@ public class ChunkManager : NetworkBehaviour {
             return;
         }
         // Store durability locally for effects 
-        ClientCacheChunkDurability(chunkCoord, durabilities); 
+        //ClientCacheChunkDurability(chunkCoord, durabilities); 
         // Apply the received tiles visually
         Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkCoord);
         BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, chunkSize, chunkSize, 1);
-        TileBase[] tilesToSet = new TileBase[chunkSize * chunkSize];
+        TileSO[] tilesToSet = new TileSO[chunkSize * chunkSize];
         for (int i = 0; i < tileIds.Count; i++) {
             tilesToSet[i] = _worldManager.GetTileFromID(tileIds[i]);
         }
@@ -255,7 +248,7 @@ public class ChunkManager : NetworkBehaviour {
     private void ClientDeactivateVisualChunk(Vector2Int chunkCoord) {
         Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkCoord);
         BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, chunkSize, chunkSize, 1);
-        TileBase[] clearTiles = new TileBase[chunkSize * chunkSize]; // Array of nulls
+        TileSO[] clearTiles = new TileSO[chunkSize * chunkSize]; // Array of nulls
         _worldManager.SetTiles(chunkBounds, clearTiles);
         //Debug.Log($"Client visually deactivated chunk {chunkCoord}");
 
@@ -269,7 +262,7 @@ public class ChunkManager : NetworkBehaviour {
         // Must run on server
         if (!IsServerInitialized) return;
 
-        TileBase tileToSet = _worldManager.GetTileFromID(newTileId);
+        TileSO tileToSet = _worldManager.GetTileFromID(newTileId);
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
 
         // Get the chunk data on the server
@@ -288,11 +281,11 @@ public class ChunkManager : NetworkBehaviour {
 
         if (localX >= 0 && localX < chunkSize && localY >= 0 && localY < chunkSize) {
             // Check if the tile is actually changing
-            if (chunk.tiles[localX, localY] != tileToSet) {
+            if (chunk.tiles[localX, localY].TileSO != tileToSet) {
                 // --- Update SERVER data FIRST ---
-                chunk.tiles[localX, localY] = tileToSet;
+                chunk.tiles[localX, localY].TileSO = tileToSet as TileSO;
                 chunk.isModified = true; // Mark chunk as modified for saving
-                chunk.tileDurability[localX, localY] = -1; // Reset to default state
+                //chunk.tileDurability[localX, localY] = -1; // Reset to default state
                 // --- Update Server's OWN visuals (optional but good for host) ---
                 _worldManager.SetTile(cellPos, tileToSet);
                 // --- BROADCAST change to ALL clients ---
@@ -335,58 +328,48 @@ public class ChunkManager : NetworkBehaviour {
 
         if (localX < 0 || localX >= chunkSize || localY < 0 || localY >= chunkSize) { Debug.LogWarning($"Server: Invalid local coordinates {localX},{localY} for damage at {cellPos}"); return; }
 
-
         // --- Get Tile Type & Properties ---
-        TileBase tileBase = chunk.tiles[localX, localY];
-        if (tileBase == null) return; // Cannot damage air
+        TileData targetTile = chunk.tiles[localX, localY];
+        if (targetTile.TileSO.maxDurability <= 0) return; // Indestructible tile
 
-        if (tileBase is TileSO targetTile) // Check if it's our custom type
+        // --- Apply Damage ---
+        var currentDurability = targetTile.tileDurability;
+        if (currentDurability < 0) // Was at full health (-1 sentinel)
         {
-        Debug.Log("Tile is SO");
-            if (targetTile.maxDurability <= 0) return; // Indestructible tile
-
-            // --- Apply Damage ---
-            int currentDurability = chunk.tileDurability[localX, localY];
-            if (currentDurability < 0) // Was at full health (-1 sentinel)
-            {
-                currentDurability = targetTile.maxDurability;
-            }
-
-            int newDurability = currentDurability - damageAmount;
-
-            // Mark as modified ONLY if durability actually changed
-            if (newDurability != chunk.tileDurability[localX, localY]) {
-                chunk.isModified = true;
-            }
-            chunk.tileDurability[localX, localY] = newDurability;
-
-
-            // --- Check for Destruction ---
-            if (newDurability <= 0) {
-                // Destroy Tile: Set to Air (will broadcast visual change via existing RPC)
-                // Setting durability back to -1 for the (now air) tile in the data is good practice
-                chunk.tileDurability[localX, localY] = -1;
-                // TODO air tile type should be of the dominant biome of the chunk
-                ServerRequestModifyTile(cellPos, 0); // Tile ID 0 = Air/Null
-
-                // Spawn Drops (Server-side)
-                SpawnDrops(targetTile, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Drop at cell center
-
-                // Spawn Break Effect (Broadcast to clients)
-                if (targetTile.breakEffectPrefab != null)
-                    ObserversSpawnEffect(targetTile.breakEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Pass prefab path or ID if effects aren't NetworkObjects
-            } else {
-                // Tile Damaged, Not Destroyed: Broadcast new durability
-                ObserversUpdateTileDurability(cellPos, newDurability);
-
-                // Spawn Hit Effect (Broadcast to clients)
-                if (targetTile.hitEffectPrefab != null)
-                    ObserversSpawnEffect(targetTile.hitEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0));
-            }
-        } else {
-            // Tile is not a 'CustomTile' - maybe it's indestructible base Tile?
-            // Decide how to handle - ignore damage, or maybe break immediately if base tile?
+            currentDurability = targetTile.TileSO.maxDurability;
         }
+
+        var newDurability = currentDurability - damageAmount;
+
+        // Mark as modified ONLY if durability actually changed
+        if (newDurability != targetTile.tileDurability) {
+            chunk.isModified = true;
+        }
+        chunk.tiles[localX, localY].tileDurability = newDurability;
+
+        /*
+        // --- Check for Destruction ---
+        if (newDurability <= 0) {
+            // Destroy Tile: Set to Air (will broadcast visual change via existing RPC)
+            // Setting durability back to -1 for the (now air) tile in the data is good practice
+            chunk.tileDurability[localX, localY] = -1;
+            // TODO air tile type should be of the dominant biome of the chunk
+            ServerRequestModifyTile(cellPos, 0); // Tile ID 0 = Air/Null
+
+            // Spawn Drops (Server-side)
+            SpawnDrops(targetTile, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Drop at cell center
+
+            // Spawn Break Effect (Broadcast to clients)
+            if (targetTile.breakEffectPrefab != null)
+                ObserversSpawnEffect(targetTile.breakEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Pass prefab path or ID if effects aren't NetworkObjects
+        } else {
+            // Tile Damaged, Not Destroyed: Broadcast new durability
+            ObserversUpdateTileDurability(cellPos, newDurability);
+
+            // Spawn Hit Effect (Broadcast to clients)
+            if (targetTile.hitEffectPrefab != null)
+                ObserversSpawnEffect(targetTile.hitEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0));
+        }*/
     }
     // --- Server-side method to handle spawning drops ---
     // We might want to move this to WorldManager but eh
@@ -438,11 +421,11 @@ public class ChunkManager : NetworkBehaviour {
         if (!activeChunks.Contains(chunkCoord)) {
             Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkCoord);
             BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, chunkSize, chunkSize, 1);
-            TileBase[] tilesToSet = new TileBase[chunkSize * chunkSize];
+            TileSO[] tilesToSet = new TileSO[chunkSize * chunkSize];
             int tileIndex = 0;
             for (int localY = 0; localY < chunkSize; localY++) {
                 for (int localX = 0; localX < chunkSize; localX++) {
-                    tilesToSet[tileIndex++] = chunkData.tiles[localX, localY];
+                    tilesToSet[tileIndex++] = chunkData.tiles[localX, localY].TileSO;
                 }
             }
             _worldManager.SetTiles(chunkBounds, tilesToSet);
@@ -475,7 +458,7 @@ public class ChunkManager : NetworkBehaviour {
         BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, chunkSize, chunkSize, 1);
 
         // Create an array full of nulls to clear the area
-        TileBase[] clearTiles = new TileBase[chunkSize * chunkSize];
+        TileSO[] clearTiles = new TileSO[chunkSize * chunkSize];
         // No need to fill it explicitly, default is null
 
         _worldManager.SetTiles(chunkBounds, clearTiles);

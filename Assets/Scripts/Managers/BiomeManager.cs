@@ -78,9 +78,9 @@ public class BiomeManager : MonoBehaviour
 
         for (int x = 0; x < chunkSize; x++) {
             for (int y = 0; y < chunkSize; y++) {
-                TileBase tileBase = chunkData.tiles[x, y];
-                if (tileBase is TileSO customTile && customTile.associatedBiome != BiomeType.None) {
-                    BiomeType biome = customTile.associatedBiome;
+                TileData tileBase = chunkData.tiles[x, y];
+                if(tileBase.TileSO.associatedBiome != BiomeType.None) {
+                    BiomeType biome = tileBase.TileSO.associatedBiome;
                     if (!biomeInfo.biomeCounts.ContainsKey(biome)) {
                         biomeInfo.biomeCounts[biome] = 0;
                     }
