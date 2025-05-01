@@ -39,6 +39,7 @@ public class ChunkManager : NetworkBehaviour {
 
     [SerializeField] private int chunkSize = 16; // Size of chunks (16x16 tiles) - Power of 2 often good
     public int GetChunkSize() => chunkSize;
+    public bool IsChunkActive(Vector2Int c) => activeChunks.Contains(c);
     // --- Chunk Data ---
     private Dictionary<Vector2Int, ChunkData> worldChunks = new Dictionary<Vector2Int, ChunkData>(); // Main world data
     private HashSet<Vector2Int> activeChunks = new HashSet<Vector2Int>();
@@ -166,28 +167,21 @@ public class ChunkManager : NetworkBehaviour {
                     durabilities.Add(chunkData.tileDurability[x, y]); 
                 }
             }
-            // Activate entitys for that chunk, note that this just spawns it for every client, which is 
-            // probably very bad
-            var entityIds =  _entitySpawner.GetEntityIDsByChunkCoord(chunkCoord);
-            if(entityIds != null) {
-                foreach (ulong id in entityIds) {
-                    _entitySpawner.IncrementActivationRef(id);
-                }    
-            }
-
+            // This entitySpawner gets the ids for the chunk through ServerGenerateChunkData
+            var entityIds = _entitySpawner.GetEntityIDsByChunkCoord(chunkCoord);
             // 4. Send data back to the SPECIFIC client who requested it
-            TargetReceiveChunkData(requester, chunkCoord, tileIds, durabilities);
+            TargetReceiveChunkData(requester, chunkCoord, tileIds, durabilities, entityIds);
         }
     }
+
     // --- Target RPC to send chunk data to a specific client ---
     [TargetRpc]
-    private void TargetReceiveChunkData(NetworkConnection conn, Vector2Int chunkCoord, List<int> tileIds, List<int> durabilities) {
+    private void TargetReceiveChunkData(NetworkConnection conn, Vector2Int chunkCoord, List<int> tileIds, List<int> durabilities, List<ulong> entityIds) {
         // Executed ONLY on the client specified by 'conn'
         if (tileIds == null || tileIds.Count != chunkSize * chunkSize) {
             Debug.LogWarning($"Received invalid tile data for chunk {chunkCoord} from server.");
             return;
         }
-
         // Store durability locally for effects 
         ClientCacheChunkDurability(chunkCoord, durabilities); 
         // Apply the received tiles visually
@@ -199,10 +193,13 @@ public class ChunkManager : NetworkBehaviour {
         }
 
         _worldManager.SetTiles(chunkBounds, tilesToSet);
+
+        // Spawn enemies client only
+        if (entityIds != null) {
+            _entitySpawner.ProcessReceivedEntityIds(chunkCoord, entityIds);
+        }
         // Debug.Log($"Client received and visually loaded chunk {chunkCoord}");
     }
-
-
     private void ClientCacheChunkDurability(Vector2Int chunkCoord, List<int> durabilityList) {
         if (!clientDurabilityCache.ContainsKey(chunkCoord)) {
             clientDurabilityCache[chunkCoord] = new int[chunkSize, chunkSize];
@@ -245,7 +242,7 @@ public class ChunkManager : NetworkBehaviour {
         _worldManager.BiomeManager.CalculateBiomeForChunk(chunkCoord, chunkData);
         // --- Add Generated Entities to Persistent Store AND Chunk Map ---
         if (enemyList != null && enemyList.Count > 0) {
-            _entitySpawner.ServerSpawnGeneratedEntities(chunkCoord, enemyList);
+            _entitySpawner.AddGeneratedEntityData(chunkCoord, enemyList);
         }
         
         // --- Finalization ---
@@ -260,16 +257,11 @@ public class ChunkManager : NetworkBehaviour {
         BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, chunkSize, chunkSize, 1);
         TileBase[] clearTiles = new TileBase[chunkSize * chunkSize]; // Array of nulls
         _worldManager.SetTiles(chunkBounds, clearTiles);
-        // Debug.Log($"Client visually deactivated chunk {chunkCoord}");
+        //Debug.Log($"Client visually deactivated chunk {chunkCoord}");
 
         // Entities, note this will not work in multiplayer now, 
-        var ids = _entitySpawner.GetEntityIDsByChunkCoord(chunkCoord);
-        if(ids != null) {
-            // Despawn
-            foreach(var id in ids) {
-                _entitySpawner.DecrementActivationRef(id);
-            }
-        }
+        _entitySpawner.RemoveEntitieAtChunk(chunkCoord);
+        
     }
     // --- Tile Modification ---
     // This is the entry point called by the PlayerController's ServerRpc

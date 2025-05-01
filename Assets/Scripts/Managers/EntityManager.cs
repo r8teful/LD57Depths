@@ -2,7 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using FishNet.Object; // For NetworkBehaviour and ServerManager access
-using FishNet;       // For InstanceFinder
+using FishNet;
+using FishNet.Connection;       // For InstanceFinder
 
 public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to use ServerManager etc.
 {
@@ -23,15 +24,21 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
     private List<NetworkObject> spawnedEntities = new List<NetworkObject>(); // Track instances for despawning
     private Dictionary<GameObject, int> currentEntityCounts = new Dictionary<GameObject, int>(); // Key: Prefab, Value: Count
     private Dictionary<int, GameObject> idToPrefab = new Dictionary<int, GameObject>();
+    // Key: Persistent Entity ID, Value: Number of CLIENTS currently needing it active
+    private Dictionary<ulong, int> entityClientRefCount = new Dictionary<ulong, int>();
 
     // Key: Persistent Entity ID, Value: How many active chunks require it
     private Dictionary<ulong, int> entityActivationRefCount = new Dictionary<ulong, int>();
-    private Dictionary<Vector2Int, List<ulong>> entityIdsByChunkCoord = new Dictionary<Vector2Int, List<ulong>>();
+    private Dictionary<Vector2Int, List<ulong>> worldEntityIdsData = new Dictionary<Vector2Int, List<ulong>>(); // Like worldChunks but for entities
     private Dictionary<ulong, PersistentEntityData> persistentEntityDatabase = new Dictionary<ulong, PersistentEntityData>();
     private ulong nextPersistentEntityId = 1; // Counter for assigning unique IDs
+
+    // Local entity data
+    private HashSet<ulong> locallyActiveEntityIds = new HashSet<ulong>(); 
+    private Dictionary<Vector2Int, List<ulong>> cachedEntityIdsByChunk = new Dictionary<Vector2Int, List<ulong>>();
     private ulong GetNextPersistentEntityId() { return nextPersistentEntityId++; }
     public List<ulong> GetEntityIDsByChunkCoord(Vector2Int chunkCoord) { 
-        if(entityIdsByChunkCoord.TryGetValue(chunkCoord, out var Idlist)){
+        if(worldEntityIdsData.TryGetValue(chunkCoord, out var Idlist)){
             return Idlist;
         } else {
             return null;
@@ -233,13 +240,12 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             return false;
         }
     }
-    // Instead of spawning directly, it now adds to the persistent database
-    public void ServerSpawnGeneratedEntities(Vector2Int chunkCoord, List<EntitySpawnInfo> entityList) {
+    // Adds data to a persistent database, doesn't get spawned yet because that is client only
+    public void AddGeneratedEntityData(Vector2Int chunkCoord, List<EntitySpawnInfo> entityList) {
         if (!IsServerInitialized || entityList == null || entityList.Count == 0) return;
-        if (!entityIdsByChunkCoord.ContainsKey(chunkCoord)) {
-            entityIdsByChunkCoord[chunkCoord] = new List<ulong>();
+        if (!worldEntityIdsData.ContainsKey(chunkCoord)) {
+            worldEntityIdsData[chunkCoord] = new List<ulong>();
         }
-
         foreach (EntitySpawnInfo info in entityList) {
             if (!idToPrefab.ContainsKey(info.entityID)) {
                 // new entry
@@ -249,7 +255,34 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             PersistentEntityData newEntityData = ServerAddNewPersistentEntity(info.entityID, info.position, info.rotation, info.scale);
             if (newEntityData != null) {
                 // Add the ID to this chunk's list
-                entityIdsByChunkCoord[chunkCoord].Add(newEntityData.persistentId);
+                worldEntityIdsData[chunkCoord].Add(newEntityData.persistentId);
+            }
+        }
+    }
+    // Called by WorldGenerator's TargetRPC
+    public void ProcessReceivedEntityIds(Vector2Int chunkCoord, List<ulong> entityIds) {
+        // Cache the received IDs
+        cachedEntityIdsByChunk[chunkCoord] = entityIds;
+
+        // Request activation for entities in this list that we aren't already tracking
+        foreach (ulong id in entityIds) {
+            if (locallyActiveEntityIds.Add(id)) // If added (wasn't previously needed)
+            {
+                // Request activation from server
+                CmdRequestEntityActivation(id);
+            }
+        }
+    }
+    public void RemoveEntitieAtChunk(Vector2Int chunkCoord) {
+        if (cachedEntityIdsByChunk.TryGetValue(chunkCoord, out List<ulong> entityIds)) {
+            foreach (ulong id in entityIds) {
+                if (locallyActiveEntityIds.Contains(id)) {
+                    // Only decrement ref if no *other* active local chunk still contains this ID
+                    if (!IsEntityStillNeededByOtherChunks(id, chunkCoord)) {
+                        CmdRequestEntityDeactivation(id);
+                        locallyActiveEntityIds.Remove(id); // Assume deactivation request will succeed
+                    } 
+                }
             }
         }
     }
@@ -260,46 +293,140 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         Debug.Log($"Added new persistent entity ID:{unqiueID} at {pos}");
         return newEntityData; // Return the created data
     }
-    // --- Called by WorldGenerator when a chunk activating NEEDS this entity ---
-    [Server] // Decorator reinforces server-only execution
-    public void IncrementActivationRef(ulong persistentId) {
-        if (!persistentEntityDatabase.ContainsKey(persistentId)) {
-            // This might happen if entity was removed just before activation notification
-            Debug.LogWarning($"EntityManager: Tried to increment ref for unknown entity ID {persistentId}");
+    // --- Client RPCs for Activation/Deactivation ---
+    [ServerRpc(RequireOwnership = false)] // Any client can request
+    public void CmdRequestEntityActivation(ulong persistentId, NetworkConnection requester = null) {
+        if (!IsServerInitialized) return;
+        if (requester == null) return; // Should not happen
+
+        PersistentEntityData data = persistentEntityDatabase[persistentId];
+        if (data == null) {
+            Debug.LogWarning($"Server: Client {requester.ClientId} requested activation for unknown entity ID {persistentId}");
+            // Optionally: Send error back to client? TargetRpc...?
             return;
         }
 
-        entityActivationRefCount.TryGetValue(persistentId, out int currentRefCount);
+        entityClientRefCount.TryGetValue(persistentId, out int currentRefCount);
         currentRefCount++;
-        entityActivationRefCount[persistentId] = currentRefCount;
+        entityClientRefCount[persistentId] = currentRefCount;
 
-        // If count was 0, it's now 1 -> Activate the entity instance
+        NetworkObject nob = data.activeInstance;
+
+        // --- Activate SERVER instance if ref count is now 1 ---
         if (currentRefCount == 1) {
-            ActivateEntity(persistentId);
+            // Get prefab based on type ID
+            GameObject prefab = idToPrefab[data.entityID];
+            if (prefab == null) { Debug.LogError($"Cannot activate entity {persistentId}: Prefab missing for type {data.entityID}");
+                return; 
+            }
+
+            // Instantiate and apply data
+            GameObject instance = Instantiate(prefab, data.position, data.rotation);
+            instance.transform.localScale = data.scale;
+
+            nob = instance.GetComponent<NetworkObject>();
+            if (nob != null) {
+                ApplyDataToInstance(instance, data); // Apply health, growth etc.
+                // Link instance BEFORE spawn
+                // Spawn server-side FIRST (observers added after)
+                InstanceFinder.ServerManager.Spawn(nob);
+                data.activeInstance = nob;
+               // nob.OnStopServer += HandleUnexpectedDespawn; // Add listener
+                                                             // Debug.Log($"Server: Spawned instance for entity {persistentId} due to first client activation.");
+            } else {
+                Debug.LogError($"Entity prefab {prefab.name} is missing NetworkObject component!");
+                Destroy(instance);
+                entityClientRefCount[persistentId] = 0; // Failed, reset ref count
+                if (entityClientRefCount[persistentId] == 0) entityClientRefCount.Remove(persistentId);
+                return;
+            }
+        }
+
+        // --- Add requesting client as observer ---
+        if (nob != null && nob.IsSpawned) // Check if instance exists and is spawned
+        {
+            //nob.AddObserver(requester);
+            nob.Observers.Add(requester);
+            //nob.NetworkObserver = requester;
+            //Debug.Log($"Server: Added client {requester.ClientId} as observer for entity {persistentId}. Ref count: {currentRefCount}");
+        } else if (nob == null && currentRefCount == 1) {
+            // Should not happen if spawn logic above worked
+            Debug.LogError($"Server: Entity {persistentId} instance failed to spawn or link correctly.");
+        } else if (nob == null) {
+            // Instance doesn't exist even though ref count > 1? Problem!
+            Debug.LogError($"Server: Entity {persistentId} instance missing despite ref count {currentRefCount}!");
         }
     }
 
-    // --- Called by WorldGenerator when a chunk deactivating NO LONGER NEEDS this entity ---
-    [Server]
-    public void DecrementActivationRef(ulong persistentId) {
-        if (entityActivationRefCount.TryGetValue(persistentId, out int currentRefCount)) {
-            currentRefCount--;
-            if (currentRefCount < 0) {
-                Debug.LogError($"Entity {persistentId} ref count dropped below zero!");
-                currentRefCount = 0; // Prevent negative counts
-            }
-            entityActivationRefCount[persistentId] = currentRefCount;
 
-            // If count is now 0 -> Deactivate the entity instance
+    [ServerRpc(RequireOwnership = false)]
+    public void CmdRequestEntityDeactivation(ulong persistentId, NetworkConnection requester = null) {
+        if (!IsServerInitialized) return;
+        if (requester == null) return;
+
+        PersistentEntityData data = persistentEntityDatabase[persistentId];
+        // It's possible data is null if entity was just removed permanently
+        if (data == null) {
+            // Clean up ref count if somehow it exists for a removed entity
+            entityClientRefCount.Remove(persistentId);
+            return;
+        }
+
+        if (entityClientRefCount.TryGetValue(persistentId, out int currentRefCount)) {
+            // --- Remove requesting client as observer ---
+            NetworkObject nob = data.activeInstance;
+            if (nob != null && nob.IsSpawned) {
+                
+                //Debug.Log($"Server: Removed client {requester.ClientId} as observer for entity {persistentId}.");
+            }
+
+            // --- Decrement ref count ---
+            currentRefCount--;
+            if (currentRefCount < 0) currentRefCount = 0; // Safety
+            entityClientRefCount[persistentId] = currentRefCount;
+
+            // --- Deactivate SERVER instance if ref count hits 0 ---
             if (currentRefCount == 0) {
-                DeactivateEntity(persistentId);
-                // Optionally remove from dictionary to save memory if count is 0
-                entityActivationRefCount.Remove(persistentId);
+                entityClientRefCount.Remove(persistentId); // Remove entry
+
+                if (nob != null && nob.IsSpawned) {
+                    // Save state just before despawning
+                    UpdateDataFromInstance(nob, data);
+
+                    // Unsubscribe FIRST
+                    //nob.OnStopServer -= HandleUnexpectedDespawn;
+
+                    // Despawn server instance
+                    Debug.Log($"Despawning {nob.name} for client {requester.ClientId}");
+                    nob.Despawn(DespawnType.Destroy);
+                    //InstanceFinder.ServerManager.Despawn(nob);
+                    // Debug.Log($"Server: Despawned instance for entity {persistentId} as ref count hit 0.");
+                    nob.Observers.Remove(requester);
+                }
+                // Clear link in persistent data regardless
+                data.activeInstance = null;
             }
         } else {
-            // This could happen if Decrement is called before Increment, or after forced removal
-            // Debug.LogWarning($"EntityManager: Tried to decrement ref for entity ID {persistentId} which had no active refs.");
+            // Client requested deactivation for an entity server wasn't tracking refs for. Maybe already hit 0? Ignore.
+            // Debug.LogWarning($"Server: Client {requester.ClientId} requested deactivation for entity {persistentId} with no active refs tracked.");
         }
+    }
+
+    // --- Need this when entity is *permanently* removed by WorldGenerator ---
+    [Server]
+    public void ForceDeactivationAndCleanup(ulong persistentId) {
+        PersistentEntityData data = persistentEntityDatabase[persistentId]; // Get data before WG removes it
+        if (data != null) {
+            // Despawn instance if active
+            if (data.activeInstance != null && data.activeInstance.IsSpawned) {
+                //data.activeInstance.OnStopServer -= HandleUnexpectedDespawn; // Unsubscribe
+                InstanceFinder.ServerManager.Despawn(data.activeInstance);
+                data.activeInstance = null;
+            }
+        }
+        // Clean up ref count map
+        entityClientRefCount.Remove(persistentId);
+        // Debug.Log($"Server: Force cleanup for permanently removed entity {persistentId}.");
     }
 
     // --- Force Deactivation (e.g., when entity is permanently removed) ---
@@ -335,48 +462,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
 
         // Debug.Log($"Handled despawn for {nob.name}");
     }  // --- Activate (Spawn NetworkObject) ---
-    private void ActivateEntity(ulong persistentId) {
-        if (!IsServerInitialized) return;
 
-        if (persistentEntityDatabase.TryGetValue(persistentId, out PersistentEntityData data)) {
-            if (data.activeInstance != null) {
-                // Already active? Log warning or ignore.
-                Debug.LogWarning($"Attempted to activate entity {persistentId} which is already active.");
-                return;
-            }
-
-            // Get prefab based on type ID
-            GameObject prefab = idToPrefab[data.entityID];
-            if (prefab == null) {
-                Debug.LogError($"Cannot activate entity {persistentId}: Prefab not found for type ID {data.entityID}");
-                return;
-            }
-
-            // Instantiate and spawn
-            GameObject instance = Instantiate(prefab, data.position, data.rotation);
-            instance.transform.localScale = data.scale;
-            NetworkObject nob = instance.GetComponent<NetworkObject>();
-
-            if (nob != null) {
-                // --- IMPORTANT: Sync State BEFORE spawning ---
-                ApplyDataToInstance(instance, data); // Apply health, growth etc.
-
-                InstanceFinder.ServerManager.Spawn(nob); // Spawn it
-
-                data.activeInstance = nob; // Link data to instance
-                // Add despawn listener specific to activation/deactivation cycle
-                // We NEED to know if it despawned for reasons OTHER than our DeactivateEntity call
-                //nob.OnStopServer += HandleUnexpectedDespawn; // todo add this later if it becomes a problem
-
-                Debug.Log($"Activated entity {persistentId} ({prefab.name})");
-            } else {
-                Debug.LogError($"Entity prefab {prefab.name} (TypeID {data.entityID}) is missing NetworkObject component!");
-                Destroy(instance);
-            }
-        } else {
-            Debug.LogWarning($"Cannot activate entity {persistentId}: Data not found in database.");
-        }
-    }
     // --- Deactivate (Despawn NetworkObject) ---
     private void DeactivateEntity(ulong persistentId) {
         if (!IsServerInitialized) return;
@@ -489,14 +575,14 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
 
         if (oldChunk != newChunk) {
             // Remove from old chunk's list
-            if (entityIdsByChunkCoord.TryGetValue(oldChunk, out List<ulong> oldList)) {
+            if (worldEntityIdsData.TryGetValue(oldChunk, out List<ulong> oldList)) {
                 oldList.Remove(persistentId);
             }
             // Add to new chunk's list
-            if (!entityIdsByChunkCoord.ContainsKey(newChunk)) {
-                entityIdsByChunkCoord[newChunk] = new List<ulong>();
+            if (!worldEntityIdsData.ContainsKey(newChunk)) {
+                worldEntityIdsData[newChunk] = new List<ulong>();
             }
-            entityIdsByChunkCoord[newChunk].Add(persistentId);
+            worldEntityIdsData[newChunk].Add(persistentId);
             // Debug.Log($"Entity {persistentId} moved from chunk {oldChunk} to {newChunk}");
         }
     }
@@ -508,7 +594,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
 
             // --- Remove from chunk map ---
             Vector2Int chunkCoord = chunkManager.WorldToChunkCoord(data.position);
-            if (entityIdsByChunkCoord.TryGetValue(chunkCoord, out List<ulong> list)) {
+            if (worldEntityIdsData.TryGetValue(chunkCoord, out List<ulong> list)) {
                 list.Remove(persistentId);
             }
             // ---------------------------
@@ -517,6 +603,21 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             // Notify Entity Manager in case it needs to clean up ref count
             ForceDeactivation(persistentId);
         }
+    }
+    // Helper to check if an entity is still needed by another loaded chunk
+    private bool IsEntityStillNeededByOtherChunks(ulong entityId, Vector2Int chunkBeingUnloaded) {
+        foreach (var kvp in cachedEntityIdsByChunk) {
+            Vector2Int checkCoord = kvp.Key;
+            List<ulong> idsInChunk = kvp.Value;
+
+            // Skip the chunk being unloaded, only check other *active* chunks
+            if (checkCoord != chunkBeingUnloaded && chunkManager.IsChunkActive(checkCoord)) {
+                if (idsInChunk != null && idsInChunk.Contains(entityId)) {
+                    return true; // Found in another active chunk
+                }
+            }
+        }
+        return false; // Not found in any other active chunk
     }
 }
 

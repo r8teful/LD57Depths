@@ -80,7 +80,7 @@ public static class WorldGen {
 
 
     internal static ChunkData GenerateChunk(int chunkSize, Vector3Int chunkOriginCell, out List<EntitySpawnInfo> entitySpawns) {
-        Debug.Log("Generating new chunk: " + chunkOriginCell);
+        //Debug.Log("Generating new chunk: " + chunkOriginCell);
         ChunkData chunkData = new ChunkData(chunkSize, chunkSize);
         entitySpawns = new List<EntitySpawnInfo>();
         // Intermediate data for CA (bool could be byte for different initial states)
@@ -466,7 +466,7 @@ public static class WorldGen {
                     }
                 }
                 if (!clearAbove) continue; // Trying to spawn in a solid block, skip this block
-                Debug.Log($"Valid placement found at x: {worldX} and y: {worldY}");
+                //Debug.Log($"Valid placement found at x: {worldX} and y: {worldY}");
 
                 bool adjacentToWater = false;
                 if (worldSpawnEntities.Exists(def => def.requireWaterAdjacent)) // Optimization: only check if any entity needs it

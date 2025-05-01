@@ -179,7 +179,7 @@ public class BiomeManager : MonoBehaviour
         //      return biomeInfo;
         // }
 
-        Debug.LogWarning($"BiomeManager: No biome data found for chunk {chunkCoord}.");
+        //Debug.LogWarning($"BiomeManager: No biome data found for chunk {chunkCoord}.");
         return null; // No data available
     }
 
