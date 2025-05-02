@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 [CreateAssetMenu(fileName = "WorldGenSettingSO", menuName = "ScriptableObjects/WorldGenSettingSO", order =4 )]
 public class WorldGenSettingSO : ScriptableObject {
     public int seed = 12345;

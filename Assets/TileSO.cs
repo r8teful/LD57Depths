@@ -33,9 +33,9 @@ public class TileSO : RuleTile
     // public AudioClip breakSound;
     // public AudioClip hitSound;
     public float GetDurabilityRatio(float current) {
-        if(maxDurability!=0)
-            return current / maxDurability;
-        return -1; // error
+        if(maxDurability<=0)
+            return -1; // error
+        return Mathf.Clamp(current / maxDurability, 0f, 1f);
     }
 }
 public enum BiomeType {

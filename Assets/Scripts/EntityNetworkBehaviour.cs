@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-using FishNet.Object;
+﻿using FishNet.Object;
 using System;
 public class EntityNetworkBehaviour : NetworkBehaviour {
     public event Action<NetworkObject> OnAnyNetworkObjectStopped;

@@ -99,7 +99,7 @@ public class ChunkManager : NetworkBehaviour {
     // --- Client-Side Chunk VISUAL Loading ---
     // This routine runs on each client (including host) to manage visuals
     private IEnumerator ClientChunkLoadingRoutine() {
-        Debug.Log("Chunk loading");
+        //Debug.Log("Chunk loading");
         HashSet<Vector2Int> clientActiveVisualChunks = new HashSet<Vector2Int>();
         Vector2Int clientCurrentChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
 
@@ -282,7 +282,7 @@ public class ChunkManager : NetworkBehaviour {
     public void ServerRequestModifyTile(Vector3Int cellPos, int newTileId) {
         // Must run on server
         if (!IsServerInitialized) return;
-
+        var isAir = IsTileAir(newTileId);
         TileBase tileToSet = _worldManager.GetTileFromID(newTileId);
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
 
@@ -317,6 +317,7 @@ public class ChunkManager : NetworkBehaviour {
             Debug.LogWarning($"Server: Invalid local coordinates for modification at {cellPos}");
         }
     }
+
     // --- RPC to inform clients of durability change ---
     [ObserversRpc]
     private void ObserversUpdateTileDurability(Vector3Int cellPos, int newDurability) {
@@ -465,20 +466,21 @@ public class ChunkManager : NetworkBehaviour {
 
     private TileBase GetCrackTileForDurability(Vector3Int cellPos, int currentDurability) {
         var t = _worldManager.GetTileAtCellPos(cellPos);
+        //var ore = _worldManager.GetOreFromID(chunk.oreID[localX, localY]);
+        //var ore = _worldManager.GetOreAtCellPos(cellPos);
         if (t is TileSO tile) {
             var r = tile.GetDurabilityRatio(currentDurability);
-
+            Debug.Log($"Durability ratio is: {r} current dur is: {currentDurability} max is {tile.maxDurability}");
             if (r > 0.75) {
                 return null; // No cracks for high durability.
             } else if (r > 0.50) {
-                return tile.breakVersions[1];
+                return tile.breakVersions[0];
             } else if (r > 0.25) {
-                return tile.breakVersions[2];
+                return tile.breakVersions[1];
             } else if (r > 0) {
-                return tile.breakVersions[3];
+                return tile.breakVersions[2];
             }
         }
-        Debug.LogError("Tile is not TileSO");
         return null;
 
     }
@@ -498,6 +500,12 @@ public class ChunkManager : NetworkBehaviour {
     public void AddChunkData(Vector2Int chunkCoord, ChunkData data) {
         worldChunks.Add(chunkCoord, data);
     }
+    private bool IsTileAir(int newTileId) {
+        // Check if the tile ID corresponds to an air tile
+        // Assuming 0 is the ID for air tiles
+        return newTileId == 0;
+    }
+
 
     // =============================================
     // === Coordinate Conversion Helper Methods ===

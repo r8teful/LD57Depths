@@ -1,6 +1,3 @@
-
-
-using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
@@ -321,7 +318,7 @@ public static class WorldGen {
 
                     TileBase oreTile = DetermineOre(worldX, worldY, biomeName);
                     if (oreTile != null) {
-                        Debug.Log($"Generating ore at: X: {worldX} Y: {worldY}");
+                        //Debug.Log($"Generating ore at: X: {worldX} Y: {worldY}");
                         chunkData.oreID[x, y] = worldmanager.GetIDFromOre(oreTile as TileSO);
                     }
                 }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine.Tilemaps;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "WorldSpawnEntitySO", menuName = "ScriptableObjects/WorldSpawnEntitySO", order = 4)]

@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 using UnityEngine.Tilemaps;
 [CreateAssetMenu(fileName = "CustomTileRuleTest", menuName = "ScriptableObjects/CustomTileRuleTest")]
 public class CustomTileRuleTest : RuleTile {

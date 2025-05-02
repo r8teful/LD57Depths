@@ -2,10 +2,7 @@ using FishNet.Object;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
 using UnityEngine;
-using FishNet.Connection;
 using Sirenix.OdinInspector;
-using System;
-using FishNet;
 
 public class WorldManager : NetworkBehaviour {
     // --- Managers ---
@@ -94,7 +91,8 @@ public class WorldManager : NetworkBehaviour {
         // This runs on ALL clients (including the host)
         TileBase tileToSet = GetTileFromID(newTileId);
         mainTilemap.SetTile(cellPos, tileToSet); // Update local visuals
-
+        if (newTileId == 0)
+            overlayTilemapOre.SetTile(cellPos, tileToSet);
         // Optional: Update client-side data cache if you implement one.
         // Optional: Trigger particle effects, sound, etc. on the client here.
     }
@@ -139,15 +137,17 @@ public class WorldManager : NetworkBehaviour {
     // =============================================
 
     // Gets the TileBase asset at a given world position (checks the ground layer)
-    public TileBase GetTileAtWorldPos(Vector3 worldPos) {
-        Vector3Int cellPos = WorldToCell(worldPos);
-        return mainTilemap.GetTile(cellPos);
-        // To check other layers, call GetTile on their respective Tilemaps
-    }
+    public TileSO GetTileAtCellPos (Vector3Int cellPos) {
+        //Vector3Int cellPos = WorldToCell(worldPos);
 
-    
-    // Sets a tile at a given world position (modifies the ground layer)
-    // IMPORTANT: Also updates the underlying ChunkData!
+        // 1st choice: ore overlay
+        TileSO ore = overlayTilemapOre.GetTile(cellPos) as TileSO;
+        if (ore != null)
+            return ore;
+
+        // fallback: main map
+        return mainTilemap.GetTile(cellPos) as TileSO;
+    }
 
     public void SetTileAtWorldPos(Vector3 worldPos, TileBase tileToSet) {
         Vector3Int cellPos = WorldToCell(worldPos);
@@ -161,11 +161,6 @@ public class WorldManager : NetworkBehaviour {
     }
     public Vector3 CellToWorld(Vector3Int cellPosition) {
         return mainTilemap.CellToWorld(cellPosition); // Get bottom-left corner
-    }
-    public TileBase GetTileAtCellPos(Vector3Int cellPosition) {
-        var world = mainTilemap.CellToWorld(cellPosition);
-        return GetTileAtWorldPos(world);
-
     }
     public Vector3Int WorldToCell(Vector3 worldPosition) {
         return mainTilemap.WorldToCell(worldPosition);

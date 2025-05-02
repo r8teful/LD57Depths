@@ -36,8 +36,7 @@ public class TileRulegenerator : MonoBehaviour {
         2,1,1
         };
 
-        Debug.Log("Test 4");
-
+        r_33.m_ColliderType = UnityEngine.Tilemaps.Tile.ColliderType.Grid;
         r_33.m_Neighbors = r_33_list;
         rTile.m_TilingRules.Add(r_33);
 
