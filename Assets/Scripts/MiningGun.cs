@@ -80,7 +80,7 @@ public class MiningGun : MonoBehaviour {
                     float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloffStrength);
                     float finalDamage = damagePerRay * falloffFactor;
 
-                    GridManager.Instance.DamageTileAtGridPosition(hitTile.gridPosition, finalDamage);
+                    //GridManager.Instance.DamageTileAtGridPosition(hitTile.gridPosition, finalDamage);
                     //CreateLaserEffect(transform.position, hit.point);
                 } else {
                    // CreateLaserEffect(transform.position, hit.point);

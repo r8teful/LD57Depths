@@ -11,6 +11,7 @@ public class DEBUGGOD : MonoBehaviour
     public WorldManager _worldManager;
     public ChunkManager _chunkManager;
     public TileBase _airTile;
+    private bool _toggle;
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
     }
@@ -32,9 +33,15 @@ public class DEBUGGOD : MonoBehaviour
         if (Input.GetMouseButtonUp(0)) {
             _isDamaging = false;
         }
+        if (Input.GetKeyDown(KeyCode.I)) {
+            ToggleArea(_toggle);
+            _toggle = !_toggle;
+        }
     }
     private bool _isDamaging = false;
-
+    public void ToggleArea(bool isWorld) {
+        _worldManager.ToggleWorldTilemap(isWorld);
+    }
     private IEnumerator DamageTileRoutine() {
         _isDamaging = true;
 

@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41cbcd6f548799048b959be97b09b0c5, type: 3}
+  m_Script: {fileID: 11500000, guid: be00040ac3102f841a04e2b78a008678, type: 3}
   m_Name: WorldGenSettingSO
   m_EditorClassIdentifier: 
   seed: 4444
-  trenchBaseWidth: 139.29
+  trenchBaseWidth: 140
   trenchWidenFactor: -0.05
   trenchEdgeNoiseFrequency: 0.03
   trenchEdgeNoiseAmplitude: 8
@@ -23,22 +23,15 @@ MonoBehaviour:
   caveCASteps: 4
   caveBirthThreshold: 6
   caveSurvivalThreshold: 4
-  biomeLayers:
-  - name: Surface
-    defaultGroundTile: {fileID: 11400000, guid: 8fdc4ce88b17cf641a439c858d645a57, type: 2}
-    startY: 0
-    maxHeight: 100
-    maxHorizontalDistanceFromTrenchCenter: 349
-    verticalBlendPercentage: 0.962
-    horizontalBlendPercentage: 0.992
+  biomeLayers: []
   oreTypes:
   - name: Iron
     tile: {fileID: 11400000, guid: f4b09cb01edb0244da271b27ca802fa3, type: 2}
     allowedBiomeNames: []
     frequency: 0.05
-    threshold: 0.846
-    clusterFrequency: 3.96
-    clusterThreshold: 0.134
+    threshold: 0.85
+    clusterFrequency: 4
+    clusterThreshold: 0.135
     requireCluster: 1
   worldSpawnEntities:
   - {fileID: 11400000, guid: d43c3f02f91b332498b32a9be1ee129e, type: 2}

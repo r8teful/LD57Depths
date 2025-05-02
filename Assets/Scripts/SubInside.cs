@@ -78,7 +78,7 @@ public class SubInside : StaticInstance<SubInside> {
                     ShipManager.Instance.ShipOpen();
                     break;
                 case SubInteractionState.Exit:
-                    Submarine.Instance.ExitSub();
+                    //Submarine.Instance.ExitSub();
                     break;
                 default:
                     break;

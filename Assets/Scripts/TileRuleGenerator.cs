@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-
+using UnityEngine.Tilemaps;
 public class TileRulegenerator : MonoBehaviour {
     public List<Sprite> spriteList;
     public string FileName;
-
+    public Tile.ColliderType ColliderType;
     [ContextMenu("Create Rule Tile from Populated Sprite List")]
     public void CreateRuleTile() {
 
@@ -36,7 +36,7 @@ public class TileRulegenerator : MonoBehaviour {
         2,1,1
         };
 
-        r_33.m_ColliderType = UnityEngine.Tilemaps.Tile.ColliderType.Grid;
+        r_33.m_ColliderType = ColliderType;
         r_33.m_Neighbors = r_33_list;
         rTile.m_TilingRules.Add(r_33);
 
@@ -50,6 +50,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         1,1,2
         };
+        r_27.m_ColliderType = ColliderType;
         r_27.m_Neighbors = r_27_list;
         rTile.m_TilingRules.Add(r_27);
 
@@ -62,6 +63,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         2,1,2
         };
+        r_34.m_ColliderType = ColliderType;
         r_34.m_Neighbors = r_34_list;
         rTile.m_TilingRules.Add(r_34);
 
@@ -74,6 +76,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         2,1,2
         };
+        r_32.m_ColliderType = ColliderType;
         r_32.m_Neighbors = r_32_list;
         rTile.m_TilingRules.Add(r_32);
 
@@ -86,6 +89,7 @@ public class TileRulegenerator : MonoBehaviour {
         2,  1,
         0,1,1
         };
+        r_0.m_ColliderType = ColliderType;
         r_0.m_Neighbors = r_0_list;
         rTile.m_TilingRules.Add(r_0);
 
@@ -98,6 +102,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  2,
         1,1,0
         };
+        r_02.m_ColliderType = ColliderType;
         r_02.m_Neighbors = r_02_list;
         rTile.m_TilingRules.Add(r_02);
 
@@ -110,6 +115,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  2,
         0,2,0
         };
+        r_16.m_ColliderType = ColliderType;
         r_16.m_Neighbors = r_16_list;
         rTile.m_TilingRules.Add(r_16);
 
@@ -122,6 +128,7 @@ public class TileRulegenerator : MonoBehaviour {
         2,  1,
         0,2,0
         };
+        r_14.m_ColliderType = ColliderType;
         r_14.m_Neighbors = r_14_list;
         rTile.m_TilingRules.Add(r_14);
 
@@ -134,6 +141,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         1,1,1
         };
+        r_01.m_ColliderType = ColliderType;
         r_01.m_Neighbors = r_01_list;
         rTile.m_TilingRules.Add(r_01);
 
@@ -147,6 +155,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         1,1,1
         };
+        r_43.m_ColliderType = ColliderType;
         r_43.m_Neighbors = r_43_list;
         rTile.m_TilingRules.Add(r_43);
 
@@ -159,6 +168,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         1,1,2
         };
+
+        r_44.m_ColliderType = ColliderType;
         r_44.m_Neighbors = r_44_list;
         rTile.m_TilingRules.Add(r_44);
 
@@ -171,6 +182,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         2,1,2
         };
+        r_45.m_ColliderType = ColliderType;
+
         r_45.m_Neighbors = r_45_list;
         rTile.m_TilingRules.Add(r_45);
 
@@ -183,6 +196,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         2,1,1
         };
+        r_46.m_ColliderType = ColliderType;
+
         r_46.m_Neighbors = r_46_list;
         rTile.m_TilingRules.Add(r_46);
 
@@ -195,6 +210,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         0,1,2
         };
+        r_03.m_ColliderType = ColliderType;
+
         r_03.m_Neighbors = r_03_list;
         rTile.m_TilingRules.Add(r_03);
 
@@ -207,6 +224,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         2,1,0
         };
+        r_04.m_ColliderType = ColliderType;
+
         r_04.m_Neighbors = r_04_list;
         rTile.m_TilingRules.Add(r_04);
 
@@ -219,6 +238,8 @@ public class TileRulegenerator : MonoBehaviour {
         2,  1,
         0,1,2
         };
+        r_05.m_ColliderType = ColliderType;
+
         r_05.m_Neighbors = r_05_list;
         rTile.m_TilingRules.Add(r_05);
 
@@ -231,6 +252,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,  2,
         2,1,0
         };
+        r_06.m_ColliderType = ColliderType;
+
         r_06.m_Neighbors = r_06_list;
         rTile.m_TilingRules.Add(r_06);
 
@@ -243,6 +266,8 @@ public class TileRulegenerator : MonoBehaviour {
         2,  1,
         0,1,1
         };
+        r_07.m_ColliderType = ColliderType;
+
         r_07.m_Neighbors = r_07_list;
         rTile.m_TilingRules.Add(r_07);
 
@@ -255,6 +280,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         1,1,1
         };
+        r_08.m_ColliderType = ColliderType;
+
         r_08.m_Neighbors = r_08_list;
         rTile.m_TilingRules.Add(r_08);
 
@@ -267,6 +294,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,  2,
         1,1,0
         };
+        r_09.m_ColliderType = ColliderType;
+
         r_09.m_Neighbors = r_09_list;
         rTile.m_TilingRules.Add(r_09);
 
@@ -279,6 +308,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         1,1,0
         };
+        r_10.m_ColliderType = ColliderType;
+
         r_10.m_Neighbors = r_10_list;
         rTile.m_TilingRules.Add(r_10);
 
@@ -291,6 +322,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         0,1,1
         };
+        r_11.m_ColliderType = ColliderType;
+
         r_11.m_Neighbors = r_11_list;
         rTile.m_TilingRules.Add(r_11);
 
@@ -303,6 +336,8 @@ public class TileRulegenerator : MonoBehaviour {
         2,  1,
         0,2,0
         };
+        r_12.m_ColliderType = ColliderType;
+
         r_12.m_Neighbors = r_12_list;
         rTile.m_TilingRules.Add(r_12);
 
@@ -315,6 +350,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,  2,
         0,2,0
         };
+        r_13.m_ColliderType = ColliderType;
+
         r_13.m_Neighbors = r_13_list;
         rTile.m_TilingRules.Add(r_13);
 
@@ -327,6 +364,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         0,2,0
         };
+        r_15.m_ColliderType = ColliderType;
+
         r_15.m_Neighbors = r_15_list;
         rTile.m_TilingRules.Add(r_15);
 
@@ -339,6 +378,8 @@ public class TileRulegenerator : MonoBehaviour {
         2,  2,
         0,2,0
         };
+        r_17.m_ColliderType = ColliderType;
+
         r_17.m_Neighbors = r_17_list;
         rTile.m_TilingRules.Add(r_17);
 
@@ -351,6 +392,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         2,1,2
         };
+        r_18.m_ColliderType = ColliderType;
+
         r_18.m_Neighbors = r_18_list;
         rTile.m_TilingRules.Add(r_18);
 
@@ -363,6 +406,7 @@ public class TileRulegenerator : MonoBehaviour {
         2,  2,
         0,1,0
         };
+        r_19.m_ColliderType = ColliderType;
         r_19.m_Neighbors = r_19_list;
         rTile.m_TilingRules.Add(r_19);
 
@@ -375,6 +419,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         0,2,0
         };
+        r_20.m_ColliderType = ColliderType;
         r_20.m_Neighbors = r_20_list;
         rTile.m_TilingRules.Add(r_20);
 
@@ -387,6 +432,7 @@ public class TileRulegenerator : MonoBehaviour {
         2,  1,
         0,2,0
         };
+        r_21.m_ColliderType = ColliderType;
         r_21.m_Neighbors = r_21_list;
         rTile.m_TilingRules.Add(r_21);
 
@@ -399,6 +445,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  2,
         0,2,0
         };
+        r_22.m_ColliderType = ColliderType;
         r_22.m_Neighbors = r_22_list;
         rTile.m_TilingRules.Add(r_22);
 
@@ -411,6 +458,7 @@ public class TileRulegenerator : MonoBehaviour {
         2,  2,
         0,2,0
         };
+        r_24.m_ColliderType = ColliderType;
         r_24.m_Neighbors = r_24_list;
         rTile.m_TilingRules.Add(r_24);
 
@@ -422,7 +470,8 @@ public class TileRulegenerator : MonoBehaviour {
         0,2,0,
         2,  2,
         0,1,0
-        };
+        }; 
+        r_23.m_ColliderType = ColliderType;
         r_23.m_Neighbors = r_23_list;
         rTile.m_TilingRules.Add(r_23);
 
@@ -435,7 +484,8 @@ public class TileRulegenerator : MonoBehaviour {
         2,1,1,
         1,  1,
         1,1,2
-        };
+        }; 
+        r_25.m_ColliderType = ColliderType;
         r_25.m_Neighbors = r_25_list;
         rTile.m_TilingRules.Add(r_25);
 
@@ -447,7 +497,8 @@ public class TileRulegenerator : MonoBehaviour {
         1,1,2,
         1,  1,
         2,1,1
-        };
+        }; 
+        r_26.m_ColliderType = ColliderType;
         r_26.m_Neighbors = r_26_list;
         rTile.m_TilingRules.Add(r_26);
 
@@ -459,7 +510,8 @@ public class TileRulegenerator : MonoBehaviour {
         2,1,2,
         1,  1,
         0,2,0
-        };
+        }; 
+        r_28.m_ColliderType = ColliderType;
         r_28.m_Neighbors = r_28_list;
         rTile.m_TilingRules.Add(r_28);
 
@@ -472,6 +524,7 @@ public class TileRulegenerator : MonoBehaviour {
         2,  1,
         0,1,2
         };
+        r_29.m_ColliderType = ColliderType;
         r_29.m_Neighbors = r_29_list;
         rTile.m_TilingRules.Add(r_29);
 
@@ -484,6 +537,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         2,1,2
         };
+        r_30.m_ColliderType = ColliderType;
         r_30.m_Neighbors = r_30_list;
         rTile.m_TilingRules.Add(r_30);
 
@@ -496,6 +550,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  2,
         2,1,0
         };
+        r_31.m_ColliderType = ColliderType;
         r_31.m_Neighbors = r_31_list;
         rTile.m_TilingRules.Add(r_31);
 
@@ -508,6 +563,7 @@ public class TileRulegenerator : MonoBehaviour {
         2,  1,
         0,1,1
         };
+        r_35.m_ColliderType = ColliderType;
         r_35.m_Neighbors = r_35_list;
         rTile.m_TilingRules.Add(r_35);
 
@@ -520,6 +576,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         1,1,2
         };
+        r_36.m_ColliderType = ColliderType;
         r_36.m_Neighbors = r_36_list;
         rTile.m_TilingRules.Add(r_36);
 
@@ -532,6 +589,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  2,
         2,1,0
         };
+        r_37.m_ColliderType = ColliderType;
         r_37.m_Neighbors = r_37_list;
         rTile.m_TilingRules.Add(r_37);
 
@@ -544,6 +602,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         0,2,0
         };
+        r_38.m_ColliderType = ColliderType;
         r_38.m_Neighbors = r_38_list;
         rTile.m_TilingRules.Add(r_38);
 
@@ -556,6 +615,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  2,
         1,1,0
         };
+        r_39.m_ColliderType = ColliderType;
         r_39.m_Neighbors = r_39_list;
         rTile.m_TilingRules.Add(r_39);
 
@@ -568,6 +628,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         0,2,0
         };
+        r_40.m_ColliderType = ColliderType;
         r_40.m_Neighbors = r_40_list;
         rTile.m_TilingRules.Add(r_40);
 
@@ -580,6 +641,7 @@ public class TileRulegenerator : MonoBehaviour {
         2,  1,
         0,1,2
         };
+        r_41.m_ColliderType = ColliderType;
         r_41.m_Neighbors = r_41_list;
         rTile.m_TilingRules.Add(r_41);
 
@@ -593,6 +655,7 @@ public class TileRulegenerator : MonoBehaviour {
         1,  1,
         2,1,1
         };
+        r_42.m_ColliderType = ColliderType;
         r_42.m_Neighbors = r_42_list;
         rTile.m_TilingRules.Add(r_42);
         Debug.Log($"File created at: Assets/Resources/{FileName}.asset");

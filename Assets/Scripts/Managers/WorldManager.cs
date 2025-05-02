@@ -123,7 +123,11 @@ public class WorldManager : NetworkBehaviour {
         Debug.LogWarning($"Tile '{tile.name}' not found in mapping. Returning 0.");
         return 0; // Fallback to air/null ID
     }
-
+    public void ToggleWorldTilemap(bool enableWorld) {
+        mainTilemap.GetComponent<TilemapRenderer>().enabled = enableWorld;
+        overlayTilemapOre.GetComponent<TilemapRenderer>().enabled = enableWorld;
+        overlayTilemapDamage.GetComponent<TilemapRenderer>().enabled = enableWorld;
+    }
     // Modify the world (visually)
     internal void SetTiles(BoundsInt chunkBounds, TileBase[] tilesToSet) {
         mainTilemap.SetTilesBlock(chunkBounds, tilesToSet);
@@ -136,8 +140,8 @@ public class WorldManager : NetworkBehaviour {
     // === World Interaction Helper Methods ===
     // =============================================
 
-    // Gets the TileBase asset at a given world position (checks the ground layer)
-    public TileSO GetTileAtCellPos (Vector3Int cellPos) {
+    // Ores get returned first, then ground layer
+    public TileSO GetFirstTileAtCellPos (Vector3Int cellPos) {
         //Vector3Int cellPos = WorldToCell(worldPos);
 
         // 1st choice: ore overlay

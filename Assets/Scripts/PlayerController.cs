@@ -213,10 +213,7 @@ public class PlayerController : NetworkBehaviour {
             // Snap player to the curve position
             Vector3 newPos = EvaluateBezier(outsideStart.position, outsideTurning.position, outsideEnd.position, outsideT);
             rb.MovePosition(newPos);
-        } else if (_currentState == PlayerState.Cutscene) {
-            // Follow sub position;
-            rb.MovePosition(Submarine.Instance.transform.position);
-        }
+        } 
     }
     // A helper function to evaluate a quadratic Bézier curve
     Vector3 EvaluateBezier(Vector3 p0, Vector3 p1, Vector3 p2, float t) {
@@ -301,8 +298,6 @@ public class PlayerController : NetworkBehaviour {
                 // Lose some resources and go back to base
                 if (UpgradeManager.Instance != null)
                     UpgradeManager.Instance.RemoveAllResources(0.5f);
-                if(Submarine.Instance != null)
-                    Submarine.Instance.EnterSub(); // Will also set player state
                 Resurect();
             }
             UpdateFadeOutVisual();

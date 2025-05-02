@@ -6,9 +6,9 @@ using FishNet.Object;
 using FishNet.Connection;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
-    public TileBase[,] tiles; // Store references to TileBase assets
-    public int[,] tileDurability;
-    public int[,] oreID;
+    public TileBase[,] tiles; // The ground layer 
+    public int[,] oreID;      // Second "ore" layer
+    public int[,] tileDurability; // Third "dmg" layer 
     public bool isModified = false; // Flag to track if chunk has changed since load/generation
     public bool hasBeenGenerated = false; // Flag to prevent regenerating loaded chunks
     public List<PersistentEntityData> entitiesToSpawn; 
@@ -465,7 +465,7 @@ public class ChunkManager : NetworkBehaviour {
     }
 
     private TileBase GetCrackTileForDurability(Vector3Int cellPos, int currentDurability) {
-        var t = _worldManager.GetTileAtCellPos(cellPos);
+        var t = _worldManager.GetFirstTileAtCellPos(cellPos);
         //var ore = _worldManager.GetOreFromID(chunk.oreID[localX, localY]);
         //var ore = _worldManager.GetOreAtCellPos(cellPos);
         if (t is TileSO tile) {

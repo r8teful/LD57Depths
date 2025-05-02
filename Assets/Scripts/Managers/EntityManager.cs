@@ -58,6 +58,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         //StartCoroutine(DespawnCheckLoop());
     }
 
+    #region Runtime spawning
     IEnumerator SpawnCheckLoop() {
         // Safety check: Ensure this only runs on the server.
         if (!IsServerInitialized) yield break;
@@ -177,6 +178,50 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             }
         }
     }
+    IEnumerator DespawnCheckLoop() {
+        if (!IsServerInitialized) yield break;
+
+        while (true) {
+            yield return new WaitForSeconds(spawnCheckInterval * 2.5f); // Check less often than spawning
+
+            if (InstanceFinder.ServerManager == null || !InstanceFinder.ServerManager.Started) continue;
+
+            // Build list of active player positions
+            List<Vector3> playerPositions = new List<Vector3>();
+            foreach (var conn in InstanceFinder.ServerManager.Clients.Values) {
+                if (conn.FirstObject != null) { playerPositions.Add(conn.FirstObject.transform.position); }
+            }
+
+            if (playerPositions.Count == 0) continue; // No players to check against
+
+            // Iterate backwards through spawned entities list (safe for removal)
+            for (int i = spawnedEntities.Count - 1; i >= 0; i--) {
+                NetworkObject nob = spawnedEntities[i];
+                if (nob == null || !nob.IsSpawned) { // Check if object already destroyed or not spawned
+                    spawnedEntities.RemoveAt(i);
+                    continue;
+                }
+
+                Vector3 entityPos = nob.transform.position;
+                bool nearAPlayer = false;
+                foreach (Vector3 playerPos in playerPositions) {
+                    if (Vector3.Distance(entityPos, playerPos) < playerDespawnRange) {
+                        nearAPlayer = true;
+                        break;
+                    }
+                }
+
+                if (!nearAPlayer) {
+                    // Too far from ALL players, despawn it
+                    Debug.Log($"Despawning {nob.name} due to distance.");
+                    // IMPORTANT: OnStopServer listener (HandleEntityDespawned) will handle removal from list & count updates
+                    InstanceFinder.ServerManager.Despawn(nob);
+                    // Do NOT remove from spawnedEntities list here, HandleEntityDespawned does it.
+                }
+            }
+        }
+    }
+    #endregion
 
     // Called by WorldGenerator after a chunk's data (including entities) is ready on the server.
     public bool ServerSpawnPredefinedEntity(GameObject prefab, Vector3 position, Quaternion rotation, Vector3 scale) {
@@ -486,49 +531,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             Debug.LogWarning($"Cannot deactivate entity {persistentId}: Data not found");
         }
     }
-    IEnumerator DespawnCheckLoop() {
-        if (!IsServerInitialized) yield break;
 
-        while (true) {
-            yield return new WaitForSeconds(spawnCheckInterval * 2.5f); // Check less often than spawning
-
-            if (InstanceFinder.ServerManager == null || !InstanceFinder.ServerManager.Started) continue;
-
-            // Build list of active player positions
-            List<Vector3> playerPositions = new List<Vector3>();
-            foreach (var conn in InstanceFinder.ServerManager.Clients.Values) {
-                if (conn.FirstObject != null) { playerPositions.Add(conn.FirstObject.transform.position); }
-            }
-
-            if (playerPositions.Count == 0) continue; // No players to check against
-
-            // Iterate backwards through spawned entities list (safe for removal)
-            for (int i = spawnedEntities.Count - 1; i >= 0; i--) {
-                NetworkObject nob = spawnedEntities[i];
-                if (nob == null || !nob.IsSpawned) { // Check if object already destroyed or not spawned
-                    spawnedEntities.RemoveAt(i);
-                    continue;
-                }
-
-                Vector3 entityPos = nob.transform.position;
-                bool nearAPlayer = false;
-                foreach (Vector3 playerPos in playerPositions) {
-                    if (Vector3.Distance(entityPos, playerPos) < playerDespawnRange) {
-                        nearAPlayer = true;
-                        break;
-                    }
-                }
-
-                if (!nearAPlayer) {
-                    // Too far from ALL players, despawn it
-                    Debug.Log($"Despawning {nob.name} due to distance.");
-                    // IMPORTANT: OnStopServer listener (HandleEntityDespawned) will handle removal from list & count updates
-                    InstanceFinder.ServerManager.Despawn(nob);
-                    // Do NOT remove from spawnedEntities list here, HandleEntityDespawned does it.
-                }
-            }
-        }
-    }
     private void ApplyDataToInstance(GameObject instance, PersistentEntityData data) {
         if (instance == null || data == null) return;
         /* TODO obviously
