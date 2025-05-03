@@ -278,11 +278,10 @@ public class ChunkManager : NetworkBehaviour {
         
     }
     // --- Tile Modification ---
-    // This is the entry point called by the PlayerController's ServerRpc
+    // This is the entry point called by the PlayerController's ServerRpc, this is usually after all checks have been done already
     public void ServerRequestModifyTile(Vector3Int cellPos, int newTileId) {
         // Must run on server
         if (!IsServerInitialized) return;
-        var isAir = IsTileAir(newTileId);
         TileBase tileToSet = _worldManager.GetTileFromID(newTileId);
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
 
@@ -312,6 +311,9 @@ public class ChunkManager : NetworkBehaviour {
                 // --- BROADCAST change to ALL clients ---
                 ObserversUpdateTileDurability(cellPos, -1);
                 _worldManager.ObserversUpdateTile(cellPos, newTileId); // TODO check if this works it might break because we call it in the parent
+
+                // Entity behaviour might change state, notify entitymanager
+                _entitySpawner.NotifyTileChanged(cellPos, chunkCoord, newTileId);
             }
         } else {
             Debug.LogWarning($"Server: Invalid local coordinates for modification at {cellPos}");
@@ -470,7 +472,7 @@ public class ChunkManager : NetworkBehaviour {
         //var ore = _worldManager.GetOreAtCellPos(cellPos);
         if (t is TileSO tile) {
             var r = tile.GetDurabilityRatio(currentDurability);
-            Debug.Log($"Durability ratio is: {r} current dur is: {currentDurability} max is {tile.maxDurability}");
+            //Debug.Log($"Durability ratio is: {r} current dur is: {currentDurability} max is {tile.maxDurability}");
             if (r > 0.75) {
                 return null; // No cracks for high durability.
             } else if (r > 0.50) {

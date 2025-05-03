@@ -446,7 +446,8 @@ public static class WorldGen {
                 int worldY = chunkOriginCell.y + y;
 
                 // --- Check conditions applicable to the anchor point itself ---
-                bool groundBelow = IsRock(anchorTile); // Use your IsRock or similar definition
+                bool isWaterSpawn = !IsRock(anchorTile); 
+                bool isGroundBelow = IsRock(anchorTile); // 
 
                 // Quick check using first entity's height needs, real check below
                 bool clearAbove = true;
@@ -487,8 +488,8 @@ public static class WorldGen {
                     }
 
                     // 2. Condition Checks
-                    if (entityDef.requireSolidGroundBelow && !groundBelow) continue;
-                    if (entityDef.requireWaterAdjacent && !adjacentToWater) continue; // Reuse the check from above
+                    if (entityDef.requireSolidGroundBelow && !isGroundBelow) continue;
+                    if (entityDef.requireWaterAdjacent && !adjacentToWater && !isWaterSpawn) continue;
 
                     // Check specific ceiling height required by *this* entity definition
                     if (entityDef.requireCeilingSpace) {
@@ -513,9 +514,7 @@ public static class WorldGen {
 
 
                     // --- ALL CHECKS PASSED --- Spawn this entity ---
-
-                    // Calculate spawn position (anchor is bottom-left corner of cell)
-                    Vector3 spawnPos = new Vector3(worldX + 0.5f, worldY + 0.5f, 0f) + entityDef.positionOffset;
+                    Vector3Int spawnPos = new(worldX, worldY);
 
                     // Calculate rotation
                     Quaternion spawnRot = entityDef.randomYRotation ?

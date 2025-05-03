@@ -16,7 +16,6 @@ public class WorldSpawnEntitySO : EntityBaseSO {
     // public float maxSlope = 30f; // Optional: Add slope check later if needed
 
     [Header("Placement Fine-tuning")]
-    public Vector3 positionOffset = Vector3.zero; // Offset from the anchor tile center
     public bool randomYRotation = true;
     public Vector2 scaleVariation = Vector2.one; // Min/Max uniform scale multiplier
 }

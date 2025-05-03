@@ -28,8 +28,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
     private Dictionary<ulong, int> entityClientRefCount = new Dictionary<ulong, int>();
 
     // Key: Persistent Entity ID, Value: How many active chunks require it
-    private Dictionary<ulong, int> entityActivationRefCount = new Dictionary<ulong, int>();
-    private Dictionary<Vector2Int, List<ulong>> worldEntityIdsData = new Dictionary<Vector2Int, List<ulong>>(); // Like worldChunks but for entities
+    private Dictionary<Vector2Int, List<ulong>> entityIdsByByChunkCoord = new Dictionary<Vector2Int, List<ulong>>(); // Like worldChunks but for entities
     private Dictionary<ulong, PersistentEntityData> persistentEntityDatabase = new Dictionary<ulong, PersistentEntityData>();
     private ulong nextPersistentEntityId = 1; // Counter for assigning unique IDs
 
@@ -38,7 +37,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
     private Dictionary<Vector2Int, List<ulong>> cachedEntityIdsByChunk = new Dictionary<Vector2Int, List<ulong>>();
     private ulong GetNextPersistentEntityId() { return nextPersistentEntityId++; }
     public List<ulong> GetEntityIDsByChunkCoord(Vector2Int chunkCoord) { 
-        if(worldEntityIdsData.TryGetValue(chunkCoord, out var Idlist)){
+        if(entityIdsByByChunkCoord.TryGetValue(chunkCoord, out var Idlist)){
             return Idlist;
         } else {
             return null;
@@ -288,8 +287,8 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
     // Adds data to a persistent database, doesn't get spawned yet because that is client only
     public void AddGeneratedEntityData(Vector2Int chunkCoord, List<EntitySpawnInfo> entityList) {
         if (!IsServerInitialized || entityList == null || entityList.Count == 0) return;
-        if (!worldEntityIdsData.ContainsKey(chunkCoord)) {
-            worldEntityIdsData[chunkCoord] = new List<ulong>();
+        if (!entityIdsByByChunkCoord.ContainsKey(chunkCoord)) {
+            entityIdsByByChunkCoord[chunkCoord] = new List<ulong>();
         }
         foreach (EntitySpawnInfo info in entityList) {
             if (!idToPrefab.ContainsKey(info.entityID)) {
@@ -297,10 +296,10 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
                 idToPrefab.Add(info.entityID, info.prefab);
             }
             // Add to the main persistent database
-            PersistentEntityData newEntityData = ServerAddNewPersistentEntity(info.entityID, info.position, info.rotation, info.scale);
+            PersistentEntityData newEntityData = ServerAddNewPersistentEntity(info.entityID, info.cellPos, info.rotation, info.scale);
             if (newEntityData != null) {
                 // Add the ID to this chunk's list
-                worldEntityIdsData[chunkCoord].Add(newEntityData.persistentId);
+                entityIdsByByChunkCoord[chunkCoord].Add(newEntityData.persistentId);
             }
         }
     }
@@ -331,7 +330,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             }
         }
     }
-    public PersistentEntityData ServerAddNewPersistentEntity(int id, Vector3 pos, Quaternion rot, Vector3 scale) {
+    public PersistentEntityData ServerAddNewPersistentEntity(int id, Vector3Int pos, Quaternion rot, Vector3 scale) {
         ulong unqiueID = GetNextPersistentEntityId();
         PersistentEntityData newEntityData = new PersistentEntityData(unqiueID, id, pos, rot, scale);
         persistentEntityDatabase.Add(unqiueID, newEntityData);
@@ -366,7 +365,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             }
 
             // Instantiate and apply data
-            GameObject instance = Instantiate(prefab, data.position, data.rotation,worldManager.GetWorldRoot());
+            GameObject instance = Instantiate(prefab, data.cellPos, data.rotation);
             instance.transform.localScale = data.scale;
 
             nob = instance.GetComponent<NetworkObject>();
@@ -376,7 +375,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
                 // Spawn server-side FIRST (observers added after)
                 InstanceFinder.ServerManager.Spawn(nob);
                 data.activeInstance = nob;
-               // nob.OnStopServer += HandleUnexpectedDespawn; // Add listener
+                //nob.OnStopServer += HandleUnexpectedDespawn; // Add listener
                                                              // Debug.Log($"Server: Spawned instance for entity {persistentId} due to first client activation.");
             } else {
                 Debug.LogError($"Entity prefab {prefab.name} is missing NetworkObject component!");
@@ -478,11 +477,11 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
     [Server]
     public void ForceDeactivation(ulong persistentId) {
         // Deactivate instance if present
-        if (entityActivationRefCount.ContainsKey(persistentId)) {
+        if (entityClientRefCount.ContainsKey(persistentId)) {
             DeactivateEntity(persistentId);
         }
         // Ensure ref count is removed
-        entityActivationRefCount.Remove(persistentId);
+        entityClientRefCount.Remove(persistentId);
     }
     // Called when a NetworkObject tracked by this spawner is despawned/destroyed on the server
     private void HandleEntityDespawned(NetworkObject nob) {
@@ -554,7 +553,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         if (nob == null || data == null) return;
 
         // Update Core State
-        data.position = nob.transform.position;
+        //data.cellPos = Mathf.FloorToInt(nob.transform.position);
         data.rotation = nob.transform.rotation;
         data.scale = nob.transform.localScale;
         /* todo
@@ -578,14 +577,14 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
 
         if (oldChunk != newChunk) {
             // Remove from old chunk's list
-            if (worldEntityIdsData.TryGetValue(oldChunk, out List<ulong> oldList)) {
+            if (entityIdsByByChunkCoord.TryGetValue(oldChunk, out List<ulong> oldList)) {
                 oldList.Remove(persistentId);
             }
             // Add to new chunk's list
-            if (!worldEntityIdsData.ContainsKey(newChunk)) {
-                worldEntityIdsData[newChunk] = new List<ulong>();
+            if (!entityIdsByByChunkCoord.ContainsKey(newChunk)) {
+                entityIdsByByChunkCoord[newChunk] = new List<ulong>();
             }
-            worldEntityIdsData[newChunk].Add(persistentId);
+            entityIdsByByChunkCoord[newChunk].Add(persistentId);
             // Debug.Log($"Entity {persistentId} moved from chunk {oldChunk} to {newChunk}");
         }
     }
@@ -596,8 +595,9 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             // ... (Despawn active instance if needed) ...
 
             // --- Remove from chunk map ---
-            Vector2Int chunkCoord = chunkManager.WorldToChunkCoord(data.position);
-            if (worldEntityIdsData.TryGetValue(chunkCoord, out List<ulong> list)) {
+            //Vector2Int chunkCoord = chunkManager.WorldToChunkCoord(data.position);
+            Vector2Int chunkCoord = chunkManager.CellToChunkCoord(data.cellPos);
+            if (entityIdsByByChunkCoord.TryGetValue(chunkCoord, out List<ulong> list)) {
                 list.Remove(persistentId);
             }
             // ---------------------------
@@ -621,6 +621,100 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             }
         }
         return false; // Not found in any other active chunk
+    }
+    // ==================================================
+    // == HELPER FUNCTIONS for Entities (Called by Entity Components SERVER-SIDE) ==
+    // ==================================================
+
+    #region Entity helpers
+
+    // --- Player Queries (Server-Side) ---
+    [Server]
+    public List<NetworkObject> GetPlayersNear(Vector3 position, float radius) {
+        List<NetworkObject> nearbyPlayers = new List<NetworkObject>();
+        if (InstanceFinder.ServerManager == null || !InstanceFinder.ServerManager.Started) return nearbyPlayers;
+
+        float sqrRadius = radius * radius;
+        foreach (NetworkConnection conn in InstanceFinder.ServerManager.Clients.Values)
+        {
+             if (conn.FirstObject != null) // FirstObject is usually the player's root Nob
+            {
+                 // Use world generator's method which likely includes range check already
+                 // Or calculate here:
+                 if(Vector3.SqrMagnitude(conn.FirstObject.transform.position - position) <= sqrRadius)
+                 {
+                    nearbyPlayers.Add(conn.FirstObject);
+                 }
+            }
+        }
+        return nearbyPlayers;
+    }
+
+    // --- Entity Queries (Server-Side) ---
+    [Server]
+    public List<NetworkObject> GetActiveEntitiesNear(Vector3 position, float radius, ulong selfIdToExclude = 0) {
+        List<NetworkObject> nearbyEntities = new List<NetworkObject>();
+        float sqrRadius = radius * radius;
+        // This still iterates the whole database, but only checks ACTIVE entities.
+        // Optimization: Could use WorldGenerator's chunk map + proximity check if DB is huge.
+        foreach (var kvp in persistentEntityDatabase) {
+            PersistentEntityData data = kvp.Value;
+            if (data.persistentId != selfIdToExclude && data.activeInstance != null && data.activeInstance.IsSpawned) {
+                if (Vector3.SqrMagnitude(data.cellPos - position) <= sqrRadius) // Check against persistent position (more stable) or activeInstance.transform.position?
+               {
+                    nearbyEntities.Add(data.activeInstance);
+                }
+            }
+        }
+        return nearbyEntities;
+    }
+    // ==================================================
+    // == NOTIFICATION FUNCTIONS (Called by other Managers SERVER-SIDE) ==
+    // ==================================================
+
+    [Server]
+    public void NotifyTileChanged(Vector3Int changedCellPosition, Vector2Int chunkCoord, int newTileID) {
+        List<ulong> candidateIds = GetEntityIDsByChunkCoord(chunkCoord); // Need getter in WG
+        if (candidateIds == null) return; // No entities registered in this chunk
+
+        float sqrNotifyRadius = 5 * 5; //default of 5 tiles now
+        Vector3 changeWorldPos = worldManager.GetCellCenterWorld(changedCellPosition);
+
+        foreach (ulong entityId in candidateIds) {
+            PersistentEntityData entityData = persistentEntityDatabase[entityId]; 
+            // Check if entity is ACTIVE and within notification radius
+            if (entityData != null && entityData.activeInstance != null && entityData.activeInstance.IsSpawned) {
+                if (Vector3.SqrMagnitude(entityData.activeInstance.transform.position - changeWorldPos) <= sqrNotifyRadius) {
+                    // Found a nearby active entity, notify its components
+                    NotifyEntityComponents<ITileChangeReactor>(
+                         entityData.activeInstance,
+                         (reactor) => reactor.OnTileChangedNearby(changedCellPosition, newTileID)
+                     );
+                }
+            }
+        }
+    }
+
+    // Generic helper to find and call methods on components implementing an interface
+    [Server]
+    private void NotifyEntityComponents<T>(NetworkObject targetNobo, System.Action<T> action) where T : class // Interface constraint
+    {
+        if (targetNobo == null || action == null) return;
+
+        // GetComponentsInChildren also includes components on the root object
+        T[] reactors = targetNobo.GetComponentsInChildren<T>();
+        foreach (T reactor in reactors) {
+            try {
+                action(reactor); // Execute the provided action (e.g., calling the interface method)
+            } catch (System.Exception e) {
+                Debug.LogError($"Error notifying component {typeof(T).Name} on entity {targetNobo.name}: {e.Message}", targetNobo);
+            }
+        }
+    }
+
+#endregion
+internal void OnTileBroken(Vector3Int cellPos) {
+        throw new System.NotImplementedException();
     }
 }
 

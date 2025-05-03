@@ -13,9 +13,7 @@ public class PlayerLayerController : NetworkBehaviour {
     private readonly SyncVar<PlayerWorldLayer> _currentLayer = 
         new SyncVar<PlayerWorldLayer>(PlayerWorldLayer.Exterior,new SyncTypeSettings(ReadPermission.Observers));
 
-
     private readonly SyncVar<string> _currentInteriorId = new SyncVar<string>("", new SyncTypeSettings(ReadPermission.Observers));
-    private Transform _exteriorSpawnpoint;
     public SyncVar<PlayerWorldLayer> CurrentLayer => _currentLayer;
     public SyncVar<string> CurrentInteriorId => _currentInteriorId;
 

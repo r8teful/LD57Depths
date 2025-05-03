@@ -11,8 +11,10 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
     private string PlayerTag = "Player"; 
     private PlayerLayerController _localPlayerController = null;
     private List<PlayerLayerController> _remotePlayers = new List<PlayerLayerController>(); // Keep track of others
+    private readonly HashSet<ExteriorObject> _runtimeExteriorObjects = new HashSet<ExteriorObject>();
 
-
+    // State variable to know if the exterior is currently supposed to be visible
+    private bool _isExteriorVisible = true;
     void Start() {
         if (ExteriorWorldRoot == null) {
             Debug.LogError("ExteriorWorldRoot is not assigned in WorldVisibilityManager!");
@@ -61,7 +63,22 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
             }
         }
     }
+    public void RegisterExteriorObject(ExteriorObject obj) {
+        if (obj != null && _runtimeExteriorObjects.Add(obj)) // Add returns true if item was added (not already present)
+        {
+            // IMPORTANT: Immediately set the visibility of the newly registered object
+            // based on the *current* state of the WorldVisibilityManager.
+            obj.SetVisibility(_isExteriorVisible);
+            Debug.Log($"WVM: Registered Runtime Exterior Object: {obj.name}. Setting visibility to {_isExteriorVisible}");
+        }
+    }
 
+    public void DeregisterExteriorObject(ExteriorObject obj) {
+        if (obj != null) {
+            _runtimeExteriorObjects.Remove(obj);
+            // Debug.Log($"WVM: Deregistered Runtime Exterior Object: {obj.name}");
+        }
+    }
     /*
     void Update() {
         // Simple periodic check for players joining/leaving.
@@ -90,13 +107,22 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
 
     // Main function called when the LOCAL player's state changes
     public void UpdateVisibilityForLocalPlayer(PlayerWorldLayer localPlayerLayer, string localPlayerInteriorId) {
-        bool isExteriorVisible = (localPlayerLayer == PlayerWorldLayer.Exterior);
+        _isExteriorVisible = (localPlayerLayer == PlayerWorldLayer.Exterior);
 
         // 1. Handle Exterior World Visibility
-        SetExteriorWorldActive(isExteriorVisible);
+        SetExteriorWorldActive(_isExteriorVisible);
 
-        // 2. Handle Interior World Visibility
-        if (isExteriorVisible) {
+        // 2. Iterate through the tracked runtime objects and set their visibility.
+        foreach (var runtimeObj in _runtimeExteriorObjects) {
+            if (runtimeObj != null) 
+            {
+                runtimeObj.SetVisibility(_isExteriorVisible);
+            }
+            // Consider removing null entries here if they accumulate, though Deregister should handle most cases.
+        }
+
+        // 3. Handle Interior World Visibility
+        if (_isExteriorVisible) {
             // Player is outside, deactivate all interiors
             InteriorManager.Instance.DeactivateAllInteriors();
         } else {
@@ -104,7 +130,7 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
             InteriorManager.Instance.ActivateInterior(localPlayerInteriorId);
         }
 
-        // 3. Update visibility of REMOTE players based on the local player's location
+        // 4. Update visibility of REMOTE players based on the local player's location
         foreach (var remotePlayer in _remotePlayers) {
             UpdateRemotePlayerVisibility(remotePlayer);
         }
