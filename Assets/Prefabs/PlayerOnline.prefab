@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 6962948237969374493}
   - component: {fileID: 7077130184189570014}
   - component: {fileID: -5283526655762208488}
+  - component: {fileID: -7626533647889685779}
   m_Layer: 2
   m_Name: PlayerOnline
   m_TagString: Player
@@ -327,6 +328,21 @@ MonoBehaviour:
     X: 0
     Y: 0
     Z: 0
+--- !u!114 &-7626533647889685779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228294681075539138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62e6e5541640c1a44881035a21ac43df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 6962948237969374493}
+  _networkObjectCache: {fileID: 0}
 --- !u!1 &7921325826699556024
 GameObject:
   m_ObjectHideFlags: 0

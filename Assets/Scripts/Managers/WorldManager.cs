@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine.Tilemaps;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using FishNet;
 
 public class WorldManager : NetworkBehaviour {
+    public static WorldManager Instance { get; private set; }
     // --- Managers ---
     public WorldDataManager WorldDataManager;
     public ChunkManager ChunkManager;
     public BiomeManager BiomeManager;
+    [SerializeField] private Transform _sub;
+    [SerializeField] private Transform _worldRoot; // All world entities have this as their parent, used for hiding when entering sub or other interiors
     [InlineEditor]
     public WorldGenSettingSO WorldGenSettings;
     // --- Tile ID Mapping ---
@@ -20,6 +24,7 @@ public class WorldManager : NetworkBehaviour {
     public Dictionary<TileBase, int> GetTileToID() => tileAssetToIdMap;
     public Dictionary<int, TileBase> GetIDToTile() => idToTileAssetMap;
     public int GetChunkSize() => ChunkManager.GetChunkSize();
+    public Transform GetWorldRoot() => _worldRoot;
     
     [SerializeField] private List<TileSO> tileAssets; // Assign ALL your TileBase assets here in order
     [SerializeField] private List<TileSO> oreAssets; // Assign ALL your TileBase assets here in order
@@ -36,6 +41,10 @@ public class WorldManager : NetworkBehaviour {
         ChunkManager.DEBUGNewGen();
         WorldGen.InitializeNoise();
     }
+    private void Awake() {
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else Instance = this;
+    }
     public override void OnStartServer() {
         base.OnStartServer();
         // Server-only initialization
@@ -48,6 +57,8 @@ public class WorldManager : NetworkBehaviour {
         BiomeManager.SetWorldManager(this);
         var offset = GetVisualTilemapGridSize() * 6;
         playerSpawn.transform.position = new Vector3(0,-WorldGen.GetDepth()* GetVisualTilemapGridSize() + offset); // Depths is in blocks, so times it with grid size to get world space pos
+        _sub.transform.position = new Vector3(0, -WorldGen.GetDepth() * GetVisualTilemapGridSize() + offset/4);
+        //InstanceFinder.ServerManager.Spawn(sub);
         //StartCoroutine(ServerChunkManagementRoutine()); // Not using atm
     }
     public override void OnStartClient() {

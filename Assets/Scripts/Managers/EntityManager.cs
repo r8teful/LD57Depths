@@ -158,7 +158,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             GameObject prefabToSpawn = data.entityPrefab;
 
             // Instantiate PREFAB on SERVER -> Spawn INSTANCE over network
-            GameObject instance = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
+            GameObject instance = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity, worldManager.GetWorldRoot());
             NetworkObject nob = instance.GetComponent<NetworkObject>();
 
             if (nob != null) {
@@ -255,7 +255,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         }
 
         // --- Spawn the Entity ---
-        GameObject instance = Instantiate(prefab, position, rotation);
+        GameObject instance = Instantiate(prefab, position, rotation, worldManager.GetWorldRoot());
         instance.transform.localScale = scale; // Apply scale *after* instantiation
         NetworkObject nob = instance.GetComponent<NetworkObject>();
 
@@ -366,7 +366,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             }
 
             // Instantiate and apply data
-            GameObject instance = Instantiate(prefab, data.position, data.rotation);
+            GameObject instance = Instantiate(prefab, data.position, data.rotation,worldManager.GetWorldRoot());
             instance.transform.localScale = data.scale;
 
             nob = instance.GetComponent<NetworkObject>();
