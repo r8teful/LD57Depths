@@ -3,7 +3,11 @@ using FishNet.Object;
 
 // Attach this component to the ROOT of any NetworkObject prefab
 // that should be hidden when the player enters an interior.
-public class ExteriorObject : NetworkBehaviour {
+public class ExteriorObject : NetworkBehaviour, IVisibilityEntity {
+    public VisibilityLayerType VisibilityScope => VisibilityLayerType.Exterior;
+
+    public string AssociatedInteriorId => null;
+
     // Cache components for efficiency if needed
     // [SerializeField] private Renderer[] renderers;
     // [SerializeField] private Collider2D[] colliders;
@@ -11,7 +15,7 @@ public class ExteriorObject : NetworkBehaviour {
     public override void OnStartClient() {
         base.OnStartClient();
         // Register this object with the central manager when it spawns on the client
-        WorldVisibilityManager.Instance.RegisterExteriorObject(this);
+        WorldVisibilityManager.Instance.RegisterObject(this);
     }
 
     public override void OnStopClient() {
@@ -19,14 +23,11 @@ public class ExteriorObject : NetworkBehaviour {
         // Deregister when it's despawned/destroyed on the client
         // Add a null check for the instance in case the manager is destroyed first during shutdown
         if (WorldVisibilityManager.Instance != null) {
-            WorldVisibilityManager.Instance.DeregisterExteriorObject(this);
+            WorldVisibilityManager.Instance.DeregisterObject(this);
         }
     }
 
-    // Helper method that the WorldVisibilityManager will call
-    public void SetVisibility(bool isVisible) {
-        // Find components each time - safer if children are added/removed dynamically,
-        // though usually NetworkObject children are fixed by the prefab.
+    public void SetObjectVisibility(bool isVisible) {
         foreach (Renderer r in GetComponentsInChildren<Renderer>(true)) // Include inactive children
             if (r != null) r.enabled = isVisible;
         foreach (Collider2D c in GetComponentsInChildren<Collider2D>(true))

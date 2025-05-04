@@ -11,8 +11,10 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
     private string PlayerTag = "Player"; 
     private PlayerLayerController _localPlayerController = null;
     private List<PlayerLayerController> _remotePlayers = new List<PlayerLayerController>(); // Keep track of others
-    private readonly HashSet<ExteriorObject> _runtimeExteriorObjects = new HashSet<ExteriorObject>();
+    private readonly HashSet<IVisibilityEntity> _trackedEntities = new HashSet<IVisibilityEntity>();
 
+    private VisibilityLayerType _currentLocalLayer = VisibilityLayerType.Exterior;
+    private string _currentLocalInteriorId = "";
     // State variable to know if the exterior is currently supposed to be visible
     private bool _isExteriorVisible = true;
     void Start() {
@@ -25,7 +27,7 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
         // FindAllPlayers(); // Better to dynamically track via OnStartClient/OnStopClient events maybe
 
         // Ensure exterior is initially visible if nothing else dictates state
-        SetExteriorWorldActive(true);
+        ApplyVisibilityForAllObjects(VisibilityLayerType.Exterior, "");
         InteriorManager.Instance.DeactivateAllInteriors(); // Ensure interiors start deactivated
 
     }
@@ -39,7 +41,7 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
             _localPlayerController = playerController;
             Debug.Log($"WorldVisibilityManager: Local Player {playerController.OwnerId} Registered.");
             // Immediately apply visibility based on the local player's *current* state
-            UpdateVisibilityForLocalPlayer(playerController.CurrentLayer.Value,playerController.CurrentInteriorId.Value);
+            ApplyVisibilityForAllObjects(playerController.CurrentLayer.Value,playerController.CurrentInteriorId.Value);
         } else // It's a Remote Player
           {
             if (!_remotePlayers.Contains(playerController)) {
@@ -63,20 +65,18 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
             }
         }
     }
-    public void RegisterExteriorObject(ExteriorObject obj) {
-        if (obj != null && _runtimeExteriorObjects.Add(obj)) // Add returns true if item was added (not already present)
-        {
-            // IMPORTANT: Immediately set the visibility of the newly registered object
-            // based on the *current* state of the WorldVisibilityManager.
-            obj.SetVisibility(_isExteriorVisible);
-            Debug.Log($"WVM: Registered Runtime Exterior Object: {obj.name}. Setting visibility to {_isExteriorVisible}");
+    public void RegisterObject(IVisibilityEntity obj) {
+        if (obj != null && _trackedEntities.Add(obj)) {
+            // Immediately set the correct visibility for the new object based on the *manager's* current state
+            bool shouldBeVisible = ShouldObjectBeVisible(obj, _currentLocalLayer, _currentLocalInteriorId);
+            obj.SetObjectVisibility(shouldBeVisible);
+            // Debug.Log($"WVM Registered: {obj.NetworkObject.name}. Layer: {obj.VisibilityScope}, ID: '{obj.AssociatedInteriorId}'. Initial visibility: {shouldBeVisible}");
         }
     }
-
-    public void DeregisterExteriorObject(ExteriorObject obj) {
+    public void DeregisterObject(IVisibilityEntity obj) {
         if (obj != null) {
-            _runtimeExteriorObjects.Remove(obj);
-            // Debug.Log($"WVM: Deregistered Runtime Exterior Object: {obj.name}");
+            _trackedEntities.Remove(obj);
+            // Debug.Log($"WVM Deregistered: {obj.NetworkObject.name}");
         }
     }
     /*
@@ -105,32 +105,57 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
         }
     }*/
 
-    // Main function called when the LOCAL player's state changes
-    public void UpdateVisibilityForLocalPlayer(PlayerWorldLayer localPlayerLayer, string localPlayerInteriorId) {
-        _isExteriorVisible = (localPlayerLayer == PlayerWorldLayer.Exterior);
+    // Apply the visibility rules based on the local player's context
 
-        // 1. Handle Exterior World Visibility
-        SetExteriorWorldActive(_isExteriorVisible);
+    // Note to self, this and LocalPlayerConttextChanged replaces UpdateVisibilityForLocalPlayer
+    private void ApplyVisibilityForAllObjects(VisibilityLayerType localPlayerLayer, string localPlayerInteriorId) {
+        // Cache the new state
+        _currentLocalLayer = localPlayerLayer;
+        _currentLocalInteriorId = localPlayerInteriorId;
 
-        // 2. Iterate through the tracked runtime objects and set their visibility.
-        foreach (var runtimeObj in _runtimeExteriorObjects) {
-            if (runtimeObj != null) 
+        // Debug.Log($"WVM: Applying Global Visibility. Local Context -> Layer: {_currentLocalLayer}, Interior ID: '{_currentLocalInteriorId}'");
+
+
+        // 1. Handle STATIC Exterior Root (if used)
+        SetExteriorWorldActive(_currentLocalLayer == VisibilityLayerType.Exterior);
+
+        // 2. Handle ALL dynamically tracked objects (Interior & Exterior)
+        foreach (var entity in _trackedEntities) {
+            if (entity != null) // Check for destroyed/nulled objects
             {
-                runtimeObj.SetVisibility(_isExteriorVisible);
+                bool shouldBeVisible = ShouldObjectBeVisible(entity, _currentLocalLayer, _currentLocalInteriorId);
+                entity.SetObjectVisibility(shouldBeVisible);
+                // Debug.Log($"-- Updating {obj.NetworkObject.name}: shouldBeVisible = {shouldBeVisible}");
             }
-            // Consider removing null entries here if they accumulate, though Deregister should handle most cases.
+            // Consider adding logic here to occasionally clean the HashSet of null entries if they occur
         }
 
-        // 3. Handle Interior World Visibility
-        if (_isExteriorVisible) {
-            // Player is outside, deactivate all interiors
+        // 3. Activate/Deactivate Interior GROUPS via InteriorManager
+        if (_currentLocalLayer == VisibilityLayerType.Exterior) {
             InteriorManager.Instance.DeactivateAllInteriors();
         } else {
-            // Player is inside, activate the specific interior, deactivate others
-            InteriorManager.Instance.ActivateInterior(localPlayerInteriorId);
+            // InteriorManager handles positioning and activation of the specific interior *instance*
+            InteriorManager.Instance.ActivateInterior(_currentLocalInteriorId);
+        }
+        foreach (var remotePlayer in _remotePlayers) UpdateRemotePlayerVisibility(remotePlayer);
+    }
+    // Called when local player state CHANGES (via OnChange)
+    public void LocalPlayerContextChanged() {
+        if (_localPlayerController == null) {
+            // This case should ideally be handled by DeregisterPlayer setting default view
+            ApplyVisibilityForAllObjects(VisibilityLayerType.Exterior, "");
+            HideAllRemotePlayers();
+            return;
         }
 
-        // 4. Update visibility of REMOTE players based on the local player's location
+        // Determine the new state
+        VisibilityLayerType newLayer = _localPlayerController.CurrentLayer.Value;
+        string newInteriorId = _localPlayerController.CurrentInteriorId.Value;
+
+        // Apply the new state to ALL tracked objects
+        ApplyVisibilityForAllObjects(newLayer, newInteriorId);
+
+        // Update visibility of remote players relative to the new local context
         foreach (var remotePlayer in _remotePlayers) {
             UpdateRemotePlayerVisibility(remotePlayer);
         }
@@ -145,29 +170,29 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
 
         Debug.Log("Trying to set remote player visibility");
         bool shouldBeVisible = false;
-        PlayerWorldLayer localLayer = _localPlayerController.CurrentLayer.Value;
+        var localLayer = _localPlayerController.CurrentLayer.Value;
         string localInteriorId = _localPlayerController.CurrentInteriorId.Value;
 
-        PlayerWorldLayer remoteLayer = remotePlayer.CurrentLayer.Value;
+        var remoteLayer = remotePlayer.CurrentLayer.Value;
         string remoteInteriorId = remotePlayer.CurrentInteriorId.Value;
 
-        if (localLayer == PlayerWorldLayer.Exterior && remoteLayer == PlayerWorldLayer.Exterior) {
-            // Both outside? Show remote player.
-            shouldBeVisible = true;
-        } else if (localLayer == PlayerWorldLayer.Interior && remoteLayer == PlayerWorldLayer.Interior) {
-            // Both inside? Show remote player ONLY if they are in the SAME interior.
+        if (localLayer == VisibilityLayerType.Interior && remoteLayer == VisibilityLayerType.Interior) {
             shouldBeVisible = (localInteriorId == remoteInteriorId);
+        } else if (localLayer == remoteLayer) {
+            // Same layer, show remote player.
+            shouldBeVisible = true;
+            // Both inside? Show remote player ONLY if they are in the SAME interior.
         } else {
             // One is inside, one is outside? Hide remote player.
             shouldBeVisible = false;
         }
-
         // Apply visibility (enable/disable renderers, colliders, maybe the whole GameObject)
         // Disabling the whole GO is simplest but might interfere with other logic.
         // Disabling components is safer.
         SetGameObjectComponentsActive(remotePlayer.gameObject, shouldBeVisible);
         //Debug.Log($"Setting remote player {remotePlayer.OwnerId} visibility to {shouldBeVisible} (Local: {localLayer}/{localInteriorId}, Remote: {remoteLayer}/{remoteInteriorId})");
     }
+    private void HideAllRemotePlayers() { foreach (var remote in _remotePlayers) if (remote != null) SetGameObjectComponentsActive(remote.gameObject, false); }
 
     private void SetGameObjectComponentsActive(GameObject go, bool isActive) {
         // Example: Disable Renderers and Colliders
@@ -209,6 +234,23 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
             else if (component is Renderer renderer) renderer.enabled = isActive;
             else if (component is Collider2D collider) collider.enabled = isActive;
             // Add more types if necessary (Light, ParticleSystem, etc.)
+        }
+    }
+    // Determines if a specific managed object should be visible given the local player's context
+    private bool ShouldObjectBeVisible(IVisibilityEntity obj, VisibilityLayerType localPlayerLayer, string localPlayerInteriorId) {
+        if (obj == null) return false;
+
+        switch (localPlayerLayer) {
+            case VisibilityLayerType.Exterior:
+                // Show ONLY objects marked as Exterior
+                return obj.VisibilityScope == VisibilityLayerType.Exterior;
+
+            case VisibilityLayerType.Interior:
+                // Show ONLY objects marked as Interior AND matching the current interior ID
+                return obj.VisibilityScope == VisibilityLayerType.Interior &&
+                       obj.AssociatedInteriorId == localPlayerInteriorId;
+            default:
+                return false;
         }
     }
 }

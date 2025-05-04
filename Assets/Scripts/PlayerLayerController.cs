@@ -2,19 +2,15 @@ using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 
-public enum PlayerWorldLayer {
-    Exterior,
-    Interior
-}
 
 public class PlayerLayerController : NetworkBehaviour {
     // --- State ---
     // Synced variable to track the current layer across the network.
-    private readonly SyncVar<PlayerWorldLayer> _currentLayer = 
-        new SyncVar<PlayerWorldLayer>(PlayerWorldLayer.Exterior,new SyncTypeSettings(ReadPermission.Observers));
+    private readonly SyncVar<VisibilityLayerType> _currentLayer = 
+        new SyncVar<VisibilityLayerType>(VisibilityLayerType.Exterior,new SyncTypeSettings(ReadPermission.Observers));
 
     private readonly SyncVar<string> _currentInteriorId = new SyncVar<string>("", new SyncTypeSettings(ReadPermission.Observers));
-    public SyncVar<PlayerWorldLayer> CurrentLayer => _currentLayer;
+    public SyncVar<VisibilityLayerType> CurrentLayer => _currentLayer;
     public SyncVar<string> CurrentInteriorId => _currentInteriorId;
 
     // --- Client-Side References & Logic ---
@@ -35,7 +31,7 @@ public class PlayerLayerController : NetworkBehaviour {
 
         // Apply initial state visibility if this is the local player
         if (base.IsOwner) {
-            _visibilityManager.UpdateVisibilityForLocalPlayer(_currentLayer.Value, _currentInteriorId.Value);
+            HandleClientContextChange();
         }
         // Apply visibility state for this (potentially remote) player from the perspective of the local player
         _visibilityManager.UpdateRemotePlayerVisibility(this);
@@ -52,7 +48,7 @@ public class PlayerLayerController : NetworkBehaviour {
     public void RequestEnterInterior(string interiorId) // Removed entryPosition argument
     {
         Debug.Log("Enter request enter");
-        if (_currentLayer.Value == PlayerWorldLayer.Interior || string.IsNullOrEmpty(interiorId)) return;
+        if (_currentLayer.Value == VisibilityLayerType.Interior || string.IsNullOrEmpty(interiorId)) return;
 
         // Find the InteriorInstance server-side
         var targetInterior = InteriorManager.Instance.GetInteriorById(interiorId);
@@ -66,7 +62,7 @@ public class PlayerLayerController : NetworkBehaviour {
         }
         // --- Server Authoritative State Change & Positioning ---
         _currentInteriorId.Value = interiorId;
-        _currentLayer.Value = PlayerWorldLayer.Interior;
+        _currentLayer.Value = VisibilityLayerType.Interior;
 
         // Calculate the world spawn position based on the anchor and offset
         Vector3 worldSpawnPosition = targetInterior.ExteriorAnchor.transform.position + targetInterior.EntrySpawnOffset;
@@ -84,11 +80,11 @@ public class PlayerLayerController : NetworkBehaviour {
 
     [ServerRpc(RequireOwnership = true)]
     public void RequestExitInterior(string interiorID) {
-        if (_currentLayer.Value == PlayerWorldLayer.Exterior) return;
+        if (_currentLayer.Value == VisibilityLayerType.Exterior) return;
         // --- Server Authoritative State Change ---
         string previousInteriorId = _currentInteriorId.Value; // Store before clearing
         _currentInteriorId.Value = "";
-        _currentLayer.Value = PlayerWorldLayer.Exterior;
+        _currentLayer.Value = VisibilityLayerType.Exterior;
         // Teleport player physically on the server
 
         var targetInterior = InteriorManager.Instance.GetInteriorById(interiorID);
@@ -102,33 +98,14 @@ public class PlayerLayerController : NetworkBehaviour {
     }
 
     // --- SyncVar Callbacks (Triggered on Clients) ---
-    private void OnLayerChanged(PlayerWorldLayer prev, PlayerWorldLayer next, bool asServer) {
-        if (asServer) return; // Server already knows. Client logic below.
-        // This runs on all clients observing this object when _currentLayer changes.
-        // If it's the local player's controller, update their entire view.
-        if (base.IsOwner) {
-            _visibilityManager.UpdateVisibilityForLocalPlayer(next, _currentInteriorId.Value); // Use the potentially updated interior ID too
-        }
-        // Update visibility of this player object on other clients
-        _visibilityManager.UpdateRemotePlayerVisibility(this);
-
-        // Optionally: Trigger local effects (fade in/out, sound) based on layer change
-        //Debug.Log($"Client {NetworkManager.ClientManager.Connection.ClientId}: Player {OwnerId} layer changed to {next}");
-    }
-
-    private void OnInteriorIdChanged(string prev, string next, bool asServer) {
+    private void OnLayerChanged(VisibilityLayerType prev, VisibilityLayerType next, bool asServer) {
         if (asServer) return;
-
-        // This runs on all clients when _currentInteriorId changes.
-        // Usually, the main logic is handled by OnLayerChanged, but this provides the ID.
-        // If the layer hasn't changed (e.g., moving between connected interior rooms), update might be needed.
-        if (base.IsOwner && _currentLayer.Value == PlayerWorldLayer.Interior) // Ensure layer is consistent
-        {
-            _visibilityManager.UpdateVisibilityForLocalPlayer(_currentLayer.Value, next);
-        }
-        _visibilityManager.UpdateRemotePlayerVisibility(this); // Update visibility based on new location
-
-        //Debug.Log($"Client {NetworkManager.ClientManager.Connection.ClientId}: Player {OwnerId} Interior ID changed to {next}");
+        HandleClientContextChange();
+    }
+    private void OnInteriorIdChanged(string prev, string next, bool asServer)
+    {
+        if (asServer) return;
+        HandleClientContextChange();
     }
 
     public void InteractWithPortal(InteriorPortal portal) {
@@ -140,10 +117,10 @@ public class PlayerLayerController : NetworkBehaviour {
             return;
         }
 
-        if (_currentLayer.Value == PlayerWorldLayer.Exterior && portal.IsEntrance) {
+        if (_currentLayer.Value == VisibilityLayerType.Exterior && portal.IsEntrance) {
             Debug.Log($"Requesting Entry to {portalInteriorId}");
             RequestEnterInterior(portalInteriorId); // Server calculates internal position
-        } else if (_currentLayer.Value == PlayerWorldLayer.Interior && !portal.IsEntrance) {
+        } else if (_currentLayer.Value == VisibilityLayerType.Interior && !portal.IsEntrance) {
             // Check if the portal's associated ID matches the player's CURRENT interior ID
             if (portalInteriorId == _currentInteriorId.Value) {
                 RequestExitInterior(portalInteriorId);
@@ -152,6 +129,18 @@ public class PlayerLayerController : NetworkBehaviour {
             }
         } else {
             Debug.LogWarning($"Portal interaction logic issue: CurrentLayer={_currentLayer}, IsEntrance={portal.IsEntrance}");
+        }
+    }
+    // Consolidated handler called by BOTH OnChange callbacks
+    private void HandleClientContextChange() {
+        if (WorldVisibilityManager.Instance == null) return; // Safety check
+
+        if (base.IsOwner) {
+            // My context changed, update the entire world view
+            WorldVisibilityManager.Instance.LocalPlayerContextChanged();
+        } else {
+            // A remote player's context changed, just update *their* visibility relative to me
+            WorldVisibilityManager.Instance.UpdateRemotePlayerVisibility(this);
         }
     }
 }
