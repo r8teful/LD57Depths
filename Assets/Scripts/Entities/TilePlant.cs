@@ -23,8 +23,8 @@ public class TilePlant : ExteriorObject, ITileChangeReactor {
         }
     }
 
-    public override void OnStartServer() {
-        base.OnStartServer();
+    public override void OnStartClient() {
+        base.OnStartClient();
         rb = GetComponent<Rigidbody2D>();
         if (rb) rb.bodyType = RigidbodyType2D.Kinematic; // Start kinematic
        // CheckGroundedState(); // Initial check

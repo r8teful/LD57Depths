@@ -41,7 +41,7 @@ public class InteriorInstance : NetworkBehaviour {
     }
 
     private void OnDestroy() {
-        InteriorManager.Instance?.UnregisterInterior(this);
+        InteriorManager.Instance.UnregisterInterior(this);
     }
 
     // Call this to activate/deactivate all elements of the interior

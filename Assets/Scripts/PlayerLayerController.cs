@@ -1,6 +1,7 @@
 using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using FishNet.Connection;
 
 
 public class PlayerLayerController : NetworkBehaviour {
@@ -79,7 +80,7 @@ public class PlayerLayerController : NetworkBehaviour {
 
 
     [ServerRpc(RequireOwnership = true)]
-    public void RequestExitInterior(string interiorID) {
+    public void RequestExitInterior(string interiorID, NetworkConnection sender) {
         if (_currentLayer.Value == VisibilityLayerType.Exterior) return;
         // --- Server Authoritative State Change ---
         string previousInteriorId = _currentInteriorId.Value; // Store before clearing
@@ -88,15 +89,16 @@ public class PlayerLayerController : NetworkBehaviour {
         // Teleport player physically on the server
 
         var targetInterior = InteriorManager.Instance.GetInteriorById(interiorID);
-        this.transform.position = targetInterior.ExteriorSpawnPoint.position;
-        if (TryGetComponent<Rigidbody2D>(out var rb)) rb.linearVelocity = Vector2.zero;
-
-
+        SetPlayerClientPos(sender, targetInterior.ExteriorSpawnPoint.position);
         Debug.Log($"Server: Player {OwnerId} exiting Interior '{previousInteriorId}' to {interiorID}");
 
         // Optional: Server logic after exiting (e.g., maybe tell InteriorManager the interior might be empty now)
     }
-
+    [TargetRpc]
+    private void SetPlayerClientPos(NetworkConnection target, Vector3 newPos) {
+        transform.position = newPos;
+        if (TryGetComponent<Rigidbody2D>(out var rb)) rb.linearVelocity = Vector2.zero;
+    }
     // --- SyncVar Callbacks (Triggered on Clients) ---
     private void OnLayerChanged(VisibilityLayerType prev, VisibilityLayerType next, bool asServer) {
         if (asServer) return;
@@ -123,7 +125,7 @@ public class PlayerLayerController : NetworkBehaviour {
         } else if (_currentLayer.Value == VisibilityLayerType.Interior && !portal.IsEntrance) {
             // Check if the portal's associated ID matches the player's CURRENT interior ID
             if (portalInteriorId == _currentInteriorId.Value) {
-                RequestExitInterior(portalInteriorId);
+                RequestExitInterior(portalInteriorId,Owner);
             } else {
                 Debug.LogWarning($"Trying to use Exit portal associated with '{portalInteriorId}' but currently in '{_currentInteriorId}'. Interaction ignored.");
             }

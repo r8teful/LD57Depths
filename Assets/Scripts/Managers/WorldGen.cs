@@ -538,7 +538,7 @@ public static class WorldGen {
     }
 
     private static bool IsRock(TileBase tile) {
-        return tile != null && tile != worldmanager.GetTileFromID(0);
+        return tile != null && (tile != worldmanager.GetTileFromID(0) && tile != worldmanager.GetTileFromID(2));
         // Add checks for air tiles if you have them
     }
     // Helper for adjacent water check
