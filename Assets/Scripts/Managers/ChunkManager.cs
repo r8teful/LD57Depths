@@ -9,6 +9,7 @@ public class ChunkData {
     public TileBase[,] tiles; // The ground layer 
     public int[,] oreID;      // Second "ore" layer
     public int[,] tileDurability; // Third "dmg" layer 
+    public byte[,] biomeID;
     public bool isModified = false; // Flag to track if chunk has changed since load/generation
     public bool hasBeenGenerated = false; // Flag to prevent regenerating loaded chunks
     public List<PersistentEntityData> entitiesToSpawn; 
@@ -24,6 +25,12 @@ public class ChunkData {
         for (int y = 0; y < chunkSizeY; ++y) {
             for (int x = 0; x < chunkSizeX; ++x) {
                 oreID[x, y] = 0; // Default state
+            }
+        }
+        biomeID = new byte[chunkSizeX, chunkSizeY];
+        for (int y = 0; y < chunkSizeY; ++y) {
+            for (int x = 0; x < chunkSizeX; ++x) {
+                biomeID[x, y] = 0; // Default state
             }
         }
         entitiesToSpawn = new List<PersistentEntityData>(); // Initialize the list

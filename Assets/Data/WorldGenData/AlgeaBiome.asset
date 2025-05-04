@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be0c9e2e1119e314a9e14320abecc53a, type: 3}
+  m_Name: AlgeaBiome
+  m_EditorClassIdentifier: 
+  biomeType: 4
+  defaultGroundTile: {fileID: 11400000, guid: de9f5bf132e15114faff39f58cca21b7, type: 2}
+  startY: -1500
+  endY: -1000
+  verticalEdgeNoiseFrequency: 0
+  verticalEdgeNoiseAmplitude: 0
+  maxHorizontalDistanceFromTrenchCenter: 0
+  horizontalEdgeNoiseFrequency: 0
+  horizontalEdgeNoiseAmplitude: 0
+  caveSettings:
+    overrideGlobalCaveSettings: 0
+    generateCavesInBiome: 0
+    baseCaveFrequency: 0
+    caveThreshold: 0
+    warpAmplitude: 0
+    warpFrequency: 0
+    useDetailNoise: 0
+    detailFrequency: 0
+    detailInfluence: 0
+  oreSettings:
+    overrideGlobalOreSettings: 0
+    allowedOres: []

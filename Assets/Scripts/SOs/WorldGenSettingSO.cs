@@ -7,14 +7,17 @@ public class WorldGenSettingSO : ScriptableObject {
     public float trenchWidenFactor; // How much wider per unit Y increase
     public float trenchEdgeNoiseFrequency;
     public float trenchEdgeNoiseAmplitude;
+
+    // Surface
+    public float surfaceCenterY = 0f; // The conceptual "sea level"
+    public float surfaceMaxDepth = 15f; // How far down the solid "surface" can reach from surfaceCenterY
+    public float surfaceNoiseFrequency = 0.03f;
+    public float surfaceNoiseAmplitude = 5f; // Additional wiggle
+
     // Caves
-    [Range(0f, 1f)] public float initialCaveNoiseThreshold; // Density of initial "potential cave" tiles
     public bool generateCaves;
-    public float initialCaveNoiseFrequency;
-    public int caveCASteps = 4;          // Number of CA iterations 4
-    public int caveBirthThreshold = 5; // Become wall if >= N neighbours are walls (Rule: B5678) 5 
-    public int caveSurvivalThreshold = 4;// Stay wall if >= N neighbours are walls (Rule: S45678) 4 
-    public List<BiomeLayer> biomeLayers;
+    public BiomeCaveSettings globalCaveSettings;
+    public List<BiomeLayerSO> biomeLayers;
     public List<OreType> oreTypes;
 
     // Decorations

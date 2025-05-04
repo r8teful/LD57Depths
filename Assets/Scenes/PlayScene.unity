@@ -207,11 +207,12 @@ MonoBehaviour:
   BiomeManager: {fileID: 187924544}
   _sub: {fileID: 1724639416}
   _worldRoot: {fileID: 1903222420}
-  WorldGenSettings: {fileID: 11400000, guid: 9ac295e3fbaed61498d6271f0b2d5095, type: 2}
+  WorldGenSettings: {fileID: 11400000, guid: ee93ccb884ff37c41ba16b4bbbd69bcf, type: 2}
   tileAssets:
   - {fileID: 11400000, guid: c4eef0ba8143b754689e91e615a73c8b, type: 2}
   - {fileID: 11400000, guid: dafaef1663c6ab142aa12cf18d01aef5, type: 2}
   - {fileID: 11400000, guid: 3769c4015dc52e946be47a29c3cace65, type: 2}
+  - {fileID: 11400000, guid: de9f5bf132e15114faff39f58cca21b7, type: 2}
   oreAssets:
   - {fileID: 11400000, guid: f4b09cb01edb0244da271b27ca802fa3, type: 2}
   mainTilemap: {fileID: 1696825754}
@@ -219,6 +220,7 @@ MonoBehaviour:
   overlayTilemapDamage: {fileID: 561763989}
   useSave: 0
   playerSpawn: {fileID: 410588327}
+  DEBUGConstantNewGen: 0
 --- !u!4 &187924543
 Transform:
   m_ObjectHideFlags: 0

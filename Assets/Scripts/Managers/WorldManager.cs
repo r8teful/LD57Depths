@@ -36,10 +36,16 @@ public class WorldManager : NetworkBehaviour {
     public bool useSave; 
     [SerializeField] Transform playerSpawn;
 
-     [Button("NewWorld")]
+    [Button("NewWorld")]
     private void DEBUGNEWGEN() {
         ChunkManager.DEBUGNewGen();
-        WorldGen.InitializeNoise();
+        WorldGen.Init(WorldGenSettings, this);
+        WorldGen.InitializeNoise(); 
+    }
+    [SerializeField] private bool DEBUGConstantNewGen;
+    private void Update() {
+        if (DEBUGConstantNewGen && Time.frameCount % Mathf.RoundToInt(1f / (Time.deltaTime * 2)) == 0)
+            DEBUGNEWGEN();
     }
     private void Awake() {
         if (Instance != null && Instance != this) Destroy(gameObject);

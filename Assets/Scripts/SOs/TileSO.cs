@@ -38,10 +38,3 @@ public class TileSO : RuleTile
         return Mathf.Clamp(current / maxDurability, 0f, 1f);
     }
 }
-public enum BiomeType {
-    None, 
-    Trench,
-    Cave,
-    Coral,
-    Ocean
-}

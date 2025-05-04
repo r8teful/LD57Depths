@@ -1,30 +1,9 @@
+using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-[System.Serializable]
-public struct BiomeLayer {
-    public string name;
-    public TileBase defaultGroundTile;
-    public int startY; // Center Y of the biome layer
-    public int maxHeight; // Max vertical distance from center Y this biome extends
-    public int maxHorizontalDistanceFromTrenchCenter; // Max horizontal extent
-    [Range(0.0f, 1.0f)] public float verticalBlendPercentage; // How much of maxHeight is used for blending?
-    [Range(0.0f, 1.0f)] public float horizontalBlendPercentage; // How much of maxHorizontalDist is used for blending?
-}
-
-[System.Serializable]
-public struct OreType {
-    public string name;
-    public TileBase tile;
-    public List<string> allowedBiomeNames; // Names of biomes where this ore can spawn
-    public float frequency;     // Noise frequency for this ore
-    [Range(0f, 1f)] public float threshold; // Noise value above which ore spawns (higher = rarer)
-    public float clusterFrequency; // Lower frequency noise for controlling large clusters
-    [Range(0f, 1f)] public float clusterThreshold; // Threshold for cluster noise
-    public bool requireCluster; // Must the cluster noise also be above threshold?
-}
 
 [System.Serializable]
 public struct DeterministicStructure {
@@ -40,7 +19,7 @@ public static class WorldGen {
     private static Unity.Mathematics.Random noiseRandomGen;
     private static float seedOffsetX;
     private static float seedOffsetY;
-    private static Dictionary<string, BiomeLayer> biomeLookup = new Dictionary<string, BiomeLayer>();
+    private static Dictionary<BiomeType, BiomeLayerSO> biomeLookup = new Dictionary<BiomeType, BiomeLayerSO>();
     private static WorldGenSettingSO _settings;
     private static float maxDepth;
     private static WorldManager worldmanager;
@@ -55,10 +34,11 @@ public static class WorldGen {
         maxDepth = Mathf.Abs(maxD) * 0.90f; // 90% of the max theoretical depth
         biomeLookup.Clear();
         foreach (var biome in _settings.biomeLayers) {
-            if (!string.IsNullOrEmpty(biome.name) && !biomeLookup.ContainsKey(biome.name)) {
-                biomeLookup.Add(biome.name, biome);
+            if (biome.biomeType != BiomeType.None && !biomeLookup.ContainsKey(biome.biomeType)) {
+                biomeLookup.Add(biome.biomeType, biome);
+                Debug.LogWarning($"Added biome: {biome.biomeType} to lookup");
             } else {
-                Debug.LogWarning($"Duplicate or invalid biome name found: {biome.name}");
+                Debug.LogWarning($"Duplicate or invalid biome name found: {biome.biomeType}");
             }
         }
         //_settings.biomeLayers.Sort((a, b) => a.startY.CompareTo(b.startY));
@@ -80,40 +60,21 @@ public static class WorldGen {
         //Debug.Log("Generating new chunk: " + chunkOriginCell);
         ChunkData chunkData = new ChunkData(chunkSize, chunkSize);
         entitySpawns = new List<EntitySpawnInfo>();
-        // Intermediate data for CA (bool could be byte for different initial states)
-        bool[,] isPotentialCave = _settings.generateCaves ? new bool[chunkSize, chunkSize] : null;
-
         // --- Pass 1: Base Terrain & Biome Assignment ---
-        // (And marking potential caves)
         for (int y = 0; y < chunkSize; y++) {
             for (int x = 0; x < chunkSize; x++) {
                 int worldX = chunkOriginCell.x + x;
                 int worldY = chunkOriginCell.y + y;
 
-                TileBase tile = DetermineBaseTerrainAndBiome(worldX, worldY, out string biomeName);
+                TileBase tile = DetermineBaseTerrainAndBiome(worldX, worldY, out BiomeType biomeType);
                 chunkData.tiles[x, y] = tile; // Assign base tile
 
-                // Store biome info if needed later (optional)
-                // chunkData.biomeNames[x,y] = biomeName;
-
-                // Mark potential caves using noise (only if the base tile is rock)
-                if (_settings.generateCaves && IsRock(tile)) 
-                {
-                    float caveNoise = GetNoise(worldX, worldY, _settings.initialCaveNoiseFrequency);
-                    if (caveNoise < _settings.initialCaveNoiseThreshold) // Use '<' for noise floor as caves
-                    {
-                        isPotentialCave[x, y] = true;
-                    }
-                }
+                // Store biome info if needed later (not doing yet)
+                chunkData.biomeID[(byte)x, (byte)y] = (byte)biomeType;
             }
         }
-        // --- Pass 2: Cellular Automata Caves ---
-        if (_settings.generateCaves && isPotentialCave != null) {
-            // IMPORTANT: For CA, you often need neighbor info from adjacent chunks.
-            // This basic version only runs CA within the chunk's bounds.
-            // A more robust solution would require reading border tiles from neighbour chunks.
-            RunCellularAutomata(chunkData, isPotentialCave, _settings.caveCASteps, chunkSize);
-        }
+        // --- Pass 2: Cave Generation ---
+        GenerateNoiseCavesForChunk(chunkData, chunkOriginCell,chunkSize); // New function call
 
         // --- Pass 3: Ore Generation ---
         // Iterate again, placing ores only on non-cave, non-water tiles
@@ -131,178 +92,133 @@ public static class WorldGen {
     }
     // 0 Air, 1 Stone, 
     // --- Pass 1 Helper: Determine Base Terrain & Primary Biome ---
-    private static TileBase DetermineBaseTerrainAndBiome(int worldX, int worldY, out string primaryBiomeName) {
-        primaryBiomeName = null; // Default to no specific biome
+    private static TileBase DetermineBaseTerrainAndBiome(int worldX, int worldY, out BiomeType primaryBiome) {
+        primaryBiome = BiomeType.None; // Default to no specific biome
 
-        // 1. Trench Shape
+        // Surface
+        if (worldY > _settings.surfaceCenterY - _settings.surfaceMaxDepth - _settings.surfaceNoiseAmplitude) {
+            // Calculate the actual noisy surface boundary Y value at this X coordinate
+            // Noise value [0, 1] maps to depth [0, surfaceMaxDepth]
+            float surfaceDepthAtX = GetNoise(worldX, worldY, _settings.surfaceNoiseFrequency) * _settings.surfaceMaxDepth;
+            // Add additional wiggle noise
+            surfaceDepthAtX += (GetNoise(worldX + 1000, worldY + 1000, _settings.surfaceNoiseFrequency * 2f) - 0.5f) * 2f * _settings.surfaceNoiseAmplitude;
+            surfaceDepthAtX = Mathf.Clamp(surfaceDepthAtX, 0, _settings.surfaceMaxDepth * 1.5f); // Clamp variation a bit
+
+            float boundaryY = _settings.surfaceCenterY - surfaceDepthAtX;
+
+            if (worldY >= boundaryY) {
+                // Above or at the noisy surface level - it's water (or air if you prefer)
+                primaryBiome = BiomeType.Surface;
+                return worldmanager.GetTileFromID(0);//_settings.surfaceWaterTile ?? _settings.mainWaterTile; // Use specified surface water or fallback
+            }
+            // If below the noisy surface level, proceed to trench/biome checks
+        }
+        // --- 2. Trench Definition ---
+        // (Same trench logic as before - calculate noisyHalfWidth)
         float halfTrenchWidth = (_settings.trenchBaseWidth + Mathf.Abs(worldY) * _settings.trenchWidenFactor) / 2f;
-        float edgeNoise = (GetNoise(worldX, worldY, _settings.trenchEdgeNoiseFrequency) - 0.5f) * 2f;
+        float edgeNoise = (GetNoise(worldX, worldY + 5000, _settings.trenchEdgeNoiseFrequency) - 0.5f) * 2f; // Use offset Y noise sample
         float noisyHalfWidth = halfTrenchWidth + edgeNoise * _settings.trenchEdgeNoiseAmplitude;
         noisyHalfWidth = Mathf.Max(0, noisyHalfWidth);
-        // Calculate the theoretical worldY where halfTrenchWidth would be 0
+
         if (Mathf.Abs(worldX) < noisyHalfWidth && Mathf.Abs(worldY) < maxDepth) {
-            return worldmanager.GetTileFromID(0); // Main trench
-        } else if (worldY > 0) {
-            return worldmanager.GetTileFromID(0); // Surface
+            primaryBiome = BiomeType.Trench;
+            return worldmanager.GetTileFromID(0); // Inside main trench
         }
 
-        // 2. Biome Influence Calculation (Handles multiple overlapping potentials and blending)
-        float totalWeight = 0f;
-        Dictionary<string, float> biomeWeights = new Dictionary<string, float>();
-
+        // --- 3. Biome Check (Priority Based - Uses Sorted List) ---
+        // Iterate through biomes (sorted bottom-up by StartY in Awake)
         foreach (var biome in _settings.biomeLayers) {
-            float weight = CalculateBiomeInfluence(worldX, worldY, biome);
-            if (weight > 0.001f) // Use a small threshold
-            {
-                biomeWeights.Add(biome.name, weight);
-                totalWeight += weight;
+            // --- Check Horizontal Range (with Noise) ---
+            float maxDist = biome.maxHorizontalDistanceFromTrenchCenter;
+            float horizontalNoiseShift = (GetNoise(worldX + 2000, worldY, biome.horizontalEdgeNoiseFrequency) - 0.5f) * 2f * biome.horizontalEdgeNoiseAmplitude;
+            float noisyMaxHorizDist = Mathf.Max(0, maxDist + horizontalNoiseShift); // Don't let max dist go below 0
+
+            if (Mathf.Abs(worldX) >= noisyMaxHorizDist) {
+                continue; // Outside this biome's noisy horizontal range
+            }
+
+
+            // --- Check Vertical Range (with Noise) ---
+            // Use different noise samples for start/end for independent boundaries
+            float startNoiseShift = (GetNoise(worldX, worldY + 3000, biome.verticalEdgeNoiseFrequency) - 0.5f) * 2f * biome.verticalEdgeNoiseAmplitude;
+            float endNoiseShift = (GetNoise(worldX, worldY + 4000, biome.verticalEdgeNoiseFrequency) - 0.5f) * 2f * biome.verticalEdgeNoiseAmplitude;
+
+            float noisyStartY = biome.startY + startNoiseShift;
+            float noisyEndY = biome.endY + endNoiseShift;
+
+            // Ensure EndY is generally above StartY even with noise, adjust if necessary based on desired overlap behaviour
+            // Example simple clamp: if (noisyEndY < noisyStartY + 1) noisyEndY = noisyStartY + 1; // Ensure min 1 unit height
+
+            if (worldY >= noisyStartY && worldY < noisyEndY) {
+                // --- Match Found! ---
+                // This is the highest priority biome (lowest StartY checked first) that contains this point.
+                primaryBiome = biome.biomeType;
+                return biome.defaultGroundTile;
             }
         }
-
-        // 3. Determine Dominant Biome and Tile
-        if (totalWeight > 0f) {
-            float maxWeight = 0f;
-            string dominantBiome = null;
-
-            // Normalize weights and find dominant biome
-            foreach (var pair in biomeWeights) {
-                float normalizedWeight = pair.Value / totalWeight; // Can be used for blending later if needed
-                if (normalizedWeight > maxWeight) {
-                    maxWeight = normalizedWeight;
-                    dominantBiome = pair.Key;
-                }
-                // Optional: store normalizedWeight for later blending steps if needed
-            }
-            if (dominantBiome != null && biomeLookup.TryGetValue(dominantBiome, out BiomeLayer chosenBiome)) {
-                primaryBiomeName = dominantBiome;
-                // TODO: Implement actual blending here if desired (e.g., using RuleTiles based on neighbours, or lerping colors/properties)
-                // For now, just return the dominant biome's default tile.
-                return chosenBiome.defaultGroundTile;
-            }
-        }
-
         // Fallback if outside all biome influences
         return worldmanager.GetTileFromID(1);
     }
 
-    // --- Helper: Calculate Influence of a Single Biome ---
-    private static float CalculateBiomeInfluence(int worldX, int worldY, BiomeLayer biome) {
-        // Vertical Check
-        float dy = Mathf.Abs(worldY - biome.startY);
-        float maxVertDist = biome.maxHeight / 2.0f;
-        if (dy > maxVertDist) return 0f; // Outside max vertical range
 
-        // Horizontal Check
-        float dx = Mathf.Abs(worldX);
-        if (dx > biome.maxHorizontalDistanceFromTrenchCenter) return 0f; // Outside max horizontal range
 
-        // --- Calculate Blend Weights (using smoothstep for nice transitions) ---
-        // Vertical Blend
-        float vertBlendZone = maxVertDist * biome.verticalBlendPercentage;
-        float vertCoreZone = maxVertDist - vertBlendZone;
-        float vertWeight = 1.0f;
-        if (dy > vertCoreZone && vertBlendZone > 0) {
-            vertWeight = 1.0f - Mathf.SmoothStep(0.0f, 1.0f, (dy - vertCoreZone) / vertBlendZone);
-        }
+    // --- New Cave Generation Function (Pass 2) ---
+    private static void GenerateNoiseCavesForChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
+        for (int y = 0; y < chunkSize; y++) {
+            for (int x = 0; x < chunkSize; x++) {
 
-        // Horizontal Blend
-        float horizBlendZone = biome.maxHorizontalDistanceFromTrenchCenter * biome.horizontalBlendPercentage;
-        float horizCoreZone = biome.maxHorizontalDistanceFromTrenchCenter - horizBlendZone;
-        float horizWeight = 1.0f;
-        if (dx > horizCoreZone && horizBlendZone > 0) {
-            horizWeight = 1.0f - Mathf.SmoothStep(0.0f, 1.0f, (dx - horizCoreZone) / horizBlendZone);
-        }
+                // Only carve caves into existing rock/ground tiles
+                if (!IsRock(chunkData.tiles[x, y])) {
+                    continue;
+                }
 
-        // Combine weights (multiplication means influence drops off in both blend zones)
-        return vertWeight * horizWeight;
-    }
+                int worldX = chunkOriginCell.x + x;
+                int worldY = chunkOriginCell.y + y;
 
-    // --- Pass 2: Cellular Automata ---
-    private static void RunCellularAutomata(ChunkData chunkData, bool[,] isWall, int steps, int chunkSize) {
-        int width = chunkSize;
-        int height = chunkSize;
-        bool[,] currentWalls = (bool[,])isWall.Clone(); // Work on a copy
+                // --- Determine Cave Settings for this tile ---
+                BiomeType biomeName = (BiomeType)chunkData.biomeID[x, y];
+                BiomeCaveSettings settingsToUse = _settings.globalCaveSettings;
 
-        for (int step = 0; step < steps; step++) {
-            bool[,] nextWalls = new bool[width, height];
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    int neighborWallCount = CountAliveNeighbors(currentWalls, x, y);
-
-                    if (currentWalls[x, y]) // If it's currently a wall
-                    {
-                        nextWalls[x, y] = (neighborWallCount >= _settings.caveSurvivalThreshold);
-                    } else // If it's currently empty space
-                      {
-                        nextWalls[x, y] = (neighborWallCount >= _settings.caveBirthThreshold);
+                if (biomeLookup.TryGetValue(biomeName, out BiomeLayerSO biome)) {
+                    if (biome.caveSettings.overrideGlobalCaveSettings) {
+                        settingsToUse = biome.caveSettings;
                     }
                 }
-            }
-            currentWalls = nextWalls; // Update for next iteration
-        }
 
-        // Apply the final CA result to the chunk data
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                if (currentWalls[x, y] && IsRock(chunkData.tiles[x, y])) {
-                    // Keep it as the rock tile it was
-                } else if (!currentWalls[x, y] && IsRock(chunkData.tiles[x, y])) {
-                    // Turn rock into cave water if CA removed the wall
-                    chunkData.tiles[x, y] = worldmanager.GetTileFromID(2); // Water cave tile
+                // --- Check if caves are enabled for this context ---
+                if (!settingsToUse.generateCavesInBiome) {
+                    continue;
                 }
-                // Else: Don't overwrite main water or already existing cave water
-            }
-        }
-    }
 
-    // --- Helper for CA: Count Neighbours ---
-    // Includes diagonals, treats edge as wall
-    private static int CountAliveNeighbors(bool[,] map, int x, int y) {
-        int count = 0;
-        int width = map.GetLength(0);
-        int height = map.GetLength(1);
+                // --- Calculate Warped Cave Noise Value ---
+                // 1. Calculate Warp Offsets (using different noise samples for X and Y offset)
+                // Using slightly offset coordinates/seeds for the warp noises ensures they aren't identical.
+                float warpOffsetX = GetNoise(worldX + 100.5f, worldY + 200.7f, settingsToUse.warpFrequency);
+                float warpOffsetY = GetNoise(worldX - 300.2f, worldY - 400.9f, settingsToUse.warpFrequency);
 
-        for (int j = y - 1; j <= y + 1; j++) {
-            for (int i = x - 1; i <= x + 1; i++) {
-                if (i == x && j == y) continue; // Skip self
+                // Map noise [0,1] to offset range [-amp, +amp]
+                warpOffsetX = (warpOffsetX - 0.5f) * 2f * settingsToUse.warpAmplitude;
+                warpOffsetY = (warpOffsetY - 0.5f) * 2f * settingsToUse.warpAmplitude;
 
-                if (i < 0 || i >= width || j < 0 || j >= height) {
-                    count++; // Treat out of bounds as a wall
-                } else if (map[i, j]) {
-                    count++;
+                // 2. Apply Warp and Get Base Cave Value
+                float warpedX = worldX + warpOffsetX;
+                float warpedY = worldY + warpOffsetY;
+                float caveValue = GetNoise(warpedX, warpedY, settingsToUse.baseCaveFrequency);
+
+                if (settingsToUse.useDetailNoise) {
+                   float detailNoise = GetNoise(worldX, worldY, settingsToUse.detailFrequency);
+                   // Modify caveValue based on detail noise, e.g., lerp towards 0.5 based on detail
+                   caveValue = Mathf.Lerp(caveValue, 0.5f, (detailNoise - 0.5f) * settingsToUse.detailInfluence);
                 }
-            }
-        }
-        return count;
-    }
 
-
-    // --- Helper: Get Biome Name at coordinates (after base pass) ---
-    // Recalculates influence just like DetermineBaseTerrainAndBiome but only returns the name
-    private static string GetBiomeNameAt(int worldX, int worldY) {
-        float totalWeight = 0f;
-        Dictionary<string, float> biomeWeights = new Dictionary<string, float>();
-        foreach (var biome in _settings.biomeLayers) {
-            float weight = CalculateBiomeInfluence(worldX, worldY, biome);
-            if (weight > 0.001f) {
-                biomeWeights.Add(biome.name, weight);
-                totalWeight += weight;
-            }
-        }
-
-        if (totalWeight > 0f) {
-            float maxWeight = 0f;
-            string dominantBiome = null;
-            foreach (var pair in biomeWeights) {
-                float normalizedWeight = pair.Value / totalWeight;
-                if (normalizedWeight > maxWeight) {
-                    maxWeight = normalizedWeight;
-                    dominantBiome = pair.Key;
+                // --- Apply Threshold ---
+                if (caveValue < settingsToUse.caveThreshold) {
+                    // Replace rock with cave water
+                    TileBase caveTile = worldmanager.GetTileFromID(0); 
+                    chunkData.tiles[x, y] = caveTile;
                 }
             }
-            return dominantBiome;
         }
-        return null;
     }
 
     // --- Pass 3 Helper 
@@ -314,7 +230,7 @@ public static class WorldGen {
                 {
                     int worldX = chunkOriginCell.x + x;
                     int worldY = chunkOriginCell.y + y;
-                    string biomeName = GetBiomeNameAt(worldX, worldY);
+                    string biomeName = null;//GetBiomeNameAt(worldX, worldY);
 
                     TileBase oreTile = DetermineOre(worldX, worldY, biomeName);
                     if (oreTile != null) {
@@ -483,7 +399,7 @@ public static class WorldGen {
                     int distFromTrench = Mathf.Abs(worldX);
 
                     if (entityDef.requiredBiomeNames != null && entityDef.requiredBiomeNames.Count > 0) {
-                        string biomeName = GetBiomeNameAt(worldX, worldY);
+                        string biomeName = null;//GetBiomeNameAt(worldX, worldY);
                         if (biomeName == null || !entityDef.requiredBiomeNames.Contains(biomeName)) continue;
                     }
 
