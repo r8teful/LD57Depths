@@ -18,6 +18,10 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private int slotIndex = -1;
     private Image backgroundImage; // Reference to self image if needed for color changes
 
+    private bool isContainerSlot = false; // New flag
+    private int localSlotIndex = -1; 
+    public int SlotIndex => localSlotIndex; // Expose local index
+    public bool IsContainerSlot => isContainerSlot; // Expose context flag
     void Awake() {
         backgroundImage = GetComponent<Image>(); // Get Image on this object if needed
         if (!itemIconImage || !quantityText) {
@@ -34,6 +38,12 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void Initialize(InventoryUIManager manager, int index) {
         uiManager = manager;
         slotIndex = index;
+        isContainerSlot = false;
+    }
+    public void SetContainerContext(InventoryUIManager manager, int index) {
+        uiManager = manager; // Still need manager for drag events
+        localSlotIndex = index; // Index *within the container*
+        isContainerSlot = true;
     }
 
     // Updates the visual elements based on the slot data
@@ -45,16 +55,10 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             if (backgroundImage) backgroundImage.color = emptySlotColor; // Make slot visually 'empty'
         } else {
             // Slot has an item
-            itemIconImage.sprite = slotData.itemData.icon;
+           // itemIconImage.sprite = slotData.itemData.icon;
             itemIconImage.enabled = true;
-
-            // Show quantity only if > 1 and the item is stackable
-            if (slotData.quantity > 1 && slotData.itemData.maxStackSize > 1) {
-                quantityText.text = slotData.quantity.ToString();
-                quantityText.enabled = true;
-            } else {
-                quantityText.enabled = false;
-            }
+            quantityText.enabled = slotData.quantity > 1;
+            if (quantityText.enabled) quantityText.text = slotData.quantity.ToString();
             if (backgroundImage) backgroundImage.color = Color.white; // Reset slot background color
         }
 
@@ -85,18 +89,23 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void OnBeginDrag(PointerEventData eventData) {
         // Only allow dragging with the primary button (usually left mouse)
         if (eventData.button != PointerEventData.InputButton.Left) return;
-
-        if (uiManager != null) {
-            uiManager.BeginDrag(slotIndex);
+        if (!isContainerSlot && uiManager != null) {
+            InventorySlot sourceSlotData = InventoryManager.Instance.GetSlot(localSlotIndex); // Check local player manager data
+            if (sourceSlotData != null && !sourceSlotData.IsEmpty()) // Don't drag empty slots
+           {
+                uiManager.BeginDrag(localSlotIndex); // Begin drag using player slot index
+            }
+        } else if (isContainerSlot) {
+            Debug.Log("Dragging directly from Container Slot is currently disabled.");
+            // Optionally provide visual feedback that it's disabled.
+            eventData.pointerDrag = null; // Prevent drag operation
         }
     }
 
     // --- IDragHandler ---
     public void OnDrag(PointerEventData eventData) {
-        // Only allow dragging with the primary button
-        if (eventData.button != PointerEventData.InputButton.Left) return;
-
         // The UI Manager handles updating the floating icon position in its Update()
+        return;
     }
 
     // --- IEndDragHandler ---
@@ -105,7 +114,8 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (eventData.button != PointerEventData.InputButton.Left) return;
 
         if (uiManager != null) {
-            uiManager.EndDrag();
+            if (uiManager.IsCurrentlyDragging())
+                uiManager.EndDrag();
         }
     }
 
@@ -114,18 +124,13 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void OnDrop(PointerEventData eventData) {
         // Only allow dropping with the primary button
         if (eventData.button != PointerEventData.InputButton.Left) return;
-
+        GameObject draggedObject = eventData.pointerDrag;
+        InventorySlotUI sourceSlotUI = draggedObject.GetComponent<InventorySlotUI>();
         // Check if we are actually dragging something from our inventory system
-        if (uiManager != null && uiManager.IsCurrentlyDragging()) {
-            uiManager.HandleDrop(slotIndex);
-        } else if (uiManager != null && uiManager.IsCurrentlyDragging()) {
-            // Allow dropping onto a hotbar slot *if* it's also part of the main inventory view
-            // This might happen if hotbar duplicates the top row slots visually even when inv is open.
-            // Let the main UI manager handle it as it manages the drag operation origin.
-            uiManager.HandleDrop(slotIndex);
+        if (uiManager != null && uiManager.IsCurrentlyDragging() && sourceSlotUI != null) {
+            uiManager.HandleDrop(sourceSlotUI, this);
+        } else {
+            Debug.LogWarning($"OnDrop ignored: No active drag operation or missing source slot UI. Dragging? {uiManager.IsCurrentlyDragging()} Source? {sourceSlotUI != null}");
         }
-        // Additional check: You could inspect eventData.pointerDrag to see
-        // *what* GameObject was being dragged if you need more complex inter-UI interactions.
-        // For this system, checking uiManager.IsCurrentlyDragging() is sufficient.
     }
 }

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI; // Required for UI elements like Panel
 using UnityEngine.InputSystem;
-using DG.Tweening; // Using new Input System for toggle
+using DG.Tweening;
+using TMPro; 
 
 public class InventoryUIManager : MonoBehaviour {
     [Header("UI Elements")]
@@ -13,6 +14,14 @@ public class InventoryUIManager : MonoBehaviour {
     [SerializeField] private GameObject slotPrefab; // Prefab for a single inventory slot UI element
     [SerializeField] private GameObject draggingIconObject; // A UI Image used to show the item being dragged
 
+    [Header("Shared container UI")]
+    [SerializeField] private GameObject containerPanel; // Separate panel/area for container slots
+    [SerializeField] private Transform containerSlotContainer; // Parent for container slot prefabs
+    [SerializeField] private TextMeshProUGUI containerTitleText; // Optional: To show container name/type
+    // Use the SAME slotPrefab
+
+    private List<InventorySlotUI> containerSlotUIs = new List<InventorySlotUI>();
+    private SharedContainer currentlyViewedContainer = null;
     [Header("Input")]
     [SerializeField] private InputActionReference toggleInventoryAction; // Assign your toggle input action asset
 
@@ -50,7 +59,7 @@ public class InventoryUIManager : MonoBehaviour {
             enabled = false;
             return;
         }
-        draggingIconObject.SetActive(true); 
+        draggingIconObject.SetActive(true);
 
         // Subscribe to inventory events
         inventoryManager.OnSlotChanged += UpdateSlotUI;      // Update specific UI slot when data changes
@@ -96,7 +105,7 @@ public class InventoryUIManager : MonoBehaviour {
         } else {
             inventoryPanel.GetComponent<RectTransform>().DOMoveY(-292, 0.2f).OnComplete(SetInvUnactive);
             // wait...
-          
+
         }
         // Optional: You might want to pause game, lock cursor, etc. when inventory is open
         Debug.Log($"Inventory Toggled: {inventoryPanel.activeSelf}");
@@ -109,7 +118,7 @@ public class InventoryUIManager : MonoBehaviour {
 
     private void SetInvUnactive() {
         // todo possible enable interactions here
-       // inventoryPanel.SetActive(false);
+        // inventoryPanel.SetActive(false);
     }
     void CreateSlotUIs() {
         foreach (Transform child in slotInvContainer) {
@@ -167,7 +176,7 @@ public class InventoryUIManager : MonoBehaviour {
         dragSourceIndex = slotIndex;
 
         // Update dragging icon
-        draggingIconImage.sprite = sourceSlot.itemData.icon;
+        //draggingIconImage.sprite = sourceSlot.itemData.icon;
         draggingIconImage.color = Color.white; // Make sure it's visible
         draggingIconObject.SetActive(true);
         Vector2 mousePos = Pointer.current != null ? Pointer.current.position.ReadValue() : (Vector2)Input.mousePosition;
@@ -253,5 +262,256 @@ public class InventoryUIManager : MonoBehaviour {
         }
         Debug.Log($"Updated Hotbar Highlight. Selected: {newSelectedIndex}, Inventory Open: {showHighlight}");
     }
+
+    // --- Container UI Handling ---
+
+    private void HandleContainerOpen(SharedContainer containerToView) {
+        if (!containerPanel || !containerSlotContainer) return; // Container UI not setup
+
+        currentlyViewedContainer = containerToView;
+        if (currentlyViewedContainer == null) {
+            HandleContainerClose(); // Close UI if container becomes null somehow
+            return;
+        }
+
+        Debug.Log($"[UI] Opening Container View: {containerToView.name}");
+
+
+        // Subscribe to changes for THIS container instance
+        currentlyViewedContainer.OnItemsChanged += UpdateContainerUI;
+
+
+        // --- Setup Container UI ---
+        // Clear old slots
+        foreach (Transform child in containerSlotContainer) { Destroy(child.gameObject); }
+        containerSlotUIs.Clear();
+
+        // Set Title (Optional)
+        if (containerTitleText) containerTitleText.text = containerToView.name; // Or a generic title
+
+        // Create new slots
+        for (int i = 0; i < currentlyViewedContainer.ContainerSize; ++i) {
+            GameObject slotGO = Instantiate(slotPrefab, containerSlotContainer);
+            slotGO.name = $"ContainerSlot_{i}";
+            InventorySlotUI slotUI = slotGO.GetComponent<InventorySlotUI>();
+            if (slotUI != null) {
+                // *** IMPORTANT: We need a way for InventorySlotUI to know IF it's a container slot ***
+                // Modify Initialize slightly or add a new method/flag
+                // Option A: Modify Initialize
+                // slotUI.Initialize(this, i, true); // Add isContainerSlot flag
+                // Option B: Add SetContainerContext method
+                slotUI.SetContainerContext(this, i); // Let's choose this
+
+                containerSlotUIs.Add(slotUI);
+                // UpdateSlotUI below will handle initial visuals
+            } else { Debug.LogError($"Slot prefab missing InventorySlotUI!"); }
+        }
+
+
+        // Update visuals immediately based on current container state
+        UpdateContainerUI();
+
+
+        // Make the container panel visible
+        containerPanel.SetActive(true);
+
+
+        // Ensure player inventory is ALSO open when container is open
+        if (!inventoryPanel.activeSelf) {
+            inventoryPanel.SetActive(true);
+            UpdateHotbarHighlight(itemSelectionManager.SelectedSlotIndex); // Update highlights if opened this way
+        }
+    }
+
+    private void HandleContainerClose() {
+        if (!containerPanel) return;
+
+        Debug.Log("[UI] Closing Container View");
+        containerPanel.SetActive(false);
+
+
+        // Unsubscribe from previous container
+        if (currentlyViewedContainer != null) {
+            currentlyViewedContainer.OnItemsChanged -= UpdateContainerUI;
+        }
+        currentlyViewedContainer = null;
+
+
+        // Clear UI Slots
+        foreach (Transform child in containerSlotContainer) { Destroy(child.gameObject); }
+        containerSlotUIs.Clear();
+    }
+
+
+    // Called when the currently viewed container's SyncList changes
+    private void UpdateContainerUI() {
+        if (currentlyViewedContainer == null || !containerPanel.activeSelf) return;
+
+        Debug.Log($"[UI] Updating Container UI for {currentlyViewedContainer.name}");
+        for (int i = 0; i < containerSlotUIs.Count && i < currentlyViewedContainer.ContainerSize; i++) {
+            InventorySlot slotData = currentlyViewedContainer.GetSlotReadOnly(i);
+            containerSlotUIs[i].UpdateUI(slotData); // Use existing UpdateUI
+            containerSlotUIs[i].SetSelected(false); // Container slots usually aren't 'selected' like hotbar
+        }
+    }
+
+
+    // --- Modify Drag and Drop to handle Player <-> Container ---
+
+/*    public void HandleDrop(int dropTargetIndex) { // Keep this method name for InventorySlotUI compatibility
+        if (!isDragging || dragSourceIndex == -1) return;
+
+
+        InventorySlotUI sourceSlotUI = GetSlotUIByIndex(dragSourceIndex);
+        InventorySlotUI targetSlotUI = GetSlotUIByIndex(dropTargetIndex);
+
+
+        if (sourceSlotUI == null || targetSlotUI == null) {
+            Debug.LogError($"Drop error: Couldn't find UI for indices {dragSourceIndex} or {dropTargetIndex}");
+            EndDrag(true); // Cancel if something went wrong
+            return;
+        }
+
+
+        // Determine source and target panels (Player or Container)
+        bool sourceIsPlayer = slotUIs.Contains(sourceSlotUI);
+        bool sourceIsContainer = containerSlotUIs.Contains(sourceSlotUI);
+        bool targetIsPlayer = slotUIs.Contains(targetSlotUI);
+        bool targetIsContainer = containerSlotUIs.Contains(targetSlotUI);
+
+        int sourceActualIndex = sourceSlotUI.SlotIndex; // Get the index *within its panel*
+        int targetActualIndex = targetSlotUI.SlotIndex;
+
+
+        Debug.Log($"Handle Drop: Source Panel: {(sourceIsPlayer ? "Player" : (sourceIsContainer ? "Container" : "Unknown"))} (Index {sourceActualIndex}) -> Target Panel: {(targetIsPlayer ? "Player" : (targetIsContainer ? "Container" : "Unknown"))} (Index {targetActualIndex})");
+
+
+        // --- Logic ---
+        PlayerInventorySyncer playerSyncer = FindObjectOfType<PlayerInventorySyncer>(); // Get the syncer
+
+
+        if (sourceIsPlayer && targetIsPlayer) {
+            // Player -> Player: Standard Swap (using ServerRpc now if not predicting)
+            // For simplicity let's ASSUME InventoryManager.SwapSlots is LOCAL ONLY now.
+            // We need an RPC to request a swap.
+            // inventoryManager.SwapSlots(sourceActualIndex, targetActualIndex); // OLD LOCAL WAY
+
+            // NEW RPC WAY (TODO: Implement CmdSwapPlayerSlots on PlayerInventorySyncer)
+            // playerSyncer?.RequestSwapPlayerSlots(sourceActualIndex, targetActualIndex);
+            // --- For now, let's just keep the LOCAL swap for responsiveness ---
+            if (dragSourceIndex != dropTargetIndex) { // Ensure indices are mapped correctly if lists differ
+                inventoryManager.SwapSlots(sourceActualIndex, targetActualIndex);
+                // Highlight update might be needed if swapping in/out of hotbar
+                UpdateHotbarHighlight(itemSelectionManager.SelectedSlotIndex);
+            }
+
+
+        } else if (sourceIsContainer && targetIsContainer) {
+            // Container -> Container: Request server swap (cannot do locally easily with SyncList)
+            Debug.Log("Container -> Container swap requested (Needs Server RPC)");
+            playerSyncer?.RequestSwapContainerSlots(sourceActualIndex, targetActualIndex, currentlyViewedContainer.NetworkObject); // TODO: Implement this RPC
+
+
+        } else if (sourceIsPlayer && targetIsContainer) {
+            // Player -> Container: Request move item (Pass player index, container index, quantity=all for now)
+            Debug.Log($"Requesting Move Player[{sourceActualIndex}] -> Container[{targetActualIndex}]");
+            // Get quantity from source slot BEFORE potential local prediction happens
+            InventorySlot sourceData = inventoryManager.GetSlot(sourceActualIndex);
+            if (sourceData != null && !sourceData.IsEmpty()) {
+                playerSyncer?.RequestMoveItemToContainer(sourceActualIndex, targetActualIndex, sourceData.quantity);
+            }
+
+
+        } else if (sourceIsContainer && targetIsPlayer) {
+            // Container -> Player: Request move item (Pass container index, player index, quantity=all for now)
+            Debug.Log($"Requesting Move Container[{sourceActualIndex}] -> Player[{targetActualIndex}]");
+            InventorySlot sourceData = currentlyViewedContainer?.GetSlotReadOnly(sourceActualIndex);
+            if (sourceData != null && !sourceData.IsEmpty()) {
+                playerSyncer?.RequestMoveItemToPlayer(sourceActualIndex, targetActualIndex, sourceData.quantity);
+            }
+        } else {
+            Debug.LogWarning("Unhandled drag/drop scenario.");
+        }
+        // EndDrag state reset will happen automatically via EventSystem
+    }
+*/
+     public void HandleDrop(InventorySlotUI sourceSlotUI, InventorySlotUI targetSlotUI) {
+        if (!IsCurrentlyDragging() || sourceSlotUI == null || targetSlotUI == null) {
+            Debug.LogWarning("HandleDrop called with invalid state or null slots.");
+            if (IsCurrentlyDragging()) EndDrag(true); // Cancel drag if something is wrong
+            return;
+        }
+
+
+        // Determine source and target panels using the flags on the UI components
+        bool sourceIsPlayer = !sourceSlotUI.IsContainerSlot;
+        bool targetIsPlayer = !targetSlotUI.IsContainerSlot;
+        bool targetIsContainer = targetSlotUI.IsContainerSlot;
+
+
+        // We currently only allow dragging FROM player slots (sourceIsPlayer should always be true)
+        if (!sourceIsPlayer) {
+            Debug.LogError("HandleDrop initiated but source was not a player slot (Drag should have been prevented). Cancelling.");
+            EndDrag(true);
+            return;
+        }
+
+
+        int sourceActualIndex = sourceSlotUI.SlotIndex; // Index within player inventory
+        int targetActualIndex = targetSlotUI.SlotIndex; // Index within player OR container
+
+
+        Debug.Log($"Handle Drop: Source Panel: Player (Index {sourceActualIndex}) -> Target Panel: {(targetIsPlayer ? "Player" : "Container")} (Index {targetActualIndex})");
+
+
+        // --- Logic ---
+        PlayerInventorySyncer playerSyncer = FindFirstObjectByType<PlayerInventorySyncer>(); // TODO: Cache this reference
+
+
+        if (targetIsPlayer) {
+            // Player -> Player: Request Swap
+            if (sourceActualIndex != targetActualIndex) { // Check if dropping onto a *different* player slot
+                Debug.Log($"Requesting Player Swap: {sourceActualIndex} <-> {targetActualIndex}");
+                playerSyncer.RequestSwapPlayerSlots(sourceActualIndex, targetActualIndex);
+
+
+                // Optional: Predict locally?
+                // inventoryManager.SwapSlots(sourceActualIndex, targetActualIndex);
+                // UpdateHotbarHighlight(itemSelectionManager.SelectedSlotIndex);
+            }
+            // If dropped onto the same slot, do nothing (swap isn't needed)
+
+
+        } else if (targetIsContainer) {
+            // Player -> Container: Request move item
+            Debug.Log($"Requesting Move Player[{sourceActualIndex}] -> Container[{targetActualIndex}]");
+
+
+            InventorySlot sourceData = inventoryManager.GetSlot(sourceActualIndex);
+            SharedContainer targetContainer = currentlyViewedContainer; // Use the cached container reference
+
+
+            if (sourceData != null && !sourceData.IsEmpty() && targetContainer != null) {
+                // Request move of entire stack quantity for simplicity
+                playerSyncer?.RequestMoveItemToContainer(sourceActualIndex, targetActualIndex, sourceData.quantity);
+
+
+                // Optional: Predict removal from player inventory locally?
+                // inventoryManager.RemoveItem(sourceActualIndex, sourceData.quantity);
+                // UpdateHotbarHighlight(itemSelectionManager.SelectedSlotIndex);
+            } else {
+                Debug.LogWarning("Cannot move item to container: Invalid source data or target container not open/found.");
+            }
+
+
+        } else {
+            Debug.LogWarning("Unhandled drop target scenario.");
+        }
+
+
+        // EndDrag state reset will happen automatically via EventSystem calling EndDrag on the source slot
+    }
+
+
     public bool IsCurrentlyDragging() => isDragging;
 }

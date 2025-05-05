@@ -1,5 +1,6 @@
 ﻿// ItemData.cs
 using UnityEngine;
+using UnityEngine.UI;
 
 [CreateAssetMenu(fileName = "ItemDataSO", menuName = "ScriptableObjects/ItemDataSO", order =7)]
 public class ItemData : ScriptableObject {

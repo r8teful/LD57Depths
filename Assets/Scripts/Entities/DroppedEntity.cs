@@ -1,0 +1,137 @@
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
+using Unity.VisualScripting;
+using UnityEngine;
+
+public class DroppedEntity : NetworkBehaviour {
+    // SyncVars automatically synchronize from server to clients
+    // Make sure your ItemData ScriptableObjects exist in the build!
+    private readonly SyncVar<ushort> _itemID = new SyncVar<ushort>(new SyncTypeSettings(ReadPermission.Observers)); 
+    private readonly SyncVar<int> _quantity = new SyncVar<int>(new SyncTypeSettings(ReadPermission.Observers));
+
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private float pickupDelay = 0.5f; // Prevent insta-pickup after drop
+
+    private float timeSinceSpawned = 0f;
+    private ItemData _cachedItemData = null;
+
+    public SyncVar<ushort> ItemID => _itemID;
+    public SyncVar<int> Quantity => _quantity;
+    public bool CanPickup => timeSinceSpawned >= pickupDelay;
+    //public ItemData ItemData => _cachedItemData;
+    // --- Cached ItemData (lookup result, not synced) ---
+
+    void Update() {
+        if (timeSinceSpawned < pickupDelay) {
+            timeSinceSpawned += Time.deltaTime;
+        }
+    }
+
+    private void Awake() {
+        _quantity.OnChange += OnQuantityChanged;
+        _itemID.OnChange += OnItemIDChanged;
+    }
+    public override void OnStartServer() {
+        base.OnStartServer();
+        // Server should initialize this immediately after spawning
+        // We'll do this from the Player's drop logic
+        // Example: GetComponent<WorldItem>().ServerInitialize(data, quant);
+    }
+
+    public override void OnStartClient() {
+        base.OnStartClient();
+        if (_itemID.Value != ItemDatabase.InvalidID) {
+            // If ID is valid on start, force an initial lookup and visual update
+            OnItemIDChanged(_itemID.Value, _itemID.Value, IsServerStarted); // Pass same value to trigger update
+        } else {
+            // If ID is invalid, ensure visuals are cleared
+            UpdateVisuals(null, _quantity.Value);
+        }
+    }
+
+    // Called on SERVER when spawning the item
+    [Server] // Ensures this only runs on the server
+    public void ServerInitialize(ushort id, int quantity) {
+        if (id == ItemDatabase.InvalidID || quantity <= 0) {
+            Debug.LogError("ServerInitialize called with invalid data.", this.gameObject);
+            // Despawn immediately if invalid
+            ServerManager.Despawn(gameObject);
+            return;
+        }
+        // Look up ItemData on server side for validation / logic if needed
+        _cachedItemData = ItemDatabase.Instance.GetItemByID(id);
+        if (_cachedItemData == null) {
+            Debug.LogError($"Server could not find ItemData for ID {id} in database! Despawning.", this.gameObject);
+            ServerManager.Despawn(gameObject);
+            return;
+        }
+
+
+        // Set the SyncVars
+        _itemID.Value= id;
+        _quantity.Value = quantity;
+        timeSinceSpawned = 0f;
+
+        Debug.Log($"[Server] Initialized WorldItem {gameObject.name} with ID {_itemID} ({_cachedItemData.name}) x{_quantity}");
+    }
+
+    // SyncVar hook for Quantity (only called on clients when server changes value)
+    private void OnQuantityChanged(int prev, int next, bool asServer) {
+        if (asServer) return; // Server already knows
+        // Update visuals if the quantity changes (though unlikely for simple drops)
+        UpdateVisuals(_cachedItemData, next); // Use the current ItemData
+    }
+    // Called on CLIENTS when server changes _itemID
+    private void OnItemIDChanged(ushort prevID, ushort nextID, bool asServer) {
+        if (asServer) return; // Server already knows
+
+        Debug.Log($"[Client] WorldItem {gameObject.name} ItemID changed from {prevID} to {nextID}. Performing lookup.");
+        _cachedItemData = ItemDatabase.Instance.GetItemByID(nextID); // Perform lookup
+        UpdateVisuals(_cachedItemData, _quantity.Value); // Update visuals with new data
+    }
+
+    // --- Visuals & Interaction ---
+    private void UpdateVisuals(ItemData data, int quantity) {
+        if (spriteRenderer == null) return;
+
+        if (data != null && quantity > 0) {
+            spriteRenderer.sprite = data.icon;
+            spriteRenderer.enabled = true;
+        } else {
+            spriteRenderer.enabled = false;
+        }
+    }
+
+
+    // --- Interaction (Called by Player Script) ---
+
+    [Server]
+    public bool ServerTryPickup(NetworkObject playerInteractorObject) {
+        if (!CanPickup || _itemID.Value == ItemDatabase.InvalidID) {
+            Debug.Log($"[Server] Pickup denied: Delay active or invalid ItemID ({_itemID}).");
+            return false;
+        }
+
+        PlayerInventorySyncer playerInventory = playerInteractorObject.GetComponent<PlayerInventorySyncer>();
+        if (playerInventory == null) {
+            Debug.LogError("[Server] Player object missing PlayerInventorySyncer.", playerInteractorObject.gameObject);
+            return false;
+        }
+
+        // Pass Item ID and Quantity to player inventory
+        bool added = playerInventory.Server_TryAddItem(_itemID.Value, _quantity.Value);
+
+        if (added) {
+            // Lookup item name for logging on server using cached data
+            string itemName = _cachedItemData != null ? _cachedItemData.name : $"ID:{_itemID}";
+            Debug.Log($"[Server] Item {itemName} x{_quantity} picked up by {playerInteractorObject.Owner.ClientId}. Despawning world item.");
+            ServerManager.Despawn(gameObject);
+            return true;
+        } else {
+            string itemName = _cachedItemData != null ? _cachedItemData.name : $"ID:{_itemID}";
+            Debug.Log($"[Server] Pickup failed for {playerInteractorObject.Owner.ClientId}, inventory likely full for {itemName}.");
+            playerInventory.TargetPickupFailed(playerInteractorObject.Owner, "Inventory full!");
+            return false;
+        }
+    }
+}

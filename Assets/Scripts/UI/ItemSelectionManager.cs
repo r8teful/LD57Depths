@@ -146,7 +146,7 @@ public class ItemSelectionManager : MonoBehaviour {
             return;
         }
 
-        ItemData itemToUse = selectedSlot.itemData;
+        ItemData itemToUse = selectedSlot.ItemData;
 
         if (itemToUse == null || !itemToUse.isUsable) {
             Debug.Log($"{itemToUse?.itemName ?? "Item"} is not usable.");

@@ -15,6 +15,7 @@ public class InventoryManager : Singleton<InventoryManager> {
     [SerializeField] private int inventorySize = 20; // How many slots
     // --- Runtime Data ---
     // List to hold the actual slot data
+    [ShowInInspector]
     private List<InventorySlot> slots = new List<InventorySlot>();
 
     // --- Events ---
@@ -25,6 +26,7 @@ public class InventoryManager : Singleton<InventoryManager> {
     public int InventorySize => inventorySize;
 
     private void InitializeInventory() {
+        slots.Clear();
         slots = new List<InventorySlot>(inventorySize);
         for (int i = 0; i < inventorySize; i++) {
             slots.Add(new InventorySlot()); // Add empty slots
@@ -38,19 +40,19 @@ public class InventoryManager : Singleton<InventoryManager> {
     /// <param name="itemToAdd">The ItemData of the item to add.</param>
     /// <param name="quantityToAdd">How many to add.</param>
     /// <returns>True if the entire quantity was added successfully, false otherwise (e.g., inventory full).</returns>
-    public bool AddItem(ItemData itemToAdd, int quantityToAdd = 1) {
-        if (itemToAdd == null || quantityToAdd <= 0) {
+    public bool AddItem(ushort itemIDToAdd, int quantityToAdd = 1) {
+        if (itemIDToAdd == ItemDatabase.InvalidID || quantityToAdd <= 0) {
             Debug.LogWarning("Attempted to add invalid item or quantity.");
             return false; // Indicate failure (nothing added)
         }
-
+        var itemToAdd = ItemDatabase.Instance.GetItemByID(itemIDToAdd);
         int remainingQuantity = quantityToAdd;
 
         // 1. Try to stack with existing items
         if (itemToAdd.maxStackSize > 1) // Only stack if stackable
         {
             for (int i = 0; i < slots.Count; i++) {
-                if (!slots[i].IsEmpty() && slots[i].itemData == itemToAdd) // Same item?
+                if (!slots[i].IsEmpty() && slots[i].itemID == itemIDToAdd) // Same item?
                 {
                     int canAdd = itemToAdd.maxStackSize - slots[i].quantity;
                     if (canAdd > 0) {
@@ -69,7 +71,7 @@ public class InventoryManager : Singleton<InventoryManager> {
         for (int i = 0; i < slots.Count; i++) {
             if (slots[i].IsEmpty()) {
                 int amountToAdd = Mathf.Min(remainingQuantity, itemToAdd.maxStackSize);
-                slots[i].itemData = itemToAdd;
+                slots[i].itemID = itemIDToAdd;
                 slots[i].quantity = amountToAdd; // Use direct assignment here
                 remainingQuantity -= amountToAdd;
                 OnSlotChanged?.Invoke(i); // Notify UI
@@ -138,27 +140,75 @@ public class InventoryManager : Singleton<InventoryManager> {
         return index >= 0 && index < slots.Count;
     }
 
+    public void TriggerOnSlotChanged(int slotIndex) { OnSlotChanged?.Invoke(slotIndex); }
+
+    public int CalculateHowMuchCanBeAdded(ushort idToAdd, int quantityToAdd) {
+        if (idToAdd == ItemDatabase.InvalidID || quantityToAdd <= 0) return 0;
+        int canAddTotal = 0;
+        int remainingQuantity = quantityToAdd;
+
+        var itemToAdd = ItemDatabase.Instance.GetItemByID(idToAdd);
+        // 1. Check existing stacks
+        if (itemToAdd.maxStackSize > 1) {
+            for (int i = 0; i < slots.Count; i++) {
+                if (!slots[i].IsEmpty() && slots[i].itemID == idToAdd) {
+                    int stackSpace = itemToAdd.maxStackSize - slots[i].quantity;
+                    int amountForThisStack = Mathf.Min(remainingQuantity, stackSpace);
+                    if (amountForThisStack > 0) {
+                        canAddTotal += amountForThisStack;
+                        remainingQuantity -= amountForThisStack;
+                        if (remainingQuantity <= 0) return quantityToAdd; // Can fit all
+                    }
+                }
+            }
+        }
+
+        // 2. Check empty slots
+        for (int i = 0; i < slots.Count; i++) {
+            if (slots[i].IsEmpty()) {
+                int amountForThisSlot = Mathf.Min(remainingQuantity, itemToAdd.maxStackSize);
+                canAddTotal += amountForThisSlot;
+                remainingQuantity -= amountForThisSlot;
+                if (remainingQuantity <= 0) return quantityToAdd; // Can fit all
+            }
+        }
+        // Return how much could actually fit
+        return quantityToAdd - remainingQuantity; // = canAddTotal
+    }
+
+    public List<int> FindSlotsContaining(ushort itemID) {
+        List<int> indices = new List<int>();
+        for (int i = 0; i < slots.Count; ++i) {
+            if (!slots[i].IsEmpty() && slots[i].itemID == itemID) {
+                indices.Add(i);
+            }
+        }
+        return indices;
+    }
     // --- Helper for Debugging ---
     [Button("Add Test Item")]
     void AddTestItemDebug() {
         // Find an ItemData asset in your project (replace "YourTestItemName"!)
-        ItemData testItem = Resources.Load<ItemData>("testitem"); // Assumes item is in a Resources folder
-        if (testItem != null) {
+        //ItemData testItem = Resources.Load<ItemData>("testitem"); // Assumes item is in a Resources folder
             Debug.Log("Adding item");
-            AddItem(testItem, 1);
-        } else {
-            Debug.LogError("Test item not found. Create an ItemData named 'YourTestItemName' in a Resources folder.");
-        }
+            AddItem(0, 1);
+        
     }
     [Button("Add Test Item 2")]
     void AddTestItemDebug2() {
-        // Find an ItemData asset in your project (replace "YourTestItemName"!)
-        ItemData testItem = Resources.Load<ItemData>("testitem2"); // Assumes item is in a Resources folder
-        if (testItem != null) {
-            Debug.Log("Adding item");
-            AddItem(testItem, 1);
-        } else {
-            Debug.LogError("Test item not found. Create an ItemData named 'YourTestItemName' in a Resources folder.");
+  
+        Debug.Log("Adding item");
+        AddItem(1, 1);
+        
+    }
+
+    public List<int> FindSlotsContainingID(ushort itemID) {
+        List<int> indices = new List<int>();
+        for (int i = 0; i < slots.Count; ++i) {
+            if (slots[i].itemID == itemID && !slots[i].IsEmpty()) { // Check ID and ensure not accidentally cleared
+                indices.Add(i);
+            }
         }
+        return indices;
     }
 }
