@@ -33,7 +33,7 @@ public class DEBUGGOD : MonoBehaviour
         if (Input.GetMouseButtonUp(0)) {
             _isDamaging = false;
         }
-        if (Input.GetKeyDown(KeyCode.I)) {
+        if (Input.GetKeyDown(KeyCode.L)) {
             ToggleArea(_toggle);
             _toggle = !_toggle;
         }
