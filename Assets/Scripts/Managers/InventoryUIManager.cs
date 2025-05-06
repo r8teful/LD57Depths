@@ -38,6 +38,8 @@ public class InventoryUIManager : MonoBehaviour {
     private bool isDragging = false;
     private bool isExpanded = false;
     private int dragSourceIndex = -1;
+    private bool dropHandled;
+    private bool _droppedSameSlot;
 
     // --- Properties ---
     public bool IsOpen => inventoryPanel != null && inventoryPanel.activeSelf;
@@ -228,18 +230,18 @@ public class InventoryUIManager : MonoBehaviour {
             }
 
         }
-
         // Reset visuals on the source slot if it's still valid
-        if (_localInventoryManager.IsValidIndex(dragSourceIndex)) {
-            slotUIs[dragSourceIndex].SetVisualsDuringDrag(false);
-        }
 
-        // Reset dragging state
-        isDragging = false;
-        dragSourceIndex = -1;
         draggingIconObject.SetActive(false);
         draggingIconImage.sprite = null;
 
+        if (_localInventoryManager.IsValidIndex(dragSourceIndex)) {
+            slotUIs[dragSourceIndex].SetVisualsDuringDrag(false, _droppedSameSlot);
+            if (_droppedSameSlot) _droppedSameSlot = false;
+        }
+        // Reset dragging state
+        isDragging = false;
+        dragSourceIndex = -1;
         Debug.Log("End Drag: Resetting State.");
     }
 
@@ -250,7 +252,6 @@ public class InventoryUIManager : MonoBehaviour {
             // Invalid drop scenario, maybe log warning
             return;
         }
-
         Debug.Log($"Handle Drop: From Slot {dragSourceIndex} To Slot {dropTargetIndex}");
 
         // Don't swap with self
@@ -495,8 +496,10 @@ public class InventoryUIManager : MonoBehaviour {
                 // Optional: Predict locally?
                 // inventoryManager.SwapSlots(sourceActualIndex, targetActualIndex);
                 // UpdateHotbarHighlight(itemSelectionManager.SelectedSlotIndex);
+            } else {
+                // If dropped onto the same slot
+                _droppedSameSlot = true;
             }
-            // If dropped onto the same slot, do nothing (swap isn't needed)
 
 
         } else if (targetIsContainer) {

@@ -160,7 +160,7 @@ public class PlayerInventorySyncer : NetworkBehaviour {
     private void TryClientPickupCheck() {
         // Sphere cast or Overlap Sphere to find nearby items
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, pickupRadius, pickupLayerMask);
-        Debug.Log("Casting rays");
+        //Debug.Log("Casting rays");
         if (hits.Length > 0) {
             DroppedEntity closestItem = null;
             float closestDistSq = float.MaxValue;

@@ -67,7 +67,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     }
 
     // Used to visually change the slot when its item is being dragged FROM it
-    public void SetVisualsDuringDrag(bool isBeingDragged) {
+    public void SetVisualsDuringDrag(bool isBeingDragged, bool sameSlot = false) {
         if (itemIconImage) {
             // Option 1: Just hide the icon
             // itemIconImage.enabled = !isBeingDragged;
@@ -76,7 +76,9 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             itemIconImage.color = isBeingDragged ? draggingMaskColor : Color.white;
         }
         if (quantityText) {
+            Debug.Log(isBeingDragged);
             quantityText.enabled = !isBeingDragged && quantityText.text != "" && quantityText.text != "0" && quantityText.enabled; // Also re-check conditions
+            if (sameSlot) quantityText.enabled = true;
         }
     }
     public void SetSelected(bool isSelected) {
