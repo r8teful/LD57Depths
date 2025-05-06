@@ -8,15 +8,12 @@ public class InventoryManager : MonoBehaviour {
     public void Awake() {
         InitializeInventory();
     }
-    // --- End Singleton ---
-
     [Header("Inventory Settings")]
     [SerializeField] private int inventorySize = 20; // How many slots
     // --- Runtime Data ---
     // List to hold the actual slot data
     [ShowInInspector]
     private List<InventorySlot> slots = new List<InventorySlot>();
-
     // --- Events ---
     // Event invoked when any slot in the inventory changes
     public event Action<int> OnSlotChanged; // Sends the index of the changed slot
@@ -31,7 +28,6 @@ public class InventoryManager : MonoBehaviour {
             slots.Add(new InventorySlot()); // Add empty slots
         }
         Debug.Log($"Inventory Initialized with {inventorySize} slots.");
-        Instantiate(App.ResourceSystem.GetPrefab("InventoryUICanvas")).GetComponent<InventoryUIManager>().Init(this);
     }
 
     /// <summary>

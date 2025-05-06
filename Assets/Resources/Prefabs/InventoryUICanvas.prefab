@@ -321,7 +321,6 @@ GameObject:
   - component: {fileID: 5237645888439740647}
   - component: {fileID: 7463083678202148388}
   - component: {fileID: 7227914051332170767}
-  - component: {fileID: 6551057047610419765}
   m_Layer: 5
   m_Name: InventoryUICanvas
   m_TagString: Untagged
@@ -435,21 +434,4 @@ MonoBehaviour:
   containerTitleText: {fileID: 0}
   toggleInventoryAction: {fileID: -6798067734442219671, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   hotbarSize: 4
-  inventoryManager: {fileID: 0}
-  itemSelectionManager: {fileID: 6551057047610419765}
---- !u!114 &6551057047610419765
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8002886730946339955}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe6cba3b32391ff44b7807395cadf7f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inventoryManager: {fileID: 0}
-  playerObject: {fileID: 0}
-  useItemAction: {fileID: 0}
-  hotbarSelection: {fileID: -7393504823507224180, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  _itemSelectionManager: {fileID: 0}

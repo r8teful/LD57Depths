@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: StoneDrop
   m_EditorClassIdentifier: 
   drops:
-  - itemPrefab: {fileID: 6402200259883455465, guid: 9cdb7b99142e92a42bb0a5b41fe345ce, type: 3}
+  - ItemData: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
     minAmount: 1
     maxAmount: 1
     dropChance: 1

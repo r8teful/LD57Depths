@@ -28,9 +28,11 @@ public class InventoryUIManager : MonoBehaviour {
     [SerializeField] private int hotbarSize = 5; // How many slots in the first row act as hotbar
 
     [Header("References")]
-    private InventoryManager inventoryManager; // Reference to the data manager
-    [SerializeField] private ItemSelectionManager itemSelectionManager; // Reference needed
+    private InventoryManager _localInventoryManager;
+    private ItemSelectionManager _itemSelectionManager;
     // --- Runtime ---
+    private GameObject _playerGameObject; // player that own this UI
+    private PlayerInventorySyncer _playerSyncer; // player that own this UI
     private List<InventorySlotUI> slotUIs = new List<InventorySlotUI>();
     private Image draggingIconImage;
     private bool isDragging = false;
@@ -40,52 +42,66 @@ public class InventoryUIManager : MonoBehaviour {
     // --- Properties ---
     public bool IsOpen => inventoryPanel != null && inventoryPanel.activeSelf;
     public int HotbarSize => hotbarSize; // Expose hotbar size
-    
-    public void Init(InventoryManager manager) {
-        inventoryManager = manager;
-        itemSelectionManager.Init(manager.gameObject, manager);
-    }
-    
-    void Start() {
-        if (!inventoryPanel || !slotInvContainer || !slotPrefab || !draggingIconObject) {
-            Debug.LogError("One or more UI element references are missing on InventoryUIManager!");
-            enabled = false; // Disable script if essential references are missing
-            return;
-        }
 
-
-        // Initialize dragging icon
-        draggingIconImage = draggingIconObject.GetComponent<Image>();
-        if (draggingIconImage == null) {
-            Debug.LogError("Dragging Icon Object must have an Image component!");
+    public void Init(InventoryManager localPlayerInvManager, ItemSelectionManager localPlayerItemSelector, GameObject owningPlayer) {
+        _localInventoryManager = localPlayerInvManager;
+        _itemSelectionManager = localPlayerItemSelector;
+        _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage
+        _playerSyncer = _playerGameObject.GetComponent<PlayerInventorySyncer>();
+        if (_localInventoryManager == null || _itemSelectionManager == null || _playerGameObject == null) {
+            Debug.LogError("InventoryUIManager received null references during Initialize! UI may not function.", gameObject);
             enabled = false;
             return;
         }
-        draggingIconObject.SetActive(true);
 
-        // Subscribe to inventory events
-        inventoryManager.OnSlotChanged += UpdateSlotUI;      // Update specific UI slot when data changes
-        itemSelectionManager.OnSelectionChanged += UpdateHotbarHighlight;
-        CreateSlotUIs();
-        // Initial state
-        inventoryPanel.SetActive(true);
-        itemSelectionManager.Initialize(hotbarSize);
-        // Input setup
-        if (toggleInventoryAction != null) {
-            toggleInventoryAction.action.performed += ToggleInventory;
-            toggleInventoryAction.action.Enable();
-        } else {
-            Debug.LogWarning("Toggle Inventory Action not assigned.");
+        // Validate essential UI components assigned in prefab
+        if (!inventoryPanel || !slotInvContainer || !slotPrefab || !draggingIconObject || !containerPanel || !containerSlotContainer) {
+            Debug.LogError("One or more UI elements missing in InventoryUIPrefab!", gameObject);
+            //enabled = false; return;
         }
+
+        draggingIconImage = draggingIconObject.GetComponent<Image>();
+        if (draggingIconImage == null) { /* Error */ enabled = false; return; }
+        draggingIconObject.SetActive(false);
+
+        //containerPanel.SetActive(false); // TODO For multiplayer
+        
+        // Subscribe to LOCAL events from THIS player's managers
+        _localInventoryManager.OnSlotChanged += UpdateSlotUI;
+        _itemSelectionManager.OnSelectionChanged += UpdateHotbarHighlight;
+
+        // If player syncer is on the same player object, find it for container events
+        PlayerInventorySyncer playerSyncer = _playerGameObject.GetComponent<PlayerInventorySyncer>();
+        if (playerSyncer != null) {
+            PlayerInventorySyncer.OnContainerOpened += HandleContainerOpen; // Static events are tricky, direct ref better if possible
+            PlayerInventorySyncer.OnContainerClosed += HandleContainerClose;
+        } else { Debug.LogError("PlayerInventorySyncer not found on owning player for container events!"); }
+
+
+        // Inform ItemSelectionManager about hotbar size
+        _itemSelectionManager.Initialize(hotbarSize, _playerGameObject); // Pass player object
+        // OR itemSelectionManager.Init(manager.gameObject, manager);
+
+        inventoryPanel.SetActive(true);
+
+        if (toggleInventoryAction != null && toggleInventoryAction.action != null) {
+            toggleInventoryAction.action.Enable(); // Enable the action before subscribing
+            toggleInventoryAction.action.performed += ToggleInventory;
+        } else { Debug.LogWarning("Toggle Inventory Action not assigned or invalid.", gameObject); }
+        CreateSlotUIs();
+        Debug.Log("InventoryUIManager Initialized for player: " + _playerGameObject.name);
     }
 
     void OnDestroy() // Unsubscribe from events when destroyed
    {
-        if (inventoryManager != null) {
-            inventoryManager.OnSlotChanged -= UpdateSlotUI;
+        if (_localInventoryManager != null) {
+            _localInventoryManager.OnSlotChanged -= UpdateSlotUI;
         }
         if (toggleInventoryAction != null) {
             toggleInventoryAction.action.performed -= ToggleInventory;
+        }
+        if (_itemSelectionManager != null) {
+            _itemSelectionManager.OnSelectionChanged -= UpdateHotbarHighlight;
         }
     }
 
@@ -141,7 +157,7 @@ public class InventoryUIManager : MonoBehaviour {
             }
         }
         // Instantiate UI slots based on inventory size
-        for (int i = hotbarSize; i < inventoryManager.InventorySize; i++) {
+        for (int i = hotbarSize; i < _localInventoryManager.InventorySize; i++) {
             GameObject slotGO = Instantiate(slotPrefab, slotInvContainer);
             slotGO.name = $"Slot_{i}"; // For easier debugging
 
@@ -154,16 +170,17 @@ public class InventoryUIManager : MonoBehaviour {
                 Debug.LogError($"Slot prefab '{slotPrefab.name}' is missing InventorySlotUI component!");
             }
         }
+        UpdateHotbarHighlight(_itemSelectionManager.SelectedSlotIndex); 
         Debug.Log($"Created {slotUIs.Count} UI slots.");
     }
 
     // Updates the visual representation of a single slot
     void UpdateSlotUI(int slotIndex) {
         if (slotIndex >= 0 && slotIndex < slotUIs.Count) {
-            InventorySlot slotData = inventoryManager.GetSlot(slotIndex);
+            InventorySlot slotData = _localInventoryManager.GetSlot(slotIndex);
             slotUIs[slotIndex].UpdateUI(slotData);
             if (slotIndex < hotbarSize) {
-                slotUIs[slotIndex].SetSelected(slotIndex == itemSelectionManager.SelectedSlotIndex && IsOpen);
+                slotUIs[slotIndex].SetSelected(slotIndex == _itemSelectionManager.SelectedSlotIndex && IsOpen);
             }
         }
     }
@@ -171,7 +188,7 @@ public class InventoryUIManager : MonoBehaviour {
     // --- Drag and Drop Handling ---
 
     public void BeginDrag(int slotIndex) {
-        InventorySlot sourceSlot = inventoryManager.GetSlot(slotIndex);
+        InventorySlot sourceSlot = _localInventoryManager.GetSlot(slotIndex);
         if (sourceSlot == null || sourceSlot.IsEmpty()) return; // Can't drag empty slot
 
         isDragging = true;
@@ -207,12 +224,13 @@ public class InventoryUIManager : MonoBehaviour {
                 // Drag ended outside of *any* UI. Potential drop location.
                 // For now, just reset. Add drop logic later.
                 Debug.Log("End Drag: Outside UI. Potential Drop Location. Resetting for now.");
+               // _localInventoryManager.GetPlayerInvSyncer().HandleDropInput(dragSourceIndex, 9999);
             }
 
         }
 
         // Reset visuals on the source slot if it's still valid
-        if (inventoryManager.IsValidIndex(dragSourceIndex)) {
+        if (_localInventoryManager.IsValidIndex(dragSourceIndex)) {
             slotUIs[dragSourceIndex].SetVisualsDuringDrag(false);
         }
 
@@ -228,7 +246,7 @@ public class InventoryUIManager : MonoBehaviour {
 
     // Called by InventorySlotUI when an item is dropped onto it
     public void HandleDrop(int dropTargetIndex) {
-        if (!isDragging || dragSourceIndex == -1 || !inventoryManager.IsValidIndex(dropTargetIndex)) {
+        if (!isDragging || dragSourceIndex == -1 || !_localInventoryManager.IsValidIndex(dropTargetIndex)) {
             // Invalid drop scenario, maybe log warning
             return;
         }
@@ -245,7 +263,7 @@ public class InventoryUIManager : MonoBehaviour {
 
 
         // Perform the swap in the data manager
-        inventoryManager.SwapSlots(dragSourceIndex, dropTargetIndex);
+        _localInventoryManager.SwapSlots(dragSourceIndex, dropTargetIndex);
 
         // EndDrag will be called automatically by the Input System / EventSystem
         // after OnDrop finishes. It handles resetting the drag state.
@@ -321,7 +339,7 @@ public class InventoryUIManager : MonoBehaviour {
         // Ensure player inventory is ALSO open when container is open
         if (!inventoryPanel.activeSelf) {
             inventoryPanel.SetActive(true);
-            UpdateHotbarHighlight(itemSelectionManager.SelectedSlotIndex); // Update highlights if opened this way
+            UpdateHotbarHighlight(_itemSelectionManager.SelectedSlotIndex); // Update highlights if opened this way
         }
     }
 
@@ -467,14 +485,11 @@ public class InventoryUIManager : MonoBehaviour {
 
 
         // --- Logic ---
-        PlayerInventorySyncer playerSyncer = FindFirstObjectByType<PlayerInventorySyncer>(); // TODO: Cache this reference
-
-
         if (targetIsPlayer) {
             // Player -> Player: Request Swap
             if (sourceActualIndex != targetActualIndex) { // Check if dropping onto a *different* player slot
                 Debug.Log($"Requesting Player Swap: {sourceActualIndex} <-> {targetActualIndex}");
-                playerSyncer.RequestSwapPlayerSlots(sourceActualIndex, targetActualIndex);
+                _playerSyncer.RequestSwapPlayerSlots(sourceActualIndex, targetActualIndex);
 
 
                 // Optional: Predict locally?
@@ -489,13 +504,13 @@ public class InventoryUIManager : MonoBehaviour {
             Debug.Log($"Requesting Move Player[{sourceActualIndex}] -> Container[{targetActualIndex}]");
 
 
-            InventorySlot sourceData = inventoryManager.GetSlot(sourceActualIndex);
+            InventorySlot sourceData = _localInventoryManager.GetSlot(sourceActualIndex);
             SharedContainer targetContainer = currentlyViewedContainer; // Use the cached container reference
 
 
             if (sourceData != null && !sourceData.IsEmpty() && targetContainer != null) {
                 // Request move of entire stack quantity for simplicity
-                playerSyncer?.RequestMoveItemToContainer(sourceActualIndex, targetActualIndex, sourceData.quantity);
+                _playerSyncer.RequestMoveItemToContainer(sourceActualIndex, targetActualIndex, sourceData.quantity);
 
 
                 // Optional: Predict removal from player inventory locally?

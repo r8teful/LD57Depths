@@ -72,9 +72,9 @@ public class PlayerInventorySyncer : NetworkBehaviour {
         if (localInventoryManager.GetSlot(slotIndex) == null || localInventoryManager.GetSlot(slotIndex).IsEmpty()) return; // Cannot drop empty
 
         // Optimistic client-side prediction (Optional but feels better)
+        //localInventoryManager.RemoveItem(slotIndex, quantity); 
         // We can remove the item visually here, but server is final authority
-        // For now, we WONT predict removal, we wait for server confirmation via Target_UpdateSlot
-        // localInventoryManager.RemoveItem(slotIndex, quantity); // DON'T DO THIS YET
+        // For now, we WILL predict removal, we (won't?)wait for server confirmation via Target_UpdateSlot
 
         CmdDropItem(slotIndex, quantity);
     }
@@ -86,7 +86,11 @@ public class PlayerInventorySyncer : NetworkBehaviour {
         TryClientPickupCheck();
     }
 
-
+    private void FixedUpdate() {
+        if (!base.IsOwner) return;
+        // Client checks for nearby items first (reduces unnecessary server calls)
+        TryClientPickupCheck();
+    }
     // --- Dropping Logic ---
 
     [ServerRpc(RequireOwnership = true)]
@@ -156,14 +160,14 @@ public class PlayerInventorySyncer : NetworkBehaviour {
     private void TryClientPickupCheck() {
         // Sphere cast or Overlap Sphere to find nearby items
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, pickupRadius, pickupLayerMask);
-
+        Debug.Log("Casting rays");
         if (hits.Length > 0) {
             DroppedEntity closestItem = null;
             float closestDistSq = float.MaxValue;
 
             foreach (Collider2D hit in hits) {
                 // Check if we hit a WorldItem directly or via Rigidbody parent etc.
-                DroppedEntity item = hit.GetComponentInParent<DroppedEntity>();
+                DroppedEntity item = hit.GetComponent<DroppedEntity>();
                 if (item != null && item.CanPickup) // Check pickup delay
                {
                     float distSq = (item.transform.position - transform.position).sqrMagnitude;
@@ -280,10 +284,10 @@ public class PlayerInventorySyncer : NetworkBehaviour {
             if (localSlot.quantity <= 0) localSlot.Clear(); // Ensure empty slots are cleared
 
 
-            if (changed) {
+            //if (changed) {
                 // Manually trigger the local event to update the UI
                 localInventoryManager.TriggerOnSlotChanged(slotIndex); // Need to add this helper method
-            }
+            //}
 
         } else {
             Debug.LogError($"[Client {base.Owner.ClientId}] Received update for invalid slot index {slotIndex}");
@@ -338,10 +342,7 @@ public class PlayerInventorySyncer : NetworkBehaviour {
         if (targetContainer != null) {
             // Found container, request interaction from server
             CmdInteractWithContainer(targetContainer.NetworkObject);
-        } else {
-            // If no container found, check for items to pick up
-            HandlePickupInput(); // Fallback to item pickup check
-        }
+        } 
     }
     [ServerRpc(RequireOwnership = true)]
     private void CmdInteractWithContainer(NetworkObject containerNob) {

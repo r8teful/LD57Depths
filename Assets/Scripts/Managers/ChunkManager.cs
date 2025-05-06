@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FishNet.Object;
 using FishNet.Connection;
+using NUnit.Framework.Internal.Execution;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
     public TileBase[,] tiles; // The ground layer 
@@ -418,20 +419,26 @@ public class ChunkManager : NetworkBehaviour {
         if (sourceTile.dropTable == null) return;
 
         foreach (ItemDropInfo dropInfo in sourceTile.dropTable.drops) {
-            if (dropInfo.itemPrefab != null && Random.value <= dropInfo.dropChance) {
+            if (dropInfo.ItemData.droppedPrefab != null && Random.value <= dropInfo.dropChance) {
                 int amountToDrop = Random.Range(dropInfo.minAmount, dropInfo.maxAmount + 1);
                 for (int i = 0; i < amountToDrop; i++) {
                     // Slightly randomize drop position
                     Vector3 spawnPos = position + (Vector3)Random.insideUnitCircle * 0.3f;
 
                     // Instantiate the PREFAB, then spawn the INSTANCE
-                    GameObject dropInstance = Instantiate(dropInfo.itemPrefab, spawnPos, Quaternion.identity);
-
-                    // Spawn the instantiated object over the network
+                    GameObject dropInstance = Instantiate(dropInfo.ItemData.droppedPrefab, spawnPos, Quaternion.identity);
                     base.ServerManager.Spawn(dropInstance); // FishNet spawn call
-                                                            // Add initial velocity/physics force if needed
-                                                            // Rigidbody2D rb = dropInstance.GetComponent<Rigidbody2D>();
-                                                            // if(rb != null) rb.AddForce(Random.insideUnitCircle * 1.5f, ForceMode2D.Impulse);
+                    
+                    var worldItem = dropInstance.GetComponent<DroppedEntity>();
+                    if (worldItem != null) {
+                        var id = App.ResourceSystem.GetIDByItem(dropInfo.ItemData);
+                        worldItem.ServerInitialize(id, 1); // we either drop 1, or just specify amountToDrop and don't loop
+                        Debug.Log($"[Server] Player {base.Owner.ClientId} dropped {1} of {worldItem.name}.");
+                        // No need to send TargetRpc for success IF Server_RemoveItem sends update
+                    } else {
+                        Debug.LogError($"[Server] Dropped prefab {dropInfo.ItemData.droppedPrefab.name} is missing a WorldItem component!");
+                        ServerManager.Despawn(dropInstance); // Despawn broken itemk
+                    }
                 }
             }
         }

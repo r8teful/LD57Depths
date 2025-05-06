@@ -27,18 +27,35 @@ public class ItemSelectionManager : MonoBehaviour {
     // --- Properties ---
     public int SelectedSlotIndex => currentSelectedIndex;
 
-    public void Init(GameObject player, InventoryManager inv) {
-        playerObject = player;
-        inventoryManager = inv;
-    }
+    // Called by InventoryUIManager AFTER it is initialized by PlayerUIController
+    public void Initialize(int size, GameObject owningPlayerObject) {
+        hotbarSize = size;
+        playerObject = owningPlayerObject; // Store who uses items
 
-    void Start() {
-        if (!inventoryManager) {
-            Debug.LogError("InventoryManager not found!", gameObject);
-            enabled = false;
-            return;
+        if (playerObject == null) {
+            Debug.LogError("ItemSelectionManager initialized without a valid owningPlayerObject for usage!", gameObject);
         }
-
+        if (inventoryManager == null) { // Attempt to get it if InitializeReferences wasn't called first
+            inventoryManager = GetComponent<InventoryManager>();
+            if (inventoryManager == null) Debug.LogError("ItemSelectionManager could not find InventoryManager on " + gameObject.name);
+        }
+        if (hotbarSize <= 0) { /* Handle invalid size */ return; }
+        slotCooldownTimers = new float[hotbarSize];
+        currentSelectedIndex = Mathf.Clamp(currentSelectedIndex, 0, hotbarSize - 1);
+        isInitialized = true;
+        OnSelectionChanged?.Invoke(currentSelectedIndex); // Trigger initial highlight
+        Debug.Log($"ItemSelectionManager Initialized for player: {owningPlayerObject.name} with Hotbar Size: {hotbarSize}");
+    }
+    void Start() {
+        if (inventoryManager == null) { // Attempt to get it if InitializeReferences wasn't called first
+            inventoryManager = GetComponent<InventoryManager>();
+            if (inventoryManager == null) { 
+                Debug.LogError("ItemSelectionManager could not find InventoryManager on " + gameObject.name);
+                enabled = false;
+                return;
+            } 
+        }
+        
         if (useItemAction != null) {
             useItemAction.action.performed += HandleUseInput;
             useItemAction.action.Enable();
@@ -48,8 +65,6 @@ public class ItemSelectionManager : MonoBehaviour {
         hotbarSelection.action.performed += OnHotbarSelection;
         // Initialization called by HotbarUIManager AFTER it determines the size
     }
-
-  
 
     void Update() {
         // Update cooldown timers if you implement them
@@ -68,23 +83,6 @@ public class ItemSelectionManager : MonoBehaviour {
         }
     }
 
-
-    // Called by HotbarUIManager during its Start sequence
-    public void Initialize(int size) {
-        hotbarSize = size;
-        slotCooldownTimers = new float[hotbarSize]; // Initialize cooldown array
-        SetSelectedSlot(currentSelectedIndex); // Set initial selection & trigger event
-        isInitialized = true;
-        slotCooldownTimers = new float[hotbarSize];
-        // Clamp current index just in case hotbar size decreased
-        currentSelectedIndex = Mathf.Clamp(currentSelectedIndex, 0, hotbarSize - 1);
-
-        isInitialized = true;
-        Debug.Log($"ItemSelectionManager Initialized with Hotbar Size: {hotbarSize}");
-
-        // Trigger initial selection event
-        OnSelectionChanged?.Invoke(currentSelectedIndex);
-    }
     private void OnHotbarSelection(InputAction.CallbackContext context) {
         int slotIndex = (int)context.ReadValue<float>() - 1;
         SetSelectedSlot(slotIndex);

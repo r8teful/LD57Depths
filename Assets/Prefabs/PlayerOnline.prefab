@@ -19,7 +19,9 @@ GameObject:
   - component: {fileID: -5283526655762208488}
   - component: {fileID: -7626533647889685779}
   - component: {fileID: 8161649982983680990}
+  - component: {fileID: -1594354055043781682}
   - component: {fileID: 5476060006903173347}
+  - component: {fileID: -1962570301136935684}
   m_Layer: 2
   m_Name: PlayerOnline
   m_TagString: Player
@@ -241,6 +243,7 @@ MonoBehaviour:
   - {fileID: -5283526655762208488}
   - {fileID: -7626533647889685779}
   - {fileID: 8161649982983680990}
+  - {fileID: -1962570301136935684}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -364,13 +367,27 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 6962948237969374493}
   localInventoryManager: {fileID: 5476060006903173347}
   dropPoint: {fileID: 0}
-  pickupRadius: 1.5
+  pickupRadius: 8.67
   pickupLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   containerLayerMask:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &-1594354055043781682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228294681075539138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe6cba3b32391ff44b7807395cadf7f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useItemAction: {fileID: 0}
+  hotbarSelection: {fileID: -7393504823507224180, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
 --- !u!114 &5476060006903173347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -384,6 +401,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventorySize: 20
+--- !u!114 &-1962570301136935684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228294681075539138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 509d4403a2374294f86c0ea29370fc59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 5
+  _addedNetworkObject: {fileID: 6962948237969374493}
+  _networkObjectCache: {fileID: 6962948237969374493}
+  inventoryUIPrefab: {fileID: 8002886730946339955, guid: c1db4f0b98c6bef4b96a523182ce73e3, type: 3}
 --- !u!1 &7921325826699556024
 GameObject:
   m_ObjectHideFlags: 0
