@@ -5,8 +5,8 @@ using UnityEngine.InputSystem;
 
 public class ItemSelectionManager : MonoBehaviour {
     [Header("References")]
-    [SerializeField] private InventoryManager inventoryManager;
-    [SerializeField] private GameObject playerObject; // The object that uses the items (needed for ItemData.Use)
+    private InventoryManager inventoryManager;
+    private GameObject playerObject; // The object that uses the items (needed for ItemData.Use)
 
     [Header("Input Action")]
     [SerializeField] private InputActionReference useItemAction; // Action to trigger item usage
@@ -27,19 +27,12 @@ public class ItemSelectionManager : MonoBehaviour {
     // --- Properties ---
     public int SelectedSlotIndex => currentSelectedIndex;
 
-    void Awake() {
-        // Ensure player reference is set, essential for Use()
-        if (playerObject == null) {
-            Debug.LogWarning("PlayerObject reference not set on ItemSelectionManager. Attempting to find GameObject tagged 'Player'.");
-            playerObject = GameObject.FindGameObjectWithTag("Player"); // Common practice
-            if (playerObject == null) {
-                Debug.LogError("ItemSelectionManager could not find Player object! Item usage will fail.");
-            }
-        }
+    public void Init(GameObject player, InventoryManager inv) {
+        playerObject = player;
+        inventoryManager = inv;
     }
 
     void Start() {
-        if (!inventoryManager) inventoryManager = InventoryManager.Instance;
         if (!inventoryManager) {
             Debug.LogError("InventoryManager not found!", gameObject);
             enabled = false;

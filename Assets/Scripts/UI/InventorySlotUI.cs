@@ -19,8 +19,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private Image backgroundImage; // Reference to self image if needed for color changes
 
     private bool isContainerSlot = false; // New flag
-    private int localSlotIndex = -1; 
-    public int SlotIndex => localSlotIndex; // Expose local index
+    public int SlotIndex => slotIndex; 
     public bool IsContainerSlot => isContainerSlot; // Expose context flag
     void Awake() {
         backgroundImage = GetComponent<Image>(); // Get Image on this object if needed
@@ -42,7 +41,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     }
     public void SetContainerContext(InventoryUIManager manager, int index) {
         uiManager = manager; // Still need manager for drag events
-        localSlotIndex = index; // Index *within the container*
+        slotIndex = index; // Index *within the container*
         isContainerSlot = true;
     }
 
@@ -55,7 +54,8 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             if (backgroundImage) backgroundImage.color = emptySlotColor; // Make slot visually 'empty'
         } else {
             // Slot has an item
-           // itemIconImage.sprite = slotData.itemData.icon;
+            itemIconImage.sprite = App.ResourceSystem.GetItemByID(slotData.itemID).icon; // We have to get it from here because
+            // slotData doesn't store the image
             itemIconImage.enabled = true;
             quantityText.enabled = slotData.quantity > 1;
             if (quantityText.enabled) quantityText.text = slotData.quantity.ToString();
@@ -90,11 +90,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         // Only allow dragging with the primary button (usually left mouse)
         if (eventData.button != PointerEventData.InputButton.Left) return;
         if (!isContainerSlot && uiManager != null) {
-            InventorySlot sourceSlotData = InventoryManager.Instance.GetSlot(localSlotIndex); // Check local player manager data
-            if (sourceSlotData != null && !sourceSlotData.IsEmpty()) // Don't drag empty slots
-           {
-                uiManager.BeginDrag(localSlotIndex); // Begin drag using player slot index
-            }
+            uiManager.BeginDrag(slotIndex); // Begin drag using player slot index
         } else if (isContainerSlot) {
             Debug.Log("Dragging directly from Container Slot is currently disabled.");
             // Optionally provide visual feedback that it's disabled.

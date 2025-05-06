@@ -40,7 +40,7 @@ public class DroppedEntity : NetworkBehaviour {
 
     public override void OnStartClient() {
         base.OnStartClient();
-        if (_itemID.Value != ItemDatabase.InvalidID) {
+        if (_itemID.Value != ResourceSystem.InvalidID) {
             // If ID is valid on start, force an initial lookup and visual update
             OnItemIDChanged(_itemID.Value, _itemID.Value, IsServerStarted); // Pass same value to trigger update
         } else {
@@ -52,14 +52,14 @@ public class DroppedEntity : NetworkBehaviour {
     // Called on SERVER when spawning the item
     [Server] // Ensures this only runs on the server
     public void ServerInitialize(ushort id, int quantity) {
-        if (id == ItemDatabase.InvalidID || quantity <= 0) {
+        if (id == ResourceSystem.InvalidID || quantity <= 0) {
             Debug.LogError("ServerInitialize called with invalid data.", this.gameObject);
             // Despawn immediately if invalid
             ServerManager.Despawn(gameObject);
             return;
         }
         // Look up ItemData on server side for validation / logic if needed
-        _cachedItemData = ItemDatabase.Instance.GetItemByID(id);
+        _cachedItemData = App.ResourceSystem.GetItemByID(id);
         if (_cachedItemData == null) {
             Debug.LogError($"Server could not find ItemData for ID {id} in database! Despawning.", this.gameObject);
             ServerManager.Despawn(gameObject);
@@ -86,7 +86,7 @@ public class DroppedEntity : NetworkBehaviour {
         if (asServer) return; // Server already knows
 
         Debug.Log($"[Client] WorldItem {gameObject.name} ItemID changed from {prevID} to {nextID}. Performing lookup.");
-        _cachedItemData = ItemDatabase.Instance.GetItemByID(nextID); // Perform lookup
+        _cachedItemData = App.ResourceSystem.GetItemByID(nextID); // Perform lookup
         UpdateVisuals(_cachedItemData, _quantity.Value); // Update visuals with new data
     }
 
@@ -107,7 +107,7 @@ public class DroppedEntity : NetworkBehaviour {
 
     [Server]
     public bool ServerTryPickup(NetworkObject playerInteractorObject) {
-        if (!CanPickup || _itemID.Value == ItemDatabase.InvalidID) {
+        if (!CanPickup || _itemID.Value == ResourceSystem.InvalidID) {
             Debug.Log($"[Server] Pickup denied: Delay active or invalid ItemID ({_itemID}).");
             return false;
         }

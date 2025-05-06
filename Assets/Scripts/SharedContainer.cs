@@ -108,10 +108,10 @@ public class SharedContainer : NetworkBehaviour {
     [Server]
     public bool ServerTryAddItem(ushort itemID, int quantity, int preferredIndex = -1) // Accept ID
      {
-        if (itemID == ItemDatabase.InvalidID || quantity <= 0) return false;
+        if (itemID == ResourceSystem.InvalidID || quantity <= 0) return false;
 
         // Need ItemData for maxStackSize lookup on server
-        ItemData data = ItemDatabase.Instance.GetItemByID(itemID);
+        ItemData data = App.ResourceSystem.GetItemByID(itemID);
         if (data == null) {
             Debug.LogError($"[Server] Invalid ItemID {itemID} trying to be added to container {gameObject.name}.");
             return false;
@@ -181,7 +181,7 @@ public class SharedContainer : NetworkBehaviour {
 
         items[index] = updatedSlot;
 
-        string itemName = ItemDatabase.Instance.GetItemByID(removedItemPortion.itemID)?.name ?? $"ID:{removedItemPortion.itemID}";
+        string itemName = App.ResourceSystem.GetItemByID(removedItemPortion.itemID)?.name ?? $"ID:{removedItemPortion.itemID}";
         Debug.Log($"[Server] Removed {quantityToRemove} of {itemName} from container {gameObject.name} at index {index}.");
         return removedItemPortion;
     }

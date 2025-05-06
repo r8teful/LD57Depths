@@ -4,9 +4,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InventoryManager : Singleton<InventoryManager> {
-    protected override void Awake() {
-        base.Awake();
+public class InventoryManager : MonoBehaviour {
+    public void Awake() {
         InitializeInventory();
     }
     // --- End Singleton ---
@@ -32,6 +31,7 @@ public class InventoryManager : Singleton<InventoryManager> {
             slots.Add(new InventorySlot()); // Add empty slots
         }
         Debug.Log($"Inventory Initialized with {inventorySize} slots.");
+        Instantiate(App.ResourceSystem.GetPrefab("InventoryUICanvas")).GetComponent<InventoryUIManager>().Init(this);
     }
 
     /// <summary>
@@ -41,11 +41,11 @@ public class InventoryManager : Singleton<InventoryManager> {
     /// <param name="quantityToAdd">How many to add.</param>
     /// <returns>True if the entire quantity was added successfully, false otherwise (e.g., inventory full).</returns>
     public bool AddItem(ushort itemIDToAdd, int quantityToAdd = 1) {
-        if (itemIDToAdd == ItemDatabase.InvalidID || quantityToAdd <= 0) {
+        if (itemIDToAdd == ResourceSystem.InvalidID || quantityToAdd <= 0) {
             Debug.LogWarning("Attempted to add invalid item or quantity.");
             return false; // Indicate failure (nothing added)
         }
-        var itemToAdd = ItemDatabase.Instance.GetItemByID(itemIDToAdd);
+        var itemToAdd = App.ResourceSystem.GetItemByID(itemIDToAdd);
         int remainingQuantity = quantityToAdd;
 
         // 1. Try to stack with existing items
@@ -143,11 +143,11 @@ public class InventoryManager : Singleton<InventoryManager> {
     public void TriggerOnSlotChanged(int slotIndex) { OnSlotChanged?.Invoke(slotIndex); }
 
     public int CalculateHowMuchCanBeAdded(ushort idToAdd, int quantityToAdd) {
-        if (idToAdd == ItemDatabase.InvalidID || quantityToAdd <= 0) return 0;
+        if (idToAdd == ResourceSystem.InvalidID || quantityToAdd <= 0) return 0;
         int canAddTotal = 0;
         int remainingQuantity = quantityToAdd;
 
-        var itemToAdd = ItemDatabase.Instance.GetItemByID(idToAdd);
+        var itemToAdd = App.ResourceSystem.GetItemByID(idToAdd);
         // 1. Check existing stacks
         if (itemToAdd.maxStackSize > 1) {
             for (int i = 0; i < slots.Count; i++) {

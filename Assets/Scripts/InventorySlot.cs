@@ -15,19 +15,19 @@ public class InventorySlot {
     public ItemData ItemData {
         get {
             // Return cached version if available and ID matches
-            if (_cachedItemData != null && ItemDatabase.Instance.GetIDByItem(_cachedItemData) == this.itemID) {
+            if (_cachedItemData != null && App.ResourceSystem.GetIDByItem(_cachedItemData) == this.itemID) {
                 return _cachedItemData;
             }
             // Otherwise, lookup based on current ID
-            _cachedItemData = ItemDatabase.Instance.GetItemByID(this.itemID);
+            _cachedItemData = App.ResourceSystem.GetItemByID(this.itemID);
             return _cachedItemData;
         }
     }
 
-    public InventorySlot() : this(ItemDatabase.InvalidID, 0) { }
+    public InventorySlot() : this(ResourceSystem.InvalidID, 0) { }
 
     // Constructor - takes ID
-    public InventorySlot(ushort id = ItemDatabase.InvalidID, int amount = 0) {
+    public InventorySlot(ushort id = ResourceSystem.InvalidID, int amount = 0) {
         itemID = id;
         quantity = amount;
         // Clear cache initially, will be populated by ItemData property getter
@@ -35,7 +35,7 @@ public class InventorySlot {
     }
 
     // Check against InvalidID
-    public bool IsEmpty() => itemID == ItemDatabase.InvalidID || quantity <= 0;
+    public bool IsEmpty() => itemID == ResourceSystem.InvalidID || quantity <= 0;
 
 
     // Needs to lookup ItemData to get max stack size
@@ -52,7 +52,7 @@ public class InventorySlot {
 
 
     public void Clear() {
-        itemID = ItemDatabase.InvalidID;
+        itemID = ResourceSystem.InvalidID;
         quantity = 0;
         _cachedItemData = null; // Clear cache
     }
@@ -75,7 +75,7 @@ public class InventorySlot {
         quantity = quant;
         _cachedItemData = null; // Clear cache, let property re-lookup
 
-        if (itemID == ItemDatabase.InvalidID || quantity <= 0) {
+        if (itemID == ResourceSystem.InvalidID || quantity <= 0) {
             // Ensure consistency if set to invalid state
             Clear();
         }

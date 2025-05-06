@@ -102,7 +102,7 @@ public class PlayerInventorySyncer : NetworkBehaviour {
 
         int quantityToDrop = Mathf.Min(quantity, slot.quantity); // Can't drop more than you have
         ushort idToDrop = slot.itemID;
-        ItemData data = ItemDatabase.Instance.GetItemByID(idToDrop); // Lookup data for prefab info
+        ItemData data = App.ResourceSystem.GetItemByID(idToDrop); // Lookup data for prefab info
         if (data == null) { TargetDropFailed(base.Owner, "Item data missing on server."); return; }
         // 1. Remove item from SERVER inventory
         // Use a specific Server_ method to avoid triggering local client events on server
@@ -228,7 +228,7 @@ public class PlayerInventorySyncer : NetworkBehaviour {
         // *** Notify the OWNER client about the change ***
         Target_UpdateSlot(base.Owner, slotIndex, slot.itemID, slot.quantity);
 
-        string itemName = ItemDatabase.Instance.GetItemByID(slot.itemID)?.name ?? $"ID:{slot.itemID}"; // Lookup name for log
+        string itemName = App.ResourceSystem.GetItemByID(slot.itemID)?.name ?? $"ID:{slot.itemID}"; // Lookup name for log
         Debug.Log($"[Server] Removed {quantityToRemove} of {itemName} from slot {slotIndex} for client {base.Owner.ClientId}. New Qty: {slot.quantity}");
         return true; // Indicate success
     }
@@ -251,7 +251,7 @@ public class PlayerInventorySyncer : NetworkBehaviour {
                 InventorySlot currentSlotData = _serverInventory.GetSlot(index);
                 Target_UpdateSlot(base.Owner, index, currentSlotData.itemID, currentSlotData.quantity);
             }
-            string itemName = ItemDatabase.Instance.GetItemByID(itemID)?.name ?? $"ID:{itemID}";
+            string itemName = App.ResourceSystem.GetItemByID(itemID).name ?? $"ID:{itemID}";
             Debug.Log($"[Server] Added {quantity} of {itemName} to client {base.Owner.ClientId}");
             return true;
         } else {

@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0875b8093cac994284fe8213a256f45, type: 3}
   m_Name: testitem
   m_EditorClassIdentifier: 
-  itemName: testitems
+  itemName: diamond
   description: Item Description
   icon: {fileID: 6125451436942524247, guid: 357a9e6ef768a90409f1b503c32c708f, type: 3}
   maxStackSize: 1
-  droppedPrefab: {fileID: 0}
+  droppedPrefab: {fileID: 5233232810895470869, guid: 1a7779eec3f3263439bd896b1a24ccef, type: 3}
+  isUsable: 0
+  isConsumable: 0
+  usageCooldown: 0

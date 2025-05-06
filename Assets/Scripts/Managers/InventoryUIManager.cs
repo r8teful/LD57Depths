@@ -28,7 +28,7 @@ public class InventoryUIManager : MonoBehaviour {
     [SerializeField] private int hotbarSize = 5; // How many slots in the first row act as hotbar
 
     [Header("References")]
-    [SerializeField] private InventoryManager inventoryManager; // Reference to the data manager
+    private InventoryManager inventoryManager; // Reference to the data manager
     [SerializeField] private ItemSelectionManager itemSelectionManager; // Reference needed
     // --- Runtime ---
     private List<InventorySlotUI> slotUIs = new List<InventorySlotUI>();
@@ -40,11 +40,13 @@ public class InventoryUIManager : MonoBehaviour {
     // --- Properties ---
     public bool IsOpen => inventoryPanel != null && inventoryPanel.activeSelf;
     public int HotbarSize => hotbarSize; // Expose hotbar size
+    
+    public void Init(InventoryManager manager) {
+        inventoryManager = manager;
+        itemSelectionManager.Init(manager.gameObject, manager);
+    }
+    
     void Start() {
-        if (!inventoryManager) {
-            Debug.LogError("InventoryManager reference not set on InventoryUIManager!");
-            inventoryManager = InventoryManager.Instance; // Attempt to get singleton instance
-        }
         if (!inventoryPanel || !slotInvContainer || !slotPrefab || !draggingIconObject) {
             Debug.LogError("One or more UI element references are missing on InventoryUIManager!");
             enabled = false; // Disable script if essential references are missing
