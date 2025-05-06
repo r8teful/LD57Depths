@@ -532,4 +532,122 @@ public class PlayerInventorySyncer : NetworkBehaviour {
         }
     }
 
+    // NEW RPC for server-authoritative merging/placing within player inventory
+    public void RequestMergePlayerItem(int sourceSlotIndex, int targetSlotIndex, ushort itemID, int quantityToPlace) {
+        if (!base.IsOwner) return;
+        CmdMergePlayerItem(sourceSlotIndex, targetSlotIndex, itemID, quantityToPlace);
+    }
+
+    [ServerRpc(RequireOwnership = true)]
+    private void CmdMergePlayerItem(int fromSlotIdx, int toSlotIdx, ushort itemID, int quantity) {
+        if (_serverInventory == null || !_serverInventory.IsValidIndex(fromSlotIdx) || !_serverInventory.IsValidIndex(toSlotIdx)) return;
+        InventorySlot sourceServerSlot = _serverInventory.GetSlot(fromSlotIdx);
+        if (sourceServerSlot.itemID != itemID || sourceServerSlot.quantity < quantity) {
+            Debug.LogWarning($"[Server] CmdMergePlayerItem: Mismatch or insufficient items in source slot {fromSlotIdx}. Client data might be desynced.");
+            // Force full sync of source and target slots to client?
+            Target_UpdateSlot(base.Owner, fromSlotIdx, sourceServerSlot.itemID, sourceServerSlot.quantity);
+            InventorySlot targetServerSlotPre = _serverInventory.GetSlot(toSlotIdx);
+            Target_UpdateSlot(base.Owner, toSlotIdx, targetServerSlotPre.itemID, targetServerSlotPre.quantity);
+            return;
+        }
+
+        // Remove from source on server
+        _serverInventory.RemoveItem(fromSlotIdx, quantity, false); // New param: sendTargetRpcUpdate=false
+
+        // Add to target on server
+        bool added = _serverInventory.AddItem(itemID, quantity, toSlotIdx); // New param: sendTargetRpcUpdate=false
+
+        if (!added) {
+            // Failed to add to target (e.g. wrong item type, full), so rollback removal from source
+            _serverInventory.AddItem(itemID, quantity, fromSlotIdx); // Put it back
+            Debug.LogWarning($"[Server] CmdMergePlayerItem: Failed to add to target slot {toSlotIdx}. Rolled back.");
+        }
+
+        // Now send authoritative updates for both slots
+        InventorySlot finalSourceSlot = _serverInventory.GetSlot(fromSlotIdx);
+        Target_UpdateSlot(base.Owner, fromSlotIdx, finalSourceSlot.itemID, finalSourceSlot.quantity);
+        InventorySlot finalTargetSlot = _serverInventory.GetSlot(toSlotIdx);
+        Target_UpdateSlot(base.Owner, toSlotIdx, finalTargetSlot.itemID, finalTargetSlot.quantity);
+
+        Debug.Log($"[Server] Merged/Moved Item. Source {fromSlotIdx}, Target {toSlotIdx}");
+    }
+    
+    // RPC for dropping held item (originally from player inventory) to world
+    public void RequestDropItemFromSlot(int playerSlotIndexFromWhichItWasTaken, int quantityToDrop) {
+        if (!IsOwner) return;
+        CmdDropItemFromSlot(playerSlotIndexFromWhichItWasTaken, quantityToDrop);
+    }
+
+    [ServerRpc(RequireOwnership = true)]
+    private void CmdDropItemFromSlot(int sourcePlayerSlotIndex, int quantityToDrop) {
+        if (_serverInventory == null || !_serverInventory.IsValidIndex(sourcePlayerSlotIndex)) return;
+
+        InventorySlot serverSlot = _serverInventory.GetSlot(sourcePlayerSlotIndex);
+        if (serverSlot.IsEmpty() || serverSlot.quantity < quantityToDrop) {
+            TargetDropFailed(Owner, "Item not found or insufficient quantity in source slot for drop.");
+            // Send client authoritative state of that slot
+            Target_UpdateSlot(Owner, sourcePlayerSlotIndex, serverSlot.itemID, serverSlot.quantity);
+            return;
+        }
+
+        ushort itemIDToDrop = serverSlot.itemID;
+        ItemData dataForPrefab = App.ResourceSystem.GetItemByID(itemIDToDrop);
+        if (dataForPrefab == null || dataForPrefab.droppedPrefab == null) {
+            TargetDropFailed(Owner, "Item cannot be dropped (missing data or prefab).");
+            return;
+        }
+
+        // Successfully removed, now spawn world item
+        if (Server_RemoveItem(sourcePlayerSlotIndex, quantityToDrop)) // This will send Target_UpdateSlot
+        {
+            GameObject prefab = dataForPrefab.droppedPrefab;
+            GameObject spawnedItem = Instantiate(prefab, dropPoint.position, Quaternion.identity);
+            NetworkObject nob = spawnedItem.GetComponent<NetworkObject>();
+            // ... (Spawn logic for WorldItem as in CmdDropItem) ...
+            ServerManager.Spawn(nob);
+            DroppedEntity worldItem = spawnedItem.GetComponent<DroppedEntity>();
+            if (worldItem) worldItem.ServerInitialize(itemIDToDrop, quantityToDrop);
+            else { ServerManager.Despawn(nob); /* error */ }
+        }
+    }
+
+
+    // RPC for dropping held item (originally from container) to world
+    public void RequestDropHeldItemFromContainer(int originalContainerSlotIndex, ushort heldItemID, int quantityToDrop) {
+        if (!IsOwner || currentOpenContainer == null) return; // Ensure container context is valid
+        CmdDropHeldItemFromContainer(originalContainerSlotIndex, heldItemID, quantityToDrop, currentOpenContainer.NetworkObject);
+    }
+
+
+    [ServerRpc(RequireOwnership = true)]
+    private void CmdDropHeldItemFromContainer(int containerSlotIdx, ushort itemID, int quantity, NetworkObject containerNob) {
+        if (containerNob == null) return;
+        SharedContainer container = containerNob.GetComponent<SharedContainer>();
+        if (container == null) return;
+
+        // 1. Server verifies and removes item from container
+        InventorySlot removedItem = container.ServerTryRemoveItem(containerSlotIdx, quantity);
+        if (removedItem == null || removedItem.IsEmpty() || removedItem.itemID != itemID || removedItem.quantity != quantity) {
+            TargetDropFailed(Owner, "Failed to verify and remove item from container for drop.");
+            // Container's SyncList will update client if mismatch happened.
+            return;
+        }
+
+        // 2. Item is now "in server's hand", spawn it.
+        ItemData dataForPrefab = App.ResourceSystem.GetItemByID(itemID);
+        if (dataForPrefab == null || dataForPrefab.droppedPrefab == null) {
+            TargetDropFailed(Owner, "Item cannot be dropped (missing data or prefab).");
+            // CRITICAL: Item removed from container but can't be dropped. Attempt to put it back.
+            container.ServerTryAddItem(itemID, quantity, containerSlotIdx); // Try to return
+            return;
+        }
+        GameObject prefab = dataForPrefab.droppedPrefab;
+        GameObject spawnedItem = Instantiate(prefab, dropPoint.position, Quaternion.identity);
+        NetworkObject nob = spawnedItem.GetComponent<NetworkObject>();
+        // ... (Spawn logic for WorldItem) ...
+        ServerManager.Spawn(nob);
+        DroppedEntity worldItem = spawnedItem.GetComponent<DroppedEntity>();
+        if (worldItem) worldItem.ServerInitialize(itemID, quantity);
+        else { ServerManager.Despawn(nob); /* error, also try to return to container */ }
+    }
 }

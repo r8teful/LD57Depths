@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.UI; // Required for UI elements like Panel
 using UnityEngine.InputSystem;
 using DG.Tweening;
-using TMPro; 
+using TMPro;
+using UnityEngine.EventSystems;
 
 public class InventoryUIManager : MonoBehaviour {
     [Header("UI Elements")]
@@ -22,8 +23,15 @@ public class InventoryUIManager : MonoBehaviour {
 
     private List<InventorySlotUI> containerSlotUIs = new List<InventorySlotUI>();
     private SharedContainer currentlyViewedContainer = null;
-    [Header("Input")]
-    [SerializeField] private InputActionReference toggleInventoryAction; // Assign your toggle input action asset
+
+    private InputAction _UItoggleInventoryAction; // Assign your toggle input action asset
+    private PlayerInput _playerInput; // Get reference if Input System PlayerInput component is used
+    private InputAction _uiInteractAction;   // e.g., Left Mouse / Gamepad A
+    private InputAction _uiAltInteractAction; // e.g., Right Mouse / Gamepad X
+    private InputAction _uiDropOneAction;     // e.g., Right Mouse (when holding) / Gamepad B
+    private InputAction _uiNavigateAction;    // D-Pad / Arrow Keys
+    private InputAction _uiPointAction;       // Mouse position for cursor icon
+    private InputAction _uiCancelAction;       // Escape / Gamepad Start (to cancel holding)
 
     [SerializeField] private int hotbarSize = 5; // How many slots in the first row act as hotbar
 
@@ -40,6 +48,9 @@ public class InventoryUIManager : MonoBehaviour {
     private int dragSourceIndex = -1;
     private bool dropHandled;
     private bool _droppedSameSlot;
+    private HeldItemStack _heldItemStack = new HeldItemStack();
+    private bool _isInventoryOpenForAction = false; // Tracks if panel was open when action started
+    private InventorySlotUI _currentFocusedSlot = null; // For controller navigation
 
     // --- Properties ---
     public bool IsOpen => inventoryPanel != null && inventoryPanel.activeSelf;
@@ -61,7 +72,21 @@ public class InventoryUIManager : MonoBehaviour {
             Debug.LogError("One or more UI elements missing in InventoryUIPrefab!", gameObject);
             //enabled = false; return;
         }
-
+        // Attempt to find PlayerInput component on the owning player
+        _playerInput = _playerGameObject.GetComponent<PlayerInput>();
+        if (_playerInput != null) {
+            // Assuming action map "UI" and actions named like "Interact", "AltInteract"
+            _UItoggleInventoryAction = _playerInput.actions["UI_Toggle"];
+            _uiInteractAction = _playerInput.actions["UI_Interact"];
+            _uiAltInteractAction = _playerInput.actions["UI_AltInteract"];
+            _uiDropOneAction = _playerInput.actions["UI_DropOne"];
+            _uiNavigateAction = _playerInput.actions["UI_Navigate"];
+            _uiPointAction = _playerInput.actions["UI_Point"];
+            _uiCancelAction = _playerInput.actions["UI_Cancel"]; // For cancelling held item
+            // Subscribe to input actions (do this in OnEnable, unsubscribe in OnDisable)
+        } else {
+            Debug.LogWarning("PlayerInput component not found on player. Mouse-only or manual input bindings needed.", gameObject);
+        }
         draggingIconImage = draggingIconObject.GetComponent<Image>();
         if (draggingIconImage == null) { /* Error */ enabled = false; return; }
         draggingIconObject.SetActive(false);
@@ -85,38 +110,316 @@ public class InventoryUIManager : MonoBehaviour {
         // OR itemSelectionManager.Init(manager.gameObject, manager);
 
         inventoryPanel.SetActive(true);
-
-        if (toggleInventoryAction != null && toggleInventoryAction.action != null) {
-            toggleInventoryAction.action.Enable(); // Enable the action before subscribing
-            toggleInventoryAction.action.performed += ToggleInventory;
-        } else { Debug.LogWarning("Toggle Inventory Action not assigned or invalid.", gameObject); }
         CreateSlotUIs();
         Debug.Log("InventoryUIManager Initialized for player: " + _playerGameObject.name);
     }
-
-    void OnDestroy() // Unsubscribe from events when destroyed
-   {
-        if (_localInventoryManager != null) {
-            _localInventoryManager.OnSlotChanged -= UpdateSlotUI;
-        }
-        if (toggleInventoryAction != null) {
-            toggleInventoryAction.action.performed -= ToggleInventory;
-        }
-        if (_itemSelectionManager != null) {
-            _itemSelectionManager.OnSelectionChanged -= UpdateHotbarHighlight;
+    void OnEnable() { SubscribeToEvents(); }
+    void OnDisable() { UnsubscribeFromEvents(); }
+    private void SubscribeToEvents() {
+        if (_UItoggleInventoryAction != null) _UItoggleInventoryAction.performed += ToggleInventory;
+        if (_uiInteractAction != null) _uiInteractAction.performed += HandlePrimaryInteractionPerformed;
+        if (_uiAltInteractAction != null) _uiAltInteractAction.performed += HandleSecondaryInteractionPerformed;
+        if (_uiCancelAction != null) _uiCancelAction.performed += HandleCloseAction;
+    }
+    private void UnsubscribeFromEvents() {
+        if (_UItoggleInventoryAction != null) _UItoggleInventoryAction.performed -= ToggleInventory;
+        if (_uiInteractAction != null) _uiInteractAction.performed -= HandlePrimaryInteractionPerformed;
+        if (_uiAltInteractAction != null) _uiAltInteractAction.performed -= HandleSecondaryInteractionPerformed;
+        if (_uiCancelAction != null) _uiCancelAction.performed -= HandleCloseAction;
+        if (_localInventoryManager != null) _localInventoryManager.OnSlotChanged -= UpdateSlotUI;
+        if (_itemSelectionManager != null) _itemSelectionManager.OnSelectionChanged -= UpdateHotbarHighlight;
+    }
+    void Update() {
+        if (!_heldItemStack.IsEmpty()) {
+            draggingIconObject.SetActive(true);
+            Vector2 cursorPos;
+            if (_playerInput != null && _playerInput.currentControlScheme == "Gamepad" && _currentFocusedSlot != null) {
+                // Snap to focused slot for gamepad
+                cursorPos = _currentFocusedSlot.transform.position;
+            } else if (_uiPointAction != null) { // Mouse
+                cursorPos = _uiPointAction.ReadValue<Vector2>();
+            } else { // Fallback for safety
+                cursorPos = Input.mousePosition;
+            }
+            draggingIconObject.transform.position = cursorPos;
+        } else {
+            draggingIconObject.SetActive(false);
         }
     }
+    // --- Input Handlers called by PlayerInput actions ---
+    private void HandlePrimaryInteractionPerformed(InputAction.CallbackContext context) {
+        // This is Left Mouse Click / Gamepad A
+        Debug.Log("Primary Interaction Performed");
+        ProcessInteraction(PointerEventData.InputButton.Left);
+    }
+    private void HandleSecondaryInteractionPerformed(InputAction.CallbackContext context) {
+        // This is Right Mouse Click / Gamepad X
+        Debug.Log("Secondary Interaction Performed");
+        ProcessInteraction(PointerEventData.InputButton.Right);
+    }
+    // --- Central Interaction Logic ---
+    private void ProcessInteraction(PointerEventData.InputButton button) {
+        if (!IsOpen && !_heldItemStack.IsEmpty()) // Inventory closed BUT holding item means trying to drop to world
+        {
+            HandleDropToWorld(button);
+            return;
+        }
+        if (!IsOpen) return; // Inventory not open and not holding item, do nothing
 
+        InventorySlotUI clickedOrFocusedSlot = GetSlotUnderCursorOrFocused();
 
-    private void Update() {
-        // Update dragging icon position if dragging
-        if (isDragging) {
-            // Using new Input System Pointer position
-            Vector2 mousePos = Pointer.current != null ? Pointer.current.position.ReadValue() : (Vector2)Input.mousePosition;
-            draggingIconObject.transform.position = mousePos;
+        if (!_heldItemStack.IsEmpty()) // Currently "holding" an item
+        {
+            if (clickedOrFocusedSlot != null) // Clicked on a slot while holding
+            {
+                HandlePlaceHeldItem(clickedOrFocusedSlot, button);
+            } else // Clicked outside slots (but inside UI panel boundary) while holding
+              {
+                if (EventSystem.current.IsPointerOverGameObject()) // Check if over ANY UI
+                 {
+                    // Clicked on empty UI space, possibly return item or do nothing
+                    Debug.Log("Clicked empty UI space while holding. Returning item.");
+                    ReturnHeldItemToSource();
+                    _heldItemStack.Clear();
+                } else {
+                    // Clicked outside ALL UI while holding item
+                    HandleDropToWorld(button);
+                }
+            }
+        } else // Not holding an item, trying to pick up from slot
+          {
+            if (clickedOrFocusedSlot != null) {
+                HandlePickupFromSlot(clickedOrFocusedSlot, button);
+            }
         }
     }
+    public void HandleSlotClick(InventorySlotUI clickedSlot, PointerEventData.InputButton button) {
+        // This method is now more of a direct call if slots still have IPointerClickHandler
+        // It's better if primary/secondary interaction actions directly call ProcessInteraction.
+        // This method could be deprecated if PlayerInput actions are used exclusively.
+        // For now, let's assume it might still be called by mouse clicks.
+        Debug.Log($"Legacy HandleSlotClick on {clickedSlot.name} with button {button}");
+        ProcessInteraction(button); // Requires GetSlotUnderCursorOrFocused to resolve to clickedSlot
+    }
 
+    private InventorySlotUI GetSlotUnderCursorOrFocused() {
+        if (_playerInput != null && _playerInput.currentControlScheme == "Gamepad") {
+            // For gamepad, return the currently focused slot by navigation
+            return _currentFocusedSlot;
+        } else // Mouse
+          {
+            PointerEventData eventData = new PointerEventData(EventSystem.current);
+            eventData.position = _uiPointAction != null ? _uiPointAction.ReadValue<Vector2>() : (Vector2)Input.mousePosition;
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, results);
+
+            foreach (RaycastResult result in results) {
+                InventorySlotUI slotUI = result.gameObject.GetComponent<InventorySlotUI>();
+                if (slotUI != null) return slotUI;
+            }
+        }
+        return null;
+    }
+    // --- Pickup/Place/Drop Logic ---
+
+    private void HandlePickupFromSlot(InventorySlotUI slotUI, PointerEventData.InputButton button) {
+        PlayerInventorySyncer playerSyncer = _playerGameObject.GetComponent<PlayerInventorySyncer>();
+        if (playerSyncer == null) return;
+
+        int quantityToGrab = 0;
+        ushort itemIDToGrab = ResourceSystem.InvalidID;
+        InventorySlot sourceDataSlot = null;
+
+        if (!slotUI.IsContainerSlot) // Picking from player inventory
+        {
+            sourceDataSlot = _localInventoryManager.GetSlot(slotUI.SlotIndex);
+            if (sourceDataSlot == null || sourceDataSlot.IsEmpty()) return; // Clicked empty player slot
+
+            itemIDToGrab = sourceDataSlot.itemID;
+            if (button == PointerEventData.InputButton.Left) { // Left click / Gamepad A
+                quantityToGrab = sourceDataSlot.quantity;
+            } else if (button == PointerEventData.InputButton.Right) { // Right click / Gamepad X
+                quantityToGrab = Mathf.CeilToInt((float)sourceDataSlot.quantity / 2f);
+            }
+
+            // Optimistic client-side removal (visual only)
+            _localInventoryManager.RemoveItem(slotUI.SlotIndex, quantityToGrab); // Update UI
+            // The actual server request will happen when placing or dropping.
+
+            _heldItemStack.SetItem(itemIDToGrab, quantityToGrab, slotUI.SlotIndex);
+        } else // Picking from container
+          {
+            if (currentlyViewedContainer == null) return;
+            sourceDataSlot = currentlyViewedContainer.GetSlotReadOnly(slotUI.SlotIndex);
+            if (sourceDataSlot == null || sourceDataSlot.IsEmpty()) return; // Clicked empty container slot
+
+            itemIDToGrab = sourceDataSlot.itemID;
+            if (button == PointerEventData.InputButton.Left) {
+                quantityToGrab = sourceDataSlot.quantity;
+            } else if (button == PointerEventData.InputButton.Right) {
+                quantityToGrab = Mathf.CeilToInt((float)sourceDataSlot.quantity / 2f);
+            }
+
+            // Request server to "hold" this (actually means remove from container and give to player's "hand")
+            // This is a complex server operation if we truly want a server-side "held" state.
+            // Simpler: Client "takes" it visually, server processes transfer when item is "placed".
+            playerSyncer.RequestMoveItemToPlayer(slotUI.SlotIndex, -1, quantityToGrab); // -1 playerIdx means "hold"
+                                                                                        // Server needs to handle this new "pickup to hold" intent.
+                                                                                        // For now, let's predict & update locally, and when PLACING,
+                                                                                        // Player -> Player uses swap, Container -> Player uses the already existing RequestMoveItemToPlayer.
+
+            // Client-side visual update for container (it will be corrected by server eventually)
+            InventorySlot tempVisualSlot = new InventorySlot(itemIDToGrab, sourceDataSlot.quantity - quantityToGrab);
+            slotUI.UpdateUI(tempVisualSlot); // Show remaining, or empty if all taken
+
+            _heldItemStack.SetItem(itemIDToGrab, quantityToGrab, -1, true, slotUI.SlotIndex);
+        }
+        Debug.Log($"Picked up: ID {itemIDToGrab}, Qty {quantityToGrab} from {(slotUI.IsContainerSlot ? "Container" : "Player")} Slot {slotUI.SlotIndex}");
+    }
+    private void HandlePlaceHeldItem(InventorySlotUI targetSlotUI, PointerEventData.InputButton button) {
+        PlayerInventorySyncer playerSyncer = _playerGameObject.GetComponent<PlayerInventorySyncer>();
+        if (playerSyncer == null || _heldItemStack.IsEmpty()) return;
+
+        ushort heldItemID = _heldItemStack.itemID;
+        int quantityToPlace = 0;
+
+        if (button == PointerEventData.InputButton.Left) { // Place all held / Gamepad A
+            quantityToPlace = _heldItemStack.quantity;
+        } else if (button == PointerEventData.InputButton.Right) { // Place one / Gamepad X or B
+            quantityToPlace = 1;
+        }
+        if (quantityToPlace > _heldItemStack.quantity) quantityToPlace = _heldItemStack.quantity; // Cannot place more than held
+
+        // --- Determine Action based on Source and Target ---
+        if (!_heldItemStack.isFromContainer && !targetSlotUI.IsContainerSlot) { // Player Inventory -> Player Inventory
+            // This effectively becomes a swap or merge.
+            // If target is empty or same item:
+            //   Local predict: add quantityToPlace to target, remove from held.
+            //   Server: Need an RPC like CmdMovePlayerItemToPlayerSlot(heldItemID, quantityToPlace, _heldItemStack.originalSourceSlotIndex, targetSlotUI.SlotIndex)
+            //   The CmdMoveItemToContainer/Player might need to be generalized or new ones created.
+            //   For now, simplest is a full SWAP request if different items, or MERGE if same.
+
+            InventorySlot targetDataSlot = _localInventoryManager.GetSlot(targetSlotUI.SlotIndex);
+            if (targetDataSlot.IsEmpty() || targetDataSlot.itemID == heldItemID) // Target empty or same item
+            {
+                // Optimistic Local Update
+                _localInventoryManager.AddItem(heldItemID, quantityToPlace, targetSlotUI.SlotIndex); // Target slot gets items
+                _heldItemStack.quantity -= quantityToPlace;
+                playerSyncer.RequestMergePlayerItem(_heldItemStack.originalSourceSlotIndex, targetSlotUI.SlotIndex, heldItemID, quantityToPlace);
+
+            } else { // Different items, request SWAP
+                     // Return what's in targetSlot to heldItem's original slot, then place heldItem in targetSlot
+                Debug.Log("Player -> Player (Different Items): Complex SWAP required. Server authoritative SWAP needed.");
+                // Put held item back visually for now
+                ReturnHeldItemToSource(); // Original source gets held item back
+                                          // Server will handle the actual swap via RPC if we build it, then update client
+                playerSyncer.RequestSwapPlayerSlots(_heldItemStack.originalSourceSlotIndex, targetSlotUI.SlotIndex);
+            }
+
+
+        } else if (!_heldItemStack.isFromContainer && targetSlotUI.IsContainerSlot) { // Player Inventory -> Container
+            playerSyncer.RequestMoveItemToContainer(_heldItemStack.originalSourceSlotIndex, targetSlotUI.SlotIndex, quantityToPlace);
+            // Client predict: remove from originalSourceSlot, UI for container updates on server ack.
+            _heldItemStack.quantity -= quantityToPlace; // Assume server will succeed for prediction
+
+
+        } else if (_heldItemStack.isFromContainer && !targetSlotUI.IsContainerSlot) { // Container -> Player Inventory
+            playerSyncer.RequestMoveItemToPlayer(_heldItemStack.originalContainerSlotIndex, targetSlotUI.SlotIndex, quantityToPlace);
+            // Client predict: nothing really, UI for player inventory updates on server ack.
+            _heldItemStack.quantity -= quantityToPlace; // Assume server will succeed for prediction
+
+        } else if (_heldItemStack.isFromContainer && targetSlotUI.IsContainerSlot) { // Container -> Container
+            playerSyncer.RequestSwapContainerSlots(_heldItemStack.originalContainerSlotIndex, targetSlotUI.SlotIndex, currentlyViewedContainer.NetworkObject); // Full swap is simplest for now
+                                                                                                                                                               // Client predict: Nothing, wait for SyncList.
+                                                                                                                                                               // If placing only one, then heldItemStack still has rest.
+            _heldItemStack.quantity -= quantityToPlace; // This needs more thought for container->container partial place
+
+        }
+
+
+        if (_heldItemStack.quantity <= 0) {
+            _heldItemStack.Clear();
+        }
+        Debug.Log($"Placed Item. Held now: {_heldItemStack.quantity}");
+    }
+
+    private void HandleDropToWorld(PointerEventData.InputButton button) {
+        PlayerInventorySyncer playerSyncer = _playerGameObject.GetComponent<PlayerInventorySyncer>();
+        if (playerSyncer == null || _heldItemStack.IsEmpty()) return;
+
+        int quantityToDrop = 0;
+        if (button == PointerEventData.InputButton.Left) { // Drop all held
+            quantityToDrop = _heldItemStack.quantity;
+        } else if (button == PointerEventData.InputButton.Right) { // Drop one
+            quantityToDrop = 1;
+        }
+        if (quantityToDrop > _heldItemStack.quantity) quantityToDrop = _heldItemStack.quantity;
+
+
+        if (_heldItemStack.isFromContainer) {
+            // If item was originally from a container, trying to drop it means it effectively
+            // needs to be moved to player's inventory (server-side) and then dropped from there.
+            // This is complex server logic to chain.
+            // Simplification: Server "gives" item to player's invisible hand (no actual slot), then player drops from hand.
+            Debug.LogWarning("Dropping item originally from container to world - needs refined server logic.");
+            // For now, let's assume it's like it was in player inv and then dropped:
+            playerSyncer.RequestDropHeldItemFromContainer(_heldItemStack.originalContainerSlotIndex, _heldItemStack.itemID, quantityToDrop);
+
+        } else { // Dropping from player's "hand" (originally from player inventory)
+            playerSyncer.RequestDropItemFromSlot(_heldItemStack.originalSourceSlotIndex, quantityToDrop);
+        }
+
+
+        // Optimistic client-side update of held stack
+        _heldItemStack.quantity -= quantityToDrop;
+        if (_heldItemStack.quantity <= 0) {
+            _heldItemStack.Clear();
+        }
+        Debug.Log($"Requested Drop to World. Held now: {_heldItemStack.quantity}");
+    }
+
+    private void ReturnHeldItemToSource() {
+        if (_heldItemStack.IsEmpty()) return;
+
+        if (!_heldItemStack.isFromContainer && _heldItemStack.originalSourceSlotIndex != -1) {
+            // Return to player inventory slot
+            _localInventoryManager.AddItem(_heldItemStack.itemID, _heldItemStack.quantity, _heldItemStack.originalSourceSlotIndex);
+            // Server doesn't need to be told about this client-side cancel & visual return,
+            // as no persistent change was requested yet.
+        } else if (_heldItemStack.isFromContainer && _heldItemStack.originalContainerSlotIndex != -1) {
+            // Return to container slot (visual only, server will correct if necessary)
+            // This is tricky because client can't modify container directly.
+            // Best to just clear held and let server state prevail.
+            // The visual update on container will lag until next server message or player places successfully.
+            Debug.Log("Returning item from container is complex for client prediction. Clearing held stack.");
+        }
+        _heldItemStack.Clear(); // Clear after returning or deciding not to predict return
+    }
+
+    // --- Controller Navigation Callbacks ---
+    public void OnSlotFocused(InventorySlotUI slotUI) {
+        _currentFocusedSlot = slotUI;
+        slotUI.SetFocus(true);
+    }
+
+    public void OnSlotDefocused(InventorySlotUI slotUI) {
+        if (_currentFocusedSlot == slotUI) {
+            _currentFocusedSlot = null;
+        }
+        slotUI.SetFocus(false);
+    }
+
+    private void HandleCloseAction(InputAction.CallbackContext context) {
+        // E.g., Escape key or Gamepad B/Start (if configured to cancel)
+        if (!_heldItemStack.IsEmpty()) {
+            Debug.Log("Close Action: Returning held item.");
+            ReturnHeldItemToSource(); // Or just clear if no return logic
+            _heldItemStack.Clear();
+        } else if (IsOpen) {
+            // If inventory is open and nothing held, maybe toggle it closed
+            ToggleInventory(new InputAction.CallbackContext()); // Pass dummy context
+        }
+    }
     private void ToggleInventory(InputAction.CallbackContext context) {
         isExpanded = !isExpanded;
         if (isExpanded) {
@@ -125,7 +428,8 @@ public class InventoryUIManager : MonoBehaviour {
         } else {
             inventoryPanel.GetComponent<RectTransform>().DOMoveY(-292, 0.2f).OnComplete(SetInvUnactive);
             // wait...
-
+            EventSystem.current.SetSelectedGameObject(null); // Deselect UI when closing
+            if (!_heldItemStack.IsEmpty()) ReturnHeldItemToSource(); // Return held item if inventory closes
         }
         // Optional: You might want to pause game, lock cursor, etc. when inventory is open
         Debug.Log($"Inventory Toggled: {inventoryPanel.activeSelf}");
@@ -172,6 +476,35 @@ public class InventoryUIManager : MonoBehaviour {
                 Debug.LogError($"Slot prefab '{slotPrefab.name}' is missing InventorySlotUI component!");
             }
         }
+
+        // TODO will have to do this in two passes just like above because inventory is not a perfect grid
+        var columnCount = 4;
+        for (int i = 0; i < slotUIs.Count; i++) {
+            Selectable currentSel = slotUIs[i].GetComponent<Selectable>();
+            if (currentSel == null) continue;
+
+            Navigation nav = currentSel.navigation;
+            nav.mode = Navigation.Mode.Explicit;
+
+            // Up
+            if (i >= columnCount) nav.selectOnUp = slotUIs[i - columnCount].GetComponent<Selectable>();
+            else nav.selectOnUp = null; // Or wrap around to bottom?
+                                        // Down
+            if (i < slotUIs.Count - columnCount) nav.selectOnDown = slotUIs[i + columnCount].GetComponent<Selectable>();
+            else nav.selectOnDown = null; // Or wrap to top?
+                                          // Left
+            if (i % columnCount != 0) nav.selectOnLeft = slotUIs[i - 1].GetComponent<Selectable>();
+            else nav.selectOnLeft = null; // Or wrap to right end of prev row?
+                                          // Right
+            if ((i + 1) % columnCount != 0 && (i + 1) < slotUIs.Count) nav.selectOnRight = slotUIs[i + 1].GetComponent<Selectable>();
+            else nav.selectOnRight = null; // Or wrap to left end of next row?
+
+            currentSel.navigation = nav;
+        }
+        if (IsOpen && slotUIs.Count > 0 && _playerInput != null && _playerInput.currentControlScheme == "Gamepad") {
+            EventSystem.current.SetSelectedGameObject(slotUIs[0].gameObject);
+        }
+
         UpdateHotbarHighlight(_itemSelectionManager.SelectedSlotIndex); 
         Debug.Log($"Created {slotUIs.Count} UI slots.");
     }
@@ -376,86 +709,6 @@ public class InventoryUIManager : MonoBehaviour {
         }
     }
 
-
-    // --- Modify Drag and Drop to handle Player <-> Container ---
-
-/*    public void HandleDrop(int dropTargetIndex) { // Keep this method name for InventorySlotUI compatibility
-        if (!isDragging || dragSourceIndex == -1) return;
-
-
-        InventorySlotUI sourceSlotUI = GetSlotUIByIndex(dragSourceIndex);
-        InventorySlotUI targetSlotUI = GetSlotUIByIndex(dropTargetIndex);
-
-
-        if (sourceSlotUI == null || targetSlotUI == null) {
-            Debug.LogError($"Drop error: Couldn't find UI for indices {dragSourceIndex} or {dropTargetIndex}");
-            EndDrag(true); // Cancel if something went wrong
-            return;
-        }
-
-
-        // Determine source and target panels (Player or Container)
-        bool sourceIsPlayer = slotUIs.Contains(sourceSlotUI);
-        bool sourceIsContainer = containerSlotUIs.Contains(sourceSlotUI);
-        bool targetIsPlayer = slotUIs.Contains(targetSlotUI);
-        bool targetIsContainer = containerSlotUIs.Contains(targetSlotUI);
-
-        int sourceActualIndex = sourceSlotUI.SlotIndex; // Get the index *within its panel*
-        int targetActualIndex = targetSlotUI.SlotIndex;
-
-
-        Debug.Log($"Handle Drop: Source Panel: {(sourceIsPlayer ? "Player" : (sourceIsContainer ? "Container" : "Unknown"))} (Index {sourceActualIndex}) -> Target Panel: {(targetIsPlayer ? "Player" : (targetIsContainer ? "Container" : "Unknown"))} (Index {targetActualIndex})");
-
-
-        // --- Logic ---
-        PlayerInventorySyncer playerSyncer = FindObjectOfType<PlayerInventorySyncer>(); // Get the syncer
-
-
-        if (sourceIsPlayer && targetIsPlayer) {
-            // Player -> Player: Standard Swap (using ServerRpc now if not predicting)
-            // For simplicity let's ASSUME InventoryManager.SwapSlots is LOCAL ONLY now.
-            // We need an RPC to request a swap.
-            // inventoryManager.SwapSlots(sourceActualIndex, targetActualIndex); // OLD LOCAL WAY
-
-            // NEW RPC WAY (TODO: Implement CmdSwapPlayerSlots on PlayerInventorySyncer)
-            // playerSyncer?.RequestSwapPlayerSlots(sourceActualIndex, targetActualIndex);
-            // --- For now, let's just keep the LOCAL swap for responsiveness ---
-            if (dragSourceIndex != dropTargetIndex) { // Ensure indices are mapped correctly if lists differ
-                inventoryManager.SwapSlots(sourceActualIndex, targetActualIndex);
-                // Highlight update might be needed if swapping in/out of hotbar
-                UpdateHotbarHighlight(itemSelectionManager.SelectedSlotIndex);
-            }
-
-
-        } else if (sourceIsContainer && targetIsContainer) {
-            // Container -> Container: Request server swap (cannot do locally easily with SyncList)
-            Debug.Log("Container -> Container swap requested (Needs Server RPC)");
-            playerSyncer?.RequestSwapContainerSlots(sourceActualIndex, targetActualIndex, currentlyViewedContainer.NetworkObject); // TODO: Implement this RPC
-
-
-        } else if (sourceIsPlayer && targetIsContainer) {
-            // Player -> Container: Request move item (Pass player index, container index, quantity=all for now)
-            Debug.Log($"Requesting Move Player[{sourceActualIndex}] -> Container[{targetActualIndex}]");
-            // Get quantity from source slot BEFORE potential local prediction happens
-            InventorySlot sourceData = inventoryManager.GetSlot(sourceActualIndex);
-            if (sourceData != null && !sourceData.IsEmpty()) {
-                playerSyncer?.RequestMoveItemToContainer(sourceActualIndex, targetActualIndex, sourceData.quantity);
-            }
-
-
-        } else if (sourceIsContainer && targetIsPlayer) {
-            // Container -> Player: Request move item (Pass container index, player index, quantity=all for now)
-            Debug.Log($"Requesting Move Container[{sourceActualIndex}] -> Player[{targetActualIndex}]");
-            InventorySlot sourceData = currentlyViewedContainer?.GetSlotReadOnly(sourceActualIndex);
-            if (sourceData != null && !sourceData.IsEmpty()) {
-                playerSyncer?.RequestMoveItemToPlayer(sourceActualIndex, targetActualIndex, sourceData.quantity);
-            }
-        } else {
-            Debug.LogWarning("Unhandled drag/drop scenario.");
-        }
-        // EndDrag state reset will happen automatically via EventSystem
-    }
-*/
      public void HandleDrop(InventorySlotUI sourceSlotUI, InventorySlotUI targetSlotUI) {
         if (!IsCurrentlyDragging() || sourceSlotUI == null || targetSlotUI == null) {
             Debug.LogWarning("HandleDrop called with invalid state or null slots.");

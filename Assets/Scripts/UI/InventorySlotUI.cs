@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems; // Required for Drag Handlers
 using TMPro; // Required for TextMeshPro
 
-public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler {
+public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, ISelectHandler, IDeselectHandler {
     [Header("UI Elements")]
     [SerializeField] private Image itemIconImage; // Assign the child Image component for the icon
     [SerializeField] private TextMeshProUGUI quantityText; // Assign the child TextMeshProUGUI component
@@ -19,6 +19,8 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private Image backgroundImage; // Reference to self image if needed for color changes
 
     private bool isContainerSlot = false; // New flag
+    private bool focusBorder;
+
     public int SlotIndex => slotIndex; 
     public bool IsContainerSlot => isContainerSlot; // Expose context flag
     void Awake() {
@@ -30,6 +32,13 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             Debug.LogWarning($"Slot UI on {gameObject.name} has no highlight border assigned. Selection won't be visible.", gameObject);
         } else {
             highlightBorder.enabled = false; // Start hidden
+        }
+        var selectable = GetComponent<Selectable>();
+        if (selectable == null) {
+            Debug.LogError("Need selectable on component!");
+            // Add Selectable if not present. Requires Image component on same object for default interaction.
+            // selectable = gameObject.AddComponent<Selectable>();
+            // selectable.transition = Selectable.Transition.None; // Or set up color tint/sprite swap
         }
     }
 
@@ -54,8 +63,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             if (backgroundImage) backgroundImage.color = emptySlotColor; // Make slot visually 'empty'
         } else {
             // Slot has an item
-            itemIconImage.sprite = App.ResourceSystem.GetItemByID(slotData.itemID).icon; // We have to get it from here because
-            // slotData doesn't store the image
+            itemIconImage.sprite = slotData.ItemData.icon; 
             itemIconImage.enabled = true;
             quantityText.enabled = slotData.quantity > 1;
             if (quantityText.enabled) quantityText.text = slotData.quantity.ToString();
@@ -87,48 +95,31 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
     }
 
-    // --- IBeginDragHandler ---
-    public void OnBeginDrag(PointerEventData eventData) {
-        // Only allow dragging with the primary button (usually left mouse)
-        if (eventData.button != PointerEventData.InputButton.Left) return;
-        if (!isContainerSlot && uiManager != null) {
-            uiManager.BeginDrag(slotIndex); // Begin drag using player slot index
-        } else if (isContainerSlot) {
-            Debug.Log("Dragging directly from Container Slot is currently disabled.");
-            // Optionally provide visual feedback that it's disabled.
-            eventData.pointerDrag = null; // Prevent drag operation
-        }
+    // SetFocus is for controller navigation/mouse hover
+    public void SetFocus(bool hasFocus) {
+       // if (focusBorder) focusBorder.enabled = hasFocus;
     }
 
-    // --- IDragHandler ---
-    public void OnDrag(PointerEventData eventData) {
-        // The UI Manager handles updating the floating icon position in its Update()
-        return;
+    // --- IPointerClickHandler ---
+    public void OnPointerClick(PointerEventData eventData) {
+        if (uiManager == null) return;
+
+        // Forward click event to the UIManager
+        // eventData.button tells us PointerEventData.InputButton.Left, .Right, .Middle
+        uiManager.HandleSlotClick(this, eventData.button);
     }
 
-    // --- IEndDragHandler ---
-    public void OnEndDrag(PointerEventData eventData) {
-        // Only allow dragging with the primary button
-        if (eventData.button != PointerEventData.InputButton.Left) return;
-
-        if (uiManager != null) {
-            if (uiManager.IsCurrentlyDragging())
-                uiManager.EndDrag();
-        }
+    // --- Unity UI Navigation (ISelectHandler, IDeselectHandler) ---
+    public void OnSelect(BaseEventData eventData) {
+        // Called when this UI element becomes the selected one (e.g., by controller D-Pad)
+        if (uiManager) uiManager.OnSlotFocused(this);
+        SetFocus(true);
     }
 
-    // --- IDropHandler ---
-    // Called on the slot UI element *receiving* the drop
-    public void OnDrop(PointerEventData eventData) {
-        // Only allow dropping with the primary button
-        if (eventData.button != PointerEventData.InputButton.Left) return;
-        GameObject draggedObject = eventData.pointerDrag;
-        InventorySlotUI sourceSlotUI = draggedObject.GetComponent<InventorySlotUI>();
-        // Check if we are actually dragging something from our inventory system
-        if (uiManager != null && uiManager.IsCurrentlyDragging() && sourceSlotUI != null) {
-            uiManager.HandleDrop(sourceSlotUI, this);
-        } else {
-            Debug.LogWarning($"OnDrop ignored: No active drag operation or missing source slot UI. Dragging? {uiManager.IsCurrentlyDragging()} Source? {sourceSlotUI != null}");
-        }
+    public void OnDeselect(BaseEventData eventData) {
+        // Called when this UI element loses selection
+        if (uiManager) uiManager.OnSlotDefocused(this);
+        SetFocus(false);
     }
+
 }

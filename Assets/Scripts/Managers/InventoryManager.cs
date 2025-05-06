@@ -2,6 +2,7 @@
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 
 public class InventoryManager : MonoBehaviour {
@@ -36,7 +37,7 @@ public class InventoryManager : MonoBehaviour {
     /// <param name="itemToAdd">The ItemData of the item to add.</param>
     /// <param name="quantityToAdd">How many to add.</param>
     /// <returns>True if the entire quantity was added successfully, false otherwise (e.g., inventory full).</returns>
-    public bool AddItem(ushort itemIDToAdd, int quantityToAdd = 1) {
+    public bool AddItem(ushort itemIDToAdd, int quantityToAdd = 1, int slot = -1) {
         if (itemIDToAdd == ResourceSystem.InvalidID || quantityToAdd <= 0) {
             Debug.LogWarning("Attempted to add invalid item or quantity.");
             return false; // Indicate failure (nothing added)
@@ -89,11 +90,13 @@ public class InventoryManager : MonoBehaviour {
     /// </summary>
     /// <param name="slotIndex">The index of the slot to remove from.</param>
     /// <param name="quantityToRemove">How many to remove.</param>
-    public void RemoveItem(int slotIndex, int quantityToRemove = 1) {
+    public void RemoveItem(int slotIndex, int quantityToRemove = 1, bool sendTargetRpcUpdate = true) {
         if (!IsValidIndex(slotIndex) || slots[slotIndex].IsEmpty() || quantityToRemove <= 0) {
             return; // Invalid operation
         }
-
+        if (sendTargetRpcUpdate) {
+            //PlayerInventorySyncer.CmdUpdateSlotAfterLocalRemove(...); // Not how it works currently
+        }
         slots[slotIndex].RemoveQuantity(quantityToRemove); // Let InventorySlot handle clamping and clearing
 
         OnSlotChanged?.Invoke(slotIndex); // Notify UI

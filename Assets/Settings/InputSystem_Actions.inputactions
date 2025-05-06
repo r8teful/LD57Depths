@@ -87,16 +87,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "OpenInv",
-                    "type": "Button",
-                    "id": "3ed6197b-08cd-4a33-975f-0aebed61e53a",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "HotBarSelect",
+                    "name": "HotbarSellect",
                     "type": "Value",
                     "id": "e8b0fe31-1c6a-488a-a6b0-a8b74e74d605",
                     "expectedControlType": "Axis",
@@ -493,23 +484,12 @@
                 },
                 {
                     "name": "",
-                    "id": "b5fdaa5d-b0fe-41db-b7eb-5efccb89e099",
-                    "path": "<Keyboard>/i",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "OpenInv",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "7572a59c-7aaf-44d7-a1a7-4a80ecfa48e2",
                     "path": "<Keyboard>/1",
                     "interactions": "",
                     "processors": "Scale",
                     "groups": ";Keyboard&Mouse",
-                    "action": "HotBarSelect",
+                    "action": "HotbarSellect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -520,7 +500,7 @@
                     "interactions": "",
                     "processors": "Scale(factor=2)",
                     "groups": ";Keyboard&Mouse",
-                    "action": "HotBarSelect",
+                    "action": "HotbarSellect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -531,7 +511,7 @@
                     "interactions": "",
                     "processors": "Scale(factor=3)",
                     "groups": ";Keyboard&Mouse",
-                    "action": "HotBarSelect",
+                    "action": "HotbarSellect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -542,7 +522,7 @@
                     "interactions": "",
                     "processors": "Scale(factor=4)",
                     "groups": ";Keyboard&Mouse",
-                    "action": "HotBarSelect",
+                    "action": "HotbarSellect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -565,7 +545,7 @@
                     "name": "Submit",
                     "type": "Button",
                     "id": "7607c7b6-cd76-4816-beef-bd0341cfe950",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -574,7 +554,7 @@
                     "name": "Cancel",
                     "type": "Button",
                     "id": "15cef263-9014-4fd5-94d9-4e4a6234a6ef",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -638,6 +618,69 @@
                     "type": "PassThrough",
                     "id": "9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be",
                     "expectedControlType": "Quaternion",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UI_Toggle",
+                    "type": "Button",
+                    "id": "4db37daa-bf00-4612-af03-fdfd549f94be",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UI_Interact",
+                    "type": "Button",
+                    "id": "1d12cbd1-71d0-48cb-b2b0-1faab541c7c1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UI_AltInteract",
+                    "type": "Button",
+                    "id": "0aa50351-22bd-45c8-9bc9-2bdb7380ce7a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UI_DropOne",
+                    "type": "Button",
+                    "id": "6a73c28a-4a7c-4334-8b2d-6772bae03661",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UI_Navigate",
+                    "type": "Button",
+                    "id": "688a9534-e6de-43a5-9b56-33da28eaa40f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UI_Point",
+                    "type": "Button",
+                    "id": "1b757650-1191-4edf-8ee1-aaa9c57954e2",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UI_Cancel",
+                    "type": "Button",
+                    "id": "bc87b7f6-9632-40ea-89bb-3e3dc12a688f",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -1059,6 +1102,83 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "TrackedDeviceOrientation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6a40f0d2-05f1-464f-8c5d-934cbd58aead",
+                    "path": "<Keyboard>/i",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "UI_Toggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "12cc461a-a69a-4dca-bf07-ddbd98baecda",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI_Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1ea20748-a89e-47e5-a420-74d71f9a5195",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI_AltInteract",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7c03b644-5231-48d7-bf0d-beb465d2588a",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI_DropOne",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8d74acb4-abd7-4dc7-bde9-42b044e4f57c",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI_Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3a73fb46-c4d3-4812-859f-a219c42f4b19",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI_Point",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4bb44750-dfe5-49bb-9f1d-4c0a7c34adc4",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI_Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
