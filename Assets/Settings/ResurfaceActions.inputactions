@@ -1,5 +1,5 @@
 {
-    "name": "InputSystem_Actions",
+    "name": "ResurfaceActions",
     "maps": [
         {
             "name": "Player",
@@ -669,12 +669,12 @@
                 },
                 {
                     "name": "UI_Point",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "1b757650-1191-4edf-8ee1-aaa9c57954e2",
-                    "expectedControlType": "",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "UI_Cancel",
@@ -1163,7 +1163,7 @@
                 {
                     "name": "",
                     "id": "3a73fb46-c4d3-4812-859f-a219c42f4b19",
-                    "path": "",
+                    "path": "<Mouse>/position",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

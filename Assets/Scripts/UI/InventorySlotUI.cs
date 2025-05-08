@@ -84,7 +84,6 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, ISelectHandl
             itemIconImage.color = isBeingDragged ? draggingMaskColor : Color.white;
         }
         if (quantityText) {
-            Debug.Log(isBeingDragged);
             quantityText.enabled = !isBeingDragged && quantityText.text != "" && quantityText.text != "0" && quantityText.enabled; // Also re-check conditions
             if (sameSlot) quantityText.enabled = true;
         }
@@ -106,7 +105,7 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, ISelectHandl
 
         // Forward click event to the UIManager
         // eventData.button tells us PointerEventData.InputButton.Left, .Right, .Middle
-        uiManager.HandleSlotClick(this, eventData.button);
+        //uiManager.HandleSlotClick(this, eventData.button);
     }
 
     // --- Unity UI Navigation (ISelectHandler, IDeselectHandler) ---

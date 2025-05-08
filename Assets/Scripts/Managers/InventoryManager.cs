@@ -18,7 +18,7 @@ public class InventoryManager : MonoBehaviour {
     // --- Events ---
     // Event invoked when any slot in the inventory changes
     public event Action<int> OnSlotChanged; // Sends the index of the changed slot
-    
+
     // --- Properties ---
     public int InventorySize => inventorySize;
 
@@ -33,55 +33,114 @@ public class InventoryManager : MonoBehaviour {
 
     /// <summary>
     /// Attempts to add an item to the inventory. Handles stacking.
+    /// If a specific slot is provided, attempts to add *only* to that slot.
     /// </summary>
-    /// <param name="itemToAdd">The ItemData of the item to add.</param>
+    /// <param name="itemIDToAdd">The ItemData of the item to add.</param>
     /// <param name="quantityToAdd">How many to add.</param>
-    /// <returns>True if the entire quantity was added successfully, false otherwise (e.g., inventory full).</returns>
+    /// <param name="slot">The specific slot index to add to. If -1, finds the first available/stackable slot.</param>
+    /// <returns>True if the entire quantity was added successfully, false otherwise (e.g., inventory full or specific slot unsuitable).</returns>
     public bool AddItem(ushort itemIDToAdd, int quantityToAdd = 1, int slot = -1) {
         if (itemIDToAdd == ResourceSystem.InvalidID || quantityToAdd <= 0) {
             Debug.LogWarning("Attempted to add invalid item or quantity.");
-            return false; // Indicate failure (nothing added)
+            return false;
         }
-        var itemToAdd = App.ResourceSystem.GetItemByID(itemIDToAdd);
+        ItemData itemDataToAdd = App.ResourceSystem.GetItemByID(itemIDToAdd); // Renamed for clarity
+        if (itemIDToAdd == ResourceSystem.InvalidID || itemDataToAdd == null) // Ensure item exists in system
+        {
+            Debug.LogWarning($"Attempted to add item with ID {itemIDToAdd} which was not found in ResourceSystem.");
+            return false;
+        }
+
         int remainingQuantity = quantityToAdd;
 
-        // 1. Try to stack with existing items
-        if (itemToAdd.maxStackSize > 1) // Only stack if stackable
-        {
-            for (int i = 0; i < slots.Count; i++) {
-                if (!slots[i].IsEmpty() && slots[i].itemID == itemIDToAdd) // Same item?
-                {
-                    int canAdd = itemToAdd.maxStackSize - slots[i].quantity;
-                    if (canAdd > 0) {
-                        int amountToAdd = Mathf.Min(remainingQuantity, canAdd);
-                        slots[i].AddQuantity(amountToAdd);
-                        remainingQuantity -= amountToAdd;
-                        OnSlotChanged?.Invoke(i); // Notify UI
+        // --- Specific Slot Logic ---
+        if (slot != -1) {
+            if (!IsValidIndex(slot)) {
+                Debug.LogWarning($"AddItem: Invalid target slot index {slot}.");
+                return false;
+            }
 
-                        if (remainingQuantity <= 0) return true; // All added
+            InventorySlot targetSlot = slots[slot];
+
+            // Case 1: Target slot is empty
+            if (targetSlot.IsEmpty()) {
+                if (quantityToAdd <= itemDataToAdd.maxStackSize) {
+                    targetSlot.itemID = itemIDToAdd;
+                    targetSlot.quantity = quantityToAdd; // Direct assignment
+                    OnSlotChanged?.Invoke(slot);
+                    return true; // All added to the specified empty slot
+                } else {
+                    // Cannot fit the entire quantity even in an empty slot (e.g. trying to add 2 of a non-stackable item)
+                    // Or trying to add more than maxStackSize to a single slot.
+                    // For strict slot addition, this is a failure.
+                    Debug.LogWarning($"AddItem: Cannot add {quantityToAdd} of {itemDataToAdd.itemName} (max stack: {itemDataToAdd.maxStackSize}) to empty slot {slot}. Quantity exceeds max stack size for a single placement.");
+                    return false;
+                }
+            }
+            // Case 2: Target slot has the same item and it's stackable
+            else if (targetSlot.itemID == itemIDToAdd && itemDataToAdd.maxStackSize > 1) {
+                int canAdd = itemDataToAdd.maxStackSize - targetSlot.quantity;
+                if (canAdd >= quantityToAdd) {
+                    targetSlot.AddQuantity(quantityToAdd);
+                    OnSlotChanged?.Invoke(slot);
+                    return true; // All added by stacking in the specified slot
+                } else {
+                    // Cannot fit the entire requested quantity by stacking in this specific slot.
+                    Debug.LogWarning($"AddItem: Slot {slot} can only take {canAdd} more of {itemDataToAdd.itemName}, but {quantityToAdd} were requested.");
+                    return false;
+                }
+            }
+            // Case 3: Target slot is occupied by a different item, or same item but not stackable/full
+            else {
+                Debug.LogWarning($"AddItem: Cannot add item to specified slot {slot}. It's occupied by a different item, or the item is not stackable and slot is occupied, or it's already full.");
+                return false; // Specified slot is not suitable
+            }
+        }
+        // --- General Slot Logic (slot == -1) ---
+        else {
+            // 1. Try to stack with existing items
+            if (itemDataToAdd.maxStackSize > 1) // Only stack if stackable
+            {
+                for (int i = 0; i < slots.Count; i++) {
+                    if (!slots[i].IsEmpty() && slots[i].itemID == itemIDToAdd) // Same item?
+                    {
+                        int canAdd = itemDataToAdd.maxStackSize - slots[i].quantity;
+                        if (canAdd > 0) {
+                            int amountToAddThisIteration = Mathf.Min(remainingQuantity, canAdd);
+                            slots[i].AddQuantity(amountToAddThisIteration);
+                            remainingQuantity -= amountToAddThisIteration;
+                            OnSlotChanged?.Invoke(i);
+
+                            if (remainingQuantity <= 0)
+                                return true; // All added
+                        }
                     }
                 }
             }
-        }
 
-        // 2. If items remain, try to place in empty slots
-        for (int i = 0; i < slots.Count; i++) {
-            if (slots[i].IsEmpty()) {
-                int amountToAdd = Mathf.Min(remainingQuantity, itemToAdd.maxStackSize);
-                slots[i].itemID = itemIDToAdd;
-                slots[i].quantity = amountToAdd; // Use direct assignment here
-                remainingQuantity -= amountToAdd;
-                OnSlotChanged?.Invoke(i); // Notify UI
+            // 2. If items remain, try to place in empty slots
+            if (remainingQuantity > 0) // Check if there's anything left to add
+            {
+                for (int i = 0; i < slots.Count; i++) {
+                    if (slots[i].IsEmpty()) {
+                        int amountToAddThisIteration = Mathf.Min(remainingQuantity, itemDataToAdd.maxStackSize);
+                        slots[i].itemID = itemIDToAdd;
+                        slots[i].quantity = amountToAddThisIteration; // Use direct assignment here
+                        remainingQuantity -= amountToAddThisIteration;
+                        OnSlotChanged?.Invoke(i);
 
-                if (remainingQuantity <= 0) return true; // All added
+                        if (remainingQuantity <= 0)
+                            return true; // All added
+                    }
+                }
             }
-        }
 
-        // If we reach here, inventory is full for the remaining quantity
-        if (remainingQuantity > 0) {
-            Debug.LogWarning($"Inventory full. Could not add {remainingQuantity} of {itemToAdd.itemName}");
+            // If we reach here, inventory is full for the remaining quantity
+            if (remainingQuantity > 0) {
+                Debug.LogWarning($"Inventory full. Could not add {remainingQuantity} of {itemDataToAdd.itemName}");
+            }
+            return remainingQuantity == 0; // True if all was added, false if some remained
         }
-        return remainingQuantity == 0; // True if all was added, false if some remained
     }
 
 
@@ -98,7 +157,7 @@ public class InventoryManager : MonoBehaviour {
             //PlayerInventorySyncer.CmdUpdateSlotAfterLocalRemove(...); // Not how it works currently
         }
         slots[slotIndex].RemoveQuantity(quantityToRemove); // Let InventorySlot handle clamping and clearing
-
+        Debug.Log($"Server removed: {quantityToRemove} from slot {slotIndex}");
         OnSlotChanged?.Invoke(slotIndex); // Notify UI
     }
 

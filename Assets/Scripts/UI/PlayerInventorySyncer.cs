@@ -553,7 +553,7 @@ public class PlayerInventorySyncer : NetworkBehaviour {
 
         // Remove from source on server
         _serverInventory.RemoveItem(fromSlotIdx, quantity, false); // New param: sendTargetRpcUpdate=false
-
+        
         // Add to target on server
         bool added = _serverInventory.AddItem(itemID, quantity, toSlotIdx); // New param: sendTargetRpcUpdate=false
 

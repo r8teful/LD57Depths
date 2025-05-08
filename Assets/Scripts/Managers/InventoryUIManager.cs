@@ -53,7 +53,7 @@ public class InventoryUIManager : MonoBehaviour {
     private InventorySlotUI _currentFocusedSlot = null; // For controller navigation
 
     // --- Properties ---
-    public bool IsOpen => inventoryPanel != null && inventoryPanel.activeSelf;
+    public bool IsOpen => inventoryPanel != null && isExpanded;
     public int HotbarSize => hotbarSize; // Expose hotbar size
 
     public void Init(InventoryManager localPlayerInvManager, ItemSelectionManager localPlayerItemSelector, GameObject owningPlayer) {
@@ -110,6 +110,7 @@ public class InventoryUIManager : MonoBehaviour {
         // OR itemSelectionManager.Init(manager.gameObject, manager);
 
         inventoryPanel.SetActive(true);
+        SubscribeToEvents();
         CreateSlotUIs();
         Debug.Log("InventoryUIManager Initialized for player: " + _playerGameObject.name);
     }
@@ -149,7 +150,7 @@ public class InventoryUIManager : MonoBehaviour {
     // --- Input Handlers called by PlayerInput actions ---
     private void HandlePrimaryInteractionPerformed(InputAction.CallbackContext context) {
         // This is Left Mouse Click / Gamepad A
-        Debug.Log("Primary Interaction Performed");
+        //Debug.Log("Primary Interaction Performed");
         ProcessInteraction(PointerEventData.InputButton.Left);
     }
     private void HandleSecondaryInteractionPerformed(InputAction.CallbackContext context) {
@@ -165,7 +166,6 @@ public class InventoryUIManager : MonoBehaviour {
             return;
         }
         if (!IsOpen) return; // Inventory not open and not holding item, do nothing
-
         InventorySlotUI clickedOrFocusedSlot = GetSlotUnderCursorOrFocused();
 
         if (!_heldItemStack.IsEmpty()) // Currently "holding" an item
@@ -212,7 +212,6 @@ public class InventoryUIManager : MonoBehaviour {
             eventData.position = _uiPointAction != null ? _uiPointAction.ReadValue<Vector2>() : (Vector2)Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(eventData, results);
-
             foreach (RaycastResult result in results) {
                 InventorySlotUI slotUI = result.gameObject.GetComponent<InventorySlotUI>();
                 if (slotUI != null) return slotUI;
