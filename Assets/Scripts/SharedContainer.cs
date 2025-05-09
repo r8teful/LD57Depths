@@ -6,13 +6,13 @@ using System;
 using FishNet.Connection;
 using System.Linq;
 
-public class SharedContainer : NetworkBehaviour {
+public class SharedContainer : NetworkBehaviour, IVisibilityEntity {
     [Header("Settings")]
     [SerializeField] private int containerSize = 12;
     [SerializeField] private float interactionRadius = 2.0f;
 
     // The synchronized list of items. This is the core data.
-    private readonly SyncList<InventorySlot> ContainerSlots = new SyncList<InventorySlot>();
+    public readonly SyncList<InventorySlot> ContainerSlots = new SyncList<InventorySlot>();
     // Tracks which client connection is currently interacting. -1 if none.
     private readonly SyncVar<int> _interactingClientId = new SyncVar<int>(-1, new SyncTypeSettings(WritePermission.ServerOnly));
 
@@ -27,6 +27,10 @@ public class SharedContainer : NetworkBehaviour {
     public event Action<bool, List<InventorySlot>> OnLocalPlayerInteractionStateChanged;
 
     public int ContainerSize => containerSize;
+
+    public VisibilityLayerType VisibilityScope => throw new NotImplementedException();
+
+    public string AssociatedInteriorId => throw new NotImplementedException();
 
     // --- Initialization & Sync Callbacks ---
 
@@ -214,7 +218,7 @@ public class SharedContainer : NetworkBehaviour {
         if (quantityActuallyPlaced > 0) {
             // Tell client success, and how much was *actually* placed.
             // Client is responsible for removing 'quantityActuallyPlaced' from their own inventory.
-            TargetRpcItemTransferResult(sender, true, itemId, quantityActuallyPlaced, "Item(s) placed in container.");
+            TargetRpcItemTransferResult(sender, true, itemId, quantityActuallyPlaced, $"{quantityActuallyPlaced} of item: {itemId} placed in container.");
         } else {
             TargetRpcItemTransferResult(sender, false, itemId, 0, "Could not place item(s) in container (full or no compatible stacks).");
         }
@@ -250,7 +254,7 @@ public class SharedContainer : NetworkBehaviour {
 
             // Tell client success, itemID, and how much was *actually* taken.
             // Client is responsible for adding this to their own inventory.
-            TargetRpcItemTransferResult(sender, true, itemIdToGive, quantityActuallyTaken, "Item(s) taken from container.", true); // true indicates item taken BY player
+            TargetRpcItemTransferResult(sender, true, itemIdToGive, quantityActuallyTaken, $"Quantity of {quantityActuallyTaken} of {itemIdToGive} taken from container.", true); // true indicates item taken BY player
         } else {
             TargetRpcItemTransferResult(sender, false, itemIdToGive, 0, "Could not take item (not enough quantity?).");
         }
@@ -290,17 +294,24 @@ public class SharedContainer : NetworkBehaviour {
             Debug.Log($"Client: {message}");
             if (itemTakenByPlayer) // Item moved FROM container TO player
             {
-                playerInv.AddItem(itemId, quantityTransferred);
+                playerInv.heldItemStack.SetItem(itemId, quantityTransferred);
+                //playerInv.AddItem(itemId, quantityTransferred); // If we do this it is like a shift click, but right now we just want to  put it into the hand
             } else // Item moved FROM player TO container
               {
-                playerInv.RemoveItem(itemId, quantityTransferred);
+                // playerInv.RemoveItem(itemId, quantityTransferred); // AGAIN this fucker took me 20 minutes to hunt down
+                // It is a shift click like action, we already did a RemoveItem on HandlePickupFromSlot, so if we do it agian here we pretty much
+                // Remove double the quantity, which is not good, but it would be good if we didn't have it in the hand, (which is a shift click)
+
+
                 // If player was holding this item, clear/reduce held item
-                if (!playerInv.heldItemStack.IsEmpty() && playerInv.heldItemStack.itemID == itemId) {
+
+                // HI, I honestly don't know if we need to do this either, because we are handling it within other functions, such as HandlePickupFromSlot, before we even get here 
+                /*if (!playerInv.heldItemStack.IsEmpty() && playerInv.heldItemStack.itemID == itemId) {
                     playerInv.heldItemStack.quantity -= quantityTransferred;
                     if (playerInv.heldItemStack.quantity <= 0) {
                         playerInv.heldItemStack.itemID = ResourceSystem.InvalidID;
                     }
-                }
+                }*/
             }
             playerInv.RefreshUI(); // Refresh player inventory UI
         } else {
@@ -309,20 +320,6 @@ public class SharedContainer : NetworkBehaviour {
         }
     }
     #endregion
-
-    // --- Accessing Items (Mainly for UI) ---
-
-    /// <summary>
-    /// Gets the item data at a specific index. Use for displaying UI. READ ONLY from client.
-    /// </summary>
-    public InventorySlot GetSlotReadOnly(int index) {
-        if (index < 0 || index >= ContainerSlots.Count) {
-            Debug.LogError($"Invalid index {index} requested for container {gameObject.name}");
-            return new InventorySlot(); // Return empty default
-        }
-        // Return the current state of the synchronized list item
-        return ContainerSlots[index];
-    }
 
 
     // --- Interaction Logic (Called by PlayerInventorySyncer ServerRpc) ---
@@ -435,5 +432,11 @@ public class SharedContainer : NetworkBehaviour {
         ContainerSlots[indexA] = ContainerSlots[indexB];
         ContainerSlots[indexB] = temp;
         return true;
+    }
+
+    public void SetObjectVisibility(bool isVisible) {
+        foreach (Renderer r in GetComponentsInChildren<Renderer>(true)) // Include inactive children
+            if (r != null)
+                r.enabled = isVisible;
     }
 }

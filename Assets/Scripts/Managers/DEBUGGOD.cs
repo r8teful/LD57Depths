@@ -52,7 +52,7 @@ public class DEBUGGOD : MonoBehaviour
             int damageAmount = 1; // Replace with player tool value
             CmdRequestDamageTile(targetCell, damageAmount);
 
-            yield return new WaitForSeconds(0.05f); 
+            yield return new WaitForSeconds(0.01f); 
         }
     }
     //  [ServerRpc]

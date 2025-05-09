@@ -6,7 +6,8 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using System;
-using System.Linq; // For List
+using System.Linq;
+using Sirenix.OdinInspector; // For List
 
 public class NetworkedPlayerInventory : NetworkBehaviour {
     [Header("References")]
@@ -21,11 +22,12 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
     [SerializeField] private LayerMask containerLayerMask; // Layer your containers are on
     private SharedContainer currentOpenContainer = null; // Track which container UI is open LOCALLY
     public static event System.Action<SharedContainer> OnContainerOpened; // UI listens to this
-    public static event System.Action OnContainerClosed;       // UI listens to this
+    public static event System.Action<bool> OnContainerClosed;       // UI listens to this
 
 
     [Header("Inventory Settings")]
     [SerializeField] private int inventorySize = 20; // How many slots
+    [ShowInInspector]
     private InventoryManager inventoryManager;
     public HeldItemStack heldItemStack = new HeldItemStack();
     private bool hasRequestedPickup;
@@ -92,10 +94,11 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
             inventoryManager.RemoveItem(slotUI.SlotIndex, quantityToGrab); // Update UI
             heldItemStack.SetItem(itemIDToGrab, quantityToGrab, slotUI.SlotIndex);
         } else // Picking from container
+            Debug.Log("CONTAINER PPICKUP");
           {
             if (currentOpenContainer == null)
                 return;
-            sourceDataSlot = currentOpenContainer.GetSlotReadOnly(slotUI.SlotIndex);
+            sourceDataSlot = currentOpenContainer.ContainerSlots[slotUI.SlotIndex];
             if (sourceDataSlot == null || sourceDataSlot.IsEmpty())
                 return; // Clicked empty container slot
 
@@ -105,19 +108,8 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
             } else if (button == PointerEventData.InputButton.Right) {
                 quantityToGrab = Mathf.CeilToInt((float)sourceDataSlot.quantity / 2f);
             }
-
-            // Request server to "hold" this (actually means remove from container and give to player's "hand")
-            // This is a complex server operation if we truly want a server-side "held" state.
-            // Simpler: Client "takes" it visually, server processes transfer when item is "placed".
-            //RequestMoveItemToPlayer(slotUI.SlotIndex, -1, quantityToGrab); // -1 playerIdx means "hold"
-                                                                                        // Server needs to handle this new "pickup to hold" intent.
-                                                                                        // For now, let's predict & update locally, and when PLACING,
-                                                                                        // Player -> Player uses swap, Container -> Player uses the already existing RequestMoveItemToPlayer.
-
-            InventorySlot tempVisualSlot = new InventorySlot(itemIDToGrab, sourceDataSlot.quantity - quantityToGrab);
-            slotUI.UpdateSlot(tempVisualSlot); // Show remaining, or empty if all taken
-
-            heldItemStack.SetItem(itemIDToGrab, quantityToGrab,slotUI.SlotIndex);
+            currentOpenContainer.CmdTakeItemFromContainer(slotUI.SlotIndex, quantityToGrab);
+            //heldItemStack.SetItem(itemIDToGrab, quantityToGrab,slotUI.SlotIndex);
         }
         Debug.Log($"Picked up: ID {itemIDToGrab}, Qty {quantityToGrab} from {(slotUI.IsContainerSlot ? "Container" : "Player")} Slot {slotUI.SlotIndex}");
     }
@@ -148,20 +140,15 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
                 TrySwapWithHand(targetSlotUI, quantityToPlace);
             }
         } else if (!heldItemStack.isFromContainer && targetSlotUI.IsContainerSlot) { // Player Inventory -> Container
-            RequestMoveItemToContainer(heldItemStack.originalSourceSlotIndex, targetSlotUI.SlotIndex, quantityToPlace);
-            // Client predict: remove from originalSourceSlot, UI for container updates on server ack.
-            heldItemStack.quantity -= quantityToPlace; // Assume server will succeed for prediction
-
-
+            RequestMoveItemToContainer(heldItemID, targetSlotUI.SlotIndex, quantityToPlace);
+            heldItemStack.quantity -= quantityToPlace; 
         } else if (heldItemStack.isFromContainer && !targetSlotUI.IsContainerSlot) { // Container -> Player Inventory
             RequestMoveItemToPlayer(heldItemStack.originalContainerSlotIndex, targetSlotUI.SlotIndex, quantityToPlace);
-            // Client predict: nothing really, UI for player inventory updates on server ack.
+            Debug.Log("Item to player");
             heldItemStack.quantity -= quantityToPlace; // Assume server will succeed for prediction
 
         } else if (heldItemStack.isFromContainer && targetSlotUI.IsContainerSlot) { // Container -> Container
-            RequestSwapContainerSlots(heldItemStack.originalContainerSlotIndex, targetSlotUI.SlotIndex, currentOpenContainer.NetworkObject); // Full swap is simplest for now
-                                                                                                                                                               // Client predict: Nothing, wait for SyncList.
-                                                                                                                                                               // If placing only one, then heldItemStack still has rest.
+            RequestMoveItemToContainer(heldItemID, targetSlotUI.SlotIndex, quantityToPlace);
             heldItemStack.quantity -= quantityToPlace; // This needs more thought for container->container partial place
 
         }
@@ -170,7 +157,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         if (heldItemStack.quantity <= 0) {
             heldItemStack.Clear();
         }
-        Debug.Log($"Placed Item. Held now: {heldItemStack.quantity}");
+        //Debug.Log($"Placed Item. Held now: {heldItemStack.quantity}");
     }
 
     private bool TrySwapWithHand(InventorySlotUI targetSlotUI, int quantityToPlace) {
@@ -211,11 +198,24 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
     public void ReturnHeldItemToSource() {
         if (heldItemStack.IsEmpty())
             return;
+        // Inventory
+        if (!heldItemStack.isFromContainer) {
+            if (heldItemStack.originalSourceSlotIndex != -1) {
+                // Return to player inventory slot
+                inventoryManager.AddItem(heldItemStack.itemID, heldItemStack.quantity, heldItemStack.originalSourceSlotIndex);
+            }
 
-        if (heldItemStack.originalSourceSlotIndex != -1) {
-            // Return to player inventory slot
-            inventoryManager.AddItem(heldItemStack.itemID, heldItemStack.quantity, heldItemStack.originalSourceSlotIndex);
+        } else if(currentOpenContainer !=null){
+            if (heldItemStack.originalContainerSlotIndex != -1) {
+                // Return to player inventory slot
+                currentOpenContainer.CmdPlaceItemIntoContainer(heldItemStack.itemID, heldItemStack.quantity, heldItemStack.originalSourceSlotIndex);
+            } else {
+                return;
+            }
+        } else {
+            return;
         }
+        // Container
         heldItemStack.Clear(); // Clear after returning or deciding not to predict return
     }
 
@@ -261,10 +261,13 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
     // ServerRpc to request pickup
     [ServerRpc(RequireOwnership = true)]
     private void CmdPickupItem(NetworkObject itemNetworkObject) {
-        if (itemNetworkObject == null) { Debug.LogWarning("[Server] Client sent null NetworkObject for pickup."); return; }
+        if (itemNetworkObject == null || !itemNetworkObject.IsSpawned) { 
+            Debug.LogWarning("[Server] NetworkObject is null or has not spawned"); 
+            return; 
+        }
 
         DroppedEntity worldItem = itemNetworkObject.GetComponent<DroppedEntity>();
-
+       
         if (worldItem == null) {
             Debug.LogWarning($"[Server] NetworkObject {itemNetworkObject.ObjectId} does not have a WorldItem component.");
             // Optional: Send TargetRpc back: TargetPickupFailed(base.Owner, "Invalid item.");
@@ -274,9 +277,9 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         ushort itemID = worldItem.ItemID.Value;
         int quantity = worldItem.Quantity.Value;
 
+        ServerManager.Despawn(itemNetworkObject); // Despawn the DroppedEntity
         // Award item to client and despawn world object
         TargetRpcAwardItemToClient(Owner, itemID, quantity); // Owner is the NetworkConnection of the client who sent the RPC
-        ServerManager.Despawn(itemNetworkObject); // Despawn the DroppedEntity
         Debug.Log($"Server: Awarded item {itemID} x{quantity} to client {Owner.ClientId}");
     }
     [TargetRpc]
@@ -392,11 +395,12 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
             return;
         }
         // Check for nearby containers
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, pickupRadius, containerLayerMask); // Reuse pickupRadius? Or separate radius?
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, pickupRadius*2, containerLayerMask); // Reuse pickupRadius? Or separate radius?
         SharedContainer targetContainer = null;
         float closestDistSq = float.MaxValue;
 
         foreach (Collider2D hit in hits) {
+            Debug.Log("HIT");
             SharedContainer container = hit.GetComponentInParent<SharedContainer>();
             if (container != null) {
                 float distSq = (container.transform.position - transform.position).sqrMagnitude;
@@ -447,44 +451,20 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         if (currentOpenContainer != null) {
             Debug.Log($"[Client {base.Owner.ClientId}] Closing container {currentOpenContainer.name} UI.");
             currentOpenContainer = null;
-            OnContainerClosed?.Invoke(); // Notify UI to hide container panel
+            OnContainerClosed?.Invoke(true); // Notify UI to hide container panel
         }
     }
 
-    public void RequestSwapContainerSlots(int containerSlotIndexA, int containerSlotIndexB, NetworkObject containerNob) {
-        if (!base.IsOwner || containerNob == null) return;
-        CmdSwapContainerSlots(containerSlotIndexA, containerSlotIndexB, containerNob);
-        // Client prediction for SyncList swap is complex, do not predict for now.
-    }
-
-
-    [ServerRpc(RequireOwnership = true)]
-    private void CmdSwapContainerSlots(int indexA, int indexB, NetworkObject containerNob) {
-        if (containerNob == null) return;
-        SharedContainer container = containerNob.GetComponent<SharedContainer>();
-        if (container == null) return;
-
-
-        // Let the container handle the swap logic internally for its SyncList
-        bool success = container.ServerSwapSlots(indexA, indexB); // Need to add ServerSwapSlots to SharedContainer
-
-
-        if (success) {
-            Debug.Log($"[Server] Swapped slots {indexA} <-> {indexB} in Container {container.name}");
-        } else {
-            Debug.LogWarning($"[Server] Failed to swap slots {indexA} <-> {indexB} in Container {container.name}. Invalid indices?");
-            // Send failure TargetRpc to player?
-        }
-    }
     // Called by UI when dragging Player -> Container
-    public void RequestMoveItemToContainer(int playerSlotIndex, int containerSlotIndex, int quantity) {
+    public void RequestMoveItemToContainer(ushort itemID, int containerSlotIndex, int quantity) {
         if (!base.IsOwner || currentOpenContainer == null) return;
 
         //InventorySlot localSlot = _uiManager.GetSlot(playerSlotIndex); // TODO
-        InventorySlot localSlot = null; 
-        if (localSlot == null || localSlot.IsEmpty()) return;
-        CmdMoveItemToContainer(playerSlotIndex, containerSlotIndex, quantity, currentOpenContainer.NetworkObject);
-        // Add client prediction? Optional.
+        //InventorySlot localSlot = null; 
+        //if (localSlot == null || localSlot.IsEmpty()) return;
+        //CmdMoveItemToContainer(playerSlotIndex, containerSlotIndex, quantity, currentOpenContainer.NetworkObject);
+
+        currentOpenContainer.CmdPlaceItemIntoContainer(itemID, quantity, containerSlotIndex);
     }
 
 
@@ -529,43 +509,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
     // Called by UI when dragging Container -> Player
     public void RequestMoveItemToPlayer(int containerSlotIndex, int playerSlotIndex, int quantity) {
         if (!base.IsOwner || currentOpenContainer == null) return;
-        CmdMoveItemToPlayer(containerSlotIndex, playerSlotIndex, quantity, currentOpenContainer.NetworkObject);
-        // Add client prediction? Optional.
-    }
-
-
-    [ServerRpc(RequireOwnership = true)]
-    private void CmdMoveItemToPlayer(int containerSlotIndex, int playerSlotIndex, int quantity, NetworkObject containerNob) {
-        if (containerNob == null) { Debug.LogError("[Server] Container NetworkObject is null!"); return; }
-        SharedContainer container = containerNob.GetComponent<SharedContainer>();
-        if (container == null) { Debug.LogError($"[Server] NetworkObject {containerNob.ObjectId} is not a SharedContainer!"); return; }
-
-
-        // 1. Attempt to remove item from container (SERVER SIDE)
-        // Note: ServerTryRemoveItem returns the item portion that WAS removed.
-        InventorySlot itemRemovedFromContainer = container.ServerTryRemoveItem(containerSlotIndex, quantity);
-
-        // 2. If successful, attempt to add to player (SERVER SIDE)
-        if (itemRemovedFromContainer != null && !itemRemovedFromContainer.IsEmpty()) {
-            // Use Server_TryAddItem which handles simulation and TargetRpc updates on success
-            //bool addedToPlayer = Server_TryAddItem(itemRemovedFromContainer.itemData, itemRemovedFromContainer.quantity); // Let AddItem find best slot
-
-            //bool addedToPlayer = Server_TryAddItem(itemRemovedFromContainer.itemID, itemRemovedFromContainer.quantity); // Let AddItem find best slot
-            bool addedToPlayer = false;
-            if (!addedToPlayer) {
-                // Failed to add to player (inventory full), ROLLBACK needed!
-                Debug.LogError($"[Server] CRITICAL: Removed {itemRemovedFromContainer.itemID} from container but failed to add to player {base.Owner.ClientId}. Rolling back container removal.");
-                // Rollback: Put the item back into the container
-                bool rollbackSuccess = container.ServerTryAddItem(itemRemovedFromContainer.itemID, itemRemovedFromContainer.quantity, containerSlotIndex); // Try putting back in original slot
-                if (!rollbackSuccess) Debug.LogError($"[Server] !!! FAILED TO ROLLBACK CONTAINER ITEM {itemRemovedFromContainer.itemID} !!! Container state may be inconsistent.");
-            } else {
-                Debug.Log($"[Server] Moved {itemRemovedFromContainer.quantity} of {itemRemovedFromContainer.itemID} from Container {container.name} (Slot {containerSlotIndex}) to Player {base.Owner.ClientId}");
-            }
-        } else {
-            // Failed to remove item from container (invalid index, empty slot, or invalid quantity?)
-            Debug.Log($"[Server] Failed to remove item from container {container.name} at index {containerSlotIndex}.");
-            // Send TargetRpc notification? Target_MoveFailed(base.Owner, "Item not found in container or quantity invalid.");
-        }
+        currentOpenContainer.CmdTakeItemFromContainer(containerSlotIndex, quantity);
     }
 
     // --- Dropping Logic ---

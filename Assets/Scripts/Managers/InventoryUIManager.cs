@@ -8,6 +8,8 @@ using TMPro;
 using UnityEngine.EventSystems;
 using FishNet.Object;
 using FishNet.Connection;
+using System;
+using FishNet.Managing.Client;
 
 public class InventoryUIManager : MonoBehaviour {
     [Header("UI Elements")]
@@ -17,7 +19,7 @@ public class InventoryUIManager : MonoBehaviour {
     [SerializeField] private GameObject slotPrefab; // Prefab for a single inventory slot UI element
     [SerializeField] private Image draggingImage; // A UI Image used to show the item being dragged
     [SerializeField] private TextMeshProUGUI draggingImageText; // A UI tect used to show the quantity being dragged
-
+    [SerializeField] private RectTransform inventoryUIBounds;
     [Header("Shared container UI")]
     [SerializeField] private GameObject containerPanel; // Separate panel/area for container slots
     [SerializeField] private Transform containerSlotContainer; // Parent for container slot prefabs
@@ -25,7 +27,7 @@ public class InventoryUIManager : MonoBehaviour {
     // Use the SAME slotPrefab
 
     private List<InventorySlotUI> containerSlotUIs = new List<InventorySlotUI>();
-    private SharedContainer currentlyViewedContainer = null;
+    private SharedContainer currentViewedContainer = null;
 
     private InputAction _UItoggleInventoryAction; // Assign your toggle input action asset
     private PlayerInput _playerInput; // Get reference if Input System PlayerInput component is used
@@ -35,6 +37,7 @@ public class InventoryUIManager : MonoBehaviour {
     private InputAction _uiNavigateAction;    // D-Pad / Arrow Keys
     private InputAction _uiPointAction;       // Mouse position for cursor icon
     private InputAction _uiCancelAction;       // Escape / Gamepad Start (to cancel holding)
+    private InputAction _playerInteractAction;       
 
     [SerializeField] private int hotbarSize = 5; // How many slots in the first row act as hotbar
 
@@ -85,6 +88,7 @@ public class InventoryUIManager : MonoBehaviour {
             _uiNavigateAction = _playerInput.actions["UI_Navigate"];
             _uiPointAction = _playerInput.actions["UI_Point"];
             _uiCancelAction = _playerInput.actions["UI_Cancel"]; // For cancelling held item
+            _playerInteractAction = _playerInput.actions["Interact"]; // Opening containers
             // Subscribe to input actions (do this in OnEnable, unsubscribe in OnDisable)
         } else {
             Debug.LogWarning("PlayerInput component not found on player. Mouse-only or manual input bindings needed.", gameObject);
@@ -93,7 +97,7 @@ public class InventoryUIManager : MonoBehaviour {
         if (draggingIconImage == null) { /* Error */ enabled = false; return; }
         draggingImage.gameObject.SetActive(false);
 
-        //containerPanel.SetActive(false); // TODO For multiplayer
+        containerPanel.SetActive(false);
         
         // Subscribe to LOCAL events from THIS player's managers
         _localInventoryManager.OnSlotChanged += UpdateSlotUI;
@@ -103,7 +107,7 @@ public class InventoryUIManager : MonoBehaviour {
         NetworkedPlayerInventory playerSyncer = _playerGameObject.GetComponent<NetworkedPlayerInventory>();
         if (playerSyncer != null) {
             NetworkedPlayerInventory.OnContainerOpened += HandleContainerOpen; // Static events are tricky, direct ref better if possible
-            NetworkedPlayerInventory.OnContainerClosed += HandleContainerClose;
+            NetworkedPlayerInventory.OnContainerClosed += CloseCurrentContainerUI;
         } else { Debug.LogError("PlayerInventorySyncer not found on owning player for container events!"); }
 
 
@@ -123,7 +127,9 @@ public class InventoryUIManager : MonoBehaviour {
         if (_uiInteractAction != null) _uiInteractAction.performed += HandlePrimaryInteractionPerformed;
         if (_uiAltInteractAction != null) _uiAltInteractAction.performed += HandleSecondaryInteractionPerformed;
         if (_uiCancelAction != null) _uiCancelAction.performed += HandleCloseAction;
+        if (_playerInteractAction != null) _playerInteractAction.performed += HandleInteractAction;
     }
+
     private void UnsubscribeFromEvents() {
         if (_UItoggleInventoryAction != null) _UItoggleInventoryAction.performed -= ToggleInventory;
         if (_uiInteractAction != null) _uiInteractAction.performed -= HandlePrimaryInteractionPerformed;
@@ -131,6 +137,8 @@ public class InventoryUIManager : MonoBehaviour {
         if (_uiCancelAction != null) _uiCancelAction.performed -= HandleCloseAction;
         if (_localInventoryManager != null) _localInventoryManager.OnSlotChanged -= UpdateSlotUI;
         if (_itemSelectionManager != null) _itemSelectionManager.OnSelectionChanged -= UpdateHotbarHighlight;
+        if (_playerInteractAction != null) _playerInteractAction.performed -= HandleInteractAction;
+        if (currentViewedContainer != null) currentViewedContainer.OnContainerInventoryChanged -= RefreshUIContents;
     }
   
     // --- Input Handlers called by PlayerInput actions ---
@@ -159,14 +167,13 @@ public class InventoryUIManager : MonoBehaviour {
             if (clickedOrFocusedSlot != null) // Clicked on a slot while holding
             {
                 _playerInventory.HandlePlaceHeldItem(clickedOrFocusedSlot, button);
-            } else // Clicked outside slots (but inside UI panel boundary) while holding
-              {
-                if (EventSystem.current.IsPointerOverGameObject()) // Check if over ANY UI
-                 {
+            } else { // Clicked outside slots (but inside UI panel boundary) while holding
+                if (RectTransformUtility.RectangleContainsScreenPoint(inventoryUIBounds, Input.mousePosition)) {
                     // Clicked on empty UI space, possibly return item or do nothing
                     Debug.Log("Clicked empty UI space while holding. Returning item.");
                     _playerInventory.ReturnHeldItemToSource();
                 } else {
+                    Debug.Log("DROP");
                     // Clicked outside ALL UI while holding item
                     _playerInventory.HandleDropToWorld(button);
                 }
@@ -177,6 +184,11 @@ public class InventoryUIManager : MonoBehaviour {
                 _playerInventory.HandlePickupFromSlot(clickedOrFocusedSlot, button);
             }
         }
+    }
+    // For containers
+    private void HandleInteractAction(InputAction.CallbackContext context) {
+        Debug.Log("HAndleinteraction!!1");
+        _playerInventory.HandleInteractionInput();
     }
     public void RefreshUI() {
         if (_localInventoryManager == null || _localInventoryManager.Slots == null) {
@@ -410,19 +422,17 @@ public class InventoryUIManager : MonoBehaviour {
     private void HandleContainerOpen(SharedContainer containerToView) {
         if (!containerPanel || !containerSlotContainer) return; // Container UI not setup
 
-        currentlyViewedContainer = containerToView;
-        if (currentlyViewedContainer == null) {
-            HandleContainerClose(); // Close UI if container becomes null somehow
-            return;
+        if (currentViewedContainer != null && currentViewedContainer != containerToView) {
+            CloseCurrentContainerUI(); // Close UI current viewed container
         }
-
         Debug.Log($"[UI] Opening Container View: {containerToView.name}");
 
+        currentViewedContainer = containerToView;
+        currentViewedContainer.OnContainerInventoryChanged += RefreshUIContents;
+        currentViewedContainer.OnLocalPlayerInteractionStateChanged += HandleInteractionStateChanged;
 
-        // Subscribe to changes for THIS container instance
-        currentlyViewedContainer.OnContainerInventoryChanged += UpdateContainerUI;
-
-
+        // Request server to open. Server will respond, and OnLocalPlayerInteractionStateChanged will show UI.
+        currentViewedContainer.CmdRequestOpenContainer();
         // --- Setup Container UI ---
         // Clear old slots
         foreach (Transform child in containerSlotContainer) { Destroy(child.gameObject); }
@@ -431,27 +441,8 @@ public class InventoryUIManager : MonoBehaviour {
         // Set Title (Optional)
         if (containerTitleText) containerTitleText.text = containerToView.name; // Or a generic title
 
-        // Create new slots
-        for (int i = 0; i < currentlyViewedContainer.ContainerSize; ++i) {
-            GameObject slotGO = Instantiate(slotPrefab, containerSlotContainer);
-            slotGO.name = $"ContainerSlot_{i}";
-            InventorySlotUI slotUI = slotGO.GetComponent<InventorySlotUI>();
-            if (slotUI != null) {
-                // *** IMPORTANT: We need a way for InventorySlotUI to know IF it's a container slot ***
-                // Modify Initialize slightly or add a new method/flag
-                // Option A: Modify Initialize
-                // slotUI.Initialize(this, i, true); // Add isContainerSlot flag
-                // Option B: Add SetContainerContext method
-                slotUI.SetContainerContext(this, i); // Let's choose this
-
-                containerSlotUIs.Add(slotUI);
-                // UpdateSlotUI below will handle initial visuals
-            } else { Debug.LogError($"Slot prefab missing InventorySlotUI!"); }
-        }
-
-
         // Update visuals immediately based on current container state
-        UpdateContainerUI();
+        RefreshUIContents();
 
 
         // Make the container panel visible
@@ -464,40 +455,64 @@ public class InventoryUIManager : MonoBehaviour {
             UpdateHotbarHighlight(_itemSelectionManager.SelectedSlotIndex); // Update highlights if opened this way
         }
     }
-
-    private void HandleContainerClose() {
-        if (!containerPanel) return;
-
-        Debug.Log("[UI] Closing Container View");
-        containerPanel.SetActive(false);
-
-
-        // Unsubscribe from previous container
-        if (currentlyViewedContainer != null) {
-            currentlyViewedContainer.OnContainerInventoryChanged -= UpdateContainerUI;
+    private void HandleInteractionStateChanged(bool isOpenForThisPlayer, List<InventorySlot> initialSlots) {
+        if (isOpenForThisPlayer) {
+            if (containerPanel == null)
+                return;
+            containerPanel.SetActive(true);
+            PopulateContainerSlots(initialSlots ?? new List<InventorySlot>(currentViewedContainer.ContainerSlots)); // Use initial if provided
+        } else {
+            CloseCurrentContainerUI(false); // Don't send close command again if server initiated closure
         }
-        currentlyViewedContainer = null;
-
-
-        // Clear UI Slots
-        foreach (Transform child in containerSlotContainer) { Destroy(child.gameObject); }
+    }
+    private void PopulateContainerSlots(List<InventorySlot> slotsToDisplay) {
+        // Clear existing UI slots
+        foreach (Transform child in containerSlotContainer) 
+            Destroy(child.gameObject);
         containerSlotUIs.Clear();
-    }
 
-
-    // Called when the currently viewed container's SyncList changes
-    private void UpdateContainerUI() {
-        if (currentlyViewedContainer == null || !containerPanel.activeSelf) return;
-
-        Debug.Log($"[UI] Updating Container UI for {currentlyViewedContainer.name}");
-        for (int i = 0; i < containerSlotUIs.Count && i < currentlyViewedContainer.ContainerSize; i++) {
-            InventorySlot slotData = currentlyViewedContainer.GetSlotReadOnly(i);
-            containerSlotUIs[i].UpdateSlot(slotData); // Use existing UpdateUI
-            containerSlotUIs[i].SetSelected(false); // Container slots usually aren't 'selected' like hotbar
+        for (int i = 0; i < slotsToDisplay.Count; i++) {
+            GameObject slotGO = Instantiate(slotPrefab, containerSlotContainer);
+            InventorySlotUI uiSlot = slotGO.GetComponent<InventorySlotUI>();
+            if (uiSlot != null) {
+                // Initialize it to know it's a container slot and its index
+                uiSlot.SetContainerContext(this,i); // Pass reference to this ContainerUIManager
+                uiSlot.UpdateSlot(slotsToDisplay[i]);
+                containerSlotUIs.Add(uiSlot);
+            }
         }
     }
 
- 
+    public void RefreshUIContents() {
+        if (currentViewedContainer == null || containerPanel == null || !containerPanel.activeSelf)
+            return;
 
+        // This ensures the UI matches the SyncList from the container
+        // If counts mismatch, repopulate. This can happen if containerSize changes dynamically (rare).
+        if (containerSlotUIs.Count != currentViewedContainer.ContainerSlots.Count) {
+            PopulateContainerSlots(new List<InventorySlot>(currentViewedContainer.ContainerSlots));
+        } else {
+            for (int i = 0; i < currentViewedContainer.ContainerSlots.Count; i++) {
+                if (i < containerSlotUIs.Count)
+                    containerSlotUIs[i].UpdateSlot(currentViewedContainer.ContainerSlots[i]);
+            }
+        }
+    }
+
+    public void CloseCurrentContainerUI(bool sendServerCommand = true) {
+        if (containerPanel != null)
+            containerPanel.SetActive(false);
+
+        if (currentViewedContainer != null) {
+            if (_playerInventory != null && _playerInventory.IsOwner && currentViewedContainer.InteractingClientId == _playerInventory.OwnerId) {
+                currentViewedContainer.CmdRequestCloseContainer();
+            }
+            currentViewedContainer.OnContainerInventoryChanged -= RefreshUIContents;
+            currentViewedContainer.OnLocalPlayerInteractionStateChanged -= HandleInteractionStateChanged;
+            currentViewedContainer = null;
+        }
+        foreach (Transform child in containerSlotContainer) { Destroy(child.gameObject); }
+        containerSlotUIs.Clear(); // Clean up UI elements if needed, or just hide parent
+    }
     public bool IsCurrentlyDragging() => isDragging;
 }
