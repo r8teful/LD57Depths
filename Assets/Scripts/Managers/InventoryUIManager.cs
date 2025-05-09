@@ -154,12 +154,6 @@ public class InventoryUIManager : MonoBehaviour {
     }
     // --- Central Interaction Logic ---
     private void ProcessInteraction(PointerEventData.InputButton button) {
-        if (!IsOpen && !_playerInventory.heldItemStack.IsEmpty()) // Inventory closed BUT holding item means trying to drop to world
-        {
-            _playerInventory.HandleDropToWorld(button);
-            return;
-        }
-        if (!IsOpen) return; // Inventory not open and not holding item, do nothing
         InventorySlotUI clickedOrFocusedSlot = GetSlotUnderCursorOrFocused();
 
         if (!_playerInventory.heldItemStack.IsEmpty()) // Currently "holding" an item

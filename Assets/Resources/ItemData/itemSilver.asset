@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0875b8093cac994284fe8213a256f45, type: 3}
-  m_Name: testitem
+  m_Name: itemSilver
   m_EditorClassIdentifier: 
-  itemName: diamond
-  description: Item Description
-  icon: {fileID: 6125451436942524247, guid: 357a9e6ef768a90409f1b503c32c708f, type: 3}
-  maxStackSize: 1
-  droppedPrefab: {fileID: 5233232810895470869, guid: 1a7779eec3f3263439bd896b1a24ccef, type: 3}
+  itemName: Silver
+  description: its silver and looks cool
+  icon: {fileID: -8391584212499747307, guid: bc352df9f4376de4fb89a9d2f98787d7, type: 3}
+  maxStackSize: 99
+  droppedPrefab: {fileID: 6402200259883455465, guid: 7fddc8f97ebd071409b1d139f93d9384, type: 3}
   isUsable: 0
   isConsumable: 0
   usageCooldown: 0

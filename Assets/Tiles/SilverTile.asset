@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9a8a567975dd6e4990789c9b0981ba7, type: 3}
-  m_Name: IronTile
+  m_Name: SilverTile
   m_EditorClassIdentifier: 
   m_DefaultSprite: {fileID: 3615109535770239713, guid: 7db2f528044fa9943909883aa47d44f4, type: 3}
   m_DefaultGameObject: {fileID: 0}
@@ -18,7 +18,7 @@ MonoBehaviour:
   m_TilingRules: []
   maxDurability: 85
   tileID: 3
-  dropTable: {fileID: 0}
+  dropTable: {fileID: 11400000, guid: 703951799ccf4614194cd72842ab4d0d, type: 2}
   breakEffectPrefab: {fileID: 0}
   hitEffectPrefab: {fileID: 0}
   breakVersions:

@@ -94,7 +94,6 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
             inventoryManager.RemoveItem(slotUI.SlotIndex, quantityToGrab); // Update UI
             heldItemStack.SetItem(itemIDToGrab, quantityToGrab, slotUI.SlotIndex);
         } else // Picking from container
-            Debug.Log("CONTAINER PPICKUP");
           {
             if (currentOpenContainer == null)
                 return;
@@ -140,34 +139,70 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
                 TrySwapWithHand(targetSlotUI, quantityToPlace);
             }
         } else if (!heldItemStack.isFromContainer && targetSlotUI.IsContainerSlot) { // Player Inventory -> Container
-            RequestMoveItemToContainer(heldItemID, targetSlotUI.SlotIndex, quantityToPlace);
-            heldItemStack.quantity -= quantityToPlace; 
+            InventorySlot targetDataSlot = currentOpenContainer.ContainerSlots[targetSlotUI.SlotIndex];
+            if (targetDataSlot.IsEmpty() || targetDataSlot.itemID == heldItemID) {// Target empty or same item
+                RequestMoveItemToContainer(heldItemID, targetSlotUI.SlotIndex, quantityToPlace);
+                heldItemStack.quantity -= quantityToPlace; // This needs more thought for container->container partial place
+            } else {
+                // Swap just like in inventory
+                TrySwapWithHand(targetSlotUI, quantityToPlace, true);
+            }
         } else if (heldItemStack.isFromContainer && !targetSlotUI.IsContainerSlot) { // Container -> Player Inventory
             RequestMoveItemToPlayer(heldItemStack.originalContainerSlotIndex, targetSlotUI.SlotIndex, quantityToPlace);
             Debug.Log("Item to player");
             heldItemStack.quantity -= quantityToPlace; // Assume server will succeed for prediction
 
         } else if (heldItemStack.isFromContainer && targetSlotUI.IsContainerSlot) { // Container -> Container
-            RequestMoveItemToContainer(heldItemID, targetSlotUI.SlotIndex, quantityToPlace);
-            heldItemStack.quantity -= quantityToPlace; // This needs more thought for container->container partial place
-
+            
+            // We never reach this for some reason, most likely because the hand is considered the player inventory
+            Debug.Log("container container");
         }
-
-
         if (heldItemStack.quantity <= 0) {
             heldItemStack.Clear();
         }
         //Debug.Log($"Placed Item. Held now: {heldItemStack.quantity}");
     }
 
-    private bool TrySwapWithHand(InventorySlotUI targetSlotUI, int quantityToPlace) {
-        if (quantityToPlace >= heldItemStack.quantity) {
-            var temp = inventoryManager.GetSlot(targetSlotUI.SlotIndex);
-            inventoryManager.RemoveItem(targetSlotUI.SlotIndex, quantityToPlace);
-            heldItemStack.SetItem(temp.itemID, quantityToPlace,targetSlotUI.SlotIndex);
-            return true;
+    private bool TrySwapWithHand(InventorySlotUI targetSlotUI, int quantityToPlace, bool containerSwap = false) {
+
+        if (quantityToPlace <= 1)
+            return false;
+        int slotIndex = targetSlotUI.SlotIndex;
+        if (!containerSwap) {
+
+            // 1) Grab the slot’s data
+            var slot = inventoryManager.GetSlot(slotIndex);
+
+            // 2) Copy out ID & qty into pure locals
+            ushort originalID = slot.itemID;
+            int originalQuantity = slot.quantity;
+
+            // 3) Remove the entire stack from that slot
+            inventoryManager.RemoveItem(slotIndex, originalQuantity);
+
+            // 4) Put the held items into the now‑empty slot
+            inventoryManager.AddItem(heldItemStack.itemID, quantityToPlace, slotIndex);
+
+            // 5) Now put the original items into the hand
+            heldItemStack.SetItem(originalID, originalQuantity, slotIndex);
+        } else {
+            Debug.Log("Containerswap!");
+            var slot = currentOpenContainer.ContainerSlots[slotIndex];
+
+            // 2) Copy out ID & qty into pure locals
+            ushort originalID = slot.itemID;
+            int originalQuantity = slot.quantity;
+
+            // 3) Remove the entire stack from that slot
+            currentOpenContainer.ServerTryRemoveItem(slotIndex, originalQuantity);
+
+            // 4) Put the held items into the now‑empty slot
+            currentOpenContainer.CmdPlaceItemIntoContainer(heldItemStack.itemID, quantityToPlace, slotIndex);
+
+            // 5) Now put the original items into the hand
+            heldItemStack.SetItem(originalID, originalQuantity, slotIndex);
         }
-        return false;
+        return true;
     }
 
     public void HandleDropToWorld(PointerEventData.InputButton button) {
@@ -557,9 +592,11 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
 
     internal void HandleClose(InputAction.CallbackContext context) {
         if (!heldItemStack.IsEmpty()) {
-            Debug.Log("Close Action: Returning held item.");
-            ReturnHeldItemToSource(); // Or just clear if no return logic
-            heldItemStack.Clear();
+            // TODO we could keep it in hand if there is space in the hotbar, right now just do nothing and keep it in the hand
+            // Player probably closed inventory with something in the hand for a reason
+            Debug.Log("Close Action");
+            //ReturnHeldItemToSource(); // Or just clear if no return logic
+            //heldItemStack.Clear();
         }
     }
 
