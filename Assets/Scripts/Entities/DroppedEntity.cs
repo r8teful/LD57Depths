@@ -101,37 +101,4 @@ public class DroppedEntity : NetworkBehaviour {
             spriteRenderer.enabled = false;
         }
     }
-
-
-    // --- Interaction (Called by Player Script) ---
-
-    [Server]
-    public bool ServerTryPickup(NetworkObject playerInteractorObject) {
-        if (!CanPickup || _itemID.Value == ResourceSystem.InvalidID) {
-            Debug.Log($"[Server] Pickup denied: Delay active or invalid ItemID ({_itemID}).");
-            return false;
-        }
-
-        PlayerInventorySyncer playerInventory = playerInteractorObject.GetComponent<PlayerInventorySyncer>();
-        if (playerInventory == null) {
-            Debug.LogError("[Server] Player object missing PlayerInventorySyncer.", playerInteractorObject.gameObject);
-            return false;
-        }
-
-        // Pass Item ID and Quantity to player inventory
-        bool added = playerInventory.Server_TryAddItem(_itemID.Value, _quantity.Value);
-
-        if (added) {
-            // Lookup item name for logging on server using cached data
-            string itemName = _cachedItemData != null ? _cachedItemData.name : $"ID:{_itemID}";
-            Debug.Log($"[Server] Item {itemName} x{_quantity} picked up by {playerInteractorObject.Owner.ClientId}. Despawning world item.");
-            ServerManager.Despawn(gameObject);
-            return true;
-        } else {
-            string itemName = _cachedItemData != null ? _cachedItemData.name : $"ID:{_itemID}";
-            Debug.Log($"[Server] Pickup failed for {playerInteractorObject.Owner.ClientId}, inventory likely full for {itemName}.");
-            playerInventory.TargetPickupFailed(playerInteractorObject.Owner, "Inventory full!");
-            return false;
-        }
-    }
 }

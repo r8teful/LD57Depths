@@ -55,7 +55,7 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, ISelectHandl
     }
 
     // Updates the visual elements based on the slot data
-    public void UpdateUI(InventorySlot slotData) {
+    public void UpdateSlot(InventorySlot slotData) {
         if (slotData == null || slotData.IsEmpty()) {
             // Slot is empty
             itemIconImage.enabled = false;

@@ -7,13 +7,25 @@ public class HeldItemStack {
     public bool isFromContainer = false;      // Was it picked from the container?
     public int originalContainerSlotIndex = -1; // If from container, its original slot
 
+    [System.NonSerialized]
+    private ItemData _cachedItemData = null;
+    public ItemData ItemData {
+        get {
+            // Return cached version if available and ID matches
+            if (_cachedItemData != null && App.ResourceSystem.GetIDByItem(_cachedItemData) == this.itemID) {
+                return _cachedItemData;
+            }
+            // Otherwise, lookup based on current ID
+            _cachedItemData = App.ResourceSystem.GetItemByID(this.itemID);
+            return _cachedItemData;
+        }
+    }
     public bool IsEmpty() => itemID == ResourceSystem.InvalidID || quantity <= 0;
 
-    public void SetItem(ushort id, int quant, int sourcePlayerSlot = -1, bool fromContainer = false, int sourceContainerSlot = -1) {
+    public void SetItem(ushort id, int quant, int sourcePlayerSlot = -1, int sourceContainerSlot = -1) {
         itemID = id;
         quantity = quant;
         originalSourceSlotIndex = sourcePlayerSlot;
-        isFromContainer = fromContainer;
         originalContainerSlotIndex = sourceContainerSlot;
     }
 
@@ -21,7 +33,6 @@ public class HeldItemStack {
         itemID = ResourceSystem.InvalidID;
         quantity = 0;
         originalSourceSlotIndex = -1;
-        isFromContainer = false;
         originalContainerSlotIndex = -1;
     }
 

@@ -28,16 +28,12 @@ public class ItemSelectionManager : MonoBehaviour {
     public int SelectedSlotIndex => currentSelectedIndex;
 
     // Called by InventoryUIManager AFTER it is initialized by PlayerUIController
-    public void Initialize(int size, GameObject owningPlayerObject) {
+    public void Initialize(int size, GameObject owningPlayerObject, InventoryManager inv) {
         hotbarSize = size;
         playerObject = owningPlayerObject; // Store who uses items
-
+        inventoryManager = inv;
         if (playerObject == null) {
             Debug.LogError("ItemSelectionManager initialized without a valid owningPlayerObject for usage!", gameObject);
-        }
-        if (inventoryManager == null) { // Attempt to get it if InitializeReferences wasn't called first
-            inventoryManager = GetComponent<InventoryManager>();
-            if (inventoryManager == null) Debug.LogError("ItemSelectionManager could not find InventoryManager on " + gameObject.name);
         }
         if (hotbarSize <= 0) { /* Handle invalid size */ return; }
         slotCooldownTimers = new float[hotbarSize];
@@ -47,15 +43,6 @@ public class ItemSelectionManager : MonoBehaviour {
         Debug.Log($"ItemSelectionManager Initialized for player: {owningPlayerObject.name} with Hotbar Size: {hotbarSize}");
     }
     void Start() {
-        if (inventoryManager == null) { // Attempt to get it if InitializeReferences wasn't called first
-            inventoryManager = GetComponent<InventoryManager>();
-            if (inventoryManager == null) { 
-                Debug.LogError("ItemSelectionManager could not find InventoryManager on " + gameObject.name);
-                enabled = false;
-                return;
-            } 
-        }
-        
         if (useItemAction != null) {
             useItemAction.action.performed += HandleUseInput;
             useItemAction.action.Enable();

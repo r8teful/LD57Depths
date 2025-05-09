@@ -5,31 +5,25 @@ using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 
-public class InventoryManager : MonoBehaviour {
-    public void Awake() {
-        InitializeInventory();
-    }
-    [Header("Inventory Settings")]
-    [SerializeField] private int inventorySize = 20; // How many slots
-    // --- Runtime Data ---
+public class InventoryManager {
     // List to hold the actual slot data
     [ShowInInspector]
-    private List<InventorySlot> slots = new List<InventorySlot>();
+    public List<InventorySlot> Slots { get; private set; }
     // --- Events ---
     // Event invoked when any slot in the inventory changes
     public event Action<int> OnSlotChanged; // Sends the index of the changed slot
 
-    // --- Properties ---
-    public int InventorySize => inventorySize;
-
-    private void InitializeInventory() {
-        slots.Clear();
-        slots = new List<InventorySlot>(inventorySize);
-        for (int i = 0; i < inventorySize; i++) {
-            slots.Add(new InventorySlot()); // Add empty slots
+    public InventoryManager(int size) {
+        Slots = new List<InventorySlot>(size);
+        for (int i = 0; i < size; i++) {
+            Slots.Add(new InventorySlot());
         }
-        Debug.Log($"Inventory Initialized with {inventorySize} slots.");
     }
+
+    public InventoryManager(List<InventorySlot> initialSlots) {
+        Slots = initialSlots ?? new List<InventorySlot>();
+    }
+
 
     /// <summary>
     /// Attempts to add an item to the inventory. Handles stacking.
@@ -60,7 +54,7 @@ public class InventoryManager : MonoBehaviour {
                 return false;
             }
 
-            InventorySlot targetSlot = slots[slot];
+            InventorySlot targetSlot = Slots[slot];
 
             // Case 1: Target slot is empty
             if (targetSlot.IsEmpty()) {
@@ -101,13 +95,13 @@ public class InventoryManager : MonoBehaviour {
             // 1. Try to stack with existing items
             if (itemDataToAdd.maxStackSize > 1) // Only stack if stackable
             {
-                for (int i = 0; i < slots.Count; i++) {
-                    if (!slots[i].IsEmpty() && slots[i].itemID == itemIDToAdd) // Same item?
+                for (int i = 0; i < Slots.Count; i++) {
+                    if (!Slots[i].IsEmpty() && Slots[i].itemID == itemIDToAdd) // Same item?
                     {
-                        int canAdd = itemDataToAdd.maxStackSize - slots[i].quantity;
+                        int canAdd = itemDataToAdd.maxStackSize - Slots[i].quantity;
                         if (canAdd > 0) {
                             int amountToAddThisIteration = Mathf.Min(remainingQuantity, canAdd);
-                            slots[i].AddQuantity(amountToAddThisIteration);
+                            Slots[i].AddQuantity(amountToAddThisIteration);
                             remainingQuantity -= amountToAddThisIteration;
                             OnSlotChanged?.Invoke(i);
 
@@ -121,11 +115,11 @@ public class InventoryManager : MonoBehaviour {
             // 2. If items remain, try to place in empty slots
             if (remainingQuantity > 0) // Check if there's anything left to add
             {
-                for (int i = 0; i < slots.Count; i++) {
-                    if (slots[i].IsEmpty()) {
+                for (int i = 0; i < Slots.Count; i++) {
+                    if (Slots[i].IsEmpty()) {
                         int amountToAddThisIteration = Mathf.Min(remainingQuantity, itemDataToAdd.maxStackSize);
-                        slots[i].itemID = itemIDToAdd;
-                        slots[i].quantity = amountToAddThisIteration; // Use direct assignment here
+                        Slots[i].itemID = itemIDToAdd;
+                        Slots[i].quantity = amountToAddThisIteration; // Use direct assignment here
                         remainingQuantity -= amountToAddThisIteration;
                         OnSlotChanged?.Invoke(i);
 
@@ -150,17 +144,36 @@ public class InventoryManager : MonoBehaviour {
     /// <param name="slotIndex">The index of the slot to remove from.</param>
     /// <param name="quantityToRemove">How many to remove.</param>
     public void RemoveItem(int slotIndex, int quantityToRemove = 1, bool sendTargetRpcUpdate = true) {
-        if (!IsValidIndex(slotIndex) || slots[slotIndex].IsEmpty() || quantityToRemove <= 0) {
+        if (!IsValidIndex(slotIndex) || Slots[slotIndex].IsEmpty() || quantityToRemove <= 0) {
             return; // Invalid operation
         }
         if (sendTargetRpcUpdate) {
             //PlayerInventorySyncer.CmdUpdateSlotAfterLocalRemove(...); // Not how it works currently
         }
-        slots[slotIndex].RemoveQuantity(quantityToRemove); // Let InventorySlot handle clamping and clearing
+        Slots[slotIndex].RemoveQuantity(quantityToRemove); // Let InventorySlot handle clamping and clearing
         Debug.Log($"Server removed: {quantityToRemove} from slot {slotIndex}");
         OnSlotChanged?.Invoke(slotIndex); // Notify UI
     }
-
+    public bool RemoveItem(ushort itemID, int quantityToRemove) {
+        if (itemID == ResourceSystem.InvalidID || quantityToRemove <= 0)
+            return false;
+        int S = Slots.Count - 1;
+        for (int i = S; i >= 0; --i) { //Iterate backwards to make removing easier during loop
+            if (Slots[i].itemID == itemID) {
+                if (Slots[i].quantity > quantityToRemove) {
+                    Slots[i].quantity -= quantityToRemove;
+                    return true;
+                } else {
+                    quantityToRemove -= Slots[i].quantity;
+                    Slots[i].itemID = ResourceSystem.InvalidID;
+                    Slots[i].quantity = 0;
+                    if (quantityToRemove == 0)
+                        return true;
+                }
+            }
+        }
+        return quantityToRemove == 0; // True if all requested items were removed
+    }
     /// <summary>
     /// Swaps the contents of two slots.
     /// </summary>
@@ -170,9 +183,9 @@ public class InventoryManager : MonoBehaviour {
         }
 
         // Simple swap
-        InventorySlot temp = slots[indexA];
-        slots[indexA] = slots[indexB];
-        slots[indexB] = temp;
+        InventorySlot temp = Slots[indexA];
+        Slots[indexA] = Slots[indexB];
+        Slots[indexB] = temp;
 
         // Notify that both slots changed
         OnSlotChanged?.Invoke(indexA);
@@ -188,14 +201,14 @@ public class InventoryManager : MonoBehaviour {
             Debug.LogError($"Invalid slot index requested: {index}");
             return null;
         }
-        return slots[index];
+        return Slots[index];
     }
 
     /// <summary>
     /// Checks if a slot index is within the valid range.
     /// </summary>
     public bool IsValidIndex(int index) {
-        return index >= 0 && index < slots.Count;
+        return index >= 0 && index < Slots.Count;
     }
 
     public void TriggerOnSlotChanged(int slotIndex) { OnSlotChanged?.Invoke(slotIndex); }
@@ -208,9 +221,9 @@ public class InventoryManager : MonoBehaviour {
         var itemToAdd = App.ResourceSystem.GetItemByID(idToAdd);
         // 1. Check existing stacks
         if (itemToAdd.maxStackSize > 1) {
-            for (int i = 0; i < slots.Count; i++) {
-                if (!slots[i].IsEmpty() && slots[i].itemID == idToAdd) {
-                    int stackSpace = itemToAdd.maxStackSize - slots[i].quantity;
+            for (int i = 0; i < Slots.Count; i++) {
+                if (!Slots[i].IsEmpty() && Slots[i].itemID == idToAdd) {
+                    int stackSpace = itemToAdd.maxStackSize - Slots[i].quantity;
                     int amountForThisStack = Mathf.Min(remainingQuantity, stackSpace);
                     if (amountForThisStack > 0) {
                         canAddTotal += amountForThisStack;
@@ -222,8 +235,8 @@ public class InventoryManager : MonoBehaviour {
         }
 
         // 2. Check empty slots
-        for (int i = 0; i < slots.Count; i++) {
-            if (slots[i].IsEmpty()) {
+        for (int i = 0; i < Slots.Count; i++) {
+            if (Slots[i].IsEmpty()) {
                 int amountForThisSlot = Mathf.Min(remainingQuantity, itemToAdd.maxStackSize);
                 canAddTotal += amountForThisSlot;
                 remainingQuantity -= amountForThisSlot;
@@ -236,8 +249,8 @@ public class InventoryManager : MonoBehaviour {
 
     public List<int> FindSlotsContaining(ushort itemID) {
         List<int> indices = new List<int>();
-        for (int i = 0; i < slots.Count; ++i) {
-            if (!slots[i].IsEmpty() && slots[i].itemID == itemID) {
+        for (int i = 0; i < Slots.Count; ++i) {
+            if (!Slots[i].IsEmpty() && Slots[i].itemID == itemID) {
                 indices.Add(i);
             }
         }
@@ -262,8 +275,8 @@ public class InventoryManager : MonoBehaviour {
 
     public List<int> FindSlotsContainingID(ushort itemID) {
         List<int> indices = new List<int>();
-        for (int i = 0; i < slots.Count; ++i) {
-            if (slots[i].itemID == itemID && !slots[i].IsEmpty()) { // Check ID and ensure not accidentally cleared
+        for (int i = 0; i < Slots.Count; ++i) {
+            if (Slots[i].itemID == itemID && !Slots[i].IsEmpty()) { // Check ID and ensure not accidentally cleared
                 indices.Add(i);
             }
         }
