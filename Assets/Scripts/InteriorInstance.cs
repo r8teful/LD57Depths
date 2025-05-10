@@ -2,7 +2,6 @@
 using UnityEngine.Tilemaps;
 using UnityEngine;
 using FishNet.Object;
-using FishNet;
 
 public class InteriorInstance : NetworkBehaviour {
     [Tooltip("Unique identifier for this specific interior.")]
@@ -11,11 +10,11 @@ public class InteriorInstance : NetworkBehaviour {
     [Tooltip("Reference to the GameObject in the EXTERIOR world that represents this interior")]
     [field: SerializeField] public GameObject ExteriorAnchor { get; set; }
     [Tooltip("Spawn position player gets put when we exit this interior")]
-    public Transform ExteriorSpawnPoint { get; private set; } 
+    public Transform ExteriorSpawnPoint { get; private set; }
+    [field: SerializeField] public Transform InteriorSpawnPoint { get; private set; } 
     [Tooltip("The local position offset within this interior where players spawn upon entering.")]
     public Vector3 EntrySpawnOffset = Vector3.zero;
 
-    [Tooltip("Drag all root objects belonging to this interior here (Tilemaps, Lights, Props etc.)")]
     public List<GameObject> InteriorRootObjects = new List<GameObject>();
 
     // Store original position if you want to reset it on deactivation
@@ -35,9 +34,16 @@ public class InteriorInstance : NetworkBehaviour {
         _originalPosition = transform.position; // Store initial position
         ExteriorSpawnPoint = ExteriorAnchor.transform.Find("ExitSpawn"); // This could be a function in some kind of base "exterior" class
         InteriorManager.Instance.RegisterInterior(this);
-
+        PopuplateInteriorObjects();
         // Start deactivated visually/physically
         SetInteriorActive(false);
+    }
+
+    private void PopuplateInteriorObjects() {
+        // Instance must be on root object for this to work
+        for (int i = 0; i < transform.childCount; i++) {
+            InteriorRootObjects.Add(transform.GetChild(i).gameObject);
+        }
     }
 
     private void OnDestroy() {

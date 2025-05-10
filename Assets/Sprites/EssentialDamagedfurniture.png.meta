@@ -1,49 +1,55 @@
 fileFormatVersion: 2
-guid: 7e65c3cb59e6ff942afd491862f71480
+guid: 99ca9938ddb8fee4b91591daeb0e8586
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5329366403148133511
-    second: Essential 4x4 furniture_0
+      213: 382763966939500167
+    second: EssentialDamagedfurniture_0
   - first:
-      213: -7745986154829662007
-    second: Essential 4x4 furniture_1
+      213: -141329853533867474
+    second: EssentialDamagedfurniture_1
   - first:
-      213: 996183958255520896
-    second: Essential 4x4 furniture_2
+      213: 8645188373348039214
+    second: EssentialDamagedfurniture_2
   - first:
-      213: -434315380019741233
-    second: Essential 4x4 furniture_3
+      213: -5896958466119167396
+    second: EssentialDamagedfurniture_3
   - first:
-      213: -7410520417770032049
-    second: Essential 4x4 furniture_4
+      213: -6550138709279101142
+    second: EssentialDamagedfurniture_4
   - first:
-      213: -3606425250873083057
-    second: Essential 4x4 furniture_5
+      213: 718197573170950493
+    second: EssentialDamagedfurniture_5
   - first:
-      213: 8595044717766716126
-    second: Essential 4x4 furniture_6
+      213: -5320994167575057972
+    second: EssentialDamagedfurniture_6
   - first:
-      213: -7131923894783928930
-    second: Essential 4x4 furniture_7
+      213: 5770999077776087083
+    second: EssentialDamagedfurniture_7
   - first:
-      213: -5858081572758459173
-    second: Essential 4x4 furniture_8
+      213: 211173015912641112
+    second: EssentialDamagedfurniture_8
   - first:
-      213: 8365170697606692565
-    second: Essential 4x4 furniture_9
+      213: 8356698065561707913
+    second: EssentialDamagedfurniture_9
   - first:
-      213: -2333784600514525735
-    second: Essential 4x4 furniture_10
+      213: -368505595284645410
+    second: EssentialDamagedfurniture_10
   - first:
-      213: -7235203260275808560
-    second: Essential 4x4 furniture_11
+      213: -4898511369478832233
+    second: EssentialDamagedfurniture_11
   - first:
-      213: 539529954976661395
-    second: Essential 4x4 furniture_12
+      213: -4999026855472144463
+    second: EssentialDamagedfurniture_12
   - first:
-      213: 7349048080046232725
-    second: Essential 4x4 furniture_13
+      213: -2426119434747332761
+    second: EssentialDamagedfurniture_13
+  - first:
+      213: -5565982764361621312
+    second: EssentialDamagedfurniture_14
+  - first:
+      213: 4606900042196781248
+    second: EssentialDamagedfurniture_15
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -139,7 +145,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CrateBig
+      name: EssentialDamagedfurniture_0
       rect:
         serializedVersion: 2
         x: 4
@@ -147,21 +153,21 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 97b44761e794a06b0800000000000000
-      internalID: -5329366403148133511
+      spriteID: 78e8f3accc9df4500800000000000000
+      internalID: 382763966939500167
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CrateMedium
+      name: EssentialDamagedfurniture_1
       rect:
         serializedVersion: 2
         x: 24
@@ -169,263 +175,21 @@ TextureImporter:
         width: 12
         height: 12
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 08c43c2380823dd00800000000000000
-      internalID: 996183958255520896
+      spriteID: e22b4fb3f35e90ef0800000000000000
+      internalID: -141329853533867474
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PatchMedium
-      rect:
-        serializedVersion: 2
-        x: 54
-        y: 96
-        width: 9
-        height: 9
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: fcd3f65867009f9f0800000000000000
-      internalID: -434315380019741233
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: PatchSmall
-      rect:
-        serializedVersion: 2
-        x: 67
-        y: 99
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f44b90251fa882990800000000000000
-      internalID: -7410520417770032049
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: PatchBig
-      rect:
-        serializedVersion: 2
-        x: 80
-        y: 93
-        width: 17
-        height: 11
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f4bf5bc875763fdc0800000000000000
-      internalID: -3606425250873083057
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Control
-      rect:
-        serializedVersion: 2
-        x: 3
-        y: 44
-        width: 36
-        height: 20
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: eda251fd1abb74770800000000000000
-      internalID: 8595044717766716126
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Webs
-      rect:
-        serializedVersion: 2
-        x: 5
-        y: 71
-        width: 85
-        height: 17
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e9598461101560d90800000000000000
-      internalID: -7131923894783928930
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Saw
-      rect:
-        serializedVersion: 2
-        x: 43
-        y: 44
-        width: 20
-        height: 18
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: bdc6876d8d9e3bea0800000000000000
-      internalID: -5858081572758459173
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Workstation
-      rect:
-        serializedVersion: 2
-        x: 68
-        y: 44
-        width: 20
-        height: 24
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5de7a5ccd6e071470800000000000000
-      internalID: 8365170697606692565
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: LED
-      rect:
-        serializedVersion: 2
-        x: 2
-        y: 32
-        width: 84
-        height: 8
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9d50e00554bbc9fd0800000000000000
-      internalID: -2333784600514525735
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Wardrobe
-      rect:
-        serializedVersion: 2
-        x: 1
-        y: 1
-        width: 23
-        height: 29
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0d62381f7f4679b90800000000000000
-      internalID: -7235203260275808560
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Ladder
-      rect:
-        serializedVersion: 2
-        x: 90
-        y: 2
-        width: 11
-        height: 44
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 39ff010b2abcc7700800000000000000
-      internalID: 539529954976661395
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Shelf
-      rect:
-        serializedVersion: 2
-        x: 26
-        y: 2
-        width: 20
-        height: 12
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5941c68ba401df560800000000000000
-      internalID: 7349048080046232725
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: CrateSmall
+      name: EssentialDamagedfurniture_2
       rect:
         serializedVersion: 2
         x: 41
@@ -433,15 +197,257 @@ TextureImporter:
         width: 8
         height: 8
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 277ccccbcd86d9b4f9ce28c1901902f4
-      internalID: 603953156
+      spriteID: e2a3fb97501e9f770800000000000000
+      internalID: 8645188373348039214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EssentialDamagedfurniture_3
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 96
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c521cbbb48bc92ea0800000000000000
+      internalID: -5896958466119167396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EssentialDamagedfurniture_4
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 99
+        width: 5
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2f22eb4c8b3915a0800000000000000
+      internalID: -6550138709279101142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EssentialDamagedfurniture_5
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 93
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d51f66b33ec87f900800000000000000
+      internalID: 718197573170950493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EssentialDamagedfurniture_6
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 70
+        width: 82
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc963c51ff70826b0800000000000000
+      internalID: -5320994167575057972
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EssentialDamagedfurniture_8
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 44
+        width: 36
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 852fe973dbc3ee200800000000000000
+      internalID: 211173015912641112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EssentialDamagedfurniture_9
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 44
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 985effc6d94f8f370800000000000000
+      internalID: 8356698065561707913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EssentialDamagedfurniture_10
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 44
+        width: 20
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed9905f0d1ec2eaf0800000000000000
+      internalID: -368505595284645410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EssentialDamagedfurniture_11
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 2
+        width: 11
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79f7006ecddf40cb0800000000000000
+      internalID: -4898511369478832233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EssentialDamagedfurniture_13
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 31
+        width: 84
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 767b63d6a31b45ed0800000000000000
+      internalID: -2426119434747332761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EssentialDamagedfurniture_14
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 1
+        width: 23
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c067486a28a1c2b0800000000000000
+      internalID: -5565982764361621312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EssentialDamagedfurniture_15
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 2
+        width: 20
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c80fd21e2ffeef30800000000000000
+      internalID: 4606900042196781248
       vertices: []
       indices: 
       edges: []
@@ -450,33 +456,32 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 48d1e61a52c38284384fa1f931b19f55
+    spriteID: 9849ae4ae4622b44883c5263df0e3f7c
     internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
-    secondaryTextures:
-    - texture: {fileID: 2800000, guid: 99ca9938ddb8fee4b91591daeb0e8586, type: 3}
-      name: _Damaged
+    secondaryTextures: []
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Control: 8595044717766716126
-      CrateBig: -5329366403148133511
-      CrateMedium: 996183958255520896
-      CrateSmall: 603953156
-      Essential 4x4 furniture_1: 1702969175
-      LED: -2333784600514525735
-      Ladder: 539529954976661395
-      PatchBig: -3606425250873083057
-      PatchMedium: -434315380019741233
-      PatchSmall: -7410520417770032049
-      Saw: -5858081572758459173
-      Shelf: 7349048080046232725
-      Wardrobe: -7235203260275808560
-      Webs: -7131923894783928930
-      Workstation: 8365170697606692565
+      EssentialDamagedfurniture_0: 382763966939500167
+      EssentialDamagedfurniture_1: -141329853533867474
+      EssentialDamagedfurniture_10: -368505595284645410
+      EssentialDamagedfurniture_11: -4898511369478832233
+      EssentialDamagedfurniture_12: -4999026855472144463
+      EssentialDamagedfurniture_13: -2426119434747332761
+      EssentialDamagedfurniture_14: -5565982764361621312
+      EssentialDamagedfurniture_15: 4606900042196781248
+      EssentialDamagedfurniture_2: 8645188373348039214
+      EssentialDamagedfurniture_3: -5896958466119167396
+      EssentialDamagedfurniture_4: -6550138709279101142
+      EssentialDamagedfurniture_5: 718197573170950493
+      EssentialDamagedfurniture_6: -5320994167575057972
+      EssentialDamagedfurniture_7: 5770999077776087083
+      EssentialDamagedfurniture_8: 211173015912641112
+      EssentialDamagedfurniture_9: 8356698065561707913
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

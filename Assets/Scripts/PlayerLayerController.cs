@@ -2,6 +2,7 @@ using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using FishNet.Connection;
+using DG.Tweening;
 
 
 public class PlayerLayerController : NetworkBehaviour {
@@ -16,6 +17,8 @@ public class PlayerLayerController : NetworkBehaviour {
 
     // --- Client-Side References & Logic ---
     private WorldVisibilityManager _visibilityManager;
+    private Camera _playerCamera;
+    private PlayerController _playerController;
     private void Awake() {
         _currentLayer.OnChange += OnLayerChanged;
         _currentInteriorId.OnChange += OnInteriorIdChanged;
@@ -23,6 +26,8 @@ public class PlayerLayerController : NetworkBehaviour {
     public override void OnStartClient() {
         base.OnStartClient();
         // Find the client-side manager responsible for visibility
+        _playerCamera = GetComponentInChildren<Camera>();
+        _playerController = GetComponent<PlayerController>();
         _visibilityManager = FindFirstObjectByType<WorldVisibilityManager>();
         WorldVisibilityManager.Instance.RegisterPlayer(this);
         if (_visibilityManager == null) {
@@ -46,7 +51,7 @@ public class PlayerLayerController : NetworkBehaviour {
     }
     // --- Server-Side Transition Logic ---
     [ServerRpc(RequireOwnership = true)] // Only owner should trigger transitions for themselves
-    public void RequestEnterInterior(string interiorId) // Removed entryPosition argument
+    public void RequestEnterInterior(string interiorId, NetworkConnection sender) // Removed entryPosition argument
     {
         Debug.Log("Enter request enter");
         if (_currentLayer.Value == VisibilityLayerType.Interior || string.IsNullOrEmpty(interiorId)) return;
@@ -65,17 +70,24 @@ public class PlayerLayerController : NetworkBehaviour {
         _currentInteriorId.Value = interiorId;
         _currentLayer.Value = VisibilityLayerType.Interior;
 
-        // Calculate the world spawn position based on the anchor and offset
-        Vector3 worldSpawnPosition = targetInterior.ExteriorAnchor.transform.position + targetInterior.EntrySpawnOffset;
-
+        // Calculate the world spawn position. Pretty much predicts that the interior will move, which could be VERY BAD
+        Vector3 worldSpawnPosition = targetInterior.ExteriorAnchor.transform.position + targetInterior.InteriorSpawnPoint.localPosition;
+        
         // Teleport player physically on the server
         this.transform.position = worldSpawnPosition;
+        SetPlayerClientPos(sender, worldSpawnPosition);
         if (TryGetComponent<Rigidbody2D>(out var rb)) rb.linearVelocity = Vector2.zero;
 
         Debug.Log($"Server: Player {OwnerId} entering Interior '{interiorId}' at {worldSpawnPosition}");
 
         // Optional: Notify other server systems if needed
         // Observer broadcast of SyncVars handles client updates automatically.
+        if (_playerCamera == null)
+            _playerCamera = GetComponentInChildren<Camera>();
+        if (_playerController == null)
+            _playerController = GetComponent<PlayerController>();
+        _playerController.ChangeState(PlayerController.PlayerState.Interior);
+        _playerCamera.DOOrthoSize(13, 1);
     }
 
 
@@ -90,8 +102,12 @@ public class PlayerLayerController : NetworkBehaviour {
 
         var targetInterior = InteriorManager.Instance.GetInteriorById(interiorID);
         SetPlayerClientPos(sender, targetInterior.ExteriorSpawnPoint.position);
-        Debug.Log($"Server: Player {OwnerId} exiting Interior '{previousInteriorId}' to {interiorID}");
 
+        if (_playerController == null)
+            _playerController = GetComponent<PlayerController>();
+        _playerController.ChangeState(PlayerController.PlayerState.Swimming);
+        _playerCamera.DOOrthoSize(22.5f, 2);
+        Debug.Log($"Server: Player {OwnerId} exiting Interior '{previousInteriorId}' to {interiorID}");
         // Optional: Server logic after exiting (e.g., maybe tell InteriorManager the interior might be empty now)
     }
     [TargetRpc]
@@ -121,7 +137,7 @@ public class PlayerLayerController : NetworkBehaviour {
 
         if (_currentLayer.Value == VisibilityLayerType.Exterior && portal.IsEntrance) {
             Debug.Log($"Requesting Entry to {portalInteriorId}");
-            RequestEnterInterior(portalInteriorId); // Server calculates internal position
+            RequestEnterInterior(portalInteriorId,Owner); // Server calculates internal position
         } else if (_currentLayer.Value == VisibilityLayerType.Interior && !portal.IsEntrance) {
             // Check if the portal's associated ID matches the player's CURRENT interior ID
             if (portalInteriorId == _currentInteriorId.Value) {

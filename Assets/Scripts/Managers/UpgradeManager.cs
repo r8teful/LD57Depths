@@ -9,7 +9,7 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
     private Dictionary<UpgradeType, float> upgradeValues = new Dictionary<UpgradeType, float>();
 
     // Public only to see
-    public Dictionary<TileScript.TileType, int> playerResources = new Dictionary<TileScript.TileType, int>();
+    public Dictionary<ItemData, int> playerResources = new Dictionary<ItemData, int>();
     public static event Action<UpgradeType> UpgradeBought;
 
     public UpgradeDataSO[] upgrades; // Assign in Unity Inspector
@@ -31,11 +31,11 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
     public void DEBUGMAXResources() {
         for (int i = 0; i < 1000; i++) {
             
-        AddResource(TileScript.TileType.Ore_Stone);
-        AddResource(TileScript.TileType.Ore_Silver);
-        AddResource(TileScript.TileType.Ore_Ruby);
-        AddResource(TileScript.TileType.Ore_Gold);
-        AddResource(TileScript.TileType.Ore_Diamond);
+        //AddResource(TileScript.TileType.Ore_Stone);
+        //AddResource(TileScript.TileType.Ore_Silver);
+        //AddResource(TileScript.TileType.Ore_Ruby);
+        //AddResource(TileScript.TileType.Ore_Gold);
+        //AddResource(TileScript.TileType.Ore_Diamond);
         }
     }
     public void BuyUpgrade(UpgradeType type) {
@@ -44,7 +44,7 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         if (upgrade == null) return;
         
         int currentLevel = upgradeLevels[type];
-        Dictionary<TileScript.TileType, int> upgradeCost = GetUpgradeCost(type);
+        Dictionary<ItemData, int> upgradeCost = GetUpgradeCost(type);
 
 
         // Check if the player has enough resources
@@ -71,7 +71,7 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         UpdateResourceVisual();
         Debug.Log($"{type} upgraded to Level {upgradeLevels[type]}. New Value: {upgradeValues[type]}");
     }
-    public bool HasEnoughResources(Dictionary<TileScript.TileType,int> costs) {
+    public bool HasEnoughResources(Dictionary<ItemData,int> costs) {
         foreach (var cost in costs) {
             if (!playerResources.ContainsKey(cost.Key) || playerResources[cost.Key] < cost.Value) {
                 //Debug.Log($"Not enough {cost.Key}! Need {cost.Value}, have {playerResources[cost.Key]}.");
@@ -80,7 +80,7 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         }
         return true;
     }
-    public bool TryRemoveResources(Dictionary<TileScript.TileType, int> resources, out bool b) {
+    public bool TryRemoveResources(Dictionary<ItemData, int> resources, out bool b) {
         b = false;
         // Check first 
         if (HasEnoughResources(resources)) {
@@ -115,9 +115,9 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         }
         return null;
     }
-    public Dictionary<TileScript.TileType, int> GetUpgradeCost(UpgradeType type) {
+    public Dictionary<ItemData, int> GetUpgradeCost(UpgradeType type) {
         UpgradeDataSO upgrade = GetUpgradeData(type);
-        Dictionary<TileScript.TileType, int> costDict = new Dictionary<TileScript.TileType, int>();
+        Dictionary<ItemData, int> costDict = new Dictionary<ItemData, int>();
 
         int currentLevel = upgradeLevels[type];
 
@@ -136,7 +136,7 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
 
         return costDict;
     }
-    public void AddResource(TileScript.TileType resource) {
+    public void AddResource(ItemData resource) {
         Debug.Log("Adding resource" + resource);
         if (playerResources.ContainsKey(resource)) {
             playerResources[resource]++;

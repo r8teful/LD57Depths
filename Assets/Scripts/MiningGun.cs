@@ -74,7 +74,8 @@ public class MiningGun : MonoBehaviour {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, range);
 
             if (hit.collider != null) {
-                TileScript hitTile = hit.collider.GetComponent<TileScript>();
+                //TileScript hitTile = hit.collider.GetComponent<TileScript>();
+                TileSO hitTile = null; // TODO obviously
                 if (hitTile != null) {
                     float distance = hit.distance;
                     float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloffStrength);

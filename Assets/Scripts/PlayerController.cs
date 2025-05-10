@@ -2,7 +2,9 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class PlayerController : NetworkBehaviour {
     // public float moveSpeed = 5f; // Base speed of swimming
@@ -16,7 +18,6 @@ public class PlayerController : NetworkBehaviour {
     private string currentAnimation = "";
     private Rigidbody2D rb;
     private CapsuleCollider2D colliderPlayer;
-    private Vector2 velocity;
     private SpriteRenderer sprite;
     private MiningGun miningGun;
     private Camera MainCam;
@@ -29,6 +30,8 @@ public class PlayerController : NetworkBehaviour {
     [Header("Movement Parameters")]
     [Tooltip("Maximum speed the swimmer can reach.")]
     public float swimSpeed = 5f;
+    public float walkSpeed = 5f;
+    public float climbSpeed = 5f;
 
     [Tooltip("Acceleration force applied when moving.")]
     public float accelerationForce = 20f;
@@ -39,47 +42,17 @@ public class PlayerController : NetworkBehaviour {
     [Tooltip("How quickly the swimmer can change direction.")]
     [Range(0f, 1f)] public float directionalChangeSpeed = 0.5f;
 
-#endregion
-
-    #region Buoyancy Parameters (Optional)
-
-    [Header("Buoyancy (Optional)")]
-    [Tooltip("If enabled, adds a slight upward force to simulate natural buoyancy.")]
-    public bool useBuoyancy = true;
-
-    [Tooltip("Upward force applied to simulate buoyancy.")]
-    public float buoyancyForce = 5f;
+    public float ladderCheckRadius = 0.3f;
+    public LayerMask ladderLayer;
 
     #endregion
 
-    #region Bobbing Effect (Optional Visual)
 
-    [Header("Bobbing Effect (Optional Visual)")]
-    [Tooltip("If enabled, adds a gentle bobbing motion for visual feedback.")]
-    public bool useBobbingEffect = true;
 
-    [Tooltip("Speed of the bobbing motion.")]
-    public float bobbingSpeed = 2f;
-
-    [Tooltip("Amplitude of the bobbing motion.")]
-    public float bobbingAmplitude = 0.1f;
-
-    private float bobbingTimer = 0f;
-    private Vector3 originalLocalPosition;
-
-    #endregion
-
-    private Vector2 currentInput;
-    public enum PlayerState { Swimming, Ship, Cutscene, None}
+    private Vector2 _currentInput;
+    public enum PlayerState {None, Swimming, Interior, Cutscene, ClimbingLadder}
     private PlayerState _currentState = PlayerState.Swimming;
 
-    [Header("Outside")]
-    // Outside state curve control points (set these via inspector or during initialization)
-    public Transform outsideStart;
-    public Transform outsideTurning;
-    public Transform outsideEnd;
-    public float outsideSpeed = 1f;  // How fast the player moves along the curve
-    private float outsideT = 0f;     // Parameter between 0 and 1 for the curve
     [Header("Oxygen")]
     public float maxOxygen = 100f;
     public float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
@@ -90,7 +63,12 @@ public class PlayerController : NetworkBehaviour {
     private bool peepPlayed;
     private bool _isFlashing;
     private Coroutine _flashCoroutine;
-    
+    private PlayerInput _playerInput;
+    private InputAction _playerMoveInput;
+    private bool _isOnLadder;
+    private GameObject _currentLadder;
+    private float _climbInput;
+
     public override void OnStartClient() {
         base.OnStartClient();
         if (base.IsOwner) // Check if this NetworkObject is owned by the local client
@@ -100,6 +78,9 @@ public class PlayerController : NetworkBehaviour {
             MainCam = Camera.main;
             MainCam.transform.SetParent(transform);
             MainCam.transform.localPosition = new Vector3(0,0,-10);
+            _playerInput = GetComponent<PlayerInput>();
+            _playerMoveInput = _playerInput.actions["Move"];
+            _playerMoveInput.performed += OnInteractPerformed;
             // Enable input, camera controls ONLY for the local player
             // Example: GetComponent<PlayerInputHandler>().enabled = true;
             // Example: playerCamera.SetActive(true);
@@ -116,7 +97,11 @@ public class PlayerController : NetworkBehaviour {
        //     Debug.LogError("PlayerController could not find WorldGenerator!");
        // }
     }
-    
+    public override void OnStopClient() {
+        base.OnStopClient();
+        _playerMoveInput.performed -= OnInteractPerformed;
+    }
+
     private void Start() {
         //LocalInstance = this;
         rb = GetComponent<Rigidbody2D>();
@@ -125,18 +110,12 @@ public class PlayerController : NetworkBehaviour {
         miningGun = GetComponentInChildren<MiningGun>();
         colliderPlayer = GetComponent<CapsuleCollider2D>();
         rb.gravityScale = 0; // Disable default gravity
-        originalLocalPosition = transform.localPosition; // Store initial position for bobbing
         
         // oxygen and slider
         currentOxygen = maxOxygen;
         playerHealth = maxHealth;
     }
-    void ChangeAnimation(string animation) {
-        if(currentAnimation != animation) {
-            currentAnimation = animation;
-            animator.CrossFade(animation,0.2f,0);
-        }
-    }
+
 
 
     private void Awake() {
@@ -161,116 +140,195 @@ public class PlayerController : NetworkBehaviour {
         
     }
 
-
     void Update() {
         // Get input for movement
-        currentInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-
-        if (_currentState == PlayerState.Swimming) {
-            //if (!rb.simulated) rb.simulated = true; 
-            // Swimming animations and sprite flipping
-            if (currentInput.magnitude != 0) {
-                ChangeAnimation("Swim");
-            } else {
-                ChangeAnimation("SwimIdle");
-            }
-            if (currentInput.x > 0) {
-                sprite.flipX = false;
-                if(miningGun!=null) miningGun.Flip(false);
-            } else if (currentInput.x < 0) {
-                sprite.flipX = true;
-                if (miningGun != null) miningGun.Flip(true);
-            }
-            // Optional Bobbing Effect
-            if (useBobbingEffect) {
-                HandleBobbing();
-            }
-            DepleteOxygen();
-        } else if (_currentState == PlayerState.Ship) {
-            // Update the parameter along the curve based on horizontal input.
-            outsideT += currentInput.x * outsideSpeed * Time.deltaTime;
-            outsideT = Mathf.Clamp01(outsideT);
-
-            ReplenishOxygen();
-            // Update sprite direction and animation as before.
-            if (currentInput.x > 0) {
-                sprite.flipX = false;
-            } else if (currentInput.x < 0) {
-                sprite.flipX = true;
-            }
-            ChangeAnimation(Mathf.Abs(currentInput.x) > 0 ? "Walk" : "Idle");
+        _currentInput = _playerMoveInput.ReadValue<Vector2>();
+        // Handle state-specific logic in Update (mostly non-physics like animations, input processing)
+        switch (_currentState) {
+            case PlayerState.Swimming:
+                HandleSwimmingUpdate();
+                break;
+            case PlayerState.Interior:
+                HandleInteriorUpdate();
+                break;
+            case PlayerState.ClimbingLadder:
+                HandleClimbingLadderUpdate();
+                break;
         }
     }
 
     void FixedUpdate() {
-        if (_currentState == PlayerState.Swimming) {
-            HandleMovement();
-            // Optional Buoyancy
-            if (useBuoyancy) {
-                HandleBuoyancy();
-            }
-        } else if (_currentState == PlayerState.Ship) {
-            // Snap player to the curve position
-            Vector3 newPos = EvaluateBezier(outsideStart.position, outsideTurning.position, outsideEnd.position, outsideT);
-            rb.MovePosition(newPos);
-        } 
+        // Handle state-specific physics logic in FixedUpdate
+        switch (_currentState) {
+            case PlayerState.Swimming:
+                HandleSwimmingPhysics();
+                break;
+            case PlayerState.Interior:
+                HandleInteriorPhysics();
+                break;
+            case PlayerState.ClimbingLadder:
+                HandleClimbingLadderPhysics();
+                break;
+        }
+        CheckEnvironment(); // For ground and ladder checks
     }
-    // A helper function to evaluate a quadratic Bézier curve
-    Vector3 EvaluateBezier(Vector3 p0, Vector3 p1, Vector3 p2, float t) {
-        float oneMinusT = 1 - t;
-        return oneMinusT * oneMinusT * p0 + 2 * oneMinusT * t * p1 + t * t * p2;
+
+    // --- State Handlers for Update ---
+    private void HandleSwimmingUpdate() {
+        if (_currentInput.magnitude != 0) {
+            ChangeAnimation("Swim");
+        } else {
+            ChangeAnimation("SwimIdle");
+        }
+        FlipSprite(_currentInput.x);
+        DepleteOxygen();
     }
-    void HandleMovement() {
-        // Normalize input to prevent faster diagonal movement
-        Vector2 moveDirection = currentInput.normalized;
+
+    private void HandleInteriorUpdate() {
+        ReplenishOxygen();
+        FlipSprite(_currentInput.x);
+
+        ChangeAnimation(Mathf.Abs(_currentInput.x) > 0.01f ? "Walk" : "Idle");
+    }
+
+    private void HandleClimbingLadderUpdate() {
+        ReplenishOxygen();
+        // Climbing animation logic
+        if (Mathf.Abs(_climbInput) > 0.01f) {
+            ChangeAnimation("Climb");
+        } else {
+            ChangeAnimation("ClimbIdle"); // Or just stop animator speed for Climb animation
+        }
+        // No sprite flipping while climbing typically, or based on ladder orientation
+    }
+
+    // --- State Handlers for FixedUpdate (Physics) ---
+    private void HandleSwimmingPhysics() {
+        Vector2 moveDirection = _currentInput.normalized;
 
         if (moveDirection != Vector2.zero) {
-            // Apply acceleration force in the input direction
             rb.AddForce(moveDirection * accelerationForce);
         } else {
-            // Apply deceleration (water resistance) when no input
-            if (rb.linearVelocity.magnitude > 0.01f) // Avoid tiny movements when nearly stopped
-            {
+            if (rb.linearVelocity.magnitude > 0.01f) {
                 Vector2 oppositeDirection = -rb.linearVelocity.normalized;
                 rb.AddForce(oppositeDirection * decelerationForce);
             } else {
-                rb.linearVelocity = Vector2.zero; // Stop completely if very slow to avoid drift
+                rb.linearVelocity = Vector2.zero;
             }
         }
-
         // Limit maximum speed
         rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, swimSpeed);
     }
 
-    void HandleBuoyancy() {
-        // Apply a constant upward force
-        rb.AddForce(Vector2.up * buoyancyForce);
+    private void HandleInteriorPhysics() {
+        // Horizontal movement
+        rb.linearVelocity = new Vector2(_currentInput.x * walkSpeed, rb.linearVelocity.y);
     }
 
-    void HandleBobbing() {
-        bobbingTimer += Time.deltaTime * bobbingSpeed;
-        float bobbingOffset = Mathf.Sin(bobbingTimer) * bobbingAmplitude;
-        transform.position = Vector3.up * bobbingOffset;
+    private void HandleClimbingLadderPhysics() {
+        // Use the Y component of the "Move" action for climbing ladders
+        _climbInput = _currentInput.y;
+        rb.linearVelocity = new Vector2(0, _climbInput * climbSpeed); // No horizontal movement on ladder
     }
 
-    internal void SetState(PlayerState state) {
-        Debug.Log("Setting state to:" + state);
-        _currentState = state;
-        if(state == PlayerState.Ship) {
-            SetLights(false);
-            if (miningGun != null) miningGun.CanShoot = false;
-            outsideT = 0.5f;
-            rb.linearVelocity = Vector2.zero;
-            MainCam.transform.SetParent(insideSubTransform);
-            MainCam.transform.localPosition = new Vector3(0, 0, -10);
-        } else { // Camera should also follow player during the cutscene
-            if (state != PlayerState.Cutscene) {
-                if (miningGun != null) miningGun.CanShoot = true;
-            } 
-            SetLights(true);
-            MainCam.transform.SetParent(transform);
-            MainCam.transform.localPosition = new Vector3(0, 0, -10);
-            rb.linearVelocity = Vector2.zero;
+    private void CheckEnvironment() {
+        //_isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+
+        Collider2D ladderCollider = Physics2D.OverlapCircle(transform.position, ladderCheckRadius, ladderLayer);
+        _isOnLadder = ladderCollider != null;
+        if (_isOnLadder) {
+            _currentLadder = ladderCollider.gameObject; 
+        } else {
+            _currentLadder = null;
+        }
+        // Automatically exit climbing state if no longer on a ladder (e.g., reached top/bottom)
+        if (_currentState == PlayerState.ClimbingLadder && !_isOnLadder) {
+            // If player is moving up and is near the top of the ladder, allow them to step off.
+            // This might require additional checks on the ladder itself (e.g., Ladder.IsTopExit()).
+            // For simplicity now, just exit.
+            ChangeState(PlayerState.Interior);
+        }
+    }
+
+    // --- State Management ---
+    public void ChangeState(PlayerState newState) {
+        if (_currentState == newState)
+            return;
+
+        // Exit current state logic
+        OnStateExit(_currentState, newState);
+
+        _currentState = newState;
+         Debug.Log("Changed state to: " + _currentState);
+
+        // Enter new state logic
+        OnStateEnter(_currentState, newState);
+    }
+
+    void OnStateEnter(PlayerState state, PlayerState oldState) {
+        switch (state) {
+            case PlayerState.Swimming:
+                rb.gravityScale = 0; // No gravity when swimming
+                SetLights(true);
+                // Potentially change physics material for water drag if needed
+                break;
+            case PlayerState.Interior:
+                //rb.gravityScale = _originalGravityScale;
+                SetLights(false);
+                if (miningGun != null)
+                    miningGun.CanShoot = false;
+                //MainCam.transform.SetParent(insideSubTransform);
+                //MainCam.transform.localPosition = new Vector3(0, 0, -10);
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0); // Reset vertical velocity when entering from climb
+                break;
+            case PlayerState.ClimbingLadder:
+                rb.gravityScale = 0;
+                rb.linearVelocity = Vector2.zero; // Stop movement when grabbing ladder
+                if (_currentLadder != null) {
+                    // Snap to ladder's X position for better feel
+                    transform.position = new Vector2(_currentLadder.transform.position.x, transform.position.y);
+                }
+                break;
+        }
+    }
+
+    void OnStateExit(PlayerState state, PlayerState newState) {
+        // Clean up from the state we are leaving
+        switch (state) {
+            case PlayerState.ClimbingLadder:
+                //rb.gravityScale = _originalGravityScale; // Restore gravity when leaving ladder
+                 if (Mathf.Abs(_currentInput.x) > 0.1f && newState == PlayerState.Interior)
+                 {
+                     rb.linearVelocity = new Vector2(_currentInput.x * walkSpeed * 0.5f, 2f); // Small hop
+                 }
+                break;
+            case PlayerState.Swimming:
+               // rb.gravityScale = _originalGravityScale; // Restore gravity
+                break;
+                // No specific exit logic for Interior needed for now
+        }
+    }
+
+
+    // --- Helper Functions ---
+    void FlipSprite(float horizontalInput) {
+        if (horizontalInput > 0.01f) {
+            sprite.flipX = false;
+            if (miningGun != null)
+                miningGun.Flip(false);
+        } else if (horizontalInput < -0.01f) {
+            sprite.flipX = true;
+            if (miningGun != null)
+                miningGun.Flip(true);
+        }
+    }
+    void ChangeAnimation(string animationName) {
+        if (animator == null)
+            return;
+        if (currentAnimation != animationName) {
+            currentAnimation = animationName;
+            animator.CrossFade(animationName, 0.2f, 0);
+            // animator.Play(animationName); // Or use this one instead of crossfade
         }
     }
     private void SetLights(bool setOn) {
@@ -289,7 +347,7 @@ public class PlayerController : NetworkBehaviour {
 
             if(AudioController.Instance != null) AudioController.Instance.PlaySound2D("PeepPeep", 1f);
             peepPlayed = true;
-            SliderFlash(true);
+            //SliderFlash(true);
         }
         if (currentOxygen <= 0) {
             // Slowly fade out and then teleport player back to base?
@@ -336,6 +394,15 @@ public class PlayerController : NetworkBehaviour {
             yield return new WaitForSeconds(0.2f);
         }
     }
+    private void OnInteractPerformed(InputAction.CallbackContext context) {
+        if (_currentState == PlayerState.Interior && _isOnLadder && _currentLadder != null) {
+            ChangeState(PlayerState.ClimbingLadder);
+        } else if (_currentState == PlayerState.ClimbingLadder) {
+            // Option 1: Exit ladder with interact button
+            ChangeState(PlayerState.Interior);
+        }
+    }
+
     public void DEBUGSet0Oxygen() {
         currentOxygen = 0;
     }
@@ -354,7 +421,7 @@ public class PlayerController : NetworkBehaviour {
     }
     void ReplenishOxygen() {
         peepPlayed = false;
-        SliderFlash(false);
+        //SliderFlash(false);
         currentOxygen += oxygenDepletionRate*50 * Time.deltaTime;
         currentOxygen = Mathf.Clamp(currentOxygen, 0, maxOxygen);
         playerHealth = maxHealth;
@@ -369,14 +436,5 @@ public class PlayerController : NetworkBehaviour {
     }
     private void UpdateSlider() {
         OnOxygenChanged?.Invoke(currentOxygen,maxOxygen);
-    }
-    internal void CutsceneEnd() {
-        colliderPlayer.enabled = true;
-        SetState(PlayerState.Swimming);
-    }
-
-    internal void CutsceneStart() {
-        SetState(PlayerState.Cutscene);
-        colliderPlayer.enabled = false;
     }
 }
