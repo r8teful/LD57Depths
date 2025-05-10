@@ -106,7 +106,7 @@ public class PlayerLayerController : NetworkBehaviour {
         if (_playerController == null)
             _playerController = GetComponent<PlayerController>();
         _playerController.ChangeState(PlayerController.PlayerState.Swimming);
-        _playerCamera.DOOrthoSize(22.5f, 2);
+        _playerCamera.DOOrthoSize(15f, 2);
         Debug.Log($"Server: Player {OwnerId} exiting Interior '{previousInteriorId}' to {interiorID}");
         // Optional: Server logic after exiting (e.g., maybe tell InteriorManager the interior might be empty now)
     }
