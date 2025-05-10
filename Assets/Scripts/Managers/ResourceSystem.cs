@@ -13,6 +13,8 @@ public class ResourceSystem {
     private Dictionary<string, GameObject> _prefabDict;
     private Dictionary<string, Sprite> _spriteDict; 
     private Dictionary<string, Material> _materialDict;
+    private Dictionary<ushort, TileSO> _tileLookupByID;
+    private Dictionary<TileSO, ushort> _idLookupByTile;
     private Dictionary<ushort, ItemData> _itemLookupByID;
     private Dictionary<ItemData, ushort> _idLookupByItem;
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
@@ -26,10 +28,10 @@ public class ResourceSystem {
         
         Materials = Resources.LoadAll<Material>("Materials").ToList(); 
         _materialDict = Materials.ToDictionary(r => r.name, r => r);
-        
-        InitializeItemLookups();
+
+        InitializeLookups();
     }
-    private void InitializeItemLookups() {
+    private void InitializeLookups() {
         _itemLookupByID = new Dictionary<ushort, ItemData>();
         _idLookupByItem = new Dictionary<ItemData, ushort>();
 
@@ -53,6 +55,30 @@ public class ResourceSystem {
             _idLookupByItem.Add(item, id);
         }
         Debug.Log($"ItemDatabase Initialized with {_itemLookupByID.Count} items.");
+
+        //  --- TILES ---
+        _tileLookupByID = new Dictionary<ushort, TileSO>();
+        _idLookupByTile = new Dictionary<TileSO, ushort>();
+        var allTiles = Resources.LoadAll<TileSO>("Tiles").ToList();
+        for (int i = 0; i < allTiles.Count; i++) {
+            TileSO tile = allTiles[i];
+            if (tile == null) {
+                Debug.LogWarning($"Found a NULL ItemData entry at index {i}. Skipping.");
+                continue;
+            }
+            ushort id = (ushort)i;
+            if (_tileLookupByID.ContainsKey(id)) {
+                Debug.LogError($"ItemDatabase conflict: ID {id} (index {i}) is already assigned to '{_tileLookupByID[id].name}'. Duplicate ItemData '{tile.name}' or internal error?");
+                continue; // Skip duplicate ID assignment
+            }
+            if (_idLookupByTile.ContainsKey(tile)) {
+                Debug.LogError($"ItemDatabase conflict: ItemData '{tile.name}' is already in the database with ID {_idLookupByTile[tile]}. Ensure ItemDatas are unique in the list.");
+                continue; // Skip duplicate item assignment
+            }
+            _tileLookupByID.Add(id, tile);
+            _idLookupByTile.Add(tile, id);
+        }
+        Debug.Log($"TileDatabase Initialized with {_tileLookupByID.Count} items.");
     }
 
     public ItemData GetItemByID(ushort id) {
@@ -69,6 +95,15 @@ public class ResourceSystem {
             return InvalidID;
         }
         return id;
+    }
+
+    public TileSO GetTileByID(ushort id) {
+        if (id == InvalidID || !_tileLookupByID.TryGetValue(id, out TileSO tile)) {
+            if (id != InvalidID)
+                Debug.LogWarning($"Item ID {id} not found in ItemDatabase.");
+            return null;
+        }
+        return tile;
     }
     public GameObject GetPrefab(string s) => _prefabDict[s];
     public Sprite GetSprite(string s) => _spriteDict[s];

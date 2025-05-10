@@ -904,6 +904,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1192586183}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &595053098
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 595053100}
+  - component: {fileID: 595053099}
+  m_Layer: 0
+  m_Name: WorldLight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &595053099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 595053098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0728a95a1167ce468c6fe1dc2c6966d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _chunkManager: {fileID: 953411378}
+  _worldManager: {fileID: 187924542}
+  lightPrefab: {fileID: 1505625132}
+  minRegionSizeForLight: 10
+  updateCooldown: 0.2
+  biomeLightConfigs:
+  - biome: 2
+    properties:
+      color: {r: 1, g: 1, b: 1, a: 0.9372549}
+      intensity: 1
+--- !u!4 &595053100
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 595053098}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &645121136
 GameObject:
   m_ObjectHideFlags: 0
@@ -2032,6 +2086,89 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1505625131
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1505625133}
+  - component: {fileID: 1505625132}
+  m_Layer: 0
+  m_Name: WorldLight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1505625132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505625131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ComponentVersion: 2
+  m_LightType: 1
+  m_BlendStyleIndex: 0
+  m_FalloffIntensity: 0.531
+  m_Color: {r: 1, g: 1, b: 1, a: 0.9372549}
+  m_Intensity: 0.62
+  m_LightVolumeIntensity: 1
+  m_LightVolumeEnabled: 0
+  m_ApplyToSortingLayers: 00000000ad208ff6
+  m_LightCookieSprite: {fileID: 0}
+  m_DeprecatedPointLightCookieSprite: {fileID: 0}
+  m_LightOrder: 0
+  m_AlphaBlendOnOverlap: 0
+  m_OverlapOperation: 0
+  m_NormalMapDistance: 3
+  m_NormalMapQuality: 2
+  m_UseNormalMap: 0
+  m_ShadowsEnabled: 1
+  m_ShadowIntensity: 0.75
+  m_ShadowSoftness: 0.3
+  m_ShadowSoftnessFalloffIntensity: 0.5
+  m_ShadowVolumeIntensityEnabled: 0
+  m_ShadowVolumeIntensity: 0.75
+  m_LocalBounds:
+    m_Center: {x: 9.5812, y: -2505.7651, z: 0}
+    m_Extent: {x: 1.2162004, y: 1.164917, z: 0}
+  m_PointLightInnerAngle: 360
+  m_PointLightOuterAngle: 360
+  m_PointLightInnerRadius: 0
+  m_PointLightOuterRadius: 1
+  m_ShapeLightParametricSides: 5
+  m_ShapeLightParametricAngleOffset: 0
+  m_ShapeLightParametricRadius: 1
+  m_ShapeLightFalloffSize: 0.8
+  m_ShapeLightFalloffOffset: {x: 0, y: 0}
+  m_ShapePath:
+  - {x: 9.162647, y: -2506.1301, z: 0}
+  - {x: 9.999614, y: -2505.7688, z: 0}
+  - {x: 9.4649515, y: -2505.401, z: 0}
+--- !u!4 &1505625133
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505625131}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.6441183, y: -0.5023256, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1520399081
 GameObject:
   m_ObjectHideFlags: 0
@@ -2795,12 +2932,12 @@ GameObject:
   - component: {fileID: 1746999528}
   - component: {fileID: 1746999527}
   m_Layer: 0
-  m_Name: Light 2D
+  m_Name: DebugAllLight 2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1746999527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3121,6 +3258,10 @@ PrefabInstance:
     - target: {fileID: 5585560299370844146, guid: b108df9b79e56524586b4a75cb274b22, type: 3}
       propertyPath: chunkSize
       value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 5585560299370844146, guid: b108df9b79e56524586b4a75cb274b22, type: 3}
+      propertyPath: loadDistance
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6749226527578817052, guid: b108df9b79e56524586b4a75cb274b22, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5888,6 +6029,7 @@ SceneRoots:
   - {fileID: 220458588}
   - {fileID: 1675877246}
   - {fileID: 1746999528}
+  - {fileID: 1505625133}
   - {fileID: 1380185996}
   - {fileID: 712217264}
   - {fileID: 485976413}
@@ -5899,3 +6041,4 @@ SceneRoots:
   - {fileID: 2001043746}
   - {fileID: 1465554628}
   - {fileID: 1098162248}
+  - {fileID: 595053100}

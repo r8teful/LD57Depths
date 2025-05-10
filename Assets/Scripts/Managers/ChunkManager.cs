@@ -5,11 +5,18 @@ using System.Collections.Generic;
 using FishNet.Object;
 using FishNet.Connection;
 using NUnit.Framework.Internal.Execution;
+using Sirenix.OdinInspector;
+using System.Linq;
+using Unity.Collections.LowLevel.Unsafe;
+using UnityEditor;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
     public TileBase[,] tiles; // The ground layer 
     public int[,] oreID;      // Second "ore" layer
-    public int[,] tileDurability; // Third "dmg" layer 
+    public int[,] tileDurability; // Third "dmg" layer
+                                  // Odin doesn't know how to draw a table matrix for this particular type. Make a custom DrawElementMethod via the TableMatrix attribute like so:
+
+    [TableMatrix(DrawElementMethod = "DrawElement")]
     public byte[,] biomeID;
     public bool isModified = false; // Flag to track if chunk has changed since load/generation
     public bool hasBeenGenerated = false; // Flag to prevent regenerating loaded chunks
@@ -36,6 +43,14 @@ public class ChunkData {
         }
         entitiesToSpawn = new List<PersistentEntityData>(); // Initialize the list
     }
+    static byte DrawElement(Rect rect, byte value) {
+        // Draw an int field in the given rect, initializing with the current byte value
+        int intVal = EditorGUI.IntField(rect, value);
+        // Clamp the int to the valid byte range 0–255
+        intVal = Mathf.Clamp(intVal, byte.MinValue, byte.MaxValue);
+        // Cast back to byte and return as the new cell value
+        return (byte)intVal;
+    }
 }
 
 public class ChunkManager : NetworkBehaviour {
@@ -56,13 +71,16 @@ public class ChunkManager : NetworkBehaviour {
     public int GetChunkSize() => chunkSize;
     public bool IsChunkActive(Vector2Int c) => activeChunks.Contains(c);
     // --- Chunk Data ---
+    [ShowInInspector]
     private Dictionary<Vector2Int, ChunkData> worldChunks = new Dictionary<Vector2Int, ChunkData>(); // Main world data
+    [ShowInInspector]
     private HashSet<Vector2Int> activeChunks = new HashSet<Vector2Int>();
     private Vector2Int currentPlayerChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
     private Dictionary<Vector2Int, int[,]> clientDurabilityCache = new Dictionary<Vector2Int, int[,]>();
 
     private WorldManager _worldManager;
     private EntityManager _entitySpawner;
+    private WorldLightingManager _lightManager;
 
     public void DEBUGNewGen() {
         worldChunks.Clear();
@@ -90,6 +108,7 @@ public class ChunkManager : NetworkBehaviour {
             Debug.LogError("ChunkManager needs a reference to world manager!");
         }
         _entitySpawner = FindFirstObjectByType<EntityManager>();
+        _lightManager = FindFirstObjectByType<WorldLightingManager>();
         StartCoroutine(ClientChunkLoadingRoutine());
     }
     IEnumerator ServerChunkManagementRoutine() {
@@ -200,7 +219,9 @@ public class ChunkManager : NetworkBehaviour {
             return;
         }
         // Store durability locally for effects 
-        ClientCacheChunkDurability(chunkCoord, durabilities); 
+        ClientCacheChunkDurability(chunkCoord, durabilities);
+        // New active local chunk
+        activeChunks.Add(chunkCoord);
         // Apply the received tiles visually
         Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkCoord);
         BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, chunkSize, chunkSize, 1);
@@ -214,6 +235,9 @@ public class ChunkManager : NetworkBehaviour {
             oresToSet[i] = _worldManager.GetOreFromID(OreIDs[i]);
         }
         _worldManager.SetOres(chunkBounds, oresToSet);
+
+        // Update lighting
+        _lightManager.RequestLightUpdate();
 
         // Spawn enemies client only
         if (entityIds != null) {
@@ -280,7 +304,7 @@ public class ChunkManager : NetworkBehaviour {
         _worldManager.SetTiles(chunkBounds, clearTiles);
         _worldManager.SetOres(chunkBounds, clearTiles);
         //Debug.Log($"Client visually deactivated chunk {chunkCoord}");
-
+        activeChunks.Remove(chunkCoord);
         // Entities, note this will not work in multiplayer now, 
         _entitySpawner.RemoveEntitieAtChunk(chunkCoord);
         
@@ -555,5 +579,37 @@ public class ChunkManager : NetworkBehaviour {
 
     internal bool CanWriteData(Vector2Int chunkCoord) {
         return worldChunks.ContainsKey(chunkCoord);
+    }
+
+    // Tile should be as unique global position,
+    internal (HashSet<Vector2Int>, Dictionary<Vector2Int, BiomeType>) GetAllNonSolidTilesInLoadedChunks() {
+        var validTiles = new HashSet<Vector2Int>();
+        var tilesByBiome = new Dictionary<Vector2Int, BiomeType>();
+        foreach (var chunkCoord in activeChunks) {
+            if (!worldChunks.TryGetValue(chunkCoord, out ChunkData chunkData))
+                continue;
+
+
+            // nested for-loop for best performance
+            for (int localX = 0; localX < chunkSize; localX++) {
+                for (int localY = 0; localY < chunkSize; localY++) {
+                    TileSO tile = chunkData.tiles[localX, localY] as TileSO;
+                    if (tile.IsSolid)
+                        continue;
+                    // biome
+                    byte biomeID = chunkData.biomeID[localX, localY];
+
+                    // compute global cell position
+                    int globalX = chunkCoord.x * chunkSize + localX;
+                    int globalY = chunkCoord.y * chunkSize + localY;
+                    var tilePos = new Vector2Int(globalX, globalY);
+                    validTiles.Add(tilePos);
+
+                    tilesByBiome.Add(tilePos, (BiomeType)biomeID);
+                }
+            }
+        }
+
+        return (validTiles,tilesByBiome);
     }
 }

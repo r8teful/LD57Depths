@@ -32,7 +32,8 @@ MonoBehaviour:
     useDetailNoise: 0
     detailFrequency: 0.58
     detailInfluence: 3.7
-  biomeLayers: []
+  biomeLayers:
+  - {fileID: 11400000, guid: e574c9abbbd133b40a99afb89f8c3a40, type: 2}
   oreTypes:
   - name: Iron
     tile: {fileID: 11400000, guid: f4b09cb01edb0244da271b27ca802fa3, type: 2}

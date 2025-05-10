@@ -16,16 +16,16 @@ MonoBehaviour:
   defaultGroundTile: {fileID: 11400000, guid: de9f5bf132e15114faff39f58cca21b7, type: 2}
   startY: -1500
   endY: -1000
-  verticalEdgeNoiseFrequency: 0
-  verticalEdgeNoiseAmplitude: 0
-  maxHorizontalDistanceFromTrenchCenter: 0
-  horizontalEdgeNoiseFrequency: 0
-  horizontalEdgeNoiseAmplitude: 0
+  verticalEdgeNoiseFrequency: 0.74
+  verticalEdgeNoiseAmplitude: 0.22
+  maxHorizontalDistanceFromTrenchCenter: 717
+  horizontalEdgeNoiseFrequency: 0.8
+  horizontalEdgeNoiseAmplitude: 0.33
   caveSettings:
-    overrideGlobalCaveSettings: 0
-    generateCavesInBiome: 0
-    baseCaveFrequency: 0
-    caveThreshold: 0
+    overrideGlobalCaveSettings: 1
+    generateCavesInBiome: 1
+    baseCaveFrequency: 0.105
+    caveThreshold: 0.63
     warpAmplitude: 0
     warpFrequency: 0
     useDetailNoise: 0

@@ -2,12 +2,12 @@
 using System.Collections.Generic; 
 using FishNet;
 using UnityEngine.Tilemaps;
+using UnityEngine.Rendering.Universal;
 
 
 public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
     [Tooltip("Drag the root GameObject containing all exterior world elements (chunks, scenery, etc.)")]
     public GameObject ExteriorWorldRoot;
-
     private string PlayerTag = "Player"; 
     private PlayerLayerController _localPlayerController = null;
     private List<PlayerLayerController> _remotePlayers = new List<PlayerLayerController>(); // Keep track of others
