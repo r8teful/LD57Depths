@@ -11,9 +11,7 @@ public class InteriorInstance : NetworkBehaviour {
     [field: SerializeField] public GameObject ExteriorAnchor { get; set; }
     [Tooltip("Spawn position player gets put when we exit this interior")]
     public Transform ExteriorSpawnPoint { get; private set; }
-    [field: SerializeField] public Transform InteriorSpawnPoint { get; private set; } 
-    [Tooltip("The local position offset within this interior where players spawn upon entering.")]
-    public Vector3 EntrySpawnOffset = Vector3.zero;
+    [field: SerializeField] public Transform InteriorSpawnPoint { get; private set; }
 
     public List<GameObject> InteriorRootObjects = new List<GameObject>();
 
@@ -82,18 +80,6 @@ public class InteriorInstance : NetworkBehaviour {
         } else {
             Debug.LogError($"Cannot position Interior '{InteriorId}', ExteriorAnchor is missing!", this);
         }
-    }
-
-    public Vector3 GetWorldEntrySpawnPoint() {
-        // Ensure it's positioned first if it hasn't been
-        // This is a safeguard, ideally positioning happens before this call.
-        // if (!_hasBeenPositioned && ExteriorAnchor != null)
-        // {
-        //     PositionToAnchor();
-        // }
-
-        // Spawn point is the (now potentially moved) interior's root position + local offset
-        return transform.position + EntrySpawnOffset;
     }
 
     // Helper to enable/disable specific component types recursively

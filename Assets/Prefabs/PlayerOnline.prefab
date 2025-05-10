@@ -42,6 +42,7 @@ Transform:
   m_Children:
   - {fileID: 4081051856437968214}
   - {fileID: 6796971631772098423}
+  - {fileID: 5559968206278809909}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1313871075536036865
@@ -115,20 +116,28 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 6962948237969374493}
   _networkObjectCache: {fileID: 6962948237969374493}
   insideSubTransform: {fileID: 0}
+  groundCheck: {fileID: 5559968206278809909}
   lightSpot: {fileID: 8774488322261225542}
   swimSpeed: 1.5
+  walkSpeed: 5
+  climbSpeed: 5
   accelerationForce: 5
   decelerationForce: 0.7
   directionalChangeSpeed: 0.3
-  useBuoyancy: 0
-  buoyancyForce: 5
-  useBobbingEffect: 0
-  bobbingSpeed: 1
-  bobbingAmplitude: 0.1
-  outsideStart: {fileID: 0}
-  outsideTurning: {fileID: 0}
-  outsideEnd: {fileID: 0}
-  outsideSpeed: 0.2
+  ladderSensorSize: {x: 0.31, y: 2.05}
+  ladderTopExitCheckPoint: {fileID: 5559968206278809909}
+  ladderSensorOffset: {x: 0, y: 0, z: 0}
+  groundCheckRadius: 0.33
+  ladderTopExitCheckRadius: 0.12
+  ladderLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  ladderExitLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 256
   maxOxygen: 30
   oxygenDepletionRate: 1
   currentOxygen: 0
@@ -217,7 +226,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 1.84, y: 2}
   m_Direction: 0
 --- !u!114 &6962948237969374493
 MonoBehaviour:
@@ -408,6 +417,37 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!1 &5741266127992731626
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5559968206278809909}
+  m_Layer: 2
+  m_Name: groundCheckPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5559968206278809909
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5741266127992731626}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.004, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7361887707154562350}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7921325826699556024
 GameObject:
   m_ObjectHideFlags: 0

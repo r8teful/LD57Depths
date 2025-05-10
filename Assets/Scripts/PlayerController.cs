@@ -22,6 +22,7 @@ public class PlayerController : NetworkBehaviour {
     private MiningGun miningGun;
     private Camera MainCam;
     public Transform insideSubTransform;
+    public Transform groundCheck;
     //public CanvasGroup blackout;
     public Light2D lightSpot;
     public static event Action<float,float> OnOxygenChanged;
@@ -42,8 +43,14 @@ public class PlayerController : NetworkBehaviour {
     [Tooltip("How quickly the swimmer can change direction.")]
     [Range(0f, 1f)] public float directionalChangeSpeed = 0.5f;
 
-    public float ladderCheckRadius = 0.3f;
+    public Vector2 ladderSensorSize;
+    public Transform ladderTopExitCheckPoint;
+    public Vector3 ladderSensorOffset = Vector3.zero;         // Offset for the ladder sensor from player pivot
+    public float groundCheckRadius;
+    public float ladderTopExitCheckRadius;
     public LayerMask ladderLayer;
+    public LayerMask ladderExitLayer;
+    public LayerMask groundLayer;
 
     #endregion
 
@@ -67,7 +74,8 @@ public class PlayerController : NetworkBehaviour {
     private InputAction _playerMoveInput;
     private bool _isOnLadder;
     private GameObject _currentLadder;
-    private float _climbInput;
+    private bool _isGrounded;
+    private bool _canExitAtLadderTop;
 
     public override void OnStartClient() {
         base.OnStartClient();
@@ -165,12 +173,13 @@ public class PlayerController : NetworkBehaviour {
                 break;
             case PlayerState.Interior:
                 HandleInteriorPhysics();
+                CheckEnvironment(); // For ladder checks
                 break;
             case PlayerState.ClimbingLadder:
                 HandleClimbingLadderPhysics();
+                CheckEnvironment(); // For ladder checks
                 break;
         }
-        CheckEnvironment(); // For ground and ladder checks
     }
 
     // --- State Handlers for Update ---
@@ -186,20 +195,54 @@ public class PlayerController : NetworkBehaviour {
 
     private void HandleInteriorUpdate() {
         ReplenishOxygen();
+        if(_isOnLadder && _currentInput.y > 0.01f) {
+            // Enter ladder state
+            // Check if already climbing to prevent re-entry issues
+            if (_currentState != PlayerState.ClimbingLadder) {
+                // Small check: Don't allow initiating climb if standing on top of a ladder and pressing up
+                // This needs a more robust "is at top of ladder" check, but for now, this simple condition helps
+                // Or just allow it and let them "climb" into the air slightly if ladder collider is short.
+                // For now, simpler is better.
+                ChangeState(PlayerState.ClimbingLadder);
+                return; // Important: Exit after changing state
+            }
+        }
         FlipSprite(_currentInput.x);
-
         ChangeAnimation(Mathf.Abs(_currentInput.x) > 0.01f ? "Walk" : "Idle");
     }
 
     private void HandleClimbingLadderUpdate() {
         ReplenishOxygen();
+        if (!_isOnLadder) {
+            ChangeState(_isGrounded ? PlayerState.Interior : PlayerState.Interior); // Or Falling state
+            return;
+        }
+        // Condition 2: At a ladder top exit point and moving to dismount
+        if (_canExitAtLadderTop) {
+            // If pressing UP at the top OR moving horizontally significantly
+            if (_currentInput.y > 0.1f || Mathf.Abs(_currentInput.x) > 0.1f) {
+                // Optional: Small positional adjustment to ensure clearing the ladder top
+                // This depends heavily on your ladder top platform colliders
+                // Example: transform.position += Vector3.up * 0.1f;
+                ChangeState(_isGrounded ? PlayerState.Interior : PlayerState.Interior); // Or Walking/Falling
+                return;
+            }
+        }
+        // Condition 3: Reached bottom of ladder and pressing down while grounded
+        if (_isGrounded && _currentInput.y < -0.1f && _isOnLadder && !_canExitAtLadderTop) // Ensure not at top
+        {
+            // Check if player's feet are roughly at or below ladder bottom
+            // This is a simplified check; a more robust one would compare player Y to ladder bottom Y
+            ChangeState(PlayerState.Interior);
+            return;
+        }
+
         // Climbing animation logic
-        if (Mathf.Abs(_climbInput) > 0.01f) {
+        if (Mathf.Abs(_currentInput.y) > 0.01f) {
             ChangeAnimation("Climb");
         } else {
             ChangeAnimation("ClimbIdle"); // Or just stop animator speed for Climb animation
         }
-        // No sprite flipping while climbing typically, or based on ladder orientation
     }
 
     // --- State Handlers for FixedUpdate (Physics) ---
@@ -227,27 +270,22 @@ public class PlayerController : NetworkBehaviour {
 
     private void HandleClimbingLadderPhysics() {
         // Use the Y component of the "Move" action for climbing ladders
-        _climbInput = _currentInput.y;
-        rb.linearVelocity = new Vector2(0, _climbInput * climbSpeed); // No horizontal movement on ladder
+        rb.linearVelocity = new Vector2(_currentInput.x, _currentInput.y) * climbSpeed;
     }
 
     private void CheckEnvironment() {
-        //_isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        _isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-        Collider2D ladderCollider = Physics2D.OverlapCircle(transform.position, ladderCheckRadius, ladderLayer);
+        Collider2D ladderCollider = Physics2D.OverlapBox((Vector2)transform.position + ladderSensorSize, ladderSensorSize, 0, ladderLayer);
+        //Collider2D ladderCollider = Physics2D.OverlapCollider(ladderCollider,ladderLayer,results);
         _isOnLadder = ladderCollider != null;
+        Debug.Log("is On Ladder: " + _isOnLadder);
         if (_isOnLadder) {
             _currentLadder = ladderCollider.gameObject; 
         } else {
             _currentLadder = null;
         }
-        // Automatically exit climbing state if no longer on a ladder (e.g., reached top/bottom)
-        if (_currentState == PlayerState.ClimbingLadder && !_isOnLadder) {
-            // If player is moving up and is near the top of the ladder, allow them to step off.
-            // This might require additional checks on the ladder itself (e.g., Ladder.IsTopExit()).
-            // For simplicity now, just exit.
-            ChangeState(PlayerState.Interior);
-        }
+        _canExitAtLadderTop = Physics2D.OverlapCircle(ladderTopExitCheckPoint.position, ladderTopExitCheckRadius, ladderExitLayer);
     }
 
     // --- State Management ---
@@ -273,7 +311,7 @@ public class PlayerController : NetworkBehaviour {
                 // Potentially change physics material for water drag if needed
                 break;
             case PlayerState.Interior:
-                //rb.gravityScale = _originalGravityScale;
+                rb.gravityScale = 2;
                 SetLights(false);
                 if (miningGun != null)
                     miningGun.CanShoot = false;
@@ -283,10 +321,10 @@ public class PlayerController : NetworkBehaviour {
                 break;
             case PlayerState.ClimbingLadder:
                 rb.gravityScale = 0;
-                rb.linearVelocity = Vector2.zero; // Stop movement when grabbing ladder
+                //rb.linearVelocity = Vector2.zero; // Stop movement when grabbing ladder
                 if (_currentLadder != null) {
                     // Snap to ladder's X position for better feel
-                    transform.position = new Vector2(_currentLadder.transform.position.x, transform.position.y);
+                    //transform.position = new Vector2(_currentLadder.transform.position.x, transform.position.y);
                 }
                 break;
         }
@@ -296,11 +334,13 @@ public class PlayerController : NetworkBehaviour {
         // Clean up from the state we are leaving
         switch (state) {
             case PlayerState.ClimbingLadder:
-                //rb.gravityScale = _originalGravityScale; // Restore gravity when leaving ladder
-                 if (Mathf.Abs(_currentInput.x) > 0.1f && newState == PlayerState.Interior)
-                 {
-                     rb.linearVelocity = new Vector2(_currentInput.x * walkSpeed * 0.5f, 2f); // Small hop
-                 }
+                 rb.gravityScale = 2; // Restore gravity when leaving ladder
+                if (newState == PlayerState.None || newState == PlayerState.Interior) {
+                    // If we were at the top and are now grounded, make sure we don't "pop" up
+                    if (_canExitAtLadderTop && _isGrounded) {
+                        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+                    }
+                }
                 break;
             case PlayerState.Swimming:
                // rb.gravityScale = _originalGravityScale; // Restore gravity
@@ -309,7 +349,24 @@ public class PlayerController : NetworkBehaviour {
         }
     }
 
+    // --- Gizmos for Debugging ---
+    void OnDrawGizmosSelected()
+    {
+        if (groundCheck != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        }
 
+        Gizmos.color = Color.yellow;
+        // For OverlapBox, Gizmos.DrawWireCube needs center and full size
+        Gizmos.DrawWireCube(transform.position, new Vector3(ladderSensorSize.x, ladderSensorSize.y, 0));
+        // Ladder Top Exit Check Gizmo
+        if (ladderTopExitCheckPoint != null) {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(ladderTopExitCheckPoint.position, ladderTopExitCheckRadius);
+        }
+    }
     // --- Helper Functions ---
     void FlipSprite(float horizontalInput) {
         if (horizontalInput > 0.01f) {
@@ -396,10 +453,10 @@ public class PlayerController : NetworkBehaviour {
     }
     private void OnInteractPerformed(InputAction.CallbackContext context) {
         if (_currentState == PlayerState.Interior && _isOnLadder && _currentLadder != null) {
-            ChangeState(PlayerState.ClimbingLadder);
+            //ChangeState(PlayerState.ClimbingLadder); // We could make this an actuall button later
         } else if (_currentState == PlayerState.ClimbingLadder) {
             // Option 1: Exit ladder with interact button
-            ChangeState(PlayerState.Interior);
+            //ChangeState(PlayerState.Interior); // Same here!!
         }
     }
 
