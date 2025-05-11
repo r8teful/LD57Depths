@@ -356,6 +356,7 @@ public class ChunkManager : NetworkBehaviour {
     [ObserversRpc]
     private void ObserversUpdateTileDurability(Vector3Int cellPos, int newDurability) {
         // Runs on all clients
+        _lightManager.RequestLightUpdate(); // Do this here because fuck it
         // Update local cache if you have one
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
         if (clientDurabilityCache.TryGetValue(chunkCoord, out int[,] chunkDurability)) {

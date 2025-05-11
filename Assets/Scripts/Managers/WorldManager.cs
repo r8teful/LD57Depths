@@ -25,6 +25,7 @@ public class WorldManager : NetworkBehaviour {
     public Dictionary<int, TileBase> GetIDToTile() => idToTileAssetMap;
     public int GetChunkSize() => ChunkManager.GetChunkSize();
     public Transform GetWorldRoot() => _worldRoot;
+    public GameObject GetMainTileMap() => mainTilemap.gameObject;
     
     [SerializeField] private List<TileSO> tileAssets; // Assign ALL your TileBase assets here in order
     [SerializeField] private List<TileSO> oreAssets; // Assign ALL your TileBase assets here in order
