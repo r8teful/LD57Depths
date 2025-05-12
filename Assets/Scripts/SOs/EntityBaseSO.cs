@@ -7,14 +7,36 @@ using Sirenix.OdinInspector;
 [CreateAssetMenu(fileName = "EntitySpawnSO", menuName = "ScriptableObjects/EntitySpawnSO")]
 // An entity that can be spawned, either dynamically, or with the world generation 
 public class EntityBaseSO : ScriptableObject, IIdentifiable {
-    [Header("Identification")]
-    public string entityName = "Generic Entity";
+    [TitleGroup("Identification")]
+    [HorizontalGroup("Identification/Split")]
+    [VerticalGroup("Identification/Split/Right")]
     public ushort entityID; 
+    [VerticalGroup("Identification/Split/Right")]
+    public string entityName = "Generic Entity";
+    [VerticalGroup("Identification/Split/Right")]
+    [OnValueChanged(nameof(UpdatePreview))]
     public GameObject entityPrefab; // Must have NetworkObject!
+#if UNITY_EDITOR
+    [VerticalGroup("Identification/Split/Left")]
+    [PreviewField(75, ObjectFieldAlignment.Left)]
+    [ReadOnly,HideLabel]
+    [ShowInInspector]
+    private Sprite sprite;
+    private void UpdatePreview() {
+        sprite = null;
 
+        if (entityPrefab != null) {
+            var spriteRenderer = entityPrefab.GetComponentInChildren<SpriteRenderer>();
+            if (spriteRenderer != null) {
+                sprite = spriteRenderer.sprite;
+            }
+        }
+    }
+#endif
     [Header("Spawn Conditions")]
     public List<BiomeType> requiredBiomes; // Spawns if CURRENT biome is one of these
     public float minBiomeRate = 0.5f;      // Required rate of one of the requiredBiomes
+    //[MinMaxSlider(-10, 10, true)]
     public int minY = -1000;         
     public int maxY = 2000;     
     public List<TileBase> specificSpawnTiles;
