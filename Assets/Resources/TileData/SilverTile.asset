@@ -17,7 +17,7 @@ MonoBehaviour:
   m_DefaultColliderType: 1
   m_TilingRules: []
   maxDurability: 85
-  tileID: 3
+  ID: 3
   dropTable: {fileID: 11400000, guid: 703951799ccf4614194cd72842ab4d0d, type: 2}
   breakEffectPrefab: {fileID: 0}
   hitEffectPrefab: {fileID: 0}
@@ -25,4 +25,3 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8e7dd3e707e6ab642bee1415e7dc7bf6, type: 2}
   - {fileID: 11400000, guid: 806494e32afd5784b8f6c55fc2058a19, type: 2}
   - {fileID: 11400000, guid: e3f9cf83d4f31aa428f860d06fafb558, type: 2}
-  associatedBiome: 0

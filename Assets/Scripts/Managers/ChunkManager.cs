@@ -8,28 +8,25 @@ using Sirenix.OdinInspector;
 using UnityEditor;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
-    public TileBase[,] tiles; // The ground layer 
-    public int[,] oreID;      // Second "ore" layer
-    public int[,] tileDurability; // Third "dmg" layer
-                                  // Odin doesn't know how to draw a table matrix for this particular type. Make a custom DrawElementMethod via the TableMatrix attribute like so:
-
+    public TileSO[,] tiles; // The ground layer 
+    public ushort[,] oreID;      // Second "ore" layer
+    public short[,] tileDurability; // Third "dmg" layer
     [TableMatrix(DrawElementMethod = "DrawElement")]
     public byte[,] biomeID;
     public bool isModified = false; // Flag to track if chunk has changed since load/generation
     public bool hasBeenGenerated = false; // Flag to prevent regenerating loaded chunks
-    public List<PersistentEntityData> entitiesToSpawn; 
     public ChunkData(int chunkSizeX, int chunkSizeY) {
-        tiles = new TileBase[chunkSizeX, chunkSizeY];
-        tileDurability = new int[chunkSizeX, chunkSizeY];
+        tiles = new TileSO[chunkSizeX, chunkSizeY];
+        tileDurability = new short[chunkSizeX, chunkSizeY];
         for (int y = 0; y < chunkSizeY; ++y) {
             for (int x = 0; x < chunkSizeX; ++x) {
                 tileDurability[x, y] = -1; // Default state
             }
         }
-        oreID = new int[chunkSizeX, chunkSizeY];
+        oreID = new ushort[chunkSizeX, chunkSizeY];
         for (int y = 0; y < chunkSizeY; ++y) {
             for (int x = 0; x < chunkSizeX; ++x) {
-                oreID[x, y] = 0; // Default state
+                oreID[x, y] = ResourceSystem.InvalidID; // Default state
             }
         }
         biomeID = new byte[chunkSizeX, chunkSizeY];
@@ -38,7 +35,7 @@ public class ChunkData {
                 biomeID[x, y] = 0; // Default state
             }
         }
-        entitiesToSpawn = new List<PersistentEntityData>(); // Initialize the list
+        //entitiesToSpawn = new List<PersistentEntityData>(); // Initialize the list
     }
     static byte DrawElement(Rect rect, byte value) {
         // Draw an int field in the given rect, initializing with the current byte value
@@ -73,7 +70,7 @@ public class ChunkManager : NetworkBehaviour {
     [ShowInInspector]
     private HashSet<Vector2Int> activeChunks = new HashSet<Vector2Int>();
     private Vector2Int currentPlayerChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
-    private Dictionary<Vector2Int, int[,]> clientDurabilityCache = new Dictionary<Vector2Int, int[,]>();
+    private Dictionary<Vector2Int, short[,]> clientDurabilityCache = new Dictionary<Vector2Int, short[,]>();
 
     private WorldManager _worldManager;
     private EntityManager _entitySpawner;
@@ -190,12 +187,12 @@ public class ChunkManager : NetworkBehaviour {
 
         // 3. Serialize chunk data into Tile IDs
         if (chunkData.tiles != null) {
-            List<int> tileIds = new List<int>(chunkSize * chunkSize);
-            List<int> durabilities = new List<int>(chunkSize * chunkSize);
-            List<int> oreIDs = new List<int>(chunkSize * chunkSize);
+            List<ushort> tileIds = new List<ushort>(chunkSize * chunkSize);
+            List<ushort> oreIDs = new List<ushort>(chunkSize * chunkSize);
+            List<short> durabilities = new List<short>(chunkSize * chunkSize);
             for (int y = 0; y < chunkSize; y++) {
                 for (int x = 0; x < chunkSize; x++) {
-                    tileIds.Add(_worldManager.GetIDFromTile(chunkData.tiles[x, y]));
+                    tileIds.Add(App.ResourceSystem.GetIDByTile(chunkData.tiles[x, y]));
                     durabilities.Add(chunkData.tileDurability[x, y]);
                     oreIDs.Add(chunkData.oreID[x, y]); 
                 }
@@ -209,7 +206,7 @@ public class ChunkManager : NetworkBehaviour {
 
     // --- Target RPC to send chunk data to a specific client ---
     [TargetRpc]
-    private void TargetReceiveChunkData(NetworkConnection conn, Vector2Int chunkCoord, List<int> tileIds, List<int> OreIDs, List<int> durabilities, List<ulong> entityIds) {
+    private void TargetReceiveChunkData(NetworkConnection conn, Vector2Int chunkCoord, List<ushort> tileIds, List<ushort> OreIDs, List<short> durabilities, List<ulong> entityIds) {
         // Executed ONLY on the client specified by 'conn'
         if (tileIds == null || tileIds.Count != chunkSize * chunkSize) {
             Debug.LogWarning($"Received invalid tile data for chunk {chunkCoord} from server.");
@@ -225,11 +222,11 @@ public class ChunkManager : NetworkBehaviour {
         TileBase[] tilesToSet = new TileBase[chunkSize * chunkSize];
         TileBase[] oresToSet = new TileBase[chunkSize * chunkSize];
         for (int i = 0; i < tileIds.Count; i++) {
-            tilesToSet[i] = _worldManager.GetTileFromID(tileIds[i]);
+            tilesToSet[i] = App.ResourceSystem.GetTileByID(tileIds[i]);
         }
         _worldManager.SetTiles(chunkBounds, tilesToSet);
         for (int i = 0; i < OreIDs.Count; i++) {
-            oresToSet[i] = _worldManager.GetOreFromID(OreIDs[i]);
+            oresToSet[i] = App.ResourceSystem.GetTileByID(OreIDs[i]);
         }
         _worldManager.SetOres(chunkBounds, oresToSet);
 
@@ -242,12 +239,12 @@ public class ChunkManager : NetworkBehaviour {
         }
         // Debug.Log($"Client received and visually loaded chunk {chunkCoord}");
     }
-    private void ClientCacheChunkDurability(Vector2Int chunkCoord, List<int> durabilityList) {
+    private void ClientCacheChunkDurability(Vector2Int chunkCoord, List<short> durabilityList) {
         if (!clientDurabilityCache.ContainsKey(chunkCoord)) {
-            clientDurabilityCache[chunkCoord] = new int[chunkSize, chunkSize];
+            clientDurabilityCache[chunkCoord] = new short[chunkSize, chunkSize];
         }
 
-        int[,] chunkDurability = clientDurabilityCache[chunkCoord];
+        short[,] chunkDurability = clientDurabilityCache[chunkCoord];
         int index = 0;
         for (int y = 0; y < chunkSize; y++) {
             for (int x = 0; x < chunkSize; x++) {
@@ -260,7 +257,7 @@ public class ChunkManager : NetworkBehaviour {
 
     public int GetClientCachedDurability(Vector3Int cellPos) {
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
-        if (clientDurabilityCache.TryGetValue(chunkCoord, out int[,] chunkDurability)) {
+        if (clientDurabilityCache.TryGetValue(chunkCoord, out short[,] chunkDurability)) {
             int localX = cellPos.x - chunkCoord.x * chunkSize;
             int localY = cellPos.y - chunkCoord.y * chunkSize;
             if (localX >= 0 && localX < chunkSize && localY >= 0 && localY < chunkSize) {
@@ -308,10 +305,10 @@ public class ChunkManager : NetworkBehaviour {
     }
     // --- Tile Modification ---
     // This is the entry point called by the PlayerController's ServerRpc, this is usually after all checks have been done already
-    public void ServerRequestModifyTile(Vector3Int cellPos, int newTileId) {
+    public void ServerRequestModifyTile(Vector3Int cellPos, ushort newTileId) {
         // Must run on server
         if (!IsServerInitialized) return;
-        TileBase tileToSet = _worldManager.GetTileFromID(newTileId);
+        TileSO tileToSet = App.ResourceSystem.GetTileByID(newTileId);
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
 
         // Get the chunk data on the server
@@ -351,12 +348,13 @@ public class ChunkManager : NetworkBehaviour {
 
     // --- RPC to inform clients of durability change ---
     [ObserversRpc]
-    private void ObserversUpdateTileDurability(Vector3Int cellPos, int newDurability) {
+    private void ObserversUpdateTileDurability(Vector3Int cellPos, short newDurability) {
         // Runs on all clients
-        _lightManager.RequestLightUpdate(); // Do this here because fuck it
+        if(newDurability == -1)
+            _lightManager.RequestLightUpdate(); // Tile broke so update lights
         // Update local cache if you have one
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
-        if (clientDurabilityCache.TryGetValue(chunkCoord, out int[,] chunkDurability)) {
+        if (clientDurabilityCache.TryGetValue(chunkCoord, out short[,] chunkDurability)) {
             int localX = cellPos.x - chunkCoord.x * chunkSize;
             int localY = cellPos.y - chunkCoord.y * chunkSize;
             if (localX >= 0 && localX < chunkSize && localY >= 0 && localY < chunkSize) {
@@ -366,10 +364,9 @@ public class ChunkManager : NetworkBehaviour {
         }
     }
     // New method on server to handle receiving damage requests
-    public void ServerProcessDamageTile(Vector3Int cellPos, int damageAmount, NetworkConnection sourceConnection = null) {
+    public void ServerProcessDamageTile(Vector3Int cellPos, short damageAmount, NetworkConnection sourceConnection = null) {
         if (!IsServerInitialized) return;
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
-
         // Ensure chunk data exists (generate if necessary)
         if (!worldChunks.TryGetValue(chunkCoord, out ChunkData chunk)) {
             chunk = ServerGenerateChunkData(chunkCoord);
@@ -385,20 +382,22 @@ public class ChunkManager : NetworkBehaviour {
 
         // --- Get Tile Type & Properties ---
         TileBase tileBase = chunk.tiles[localX, localY];
-        var ore = _worldManager.GetOreFromID(chunk.oreID[localX, localY]);
+        var ore = App.ResourceSystem.GetTileByID(chunk.oreID[localX, localY]);
         // if ore use Ore tilebase, not stone
         if (tileBase is TileSO targetTile) {
             if (ore != null) targetTile = ore;
+            Debug.Log("Processing damage!!: ");
             if (targetTile.maxDurability <= 0) return; // Indestructible tile
+            Debug.Log("Reutneutnet!!: ");
 
             // --- Apply Damage ---
-            int currentDurability = chunk.tileDurability[localX, localY];
+            short currentDurability = chunk.tileDurability[localX, localY];
             if (currentDurability < 0) // Was at full health (-1 sentinel)
             {
                 currentDurability = targetTile.maxDurability;
             }
 
-            int newDurability = currentDurability - damageAmount;
+            short newDurability = (short)(currentDurability - damageAmount);
 
             // Mark as modified ONLY if durability actually changed
             if (newDurability != chunk.tileDurability[localX, localY]) {
@@ -478,7 +477,7 @@ public class ChunkManager : NetworkBehaviour {
     }
 
     // Placeholder for client-side visual updates (e.g., crack overlays)
-    private void UpdateTileVisuals(Vector3Int cellPos, int currentDurability) {
+    private void UpdateTileVisuals(Vector3Int cellPos, short currentDurability) {
 
         TileBase crackTile = GetCrackTileForDurability(cellPos, currentDurability); // Find appropriate crack sprite
 
@@ -538,12 +537,6 @@ public class ChunkManager : NetworkBehaviour {
     public void AddChunkData(Vector2Int chunkCoord, ChunkData data) {
         worldChunks.Add(chunkCoord, data);
     }
-    private bool IsTileAir(int newTileId) {
-        // Check if the tile ID corresponds to an air tile
-        // Assuming 0 is the ID for air tiles
-        return newTileId == 0;
-    }
-
 
     // =============================================
     // === Coordinate Conversion Helper Methods ===

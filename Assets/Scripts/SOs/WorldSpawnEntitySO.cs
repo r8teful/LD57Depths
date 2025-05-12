@@ -7,7 +7,6 @@ public class WorldSpawnEntitySO : EntityBaseSO {
     [Header("Placement Rules")]
     public float placementFrequency = 0.1f; // Noise frequency for density/clustering control
     [Range(0f, 1f)] public float placementThreshold = 0.7f; // Noise value needed at anchor point
-    public List<string> requiredBiomeNames; // Optional: Only place in these biomes
     public List<AttachmentType> allowedAttachmentTypes;
     [Header("Spawn Conditions at Anchor Point")]
     public bool requireSolidGround = true; // Must the anchor tile be 'rock'?

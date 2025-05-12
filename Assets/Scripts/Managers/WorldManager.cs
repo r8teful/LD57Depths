@@ -15,20 +15,10 @@ public class WorldManager : NetworkBehaviour {
     [SerializeField] private Transform _worldRoot; // All world entities have this as their parent, used for hiding when entering sub or other interiors
     [InlineEditor]
     public WorldGenSettingSO WorldGenSettings;
-    // --- Tile ID Mapping ---
-    private Dictionary<TileBase, int> tileAssetToIdMap = new Dictionary<TileBase, int>();
-    private Dictionary<int, TileBase> idToTileAssetMap = new Dictionary<int, TileBase>();
-    // --- Ore to ID Mapping
-    private Dictionary<int, TileSO> idToOreAssetMap = new Dictionary<int, TileSO>();
-    private Dictionary<TileSO, int> oreToidAssetMap = new Dictionary<TileSO, int>();
-    public Dictionary<TileBase, int> GetTileToID() => tileAssetToIdMap;
-    public Dictionary<int, TileBase> GetIDToTile() => idToTileAssetMap;
     public int GetChunkSize() => ChunkManager.GetChunkSize();
     public Transform GetWorldRoot() => _worldRoot;
     public GameObject GetMainTileMap() => mainTilemap.gameObject;
     
-    [SerializeField] private List<TileSO> tileAssets; // Assign ALL your TileBase assets here in order
-    [SerializeField] private List<TileSO> oreAssets; // Assign ALL your TileBase assets here in order
     [SerializeField] private Tilemap mainTilemap; // Main visual grid component for the game
     [SerializeField] private Tilemap overlayTilemapOre; // Main visual grid component for the game
     [SerializeField] private Tilemap overlayTilemapDamage; // for damaged tiles 
@@ -55,7 +45,6 @@ public class WorldManager : NetworkBehaviour {
     public override void OnStartServer() {
         base.OnStartServer();
         // Server-only initialization
-        InitializeTileMapping();
         WorldGen.Init(WorldGenSettings, this);
         //InstanceFinder.ServerManager.Spawn(ChunkManager.gameObject, Owner);
         //ChunkManager.Spawn(ChunkManager.gameObject, Owner);
@@ -71,77 +60,22 @@ public class WorldManager : NetworkBehaviour {
     }
     public override void OnStartClient() {
         base.OnStartClient();
-        InitializeTileMapping(); // Clients also need the ID maps to interpret RPCs
         Debug.Log("Start client");
         mainTilemap.ClearAllTiles(); // Start with a clear visual map
     }
-    // --- Initialization ---
-    void InitializeTileMapping() {
-        tileAssetToIdMap.Clear();
-        idToTileAssetMap.Clear();
-        oreToidAssetMap.Clear();
-        idToOreAssetMap.Clear();
-        // Assign IDs based on the order in the tileAssets list
-        for (int i = 0; i < tileAssets.Count; i++) {
-            if (tileAssets[i] == null) continue; // Skip null entries in the list itself
-            if (!tileAssetToIdMap.ContainsKey(tileAssets[i])) {
-                tileAssetToIdMap.Add(tileAssets[i], tileAssets[i].tileID);
-                idToTileAssetMap.Add(tileAssets[i].tileID, tileAssets[i]);
-                //Debug.Log($"Mapped Tile: {tileAssets[i].name} to ID: {i}");
-            } else {
-                Debug.LogWarning($"Duplicate TileBase '{tileAssets[i].name}' detected in tileAssets list. Only the first instance will be used for ID mapping.");
-            }
-        }
-        // Ores
-        for (int i = 0; i < oreAssets.Count; i++) {
-            if (oreAssets[i] == null) continue; // Skip null entries in the list itself
-            if (!oreToidAssetMap.ContainsKey(oreAssets[i])) {
-                oreToidAssetMap.Add(oreAssets[i], oreAssets[i].tileID);
-                idToOreAssetMap.Add(oreAssets[i].tileID, oreAssets[i]);
-                //Debug.Log($"Mapped Tile: {tileAssets[i].name} to ID: {i}");
-            } else {
-                Debug.LogWarning($"Duplicate Ore '{oreAssets[i].name}' detected in oreAssets list. Only the first instance will be used for ID mapping.");
-            }
-        }
-    }
+
     // --- RPC to tell all clients about a tile change ---
     [ObserversRpc(BufferLast = false)] // Don't buffer, could spam late joiners. Consider buffering important static tiles.
-    public void ObserversUpdateTile(Vector3Int cellPos, int newTileId) {
+    public void ObserversUpdateTile(Vector3Int cellPos, ushort newTileId) {
         // This runs on ALL clients (including the host)
-        TileBase tileToSet = GetTileFromID(newTileId);
+        TileSO tileToSet = App.ResourceSystem.GetTileByID(newTileId);
         mainTilemap.SetTile(cellPos, tileToSet); // Update local visuals
         if (newTileId == 0)
             overlayTilemapOre.SetTile(cellPos, tileToSet);
         // Optional: Update client-side data cache if you implement one.
         // Optional: Trigger particle effects, sound, etc. on the client here.
     }
-    public TileSO GetOreFromID(int id) {
-        if (idToOreAssetMap.TryGetValue(id, out TileSO tile)) {
-            return tile;
-        }
-        return null; // Fallback to air/null
-    }
-    public int GetIDFromOre(TileSO ore) {
-        if (oreToidAssetMap.TryGetValue(ore, out int id)) {
-            return id;
-        }
-        return 0;
-    }
-    public TileBase GetTileFromID(int id) {
-        if (idToTileAssetMap.TryGetValue(id, out TileBase tile)) {
-            return tile;
-        }
-        Debug.LogWarning($"Tile ID '{id}' not found in mapping. Returning null.");
-        return null; // Fallback to air/null
-    }
-    // --- Tile ID Helpers (Ensure these exist and are correct) ---
-    public int GetIDFromTile(TileBase tile) { // TODO needs to be moved to ResourceSystem
-        if (tileAssetToIdMap.TryGetValue(tile, out int id)) {
-            return id;
-        }
-        Debug.LogWarning($"Tile '{tile.name}' not found in mapping. Returning 0.");
-        return 0; // Fallback to air/null ID
-    }
+
     public void ToggleWorldTilemap(bool enableWorld) {
         mainTilemap.GetComponent<TilemapRenderer>().enabled = enableWorld;
         overlayTilemapOre.GetComponent<TilemapRenderer>().enabled = enableWorld;
@@ -165,17 +99,19 @@ public class WorldManager : NetworkBehaviour {
 
         // 1st choice: ore overlay
         TileSO ore = overlayTilemapOre.GetTile(cellPos) as TileSO;
-        if (ore != null)
+        if (ore != null) {
+            Debug.Log("Returning ore");
             return ore;
+        }
 
         // fallback: main map
         return mainTilemap.GetTile(cellPos) as TileSO;
     }
 
-    public void SetTileAtWorldPos(Vector3 worldPos, TileBase tileToSet) {
+    public void SetTileAtWorldPos(Vector3 worldPos, TileSO tileToSet) {
         Vector3Int cellPos = WorldToCell(worldPos);
         // Let chunk manager handle it
-        ChunkManager.ServerRequestModifyTile(cellPos, tileAssetToIdMap[tileToSet]);
+        ChunkManager.ServerRequestModifyTile(cellPos, App.ResourceSystem.GetIDByTile(tileToSet));
     }   
     
     // Gets the world coordinate of the center of a specific cell

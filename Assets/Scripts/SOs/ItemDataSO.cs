@@ -2,11 +2,12 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ItemDataSO", menuName = "ScriptableObjects/ItemDataSO", order =7)]
-public class ItemData : ScriptableObject {
+public class ItemData : ScriptableObject, IIdentifiable {
     [Header("Info")]
     public string itemName = "New Item";
     public string description = "Item Description";
     public Sprite icon = null;
+    public ushort ID;
 
     [Header("Stacking")]
     public int maxStackSize = 1; // Default to 1 for non-stackable items
@@ -18,6 +19,9 @@ public class ItemData : ScriptableObject {
     public bool isUsable = false;
     public bool isConsumable = true; // Is it used up after one use?
     public int usageCooldown = 0;
+    
+    ushort IIdentifiable.ID => ID;
+
     public virtual bool Use(GameObject user) {
         if (isUsable) {
             Debug.LogWarning($"Using {itemName} - Base Use() called. Override in derived class for specific effect!");

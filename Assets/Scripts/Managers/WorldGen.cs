@@ -65,7 +65,7 @@ public static class WorldGen {
                 int worldX = chunkOriginCell.x + x;
                 int worldY = chunkOriginCell.y + y;
 
-                TileBase tile = DetermineBaseTerrainAndBiome(worldX, worldY, out BiomeType biomeType);
+                TileSO tile = DetermineBaseTerrainAndBiome(worldX, worldY, out BiomeType biomeType);
                 chunkData.tiles[x, y] = tile; // Assign base tile
 
                 // Store biome info if needed later (not doing yet)
@@ -91,7 +91,7 @@ public static class WorldGen {
     }
     // 0 Air, 1 Stone, 
     // --- Pass 1 Helper: Determine Base Terrain & Primary Biome ---
-    private static TileBase DetermineBaseTerrainAndBiome(int worldX, int worldY, out BiomeType primaryBiome) {
+    private static TileSO DetermineBaseTerrainAndBiome(int worldX, int worldY, out BiomeType primaryBiome) {
         primaryBiome = BiomeType.None; // Default to no specific biome
 
         // Surface
@@ -108,7 +108,7 @@ public static class WorldGen {
             if (worldY >= boundaryY) {
                 // Above or at the noisy surface level - it's water (or air if you prefer)
                 primaryBiome = BiomeType.Surface;
-                return worldmanager.GetTileFromID(0);//_settings.surfaceWaterTile ?? _settings.mainWaterTile; // Use specified surface water or fallback
+                return App.ResourceSystem.GetTileByID(0);//_settings.surfaceWaterTile ?? _settings.mainWaterTile; // Use specified surface water or fallback
             }
             // If below the noisy surface level, proceed to trench/biome checks
         }
@@ -121,7 +121,7 @@ public static class WorldGen {
 
         if (Mathf.Abs(worldX) < noisyHalfWidth && Mathf.Abs(worldY) < maxDepth) {
             primaryBiome = BiomeType.Trench;
-            return worldmanager.GetTileFromID(0); // Inside main trench
+            return App.ResourceSystem.GetTileByID(0); // Inside main trench
         }
 
         // --- 3. Biome Check (Priority Based - Uses Sorted List) ---
@@ -152,11 +152,11 @@ public static class WorldGen {
                 // --- Match Found! ---
                 // This is the highest priority biome (lowest StartY checked first) that contains this point.
                 primaryBiome = biome.biomeType;
-                return biome.defaultGroundTile;
+               // return biome.defaultGroundTile; // TODODODODODODO
             }
         }
         // Fallback if outside all biome influences
-        return worldmanager.GetTileFromID(1);
+        return App.ResourceSystem.GetTileByID(1);
     }
 
 
@@ -213,7 +213,7 @@ public static class WorldGen {
                 // --- Apply Threshold ---
                 if (caveValue < settingsToUse.caveThreshold) {
                     // Replace rock with cave water
-                    TileBase caveTile = worldmanager.GetTileFromID(0); 
+                    TileSO caveTile = App.ResourceSystem.GetTileByID(0); 
                     chunkData.tiles[x, y] = caveTile;
                 }
             }
@@ -234,7 +234,7 @@ public static class WorldGen {
                     TileBase oreTile = DetermineOre(worldX, worldY, biomeName);
                     if (oreTile != null) {
                         //Debug.Log($"Generating ore at: X: {worldX} Y: {worldY}");
-                        chunkData.oreID[x, y] = worldmanager.GetIDFromOre(oreTile as TileSO);
+                        chunkData.oreID[x, y] = App.ResourceSystem.GetIDByTile(oreTile as TileSO); // Todo will probably not work
                     }
                 }
             }
@@ -504,7 +504,7 @@ public static class WorldGen {
         }
     }
     private static bool IsRock(TileBase tile) {
-        return tile != null && (tile != worldmanager.GetTileFromID(0) && tile != worldmanager.GetTileFromID(2));
+        return tile != null && (tile != App.ResourceSystem.GetTileByID(0) && tile != App.ResourceSystem.GetTileByID(2));
         // Add checks for air tiles if you have them
     }
 
@@ -529,7 +529,7 @@ public static class WorldGen {
     // private static bool IsRock(TileBase tile) { /* ... your logic ... */ }
     // And a helper for IsEmpty (the opposite of IsRock, or specific non-blocking tiles)
     private static bool IsEmptyOrNonBlocking(TileBase tile) {
-        return tile == null || tile == worldmanager.GetTileFromID(0) || !IsRock(tile); // Adjust for your definition of empty
+        return tile == null || tile == App.ResourceSystem.GetTileByID(0) || !IsRock(tile); // Adjust for your definition of empty
     }
     private static bool IsAdjacentWater(ChunkData chunkData, int x, int y) {
         int width = chunkData.tiles.GetLength(0);
@@ -545,7 +545,7 @@ public static class WorldGen {
             // Check bounds (simple version, doesn't check neighbour chunks)
             if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
                 TileBase neighborTile = chunkData.tiles[nx, ny];
-                if (neighborTile == worldmanager.GetTileFromID(0)){//|| neighborTile == worldGenerator.caveWaterTile) {
+                if (neighborTile == App.ResourceSystem.GetTileByID(0)) {//|| neighborTile == worldGenerator.caveWaterTile) {
                     return true;
                 }
             }

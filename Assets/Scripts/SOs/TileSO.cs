@@ -1,19 +1,21 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using System.Collections.Generic; 
+using System.Collections.Generic;
+using Sirenix.OdinInspector;
 
 [CreateAssetMenu(fileName = "TileSO", menuName = "ScriptableObjects/TileSO")]
-public class TileSO : RuleTile 
-{
+public class TileSO : RuleTile, IIdentifiable {
     [Header("Game Properties")]
-    public int maxDurability = 10; // How many "hits" it takes to break. -1 means non solid.
-    public int tileID;
+    public short maxDurability = 10; // How many "hits" it takes to break. -1 means non solid.
+    ushort IIdentifiable.ID => ID;
+    public ushort ID; 
     public bool IsSolid => maxDurability != -1;
+
+
     public DropTableSO dropTable;   // Assign the ScriptableObject defining drops
     public GameObject breakEffectPrefab; // Optional: particle effect on break
     public GameObject hitEffectPrefab; // Optional: particle effect on hit
     public List<TileBase> breakVersions;
-    public BiomeType associatedBiome = BiomeType.None;
     // We might add other properties here later:
     // public ToolType requiredTool;
     // public int minToolLevel;

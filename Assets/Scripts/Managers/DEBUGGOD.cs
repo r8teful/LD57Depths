@@ -49,14 +49,14 @@ public class DEBUGGOD : MonoBehaviour
             Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector3Int targetCell = _worldManager.WorldToCell(mouseWorldPosition);
 
-            int damageAmount = 1; // Replace with player tool value
+            short damageAmount = 1; // Replace with player tool value
             CmdRequestDamageTile(targetCell, damageAmount);
 
             yield return new WaitForSeconds(0.01f); 
         }
     }
     //  [ServerRpc]
-    private void CmdRequestDamageTile(Vector3Int cellPosition, int damageAmount) {
+    private void CmdRequestDamageTile(Vector3Int cellPosition, short damageAmount) {
         if (_worldManager != null) {
             // TODO: Server-side validation (range, tool, cooldowns, etc.)
 

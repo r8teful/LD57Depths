@@ -334,7 +334,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             }
         }
     }
-    public PersistentEntityData ServerAddNewPersistentEntity(int id, Vector3Int pos, Quaternion rot, Vector3 scale) {
+    public PersistentEntityData ServerAddNewPersistentEntity(ushort id, Vector3Int pos, Quaternion rot, Vector3 scale) {
         ulong unqiueID = GetNextPersistentEntityId();
         PersistentEntityData newEntityData = new PersistentEntityData(unqiueID, id, pos, rot, scale);
         persistentEntityDatabase.Add(unqiueID, newEntityData);

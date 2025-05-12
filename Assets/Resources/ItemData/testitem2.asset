@@ -15,5 +15,9 @@ MonoBehaviour:
   itemName: testitems
   description: Item Description
   icon: {fileID: 5380471612366557246, guid: 42885d966f1bcd743bb07bfac8a1c13c, type: 3}
+  ID: 2
   maxStackSize: 6
   droppedPrefab: {fileID: 0}
+  isUsable: 0
+  isConsumable: 1
+  usageCooldown: 0

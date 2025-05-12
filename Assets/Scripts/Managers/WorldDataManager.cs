@@ -5,10 +5,10 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 [System.Serializable]
 public class ChunkSaveData {
-    public List<int> tileIds; // Flattened list of Tile IDs
-    public List<int> tileDurabilities; // Save durability state
-    public ChunkSaveData() { tileIds = new List<int>(); }
-    public ChunkSaveData(int capacity) { tileIds = new List<int>(capacity); }
+    public List<ushort> tileIds; // Flattened list of Tile IDs
+    public List<short> tileDurabilities; // Save durability state
+    public ChunkSaveData() { tileIds = new List<ushort>(); }
+    public ChunkSaveData(int capacity) { tileIds = new List<ushort>(capacity); }
     // Todo add entities
 }
 
@@ -31,7 +31,6 @@ public class WorldDataManager {
 
     public void SaveWorld(Dictionary<Vector2Int, ChunkData> worldChunks, Vector3 playerPos) {
         WorldSaveData saveData = new WorldSaveData();
-        var tileAssetToIdMap = _worldManager.GetTileToID();
         var chunkSize = _chunkManager.GetChunkSize();
         // --- Save Chunks ---
         foreach (KeyValuePair<Vector2Int, ChunkData> chunkPair in worldChunks) {
@@ -44,9 +43,10 @@ public class WorldDataManager {
                 ChunkSaveData chunkSave = new ChunkSaveData(chunkSize * chunkSize);
                 for (int y = 0; y < chunkSize; y++) {
                     for (int x = 0; x < chunkSize; x++) {
-                        TileBase tile = chunkData.tiles[x, y];
-                        if (tileAssetToIdMap.TryGetValue(tile, out int tileId)) {
-                            chunkSave.tileIds.Add(tileId);
+                        TileSO tile = chunkData.tiles[x, y];
+                        var tileID = App.ResourceSystem.GetIDByTile(tile);
+                        if (tileID != ResourceSystem.InvalidID) {
+                            chunkSave.tileIds.Add(tileID);
                             chunkSave.tileDurabilities.Add(chunkData.tileDurability[x, y]);
                         } else {
                             Debug.LogWarning($"Tile '{tile?.name ?? "NULL"}' at [{x},{y}] in chunk {chunkCoord} has no ID mapping! Saving as air (ID 0).");
@@ -92,8 +92,6 @@ public class WorldDataManager {
 
                 if (loadData != null && loadData.savedChunks != null) {
                     _worldManager.ClearAllData();
-
-                    var idToTileAssetMap = _worldManager.GetIDToTile();
                     var chunkSize = _chunkManager.GetChunkSize();
                     foreach (KeyValuePair<string, ChunkSaveData> savedChunkPair in loadData.savedChunks) {
                         // Parse the string key back to Vector2Int
@@ -109,8 +107,9 @@ public class WorldDataManager {
                                 int tileIndex = 0;
                                 for (int localY = 0; localY < chunkSize; localY++) {
                                     for (int localX = 0; localX < chunkSize; localX++) {
-                                        int tileId = chunkSave.tileIds[tileIndex];
-                                        if (idToTileAssetMap.TryGetValue(tileId, out TileBase tileAsset)) {
+                                        ushort tileId = chunkSave.tileIds[tileIndex];
+                                        var tileAsset = App.ResourceSystem.GetTileByID(tileId);
+                                        if (tileAsset != null) {
                                             newChunk.tiles[localX, localY] = tileAsset;
                                             newChunk.tileDurability[localX, localY] = chunkSave.tileDurabilities[tileIndex];
                                             tileIndex++;

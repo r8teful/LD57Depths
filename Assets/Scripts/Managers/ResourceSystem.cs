@@ -17,6 +17,9 @@ public class ResourceSystem {
     private Dictionary<TileSO, ushort> _idLookupByTile;
     private Dictionary<ushort, ItemData> _itemLookupByID;
     private Dictionary<ItemData, ushort> _idLookupByItem;
+
+    private Dictionary<ushort, EntityBaseSO> _entityLookupByID;
+    private Dictionary<EntityBaseSO, ushort> _idLookupByEntity;
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
     public void AssembleResources() {
    
@@ -29,61 +32,38 @@ public class ResourceSystem {
         Materials = Resources.LoadAll<Material>("Materials").ToList(); 
         _materialDict = Materials.ToDictionary(r => r.name, r => r);
 
-        InitializeLookups();
+        InitializeLookup("ItemData", out _itemLookupByID, out _idLookupByItem);
+        InitializeLookup("TileData", out _tileLookupByID, out _idLookupByTile);
+        InitializeLookup("EntityData", out _entityLookupByID, out _idLookupByEntity);
     }
-    private void InitializeLookups() {
-        _itemLookupByID = new Dictionary<ushort, ItemData>();
-        _idLookupByItem = new Dictionary<ItemData, ushort>();
+   
+    private void InitializeLookup<T>(string resourcePath, out Dictionary<ushort, T> lookupByID,
+        out Dictionary<T, ushort> idByLookup) where T : Object, IIdentifiable { lookupByID = new Dictionary<ushort, T>(); idByLookup = new Dictionary<T, ushort>();
 
-        var allItems = Resources.LoadAll<ItemData>("ItemData").ToList();
-        for (int i = 0; i < allItems.Count; i++) {
-            ItemData item = allItems[i];
-            if (item == null) {
-                Debug.LogWarning($"Found a NULL ItemData entry at index {i}. Skipping.");
+        var allAssets = Resources.LoadAll<T>(resourcePath).ToList();
+        for (int i = 0; i < allAssets.Count; i++) {
+            T asset = allAssets[i];
+            if (asset == null) {
+                Debug.LogWarning($"Found a NULL {typeof(T).Name} entry at index {i}. Skipping.");
                 continue;
             }
-            ushort id = (ushort)i;
-            if (_itemLookupByID.ContainsKey(id)) {
-                Debug.LogError($"ItemDatabase conflict: ID {id} (index {i}) is already assigned to '{_itemLookupByID[id].name}'. Duplicate ItemData '{item.name}' or internal error?");
-                continue; // Skip duplicate ID assignment
-            }
-            if (_idLookupByItem.ContainsKey(item)) {
-                Debug.LogError($"ItemDatabase conflict: ItemData '{item.name}' is already in the database with ID {_idLookupByItem[item]}. Ensure ItemDatas are unique in the list.");
-                continue; // Skip duplicate item assignment
-            }
-            _itemLookupByID.Add(id, item);
-            _idLookupByItem.Add(item, id);
-        }
-        Debug.Log($"ItemDatabase Initialized with {_itemLookupByID.Count} items.");
-
-        //  --- TILES ---
-        _tileLookupByID = new Dictionary<ushort, TileSO>();
-        _idLookupByTile = new Dictionary<TileSO, ushort>();
-        var allTiles = Resources.LoadAll<TileSO>("Tiles").ToList();
-        for (int i = 0; i < allTiles.Count; i++) {
-            TileSO tile = allTiles[i];
-            if (tile == null) {
-                Debug.LogWarning($"Found a NULL ItemData entry at index {i}. Skipping.");
+            ushort id = asset.ID;
+            if (lookupByID.ContainsKey(id)) {
+                Debug.LogError($"{typeof(T).Name}Database conflict: ID {id} (index {i}) is already assigned to '{lookupByID[id].name}'. Duplicate or internal error?");
                 continue;
             }
-            ushort id = (ushort)i;
-            if (_tileLookupByID.ContainsKey(id)) {
-                Debug.LogError($"ItemDatabase conflict: ID {id} (index {i}) is already assigned to '{_tileLookupByID[id].name}'. Duplicate ItemData '{tile.name}' or internal error?");
-                continue; // Skip duplicate ID assignment
+            if (idByLookup.ContainsKey(asset)) {
+                Debug.LogError($"{typeof(T).Name}Database conflict: '{asset.name}' is already in the database with ID {idByLookup[asset]}. Ensure assets are unique.");
+                continue;
             }
-            if (_idLookupByTile.ContainsKey(tile)) {
-                Debug.LogError($"ItemDatabase conflict: ItemData '{tile.name}' is already in the database with ID {_idLookupByTile[tile]}. Ensure ItemDatas are unique in the list.");
-                continue; // Skip duplicate item assignment
-            }
-            _tileLookupByID.Add(id, tile);
-            _idLookupByTile.Add(tile, id);
+            lookupByID.Add(id, asset);
+            idByLookup.Add(asset, id);
         }
-        Debug.Log($"TileDatabase Initialized with {_tileLookupByID.Count} items.");
+        Debug.Log($"{typeof(T).Name}Database Initialized with {lookupByID.Count} items.");
     }
-
     public ItemData GetItemByID(ushort id) {
         if (id == InvalidID || !_itemLookupByID.TryGetValue(id, out ItemData item)) {
-            if (id != InvalidID) Debug.LogWarning($"Item ID {id} not found in ItemDatabase.");
+            Debug.LogWarning($"Item ID {id} not found in ItemDatabase.");
             return null;
         }
         return item;
@@ -91,7 +71,7 @@ public class ResourceSystem {
 
     public ushort GetIDByItem(ItemData item) {
         if (item == null || !_idLookupByItem.TryGetValue(item, out ushort id)) {
-            if (item != null) Debug.LogWarning($"ItemData '{item.name}' not found in ItemDatabase. Make sure it's added to the database asset.");
+            Debug.LogWarning($"ItemData '{item.name}' not found in ItemDatabase. Make sure it's added to the database asset.");
             return InvalidID;
         }
         return id;
@@ -99,11 +79,24 @@ public class ResourceSystem {
 
     public TileSO GetTileByID(ushort id) {
         if (id == InvalidID || !_tileLookupByID.TryGetValue(id, out TileSO tile)) {
-            if (id != InvalidID)
-                Debug.LogWarning($"Item ID {id} not found in ItemDatabase.");
+            Debug.LogWarning($"Item ID {id} not found in ItemDatabase.");
             return null;
         }
         return tile;
+    }
+    public ushort GetIDByTile(TileSO tile) {
+        if (tile == null || !_idLookupByTile.TryGetValue(tile, out ushort id)) {
+            Debug.LogWarning($"TileData '{tile.name}' not found in ItemDatabase. Make sure it's added to the database asset.");
+            return InvalidID;
+        }
+        return id;
+    }
+    public EntityBaseSO GetEntityByID(ushort id) {
+        if (id == InvalidID || !_entityLookupByID.TryGetValue(id, out EntityBaseSO entity)) {
+            Debug.LogWarning($"Item ID {id} not found in ItemDatabase.");
+            return null;
+        }
+        return entity;
     }
     public GameObject GetPrefab(string s) => _prefabDict[s];
     public Sprite GetSprite(string s) => _spriteDict[s];
