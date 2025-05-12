@@ -65,8 +65,8 @@ public static class WorldGen {
                 int worldX = chunkOriginCell.x + x;
                 int worldY = chunkOriginCell.y + y;
 
-                TileSO tile = DetermineBaseTerrainAndBiome(worldX, worldY, out BiomeType biomeType);
-                chunkData.tiles[x, y] = tile; // Assign base tile
+                ushort TileID = DetermineBaseTerrainAndBiome(worldX, worldY, out BiomeType biomeType);
+                chunkData.tiles[x, y] = TileID; // Assign base tile
 
                 // Store biome info if needed later (not doing yet)
                 chunkData.biomeID[(byte)x, (byte)y] = (byte)biomeType;
@@ -91,7 +91,7 @@ public static class WorldGen {
     }
     // 0 Air, 1 Stone, 
     // --- Pass 1 Helper: Determine Base Terrain & Primary Biome ---
-    private static TileSO DetermineBaseTerrainAndBiome(int worldX, int worldY, out BiomeType primaryBiome) {
+    private static ushort DetermineBaseTerrainAndBiome(int worldX, int worldY, out BiomeType primaryBiome) {
         primaryBiome = BiomeType.None; // Default to no specific biome
 
         // Surface
@@ -108,7 +108,7 @@ public static class WorldGen {
             if (worldY >= boundaryY) {
                 // Above or at the noisy surface level - it's water (or air if you prefer)
                 primaryBiome = BiomeType.Surface;
-                return App.ResourceSystem.GetTileByID(0);//_settings.surfaceWaterTile ?? _settings.mainWaterTile; // Use specified surface water or fallback
+                return 0;//_settings.surfaceWaterTile ?? _settings.mainWaterTile; // Use specified surface water or fallback
             }
             // If below the noisy surface level, proceed to trench/biome checks
         }
@@ -121,7 +121,7 @@ public static class WorldGen {
 
         if (Mathf.Abs(worldX) < noisyHalfWidth && Mathf.Abs(worldY) < maxDepth) {
             primaryBiome = BiomeType.Trench;
-            return App.ResourceSystem.GetTileByID(0); // Inside main trench
+            return 0; // Inside main trench
         }
 
         // --- 3. Biome Check (Priority Based - Uses Sorted List) ---
@@ -156,7 +156,7 @@ public static class WorldGen {
             }
         }
         // Fallback if outside all biome influences
-        return App.ResourceSystem.GetTileByID(1);
+        return 1;
     }
 
 
@@ -213,8 +213,7 @@ public static class WorldGen {
                 // --- Apply Threshold ---
                 if (caveValue < settingsToUse.caveThreshold) {
                     // Replace rock with cave water
-                    TileSO caveTile = App.ResourceSystem.GetTileByID(0); 
-                    chunkData.tiles[x, y] = caveTile;
+                    chunkData.tiles[x, y] = 0;
                 }
             }
         }
@@ -224,8 +223,8 @@ public static class WorldGen {
     private static void SpawnOresInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
         for (int y = 0; y < chunkSize; y++) {
             for (int x = 0; x < chunkSize; x++) {
-                TileBase currentTile = chunkData.tiles[x, y];
-                if (IsRock(currentTile)) // Check if it's a valid tile for ore placement
+                ushort currentTileID = chunkData.tiles[x, y];
+                if (IsRock(currentTileID)) // Check if it's a valid tile for ore placement
                 {
                     int worldX = chunkOriginCell.x + x;
                     int worldY = chunkOriginCell.y + y;
@@ -341,9 +340,9 @@ public static class WorldGen {
         HashSet<Vector2Int> occupiedAnchors = new HashSet<Vector2Int>();
         for (int y = 0; y < chunkSize; y++) {
             for (int x = 0; x < chunkSize; x++) {
-                TileBase anchorTile = chunkData.tiles[x, y];
+                ushort anchorTileID = chunkData.tiles[x, y];
                 // The ANCHOR TILE ITSELF must usually be solid for attachment
-                if (!IsRock(anchorTile)) {
+                if (!IsRock(anchorTileID)) {
                     continue;
                 }
                 if (occupiedAnchors.Contains(new Vector2Int(x, y))) {
@@ -382,7 +381,7 @@ public static class WorldGen {
                     System.Func<Vector2Int[], bool> checkRelativeEmpty = (offsets) =>
                     {
                         foreach (var offset in offsets) {
-                            TileBase tileToCheck = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
+                            ushort tileToCheck = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
                                                                            x + offset.x, y + offset.y, cm);
                             if (!IsEmptyOrNonBlocking(tileToCheck))
                                 return false; // Needs to be empty
@@ -397,7 +396,7 @@ public static class WorldGen {
                                 // Check space above for minCeilingHeight
                                 bool groundClear = true;
                                 for (int h = 1; h <= entityDef.minHeightSpace; ++h) {
-                                    TileBase tileAbove = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
+                                    ushort tileAbove = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
                                                                                  x, y + h, cm);
                                     if (!IsEmptyOrNonBlocking(tileAbove)) {
                                         groundClear = false;
@@ -415,7 +414,7 @@ public static class WorldGen {
                                 bool ceilingClear = true;
                                 for (int h = 1; h <= entityDef.minHeightSpace; ++h) // minCeilingHeight here means min clearance *below*
                                 {
-                                    TileBase tileBelow = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
+                                    ushort tileBelow = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
                                                                                  x, y - h, cm);
                                     if (!IsEmptyOrNonBlocking(tileBelow)) {
                                         ceilingClear = false;
@@ -464,7 +463,7 @@ public static class WorldGen {
                         continue;
 
                     // --- Additional checks (like water adjacency) if still relevant ---
-                    bool isWaterSpawn = !IsRock(anchorTile); // This check is a bit confusing here since anchor is solid
+                    bool isWaterSpawn = !IsRock(anchorTileID); // This check is a bit confusing here since anchor is solid
                                                              // Let's assume this was for entities spawning IN water vs. on land.
                                                              // For wall/ceiling entities, it might mean "anchor is adjacent to water".
 
@@ -475,9 +474,9 @@ public static class WorldGen {
                         new Vector2Int(0,1), new Vector2Int(0,-1), new Vector2Int(1,0), new Vector2Int(-1,0)
                     };
                         foreach (var offset in cardinalOffsets) {
-                            TileBase adjacentTile = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
+                            ushort adjacentTileID = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
                                                                             x + offset.x, y + offset.y, cm);
-                            if (adjacentTile != null && !IsRock(adjacentTile) /* && IsWater(adjacentTile) */) // You might need an IsWater check
+                            if (adjacentTileID != ResourceSystem.InvalidID && !IsRock(adjacentTileID) /* && IsWater(adjacentTile) */) // You might need an IsWater check
                             {
                                 adjacentToWater = true;
                                 break;
@@ -503,15 +502,12 @@ public static class WorldGen {
             }
         }
     }
-    private static bool IsRock(TileBase tile) {
-        return tile != null && (tile != App.ResourceSystem.GetTileByID(0) && tile != App.ResourceSystem.GetTileByID(2));
+    private static bool IsRock(ushort tileID) {
+        return tileID != ResourceSystem.InvalidID && tileID != ResourceSystem.AirID;
         // Add checks for air tiles if you have them
     }
 
-    // (Place this in your WorldManager or a static utility class)
-    // Assumes worldmanager.GetTileAtWorldPos(worldX, worldY) exists and can fetch from any loaded chunk
-    // or returns null/empty if outside loaded world.
-    private static TileBase GetTileFromChunkOrWorld(ChunkData currentChunkData, Vector3Int currentChunkOriginCell, int chunkSize,
+    private static ushort GetTileFromChunkOrWorld(ChunkData currentChunkData, Vector3Int currentChunkOriginCell, int chunkSize,
                                                     int localX, int localY, ChunkManager cm) {
         if (localX >= 0 && localX < chunkSize && localY >= 0 && localY < chunkSize) {
             return currentChunkData.tiles[localX, localY];
@@ -525,12 +521,11 @@ public static class WorldGen {
         }
     }
 
-    // You'll also need IsRock. Let's assume it exists and takes a TileBase.
-    // private static bool IsRock(TileBase tile) { /* ... your logic ... */ }
-    // And a helper for IsEmpty (the opposite of IsRock, or specific non-blocking tiles)
-    private static bool IsEmptyOrNonBlocking(TileBase tile) {
-        return tile == null || tile == App.ResourceSystem.GetTileByID(0) || !IsRock(tile); // Adjust for your definition of empty
+    // Some non-blocking tiles like vines or something might be non blocking later
+    private static bool IsEmptyOrNonBlocking(ushort tileID) {
+        return !IsRock(tileID); 
     }
+
     private static bool IsAdjacentWater(ChunkData chunkData, int x, int y) {
         int width = chunkData.tiles.GetLength(0);
         int height = chunkData.tiles.GetLength(0);
@@ -544,8 +539,8 @@ public static class WorldGen {
 
             // Check bounds (simple version, doesn't check neighbour chunks)
             if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                TileBase neighborTile = chunkData.tiles[nx, ny];
-                if (neighborTile == App.ResourceSystem.GetTileByID(0)) {//|| neighborTile == worldGenerator.caveWaterTile) {
+                ushort neighborTile = chunkData.tiles[nx, ny];
+                if (neighborTile == ResourceSystem.AirID) {
                     return true;
                 }
             }

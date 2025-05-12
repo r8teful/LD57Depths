@@ -43,13 +43,12 @@ public class WorldDataManager {
                 ChunkSaveData chunkSave = new ChunkSaveData(chunkSize * chunkSize);
                 for (int y = 0; y < chunkSize; y++) {
                     for (int x = 0; x < chunkSize; x++) {
-                        TileSO tile = chunkData.tiles[x, y];
-                        var tileID = App.ResourceSystem.GetIDByTile(tile);
+                        var tileID = chunkData.tiles[x, y];
                         if (tileID != ResourceSystem.InvalidID) {
                             chunkSave.tileIds.Add(tileID);
                             chunkSave.tileDurabilities.Add(chunkData.tileDurability[x, y]);
                         } else {
-                            Debug.LogWarning($"Tile '{tile?.name ?? "NULL"}' at [{x},{y}] in chunk {chunkCoord} has no ID mapping! Saving as air (ID 0).");
+                            Debug.LogWarning($"Tile at [{x},{y}] in chunk {chunkCoord} has no ID mapping! Saving as air (ID 0).");
                             chunkSave.tileIds.Add(0); // Save as air/null ID
                         }
                     }
@@ -108,14 +107,13 @@ public class WorldDataManager {
                                 for (int localY = 0; localY < chunkSize; localY++) {
                                     for (int localX = 0; localX < chunkSize; localX++) {
                                         ushort tileId = chunkSave.tileIds[tileIndex];
-                                        var tileAsset = App.ResourceSystem.GetTileByID(tileId);
-                                        if (tileAsset != null) {
-                                            newChunk.tiles[localX, localY] = tileAsset;
+                                        if (tileId != ResourceSystem.InvalidID) {
+                                            newChunk.tiles[localX, localY] = tileId;
                                             newChunk.tileDurability[localX, localY] = chunkSave.tileDurabilities[tileIndex];
                                             tileIndex++;
                                         } else {
                                             Debug.LogWarning($"Unknown Tile ID {tileId} found in chunk {chunkCoord} during load. Setting to null/air.");
-                                            newChunk.tiles[localX, localY] = null; // Or airTile if not null
+                                            newChunk.tiles[localX, localY] = 0;
                                         }
                                     }
                                 }

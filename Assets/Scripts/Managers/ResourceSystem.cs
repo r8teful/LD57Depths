@@ -21,6 +21,7 @@ public class ResourceSystem {
     private Dictionary<ushort, EntityBaseSO> _entityLookupByID;
     private Dictionary<EntityBaseSO, ushort> _idLookupByEntity;
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
+    public const ushort AirID = 0; // Air is ALWAYS 0 
     public void AssembleResources() {
    
         Prefabs = Resources.LoadAll<GameObject>("Prefabs").ToList();

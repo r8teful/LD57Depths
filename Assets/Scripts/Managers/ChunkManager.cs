@@ -8,7 +8,7 @@ using Sirenix.OdinInspector;
 using UnityEditor;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
-    public TileSO[,] tiles; // The ground layer 
+    public ushort[,] tiles; // The ground layer 
     public ushort[,] oreID;      // Second "ore" layer
     public short[,] tileDurability; // Third "dmg" layer
     [TableMatrix(DrawElementMethod = "DrawElement")]
@@ -16,7 +16,7 @@ public class ChunkData {
     public bool isModified = false; // Flag to track if chunk has changed since load/generation
     public bool hasBeenGenerated = false; // Flag to prevent regenerating loaded chunks
     public ChunkData(int chunkSizeX, int chunkSizeY) {
-        tiles = new TileSO[chunkSizeX, chunkSizeY];
+        tiles = new ushort[chunkSizeX, chunkSizeY];
         tileDurability = new short[chunkSizeX, chunkSizeY];
         for (int y = 0; y < chunkSizeY; ++y) {
             for (int x = 0; x < chunkSizeX; ++x) {
@@ -192,7 +192,7 @@ public class ChunkManager : NetworkBehaviour {
             List<short> durabilities = new List<short>(chunkSize * chunkSize);
             for (int y = 0; y < chunkSize; y++) {
                 for (int x = 0; x < chunkSize; x++) {
-                    tileIds.Add(App.ResourceSystem.GetIDByTile(chunkData.tiles[x, y]));
+                    tileIds.Add(chunkData.tiles[x, y]);
                     durabilities.Add(chunkData.tileDurability[x, y]);
                     oreIDs.Add(chunkData.oreID[x, y]); 
                 }
@@ -226,6 +226,9 @@ public class ChunkManager : NetworkBehaviour {
         }
         _worldManager.SetTiles(chunkBounds, tilesToSet);
         for (int i = 0; i < OreIDs.Count; i++) {
+            // Don't add if there is no ore, TODO, we could just shorten the array by filtering out invalidID before we get here
+            if (OreIDs[i] == ResourceSystem.InvalidID)
+                continue; // skip
             oresToSet[i] = App.ResourceSystem.GetTileByID(OreIDs[i]);
         }
         _worldManager.SetOres(chunkBounds, oresToSet);
@@ -308,7 +311,6 @@ public class ChunkManager : NetworkBehaviour {
     public void ServerRequestModifyTile(Vector3Int cellPos, ushort newTileId) {
         // Must run on server
         if (!IsServerInitialized) return;
-        TileSO tileToSet = App.ResourceSystem.GetTileByID(newTileId);
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
 
         // Get the chunk data on the server
@@ -327,13 +329,13 @@ public class ChunkManager : NetworkBehaviour {
 
         if (localX >= 0 && localX < chunkSize && localY >= 0 && localY < chunkSize) {
             // Check if the tile is actually changing
-            if (chunk.tiles[localX, localY] != tileToSet) {
+            if (chunk.tiles[localX, localY] != newTileId) {
                 // --- Update SERVER data FIRST ---
-                chunk.tiles[localX, localY] = tileToSet;
+                chunk.tiles[localX, localY] = newTileId;
                 chunk.isModified = true; // Mark chunk as modified for saving
                 chunk.tileDurability[localX, localY] = -1; // Reset to default state
                 // --- Update Server's OWN visuals (optional but good for host) ---
-                _worldManager.SetTile(cellPos, tileToSet);
+                _worldManager.SetTile(cellPos, newTileId);
                 // --- BROADCAST change to ALL clients ---
                 ObserversUpdateTileDurability(cellPos, -1);
                 _worldManager.ObserversUpdateTile(cellPos, newTileId); // TODO check if this works it might break because we call it in the parent
@@ -381,10 +383,10 @@ public class ChunkManager : NetworkBehaviour {
 
 
         // --- Get Tile Type & Properties ---
-        TileBase tileBase = chunk.tiles[localX, localY];
+        TileSO targetTile = App.ResourceSystem.GetTileByID(chunk.tiles[localX, localY]);
         var ore = App.ResourceSystem.GetTileByID(chunk.oreID[localX, localY]);
         // if ore use Ore tilebase, not stone
-        if (tileBase is TileSO targetTile) {
+        if (targetTile != null) {
             if (ore != null) targetTile = ore;
             Debug.Log("Processing damage!!: ");
             if (targetTile.maxDurability <= 0) return; // Indestructible tile
@@ -429,8 +431,7 @@ public class ChunkManager : NetworkBehaviour {
                     ObserversSpawnEffect(targetTile.hitEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0));
             }
         } else {
-            // Tile is not a 'CustomTile' - maybe it's indestructible base Tile?
-            // Decide how to handle - ignore damage, or maybe break immediately if base tile?
+            Debug.LogError("ResourceSystem returned NULL tile");
         }
     }
     // --- Server-side method to handle spawning drops ---
@@ -483,17 +484,24 @@ public class ChunkManager : NetworkBehaviour {
 
         _worldManager.SetOverlayTile(cellPos, crackTile);
     }
-    // Activates a chunk (makes it visible), pulling data from ChunkData
+    // Activates a chunk (makes it visible), pulling data from ChunkData, this might be usefull later if we want to see the chunk
+    // Without spawning or doing any of the loading, (maybe for maps?)
     void ActivateChunk(Vector2Int chunkCoord, ChunkData chunkData) {
         // If chunk was loaded but never visually activated yet, ensure tiles are set
         if (!activeChunks.Contains(chunkCoord)) {
             Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkCoord);
             BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, chunkSize, chunkSize, 1);
-            TileBase[] tilesToSet = new TileBase[chunkSize * chunkSize];
+            TileSO[] tilesToSet = new TileSO[chunkSize * chunkSize];
             int tileIndex = 0;
             for (int localY = 0; localY < chunkSize; localY++) {
                 for (int localX = 0; localX < chunkSize; localX++) {
-                    tilesToSet[tileIndex++] = chunkData.tiles[localX, localY];
+                    var tile = App.ResourceSystem.GetTileByID(chunkData.tiles[localX, localY]);
+                    if(tile != null) {
+                        tilesToSet[tileIndex++] = tile;
+                    } else {
+                        Debug.LogError("Resource system returned NULL tile, defaulting to air");
+                        tilesToSet[tileIndex++] = App.ResourceSystem.GetTileByID(0);
+                    }
                 }
             }
             _worldManager.SetTiles(chunkBounds, tilesToSet);
@@ -571,7 +579,7 @@ public class ChunkManager : NetworkBehaviour {
     internal bool CanWriteData(Vector2Int chunkCoord) {
         return worldChunks.ContainsKey(chunkCoord);
     }
-    public TileSO GetTileAtWorldPos(int x, int y) {
+    public ushort GetTileAtWorldPos(int x, int y) {
         var chunkCoord = WorldToChunkCoord(new(x, y));
         if(worldChunks.TryGetValue(chunkCoord, out var chunk)) {
             // Calculate local tile indices within the chunk
@@ -580,12 +588,12 @@ public class ChunkManager : NetworkBehaviour {
 
             // Ensure indices are within the chunk bounds
             if (localX < 0 || localX >= chunkSize || localY < 0 || localY >= chunkSize)
-                return null;
+                return ResourceSystem.InvalidID;
 
             // Return the tile from the chunk's tile array
-            return chunk.tiles[localX, localY] as TileSO;
+            return chunk.tiles[localX, localY];
         } else {
-            return null; // Chunk not generated yet
+            return ResourceSystem.InvalidID; // Chunk not generated yet
         }
     }
     // Tile should be as unique global position,
@@ -600,8 +608,8 @@ public class ChunkManager : NetworkBehaviour {
             // nested for-loop for best performance
             for (int localX = 0; localX < chunkSize; localX++) {
                 for (int localY = 0; localY < chunkSize; localY++) {
-                    TileSO tile = chunkData.tiles[localX, localY] as TileSO;
-                    if (tile.IsSolid)
+                    TileSO tile = App.ResourceSystem.GetTileByID(chunkData.tiles[localX, localY]);
+                    if (tile.IsSolid || tile == null)
                         continue;
                     // biome
                     byte biomeID = chunkData.biomeID[localX, localY];
