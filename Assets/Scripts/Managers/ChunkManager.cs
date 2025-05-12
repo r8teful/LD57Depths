@@ -4,10 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FishNet.Object;
 using FishNet.Connection;
-using NUnit.Framework.Internal.Execution;
 using Sirenix.OdinInspector;
-using System.Linq;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEditor;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
@@ -283,7 +280,7 @@ public class ChunkManager : NetworkBehaviour {
         // --- Prep ---
         Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkCoord);
 
-        ChunkData chunkData = WorldGen.GenerateChunk(chunkSize, chunkOriginCell, out var enemyList);
+        ChunkData chunkData = WorldGen.GenerateChunk(chunkSize, chunkOriginCell, this, out var enemyList);
         _worldManager.BiomeManager.CalculateBiomeForChunk(chunkCoord, chunkData);
         // --- Add Generated Entities to Persistent Store AND Chunk Map ---
         if (enemyList != null && enemyList.Count > 0) {
@@ -581,7 +578,23 @@ public class ChunkManager : NetworkBehaviour {
     internal bool CanWriteData(Vector2Int chunkCoord) {
         return worldChunks.ContainsKey(chunkCoord);
     }
+    public TileSO GetTileAtWorldPos(int x, int y) {
+        var chunkCoord = WorldToChunkCoord(new(x, y));
+        if(worldChunks.TryGetValue(chunkCoord, out var chunk)) {
+            // Calculate local tile indices within the chunk
+            int localX = x - chunkCoord.x * chunkSize;
+            int localY = y - chunkCoord.y * chunkSize;
 
+            // Ensure indices are within the chunk bounds
+            if (localX < 0 || localX >= chunkSize || localY < 0 || localY >= chunkSize)
+                return null;
+
+            // Return the tile from the chunk's tile array
+            return chunk.tiles[localX, localY] as TileSO;
+        } else {
+            return null; // Chunk not generated yet
+        }
+    }
     // Tile should be as unique global position,
     internal (HashSet<Vector2Int>, Dictionary<Vector2Int, BiomeType>) GetAllNonSolidTilesInLoadedChunks() {
         var validTiles = new HashSet<Vector2Int>();

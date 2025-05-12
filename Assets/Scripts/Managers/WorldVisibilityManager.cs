@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections.Generic; 
-using FishNet;
+using System.Collections.Generic;
 using UnityEngine.Tilemaps;
-using UnityEngine.Rendering.Universal;
 
 
 public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {

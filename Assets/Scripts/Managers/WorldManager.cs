@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine.Tilemaps;
 using UnityEngine;
 using Sirenix.OdinInspector;
-using FishNet;
 
 public class WorldManager : NetworkBehaviour {
     public static WorldManager Instance { get; private set; }

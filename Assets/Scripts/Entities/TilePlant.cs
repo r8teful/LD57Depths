@@ -1,15 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
 using FishNet.Object;
-using UnityEngine.Tilemaps;
-using System;
 
-// Todo
 public class TilePlant : ExteriorObject, ITileChangeReactor {
 
     [SerializeField] private float groundCheckDistance = 0.6f;
     [SerializeField] private LayerMask groundLayer;
-
+    [SerializeField] private Transform offset;
     private bool isGrounded = true; // Server state
     private Rigidbody2D rb;
 
@@ -27,21 +23,40 @@ public class TilePlant : ExteriorObject, ITileChangeReactor {
         base.OnStartClient();
         rb = GetComponent<Rigidbody2D>();
         if (rb) rb.bodyType = RigidbodyType2D.Kinematic; // Start kinematic
+        MovePos();
        // CheckGroundedState(); // Initial check
     }
-/*
-    // --- Called by EntityManager via Interface ---
-    [Server] // Ensure server execution
-    public void OnTileChangedNearby(Vector3Int cellPosition, int newTileID) {
-        // Check if the change happened directly below us
-        if (newTileID == 0) {
-            if (cellPosition == transform.position) {
-                // The tile directly below us changed! Re-check if we are grounded.
-                CheckGroundedState();
+    /*
+        // --- Called by EntityManager via Interface ---
+        [Server] // Ensure server execution
+        public void OnTileChangedNearby(Vector3Int cellPosition, int newTileID) {
+            // Check if the change happened directly below us
+            if (newTileID == 0) {
+                if (cellPosition == transform.position) {
+                    // The tile directly below us changed! Re-check if we are grounded.
+                    CheckGroundedState();
+                }
             }
-        }
-    }*/
+        }*/
 
+    // Move depending of the orientation of the root
+    private void MovePos() {
+        // BRUH, it's all bloddy the same because when we rotate it the local up will be the right way up 
+        var angles = transform.localEulerAngles;
+        if (angles == new Vector3(0, 0, 0)) {
+            // Ground
+            offset.localPosition = new Vector3(0f,0.5f, 0f);
+        } else if (angles == new Vector3(0, 0, 180f)) {
+            // Ceiling
+            offset.localPosition = new Vector3(0,0.5f, 0f);
+        } else if (angles == new Vector3(0, 0, 270f)) {
+            // Left Wall
+            offset.localPosition = new Vector3(0f, 0.5f, 0f);
+        } else if (angles == new Vector3(0, 0, 90)) {
+            // Right wall
+            offset.localPosition = new Vector3(0, 0.5f, 0f);
+        }
+    }
     [Server]
     private void CheckGroundedState() {
         // Raycast down slightly further than foot position

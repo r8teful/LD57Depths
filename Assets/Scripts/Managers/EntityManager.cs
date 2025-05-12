@@ -370,7 +370,8 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             }
 
             // Instantiate and apply data
-            GameObject instance = Instantiate(prefab, data.cellPos, data.rotation);
+            Vector3 spawnPos = new Vector3(data.cellPos.x + 0.5f, data.cellPos.y + 0.5f, 0f); // Spawn in the centre of the tile
+            GameObject instance = Instantiate(prefab, spawnPos, data.rotation);
             instance.transform.localScale = data.scale;
 
             nob = instance.GetComponent<NetworkObject>();

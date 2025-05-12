@@ -1,8 +1,6 @@
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using FishNet.Object;
 using System.Collections.Generic;
-using System; // For NetworkObject
 
 // Interface for components reacting to nearby tile changes
 public interface ITileChangeReactor {

@@ -6,10 +6,6 @@ using UnityEngine.InputSystem;
 using DG.Tweening;
 using TMPro;
 using UnityEngine.EventSystems;
-using FishNet.Object;
-using FishNet.Connection;
-using System;
-using FishNet.Managing.Client;
 
 public class InventoryUIManager : MonoBehaviour {
     [Header("UI Elements")]

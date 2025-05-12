@@ -1,4 +1,3 @@
-using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
@@ -56,7 +55,7 @@ public static class WorldGen {
 
 
 
-    internal static ChunkData GenerateChunk(int chunkSize, Vector3Int chunkOriginCell, out List<EntitySpawnInfo> entitySpawns) {
+    internal static ChunkData GenerateChunk(int chunkSize, Vector3Int chunkOriginCell, ChunkManager cm, out List<EntitySpawnInfo> entitySpawns) {
         //Debug.Log("Generating new chunk: " + chunkOriginCell);
         ChunkData chunkData = new ChunkData(chunkSize, chunkSize);
         entitySpawns = new List<EntitySpawnInfo>();
@@ -86,7 +85,7 @@ public static class WorldGen {
 
         // --- Pass 5: Decorative Entity Spawning ---
         // Determines WHERE entities should be placed, adds them to chunkData.entitiesToSpawn
-        SpawnEntitiesInChunk(chunkData, chunkOriginCell, chunkSize, entitySpawns);
+        SpawnEntitiesInChunk(chunkData, chunkOriginCell, chunkSize, entitySpawns, cm);
 
         return chunkData;
     }
@@ -337,127 +336,201 @@ public static class WorldGen {
         }
     }*/
 
-    // --- Pass 5 Implementation ---
-    private static void SpawnEntitiesInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize, List<EntitySpawnInfo> entitySpawns) {
-        if (worldSpawnEntities == null || worldSpawnEntities.Count == 0) return;
-        // Use a temporary set for basic overlap check within this chunk pass
+    private static void SpawnEntitiesInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize, List<EntitySpawnInfo> entitySpawns, ChunkManager cm) {
+        if (worldSpawnEntities == null || worldSpawnEntities.Count == 0)return;
         HashSet<Vector2Int> occupiedAnchors = new HashSet<Vector2Int>();
-
-        // Iterate through potential ANCHOR points in the chunk
-        // An anchor is typically a ground tile surface
-        for (int y = 0; y < chunkSize; y++) // Iterate y from 0 upwards
-        {
+        for (int y = 0; y < chunkSize; y++) {
             for (int x = 0; x < chunkSize; x++) {
-                // --- Identify potential anchor tile ---
                 TileBase anchorTile = chunkData.tiles[x, y];
-                if (anchorTile == null || anchorTile == worldmanager.GetTileFromID(0)) {
-                    continue; // Not a valid ground anchor tile type
+                // The ANCHOR TILE ITSELF must usually be solid for attachment
+                if (!IsRock(anchorTile)) {
+                    continue;
                 }
-                // Optimization: If this anchor is already used by another entity in this pass, skip
                 if (occupiedAnchors.Contains(new Vector2Int(x, y))) {
                     continue;
                 }
-
                 int worldX = chunkOriginCell.x + x;
                 int worldY = chunkOriginCell.y + y;
 
-                // --- Check conditions applicable to the anchor point itself ---
-                bool isWaterSpawn = !IsRock(anchorTile); 
-                bool isGroundBelow = IsRock(anchorTile); // 
-
-                // Quick check using first entity's height needs, real check below
-                bool clearAbove = true;
-                for (int h = 1; h <= Mathf.Max(1, worldSpawnEntities.Count > 0 ? worldSpawnEntities[0].minCeilingHeight : 1); ++h) {
-                    if (y + h < chunkSize) {
-                        TileBase tileAbove = chunkData.tiles[x, y + h];
-                        if (IsRock(tileAbove)) { // Is there solid ground above?
-                            clearAbove = false;
-                            break;
-                        }
-                    } else {
-                        // Reached top of chunk, assume not clear unless world boundary says otherwise
-                        clearAbove = false;
-                        break;
-                    }
-                }
-                if (!clearAbove) continue; // Trying to spawn in a solid block, skip this block
-                //Debug.Log($"Valid placement found at x: {worldX} and y: {worldY}");
-
-                bool adjacentToWater = false;
-                if (worldSpawnEntities.Exists(def => def.requireWaterAdjacent)) // Optimization: only check if any entity needs it
-                {
-                    adjacentToWater = IsAdjacentWater(chunkData, x, y);
-                }
-
-
                 // --- Iterate through Entity Definitions ---
                 foreach (var entityDef in worldSpawnEntities) {
-                    if (entityDef.entityPrefab == null) continue; // Skip definitions without prefabs
+                    if (entityDef.entityPrefab == null)
+                        continue;
 
-                    // 1. Basic Filters (Position, Biome)
-                    if (worldY < entityDef.minY || worldY > entityDef.maxY) continue;
-                    int distFromTrench = Mathf.Abs(worldX);
-
-                    if (entityDef.requiredBiomeNames != null && entityDef.requiredBiomeNames.Count > 0) {
-                        string biomeName = null;//GetBiomeNameAt(worldX, worldY);
-                        if (biomeName == null || !entityDef.requiredBiomeNames.Contains(biomeName)) continue;
-                    }
-
-                    // 2. Condition Checks
-                    if (entityDef.requireSolidGroundBelow && !isGroundBelow) continue;
-                    if (entityDef.requireWaterAdjacent && !adjacentToWater && !isWaterSpawn) continue;
-
-                    // Check specific ceiling height required by *this* entity definition
-                    if (entityDef.requireCeilingSpace) {
-                        bool specificCeilingClear = true;
-                        for (int h = 1; h <= entityDef.minCeilingHeight; ++h) {
-                            if (y + h < chunkSize) {
-                                TileBase tileAbove = chunkData.tiles[x, y + h];
-                                if (IsRock(tileAbove)) {
-                                    specificCeilingClear = false;
-                                    break;
-                                }
-                            } // else: Assume clear above chunk
-                        }
-                        if (!specificCeilingClear) continue;
-                    }
-
-
-                    // 3. Stochastic Check (Noise/Hashing)
+                    // 1. Stochastic Check
                     float placementValue = GetNoise(worldX, worldY, entityDef.placementFrequency);
-                    // Could also use GetHash(worldX, worldY) for non-frequency based sparsity
-                    if (placementValue < entityDef.placementThreshold) continue;
+                    if (placementValue < entityDef.placementThreshold)
+                        continue;
+
+                    // 2. Basic Filters
+                    if (worldY < entityDef.minY || worldY > entityDef.maxY)
+                        continue;
+
+                    // Biome Check (ensure GetBiomeNameAt is implemented)
+                    // if (entityDef.requiredBiomeNames != null && entityDef.requiredBiomeNames.Count > 0) {
+                    //     string biomeName = GetBiomeNameAt(worldX, worldY); // Implement this
+                    //     if (biomeName == null || !entityDef.requiredBiomeNames.Contains(biomeName)) continue;
+                    // }
+
+
+                    // --- 3. Attachment and Clearance Checks ---
+                    bool canSpawn = false;
+                    Quaternion spawnRot = Quaternion.identity; // Default rotation
+
+                    // Helper to check a list of relative coordinates for emptiness
+                    // Takes coordinates relative to the anchor (x,y)
+                    System.Func<Vector2Int[], bool> checkRelativeEmpty = (offsets) =>
+                    {
+                        foreach (var offset in offsets) {
+                            TileBase tileToCheck = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
+                                                                           x + offset.x, y + offset.y, cm);
+                            if (!IsEmptyOrNonBlocking(tileToCheck))
+                                return false; // Needs to be empty
+                        }
+                        return true;
+                    };
+                    foreach (var attachment in entityDef.allowedAttachmentTypes) {
+
+                        switch (attachment) {
+                            case AttachmentType.Ground:
+                                // Anchor (x,y) is already checked as solid.
+                                // Check space above for minCeilingHeight
+                                bool groundClear = true;
+                                for (int h = 1; h <= entityDef.minHeightSpace; ++h) {
+                                    TileBase tileAbove = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
+                                                                                 x, y + h, cm);
+                                    if (!IsEmptyOrNonBlocking(tileAbove)) {
+                                        groundClear = false;
+                                        break;
+                                    }
+                                }
+                                if (groundClear) {
+                                    canSpawn = true;
+                                    spawnRot = Quaternion.Euler(0,0,0);
+                                }
+                                break;
+
+                            case AttachmentType.Ceiling:
+                                // Check space below for minClearanceHeight
+                                bool ceilingClear = true;
+                                for (int h = 1; h <= entityDef.minHeightSpace; ++h) // minCeilingHeight here means min clearance *below*
+                                {
+                                    TileBase tileBelow = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
+                                                                                 x, y - h, cm);
+                                    if (!IsEmptyOrNonBlocking(tileBelow)) {
+                                        ceilingClear = false;
+                                        break;
+                                    }
+                                }
+                                if (ceilingClear) {
+                                    canSpawn = true;
+                                    // Assuming default prefab rotation faces +Z, and you want it to face "down" relative to world.
+                                    // This depends on your prefab's default orientation.
+                                    spawnRot = Quaternion.Euler(0, 0, 180f);
+                                }
+                                break;
+
+                            case AttachmentType.WallLeft:
+                                Vector2Int[] rightClearance = {
+                                new Vector2Int(1, 0),  // E
+                                new Vector2Int(1, 1),  // NE
+                                new Vector2Int(1, -1)  // SE
+                            };
+                                // If entityDef.entitySize.x > 1, expand clearance checks.
+                                // For now, assumes 1x1 clearance needed.
+                                if (checkRelativeEmpty(rightClearance)) {
+                                    canSpawn = true;
+                                    spawnRot = Quaternion.Euler(0, 0, 270f);
+                                }
+                                break;
+
+                            case AttachmentType.WallRight: 
+                                Vector2Int[] leftClearance = {
+                                new Vector2Int(-1, 0), // W
+                                new Vector2Int(-1, 1), // NW
+                                new Vector2Int(-1, -1) // SW
+                            };
+                                if (checkRelativeEmpty(leftClearance)) {
+                                    canSpawn = true;
+                                    spawnRot = Quaternion.Euler(0, 0, 90);
+                                }
+                                break;
+                        }
+                        if (canSpawn)
+                            break;
+                    }
+
+                    if (!canSpawn)
+                        continue;
+
+                    // --- Additional checks (like water adjacency) if still relevant ---
+                    bool isWaterSpawn = !IsRock(anchorTile); // This check is a bit confusing here since anchor is solid
+                                                             // Let's assume this was for entities spawning IN water vs. on land.
+                                                             // For wall/ceiling entities, it might mean "anchor is adjacent to water".
+
+                    if (entityDef.requireWaterAdjacent) {
+                        // Check immediate N,S,E,W of the ANCHOR tile for water
+                        bool adjacentToWater = false;
+                        Vector2Int[] cardinalOffsets = {
+                        new Vector2Int(0,1), new Vector2Int(0,-1), new Vector2Int(1,0), new Vector2Int(-1,0)
+                    };
+                        foreach (var offset in cardinalOffsets) {
+                            TileBase adjacentTile = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
+                                                                            x + offset.x, y + offset.y, cm);
+                            if (adjacentTile != null && !IsRock(adjacentTile) /* && IsWater(adjacentTile) */) // You might need an IsWater check
+                            {
+                                adjacentToWater = true;
+                                break;
+                            }
+                        }
+                        if (!adjacentToWater)
+                            continue;
+                    }
 
 
                     // --- ALL CHECKS PASSED --- Spawn this entity ---
                     Vector3Int spawnPos = new(worldX, worldY);
+                    entitySpawns.Add(new EntitySpawnInfo(entityDef.entityPrefab, entityDef.entityID, spawnPos, spawnRot,Vector3.one));
 
-                    // Calculate rotation
-                    Quaternion spawnRot = entityDef.randomYRotation ?
-                                           Quaternion.Euler(0, noiseRandomGen.NextFloat(0f, 360f), 0) : // Use the seeded random gen
-                                           Quaternion.identity;
-
-                    // Add to the spawn list
-                    entitySpawns.Add(new EntitySpawnInfo(entityDef.entityPrefab,entityDef.entityID, spawnPos, spawnRot,Vector3.one)); // todo add scale
-
-                    // Mark anchor as occupied for this pass to prevent overlap *at the anchor*
                     occupiedAnchors.Add(new Vector2Int(x, y));
 
-                    // Optional: Implement more robust clearance checking here if needed, potentially
-                    // marking a larger area than just the anchor in occupiedAnchors or a separate grid.
+                    // If an entity can occupy more than its anchor tile (e.g., a 2x1 entity on the ground)
+                    // you'd need to mark all occupied tiles in a more sophisticated way than just the anchor.
+                    // For example, if a ground entity is 2 tiles wide, mark (x,y) and (x+1,y) if it extends right.
 
-                    // If only one entity type should spawn per valid anchor point, uncomment break:
-                    break;
+                    break; // Spawned one entity for this anchor, move to next anchor
                 }
             }
         }
     }
-
     private static bool IsRock(TileBase tile) {
         return tile != null && (tile != worldmanager.GetTileFromID(0) && tile != worldmanager.GetTileFromID(2));
         // Add checks for air tiles if you have them
     }
-    // Helper for adjacent water check
+
+    // (Place this in your WorldManager or a static utility class)
+    // Assumes worldmanager.GetTileAtWorldPos(worldX, worldY) exists and can fetch from any loaded chunk
+    // or returns null/empty if outside loaded world.
+    private static TileBase GetTileFromChunkOrWorld(ChunkData currentChunkData, Vector3Int currentChunkOriginCell, int chunkSize,
+                                                    int localX, int localY, ChunkManager cm) {
+        if (localX >= 0 && localX < chunkSize && localY >= 0 && localY < chunkSize) {
+            return currentChunkData.tiles[localX, localY];
+        } else {
+            // Calculate world coordinates
+            int worldX = currentChunkOriginCell.x + localX;
+            int worldY = currentChunkOriginCell.y + localY;
+            // You'll need a method in WorldManager to get a tile at any world position
+            // This method should handle loading adjacent chunks if necessary, or return null/empty if out of bounds.
+            return cm.GetTileAtWorldPos(worldX, worldY); // Implement this in WorldManager
+        }
+    }
+
+    // You'll also need IsRock. Let's assume it exists and takes a TileBase.
+    // private static bool IsRock(TileBase tile) { /* ... your logic ... */ }
+    // And a helper for IsEmpty (the opposite of IsRock, or specific non-blocking tiles)
+    private static bool IsEmptyOrNonBlocking(TileBase tile) {
+        return tile == null || tile == worldmanager.GetTileFromID(0) || !IsRock(tile); // Adjust for your definition of empty
+    }
     private static bool IsAdjacentWater(ChunkData chunkData, int x, int y) {
         int width = chunkData.tiles.GetLength(0);
         int height = chunkData.tiles.GetLength(0);

@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using FishNet.Object; // Need NetworkObject reference
+﻿using FishNet.Object; // Need NetworkObject reference
 
 public enum VisibilityLayerType {
     Exterior, // Visible only when the local player is in the Exterior layer

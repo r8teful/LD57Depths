@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CutsceneStart : MonoBehaviour {
     public GameObject[] LoreFrames;

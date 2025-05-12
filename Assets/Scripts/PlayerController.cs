@@ -4,7 +4,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class PlayerController : NetworkBehaviour {
     // public float moveSpeed = 5f; // Base speed of swimming

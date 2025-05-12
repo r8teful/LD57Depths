@@ -43,4 +43,5 @@ MonoBehaviour:
     clusterFrequency: 4
     clusterThreshold: 0.135
     requireCluster: 1
-  worldSpawnEntities: []
+  worldSpawnEntities:
+  - {fileID: 11400000, guid: d43c3f02f91b332498b32a9be1ee129e, type: 2}
