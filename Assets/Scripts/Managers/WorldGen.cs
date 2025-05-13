@@ -1,6 +1,7 @@
 using Sirenix.Utilities;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Mail;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -169,7 +170,7 @@ public static class WorldGen {
             for (int x = 0; x < chunkSize; x++) {
 
                 // Only carve caves into existing rock/ground tiles
-                if (!IsRock(chunkData.tiles[x, y])) {
+                if (!IsSolid(chunkData.tiles[x, y])) {
                     continue;
                 }
 
@@ -226,7 +227,7 @@ public static class WorldGen {
         for (int y = 0; y < chunkSize; y++) {
             for (int x = 0; x < chunkSize; x++) {
                 ushort currentTileID = chunkData.tiles[x, y];
-                if (IsRock(currentTileID)) // Check if it's a valid tile for ore placement
+                if (IsSolid(currentTileID)) // Check if it's a valid tile for ore placement
                 {
                     int worldX = chunkOriginCell.x + x;
                     int worldY = chunkOriginCell.y + y;
@@ -343,12 +344,12 @@ public static class WorldGen {
         for (int y = 0; y < chunkSize; y++) {
             for (int x = 0; x < chunkSize; x++) {
                 ushort anchorTileID = chunkData.tiles[x, y];
-                // The ANCHOR TILE ITSELF must usually be solid for attachment
-                if (!IsRock(anchorTileID)) {
+                if (!IsSolid(anchorTileID)) {
+                    // We're doing a more extensive anchor check later
                     continue;
                 }
                 if (occupiedAnchors.Contains(new Vector2Int(x, y))) {
-                    continue;
+                    continue; // Could also check the whole anchor is overlapping here but EH, a bit dence will look nice
                 }
                 int worldX = chunkOriginCell.x + x;
                 int worldY = chunkOriginCell.y + y;
@@ -375,69 +376,104 @@ public static class WorldGen {
 
 
                     // --- 3. Attachment and Clearance Checks ---
-                    bool canSpawn = false;
+                    bool canSpawn = true;
                     Quaternion spawnRot = Quaternion.identity; // Default rotation
                     var occopied = new List<Vector2Int>();
-
-                
-
+                    var bounds = entityDef.GetBoundingOffset();
+                    int canonicalAnchorLocalY = bounds.Item1.y;
+                    Debug.Log("Canon:" + canonicalAnchorLocalY);
                     foreach (var attachment in entityDef.allowedAttachmentTypes) {
-                        switch (attachment) {
-                            case AttachmentType.Ground:
-                                // Anchor (x,y) is already checked as solid.
-                                // Check space above for minCeilingHeight
-                                var bounds = entityDef.GetBoundingOffset();
-                                bool areaClear = true;
-                                for (int xx = bounds.Item1.x; xx <= bounds.Item2.x; xx++) {
-                                    for (int yy = bounds.Item1.y; yy <= bounds.Item2.y; yy++) {
-                                        // Check the collision map first
-                                        if (!entityDef.areaMatrix[xx + 4, -yy + 8]) // We have to revert the mapping annoyingly
-                                            continue;
-                                        // Is this the ground layer? If so check if its a ground tile, not air
-                                        if (yy == 0) {
-                                            if (!IsRock(GetTileFromChunkOrWorld(chunkData, 
-                                                new(worldX + xx, worldY + yy), chunkSize, x + xx, y + yy, cm))) {
-                                                areaClear = false;
-                                                break;
-                                            }
-                                            occopied.Add(new Vector2Int(x + xx, y + yy)); // As local chunk bounds
-                                        } else {
-                                            if (!IsEmptyOrNonBlocking(GetTileFromChunkOrWorld(
-                                                chunkData,new(worldX+xx,worldY+yy),chunkSize,x+xx,y+yy,cm))) {
-                                                areaClear = false; 
-                                                break;
-                                            }
-                                            occopied.Add(new Vector2Int(x + xx, y + yy)); // As local chunk bounds
-                                        }
-                                    }
-                                    if (!areaClear) {
-                                        occopied.Clear();
+                        for (int local_xx = bounds.Item1.x; local_xx <= bounds.Item2.x; local_xx++) {
+                            for (int local_yy = bounds.Item1.y; local_yy <= bounds.Item2.y; local_yy++) {
+                                int areaMatrixX = local_xx + 4;
+                                int areaMatrixY = -local_yy + 8;
+
+                                // Safety check
+                                if (areaMatrixX < 0 || areaMatrixX >= entityDef.areaMatrix.GetLength(0) ||
+                                    areaMatrixY < 0 || areaMatrixY >= entityDef.areaMatrix.GetLength(1)) {
+                                    Debug.LogWarning($"areaMatrix access out of bounds for entity {entityDef.name}: local({local_xx},{local_yy}) -> matrix({areaMatrixX},{areaMatrixY}). Treating as not required.");
+                                    continue;
+                                }
+                                if (!entityDef.areaMatrix[areaMatrixX, areaMatrixY]) {
+                                    // This cell in areaMatrix is 'false', so no requirement here. Skip
+                                    continue;
+                                }
+                                // GLOBAL coordinates of the tile to check based on AttachmentType
+                                int checkGlobalX = 0;
+                                int checkGlobalY = 0;
+
+                                switch (attachment) {
+                                    case AttachmentType.Ground:
+                                        // Entity is upright. Canonical (local_xx, local_yy) maps directly to world offset.
+                                        checkGlobalX = x + local_xx;
+                                        checkGlobalY = y + local_yy;
+                                        spawnRot = Quaternion.Euler(0, 0, 0);
                                         break;
+                                    case AttachmentType.Ceiling:
+                                        // Entity upside down. Canonical +x becomes world -x; canonical +y becomes world -y.
+                                        checkGlobalX = x - local_xx;
+                                        checkGlobalY = y - local_yy;
+                                        spawnRot = Quaternion.Euler(0, 0, 180);
+                                        break;
+                                    case AttachmentType.WallLeft:
+                                        // Canonical +x (entity's right) becomes world +y (up).
+                                        // Canonical +y (entity's up) becomes world -x (left).
+                                        checkGlobalX = x - local_yy;
+                                        checkGlobalY = y + local_xx;
+                                        spawnRot = Quaternion.Euler(0, 0, 90);
+                                        break;
+                                    case AttachmentType.WallRight:
+                                        // Canonical +x (entity's right) becomes world -y (down).
+                                        // Canonical +y (entity's up) becomes world +x (right).
+                                        checkGlobalX = x + local_yy;
+                                        checkGlobalY = y - local_xx;
+                                        spawnRot = Quaternion.Euler(0, 0, -90);
+                                        break;
+                                    default:
+                                        // Debug.LogError($"Unknown attachment type: {attachment}");
+                                        canSpawn = false;
+                                        goto end_loops; // Exit both loops
+                                }
+                                // 4. Fetch the actual world tile at the calculated (checkGlobalX, checkGlobalY)
+                                var tileToCheck = GetTileFromChunkOrWorld(chunkData, new Vector2Int(worldX, worldY), chunkSize,
+                                    checkGlobalX,          // Target tile X, local to chunk
+                                    checkGlobalY,          // Target tile Y, local to chunk
+                                    //checkGlobalY - worldY,          // Target tile Y, local to chunk
+                                    cm
+                                ); // TODO worldCoord input could be wrong here
+
+                                // 5. Check the tile based on whether it's an anchor cell or a volume cell requirement
+                                bool isCanonicalAnchorCell = local_yy == canonicalAnchorLocalY;
+                                if (isCanonicalAnchorCell) {
+                                    // This cell corresponds to the entity's canonical anchor row.
+                                    // The world tile it points to MUST be solid.
+                                    if (!IsSolid(tileToCheck)) {
+                                        // Debug.Log($"Anchor requirement FAILED for {attachment} at world ({checkGlobalX},{checkGlobalY}). Expected Solid for local_yy={local_yy}. Tile was: {tileToCheck}");
+                                        canSpawn = false;
+                                        goto end_loops;
+                                    }
+                                } else {
+                                    // This cell is part of the entity's volume (not an anchor row cell).
+                                    // The world tile it points to MUST be empty or non-blocking.
+                                    if (!IsEmptyOrNonBlocking(tileToCheck)) {
+                                        // Debug.Log($"Volume requirement FAILED for {attachment} at world ({checkGlobalX},{checkGlobalY}). Expected Empty/NonBlocking. Tile was: {tileToCheck}");
+                                        canSpawn = false;
+                                        goto end_loops;
                                     }
                                 }
-                                if (areaClear) {
-                                    canSpawn = true;
-                                    spawnRot = Quaternion.Euler(0,0,0);
-                                } else {
-                                    occopied.Clear();
-                                }
-                                break;
-                            case AttachmentType.Ceiling:
-                                // Todo flip bounds accordingingly
-                            case AttachmentType.WallLeft:
-                                // TODO same here
-
-                            case AttachmentType.WallRight:
-                                break;
-                               // same here
+                                // Reaching here means we passed this tiles checks, add it to occupied list
+                                occopied.Add(new Vector2Int(checkGlobalX, checkGlobalY)); // As local chunk bounds
+                            }
                         }
+                        canSpawn = true; // we never hit a false so this must mean we can spawn
+                    end_loops:;
                         if (canSpawn)
-                            break;
+                            break; // Break out of the attachment loop if we have found a valid spot to spawn at
+                        // Reaching here means we CANT spawn, so clear the occopied list and try a different orrientation
+                        occopied.Clear();
                     }
-
                     if (!canSpawn)
                         continue;
-
                     // --- ALL CHECKS PASSED --- Spawn this entity ---
                     Vector3Int spawnPos = new(worldX, worldY);
                     entitySpawns.Add(new EntitySpawnInfo(entityDef.entityPrefab, entityDef.entityID, spawnPos, spawnRot,Vector3.one));
@@ -448,7 +484,7 @@ public static class WorldGen {
             }
         }
     }
-    private static bool IsRock(ushort tileID) {
+    private static bool IsSolid(ushort tileID) {
         return tileID != ResourceSystem.InvalidID && tileID != ResourceSystem.AirID;
         // Add checks for air tiles if you have them
     }
@@ -470,7 +506,7 @@ public static class WorldGen {
 
     // Some non-blocking tiles like vines or something might be non blocking later
     private static bool IsEmptyOrNonBlocking(ushort tileID) {
-        return !IsRock(tileID) && tileID != ResourceSystem.InvalidID; 
+        return !IsSolid(tileID) && tileID != ResourceSystem.InvalidID; 
     }
 
     private static bool IsAdjacentWater(ChunkData chunkData, int x, int y) {

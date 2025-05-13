@@ -43,19 +43,7 @@ public class TilePlant : ExteriorObject, ITileChangeReactor {
     private void MovePos() {
         // BRUH, it's all bloddy the same because when we rotate it the local up will be the right way up 
         var angles = transform.localEulerAngles;
-        if (angles == new Vector3(0, 0, 0)) {
-            // Ground
-            offset.localPosition = new Vector3(0f,0.5f, 0f);
-        } else if (angles == new Vector3(0, 0, 180f)) {
-            // Ceiling
-            offset.localPosition = new Vector3(0,0.5f, 0f);
-        } else if (angles == new Vector3(0, 0, 270f)) {
-            // Left Wall
-            offset.localPosition = new Vector3(0f, 0.5f, 0f);
-        } else if (angles == new Vector3(0, 0, 90)) {
-            // Right wall
-            offset.localPosition = new Vector3(0, 0.5f, 0f);
-        }
+        offset.localPosition = new Vector3(0f, 0.5f, 0f);
     }
     [Server]
     private void CheckGroundedState() {
