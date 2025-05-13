@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 
 [CreateAssetMenu(fileName = "EntitySpawnSO", menuName = "ScriptableObjects/EntitySpawnSO")]
 // An entity that can be spawned, either dynamically, or with the world generation 
-public class EntityBaseSO : ScriptableObject, IIdentifiable {
+public class EntityBaseSO : SerializedScriptableObject, IIdentifiable {
     [TitleGroup("Identification")]
     [HorizontalGroup("Identification/Split")]
     [VerticalGroup("Identification/Split/Right")]

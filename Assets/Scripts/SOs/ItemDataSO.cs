@@ -4,32 +4,30 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "ItemDataSO", menuName = "ScriptableObjects/ItemDataSO", order =7)]
 public class ItemData : ScriptableObject, IIdentifiable {
-    [HorizontalGroup("Split")]
-    [BoxGroup("Split/LeftBox")]
-    [HorizontalGroup("Split/LeftBox/Left")]
-    [VerticalGroup("Split/LeftBox/Left/2")]
+    [BoxGroup("Identification")]
+    [HorizontalGroup("Identification/Left")]
+    [VerticalGroup("Identification/Left/2")]
     public string itemName = "New Item";
     
-    [VerticalGroup("Split/LeftBox/Left/2")]
+    [VerticalGroup("Identification/Left/2")]
     public ushort ID;
-    [VerticalGroup("Split/LeftBox/Left/2")]
+    [VerticalGroup("Identification/Left/2")]
     public string description = "Item Description";
-    [VerticalGroup("Split/LeftBox/Left/1")]
+    [VerticalGroup("Identification/Left/1")]
     [PreviewField(75), HideLabel, LabelWidth(0)]
     public Sprite icon = null;
 
-    [HorizontalGroup("Split")]
-    [BoxGroup("Split/RightBox")]
+    [BoxGroup("Gamepaly")]
     public int maxStackSize = 1; // Default to 1 for non-stackable items
 
     [Header("World Representation")]
     public GameObject droppedPrefab = null; // Prefab instantiated when dropped
 
-    [VerticalGroup("Split/RightBox/1")]
+    [VerticalGroup("Gamepaly/1")]
     public bool isUsable = false;
-    [VerticalGroup("Split/RightBox/1")]
+    [VerticalGroup("Gamepaly/1")]
     public bool isConsumable = true; // Is it used up after one use?
-    [VerticalGroup("Split/RightBox/1")]
+    [VerticalGroup("Gamepaly/1")]
     public int usageCooldown = 0;
     
     ushort IIdentifiable.ID => ID;

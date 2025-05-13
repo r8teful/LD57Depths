@@ -1,4 +1,6 @@
+using Sirenix.Utilities;
 using System.Collections.Generic;
+using System.Net;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -375,85 +377,59 @@ public static class WorldGen {
                     // --- 3. Attachment and Clearance Checks ---
                     bool canSpawn = false;
                     Quaternion spawnRot = Quaternion.identity; // Default rotation
+                    var occopied = new List<Vector2Int>();
 
-                    // Helper to check a list of relative coordinates for emptiness
-                    // Takes coordinates relative to the anchor (x,y)
-                    System.Func<Vector2Int[], bool> checkRelativeEmpty = (offsets) =>
-                    {
-                        foreach (var offset in offsets) {
-                            ushort tileToCheck = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
-                                                                           x + offset.x, y + offset.y, cm);
-                            if (!IsEmptyOrNonBlocking(tileToCheck))
-                                return false; // Needs to be empty
-                        }
-                        return true;
-                    };
+                
+
                     foreach (var attachment in entityDef.allowedAttachmentTypes) {
-
                         switch (attachment) {
                             case AttachmentType.Ground:
                                 // Anchor (x,y) is already checked as solid.
                                 // Check space above for minCeilingHeight
-                                bool groundClear = true;
-                                for (int h = 1; h <= entityDef.minHeightSpace; ++h) {
-                                    ushort tileAbove = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
-                                                                                 x, y + h, cm);
-                                    if (!IsEmptyOrNonBlocking(tileAbove)) {
-                                        groundClear = false;
+                                var bounds = entityDef.GetBoundingOffset();
+                                bool areaClear = true;
+                                for (int xx = bounds.Item1.x; xx <= bounds.Item2.x; xx++) {
+                                    for (int yy = bounds.Item1.y; yy <= bounds.Item2.y; yy++) {
+                                        // Check the collision map first
+                                        if (!entityDef.areaMatrix[xx + 4, -yy + 8]) // We have to revert the mapping annoyingly
+                                            continue;
+                                        // Is this the ground layer? If so check if its a ground tile, not air
+                                        if (yy == 0) {
+                                            if (!IsRock(GetTileFromChunkOrWorld(chunkData, 
+                                                new(worldX + xx, worldY + yy), chunkSize, x + xx, y + yy, cm))) {
+                                                areaClear = false;
+                                                break;
+                                            }
+                                            occopied.Add(new Vector2Int(x + xx, y + yy)); // As local chunk bounds
+                                        } else {
+                                            if (!IsEmptyOrNonBlocking(GetTileFromChunkOrWorld(
+                                                chunkData,new(worldX+xx,worldY+yy),chunkSize,x+xx,y+yy,cm))) {
+                                                areaClear = false; 
+                                                break;
+                                            }
+                                            occopied.Add(new Vector2Int(x + xx, y + yy)); // As local chunk bounds
+                                        }
+                                    }
+                                    if (!areaClear) {
+                                        occopied.Clear();
                                         break;
                                     }
                                 }
-                                if (groundClear) {
+                                if (areaClear) {
                                     canSpawn = true;
                                     spawnRot = Quaternion.Euler(0,0,0);
+                                } else {
+                                    occopied.Clear();
                                 }
                                 break;
-
                             case AttachmentType.Ceiling:
-                                // Check space below for minClearanceHeight
-                                bool ceilingClear = true;
-                                for (int h = 1; h <= entityDef.minHeightSpace; ++h) // minCeilingHeight here means min clearance *below*
-                                {
-                                    ushort tileBelow = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
-                                                                                 x, y - h, cm);
-                                    if (!IsEmptyOrNonBlocking(tileBelow)) {
-                                        ceilingClear = false;
-                                        break;
-                                    }
-                                }
-                                if (ceilingClear) {
-                                    canSpawn = true;
-                                    // Assuming default prefab rotation faces +Z, and you want it to face "down" relative to world.
-                                    // This depends on your prefab's default orientation.
-                                    spawnRot = Quaternion.Euler(0, 0, 180f);
-                                }
-                                break;
-
+                                // Todo flip bounds accordingingly
                             case AttachmentType.WallLeft:
-                                Vector2Int[] rightClearance = {
-                                new Vector2Int(1, 0),  // E
-                                new Vector2Int(1, 1),  // NE
-                                new Vector2Int(1, -1)  // SE
-                            };
-                                // If entityDef.entitySize.x > 1, expand clearance checks.
-                                // For now, assumes 1x1 clearance needed.
-                                if (checkRelativeEmpty(rightClearance)) {
-                                    canSpawn = true;
-                                    spawnRot = Quaternion.Euler(0, 0, 270f);
-                                }
-                                break;
+                                // TODO same here
 
-                            case AttachmentType.WallRight: 
-                                Vector2Int[] leftClearance = {
-                                new Vector2Int(-1, 0), // W
-                                new Vector2Int(-1, 1), // NW
-                                new Vector2Int(-1, -1) // SW
-                            };
-                                if (checkRelativeEmpty(leftClearance)) {
-                                    canSpawn = true;
-                                    spawnRot = Quaternion.Euler(0, 0, 90);
-                                }
+                            case AttachmentType.WallRight:
                                 break;
+                               // same here
                         }
                         if (canSpawn)
                             break;
@@ -462,41 +438,11 @@ public static class WorldGen {
                     if (!canSpawn)
                         continue;
 
-                    // --- Additional checks (like water adjacency) if still relevant ---
-                    bool isWaterSpawn = !IsRock(anchorTileID); // This check is a bit confusing here since anchor is solid
-                                                             // Let's assume this was for entities spawning IN water vs. on land.
-                                                             // For wall/ceiling entities, it might mean "anchor is adjacent to water".
-
-                    if (entityDef.requireWaterAdjacent) {
-                        // Check immediate N,S,E,W of the ANCHOR tile for water
-                        bool adjacentToWater = false;
-                        Vector2Int[] cardinalOffsets = {
-                        new Vector2Int(0,1), new Vector2Int(0,-1), new Vector2Int(1,0), new Vector2Int(-1,0)
-                    };
-                        foreach (var offset in cardinalOffsets) {
-                            ushort adjacentTileID = GetTileFromChunkOrWorld(chunkData, chunkOriginCell, chunkSize,
-                                                                            x + offset.x, y + offset.y, cm);
-                            if (adjacentTileID != ResourceSystem.InvalidID && !IsRock(adjacentTileID) /* && IsWater(adjacentTile) */) // You might need an IsWater check
-                            {
-                                adjacentToWater = true;
-                                break;
-                            }
-                        }
-                        if (!adjacentToWater)
-                            continue;
-                    }
-
-
                     // --- ALL CHECKS PASSED --- Spawn this entity ---
                     Vector3Int spawnPos = new(worldX, worldY);
                     entitySpawns.Add(new EntitySpawnInfo(entityDef.entityPrefab, entityDef.entityID, spawnPos, spawnRot,Vector3.one));
-
-                    occupiedAnchors.Add(new Vector2Int(x, y));
-
-                    // If an entity can occupy more than its anchor tile (e.g., a 2x1 entity on the ground)
-                    // you'd need to mark all occupied tiles in a more sophisticated way than just the anchor.
-                    // For example, if a ground entity is 2 tiles wide, mark (x,y) and (x+1,y) if it extends right.
-
+                    //occupiedAnchors.Add(new Vector2Int(x, y));
+                    occupiedAnchors.AddRange(occopied);
                     break; // Spawned one entity for this anchor, move to next anchor
                 }
             }
@@ -507,14 +453,15 @@ public static class WorldGen {
         // Add checks for air tiles if you have them
     }
 
-    private static ushort GetTileFromChunkOrWorld(ChunkData currentChunkData, Vector3Int currentChunkOriginCell, int chunkSize,
+    private static ushort GetTileFromChunkOrWorld(ChunkData currentChunkData, Vector2Int worldCoord, int chunkSize,
                                                     int localX, int localY, ChunkManager cm) {
         if (localX >= 0 && localX < chunkSize && localY >= 0 && localY < chunkSize) {
             return currentChunkData.tiles[localX, localY];
         } else {
             // Calculate world coordinates
-            int worldX = currentChunkOriginCell.x + localX;
-            int worldY = currentChunkOriginCell.y + localY;
+            int worldX = worldCoord.x;
+            int worldY = worldCoord.y;
+            Debug.Log($"Getting Tile at world pos: x:{worldX} y:{worldY}");
             // You'll need a method in WorldManager to get a tile at any world position
             // This method should handle loading adjacent chunks if necessary, or return null/empty if out of bounds.
             return cm.GetTileAtWorldPos(worldX, worldY); // Implement this in WorldManager
@@ -523,7 +470,7 @@ public static class WorldGen {
 
     // Some non-blocking tiles like vines or something might be non blocking later
     private static bool IsEmptyOrNonBlocking(ushort tileID) {
-        return !IsRock(tileID); 
+        return !IsRock(tileID) && tileID != ResourceSystem.InvalidID; 
     }
 
     private static bool IsAdjacentWater(ChunkData chunkData, int x, int y) {
