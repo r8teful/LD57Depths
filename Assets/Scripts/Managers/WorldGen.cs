@@ -2,8 +2,11 @@ using Sirenix.Utilities;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
+using Unity.Collections;
 using Unity.Mathematics;
+using UnityEditor.PackageManager.Requests;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Tilemaps;
 
 
@@ -21,6 +24,9 @@ public static class WorldGen {
     private static Unity.Mathematics.Random noiseRandomGen;
     private static float seedOffsetX;
     private static float seedOffsetY;
+    private static int chunkSize;
+    private static Vector3Int chunkOriginCell;
+    private static RenderTexture renderTexture;
     private static Dictionary<BiomeType, BiomeLayerSO> biomeLookup = new Dictionary<BiomeType, BiomeLayerSO>();
     private static WorldGenSettingSO _settings;
     private static float maxDepth;
@@ -30,8 +36,10 @@ public static class WorldGen {
     public static void Init(WorldGenSettingSO worldGenSettings, WorldManager wm) {
         _settings = worldGenSettings;
         worldmanager = wm;
+        chunkSize = wm.ChunkManager.GetChunkSize();
         InitializeNoise();
         worldSpawnEntities = _settings.worldSpawnEntities;
+        renderTexture = Resources.Load<RenderTexture>("WorldRenderTexture");
         var maxD = -_settings.trenchBaseWidth / _settings.trenchWidenFactor;
         maxDepth = Mathf.Abs(maxD) * 0.90f; // 90% of the max theoretical depth
         biomeLookup.Clear();
@@ -56,14 +64,41 @@ public static class WorldGen {
         // but we use it here to get deterministic offsets for the noise input coordinates.
     }
 
+    private static void OnChunkDataReadbackComplete(AsyncGPUReadbackRequest req) {
+        if (req.hasError) {
+            Debug.LogError("GPU Readback Error");
+            return;
+        }
+        NativeArray<Color32> pixelData = req.GetData<Color32>();
+        ChunkData chunkData = new ChunkData(chunkSize, chunkSize);
+
+        for (int y = 0; y < chunkSize; y++) {
+            for (int x = 0; x < chunkSize; x++) {
+                int worldX = chunkOriginCell.x + x;
+                int worldY = chunkOriginCell.y + y;
+                Color32 p = pixelData[y * chunkSize + x];
+
+                
+                chunkData.tiles[x, y] = p.r; // Assign base tile
 
 
-    internal static ChunkData GenerateChunk(int chunkSize, Vector3Int chunkOriginCell, ChunkManager cm, out List<EntitySpawnInfo> entitySpawns) {
+                // Store biome info if needed later (not doing yet)
+                
+                //chunkData.biomeID[(byte)x, (byte)y] = (byte)biomeType;
+            }
+        }
+    }
+
+    internal static ChunkData GenerateChunk(int chunkSize, Vector3Int chunkOrigin, ChunkManager cm, out List<EntitySpawnInfo> entitySpawns) {
         //Debug.Log("Generating new chunk: " + chunkOriginCell);
         ChunkData chunkData = new ChunkData(chunkSize, chunkSize);
         entitySpawns = new List<EntitySpawnInfo>();
+        chunkOriginCell = chunkOrigin;
+        AsyncGPUReadback.Request(renderTexture, 0, TextureFormat.RGBA32, OnChunkDataReadbackComplete);
         // --- Pass 1: Base Terrain & Biome Assignment ---
-        for (int y = 0; y < chunkSize; y++) {
+
+
+        /*for (int y = 0; y < chunkSize; y++) {
             for (int x = 0; x < chunkSize; x++) {
                 int worldX = chunkOriginCell.x + x;
                 int worldY = chunkOriginCell.y + y;
@@ -74,13 +109,16 @@ public static class WorldGen {
                 // Store biome info if needed later (not doing yet)
                 chunkData.biomeID[(byte)x, (byte)y] = (byte)biomeType;
             }
-        }
+        }*/
         // --- Pass 2: Cave Generation ---
-        GenerateNoiseCavesForChunk(chunkData, chunkOriginCell,chunkSize); // New function call
+       
+        //GenerateNoiseCavesForChunk(chunkData, chunkOriginCell,chunkSize); // New function call
 
         // --- Pass 3: Ore Generation ---
         // Iterate again, placing ores only on non-cave, non-water tiles
-        SpawnOresInChunk(chunkData, chunkOriginCell, chunkSize); // Encapsulate ore logic similar to structures/entities
+        
+        
+        //SpawnOresInChunk(chunkData, chunkOriginCell, chunkSize); // Encapsulate ore logic similar to structures/entities
 
         // --- Pass 4: Structure Placement ---
         // This needs careful design. It checks potential anchor points within the chunk.
@@ -88,7 +126,9 @@ public static class WorldGen {
 
         // --- Pass 5: Decorative Entity Spawning ---
         // Determines WHERE entities should be placed, adds them to chunkData.entitiesToSpawn
-        SpawnEntitiesInChunk(chunkData, chunkOriginCell, chunkSize, entitySpawns, cm);
+        
+        
+        //SpawnEntitiesInChunk(chunkData, chunkOriginCell, chunkSize, entitySpawns, cm);
 
         return chunkData;
     }

@@ -22,6 +22,8 @@ public class EntityBaseSO : SerializedScriptableObject, IIdentifiable {
     [ReadOnly,HideLabel]
     [ShowInInspector]
     private Sprite sprite;
+
+    [OnInspectorInit]
     private void UpdatePreview() {
         sprite = null;
 
