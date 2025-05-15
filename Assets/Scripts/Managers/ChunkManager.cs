@@ -6,6 +6,7 @@ using FishNet.Object;
 using FishNet.Connection;
 using Sirenix.OdinInspector;
 using UnityEditor;
+using System.Linq;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
     public ushort[,] tiles; // The ground layer 
@@ -348,34 +349,17 @@ public class ChunkManager : NetworkBehaviour {
     [TargetRpc]
     public void TargetReceiveChunkDataMultiple(NetworkConnection conn, List<ChunkPayload> chunks) {
         // Executed ONLY on the client specified by 'conn'
-        foreach (var chunk in chunks) {
-            ClientCacheChunkDurability(chunk.ChunkCoord, chunk.Durabilities);
-            // New active local chunk
-            activeChunks.Add(chunk.ChunkCoord);
-            // Apply the received tiles visually
-            Vector3Int[] tilePositions = new Vector3Int[CHUNK_SIZE * CHUNK_SIZE];
-            TileBase[] tilesToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
-            TileBase[] oresToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
-            int tileIndex = 0;
-            for (int y = 0; y < CHUNK_SIZE; y++) {
-                for (int x = 0; x < CHUNK_SIZE; x++) {
-                    ushort tileID = chunk.TileIds[tileIndex];
-                    TileBase tile = App.ResourceSystem.GetTileByID(tileID); // Use your resource system
+        // --- Attempt to use SetTilesBlock ---
+        if (TrySetTilesBlockOptimized(chunks)) {
+            //_groundTilemap.RefreshAllTiles(); // Or selective refresh if possible
+            return; // Successfully used SetTilesBlock
+        }
 
-                    // Calculate world position for the tile
-                    // Tilemap uses cell coordinates. ChunkCoord is chunk-level.
-                    int worldTileX = chunk.ChunkCoord.x * CHUNK_SIZE + x;
-                    int worldTileY = chunk.ChunkCoord.y * CHUNK_SIZE + y;
-
-                    tilePositions[tileIndex] = new Vector3Int(worldTileX, worldTileY, 0); // Assuming Z=0 for 2D tilemap
-                    tilesToSet[tileIndex] = tile; // Can be null to clear a tile
-
-                    tileIndex++;
-                }
-            }
-            _worldManager.SetTiles(tilePositions, tilesToSet);
-            // Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunk.ChunkCoord);
-            // BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, CHUNK_SIZE, CHUNK_SIZE, 1);
+        // --- Fallback to SetTiles per chunk if optimization wasn't possible ---
+        Debug.Log("Falling back to SetTiles per chunk.");
+        foreach (var chunkPayload in chunks) {
+            ApplySingleChunkPayload(chunkPayload);
+        }
             // for (int i = 0; i < chunk.TileIds.Count; i++) {
             //     tilesToSet[i] = App.ResourceSystem.GetTileByID(chunk.TileIds[i]);
             // }
@@ -396,8 +380,144 @@ public class ChunkManager : NetworkBehaviour {
             //if (entityIds != null) {
             //    _entitySpawner.ProcessReceivedEntityIds(chunkCoord, entityIds);
             //}
-        }
+        
         // Debug.Log($"Client received and visually loaded chunk {chunkCoord}");
+    }
+
+    private void ApplySingleChunkPayload(ChunkPayload chunkPayload) {
+        ClientCacheChunkDurability(chunkPayload.ChunkCoord, chunkPayload.Durabilities);
+        // New active local chunk
+        activeChunks.Add(chunkPayload.ChunkCoord);
+        // Apply the received tiles visually
+        Vector3Int[] tilePositions = new Vector3Int[CHUNK_SIZE * CHUNK_SIZE];
+        TileBase[] tilesToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
+        TileBase[] oresToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
+        int tileIndex = 0;
+        for (int y = 0; y < CHUNK_SIZE; y++) {
+            for (int x = 0; x < CHUNK_SIZE; x++) {
+                ushort tileID = chunkPayload.TileIds[tileIndex];
+                TileBase tile = App.ResourceSystem.GetTileByID(tileID); // Use your resource system
+
+                // Calculate world position for the tile
+                // Tilemap uses cell coordinates. ChunkCoord is chunk-level.
+                int worldTileX = chunkPayload.ChunkCoord.x * CHUNK_SIZE + x;
+                int worldTileY = chunkPayload.ChunkCoord.y * CHUNK_SIZE + y;
+
+                tilePositions[tileIndex] = new Vector3Int(worldTileX, worldTileY, 0); // Assuming Z=0 for 2D tilemap
+                tilesToSet[tileIndex] = tile; // Can be null to clear a tile
+
+                tileIndex++;
+            }
+        }
+        Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkPayload.ChunkCoord);
+        BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, CHUNK_SIZE, CHUNK_SIZE, 1);
+        _worldManager.SetTiles(chunkBounds, tilesToSet);
+    }
+    private bool TrySetTilesBlockOptimized(List<ChunkPayload> chunkPayloads) {
+        if (chunkPayloads.Count == 0)
+            return false;
+
+        // 1. Calculate overall bounds and check for contiguity.
+        int minChunkX = chunkPayloads[0].ChunkCoord.x;
+        int maxChunkX = chunkPayloads[0].ChunkCoord.x;
+        int minChunkY = chunkPayloads[0].ChunkCoord.y;
+        int maxChunkY = chunkPayloads[0].ChunkCoord.y;
+
+        HashSet<Vector2Int> receivedChunkCoords = new HashSet<Vector2Int>();
+        foreach (var payload in chunkPayloads) {
+            minChunkX = Mathf.Min(minChunkX, payload.ChunkCoord.x);
+            maxChunkX = Mathf.Max(maxChunkX, payload.ChunkCoord.x);
+            minChunkY = Mathf.Min(minChunkY, payload.ChunkCoord.y);
+            maxChunkY = Mathf.Max(maxChunkY, payload.ChunkCoord.y);
+            receivedChunkCoords.Add(payload.ChunkCoord);
+        }
+        int expectedNumChunksX = (maxChunkX - minChunkX) + 1;
+        int expectedNumChunksY = (maxChunkY - minChunkY) + 1;
+        int expectedTotalChunks = expectedNumChunksX * expectedNumChunksY;
+        if (chunkPayloads.Count != expectedTotalChunks) {
+            // Not a dense rectangle of chunks (or duplicate chunk coords were sent)
+            Debug.Log($"SetTilesBlock optimization: Payload count ({chunkPayloads.Count}) doesn't match expected count for bounds ({expectedTotalChunks}).");
+            return false;
+        }
+        // Verify all chunks within the bounds are present
+        for (int cy = 0; cy < expectedNumChunksY; cy++) {
+            for (int cx = 0; cx < expectedNumChunksX; cx++) {
+                if (!receivedChunkCoords.Contains(new Vector2Int(minChunkX + cx, minChunkY + cy))) {
+                    // A chunk is missing within the calculated rectangle
+                    Debug.Log($"SetTilesBlock optimization: Missing chunk {new Vector2Int(minChunkX + cx, minChunkY + cy)} within bounds.");
+                    return false;
+                }
+            }
+        }
+        // If we reach here, chunks form a contiguous rectangle.
+        Debug.Log($"SetTilesBlock optimization: Payloads form a contiguous rectangle from ({minChunkX},{minChunkY}) to ({maxChunkX},{maxChunkY}).");
+
+        // 2. Prepare data for SetTilesBlock.
+        int blockWidthInTiles = expectedNumChunksX * CHUNK_SIZE;
+        int blockHeightInTiles = expectedNumChunksY * CHUNK_SIZE;
+        TileBase[] blockTileBases = new TileBase[blockWidthInTiles * blockHeightInTiles];
+
+        // Sort payloads to ensure correct order when populating blockTileBases.
+        // We need to iterate through them as if we're filling the larger tile block row by row (of chunks),
+        // and within each chunk, row by row (of tiles).
+        var sortedPayloads = chunkPayloads.OrderBy(p => p.ChunkCoord.y).ThenBy(p => p.ChunkCoord.x).ToList();
+
+        // Fill blockTileBases
+        // The blockTileBases array is filled tile-row by tile-row for the entire block.
+        for (int chunkRowY = 0; chunkRowY < expectedNumChunksY; chunkRowY++) // Iterate through rows of chunks
+        {
+            for (int tileRowInChunk = 0; tileRowInChunk < CHUNK_SIZE; tileRowInChunk++) // Iterate through tile rows within a chunk row
+            {
+                for (int chunkColX = 0; chunkColX < expectedNumChunksX; chunkColX++) // Iterate through chunks in the current chunk row
+                {
+                    // Find the correct payload for (minChunkX + chunkColX, minChunkY + chunkRowY)
+                    // This assumes sortedPayloads helps, but direct access might be better.
+                    // Let's make a dictionary for faster lookup.
+                    Dictionary<Vector2Int, ChunkPayload> payloadMap = sortedPayloads.ToDictionary(p => p.ChunkCoord);
+                    ChunkPayload currentChunkPayload = payloadMap[new Vector2Int(minChunkX + chunkColX, minChunkY + chunkRowY)];
+
+                    if (currentChunkPayload.TileIds == null || currentChunkPayload.TileIds.Count != CHUNK_SIZE * CHUNK_SIZE) {
+                        Debug.LogError($"Critical error during SetTilesBlock: Invalid tile data for chunk {currentChunkPayload.ChunkCoord}. This should have been caught earlier.");
+                        return false; // Or handle more gracefully
+                    }
+
+                    for (int tileColInChunk = 0; tileColInChunk < CHUNK_SIZE; tileColInChunk++) // Iterate through tiles in current chunk's current tile row
+                    {
+                        int payloadTileIndex = tileRowInChunk * CHUNK_SIZE + tileColInChunk; // Index within the payload's 1D list
+                        ushort tileID = currentChunkPayload.TileIds[payloadTileIndex];
+                        TileBase tileBase = App.ResourceSystem.GetTileByID(tileID);
+
+                        // Calculate index in the final blockTileBases array
+                        // Overall Y tile index: (chunkRowY * CHUNK_TILE_DIMENSION + tileRowInChunk)
+                        // Overall X tile index: (chunkColX * CHUNK_TILE_DIMENSION + tileColInChunk)
+                        int blockTileY = chunkRowY * CHUNK_SIZE + tileRowInChunk;
+                        int blockTileX = chunkColX * CHUNK_SIZE + tileColInChunk;
+                        int blockArrayIndex = blockTileY * blockWidthInTiles + blockTileX;
+
+                        if (blockArrayIndex < 0 || blockArrayIndex >= blockTileBases.Length) {
+                            Debug.LogError($"SetTilesBlock index out of bounds: ({blockTileX}, {blockTileY}) -> index {blockArrayIndex}. blockWidth: {blockWidthInTiles}, Length: {blockTileBases.Length}");
+                            return false; // Should not happen if logic is correct
+                        }
+                        blockTileBases[blockArrayIndex] = tileBase;
+                    }
+                }
+            }
+        }
+
+        // 3. Define the bounds for SetTilesBlock.
+        // The position for BoundsInt is the bottom-left corner of the block in tile coordinates.
+        Vector3Int blockOriginTileCoord = new Vector3Int(
+            minChunkX * CHUNK_SIZE,
+            minChunkY * CHUNK_SIZE,
+            0 // Assuming Z=0
+        );
+
+        BoundsInt blockBounds = new BoundsInt(blockOriginTileCoord, new Vector3Int(blockWidthInTiles, blockHeightInTiles, 1));
+
+        // 4. Call SetTilesBlock.
+        _worldManager.SetTiles(blockBounds, blockTileBases);
+        Debug.Log($"Applied {blockWidthInTiles}x{blockHeightInTiles} tiles using SetTilesBlock at {blockOriginTileCoord}.");
+        return true;
     }
     private void ClientCacheChunkDurability(Vector2Int chunkCoord, List<short> durabilityList) {
         if (!clientDurabilityCache.ContainsKey(chunkCoord)) {
