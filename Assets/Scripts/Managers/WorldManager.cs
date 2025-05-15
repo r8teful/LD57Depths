@@ -1,5 +1,4 @@
 using FishNet.Object;
-using System.Collections.Generic;
 using UnityEngine.Tilemaps;
 using UnityEngine;
 using Sirenix.OdinInspector;
@@ -8,11 +7,14 @@ public class WorldManager : NetworkBehaviour {
     public static WorldManager Instance { get; private set; }
     // --- Managers ---
     public WorldDataManager WorldDataManager;
+    public WorldGen WorldGen;
     public ChunkManager ChunkManager;
     public BiomeManager BiomeManager;
     public BackgroundManager Backgroundmanager;
+    [SerializeField] private RenderTexture worldRenderTexture;
     [SerializeField] private Transform _sub;
     [SerializeField] private Transform _worldRoot; // All world entities have this as their parent, used for hiding when entering sub or other interiors
+    [SerializeField] private Camera _worldGenCamera;
     [InlineEditor]
     public WorldGenSettingSO WorldGenSettings;
     public int GetChunkSize() => ChunkManager.GetChunkSize();
@@ -30,7 +32,7 @@ public class WorldManager : NetworkBehaviour {
     [Button("NewWorld")]
     private void DEBUGNEWGEN() {
         ChunkManager.DEBUGNewGen();
-        WorldGen.Init(WorldGenSettings, this);
+        WorldGen = new(ChunkManager.GetChunkSize(), worldRenderTexture, WorldGenSettings, this, ChunkManager,_worldGenCamera);
         WorldGen.InitializeNoise(); 
     }
     [SerializeField] private bool DEBUGConstantNewGen;
@@ -45,7 +47,7 @@ public class WorldManager : NetworkBehaviour {
     public override void OnStartServer() {
         base.OnStartServer();
         // Server-only initialization
-        WorldGen.Init(WorldGenSettings, this);
+        WorldGen = new(ChunkManager.GetChunkSize(), worldRenderTexture, WorldGenSettings, this, ChunkManager, _worldGenCamera);
         //InstanceFinder.ServerManager.Spawn(ChunkManager.gameObject, Owner);
         //ChunkManager.Spawn(ChunkManager.gameObject, Owner);
         if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
@@ -62,6 +64,14 @@ public class WorldManager : NetworkBehaviour {
         base.OnStartClient();
         Debug.Log("Start client");
         mainTilemap.ClearAllTiles(); // Start with a clear visual map
+    }
+    public void MoveCamToChunkCoord(Vector2Int chunkCoord) {
+        var size = ChunkManager.GetChunkSize() / 2;
+        var cell = ChunkManager.ChunkCoordToCellOrigin(chunkCoord);
+        _worldGenCamera.transform.position = GetCellCenterWorld(new(cell.x + size, cell.y + size));
+    }
+    public void RequestGenerateChunk(Vector3Int chunkCoord) {
+        WorldGen.GenerateChunk(chunkCoord, out var entitySpawns);
     }
 
     // --- RPC to tell all clients about a tile change ---
@@ -84,6 +94,10 @@ public class WorldManager : NetworkBehaviour {
     // Modify the world (visually)
     internal void SetTiles(BoundsInt chunkBounds, TileBase[] tilesToSet) {
         mainTilemap.SetTilesBlock(chunkBounds, tilesToSet);
+    }
+    //  You should use BoundsInt instead its faster
+    internal void SetTiles(Vector3Int[] tiles, TileBase[] tilesToSet) {
+        mainTilemap.SetTiles(tiles, tilesToSet);
     }
     internal void SetTile(Vector3Int cellPos, TileBase tileToSet) {
         mainTilemap.SetTile(cellPos, tileToSet);

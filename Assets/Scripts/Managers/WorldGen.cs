@@ -1,7 +1,7 @@
+using FishNet.Connection;
 using Sirenix.Utilities;
+using System.Collections;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Mail;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEditor.PackageManager.Requests;
@@ -20,26 +20,54 @@ public struct DeterministicStructure {
     // Optional: Add pattern information if it's not just a single line
 }
 
-public static class WorldGen {
-    private static Unity.Mathematics.Random noiseRandomGen;
-    private static float seedOffsetX;
-    private static float seedOffsetY;
-    private static int chunkSize;
-    private static Vector3Int chunkOriginCell;
-    private static RenderTexture renderTexture;
-    private static Dictionary<BiomeType, BiomeLayerSO> biomeLookup = new Dictionary<BiomeType, BiomeLayerSO>();
-    private static WorldGenSettingSO _settings;
-    private static float maxDepth;
-    private static WorldManager worldmanager;
-    private static List<WorldSpawnEntitySO> worldSpawnEntities;
-    public static float GetDepth() => maxDepth;
-    public static void Init(WorldGenSettingSO worldGenSettings, WorldManager wm) {
-        _settings = worldGenSettings;
-        worldmanager = wm;
-        chunkSize = wm.ChunkManager.GetChunkSize();
+public class WorldGen {
+    private Unity.Mathematics.Random noiseRandomGen;
+    private float seedOffsetX;
+    private float seedOffsetY;
+    private int chunkSize;
+    private Vector3Int chunkOriginCell;
+    private Dictionary<BiomeType, BiomeLayerSO> biomeLookup = new Dictionary<BiomeType, BiomeLayerSO>();
+    private WorldGenSettingSO _settings;
+    private float maxDepth;
+    private WorldManager worldmanager;
+    private ChunkManager chunkManager;
+    private List<WorldSpawnEntitySO> worldSpawnEntities;
+
+    private Camera _renderCamera; // Orthographic camera for rendering chunks
+    private RenderTexture _renderTexture; // Target 96x96 RenderTexture
+
+    public const int CHUNK_TILE_DIMENSION = 16; // Size of a chunk in tiles (e.g., 16x16)
+
+    // These are derived from the problem statement but made const for clarity
+    public const int RENDER_TEXTURE_DIMENSION = 96; // Fixed size of the RenderTexture (e.g., 96x96)
+    public const int CHUNKS_IN_VIEW_DIMENSION = RENDER_TEXTURE_DIMENSION / CHUNK_TILE_DIMENSION; // 96/16 = 6
+
+    private bool _isProcessingGPUReadback = false;
+
+    // Helper struct to pass data to the async callback
+    private struct ReadbackContext {
+        public List<Vector2Int> ChunksToRequestBatch;
+        public Vector2Int RenderAreaOriginChunkCoord; // Bottom-left chunk coord of the 6x6 render area
+        public NetworkConnection req;
+        public System.Action<Dictionary<Vector2Int, ChunkData>,NetworkConnection> OnCompleteCallback;
+    }
+
+    public float GetDepth() => maxDepth;
+
+    public WorldGen(int chunkSize, RenderTexture renderTexture, WorldGenSettingSO settings, WorldManager worldmanager, ChunkManager chunkManager,Camera renderCamera) {
+        this.chunkSize = chunkSize;
+        _renderTexture = renderTexture;
+        _settings = settings;
+        this.worldmanager = worldmanager;
+        this.chunkManager = chunkManager;
+        _renderCamera = renderCamera;
+        // This should be in the constructor but I think this works like so?
+        Init();
+    }
+
+    public void Init() {
         InitializeNoise();
         worldSpawnEntities = _settings.worldSpawnEntities;
-        renderTexture = Resources.Load<RenderTexture>("WorldRenderTexture");
         var maxD = -_settings.trenchBaseWidth / _settings.trenchWidenFactor;
         maxDepth = Mathf.Abs(maxD) * 0.90f; // 90% of the max theoretical depth
         biomeLookup.Clear();
@@ -54,7 +82,7 @@ public static class WorldGen {
         //_settings.biomeLayers.Sort((a, b) => a.startY.CompareTo(b.startY));
     }
     // Call this if you change the seed at runtime
-    public static void InitializeNoise() {
+    public void InitializeNoise() {
         // Use the seed to initialize the random generator for noise offsets
         noiseRandomGen = new Unity.Mathematics.Random((uint)_settings.seed);
         // Generate large offsets based on the seed to shift noise patterns
@@ -64,7 +92,7 @@ public static class WorldGen {
         // but we use it here to get deterministic offsets for the noise input coordinates.
     }
 
-    private static void OnChunkDataReadbackComplete(AsyncGPUReadbackRequest req) {
+    private void OnChunkDataReadbackComplete(AsyncGPUReadbackRequest req) {
         if (req.hasError) {
             Debug.LogError("GPU Readback Error");
             return;
@@ -77,10 +105,8 @@ public static class WorldGen {
                 int worldX = chunkOriginCell.x + x;
                 int worldY = chunkOriginCell.y + y;
                 Color32 p = pixelData[y * chunkSize + x];
-
-                
                 chunkData.tiles[x, y] = p.r; // Assign base tile
-
+                
 
                 // Store biome info if needed later (not doing yet)
                 
@@ -88,13 +114,237 @@ public static class WorldGen {
             }
         }
     }
+    public IEnumerator GenerateChunkAsync(List<Vector2Int> chunksToRequestBatch, Vector2Int newClientChunkCoor, NetworkConnection sender) {
+        // Todo setup etc etc
+        worldmanager.MoveCamToChunkCoord(newClientChunkCoor);
+        var req = AsyncGPUReadback.Request(_renderTexture, 0, TextureFormat.RGBA32, OnChunkDataReadbackComplete);
+        while(req.done || req.hasError) {
+            if(req.hasError) {
+                Debug.LogError("GPU Readback Error");
+                break;
+            }
 
-    internal static ChunkData GenerateChunk(int chunkSize, Vector3Int chunkOrigin, ChunkManager cm, out List<EntitySpawnInfo> entitySpawns) {
+            if (req.done) {
+                ChunkData chunkData = new ChunkData(chunkSize,chunkSize);
+                List<ushort> tileIds = new List<ushort>(chunkSize * chunkSize); // todo shouln't put this here EH just for now
+                var pixelData = req.GetData<Color32>();
+                foreach(var chunkCoord  in chunksToRequestBatch) {
+                    for (int y = 0; y < chunkSize; y++) {
+                        for (int x = 0; x < chunkSize; x++) {
+                            int worldX = chunkCoord.x + x;
+                            int worldY = chunkCoord.y + y;
+                            Color32 p = pixelData[y * chunkSize + x];
+                            if(p.r == 1) {
+                                chunkData.tiles[x, y] = 1; // Assign base tile
+                                tileIds.Add(1);
+                            }
+                            if(p.r == 0) {
+                                chunkData.tiles[x, y] = 0; // air
+                                tileIds.Add(0);
+                            } else { 
+                                chunkData.tiles[x, y] = 2; // BAD
+                                tileIds.Add(2);
+                            
+                            }
+                            // Store biome info if needed later (not doing yet)
+                            //chunkData.biomeID[(byte)x, (byte)y] = (byte)biomeType;
+                        }
+                    }
+                    worldmanager.ChunkManager.TargetReceiveChunkData(sender, chunkCoord, tileIds, null, null, null);
+                }
+            }
+            yield return null;
+        }
+    }
+
+
+    /// <summary>
+    /// Generates chunk data for the requested chunks using GPU rendering and async readback.
+    /// </summary>
+    /// <param name="chunksToRequestBatch">A list of chunk coordinates that need to be generated. These are expected to fall within the 6x6 view.</param>
+    /// <param name="newClientChunkCoord">The chunk coordinate the player/client is currently in or moving to. This will be the center of the 6x6 render area.</param>
+    /// <param name="onGenerationComplete">Callback action that receives the list of generated ChunkData.</param>
+    public IEnumerator GenerateChunkAsync(List<Vector2Int> chunksToRequestBatch, Vector2Int newClientChunkCoord, 
+        NetworkConnection requester, System.Action<Dictionary<Vector2Int,ChunkData>,NetworkConnection> onGenerationComplete) {
+
+        if (_isProcessingGPUReadback) {
+            Debug.LogWarning("GPU Readback is already in progress. Request ignored.");
+            onGenerationComplete?.Invoke(new Dictionary<Vector2Int, ChunkData>(),requester); // Return empty list
+            yield break;
+        }
+        _isProcessingGPUReadback = true;
+
+        // --- 1. Camera Setup ---
+        // Orthographic size: 1 pixel = 1 tile. RT is 96x96 tiles. Ortho size is half-height.
+        _renderCamera.orthographicSize = RENDER_TEXTURE_DIMENSION / 2.0f;
+
+        // Determine the bottom-left chunk coordinate of the 6x6 area to render.
+        // newClientChunkCoord is the "center" of this 6x6 area.
+        // E.g., if CHUNKS_IN_VIEW_DIMENSION is 6, newClientChunkCoord (10,10) means rendering
+        // chunks from (10 - 6/2, 10 - 6/2) = (7,7) up to (7+5, 7+5) = (12,12).
+        Vector2Int renderAreaOriginChunk = new Vector2Int(
+            newClientChunkCoord.x - CHUNKS_IN_VIEW_DIMENSION / 2,
+            newClientChunkCoord.y - CHUNKS_IN_VIEW_DIMENSION / 2
+        );
+
+        // World position of the bottom-left corner of the entire 96x96 tile render area
+        float renderAreaWorldX = renderAreaOriginChunk.x * CHUNK_TILE_DIMENSION;
+        float renderAreaWorldY = renderAreaOriginChunk.y * CHUNK_TILE_DIMENSION;
+
+        // Position camera at the center of this 96x96 tile area
+        // The camera's position is the center of its view.
+        // If bottom-left of render area is (worldX, worldY) and it's 96 units wide/high,
+        // center is (worldX + 96/2, worldY + 96/2).
+        _renderCamera.transform.position = new Vector3(
+            renderAreaWorldX + RENDER_TEXTURE_DIMENSION / 2.0f,
+            renderAreaWorldY + RENDER_TEXTURE_DIMENSION / 2.0f,
+            _renderCamera.transform.position.z // Keep original Z
+        );
+
+        // Ensure camera renders its view to the RenderTexture.
+        // If camera is enabled and targetTexture is set, it usually renders automatically.
+        // Forcing a render or waiting for end of frame ensures data is fresh.
+        // _renderCamera.Render(); // Manually trigger render if camera is disabled or needed.
+        yield return new WaitForEndOfFrame(); // Good practice to ensure rendering is complete before readback
+
+        // --- 2. Async GPU Readback ---
+        var context = new ReadbackContext {
+            ChunksToRequestBatch = new List<Vector2Int>(chunksToRequestBatch), // Copy list
+            RenderAreaOriginChunkCoord = renderAreaOriginChunk,
+            OnCompleteCallback = onGenerationComplete,
+            req = requester
+        };
+
+        // Request readback. The callback 'OnReadbackCompleted' will be invoked when data is ready.
+        // Using RGBA32 as it's a common, flexible format. Shader should output accordingly.
+        AsyncGPUReadback.Request(_renderTexture, 0, TextureFormat.RGBA32, request => OnReadbackCompleted(request, context));
+
+        // The coroutine itself doesn't block here due to async nature.
+        // It will continue, and 'OnReadbackCompleted' will handle data processing.
+        // The `_isProcessingGPUReadback` flag will be reset in the callback.
+        // If the caller of GenerateChunkAsync needs to wait for this *specific* operation:
+        // while(_isProcessingGPUReadback) { yield return null; }
+        // However, the Action callback pattern is generally preferred for async operations.
+    }
+
+    private void OnReadbackCompleted(AsyncGPUReadbackRequest request, ReadbackContext context) {
+        Dictionary<Vector2Int, ChunkData> generatedChunks = new Dictionary<Vector2Int, ChunkData>();
+        if (request.hasError) {
+            Debug.LogError("GPU Readback Error!");
+        } else if (request.done) // Check if 'done' just in case, though Request usually ensures it.
+          {
+            NativeArray<Color32> pixelData = request.GetData<Color32>();
+            // pixelData is a 1D array representing the 2D texture.
+            // For a 96x96 texture, it has 96*96 = 9216 elements.
+            // Pixels are typically ordered row by row, starting from bottom-left (0,0).
+
+            foreach (Vector2Int requestedChunkCoord in context.ChunksToRequestBatch) {
+                // Calculate where this chunk's data starts within the 96x96 RenderTexture.
+                // Offset of the requested chunk from the origin chunk of the render texture (in chunk units)
+                int chunkOffsetX_from_RT_origin_chunks = requestedChunkCoord.x - context.RenderAreaOriginChunkCoord.x;
+                int chunkOffsetY_from_RT_origin_chunks = requestedChunkCoord.y - context.RenderAreaOriginChunkCoord.y;
+
+                // Convert to pixel offset (bottom-left corner of the chunk within the RenderTexture)
+                int chunkPixelStartX_in_RT = chunkOffsetX_from_RT_origin_chunks * CHUNK_TILE_DIMENSION;
+                int chunkPixelStartY_in_RT = chunkOffsetY_from_RT_origin_chunks * CHUNK_TILE_DIMENSION;
+
+                // Basic validation: Is this chunk actually within the 6x6 rendered area?
+                if (chunkOffsetX_from_RT_origin_chunks < 0 || chunkOffsetX_from_RT_origin_chunks >= CHUNKS_IN_VIEW_DIMENSION ||
+                    chunkOffsetY_from_RT_origin_chunks < 0 || chunkOffsetY_from_RT_origin_chunks >= CHUNKS_IN_VIEW_DIMENSION) {
+                    Debug.LogWarning($"Requested chunk {requestedChunkCoord} is outside the rendered area defined by origin {context.RenderAreaOriginChunkCoord} and view dimension {CHUNKS_IN_VIEW_DIMENSION}. Skipping.");
+                    continue;
+                }
+
+                //ChunkData currentChunkData = new ChunkData(requestedChunkCoord, CHUNK_TILE_DIMENSION);
+                ChunkData currentChunkData = new ChunkData(CHUNK_TILE_DIMENSION, CHUNK_TILE_DIMENSION);
+
+                for (int yTileInChunk = 0; yTileInChunk < CHUNK_TILE_DIMENSION; yTileInChunk++) {
+                    for (int xTileInChunk = 0; xTileInChunk < CHUNK_TILE_DIMENSION; xTileInChunk++) {
+                        // Absolute pixel coordinates in the RenderTexture
+                        int pixelX_in_RT = chunkPixelStartX_in_RT + xTileInChunk;
+                        int pixelY_in_RT = chunkPixelStartY_in_RT + yTileInChunk;
+
+                        // Convert 2D pixel coordinate to 1D index in pixelData array
+                        // (Unity's Texture2D.GetPixel(0,0) is bottom-left, matching GPU readback usually)
+                        int pixelIndex = pixelY_in_RT * RENDER_TEXTURE_DIMENSION + pixelX_in_RT;
+
+                        if (pixelIndex < 0 || pixelIndex >= pixelData.Length) {
+                            Debug.LogError($"Pixel index out of bounds: ({pixelX_in_RT}, {pixelY_in_RT}) -> index {pixelIndex}. RT dim: {RENDER_TEXTURE_DIMENSION}. Data length: {pixelData.Length}");
+                            continue;
+                        }
+                        Color32 color = pixelData[pixelIndex];
+
+                        // --- Convert color to tile ID ---
+                        // Simplest assumption: tile ID is stored in the R channel (0-255).
+                        
+                        ushort tileID = color.r;
+                        // If tile IDs are true ushort (0-65535) and packed into R and G channels by the shader:
+                        // Shader might do: outColor.r = (id % 256) / 255.0; outColor.g = floor(id / 256.0) / 255.0;
+                        // Then here: tileID = (ushort)(color.r + (color.g * 256)); // color.r and .g are 0-255 bytes
+                        // Or bitwise: tileID = (ushort)(color.r | (color.g << 8));
+
+                        currentChunkData.tiles[xTileInChunk, yTileInChunk] = tileID;
+                    }
+                }
+                generatedChunks.Add(requestedChunkCoord,currentChunkData);
+            }
+        }
+
+        // Invoke the callback with the generated chunk data
+        context.OnCompleteCallback?.Invoke(generatedChunks, context.req);
+        _isProcessingGPUReadback = false; // Allow next request
+    }
+
+#if UNITY_EDITOR
+    // Example of how to call this (for testing)
+    [ContextMenu("Test Generate Single Chunk Batch")]
+    void TestGeneration() {
+        if (Application.isPlaying) {
+            // Example: Request the chunk at (0,0) and player is also at (0,0)
+            Vector2Int playerChunkCoord = new Vector2Int(0, 0);
+            List<Vector2Int> chunksToGen = new List<Vector2Int> { new Vector2Int(0, 0) };
+
+            // Player at (0,0) will make the camera view chunks from (-3,-3) to (2,2) approx.
+            // So requesting (0,0) is fine.
+            // Requesting (-3,-3) would be the bottom-left chunk of the 6x6 view.
+            // Requesting (2,2) would be the top-right chunk of the 6x6 view.
+
+            // The actual renderAreaOriginChunk will be newClientChunkCoord - (3,3).
+            // If newClientChunkCoord is (0,0), renderAreaOriginChunk is (-3,-3).
+            // The 6x6 chunks rendered are (-3,-3) to (2,2).
+            // chunksToGen should contain coordinates within this range.
+            // Example: player at (5,5), request generation for (4,4), (5,4), (4,5), (5,5)
+            // playerChunkCoord = new Vector2Int(5,5);
+            // chunksToGen = new List<Vector2Int> {
+            //     new Vector2Int(4,4), new Vector2Int(5,4),
+            //     new Vector2Int(4,5), new Vector2Int(5,5)
+            // };
+
+
+            /*StartCoroutine(GenerateChunkAsync(chunksToGen, playerChunkCoord, (generatedChunkData) => {
+                if (generatedChunkData != null && generatedChunkData.Count > 0) {
+                    Debug.Log($"Generation complete! Received {generatedChunkData.Count} chunks.");
+                    foreach (var chunk in generatedChunkData) {
+                        Debug.Log($"Chunk {chunk.chunkCoord}: Processed {chunk.tileIDs.GetLength(0)}x{chunk.tileIDs.GetLength(1)} tiles.");
+                        // You could print a tile ID here:
+                        // if (chunk.tileIDs.GetLength(0) > 0 && chunk.tileIDs.GetLength(1) > 0)
+                        //    Debug.Log($"  Tile (0,0) ID: {chunk.tileIDs[0,0]}");
+                    }
+                } else {
+                    Debug.LogWarning("Generation returned no data or an error occurred.");
+                }
+            }));*/
+        } else {
+            Debug.LogError("TestGeneration can only be run in Play Mode.");
+        }
+    }
+#endif
+    internal ChunkData GenerateChunk(Vector3Int chunkOrigin, out List<EntitySpawnInfo> entitySpawns) {
         //Debug.Log("Generating new chunk: " + chunkOriginCell);
         ChunkData chunkData = new ChunkData(chunkSize, chunkSize);
         entitySpawns = new List<EntitySpawnInfo>();
         chunkOriginCell = chunkOrigin;
-        AsyncGPUReadback.Request(renderTexture, 0, TextureFormat.RGBA32, OnChunkDataReadbackComplete);
+        AsyncGPUReadback.Request(_renderTexture, 0, TextureFormat.RGBA32, OnChunkDataReadbackComplete);
         // --- Pass 1: Base Terrain & Biome Assignment ---
 
 
@@ -134,7 +384,7 @@ public static class WorldGen {
     }
     // 0 Air, 1 Stone, 
     // --- Pass 1 Helper: Determine Base Terrain & Primary Biome ---
-    private static ushort DetermineBaseTerrainAndBiome(int worldX, int worldY, out BiomeType primaryBiome) {
+    private ushort DetermineBaseTerrainAndBiome(int worldX, int worldY, out BiomeType primaryBiome) {
         primaryBiome = BiomeType.None; // Default to no specific biome
 
         // Surface
@@ -205,7 +455,7 @@ public static class WorldGen {
 
 
     // --- New Cave Generation Function (Pass 2) ---
-    private static void GenerateNoiseCavesForChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
+    private void GenerateNoiseCavesForChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
         for (int y = 0; y < chunkSize; y++) {
             for (int x = 0; x < chunkSize; x++) {
 
@@ -263,7 +513,7 @@ public static class WorldGen {
     }
 
     // --- Pass 3 Helper 
-    private static void SpawnOresInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
+    private void SpawnOresInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
         for (int y = 0; y < chunkSize; y++) {
             for (int x = 0; x < chunkSize; x++) {
                 ushort currentTileID = chunkData.tiles[x, y];
@@ -282,7 +532,7 @@ public static class WorldGen {
             }
         }
     }
-    private static TileBase DetermineOre(int worldX, int worldY, string biomeName) {
+    private TileBase DetermineOre(int worldX, int worldY, string biomeName) {
         TileBase foundOre = null;
         // Check Ores (consider priority/order)
         foreach (var ore in _settings.oreTypes) {
@@ -305,7 +555,7 @@ public static class WorldGen {
 
     /*
     // --- Pass 4: Structure Placement ---
-    private static void PlaceStructuresInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
+    private  void PlaceStructuresInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
         // Check potential anchor points *within* this chunk.
         // Structures can extend *outside* the chunk, tiles outside will be placed when neighbour chunk is generated.
         for (int localY = 0; localY < chunkSize; ++localY) {
@@ -378,7 +628,7 @@ public static class WorldGen {
         }
     }*/
 
-    private static void SpawnEntitiesInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize, List<EntitySpawnInfo> entitySpawns, ChunkManager cm) {
+    private void SpawnEntitiesInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize, List<EntitySpawnInfo> entitySpawns, ChunkManager cm) {
         if (worldSpawnEntities == null || worldSpawnEntities.Count == 0)return;
         HashSet<Vector2Int> occupiedAnchors = new HashSet<Vector2Int>();
         for (int y = 0; y < chunkSize; y++) {
@@ -524,12 +774,12 @@ public static class WorldGen {
             }
         }
     }
-    private static bool IsSolid(ushort tileID) {
+    private bool IsSolid(ushort tileID) {
         return tileID != ResourceSystem.InvalidID && tileID != ResourceSystem.AirID;
         // Add checks for air tiles if you have them
     }
 
-    private static ushort GetTileFromChunkOrWorld(ChunkData currentChunkData, Vector2Int worldCoord, int chunkSize,
+    private ushort GetTileFromChunkOrWorld(ChunkData currentChunkData, Vector2Int worldCoord, int chunkSize,
                                                     int localX, int localY, ChunkManager cm) {
         if (localX >= 0 && localX < chunkSize && localY >= 0 && localY < chunkSize) {
             return currentChunkData.tiles[localX, localY];
@@ -545,11 +795,11 @@ public static class WorldGen {
     }
 
     // Some non-blocking tiles like vines or something might be non blocking later
-    private static bool IsEmptyOrNonBlocking(ushort tileID) {
+    private bool IsEmptyOrNonBlocking(ushort tileID) {
         return !IsSolid(tileID) && tileID != ResourceSystem.InvalidID; 
     }
 
-    private static bool IsAdjacentWater(ChunkData chunkData, int x, int y) {
+    private bool IsAdjacentWater(ChunkData chunkData, int x, int y) {
         int width = chunkData.tiles.GetLength(0);
         int height = chunkData.tiles.GetLength(0);
 
@@ -572,7 +822,7 @@ public static class WorldGen {
         }
         return false;
     }
-    private static float GetNoise(float x, float y, float frequency) {
+    private float GetNoise(float x, float y, float frequency) {
         // Apply seed offsets and frequency
         float sampleX = (x + seedOffsetX) * frequency;
         float sampleY = (y + seedOffsetY) * frequency;
@@ -580,7 +830,7 @@ public static class WorldGen {
         return (noise.snoise(new float2(sampleX, sampleY)) + 1f) * 0.5f;
     }
     // Helper for deterministic hashing (useful for structure placement)
-    private static float GetHash(int x, int y) {
+    private float GetHash(int x, int y) {
         // Simple hash combining seed, x, y. Replace with a better one if needed.
         uint hash = (uint)_settings.seed;
         hash ^= (uint)x * 73856093;
