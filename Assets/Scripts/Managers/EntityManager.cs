@@ -24,7 +24,6 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
     // Server-side tracking
     private List<NetworkObject> spawnedEntities = new List<NetworkObject>(); // Track instances for despawning
     private Dictionary<GameObject, int> currentEntityCounts = new Dictionary<GameObject, int>(); // Key: Prefab, Value: Count
-    private Dictionary<int, GameObject> idToPrefab = new Dictionary<int, GameObject>();
     // Key: Persistent Entity ID, Value: Number of CLIENTS currently needing it active
     private Dictionary<ulong, int> entityClientRefCount = new Dictionary<ulong, int>();
 
@@ -287,26 +286,26 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         }
     }
     // Adds data to a persistent database, doesn't get spawned yet because that is client only
-    public void AddGeneratedEntityData(Vector2Int chunkCoord, List<EntitySpawnInfo> entityList) {
-        if (!IsServerInitialized || entityList == null || entityList.Count == 0) return;
+    public List<ulong> AddGeneratedEntityData(Vector2Int chunkCoord, List<EntitySpawnInfo> entityList) {
+        if (!IsServerInitialized || entityList == null || entityList.Count == 0) return new List<ulong>();
         if (!entityIdsByByChunkCoord.ContainsKey(chunkCoord)) {
             entityIdsByByChunkCoord[chunkCoord] = new List<ulong>();
         }
         foreach (EntitySpawnInfo info in entityList) {
-            if (!idToPrefab.ContainsKey(info.entityID)) {
-                // new entry
-                idToPrefab.Add(info.entityID, info.prefab);
-            }
             // Add to the main persistent database
-            PersistentEntityData newEntityData = ServerAddNewPersistentEntity(info.entityID, info.cellPos, info.rotation, info.scale);
+            PersistentEntityData newEntityData = ServerAddNewPersistentEntity(info.entityID, info.cellPos, info.rotation);
             if (newEntityData != null) {
                 // Add the ID to this chunk's list
                 entityIdsByByChunkCoord[chunkCoord].Add(newEntityData.persistentId);
             }
         }
+        return entityIdsByByChunkCoord[chunkCoord];
     }
     // Called by WorldGenerator's TargetRPC
     public void ProcessReceivedEntityIds(Vector2Int chunkCoord, List<ulong> entityIds) {
+        if (entityIds == null)
+            return;
+        if(entityIds.Count == 0) return;
         // Cache the received IDs
         cachedEntityIdsByChunk[chunkCoord] = entityIds;
         // Request activation for entities in this list that we aren't already tracking
@@ -334,9 +333,9 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             }
         }
     }
-    public PersistentEntityData ServerAddNewPersistentEntity(ushort id, Vector3Int pos, Quaternion rot, Vector3 scale) {
+    public PersistentEntityData ServerAddNewPersistentEntity(ushort id, Vector3Int pos, Quaternion rot) {
         ulong unqiueID = GetNextPersistentEntityId();
-        PersistentEntityData newEntityData = new PersistentEntityData(unqiueID, id, pos, rot, scale);
+        PersistentEntityData newEntityData = new PersistentEntityData(unqiueID, id, pos, rot);
         persistentEntityDatabase.Add(unqiueID, newEntityData);
         Debug.Log($"Added new persistent entity ID:{unqiueID} at {pos}");
         return newEntityData; // Return the created data
@@ -363,7 +362,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         // --- Activate SERVER instance if ref count is now 1 ---
         if (currentRefCount == 1) {
             // Get prefab based on type ID
-            GameObject prefab = idToPrefab[data.entityID];
+            GameObject prefab = App.ResourceSystem.GetEntityByID(data.entityID).entityPrefab;
             if (prefab == null) {
                 Debug.LogError($"Cannot activate entity {persistentId}: Prefab missing for type {data.entityID}");
                 return;
@@ -372,7 +371,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             // Instantiate and apply data
             Vector3 spawnPos = new Vector3(data.cellPos.x + 0.5f, data.cellPos.y + 0.5f, 0f); // Spawn in the centre of the tile
             GameObject instance = Instantiate(prefab, spawnPos, data.rotation);
-            instance.transform.localScale = data.scale;
+            //instance.transform.localScale = data.scale;
 
             nob = instance.GetComponent<NetworkObject>();
             if (nob != null) {
@@ -569,7 +568,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         // Update Core State
         //data.cellPos = Mathf.FloorToInt(nob.transform.position);
         data.rotation = nob.transform.rotation;
-        data.scale = nob.transform.localScale;
+        //data.scale = nob.transform.localScale;
         /* todo
         // Update Health
         HealthComponent health = nob.GetComponent<HealthComponent>();

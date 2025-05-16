@@ -26,13 +26,13 @@ public class WorldGen : MonoBehaviour {
     private Unity.Mathematics.Random noiseRandomGen;
     private float seedOffsetX;
     private float seedOffsetY;
-    private int chunkSize;
     private Vector3Int chunkOriginCell;
     private Dictionary<BiomeType, BiomeLayerSO> biomeLookup = new Dictionary<BiomeType, BiomeLayerSO>();
     private WorldGenSettingSO _settings;
     private float maxDepth;
     private WorldManager worldmanager;
     private ChunkManager chunkManager;
+    private EntityManager _entityManager;
     private List<WorldSpawnEntitySO> worldSpawnEntities;
 
     private Camera _renderCamera; // Orthographic camera for rendering chunks
@@ -51,7 +51,7 @@ public class WorldGen : MonoBehaviour {
         public List<Vector2Int> ChunksToRequestBatch;
         public Vector2Int RenderAreaOriginChunkCoord; // Bottom-left chunk coord of the 6x6 render area
         public NetworkConnection req;
-        public System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>, NetworkConnection> OnCompleteCallback;
+        public System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>, Dictionary<Vector2Int, List<EntitySpawnInfo>>, NetworkConnection> OnCompleteCallback;
     }
     private struct ChunkProcessingJobData {
         public Vector2Int ChunkCoord;
@@ -66,13 +66,13 @@ public class WorldGen : MonoBehaviour {
     }
     public float GetDepth() => maxDepth;
 
-    public void Init(int chunkSize, RenderTexture renderTexture, WorldGenSettingSO settings, WorldManager worldmanager, ChunkManager chunkManager,Camera renderCamera) {
-        this.chunkSize = chunkSize;
+    public void Init(RenderTexture renderTexture, WorldGenSettingSO settings, WorldManager worldmanager, ChunkManager chunkManager,Camera renderCamera) {
         _renderTexture = renderTexture;
         _settings = settings;
         this.worldmanager = worldmanager;
         this.chunkManager = chunkManager;
         _renderCamera = renderCamera;
+        _entityManager = FindFirstObjectByType<EntityManager>();
         // This should be in the constructor but I think this works like so?
         InitializeNoise();
         worldSpawnEntities = _settings.worldSpawnEntities;
@@ -107,11 +107,12 @@ public class WorldGen : MonoBehaviour {
     /// <param name="newClientChunkCoord">The chunk coordinate the player/client is currently in or moving to. This will be the center of the 6x6 render area.</param>
     /// <param name="onGenerationComplete">Callback action that receives the list of generated ChunkData.</param>
     public IEnumerator GenerateChunkAsync(List<Vector2Int> chunksToRequestBatch, Vector2Int newClientChunkCoord, 
-        NetworkConnection requester, System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>,NetworkConnection> onGenerationComplete) {
+        NetworkConnection requester, System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>,
+            Dictionary<Vector2Int, List<EntitySpawnInfo>>, NetworkConnection> onGenerationComplete) {
 
         if (_isProcessingChunks) {
             Debug.LogWarning("Chunk generation already in progress. Request ignored.");
-            onGenerationComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>(), requester); // Return empty list
+            onGenerationComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>(),new Dictionary<Vector2Int, List<EntitySpawnInfo>>(), requester); // Return empty list
             yield break;
         }
         _isProcessingChunks = true;
@@ -230,12 +231,12 @@ public class WorldGen : MonoBehaviour {
         // Continue with generation...
             
         NetworkConnection requester = context.req; 
-        StartCoroutine(ProcessChunksWithJobs(generatedChunks, requester, (processedPayloads,processedChunks) => {
+        StartCoroutine(ProcessChunksWithJobs(generatedChunks, requester, (processedPayloads,processedChunks,entities) => {
             // World gen complete, send them over the network.
             _isProcessingChunks = false; // Allow next request
             if (processedPayloads.Count > 0 && requester != null && requester.IsValid) {
                 // TODO
-                context.OnCompleteCallback?.Invoke(processedPayloads, processedChunks, context.req);
+                context.OnCompleteCallback?.Invoke(processedPayloads, processedChunks, entities, context.req);
                 //TargetReceiveChunkDataMultiple(requester, processedPayloads);
                 Debug.Log($"Sent {processedPayloads.Count} processed chunks to client {requester.ClientId}");
             } else if (requester == null || !requester.IsValid) {
@@ -245,14 +246,14 @@ public class WorldGen : MonoBehaviour {
     }
 
     internal ChunkData GenerateRestOfChunks(Vector3Int chunkOrigin, out List<EntitySpawnInfo> entitySpawns) {
-        ChunkData chunkData = new ChunkData(chunkSize, chunkSize);
+        ChunkData chunkData = new ChunkData(CHUNK_TILE_DIMENSION, CHUNK_TILE_DIMENSION);
         entitySpawns = new List<EntitySpawnInfo>();
         chunkOriginCell = chunkOrigin;
         // --- Pass 3: Ore Generation ---
         // Iterate again, placing ores only on non-cave, non-water tiles
         
         
-        SpawnOresInChunk(chunkData, chunkOriginCell, chunkSize); // Encapsulate ore logic similar to structures/entities
+        SpawnOresInChunk(chunkData, chunkOriginCell, CHUNK_TILE_DIMENSION); // Encapsulate ore logic similar to structures/entities
 
         // --- Pass 4: Structure Placement ---
         // This needs careful design. It checks potential anchor points within the chunk.
@@ -268,12 +269,13 @@ public class WorldGen : MonoBehaviour {
 
         return chunkData;
     }
-    // This would be called after GPU readback provides the initial List<ChunkData>
-    // and before network serialization.
-    // The 'requester' is important if you need to link back to the client connection.
-    private IEnumerator ProcessChunksWithJobs(Dictionary<Vector2Int,ChunkData> initialChunks, NetworkConnection requester, System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>> onProcessingComplete) {
+
+    // We can always extend this later if there is a bottleneck somewhere
+    private IEnumerator ProcessChunksWithJobs(Dictionary<Vector2Int,ChunkData> initialChunks, NetworkConnection requester, 
+        System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>, Dictionary<Vector2Int, List<EntitySpawnInfo>>> onProcessingComplete) {
+        
         if (initialChunks == null || initialChunks.Count == 0) {
-            onProcessingComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>());
+            onProcessingComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>(), new Dictionary<Vector2Int, List<EntitySpawnInfo>>());
             yield break;
         }
 
@@ -359,9 +361,9 @@ public class WorldGen : MonoBehaviour {
 
 
         // --- 3. Process Results and Dispose NativeArrays ---
-        List<ChunkPayload> payloadsToSend = new List<ChunkPayload>(); // For client
         Dictionary<Vector2Int, ChunkData> chunksToSend = new Dictionary<Vector2Int, ChunkData>(); // For server
-
+        Dictionary<Vector2Int, List<EntitySpawnInfo>> entitySpawnInfos = new Dictionary<Vector2Int, List<EntitySpawnInfo>>();
+        Dictionary<Vector2Int, ChunkPayload> payloadsToSend = new Dictionary<Vector2Int, ChunkPayload>();
         foreach (var data in jobDataList) {
             // Make sure to complete specific handles if you didn't use CompleteAll
             // data.OreJobHandle.Complete(); 
@@ -382,8 +384,6 @@ public class WorldGen : MonoBehaviour {
                 }
             }
 
-
-            
             // TODO 
             /*  if (data.EntitySpawnPoints_NA.IsCreated) {
                   Debug.Log($"Chunk {data.OriginalChunkData.chunkCoord} found {data.EntitySpawnPoints_NA.Length} potential entity spawn points.");
@@ -393,8 +393,7 @@ public class WorldGen : MonoBehaviour {
                   }
               }*/
             chunksToSend.Add(data.ChunkCoord,finalChunk);
-            payloadsToSend.Add(ProcessingDataToPayload(data));
-
+            payloadsToSend.Add(data.ChunkCoord, ProcessingDataToPayload(data));
             // Dispose of Native Collections
             if (data.BaseTileIDs_NA.IsCreated)
                 data.BaseTileIDs_NA.Dispose();
@@ -405,9 +404,23 @@ public class WorldGen : MonoBehaviour {
             if (data.OreTileIDs_NA.IsCreated)
                 data.OreTileIDs_NA.Dispose();
         }
-
-        Debug.Log($"All chunk processing jobs complete. {payloadsToSend.Count} payloads ready.");
-        onProcessingComplete?.Invoke(payloadsToSend,chunksToSend);
+        // Jobs done, now main thread...
+        Dictionary<Vector2Int,List<ulong>> entityIdsDict = new Dictionary<Vector2Int,List<ulong>>();
+        List<ChunkPayload> clientPayload = new List<ChunkPayload>();
+        foreach (var chunks in chunksToSend) {
+            var entityInChunk = SpawnEntitiesInChunk(chunks.Value, chunks.Key, chunkManager);
+            entitySpawnInfos.Add(chunks.Key, entityInChunk);
+            yield return null; // Wait a frame
+            // Now we have the enemy info, get the persistant IDs from EntityManager
+            entityIdsDict.Add(chunks.Key, _entityManager.AddGeneratedEntityData(chunks.Key, entityInChunk));
+        }
+        foreach(var data in payloadsToSend) {
+            var entityList = entityIdsDict.TryGetValue(data.Key, out var entities);
+            clientPayload.Add(new ChunkPayload(data.Value, entities));
+        }
+     
+        Debug.Log($"All chunk processing jobs complete. {clientPayload.Count} payloads ready.");
+        onProcessingComplete?.Invoke(clientPayload, chunksToSend,entitySpawnInfos);
     }
 
     private ChunkPayload ProcessingDataToPayload(ChunkProcessingJobData data) {
@@ -666,11 +679,11 @@ public class WorldGen : MonoBehaviour {
         }
     }*/
 
-    private void SpawnEntitiesInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize, List<EntitySpawnInfo> entitySpawns, ChunkManager cm) {
-        if (worldSpawnEntities == null || worldSpawnEntities.Count == 0)return;
+    private List<EntitySpawnInfo> SpawnEntitiesInChunk(ChunkData chunkData, Vector2Int chunkOriginCell, ChunkManager cm) {
+        List<EntitySpawnInfo> entities = new List<EntitySpawnInfo>();
         HashSet<Vector2Int> occupiedAnchors = new HashSet<Vector2Int>();
-        for (int y = 0; y < chunkSize; y++) {
-            for (int x = 0; x < chunkSize; x++) {
+        for (int y = 0; y < CHUNK_TILE_DIMENSION; y++) {
+            for (int x = 0; x < CHUNK_TILE_DIMENSION; x++) {
                 ushort anchorTileID = chunkData.tiles[x, y];
                 if (!IsSolid(anchorTileID)) {
                     // We're doing a more extensive anchor check later
@@ -679,8 +692,8 @@ public class WorldGen : MonoBehaviour {
                 if (occupiedAnchors.Contains(new Vector2Int(x, y))) {
                     continue; // Could also check the whole anchor is overlapping here but EH, a bit dence will look nice
                 }
-                int worldX = chunkOriginCell.x + x;
-                int worldY = chunkOriginCell.y + y;
+                int worldX = chunkOriginCell.x * CHUNK_TILE_DIMENSION + x;
+                int worldY = chunkOriginCell.y * CHUNK_TILE_DIMENSION + y;
 
                 // --- Iterate through Entity Definitions ---
                 foreach (var entityDef in worldSpawnEntities) {
@@ -707,9 +720,9 @@ public class WorldGen : MonoBehaviour {
                     bool canSpawn = true;
                     Quaternion spawnRot = Quaternion.identity; // Default rotation
                     var occopied = new List<Vector2Int>();
-                    var bounds = entityDef.GetBoundingOffset();
+                    var bounds = entityDef.BoundingOffset;
                     int canonicalAnchorLocalY = bounds.Item1.y;
-                    Debug.Log("Canon:" + canonicalAnchorLocalY);
+                    //Debug.Log("Canon:" + canonicalAnchorLocalY);
                     foreach (var attachment in entityDef.allowedAttachmentTypes) {
                         for (int local_xx = bounds.Item1.x; local_xx <= bounds.Item2.x; local_xx++) {
                             for (int local_yy = bounds.Item1.y; local_yy <= bounds.Item2.y; local_yy++) {
@@ -763,7 +776,7 @@ public class WorldGen : MonoBehaviour {
                                         goto end_loops; // Exit both loops
                                 }
                                 // 4. Fetch the actual world tile at the calculated (checkGlobalX, checkGlobalY)
-                                var tileToCheck = GetTileFromChunkOrWorld(chunkData, new Vector2Int(worldX, worldY), chunkSize,
+                                var tileToCheck = GetTileFromChunkOrWorld(chunkData, new Vector2Int(worldX, worldY), CHUNK_TILE_DIMENSION,
                                     checkGlobalX,          // Target tile X, local to chunk
                                     checkGlobalY,          // Target tile Y, local to chunk
                                     //checkGlobalY - worldY,          // Target tile Y, local to chunk
@@ -804,13 +817,14 @@ public class WorldGen : MonoBehaviour {
                         continue;
                     // --- ALL CHECKS PASSED --- Spawn this entity ---
                     Vector3Int spawnPos = new(worldX, worldY);
-                    entitySpawns.Add(new EntitySpawnInfo(entityDef.entityPrefab, entityDef.entityID, spawnPos, spawnRot,Vector3.one));
+                    entities.Add(new EntitySpawnInfo(entityDef.entityID, spawnPos, spawnRot));
                     //occupiedAnchors.Add(new Vector2Int(x, y));
                     occupiedAnchors.AddRange(occopied);
                     break; // Spawned one entity for this anchor, move to next anchor
                 }
             }
         }
+        return entities;
     }
     private bool IsSolid(ushort tileID) {
         return tileID != ResourceSystem.InvalidID && tileID != ResourceSystem.AirID;
@@ -825,7 +839,7 @@ public class WorldGen : MonoBehaviour {
             // Calculate world coordinates
             int worldX = worldCoord.x;
             int worldY = worldCoord.y;
-            Debug.Log($"Getting Tile at world pos: x:{worldX} y:{worldY}");
+            //Debug.Log($"Getting Tile at world pos: x:{worldX} y:{worldY}");
             // You'll need a method in WorldManager to get a tile at any world position
             // This method should handle loading adjacent chunks if necessary, or return null/empty if out of bounds.
             return cm.GetTileAtWorldPos(worldX, worldY); // Implement this in WorldManager

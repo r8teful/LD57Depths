@@ -14,7 +14,7 @@ public class WorldSpawnEntitySO : EntityBaseSO {
     [Header("Spawn Conditions at Anchor Point")]
     public bool requireSolidGround = true; // Must the anchor tile be 'rock'?
     public bool requireWaterAdjacent = false;   // Must be next to MainWater or CaveWater?
-
+    public (Vector2Int, Vector2Int) BoundingOffset;
     [OnValueChanged("Test")]
     [TableMatrix(DrawElementMethod = "DrawColoredEnumElement", ResizableColumns = false,
         SquareCells =true,HideColumnIndices =false,HideRowIndices =false)]
@@ -44,9 +44,13 @@ public class WorldSpawnEntitySO : EntityBaseSO {
     [Header("Placement Fine-tuning")]
     public bool randomYRotation = true;
     public Vector2 scaleVariation = Vector2.one; // Min/Max uniform scale multiplier
-    
+
+    private void Awake() {
+        BoundingOffset = GetBoundingOffset();
+    }
+
     // This gets the offset bounds from the middle bottom tile (4,8)
-    public (Vector2Int, Vector2Int) GetBoundingOffset() {
+    private (Vector2Int, Vector2Int) GetBoundingOffset() {
         int minRow = int.MaxValue;
         int maxRow = int.MinValue;
         int minCol = int.MaxValue;
@@ -68,7 +72,7 @@ public class WorldSpawnEntitySO : EntityBaseSO {
         var (minRowOffset, minColOffset, maxRowOffset, maxColOffset) = RemapBounds(minRow,minCol,maxRow,maxCol);
 
         //Debug.Log($"OLD {minRow}, {minCol} AND {maxRow}, {maxCol}");
-        Debug.Log($"{minRowOffset}, {minColOffset} AND {maxRowOffset}, {maxColOffset}");
+        //Debug.Log($"{minRowOffset}, {minColOffset} AND {maxRowOffset}, {maxColOffset}");
         return (new(minRowOffset, minColOffset), new(maxRowOffset, maxColOffset));
     }
     // Remaps a single (row, col) point.

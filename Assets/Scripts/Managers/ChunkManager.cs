@@ -63,19 +63,27 @@ public class ChunkData {
         return (byte)intVal;
     }
 }
+// Used by CLIENT
 public struct ChunkPayload {
     public Vector2Int ChunkCoord;
     public List<ushort> TileIds;
     public List<ushort> OreIds;
     public List<short> Durabilities;
-    public List<ulong> EntityIds;
+    public List<ulong> EntityPersistantIds;
 
     public ChunkPayload(Vector2Int chunkCoord, List<ushort> tileIds, List<ushort> oreIds, List<short> durabilities, List<ulong> entityIds) {
         ChunkCoord = chunkCoord;
         TileIds = tileIds;
         OreIds = oreIds;
         Durabilities = durabilities;
-        EntityIds = entityIds;
+        EntityPersistantIds = entityIds;
+    }
+    public ChunkPayload(ChunkPayload fromJobs, List<ulong> entityIds) {
+        ChunkCoord = fromJobs.ChunkCoord;
+        TileIds = fromJobs.TileIds;
+        OreIds = fromJobs.OreIds;
+        Durabilities = fromJobs.Durabilities;
+        EntityPersistantIds = entityIds;
     }
 }
 
@@ -239,13 +247,10 @@ public class ChunkManager : NetworkBehaviour {
                     oreIDs.Add(chunkData.oreID[x, y]);
                 }
             }
-            dataToSend.Add(new ChunkPayload(kvp.Key, tileIds, oreIDs, durabilities, null));
             // This entitySpawner gets the ids for the chunk through ServerGenerateChunkData
+            var entityIds = _entitySpawner.GetEntityIDsByChunkCoord(kvp.Key);
 
-            //var entityIds = _entitySpawner.GetEntityIDsByChunkCoord(chunkCoord);
-
-            // 4. Send data back to the SPECIFIC client who requested it
-            //TargetReceiveChunkData(requester, kvp.Key, tileIds, oreIDs, durabilities, null); // HTODO ENIMEIS 
+            dataToSend.Add(new ChunkPayload(kvp.Key, tileIds, oreIDs, durabilities, entityIds));
         }
         if(dataToSend.Count > 0) {
             // Only actually send if we added existing data to the list
@@ -253,34 +258,18 @@ public class ChunkManager : NetworkBehaviour {
         }
     }
 
-    private void OnChunkGenerationComplete123(Dictionary<Vector2Int, ChunkData> list, NetworkConnection requester) {
-        // We MUST de-serialize into lists so we can send it over the network, fishnet cant just send chunkdata like that 
-        List<ChunkPayload> payloadData = new List<ChunkPayload>(); 
-        foreach (var chunk in list) {
-            List<ushort> tileIds = new List<ushort>(CHUNK_SIZE * CHUNK_SIZE);
-            List<ushort> oreIDs = new List<ushort>(CHUNK_SIZE * CHUNK_SIZE);
-            List<short> durabilities = new List<short>(CHUNK_SIZE * CHUNK_SIZE);
-            if (list.TryGetValue(chunk.Key, out var chunkData)) {
-                for (int y = 0; y < CHUNK_SIZE; y++) {
-                    for (int x = 0; x < CHUNK_SIZE; x++) {
-                        tileIds.Add(chunkData.tiles[x, y]);
-                        durabilities.Add(chunkData.tileDurability[x, y]);
-                        oreIDs.Add(chunkData.oreID[x, y]);
-                    }
-                }
-                payloadData.Add(new ChunkPayload(chunk.Key,tileIds,oreIDs,durabilities,null));
-            } else {
-                Debug.LogError($"No chunk data found for chunk {chunk.Key}");
-            }
-        }
-        TargetReceiveChunkDataMultiple(requester, payloadData); // send it to requesting client
-    }
-    private void OnChunkGenerationComplete(List<ChunkPayload> payloadData, Dictionary<Vector2Int, ChunkData> severData, NetworkConnection requester) {
+    private void OnChunkGenerationComplete(List<ChunkPayload> payloadData, Dictionary<Vector2Int, ChunkData> severData, Dictionary<Vector2Int,List<EntitySpawnInfo>> entities, NetworkConnection requester) {
         // Store data on server
         foreach (var data in severData) {
             data.Value.hasBeenGenerated = true;
             worldChunks.Add(data.Key, data.Value);
         }
+        // Dont need to do this because its already in ChunkPayLoad
+        //foreach(var data in entities) {
+        //    _entitySpawner.AddGeneratedEntityData(data.Key, data.Value);
+        //}
+        // FINALLY, we add persistant to the chunkPayLoad and send final result to client
+        
         TargetReceiveChunkDataMultiple(requester, payloadData); // send it to requesting client
     }
     // --- Target RPC to send chunk data to a specific client ---
@@ -346,6 +335,11 @@ public class ChunkManager : NetworkBehaviour {
             BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, CHUNK_SIZE, CHUNK_SIZE, 1);
             //ApplySingleChunkPayload(chunkPayload);
             tiles.Add(chunkBounds, tilesToSet);
+
+            // Entities!!
+            if (chunkPayload.EntityPersistantIds != null) {
+                _entitySpawner.ProcessReceivedEntityIds(chunkPayload.ChunkCoord, chunkPayload.EntityPersistantIds);
+            }
         }
         _worldManager.SetTileIEnumerator(tiles);
             // for (int i = 0; i < chunk.TileIds.Count; i++) {
@@ -365,9 +359,6 @@ public class ChunkManager : NetworkBehaviour {
             // Spawn enemies client only
             
             // TODO 
-            //if (entityIds != null) {
-            //    _entitySpawner.ProcessReceivedEntityIds(chunkCoord, entityIds);
-            //}
         
         // Debug.Log($"Client received and visually loaded chunk {chunkCoord}");
     }

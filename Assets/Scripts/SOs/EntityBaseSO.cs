@@ -54,29 +54,23 @@ public class PersistentEntityData {
     // --- Core State ---
     public Vector3Int cellPos;
     public Quaternion rotation;
-    public Vector3 scale;
 
     // --- Runtime Link (Server Only, Not Saved) ---
     [System.NonSerialized] public NetworkObject activeInstance = null; // Link to the live NetworkObject when active
-    public PersistentEntityData(ulong persistentId, ushort entityID,Vector3Int cellPos, Quaternion rotation,  Vector3 scale) {
+    public PersistentEntityData(ulong persistentId, ushort entityID,Vector3Int cellPos, Quaternion rotation) {
         this.persistentId = persistentId;
         this.entityID = entityID;
         this.cellPos = cellPos;
         this.rotation = rotation;
-        this.scale = scale;
     }
 }
 public struct EntitySpawnInfo {
-    public GameObject prefab; // The prefab to instantiate
     public ushort entityID; // So I don't have to set each entity into the inspector
     public Vector3Int cellPos; // Cell position
     public Quaternion rotation; // Rotation variaton
-    public Vector3 scale; // Scale variation
-    public EntitySpawnInfo(GameObject prefab, ushort entityID, Vector3Int cellPos, Quaternion rotation, Vector3 scale) {
-        this.prefab = prefab;
+    public EntitySpawnInfo(ushort entityID, Vector3Int cellPos, Quaternion rotation) {
         this.entityID = entityID;
         this.cellPos = cellPos;
         this.rotation = rotation;
-        this.scale = scale;
     }
 }

@@ -34,7 +34,7 @@ public class WorldManager : NetworkBehaviour {
     [Button("NewWorld")]
     private void DEBUGNEWGEN() {
         ChunkManager.DEBUGNewGen();
-        WorldGen.Init(ChunkManager.GetChunkSize(), worldRenderTexture, WorldGenSettings, this, ChunkManager,_worldGenCamera);
+        WorldGen.Init(worldRenderTexture, WorldGenSettings, this, ChunkManager,_worldGenCamera);
         WorldGen.InitializeNoise(); 
     }
     [SerializeField] private bool DEBUGConstantNewGen;
@@ -49,7 +49,7 @@ public class WorldManager : NetworkBehaviour {
     public override void OnStartServer() {
         base.OnStartServer();
         // Server-only initialization
-        WorldGen.Init(ChunkManager.GetChunkSize(), worldRenderTexture, WorldGenSettings, this, ChunkManager, _worldGenCamera);
+        WorldGen.Init(worldRenderTexture, WorldGenSettings, this, ChunkManager, _worldGenCamera);
         //InstanceFinder.ServerManager.Spawn(ChunkManager.gameObject, Owner);
         //ChunkManager.Spawn(ChunkManager.gameObject, Owner);
         if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
