@@ -119,7 +119,7 @@ public class ChunkManager : NetworkBehaviour {
         for (int xOffset = -loadDistance; xOffset <= loadDistance; xOffset++) {
             for (int yOffset = -loadDistance; yOffset <= loadDistance; yOffset++) {
                 Vector2Int chunkCoord = new Vector2Int(newClientChunkCoord.x + xOffset, newClientChunkCoord.y + yOffset);
-                ServerRequestChunkData(chunkCoord); // Send RPC request
+                // ServerRequestChunkData(chunkCoord); // TODO doesn't exist anymore
                 
             }
         }
@@ -206,50 +206,17 @@ public class ChunkManager : NetworkBehaviour {
             yield return new WaitForSeconds(checkInterval);
         }
     }
-    // --- Server RPC for Chunk Request ---
-    [ServerRpc(RequireOwnership = false)] // Allow any client to request
-    private void ServerRequestChunkData(Vector2Int chunkCoord, NetworkConnection requester = null) // FishNet automatically provides requester
-    {
-        if (!IsServerInitialized) return;
-        // 1. Check if data exists on server
-        if (!worldChunks.TryGetValue(chunkCoord, out ChunkData chunkData)) {
-            // 2. If not, generate it (server only)
-            chunkData = ServerGenerateChunkData(chunkCoord);
-            if (chunkData == null) {
-                Debug.LogError($"Server failed to generate requested chunk {chunkCoord}");
-                // Optionally send an error back to client?
-                return;
-            }
-        }
-
-        // 3. Serialize chunk data into Tile IDs
-        if (chunkData.tiles != null) {
-            List<ushort> tileIds = new List<ushort>(CHUNK_SIZE * CHUNK_SIZE);
-            List<ushort> oreIDs = new List<ushort>(CHUNK_SIZE * CHUNK_SIZE);
-            List<short> durabilities = new List<short>(CHUNK_SIZE * CHUNK_SIZE);
-            for (int y = 0; y < CHUNK_SIZE; y++) {
-                for (int x = 0; x < CHUNK_SIZE; x++) {
-                    tileIds.Add(chunkData.tiles[x, y]);
-                    durabilities.Add(chunkData.tileDurability[x, y]);
-                    oreIDs.Add(chunkData.oreID[x, y]); 
-                }
-            }
-            // This entitySpawner gets the ids for the chunk through ServerGenerateChunkData
-            var entityIds = _entitySpawner.GetEntityIDsByChunkCoord(chunkCoord);
-            // 4. Send data back to the SPECIFIC client who requested it
-            TargetReceiveChunkData(requester, chunkCoord, tileIds, oreIDs, durabilities, entityIds);
-        }
-    }
+  
     [ServerRpc(RequireOwnership = false)]
     private void ServerRequestChunkDataBatch(List<Vector2Int> chunksToRequestBatch, Vector2Int newClientChunkCoor, NetworkConnection requester = null) {
         if (!IsServerInitialized)
             return;
         // 1. Check if data exists on server
         List<Vector2Int> chunksNotAvailable = new List<Vector2Int>();
-        List<ChunkData> chunksExist = new List<ChunkData>();
+        Dictionary<Vector2Int,ChunkData> chunksExist = new Dictionary<Vector2Int, ChunkData>();
         foreach (var chunkCoord in chunksToRequestBatch) {
             if (worldChunks.TryGetValue(chunkCoord, out ChunkData chunkData)) {
-                chunksExist.Add(chunkData);
+                chunksExist.Add(chunkCoord,chunkData);
             } else {
                 // Keep track of it and send a batch request when loop is done
                 chunksNotAvailable.Add(chunkCoord);
@@ -259,32 +226,34 @@ public class ChunkManager : NetworkBehaviour {
         StartCoroutine(_worldManager.WorldGen.GenerateChunkAsync(chunksNotAvailable, newClientChunkCoor, requester, OnChunkGenerationComplete));
 
         // Serialize existing data second
-        foreach (var chunkData in chunksExist) {
-            if (chunkData.tiles != null) {
-                List<ushort> tileIds = new List<ushort>(CHUNK_SIZE * CHUNK_SIZE);
-                List<ushort> oreIDs = new List<ushort>(CHUNK_SIZE * CHUNK_SIZE);
-                List<short> durabilities = new List<short>(CHUNK_SIZE * CHUNK_SIZE);
-                for (int y = 0; y < CHUNK_SIZE; y++) {
-                    for (int x = 0; x < CHUNK_SIZE; x++) {
-                        tileIds.Add(chunkData.tiles[x, y]);
-                        durabilities.Add(chunkData.tileDurability[x, y]);
-                        oreIDs.Add(chunkData.oreID[x, y]);
-                    }
+        List<ChunkPayload> dataToSend = new List<ChunkPayload>();
+        foreach (var kvp in chunksExist) {
+            var chunkData = kvp.Value;
+            List<ushort> tileIds = new List<ushort>(CHUNK_SIZE * CHUNK_SIZE);
+            List<ushort> oreIDs = new List<ushort>(CHUNK_SIZE * CHUNK_SIZE);
+            List<short> durabilities = new List<short>(CHUNK_SIZE * CHUNK_SIZE);
+            for (int y = 0; y < CHUNK_SIZE; y++) {
+                for (int x = 0; x < CHUNK_SIZE; x++) {
+                    tileIds.Add(chunkData.tiles[x, y]);
+                    durabilities.Add(chunkData.tileDurability[x, y]);
+                    oreIDs.Add(chunkData.oreID[x, y]);
                 }
-                // This entitySpawner gets the ids for the chunk through ServerGenerateChunkData
-                // NO CLUE HOW TO DO THIS NOW BUT I DONT CARE JUST WANT THE SAMPLING TO WORK
-
-                //- ----------------- !!TODODODO!! ------------------//
-                //var entityIds = _entitySpawner.GetEntityIDsByChunkCoord(chunkCoord);
-                
-                // 4. Send data back to the SPECIFIC client who requested it
-                
-                //TargetReceiveChunkData(requester, chunkCoord, tileIds, oreIDs, durabilities, entityIds);
             }
+            dataToSend.Add(new ChunkPayload(kvp.Key, tileIds, oreIDs, durabilities, null));
+            // This entitySpawner gets the ids for the chunk through ServerGenerateChunkData
+
+            //var entityIds = _entitySpawner.GetEntityIDsByChunkCoord(chunkCoord);
+
+            // 4. Send data back to the SPECIFIC client who requested it
+            //TargetReceiveChunkData(requester, kvp.Key, tileIds, oreIDs, durabilities, null); // HTODO ENIMEIS 
+        }
+        if(dataToSend.Count > 0) {
+            // Only actually send if we added existing data to the list
+            TargetReceiveChunkDataMultiple(requester, dataToSend);
         }
     }
 
-    private void OnChunkGenerationComplete(Dictionary<Vector2Int, ChunkData> list, NetworkConnection requester) {
+    private void OnChunkGenerationComplete123(Dictionary<Vector2Int, ChunkData> list, NetworkConnection requester) {
         // We MUST de-serialize into lists so we can send it over the network, fishnet cant just send chunkdata like that 
         List<ChunkPayload> payloadData = new List<ChunkPayload>(); 
         foreach (var chunk in list) {
@@ -305,7 +274,14 @@ public class ChunkManager : NetworkBehaviour {
             }
         }
         TargetReceiveChunkDataMultiple(requester, payloadData); // send it to requesting client
-
+    }
+    private void OnChunkGenerationComplete(List<ChunkPayload> payloadData, Dictionary<Vector2Int, ChunkData> severData, NetworkConnection requester) {
+        // Store data on server
+        foreach (var data in severData) {
+            data.Value.hasBeenGenerated = true;
+            worldChunks.Add(data.Key, data.Value);
+        }
+        TargetReceiveChunkDataMultiple(requester, payloadData); // send it to requesting client
     }
     // --- Target RPC to send chunk data to a specific client ---
     [TargetRpc]
@@ -349,17 +325,29 @@ public class ChunkManager : NetworkBehaviour {
     [TargetRpc]
     public void TargetReceiveChunkDataMultiple(NetworkConnection conn, List<ChunkPayload> chunks) {
         // Executed ONLY on the client specified by 'conn'
-        // --- Attempt to use SetTilesBlock ---
-        if (TrySetTilesBlockOptimized(chunks)) {
-            //_groundTilemap.RefreshAllTiles(); // Or selective refresh if possible
-            return; // Successfully used SetTilesBlock
-        }
 
         // --- Fallback to SetTiles per chunk if optimization wasn't possible ---
-        Debug.Log("Falling back to SetTiles per chunk.");
+        Dictionary<BoundsInt, TileBase[]> tiles = new Dictionary<BoundsInt, TileBase[]>();
         foreach (var chunkPayload in chunks) {
-            ApplySingleChunkPayload(chunkPayload);
+            TileBase[] tilesToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
+            TileBase[] oresToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
+            int tileIndex = 0;
+            for (int y = 0; y < CHUNK_SIZE; y++) {
+                for (int x = 0; x < CHUNK_SIZE; x++) {
+                    ushort tileID = chunkPayload.TileIds[tileIndex];
+                    ushort oreID = chunkPayload.OreIds[tileIndex];
+                    tilesToSet[tileIndex] = App.ResourceSystem.GetTileByID(tileID);
+                    oresToSet[tileIndex] = App.ResourceSystem.GetTileByID(oreID);
+
+                    tileIndex++;
+                }
+            }
+            Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkPayload.ChunkCoord);
+            BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, CHUNK_SIZE, CHUNK_SIZE, 1);
+            //ApplySingleChunkPayload(chunkPayload);
+            tiles.Add(chunkBounds, tilesToSet);
         }
+        _worldManager.SetTileIEnumerator(tiles);
             // for (int i = 0; i < chunk.TileIds.Count; i++) {
             //     tilesToSet[i] = App.ResourceSystem.GetTileByID(chunk.TileIds[i]);
             // }
@@ -383,142 +371,31 @@ public class ChunkManager : NetworkBehaviour {
         
         // Debug.Log($"Client received and visually loaded chunk {chunkCoord}");
     }
-
     private void ApplySingleChunkPayload(ChunkPayload chunkPayload) {
-        ClientCacheChunkDurability(chunkPayload.ChunkCoord, chunkPayload.Durabilities);
+        //ClientCacheChunkDurability(chunkPayload.ChunkCoord, chunkPayload.Durabilities);
         // New active local chunk
         activeChunks.Add(chunkPayload.ChunkCoord);
         // Apply the received tiles visually
-        Vector3Int[] tilePositions = new Vector3Int[CHUNK_SIZE * CHUNK_SIZE];
         TileBase[] tilesToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
         TileBase[] oresToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
         int tileIndex = 0;
         for (int y = 0; y < CHUNK_SIZE; y++) {
             for (int x = 0; x < CHUNK_SIZE; x++) {
                 ushort tileID = chunkPayload.TileIds[tileIndex];
-                TileBase tile = App.ResourceSystem.GetTileByID(tileID); // Use your resource system
-
-                // Calculate world position for the tile
-                // Tilemap uses cell coordinates. ChunkCoord is chunk-level.
-                int worldTileX = chunkPayload.ChunkCoord.x * CHUNK_SIZE + x;
-                int worldTileY = chunkPayload.ChunkCoord.y * CHUNK_SIZE + y;
-
-                tilePositions[tileIndex] = new Vector3Int(worldTileX, worldTileY, 0); // Assuming Z=0 for 2D tilemap
-                tilesToSet[tileIndex] = tile; // Can be null to clear a tile
+                ushort oreID = chunkPayload.OreIds[tileIndex];
+                tilesToSet[tileIndex] = App.ResourceSystem.GetTileByID(tileID);
+                oresToSet[tileIndex] = App.ResourceSystem.GetTileByID(oreID);
 
                 tileIndex++;
             }
         }
         Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkPayload.ChunkCoord);
         BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, CHUNK_SIZE, CHUNK_SIZE, 1);
+
+        _worldManager.SetOres(chunkBounds, oresToSet);
         _worldManager.SetTiles(chunkBounds, tilesToSet);
     }
-    private bool TrySetTilesBlockOptimized(List<ChunkPayload> chunkPayloads) {
-        if (chunkPayloads.Count == 0)
-            return false;
-
-        // 1. Calculate overall bounds and check for contiguity.
-        int minChunkX = chunkPayloads[0].ChunkCoord.x;
-        int maxChunkX = chunkPayloads[0].ChunkCoord.x;
-        int minChunkY = chunkPayloads[0].ChunkCoord.y;
-        int maxChunkY = chunkPayloads[0].ChunkCoord.y;
-
-        HashSet<Vector2Int> receivedChunkCoords = new HashSet<Vector2Int>();
-        foreach (var payload in chunkPayloads) {
-            minChunkX = Mathf.Min(minChunkX, payload.ChunkCoord.x);
-            maxChunkX = Mathf.Max(maxChunkX, payload.ChunkCoord.x);
-            minChunkY = Mathf.Min(minChunkY, payload.ChunkCoord.y);
-            maxChunkY = Mathf.Max(maxChunkY, payload.ChunkCoord.y);
-            receivedChunkCoords.Add(payload.ChunkCoord);
-        }
-        int expectedNumChunksX = (maxChunkX - minChunkX) + 1;
-        int expectedNumChunksY = (maxChunkY - minChunkY) + 1;
-        int expectedTotalChunks = expectedNumChunksX * expectedNumChunksY;
-        if (chunkPayloads.Count != expectedTotalChunks) {
-            // Not a dense rectangle of chunks (or duplicate chunk coords were sent)
-            Debug.Log($"SetTilesBlock optimization: Payload count ({chunkPayloads.Count}) doesn't match expected count for bounds ({expectedTotalChunks}).");
-            return false;
-        }
-        // Verify all chunks within the bounds are present
-        for (int cy = 0; cy < expectedNumChunksY; cy++) {
-            for (int cx = 0; cx < expectedNumChunksX; cx++) {
-                if (!receivedChunkCoords.Contains(new Vector2Int(minChunkX + cx, minChunkY + cy))) {
-                    // A chunk is missing within the calculated rectangle
-                    Debug.Log($"SetTilesBlock optimization: Missing chunk {new Vector2Int(minChunkX + cx, minChunkY + cy)} within bounds.");
-                    return false;
-                }
-            }
-        }
-        // If we reach here, chunks form a contiguous rectangle.
-        Debug.Log($"SetTilesBlock optimization: Payloads form a contiguous rectangle from ({minChunkX},{minChunkY}) to ({maxChunkX},{maxChunkY}).");
-
-        // 2. Prepare data for SetTilesBlock.
-        int blockWidthInTiles = expectedNumChunksX * CHUNK_SIZE;
-        int blockHeightInTiles = expectedNumChunksY * CHUNK_SIZE;
-        TileBase[] blockTileBases = new TileBase[blockWidthInTiles * blockHeightInTiles];
-
-        // Sort payloads to ensure correct order when populating blockTileBases.
-        // We need to iterate through them as if we're filling the larger tile block row by row (of chunks),
-        // and within each chunk, row by row (of tiles).
-        var sortedPayloads = chunkPayloads.OrderBy(p => p.ChunkCoord.y).ThenBy(p => p.ChunkCoord.x).ToList();
-
-        // Fill blockTileBases
-        // The blockTileBases array is filled tile-row by tile-row for the entire block.
-        for (int chunkRowY = 0; chunkRowY < expectedNumChunksY; chunkRowY++) // Iterate through rows of chunks
-        {
-            for (int tileRowInChunk = 0; tileRowInChunk < CHUNK_SIZE; tileRowInChunk++) // Iterate through tile rows within a chunk row
-            {
-                for (int chunkColX = 0; chunkColX < expectedNumChunksX; chunkColX++) // Iterate through chunks in the current chunk row
-                {
-                    // Find the correct payload for (minChunkX + chunkColX, minChunkY + chunkRowY)
-                    // This assumes sortedPayloads helps, but direct access might be better.
-                    // Let's make a dictionary for faster lookup.
-                    Dictionary<Vector2Int, ChunkPayload> payloadMap = sortedPayloads.ToDictionary(p => p.ChunkCoord);
-                    ChunkPayload currentChunkPayload = payloadMap[new Vector2Int(minChunkX + chunkColX, minChunkY + chunkRowY)];
-
-                    if (currentChunkPayload.TileIds == null || currentChunkPayload.TileIds.Count != CHUNK_SIZE * CHUNK_SIZE) {
-                        Debug.LogError($"Critical error during SetTilesBlock: Invalid tile data for chunk {currentChunkPayload.ChunkCoord}. This should have been caught earlier.");
-                        return false; // Or handle more gracefully
-                    }
-
-                    for (int tileColInChunk = 0; tileColInChunk < CHUNK_SIZE; tileColInChunk++) // Iterate through tiles in current chunk's current tile row
-                    {
-                        int payloadTileIndex = tileRowInChunk * CHUNK_SIZE + tileColInChunk; // Index within the payload's 1D list
-                        ushort tileID = currentChunkPayload.TileIds[payloadTileIndex];
-                        TileBase tileBase = App.ResourceSystem.GetTileByID(tileID);
-
-                        // Calculate index in the final blockTileBases array
-                        // Overall Y tile index: (chunkRowY * CHUNK_TILE_DIMENSION + tileRowInChunk)
-                        // Overall X tile index: (chunkColX * CHUNK_TILE_DIMENSION + tileColInChunk)
-                        int blockTileY = chunkRowY * CHUNK_SIZE + tileRowInChunk;
-                        int blockTileX = chunkColX * CHUNK_SIZE + tileColInChunk;
-                        int blockArrayIndex = blockTileY * blockWidthInTiles + blockTileX;
-
-                        if (blockArrayIndex < 0 || blockArrayIndex >= blockTileBases.Length) {
-                            Debug.LogError($"SetTilesBlock index out of bounds: ({blockTileX}, {blockTileY}) -> index {blockArrayIndex}. blockWidth: {blockWidthInTiles}, Length: {blockTileBases.Length}");
-                            return false; // Should not happen if logic is correct
-                        }
-                        blockTileBases[blockArrayIndex] = tileBase;
-                    }
-                }
-            }
-        }
-
-        // 3. Define the bounds for SetTilesBlock.
-        // The position for BoundsInt is the bottom-left corner of the block in tile coordinates.
-        Vector3Int blockOriginTileCoord = new Vector3Int(
-            minChunkX * CHUNK_SIZE,
-            minChunkY * CHUNK_SIZE,
-            0 // Assuming Z=0
-        );
-
-        BoundsInt blockBounds = new BoundsInt(blockOriginTileCoord, new Vector3Int(blockWidthInTiles, blockHeightInTiles, 1));
-
-        // 4. Call SetTilesBlock.
-        _worldManager.SetTiles(blockBounds, blockTileBases);
-        Debug.Log($"Applied {blockWidthInTiles}x{blockHeightInTiles} tiles using SetTilesBlock at {blockOriginTileCoord}.");
-        return true;
-    }
+ 
     private void ClientCacheChunkDurability(Vector2Int chunkCoord, List<short> durabilityList) {
         if (!clientDurabilityCache.ContainsKey(chunkCoord)) {
             clientDurabilityCache[chunkCoord] = new short[CHUNK_SIZE, CHUNK_SIZE];
@@ -546,35 +423,7 @@ public class ChunkManager : NetworkBehaviour {
         }
         return -1; // Default or error state
     }
-    // --- Helper to generate chunk data ON SERVER ONLY ---
-    private ChunkData ServerGenerateChunkData(Vector2Int chunkCoord) {
-        // Ensure called only on server
-        if (!IsServerInitialized) return null;
 
-        // Check if it already exists (maybe generated by another player's request)
-        if (worldChunks.ContainsKey(chunkCoord)) return worldChunks[chunkCoord];
-
-        // --- Prep ---
-        Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkCoord);
-
-        //_worldManager.RequestGenerateChunk(chunkCoord);
-
-        ChunkData chunkData = null; // placeholder
-        
-        //ChunkData chunkData = WorldGen.GenerateChunk(chunkSize, chunkOriginCell, this, out var enemyList);
-
-        //_worldManager.BiomeManager.CalculateBiomeForChunk(chunkCoord, chunkData);
-        // --- Add Generated Entities to Persistent Store AND Chunk Map ---
-        //if (enemyList != null && enemyList.Count > 0) {
-        //    _entitySpawner.AddGeneratedEntityData(chunkCoord, enemyList);
-        //}
-        
-        // --- Finalization ---
-        chunkData.hasBeenGenerated = true;
-        worldChunks.Add(chunkCoord, chunkData);
-        return chunkData;
-
-    }
     // --- Visually Deactivate Chunk (Client Side) ---
     private void ClientDeactivateVisualChunk(Vector2Int chunkCoord) {
         Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkCoord);
@@ -598,7 +447,7 @@ public class ChunkManager : NetworkBehaviour {
         // Get the chunk data on the server
         if (!worldChunks.TryGetValue(chunkCoord, out ChunkData chunk)) {
             // Important: If player modifies an area server hasn't generated yet, GENERATE IT FIRST!
-            chunk = ServerGenerateChunkData(chunkCoord);
+            // chunk = ServerGenerateChunkData(chunkCoord);
             if (chunk == null) {
                 Debug.LogError($"Server failed to generate chunk {chunkCoord} for modification request at {cellPos}.");
                 return;
@@ -653,7 +502,8 @@ public class ChunkManager : NetworkBehaviour {
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
         // Ensure chunk data exists (generate if necessary)
         if (!worldChunks.TryGetValue(chunkCoord, out ChunkData chunk)) {
-            chunk = ServerGenerateChunkData(chunkCoord);
+            // chunk = ServerGenerateChunkData(chunkCoord);
+            // This should never happen but if it does just return lol
             if (chunk == null) { Debug.LogError($"Server failed to get/generate chunk {chunkCoord} for damage."); return; }
         }
 
@@ -670,9 +520,7 @@ public class ChunkManager : NetworkBehaviour {
         // if ore use Ore tilebase, not stone
         if (targetTile != null) {
             if (ore != null) targetTile = ore;
-            Debug.Log("Processing damage!!: ");
             if (targetTile.maxDurability <= 0) return; // Indestructible tile
-            Debug.Log("Reutneutnet!!: ");
 
             // --- Apply Damage ---
             short currentDurability = chunk.tileDurability[localX, localY];

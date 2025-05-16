@@ -2,7 +2,9 @@ using FishNet.Connection;
 using Sirenix.Utilities;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
@@ -20,7 +22,7 @@ public struct DeterministicStructure {
     // Optional: Add pattern information if it's not just a single line
 }
 
-public class WorldGen {
+public class WorldGen : MonoBehaviour {
     private Unity.Mathematics.Random noiseRandomGen;
     private float seedOffsetX;
     private float seedOffsetY;
@@ -42,19 +44,29 @@ public class WorldGen {
     public const int RENDER_TEXTURE_DIMENSION = 96; // Fixed size of the RenderTexture (e.g., 96x96)
     public const int CHUNKS_IN_VIEW_DIMENSION = RENDER_TEXTURE_DIMENSION / CHUNK_TILE_DIMENSION; // 96/16 = 6
 
-    private bool _isProcessingGPUReadback = false;
+    private bool _isProcessingChunks = false;
 
     // Helper struct to pass data to the async callback
     private struct ReadbackContext {
         public List<Vector2Int> ChunksToRequestBatch;
         public Vector2Int RenderAreaOriginChunkCoord; // Bottom-left chunk coord of the 6x6 render area
         public NetworkConnection req;
-        public System.Action<Dictionary<Vector2Int, ChunkData>,NetworkConnection> OnCompleteCallback;
+        public System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>, NetworkConnection> OnCompleteCallback;
     }
-
+    private struct ChunkProcessingJobData {
+        public Vector2Int ChunkCoord;
+        public ChunkData OriginalChunkData; // From GPU
+        public NativeArray<ushort> BaseTileIDs_NA; // NA for NativeArray
+        public NativeArray<ushort> ProcessedTileIDs_NA;
+        public NativeArray<ushort> OreTileIDs_NA; 
+        public NativeList<Vector3Int> EntitySpawnPoints_NA; // For the entity job
+        public JobHandle OreJobHandle;
+        public JobHandle EntityJobHandle;
+        public JobHandle CombinedHandle; // To depend on previous jobs
+    }
     public float GetDepth() => maxDepth;
 
-    public WorldGen(int chunkSize, RenderTexture renderTexture, WorldGenSettingSO settings, WorldManager worldmanager, ChunkManager chunkManager,Camera renderCamera) {
+    public void Init(int chunkSize, RenderTexture renderTexture, WorldGenSettingSO settings, WorldManager worldmanager, ChunkManager chunkManager,Camera renderCamera) {
         this.chunkSize = chunkSize;
         _renderTexture = renderTexture;
         _settings = settings;
@@ -62,10 +74,6 @@ public class WorldGen {
         this.chunkManager = chunkManager;
         _renderCamera = renderCamera;
         // This should be in the constructor but I think this works like so?
-        Init();
-    }
-
-    public void Init() {
         InitializeNoise();
         worldSpawnEntities = _settings.worldSpawnEntities;
         var maxD = -_settings.trenchBaseWidth / _settings.trenchWidenFactor;
@@ -79,8 +87,8 @@ public class WorldGen {
                 Debug.LogWarning($"Duplicate or invalid biome name found: {biome.biomeType}");
             }
         }
-        //_settings.biomeLayers.Sort((a, b) => a.startY.CompareTo(b.startY));
     }
+
     // Call this if you change the seed at runtime
     public void InitializeNoise() {
         // Use the seed to initialize the random generator for noise offsets
@@ -91,73 +99,7 @@ public class WorldGen {
         // Note: Unity.Mathematics.noise doesn't *directly* use this Random object for per-call randomness,
         // but we use it here to get deterministic offsets for the noise input coordinates.
     }
-
-    private void OnChunkDataReadbackComplete(AsyncGPUReadbackRequest req) {
-        if (req.hasError) {
-            Debug.LogError("GPU Readback Error");
-            return;
-        }
-        NativeArray<Color32> pixelData = req.GetData<Color32>();
-        ChunkData chunkData = new ChunkData(chunkSize, chunkSize);
-
-        for (int y = 0; y < chunkSize; y++) {
-            for (int x = 0; x < chunkSize; x++) {
-                int worldX = chunkOriginCell.x + x;
-                int worldY = chunkOriginCell.y + y;
-                Color32 p = pixelData[y * chunkSize + x];
-                chunkData.tiles[x, y] = p.r; // Assign base tile
-                
-
-                // Store biome info if needed later (not doing yet)
-                
-                //chunkData.biomeID[(byte)x, (byte)y] = (byte)biomeType;
-            }
-        }
-    }
-    public IEnumerator GenerateChunkAsync(List<Vector2Int> chunksToRequestBatch, Vector2Int newClientChunkCoor, NetworkConnection sender) {
-        // Todo setup etc etc
-        worldmanager.MoveCamToChunkCoord(newClientChunkCoor);
-        var req = AsyncGPUReadback.Request(_renderTexture, 0, TextureFormat.RGBA32, OnChunkDataReadbackComplete);
-        while(req.done || req.hasError) {
-            if(req.hasError) {
-                Debug.LogError("GPU Readback Error");
-                break;
-            }
-
-            if (req.done) {
-                ChunkData chunkData = new ChunkData(chunkSize,chunkSize);
-                List<ushort> tileIds = new List<ushort>(chunkSize * chunkSize); // todo shouln't put this here EH just for now
-                var pixelData = req.GetData<Color32>();
-                foreach(var chunkCoord  in chunksToRequestBatch) {
-                    for (int y = 0; y < chunkSize; y++) {
-                        for (int x = 0; x < chunkSize; x++) {
-                            int worldX = chunkCoord.x + x;
-                            int worldY = chunkCoord.y + y;
-                            Color32 p = pixelData[y * chunkSize + x];
-                            if(p.r == 1) {
-                                chunkData.tiles[x, y] = 1; // Assign base tile
-                                tileIds.Add(1);
-                            }
-                            if(p.r == 0) {
-                                chunkData.tiles[x, y] = 0; // air
-                                tileIds.Add(0);
-                            } else { 
-                                chunkData.tiles[x, y] = 2; // BAD
-                                tileIds.Add(2);
-                            
-                            }
-                            // Store biome info if needed later (not doing yet)
-                            //chunkData.biomeID[(byte)x, (byte)y] = (byte)biomeType;
-                        }
-                    }
-                    worldmanager.ChunkManager.TargetReceiveChunkData(sender, chunkCoord, tileIds, null, null, null);
-                }
-            }
-            yield return null;
-        }
-    }
-
-
+    
     /// <summary>
     /// Generates chunk data for the requested chunks using GPU rendering and async readback.
     /// </summary>
@@ -165,14 +107,14 @@ public class WorldGen {
     /// <param name="newClientChunkCoord">The chunk coordinate the player/client is currently in or moving to. This will be the center of the 6x6 render area.</param>
     /// <param name="onGenerationComplete">Callback action that receives the list of generated ChunkData.</param>
     public IEnumerator GenerateChunkAsync(List<Vector2Int> chunksToRequestBatch, Vector2Int newClientChunkCoord, 
-        NetworkConnection requester, System.Action<Dictionary<Vector2Int,ChunkData>,NetworkConnection> onGenerationComplete) {
+        NetworkConnection requester, System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>,NetworkConnection> onGenerationComplete) {
 
-        if (_isProcessingGPUReadback) {
-            Debug.LogWarning("GPU Readback is already in progress. Request ignored.");
-            onGenerationComplete?.Invoke(new Dictionary<Vector2Int, ChunkData>(),requester); // Return empty list
+        if (_isProcessingChunks) {
+            Debug.LogWarning("Chunk generation already in progress. Request ignored.");
+            onGenerationComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>(), requester); // Return empty list
             yield break;
         }
-        _isProcessingGPUReadback = true;
+        _isProcessingChunks = true;
 
         // --- 1. Camera Setup ---
         // Orthographic size: 1 pixel = 1 tile. RT is 96x96 tiles. Ortho size is half-height.
@@ -217,17 +159,10 @@ public class WorldGen {
 
         // Request readback. The callback 'OnReadbackCompleted' will be invoked when data is ready.
         // Using RGBA32 as it's a common, flexible format. Shader should output accordingly.
-        AsyncGPUReadback.Request(_renderTexture, 0, TextureFormat.RGBA32, request => OnReadbackCompleted(request, context));
-
-        // The coroutine itself doesn't block here due to async nature.
-        // It will continue, and 'OnReadbackCompleted' will handle data processing.
-        // The `_isProcessingGPUReadback` flag will be reset in the callback.
-        // If the caller of GenerateChunkAsync needs to wait for this *specific* operation:
-        // while(_isProcessingGPUReadback) { yield return null; }
-        // However, the Action callback pattern is generally preferred for async operations.
+        AsyncGPUReadback.Request(_renderTexture, 0, TextureFormat.RGBA32, request => OnGPUReadbackCompleted(request, context));
     }
 
-    private void OnReadbackCompleted(AsyncGPUReadbackRequest request, ReadbackContext context) {
+    private void OnGPUReadbackCompleted(AsyncGPUReadbackRequest request, ReadbackContext context) {
         Dictionary<Vector2Int, ChunkData> generatedChunks = new Dictionary<Vector2Int, ChunkData>();
         if (request.hasError) {
             Debug.LogError("GPU Readback Error!");
@@ -291,84 +226,33 @@ public class WorldGen {
         }
 
         // Invoke the callback with the generated chunk data
-        context.OnCompleteCallback?.Invoke(generatedChunks, context.req);
-        _isProcessingGPUReadback = false; // Allow next request
+        
+        // Continue with generation...
+            
+        NetworkConnection requester = context.req; 
+        StartCoroutine(ProcessChunksWithJobs(generatedChunks, requester, (processedPayloads,processedChunks) => {
+            // World gen complete, send them over the network.
+            _isProcessingChunks = false; // Allow next request
+            if (processedPayloads.Count > 0 && requester != null && requester.IsValid) {
+                // TODO
+                context.OnCompleteCallback?.Invoke(processedPayloads, processedChunks, context.req);
+                //TargetReceiveChunkDataMultiple(requester, processedPayloads);
+                Debug.Log($"Sent {processedPayloads.Count} processed chunks to client {requester.ClientId}");
+            } else if (requester == null || !requester.IsValid) {
+                Debug.LogWarning("Requester is null or invalid, cannot send processed chunks.");
+            }
+        }));
     }
 
-#if UNITY_EDITOR
-    // Example of how to call this (for testing)
-    [ContextMenu("Test Generate Single Chunk Batch")]
-    void TestGeneration() {
-        if (Application.isPlaying) {
-            // Example: Request the chunk at (0,0) and player is also at (0,0)
-            Vector2Int playerChunkCoord = new Vector2Int(0, 0);
-            List<Vector2Int> chunksToGen = new List<Vector2Int> { new Vector2Int(0, 0) };
-
-            // Player at (0,0) will make the camera view chunks from (-3,-3) to (2,2) approx.
-            // So requesting (0,0) is fine.
-            // Requesting (-3,-3) would be the bottom-left chunk of the 6x6 view.
-            // Requesting (2,2) would be the top-right chunk of the 6x6 view.
-
-            // The actual renderAreaOriginChunk will be newClientChunkCoord - (3,3).
-            // If newClientChunkCoord is (0,0), renderAreaOriginChunk is (-3,-3).
-            // The 6x6 chunks rendered are (-3,-3) to (2,2).
-            // chunksToGen should contain coordinates within this range.
-            // Example: player at (5,5), request generation for (4,4), (5,4), (4,5), (5,5)
-            // playerChunkCoord = new Vector2Int(5,5);
-            // chunksToGen = new List<Vector2Int> {
-            //     new Vector2Int(4,4), new Vector2Int(5,4),
-            //     new Vector2Int(4,5), new Vector2Int(5,5)
-            // };
-
-
-            /*StartCoroutine(GenerateChunkAsync(chunksToGen, playerChunkCoord, (generatedChunkData) => {
-                if (generatedChunkData != null && generatedChunkData.Count > 0) {
-                    Debug.Log($"Generation complete! Received {generatedChunkData.Count} chunks.");
-                    foreach (var chunk in generatedChunkData) {
-                        Debug.Log($"Chunk {chunk.chunkCoord}: Processed {chunk.tileIDs.GetLength(0)}x{chunk.tileIDs.GetLength(1)} tiles.");
-                        // You could print a tile ID here:
-                        // if (chunk.tileIDs.GetLength(0) > 0 && chunk.tileIDs.GetLength(1) > 0)
-                        //    Debug.Log($"  Tile (0,0) ID: {chunk.tileIDs[0,0]}");
-                    }
-                } else {
-                    Debug.LogWarning("Generation returned no data or an error occurred.");
-                }
-            }));*/
-        } else {
-            Debug.LogError("TestGeneration can only be run in Play Mode.");
-        }
-    }
-#endif
-    internal ChunkData GenerateChunk(Vector3Int chunkOrigin, out List<EntitySpawnInfo> entitySpawns) {
-        //Debug.Log("Generating new chunk: " + chunkOriginCell);
+    internal ChunkData GenerateRestOfChunks(Vector3Int chunkOrigin, out List<EntitySpawnInfo> entitySpawns) {
         ChunkData chunkData = new ChunkData(chunkSize, chunkSize);
         entitySpawns = new List<EntitySpawnInfo>();
         chunkOriginCell = chunkOrigin;
-        AsyncGPUReadback.Request(_renderTexture, 0, TextureFormat.RGBA32, OnChunkDataReadbackComplete);
-        // --- Pass 1: Base Terrain & Biome Assignment ---
-
-
-        /*for (int y = 0; y < chunkSize; y++) {
-            for (int x = 0; x < chunkSize; x++) {
-                int worldX = chunkOriginCell.x + x;
-                int worldY = chunkOriginCell.y + y;
-
-                ushort TileID = DetermineBaseTerrainAndBiome(worldX, worldY, out BiomeType biomeType);
-                chunkData.tiles[x, y] = TileID; // Assign base tile
-
-                // Store biome info if needed later (not doing yet)
-                chunkData.biomeID[(byte)x, (byte)y] = (byte)biomeType;
-            }
-        }*/
-        // --- Pass 2: Cave Generation ---
-       
-        //GenerateNoiseCavesForChunk(chunkData, chunkOriginCell,chunkSize); // New function call
-
         // --- Pass 3: Ore Generation ---
         // Iterate again, placing ores only on non-cave, non-water tiles
         
         
-        //SpawnOresInChunk(chunkData, chunkOriginCell, chunkSize); // Encapsulate ore logic similar to structures/entities
+        SpawnOresInChunk(chunkData, chunkOriginCell, chunkSize); // Encapsulate ore logic similar to structures/entities
 
         // --- Pass 4: Structure Placement ---
         // This needs careful design. It checks potential anchor points within the chunk.
@@ -380,7 +264,163 @@ public class WorldGen {
         
         //SpawnEntitiesInChunk(chunkData, chunkOriginCell, chunkSize, entitySpawns, cm);
 
+
+
         return chunkData;
+    }
+    // This would be called after GPU readback provides the initial List<ChunkData>
+    // and before network serialization.
+    // The 'requester' is important if you need to link back to the client connection.
+    private IEnumerator ProcessChunksWithJobs(Dictionary<Vector2Int,ChunkData> initialChunks, NetworkConnection requester, System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>> onProcessingComplete) {
+        if (initialChunks == null || initialChunks.Count == 0) {
+            onProcessingComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>());
+            yield break;
+        }
+
+        List<ChunkProcessingJobData> jobDataList = new List<ChunkProcessingJobData>(initialChunks.Count);
+        List<JobHandle> jobHandles = new List<JobHandle>(initialChunks.Count * 2); // Max jobs per chunk (ore + entity)
+
+        uint worldSeed = 12345; // Get your world seed
+
+        // --- 1. Setup Jobs for each chunk ---
+        foreach (var kvp in initialChunks) {
+            ChunkData chunk = kvp.Value;
+            var processingData = new ChunkProcessingJobData { OriginalChunkData = chunk,ChunkCoord = kvp.Key };
+
+            // Convert ushort[,] to NativeArray<ushort>
+            int tileCount = CHUNK_TILE_DIMENSION * CHUNK_TILE_DIMENSION;
+            processingData.BaseTileIDs_NA = new NativeArray<ushort>(tileCount, Allocator.TempJob);
+            processingData.ProcessedTileIDs_NA = new NativeArray<ushort>(tileCount, Allocator.TempJob); // For ore job output
+            processingData.OreTileIDs_NA = new NativeArray<ushort>(tileCount, Allocator.TempJob); // For ore job output
+
+            int k = 0;
+            for (int y = 0; y < CHUNK_TILE_DIMENSION; y++) {
+                for (int x = 0; x < CHUNK_TILE_DIMENSION; x++) {
+                    processingData.BaseTileIDs_NA[k] = chunk.tiles[x, y]; // Assuming tileIDs[x,y] convention
+                    processingData.OreTileIDs_NA[k] = ResourceSystem.InvalidID;
+                    k++;
+                }
+            }
+
+            // --- Ore Generation Job ---
+            var oreJob = new GenerateOresJob {
+                baseTileIDs = processingData.BaseTileIDs_NA, // GPU output
+                processedOreIDs = processingData.OreTileIDs_NA, // This will be modified
+                chunkCoord = kvp.Key,
+                chunkSize = CHUNK_TILE_DIMENSION,
+                seed = worldSeed + (uint)kvp.Key.x // Vary seed per chunk slightly or use chunkCoord for determinism
+            };
+            processingData.OreJobHandle = oreJob.Schedule();
+            jobHandles.Add(processingData.OreJobHandle);
+
+            // --- Entity Spawn Points Job (depends on ore job's output, or could use BaseTileIDs_NA) ---
+            // If entity placement depends on the ores, it needs ProcessedTileIDs_NA
+            // This example assumes it can run in parallel or on base tiles. For chaining, see below.
+            
+            /*processingData.EntitySpawnPoints_NA = new NativeList<Vector3Int>(Allocator.TempJob);
+            var entityJob = new FindEntitySpawnPointsJob {
+                // If depends on ore output:
+                // tileIDs = processingData.ProcessedTileIDs_NA,
+                // And schedule with dependency: entityJob.Schedule(processingData.OreJobHandle);
+
+                // If runs on base tiles (parallel to ore):
+                tileIDs = processingData.BaseTileIDs_NA,
+                potentialSpawnPoints = processingData.EntitySpawnPoints_NA,
+                chunkCoord = kvp.Key,
+                chunkSize = CHUNK_TILE_DIMENSION
+            };*/
+            // Schedule with dependency if needed:
+            // processingData.EntityJobHandle = entityJob.Schedule(processingData.OreJobHandle);
+
+            // Or schedule independently and combine later:
+            
+            //processingData.EntityJobHandle = entityJob.Schedule();
+            
+            //jobHandles.Add(processingData.EntityJobHandle);
+
+            // Store a combined handle for this chunk's processing steps if they are sequential
+            // processingData.CombinedHandle = processingData.EntityJobHandle; // If EntityJob depends on OreJob
+            // If they are parallel initially, we'll combine all handles later.
+
+            jobDataList.Add(processingData);
+        }
+
+        // --- 2. Wait for All Jobs to Complete ---
+        // We could yield until JobHandle.IsCompleted, but for batching, completing all is cleaner.
+        // JobHandle.CompleteAll(new NativeArray<JobHandle>(jobHandles.ToArray(), Allocator.TempJob));
+        // A more Unity-conventional way in a coroutine:
+        while (jobHandles.Any(jh => !jh.IsCompleted)) {
+            yield return null; // Wait a frame
+        }
+        // Ensure completion if any stragglers
+        foreach (var jh in jobHandles) {
+            jh.Complete(); // This will block if not already done
+        }
+
+
+        // --- 3. Process Results and Dispose NativeArrays ---
+        List<ChunkPayload> payloadsToSend = new List<ChunkPayload>(); // For client
+        Dictionary<Vector2Int, ChunkData> chunksToSend = new Dictionary<Vector2Int, ChunkData>(); // For server
+
+        foreach (var data in jobDataList) {
+            // Make sure to complete specific handles if you didn't use CompleteAll
+            // data.OreJobHandle.Complete(); 
+            // data.EntityJobHandle.Complete(); // Or data.CombinedHandle.Complete();
+
+            // Recostruct new ChunkData
+            //var finalChunk = new ChunkData(CHUNK_TILE_DIMENSION, CHUNK_TILE_DIMENSION); 
+            
+            
+            // --!!! --- Assuming none of the original chunkdata is actually modified,
+            // TODO if it is, we have to recostruct base layer aswell
+            var finalChunk = data.OriginalChunkData; 
+            var k = 0;
+            for (int y = 0; y < CHUNK_TILE_DIMENSION; y++) {
+                for (int x = 0; x < CHUNK_TILE_DIMENSION; x++) {
+                    finalChunk.oreID[x,y] = data.OreTileIDs_NA[k++]; 
+                    //finalChunk.tiles[x,y] = data.ProcessedTileIDs_NA[k++]; 
+                }
+            }
+
+
+            
+            // TODO 
+            /*  if (data.EntitySpawnPoints_NA.IsCreated) {
+                  Debug.Log($"Chunk {data.OriginalChunkData.chunkCoord} found {data.EntitySpawnPoints_NA.Length} potential entity spawn points.");
+                  foreach (var point in data.EntitySpawnPoints_NA) {
+                      // Add to a global list, or process immediately if simple
+                      // e.g., serverEntityManager.RegisterPotentialSpawn(point);
+                  }
+              }*/
+            chunksToSend.Add(data.ChunkCoord,finalChunk);
+            payloadsToSend.Add(ProcessingDataToPayload(data));
+
+            // Dispose of Native Collections
+            if (data.BaseTileIDs_NA.IsCreated)
+                data.BaseTileIDs_NA.Dispose();
+            if (data.ProcessedTileIDs_NA.IsCreated)
+                data.ProcessedTileIDs_NA.Dispose();
+            if (data.EntitySpawnPoints_NA.IsCreated)
+                data.EntitySpawnPoints_NA.Dispose();
+            if (data.OreTileIDs_NA.IsCreated)
+                data.OreTileIDs_NA.Dispose();
+        }
+
+        Debug.Log($"All chunk processing jobs complete. {payloadsToSend.Count} payloads ready.");
+        onProcessingComplete?.Invoke(payloadsToSend,chunksToSend);
+    }
+
+    private ChunkPayload ProcessingDataToPayload(ChunkProcessingJobData data) {
+        // Create the payload for networking
+        List<ushort> finalTileIdsList = new List<ushort>(data.ProcessedTileIDs_NA.Length);
+        for (int tileIdx = 0; tileIdx < data.ProcessedTileIDs_NA.Length; tileIdx++) {
+            finalTileIdsList.Add(data.BaseTileIDs_NA[tileIdx]); // !!! Using base tile ids because we don't actually modify this data
+        }
+        List<ushort> finalOreIdsList = new List<ushort>(data.OreTileIDs_NA.Length);
+        for (int tileIdx = 0; tileIdx < data.OreTileIDs_NA.Length; tileIdx++) {
+            finalOreIdsList.Add(data.OreTileIDs_NA[tileIdx]);
+        }
+        return new ChunkPayload(data.ChunkCoord, finalTileIdsList, finalOreIdsList, null, null);
     }
     // 0 Air, 1 Stone, 
     // --- Pass 1 Helper: Determine Base Terrain & Primary Biome ---
@@ -431,7 +471,7 @@ public class WorldGen {
 
 
             // --- Check Vertical Range (with Noise) ---
-            // Use different noise samples for start/end for independent boundaries
+            // Use different noise samples for start/end for independent boundaries -0.5 * 2 to get -1 to 1 range
             float startNoiseShift = (GetNoise(worldX, worldY + 3000, biome.verticalEdgeNoiseFrequency) - 0.5f) * 2f * biome.verticalEdgeNoiseAmplitude;
             float endNoiseShift = (GetNoise(worldX, worldY + 4000, biome.verticalEdgeNoiseFrequency) - 0.5f) * 2f * biome.verticalEdgeNoiseAmplitude;
 
@@ -451,8 +491,6 @@ public class WorldGen {
         // Fallback if outside all biome influences
         return 1;
     }
-
-
 
     // --- New Cave Generation Function (Pass 2) ---
     private void GenerateNoiseCavesForChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {

@@ -253,6 +253,7 @@ GameObject:
   - component: {fileID: 187924542}
   - component: {fileID: 187924541}
   - component: {fileID: 187924544}
+  - component: {fileID: 187924545}
   m_Layer: 0
   m_Name: WorldManager
   m_TagString: Untagged
@@ -325,6 +326,7 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 187924541}
   _networkObjectCache: {fileID: 0}
+  WorldGen: {fileID: 187924545}
   ChunkManager: {fileID: 953411378}
   BiomeManager: {fileID: 187924544}
   Backgroundmanager: {fileID: 453340122}
@@ -364,6 +366,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7391594a9031b74da8685241c773b3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &187924545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 187924540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83988f067b20983409da1ef38e1c09d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &214857394 stripped

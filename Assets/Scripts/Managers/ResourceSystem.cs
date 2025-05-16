@@ -80,7 +80,7 @@ public class ResourceSystem {
 
     public TileSO GetTileByID(ushort id) {
         if (id == InvalidID || !_tileLookupByID.TryGetValue(id, out TileSO tile)) {
-            Debug.LogWarning($"Item ID {id} not found in ItemDatabase.");
+            if(id!=InvalidID)Debug.LogWarning($"Item ID {id} not found in ItemDatabase.");
             return null;
         }
         return tile;

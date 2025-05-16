@@ -2,6 +2,8 @@ using FishNet.Object;
 using UnityEngine.Tilemaps;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using System.Collections.Generic;
+using System.Collections;
 
 public class WorldManager : NetworkBehaviour {
     public static WorldManager Instance { get; private set; }
@@ -32,7 +34,7 @@ public class WorldManager : NetworkBehaviour {
     [Button("NewWorld")]
     private void DEBUGNEWGEN() {
         ChunkManager.DEBUGNewGen();
-        WorldGen = new(ChunkManager.GetChunkSize(), worldRenderTexture, WorldGenSettings, this, ChunkManager,_worldGenCamera);
+        WorldGen.Init(ChunkManager.GetChunkSize(), worldRenderTexture, WorldGenSettings, this, ChunkManager,_worldGenCamera);
         WorldGen.InitializeNoise(); 
     }
     [SerializeField] private bool DEBUGConstantNewGen;
@@ -47,7 +49,7 @@ public class WorldManager : NetworkBehaviour {
     public override void OnStartServer() {
         base.OnStartServer();
         // Server-only initialization
-        WorldGen = new(ChunkManager.GetChunkSize(), worldRenderTexture, WorldGenSettings, this, ChunkManager, _worldGenCamera);
+        WorldGen.Init(ChunkManager.GetChunkSize(), worldRenderTexture, WorldGenSettings, this, ChunkManager, _worldGenCamera);
         //InstanceFinder.ServerManager.Spawn(ChunkManager.gameObject, Owner);
         //ChunkManager.Spawn(ChunkManager.gameObject, Owner);
         if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
@@ -70,9 +72,6 @@ public class WorldManager : NetworkBehaviour {
         var cell = ChunkManager.ChunkCoordToCellOrigin(chunkCoord);
         _worldGenCamera.transform.position = GetCellCenterWorld(new(cell.x + size, cell.y + size));
     }
-    public void RequestGenerateChunk(Vector3Int chunkCoord) {
-        WorldGen.GenerateChunk(chunkCoord, out var entitySpawns);
-    }
 
     // --- RPC to tell all clients about a tile change ---
     [ObserversRpc(BufferLast = false)] // Don't buffer, could spam late joiners. Consider buffering important static tiles.
@@ -93,7 +92,18 @@ public class WorldManager : NetworkBehaviour {
     }
     // Modify the world (visually)
     internal void SetTiles(BoundsInt chunkBounds, TileBase[] tilesToSet) {
+        //StartCoroutine(SetWorldTiles(chunkBounds, tilesToSet));
+        //mainTilemap.lock(pos, TileFlags.LockAll);
         mainTilemap.SetTilesBlock(chunkBounds, tilesToSet);
+    }
+    public void SetTileIEnumerator(Dictionary<BoundsInt, TileBase[]> tilesToSet) {
+        StartCoroutine(SetWorldTiles(tilesToSet));
+    }
+    private IEnumerator SetWorldTiles(Dictionary<BoundsInt, TileBase[]> tilesToSet) {
+        foreach (var kvp in tilesToSet) {
+            mainTilemap.SetTilesBlock(kvp.Key, kvp.Value);
+            yield return null; // pause one frame
+        }
     }
     //  You should use BoundsInt instead its faster
     internal void SetTiles(Vector3Int[] tiles, TileBase[] tilesToSet) {
