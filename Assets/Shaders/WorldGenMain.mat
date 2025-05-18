@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TESTTRENCH
+  m_Name: WorldGenMain
   m_Shader: {fileID: -6465566751694194690, guid: 9923efd5d09773c489c27463359946de, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -39,24 +39,29 @@ Material:
     m_Floats:
     - _BaseWiden: -0.05
     - _BaseWidth: 174.5
-    - _BiomeCutoff: 0.41
+    - _BiomeAmp: 0
+    - _BiomeCutof2: 0.343
+    - _BiomeCutoff: 0.404
+    - _BiomeNoiseScale: 0.0675
     - _CaveNoise: 0.09
     - _CaveNoiseAmp: 2.66
     - _CaveNoiseFreq: 0.1395
     - _CaveThreshold: 0.257
     - _EdgeAmp: 17.3
+    - _LuminesenceStart: -3035.04
     - _NoiseFreq: 0.164
     - _NoiseScale: 0.164
     - _Parallax: 0
     - _PixelSize: 0
     - _Seed: 0.22
-    - _SilverFreq: 0.126
+    - _SilverFreq: 0.227
     - _SilverThe: 0.19
     - _SilverThreshold: 0.195
     - _SurfaceNoiseAmp: 16.46
     - _SurfaceNoiseFreq: 0.127
     - _SurfaceNoiseScale: 0.5
     - _Test: 0.57
+    - _WarpAmp: 2.12
     m_Colors:
     - _CamPos: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.003921569, g: 0, b: 0, a: 1}

@@ -1,5 +1,6 @@
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI.Table;
@@ -44,10 +45,6 @@ public class WorldSpawnEntitySO : EntityBaseSO {
     [Header("Placement Fine-tuning")]
     public bool randomYRotation = true;
     public Vector2 scaleVariation = Vector2.one; // Min/Max uniform scale multiplier
-
-    private void Awake() {
-        BoundingOffset = GetBoundingOffset();
-    }
 
     // This gets the offset bounds from the middle bottom tile (4,8)
     private (Vector2Int, Vector2Int) GetBoundingOffset() {
@@ -100,6 +97,10 @@ public class WorldSpawnEntitySO : EntityBaseSO {
         int newMaxCol = Mathf.Max(c1, c2);
 
         return (newMinRow, newMinCol, newMaxRow, newMaxCol);
+    }
+
+    internal void Init() {
+        BoundingOffset = GetBoundingOffset();
     }
 }
 

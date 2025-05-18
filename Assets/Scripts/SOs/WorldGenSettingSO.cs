@@ -7,17 +7,13 @@ public class WorldGenSettingSO : ScriptableObject {
     public float trenchWidenFactor; // How much wider per unit Y increase
     public float trenchEdgeNoiseFrequency;
     public float trenchEdgeNoiseAmplitude;
-
+    public Material associatedMaterial;
     // Surface
     public float surfaceCenterY = 0f; // The conceptual "sea level"
     public float surfaceMaxDepth = 15f; // How far down the solid "surface" can reach from surfaceCenterY
     public float surfaceNoiseFrequency = 0.03f;
     public float surfaceNoiseAmplitude = 5f; // Additional wiggle
 
-    // Caves
-    public bool generateCaves;
-    public BiomeCaveSettings globalCaveSettings;
-    public List<BiomeLayerSO> biomeLayers;
     public List<OreType> oreTypes;
 
     // Decorations

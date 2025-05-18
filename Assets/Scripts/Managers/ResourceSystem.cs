@@ -36,8 +36,18 @@ public class ResourceSystem {
         InitializeLookup("ItemData", out _itemLookupByID, out _idLookupByItem);
         InitializeLookup("TileData", out _tileLookupByID, out _idLookupByTile);
         InitializeLookup("EntityData", out _entityLookupByID, out _idLookupByEntity);
+
+        InitializeWorldEntityOffsets();
     }
-   
+
+    private void InitializeWorldEntityOffsets() {
+        foreach (var entity in _entityLookupByID) {
+            if(entity.Value is WorldSpawnEntitySO wse) {
+                wse.Init();
+            }
+        }
+    }
+
     private void InitializeLookup<T>(string resourcePath, out Dictionary<ushort, T> lookupByID,
         out Dictionary<T, ushort> idByLookup) where T : Object, IIdentifiable { lookupByID = new Dictionary<ushort, T>(); idByLookup = new Dictionary<T, ushort>();
 

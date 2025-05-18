@@ -37,7 +37,6 @@ public class EntityBaseSO : SerializedScriptableObject, IIdentifiable {
 #endif
     [Header("Spawn Conditions")]
     public List<BiomeType> requiredBiomes; // Spawns if CURRENT biome is one of these
-    public float minBiomeRate = 0.5f;      // Required rate of one of the requiredBiomes
     //[MinMaxSlider(-10, 10, true)]
     public int minY = -1000;         
     public int maxY = 2000;     

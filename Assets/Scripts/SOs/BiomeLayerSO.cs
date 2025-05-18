@@ -77,5 +77,6 @@ public enum BiomeType : byte {
     Cave = 3,
     Algea = 4,
     Coral = 5,
-    Ocean = 6
+    Ocean = 6,
+    Bioluminescent = 7
 }

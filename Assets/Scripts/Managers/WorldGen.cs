@@ -69,6 +69,9 @@ public class WorldGen : MonoBehaviour {
     public void Init(RenderTexture renderTexture, WorldGenSettingSO settings, WorldManager worldmanager, ChunkManager chunkManager,Camera renderCamera) {
         _renderTexture = renderTexture;
         _settings = settings;
+        Material worldGenMat = _settings.associatedMaterial;
+        _settings.trenchWidenFactor = worldGenMat.GetFloat("_BaseWiden");
+        _settings.trenchBaseWidth = worldGenMat.GetFloat("_BaseWidth");
         this.worldmanager = worldmanager;
         this.chunkManager = chunkManager;
         _renderCamera = renderCamera;
@@ -79,14 +82,7 @@ public class WorldGen : MonoBehaviour {
         var maxD = -_settings.trenchBaseWidth / _settings.trenchWidenFactor;
         maxDepth = Mathf.Abs(maxD) * 0.90f; // 90% of the max theoretical depth
         biomeLookup.Clear();
-        foreach (var biome in _settings.biomeLayers) {
-            if (biome.biomeType != BiomeType.None && !biomeLookup.ContainsKey(biome.biomeType)) {
-                biomeLookup.Add(biome.biomeType, biome);
-                Debug.LogWarning($"Added biome: {biome.biomeType} to lookup");
-            } else {
-                Debug.LogWarning($"Duplicate or invalid biome name found: {biome.biomeType}");
-            }
-        }
+       
     }
 
     // Call this if you change the seed at runtime
@@ -212,8 +208,12 @@ public class WorldGen : MonoBehaviour {
 
                         // --- Convert color to tile ID ---
                         // Simplest assumption: tile ID is stored in the R channel (0-255).
-                        
-                        ushort tileID = color.r;
+                        ushort tileID = 0;
+                        if(color.r ==1) {
+                            tileID = 1;
+                        } if(color.r == 90) {
+                            tileID = 5;
+                        }
                         // If tile IDs are true ushort (0-65535) and packed into R and G channels by the shader:
                         // Shader might do: outColor.r = (id % 256) / 255.0; outColor.g = floor(id / 256.0) / 255.0;
                         // Then here: tileID = (ushort)(color.r + (color.g * 256)); // color.r and .g are 0-255 bytes
@@ -435,133 +435,9 @@ public class WorldGen : MonoBehaviour {
         }
         return new ChunkPayload(data.ChunkCoord, finalTileIdsList, finalOreIdsList, null, null);
     }
-    // 0 Air, 1 Stone, 
-    // --- Pass 1 Helper: Determine Base Terrain & Primary Biome ---
-    private ushort DetermineBaseTerrainAndBiome(int worldX, int worldY, out BiomeType primaryBiome) {
-        primaryBiome = BiomeType.None; // Default to no specific biome
+    
 
-        // Surface
-        if (worldY > _settings.surfaceCenterY - _settings.surfaceMaxDepth - _settings.surfaceNoiseAmplitude) {
-            // Calculate the actual noisy surface boundary Y value at this X coordinate
-            // Noise value [0, 1] maps to depth [0, surfaceMaxDepth]
-            float surfaceDepthAtX = GetNoise(worldX, worldY, _settings.surfaceNoiseFrequency) * _settings.surfaceMaxDepth;
-            // Add additional wiggle noise
-            surfaceDepthAtX += (GetNoise(worldX + 1000, worldY + 1000, _settings.surfaceNoiseFrequency * 2f) - 0.5f) * 2f * _settings.surfaceNoiseAmplitude;
-            surfaceDepthAtX = Mathf.Clamp(surfaceDepthAtX, 0, _settings.surfaceMaxDepth * 1.5f); // Clamp variation a bit
-
-            float boundaryY = _settings.surfaceCenterY - surfaceDepthAtX;
-
-            if (worldY >= boundaryY) {
-                // Above or at the noisy surface level - it's water (or air if you prefer)
-                primaryBiome = BiomeType.Surface;
-                return 0;//_settings.surfaceWaterTile ?? _settings.mainWaterTile; // Use specified surface water or fallback
-            }
-            // If below the noisy surface level, proceed to trench/biome checks
-        }
-        // --- 2. Trench Definition ---
-        // (Same trench logic as before - calculate noisyHalfWidth)
-        float halfTrenchWidth = (_settings.trenchBaseWidth + Mathf.Abs(worldY) * _settings.trenchWidenFactor) / 2f;
-        float edgeNoise = (GetNoise(worldX, worldY + 5000, _settings.trenchEdgeNoiseFrequency) - 0.5f) * 2f; // Use offset Y noise sample
-        float noisyHalfWidth = halfTrenchWidth + edgeNoise * _settings.trenchEdgeNoiseAmplitude;
-        noisyHalfWidth = Mathf.Max(0, noisyHalfWidth);
-
-        if (Mathf.Abs(worldX) < noisyHalfWidth && Mathf.Abs(worldY) < maxDepth) {
-            primaryBiome = BiomeType.Trench;
-            return 0; // Inside main trench
-        }
-
-        // --- 3. Biome Check (Priority Based - Uses Sorted List) ---
-        // Iterate through biomes (sorted bottom-up by StartY in Awake)
-        foreach (var biome in _settings.biomeLayers) {
-            // --- Check Horizontal Range (with Noise) ---
-            float maxDist = biome.maxHorizontalDistanceFromTrenchCenter;
-            float horizontalNoiseShift = (GetNoise(worldX + 2000, worldY, biome.horizontalEdgeNoiseFrequency) - 0.5f) * 2f * biome.horizontalEdgeNoiseAmplitude;
-            float noisyMaxHorizDist = Mathf.Max(0, maxDist + horizontalNoiseShift); // Don't let max dist go below 0
-
-            if (Mathf.Abs(worldX) >= noisyMaxHorizDist) {
-                continue; // Outside this biome's noisy horizontal range
-            }
-
-
-            // --- Check Vertical Range (with Noise) ---
-            // Use different noise samples for start/end for independent boundaries -0.5 * 2 to get -1 to 1 range
-            float startNoiseShift = (GetNoise(worldX, worldY + 3000, biome.verticalEdgeNoiseFrequency) - 0.5f) * 2f * biome.verticalEdgeNoiseAmplitude;
-            float endNoiseShift = (GetNoise(worldX, worldY + 4000, biome.verticalEdgeNoiseFrequency) - 0.5f) * 2f * biome.verticalEdgeNoiseAmplitude;
-
-            float noisyStartY = biome.startY + startNoiseShift;
-            float noisyEndY = biome.endY + endNoiseShift;
-
-            // Ensure EndY is generally above StartY even with noise, adjust if necessary based on desired overlap behaviour
-            // Example simple clamp: if (noisyEndY < noisyStartY + 1) noisyEndY = noisyStartY + 1; // Ensure min 1 unit height
-
-            if (worldY >= noisyStartY && worldY < noisyEndY) {
-                // --- Match Found! ---
-                // This is the highest priority biome (lowest StartY checked first) that contains this point.
-                primaryBiome = biome.biomeType;
-               // return biome.defaultGroundTile; // TODODODODODODO
-            }
-        }
-        // Fallback if outside all biome influences
-        return 1;
-    }
-
-    // --- New Cave Generation Function (Pass 2) ---
-    private void GenerateNoiseCavesForChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
-        for (int y = 0; y < chunkSize; y++) {
-            for (int x = 0; x < chunkSize; x++) {
-
-                // Only carve caves into existing rock/ground tiles
-                if (!IsSolid(chunkData.tiles[x, y])) {
-                    continue;
-                }
-
-                int worldX = chunkOriginCell.x + x;
-                int worldY = chunkOriginCell.y + y;
-
-                // --- Determine Cave Settings for this tile ---
-                BiomeType biomeName = (BiomeType)chunkData.biomeID[x, y];
-                BiomeCaveSettings settingsToUse = _settings.globalCaveSettings;
-
-                if (biomeLookup.TryGetValue(biomeName, out BiomeLayerSO biome)) {
-                    if (biome.caveSettings.overrideGlobalCaveSettings) {
-                        settingsToUse = biome.caveSettings;
-                    }
-                }
-
-                // --- Check if caves are enabled for this context ---
-                if (!settingsToUse.generateCavesInBiome) {
-                    continue;
-                }
-
-                // --- Calculate Warped Cave Noise Value ---
-                // 1. Calculate Warp Offsets (using different noise samples for X and Y offset)
-                // Using slightly offset coordinates/seeds for the warp noises ensures they aren't identical.
-                float warpOffsetX = GetNoise(worldX + 100.5f, worldY + 200.7f, settingsToUse.warpFrequency);
-                float warpOffsetY = GetNoise(worldX - 300.2f, worldY - 400.9f, settingsToUse.warpFrequency);
-
-                // Map noise [0,1] to offset range [-amp, +amp]
-                warpOffsetX = (warpOffsetX - 0.5f) * 2f * settingsToUse.warpAmplitude;
-                warpOffsetY = (warpOffsetY - 0.5f) * 2f * settingsToUse.warpAmplitude;
-
-                // 2. Apply Warp and Get Base Cave Value
-                float warpedX = worldX + warpOffsetX;
-                float warpedY = worldY + warpOffsetY;
-                float caveValue = GetNoise(warpedX, warpedY, settingsToUse.baseCaveFrequency);
-
-                if (settingsToUse.useDetailNoise) {
-                   float detailNoise = GetNoise(worldX, worldY, settingsToUse.detailFrequency);
-                   // Modify caveValue based on detail noise, e.g., lerp towards 0.5 based on detail
-                   caveValue = Mathf.Lerp(caveValue, 0.5f, (detailNoise - 0.5f) * settingsToUse.detailInfluence);
-                }
-
-                // --- Apply Threshold ---
-                if (caveValue < settingsToUse.caveThreshold) {
-                    // Replace rock with cave water
-                    chunkData.tiles[x, y] = 0;
-                }
-            }
-        }
-    }
+  
 
     // --- Pass 3 Helper 
     private void SpawnOresInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {

@@ -124,12 +124,12 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
 
             // Biome Check
             bool biomeMatch = false;
-            foreach (BiomeType requiredBiome in data.requiredBiomes) {
-                if (biomeInfo.GetBiomeRate(requiredBiome) >= data.minBiomeRate) {
-                    biomeMatch = true;
-                    break;
-                }
-            }
+            //foreach (BiomeType requiredBiome in data.requiredBiomes) {
+            //    if (biomeInfo.GetBiomeRate(requiredBiome) >= data.minBiomeRate) {
+            //        biomeMatch = true;
+            //        break;
+            //    }
+            //}
             if (!biomeMatch && data.requiredBiomes.Count > 0) continue; // Skip if biome doesn't match
 
             // TODO: Add checks for Surface/Water based on querying WorldGenerator server data for cellPos and cellPos + Up
