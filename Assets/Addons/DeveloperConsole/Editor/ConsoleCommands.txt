@@ -1,0 +1,198 @@
+All commands found with [ConsoleCommand] attribute in the current project.
+Commands found: 30
+------ 
+
+Command name: debug_renderinfo
+Parameter: None
+Script name: Anarkila.DeveloperConsole.DebugRenderInfo.cs
+Method name: void PrintRenderInfo
+------ 
+
+Command name: theme_red
+Parameter: None
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void SetRedTheme
+------ 
+
+Command name: theme_darker
+Parameter: None
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void SetDarkerTheme
+------ 
+
+Command name: theme_dark
+Parameter: None
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void SetDarkTheme
+------ 
+
+Command name: test_hidden
+Parameter: None
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void HiddenCommand
+is hidden command: True
+is hidden minimal GUI: True
+------ 
+
+Command name: test_colorlog
+Parameter: None
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void PrintColoredLog
+------ 
+
+Command name: test_richtext
+Parameter: None
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void PrintColors
+------ 
+
+Command name: test_threadedlog
+Parameter: None
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void PrintLogFromAnotherThread
+------ 
+
+Command name: test_long
+Parameter: None
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void PrintLongMessage
+------ 
+
+Command name: test_numbers
+Parameter: None
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: IEnumerator PrintNumbers
+------ 
+
+Command name: test_error
+Parameter: None
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void PrintIntentialError
+------ 
+
+Command name: test_coroutine_float
+Parameter 1: System.Single
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: IEnumerator TestCoroutineInt
+------ 
+
+Command name: test_coroutine
+Parameter: None
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: IEnumerator TestCoroutine
+------ 
+
+Command name: test_quaternion
+Parameter 1: UnityEngine.Quaternion
+Default value: 1.0, 2.0, 3.0, 4.0
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestQuaternion
+------ 
+
+Command name: test_vector4
+Parameter 1: UnityEngine.Vector4
+Default value: 1.0, 2.0, 3.0, 4.0
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestVector4
+------ 
+
+Command name: test_vector3
+Parameter 1: UnityEngine.Vector3
+Default value: 1.0, 2.0, 3.0
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestVector3
+------ 
+
+Command name: test_vector2
+Parameter 1: UnityEngine.Vector2
+Default value: 1.0, 2.0
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestVector2
+------ 
+
+Command name: test_char
+Parameter 1: System.Char
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestChar
+------ 
+
+Command name: test_array
+Parameter 1: System.String[]
+Default value: hello, world
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void StringArray
+------ 
+
+Command name: test_string
+Parameter 1: System.String
+Default value: hello world
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestString
+------ 
+
+Command name: test_bool
+Parameter 1: System.Boolean
+Default value: true
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestBool
+------ 
+
+Command name: test_decimal
+Parameter 1: System.Decimal
+Default value: 12.3
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestDecimal
+------ 
+
+Command name: test_double
+Parameter 1: System.Double
+Default value: 50.3
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestDouble
+------ 
+
+Command name: test_float
+Parameter 1: System.Single
+Default value: 3.7
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestFloat
+------ 
+
+Command name: test_multi_opt
+Parameter 1: System.Int32
+Parameter 2: System.Int32
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestIntIntOpt
+------ 
+
+Command name: test_multi_int
+Parameter 1: System.Int32
+Parameter 2: System.Int32
+Default value: 1, 2
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestMultiInt
+------ 
+
+Command name: test_int_opt
+Parameter 1: System.Int32
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestIntOpt
+------ 
+
+Command name: test_int
+Parameter 1: System.Int32
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void TestInt
+------ 
+
+Command name: test_method
+Parameter: None
+Script name: Anarkila.DeveloperConsole.ConsoleExamples.cs
+Method name: void MyMethod
+------ 
+
+Command name: cube_enabled
+Parameter 1: System.Boolean
+Default value: false
+Script name: Anarkila.DeveloperConsole.ExampleSceneRotateCube.cs
+Method name: void EnableCubeRotation

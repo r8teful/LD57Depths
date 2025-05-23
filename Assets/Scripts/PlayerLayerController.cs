@@ -3,6 +3,8 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using FishNet.Connection;
 using DG.Tweening;
+using UnityEngine.Rendering.Universal;
+using System;
 
 
 public class PlayerLayerController : NetworkBehaviour {
@@ -18,6 +20,7 @@ public class PlayerLayerController : NetworkBehaviour {
     // --- Client-Side References & Logic ---
     private WorldVisibilityManager _visibilityManager;
     private Camera _playerCamera;
+    private PixelPerfectCamera _playerCameraPixel;
     private PlayerController _playerController;
     private void Awake() {
         _currentLayer.OnChange += OnLayerChanged;
@@ -82,14 +85,26 @@ public class PlayerLayerController : NetworkBehaviour {
 
         // Optional: Notify other server systems if needed
         // Observer broadcast of SyncVars handles client updates automatically.
-        if (_playerCamera == null)
+        if (_playerCamera == null || _playerCameraPixel == null) {
             _playerCamera = GetComponentInChildren<Camera>();
+           _playerCameraPixel = GetComponentInChildren<PixelPerfectCamera>();
+        }
         if (_playerController == null)
             _playerController = GetComponent<PlayerController>();
         _playerController.ChangeState(PlayerController.PlayerState.Interior);
-        _playerCamera.DOOrthoSize(13, 1);
+        _playerCameraPixel.enabled = false;
+        _playerCamera.DOOrthoSize(9, 1).OnComplete(() => CameraTransitionComplete(true));
     }
 
+    private TweenCallback CameraTransitionComplete(bool isEnterior) {
+        if (isEnterior) {
+            _playerCameraPixel.assetsPPU = 10;
+        } else {
+            _playerCameraPixel.assetsPPU = 8;
+        }
+        _playerCameraPixel.enabled = true;
+        return null;
+    }
 
     [ServerRpc(RequireOwnership = true)]
     public void RequestExitInterior(string interiorID, NetworkConnection sender) {
@@ -103,10 +118,15 @@ public class PlayerLayerController : NetworkBehaviour {
         var targetInterior = InteriorManager.Instance.GetInteriorById(interiorID);
         SetPlayerClientPos(sender, targetInterior.ExteriorSpawnPoint.position);
 
-        if (_playerController == null)
+        if (_playerController == null || _playerCameraPixel == null) {
             _playerController = GetComponent<PlayerController>();
+            _playerCameraPixel = GetComponentInChildren<PixelPerfectCamera>();
+
+        }
         _playerController.ChangeState(PlayerController.PlayerState.Swimming);
-        _playerCamera.DOOrthoSize(15f, 2);
+        _playerCameraPixel.enabled = false;
+        // We'll have to properly set these values depending on the players zoom value they've set in the settings
+        _playerCamera.DOOrthoSize(11.25f, 2).OnComplete(() => CameraTransitionComplete(false));
         Debug.Log($"Server: Player {OwnerId} exiting Interior '{previousInteriorId}' to {interiorID}");
         // Optional: Server logic after exiting (e.g., maybe tell InteriorManager the interior might be empty now)
     }
