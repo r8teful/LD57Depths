@@ -4,6 +4,7 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System.Collections;
+using System;
 
 public class WorldManager : NetworkBehaviour {
     public static WorldManager Instance { get; private set; }
@@ -99,9 +100,18 @@ public class WorldManager : NetworkBehaviour {
     public void SetTileIEnumerator(Dictionary<BoundsInt, TileBase[]> tilesToSet) {
         StartCoroutine(SetWorldTiles(tilesToSet));
     }
+    internal void SetOreIEnumerator(Dictionary<BoundsInt, TileBase[]> ores) {
+        StartCoroutine(SetWorldOres(ores));    
+    }
     private IEnumerator SetWorldTiles(Dictionary<BoundsInt, TileBase[]> tilesToSet) {
         foreach (var kvp in tilesToSet) {
             mainTilemap.SetTilesBlock(kvp.Key, kvp.Value);
+            yield return null; // pause one frame
+        }
+    }
+    private IEnumerator SetWorldOres(Dictionary<BoundsInt, TileBase[]> oresToSet) {
+        foreach (var kvp in oresToSet) {
+            overlayTilemapOre.SetTilesBlock(kvp.Key, kvp.Value);
             yield return null; // pause one frame
         }
     }

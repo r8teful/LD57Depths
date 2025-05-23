@@ -26,7 +26,7 @@ public class ChunkData {
         for (int y = 0; y < ChunkManager.CHUNK_SIZE; ++y)
         for (int x = 0; x < ChunkManager.CHUNK_SIZE; ++x) {
             tileDurability[x, y] = -1;
-            oreID[x, y] = ResourceSystem.InvalidID;
+            oreID[x, y] = 0;
             biomeID[x, y] = 0;
         }
     }
@@ -42,7 +42,7 @@ public class ChunkData {
         oreID = new ushort[chunkSizeX, chunkSizeY];
         for (int y = 0; y < chunkSizeY; ++y) {
             for (int x = 0; x < chunkSizeX; ++x) {
-                oreID[x, y] = ResourceSystem.InvalidID; // Default state
+                oreID[x, y] = 0; // Default state
             }
         }
         biomeID = new byte[chunkSizeX, chunkSizeY];
@@ -318,6 +318,7 @@ public class ChunkManager : NetworkBehaviour {
 
         // --- Fallback to SetTiles per chunk if optimization wasn't possible ---
         Dictionary<BoundsInt, TileBase[]> tiles = new Dictionary<BoundsInt, TileBase[]>();
+        Dictionary<BoundsInt, TileBase[]> ores = new Dictionary<BoundsInt, TileBase[]>();
         foreach (var chunkPayload in chunks) {
             TileBase[] tilesToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
             TileBase[] oresToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
@@ -336,31 +337,31 @@ public class ChunkManager : NetworkBehaviour {
             BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, CHUNK_SIZE, CHUNK_SIZE, 1);
             //ApplySingleChunkPayload(chunkPayload);
             tiles.Add(chunkBounds, tilesToSet);
-
+            ores.Add(chunkBounds, oresToSet);
             // Entities!!
             if (chunkPayload.EntityPersistantIds != null) {
                 _entitySpawner.ProcessReceivedEntityIds(chunkPayload.ChunkCoord, chunkPayload.EntityPersistantIds);
             }
         }
         _worldManager.SetTileIEnumerator(tiles);
-            // for (int i = 0; i < chunk.TileIds.Count; i++) {
-            //     tilesToSet[i] = App.ResourceSystem.GetTileByID(chunk.TileIds[i]);
-            // }
-            // _worldManager.SetTiles(chunkBounds, tilesToSet);
-            // for (int i = 0; i < chunk.OreIds.Count; i++) {
-            //     // Don't add if there is no ore, TODO, we could just shorten the array by filtering out invalidID before we get here
-            //     if (chunk.OreIds[i] == ResourceSystem.InvalidID)
-            //         continue; // skip
-            //     oresToSet[i] = App.ResourceSystem.GetTileByID(chunk.OreIds[i]);
-            // }
-            // _worldManager.SetOres(chunkBounds, oresToSet);
-            // // Update lighting
-            // _lightManager.RequestLightUpdate();
+        _worldManager.SetOreIEnumerator(ores);
+        _lightManager.RequestLightUpdate();
+        // for (int i = 0; i < chunk.TileIds.Count; i++) {
+        //     tilesToSet[i] = App.ResourceSystem.GetTileByID(chunk.TileIds[i]);
+        // }
+        // _worldManager.SetTiles(chunkBounds, tilesToSet);
+        // for (int i = 0; i < chunk.OreIds.Count; i++) {
+        //     // Don't add if there is no ore, TODO, we could just shorten the array by filtering out invalidID before we get here
+        //     if (chunk.OreIds[i] == ResourceSystem.InvalidID)
+        //         continue; // skip
+        //     oresToSet[i] = App.ResourceSystem.GetTileByID(chunk.OreIds[i]);
+        // }
+        //_worldManager.SetOres(chunkBounds, oresToSet);
 
-            // Spawn enemies client only
-            
-            // TODO 
-        
+        // Spawn enemies client only
+
+        // TODO 
+
         // Debug.Log($"Client received and visually loaded chunk {chunkCoord}");
     }
     private void ApplySingleChunkPayload(ChunkPayload chunkPayload) {
@@ -457,6 +458,8 @@ public class ChunkManager : NetworkBehaviour {
                 chunk.tiles[localX, localY] = newTileId;
                 chunk.isModified = true; // Mark chunk as modified for saving
                 chunk.tileDurability[localX, localY] = -1; // Reset to default state
+                if (newTileId == 0) // Check if destroyed, then we get rid of the ore
+                    chunk.oreID[localX, localY] = 0;
                 // --- Update Server's OWN visuals (optional but good for host) ---
                 _worldManager.SetTile(cellPos, newTileId);
                 // --- BROADCAST change to ALL clients ---

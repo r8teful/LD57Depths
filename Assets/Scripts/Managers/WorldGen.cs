@@ -323,7 +323,6 @@ public class WorldGen : MonoBehaviour {
             jobHandles.Add(processingData.OreJobHandle);
 
             // --- Entity Spawn Points Job (depends on ore job's output, or could use BaseTileIDs_NA) ---
-            // If entity placement depends on the ores, it needs ProcessedTileIDs_NA
             // This example assumes it can run in parallel or on base tiles. For chaining, see below.
             
             /*processingData.EntitySpawnPoints_NA = new NativeList<Vector3Int>(Allocator.TempJob);
