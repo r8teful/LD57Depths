@@ -209,17 +209,24 @@ public class WorldGen : MonoBehaviour {
                         // --- Convert color to tile ID ---
                         // Simplest assumption: tile ID is stored in the R channel (0-255).
                         ushort tileID = 0;
-                        if(color.r ==1) {
-                            tileID = 1;
-                        } if(color.r == 90) {
-                            tileID = 5;
-                        }
-                        // If tile IDs are true ushort (0-65535) and packed into R and G channels by the shader:
-                        // Shader might do: outColor.r = (id % 256) / 255.0; outColor.g = floor(id / 256.0) / 255.0;
-                        // Then here: tileID = (ushort)(color.r + (color.g * 256)); // color.r and .g are 0-255 bytes
-                        // Or bitwise: tileID = (ushort)(color.r | (color.g << 8));
+                        byte biomeID = 0;
+                        // Tile first
 
+                        if (color.r == 1) {
+                            tileID = 1; // BASIC TILE
+                        } else if (color.r == 0 || color.r==255) {
+                            tileID = 0;  // AIR
+                        } else if (color.r == 90) {
+                            tileID = 5; // Bioluminence
+                        }
+                        // Biome    
+                        if(color.g == 254) {
+                            biomeID = 1; // Trench
+                        } else if(color.g == 253) {
+                            biomeID = 7; // Bioluminence
+                        }
                         currentChunkData.tiles[xTileInChunk, yTileInChunk] = tileID;
+                        currentChunkData.biomeID[xTileInChunk, yTileInChunk] = biomeID;
                     }
                 }
                 generatedChunks.Add(requestedChunkCoord,currentChunkData);
@@ -586,14 +593,15 @@ public class WorldGen : MonoBehaviour {
                         continue;
 
                     // Biome Check (ensure GetBiomeNameAt is implemented)
-                    // if (entityDef.requiredBiomeNames != null && entityDef.requiredBiomeNames.Count > 0) {
-                    //     string biomeName = GetBiomeNameAt(worldX, worldY); // Implement this
-                    //     if (biomeName == null || !entityDef.requiredBiomeNames.Contains(biomeName)) continue;
-                    // }
+                    //if (entityDef.requiredBiomes != null && entityDef.requiredBiomes.Count > 0) {
+                    //    byte biomeID = chunkData.biomeID[x,y];
+                    //    if (biomeID == byte.MaxValue || !entityDef.requiredBiomes.Contains((BiomeType)biomeID)) continue;
+                    //}
 
 
                     // --- 3. Attachment and Clearance Checks ---
                     bool canSpawn = true;
+                    bool canSpawnBiome = false;
                     Quaternion spawnRot = Quaternion.identity; // Default rotation
                     var occopied = new List<Vector2Int>();
                     var bounds = entityDef.BoundingOffset;
@@ -616,34 +624,34 @@ public class WorldGen : MonoBehaviour {
                                     continue;
                                 }
                                 // GLOBAL coordinates of the tile to check based on AttachmentType
-                                int checkGlobalX = 0;
-                                int checkGlobalY = 0;
+                                int checkLocalX = 0;
+                                int checkLocalY = 0;
 
                                 switch (attachment) {
                                     case AttachmentType.Ground:
                                         // Entity is upright. Canonical (local_xx, local_yy) maps directly to world offset.
-                                        checkGlobalX = x + local_xx;
-                                        checkGlobalY = y + local_yy;
+                                        checkLocalX = x + local_xx;
+                                        checkLocalY = y + local_yy;
                                         spawnRot = Quaternion.Euler(0, 0, 0);
                                         break;
                                     case AttachmentType.Ceiling:
                                         // Entity upside down. Canonical +x becomes world -x; canonical +y becomes world -y.
-                                        checkGlobalX = x - local_xx;
-                                        checkGlobalY = y - local_yy;
+                                        checkLocalX = x - local_xx;
+                                        checkLocalY = y - local_yy;
                                         spawnRot = Quaternion.Euler(0, 0, 180);
                                         break;
                                     case AttachmentType.WallLeft:
                                         // Canonical +x (entity's right) becomes world +y (up).
                                         // Canonical +y (entity's up) becomes world -x (left).
-                                        checkGlobalX = x - local_yy;
-                                        checkGlobalY = y + local_xx;
+                                        checkLocalX = x - local_yy;
+                                        checkLocalY = y + local_xx;
                                         spawnRot = Quaternion.Euler(0, 0, 90);
                                         break;
                                     case AttachmentType.WallRight:
                                         // Canonical +x (entity's right) becomes world -y (down).
                                         // Canonical +y (entity's up) becomes world +x (right).
-                                        checkGlobalX = x + local_yy;
-                                        checkGlobalY = y - local_xx;
+                                        checkLocalX = x + local_yy;
+                                        checkLocalY = y - local_xx;
                                         spawnRot = Quaternion.Euler(0, 0, -90);
                                         break;
                                     default:
@@ -653,8 +661,8 @@ public class WorldGen : MonoBehaviour {
                                 }
                                 // 4. Fetch the actual world tile at the calculated (checkGlobalX, checkGlobalY)
                                 var tileToCheck = GetTileFromChunkOrWorld(chunkData, new Vector2Int(worldX, worldY), CHUNK_TILE_DIMENSION,
-                                    checkGlobalX,          // Target tile X, local to chunk
-                                    checkGlobalY,          // Target tile Y, local to chunk
+                                    checkLocalX,          // Target tile X, local to chunk
+                                    checkLocalY,          // Target tile Y, local to chunk
                                     //checkGlobalY - worldY,          // Target tile Y, local to chunk
                                     cm
                                 ); // TODO worldCoord input could be wrong here
@@ -676,20 +684,25 @@ public class WorldGen : MonoBehaviour {
                                         // Debug.Log($"Volume requirement FAILED for {attachment} at world ({checkGlobalX},{checkGlobalY}). Expected Empty/NonBlocking. Tile was: {tileToCheck}");
                                         canSpawn = false;
                                         goto end_loops;
+                                    } else if(!canSpawnBiome){
+                                        // Non blocking, check if any hit the biome, only if we havent met the requirement yet
+                                        var b = GetBiomeFromChunk(chunkData, CHUNK_TILE_DIMENSION, checkLocalX, checkLocalY);
+                                        if (b != byte.MaxValue && entityDef.requiredBiomes.Contains((BiomeType)b))
+                                            canSpawnBiome = true;
                                     }
                                 }
                                 // Reaching here means we passed this tiles checks, add it to occupied list
-                                occopied.Add(new Vector2Int(checkGlobalX, checkGlobalY)); // As local chunk bounds
+                                occopied.Add(new Vector2Int(checkLocalX, checkLocalY)); // As local chunk bounds
                             }
                         }
                         canSpawn = true; // we never hit a false so this must mean we can spawn
                     end_loops:;
-                        if (canSpawn)
+                        if (canSpawn && canSpawnBiome)
                             break; // Break out of the attachment loop if we have found a valid spot to spawn at
                         // Reaching here means we CANT spawn, so clear the occopied list and try a different orrientation
                         occopied.Clear();
                     }
-                    if (!canSpawn)
+                    if (!canSpawn || !canSpawnBiome)
                         continue;
                     // --- ALL CHECKS PASSED --- Spawn this entity ---
                     Vector3Int spawnPos = new(worldX, worldY);
@@ -719,6 +732,14 @@ public class WorldGen : MonoBehaviour {
             // You'll need a method in WorldManager to get a tile at any world position
             // This method should handle loading adjacent chunks if necessary, or return null/empty if out of bounds.
             return cm.GetTileAtWorldPos(worldX, worldY); // Implement this in WorldManager
+        }
+    }
+    private byte GetBiomeFromChunk(ChunkData currentChunkData, int chunkSize,
+                                                    int localX, int localY) {
+        if (localX >= 0 && localX < chunkSize && localY >= 0 && localY < chunkSize) {
+            return currentChunkData.biomeID[localX, localY];
+        } else {
+            return byte.MaxValue;
         }
     }
 

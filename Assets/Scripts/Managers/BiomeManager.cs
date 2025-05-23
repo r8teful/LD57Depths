@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Tilemaps; // Required for NetworkBehaviour if attached to one
 
 // Data structure to hold calculated biome info for a chunk
 public class BiomeChunkInfo {

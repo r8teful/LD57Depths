@@ -72,8 +72,8 @@ public class BiomeLayerSO : ScriptableObject {
 }
 public enum BiomeType : byte {
     None = 0,
-    Surface = 1,
-    Trench = 2,
+    Trench = 1,
+    Surface = 2,
     Cave = 3,
     Algea = 4,
     Coral = 5,

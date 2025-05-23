@@ -313,12 +313,12 @@ MonoBehaviour:
   entityID: 1
   entityName: Plant0
   entityPrefab: {fileID: 401910264597585571, guid: a31bd13c909f824498e178d021189f5d, type: 3}
-  requiredBiomes: 02
+  requiredBiomes: 01
   minY: -10000
   maxY: -10
   specificSpawnTiles: []
   placementFrequency: 0.24
-  placementThreshold: 0.836
+  placementThreshold: 0.891
   allowedAttachmentTypes: 010000000300000004000000
   requireSolidGround: 1
   requireWaterAdjacent: 1

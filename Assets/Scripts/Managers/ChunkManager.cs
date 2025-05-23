@@ -264,6 +264,7 @@ public class ChunkManager : NetworkBehaviour {
             data.Value.hasBeenGenerated = true;
             worldChunks.Add(data.Key, data.Value);
         }
+
         // Dont need to do this because its already in ChunkPayLoad
         //foreach(var data in entities) {
         //    _entitySpawner.AddGeneratedEntityData(data.Key, data.Value);
