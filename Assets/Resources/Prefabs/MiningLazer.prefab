@@ -49,9 +49,9 @@ MonoBehaviour:
   range: 10
   falloffStrength: 1.5
   frequency: 10
-  damagePerRay: 10
+  damagePerRay: 2
   startWidth: 0.02
   endWidth: 0.07
   rayColor: {r: 0.4188679, g: 0, b: 0, a: 0}
   lineRendererPrefab: {fileID: 8204628091933049216, guid: f695f2d52574e6c49935aadb1f38a62a, type: 3}
-  Particles: {fileID: 3697584050806109930, guid: 2fee62432f469004393aa2d63631c7ae, type: 3}
+  ParticlesPrefab: {fileID: 3697584050806109930, guid: 2fee62432f469004393aa2d63631c7ae, type: 3}

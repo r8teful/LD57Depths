@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using GameKit.Dependencies.Utilities;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,7 +20,8 @@ public class MiningLazer : MonoBehaviour, IMiningBehaviour {
     public float endWidth;
     public Color rayColor;
     public LineRenderer lineRendererPrefab;  // Assign in Inspector
-    public ParticleSystem Particles;
+    public ParticleSystem ParticlesPrefab;
+    private ParticleSystem _particleSystem;
     private List<LineRenderer> activeLineRenderers = new List<LineRenderer>();
 
     private void Awake() {
@@ -29,6 +31,9 @@ public class MiningLazer : MonoBehaviour, IMiningBehaviour {
         UpgradeManager.UpgradeBought -= OnUpgraded;
     }
     private void Start() {
+        _particleSystem = Instantiate(ParticlesPrefab);
+        _particleSystem.Stop();
+
         laser = AudioController.Instance.PlaySound2D("Laser", 0.0f, looping: true);
     }
     public void MineStart(InputManager input, MiningController controller) {
@@ -43,7 +48,7 @@ public class MiningLazer : MonoBehaviour, IMiningBehaviour {
         if(miningRoutine != null) {
             StopCoroutine(miningRoutine);
             miningRoutine = null;
-            Particles.Stop();
+            _particleSystem.Stop();
             laser.volume = 0.0f;
         }
     }
@@ -53,14 +58,15 @@ public class MiningLazer : MonoBehaviour, IMiningBehaviour {
             //Debug.Log(pos);
             CastRays(pos, controller); // Todo determine freq here
             LaserVisual(pos);
-            yield return null;
+            yield return new WaitForSeconds(0.3f);
         }
     }
     private void LaserVisual(Vector2 pos) {
-        if (!Particles.isPlaying) { 
-            Particles.Play();
+        if (!_particleSystem.isPlaying) {
+            _particleSystem.Play();
             laser.volume = 0.5f;
         }
+        ClearPreviousRays(); // Clear old rays before shooting new ones
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
         Vector2 directionToMouse = (pos - objectPos2D).normalized;
         RaycastHit2D hit = Physics2D.Raycast(objectPos2D, directionToMouse, range, LayerMask.GetMask("MiningHit"));
@@ -75,32 +81,22 @@ public class MiningLazer : MonoBehaviour, IMiningBehaviour {
                 CreateLaserEffect(transform.position, objectPos2D + directionToMouse * 999);
             }
         }
-        Particles.transform.position = hit.point;
+        _particleSystem.transform.position = hit.point;
     }
 
     void CastRays(Vector2 pos, MiningController controller) {
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
         Vector2 directionToMouse = (pos - objectPos2D).normalized;
-        int numRays = 5;
-        ClearPreviousRays(); // Clear old rays before shooting new ones
-
-        for (int i = 0; i < numRays; i++) {
-            //Vector2 rayDirection = GetConeRayDirection(directionToMouse);
-            Vector2 rayDirection = directionToMouse;
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, range, LayerMask.GetMask("MiningHit"));
-            //Debug.Log("CASTING RAYS");
-            if (hit.collider != null) {
-                // Just assuming here that we've hit a tile lol TODODODO
-                float distance = hit.distance;
-                float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloffStrength);
-                float finalDamage = damagePerRay * falloffFactor;
-                controller.CmdRequestDamageTile(new Vector3(hit.point.x,hit.point.y,0), (short)finalDamage);
-                //GridManager.Instance.DamageTileAtGridPosition(hitTile.gridPosition, finalDamage);
-                //CreateLaserEffect(transform.position, hit.point);
-                
-            } else {
-               CreateLaserEffect(transform.position, transform.position + (Vector3)rayDirection * range);
-            }
+        //Vector2 rayDirection = GetConeRayDirection(directionToMouse);
+        Vector2 rayDirection = directionToMouse;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, range, LayerMask.GetMask("MiningHit"));
+        if (hit.collider != null) {
+            // Just assuming here that we've hit a tile, but should be fine because of the mask
+            Vector2 nudgedPoint = hit.point - rayDirection * -0.1f;
+            //float distance = hit.distance;
+            //float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloffStrength);
+            //float finalDamage = damagePerRay * falloffFactor;
+            controller.CmdRequestDamageTile(new Vector3(nudgedPoint.x, nudgedPoint.y,0), (short)damagePerRay);
         }
     }
     void CreateLaserEffect(Vector3 start, Vector3 end) {

@@ -282,8 +282,7 @@ public class ChunkManager : NetworkBehaviour {
             //return;
         }
         // Store durability locally for effects 
-        if(durabilities !=null)
-            ClientCacheChunkDurability(chunkCoord, durabilities);
+        ClientCacheChunkDurability(chunkCoord, durabilities);
         // New active local chunk
         activeChunks.Add(chunkCoord);
         // Apply the received tiles visually
@@ -322,14 +321,15 @@ public class ChunkManager : NetworkBehaviour {
         foreach (var chunkPayload in chunks) {
             TileBase[] tilesToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
             TileBase[] oresToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
+            //List<short> durabilities = new List<short>(CHUNK_SIZE * CHUNK_SIZE);
             int tileIndex = 0;
             for (int y = 0; y < CHUNK_SIZE; y++) {
                 for (int x = 0; x < CHUNK_SIZE; x++) {
                     ushort tileID = chunkPayload.TileIds[tileIndex];
                     ushort oreID = chunkPayload.OreIds[tileIndex];
+                    //durabilities.Add(chunkPayload.Durabilities[tileIndex]);
                     tilesToSet[tileIndex] = App.ResourceSystem.GetTileByID(tileID);
                     oresToSet[tileIndex] = App.ResourceSystem.GetTileByID(oreID);
-
                     tileIndex++;
                 }
             }
@@ -338,6 +338,7 @@ public class ChunkManager : NetworkBehaviour {
             //ApplySingleChunkPayload(chunkPayload);
             tiles.Add(chunkBounds, tilesToSet);
             ores.Add(chunkBounds, oresToSet);
+            ClientCacheChunkDurability(chunkPayload.ChunkCoord, chunkPayload.Durabilities);
             // Entities!!
             if (chunkPayload.EntityPersistantIds != null) {
                 _entitySpawner.ProcessReceivedEntityIds(chunkPayload.ChunkCoord, chunkPayload.EntityPersistantIds);
@@ -478,9 +479,10 @@ public class ChunkManager : NetworkBehaviour {
     [ObserversRpc]
     private void ObserversUpdateTileDurability(Vector3Int cellPos, short newDurability) {
         // Runs on all clients
+        Debug.Log("OVERSEVER0");
         if(newDurability == -1)
             _lightManager.RequestLightUpdate(); // Tile broke so update lights
-        // Update local cache if you have one
+                                                // Update local cache if you have one
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
         if (clientDurabilityCache.TryGetValue(chunkCoord, out short[,] chunkDurability)) {
             int localX = cellPos.x - chunkCoord.x * CHUNK_SIZE;
@@ -489,6 +491,8 @@ public class ChunkManager : NetworkBehaviour {
                 chunkDurability[localX, localY] = newDurability;
                 UpdateTileVisuals(cellPos, newDurability);
             }
+        } else {
+            Debug.Log("BRO WHAT THE FUCK");
         }
     }
     // New method on server to handle receiving damage requests

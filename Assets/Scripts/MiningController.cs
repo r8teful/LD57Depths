@@ -14,6 +14,9 @@ public class MiningController : NetworkBehaviour {
         
         inputManager = GetComponent<InputManager>();
         _worldManager = FindFirstObjectByType<WorldManager>();
+        if (App.isEditor) {
+            DEBUGSetMineTool("laser");
+        }
     }
 
     public void OnMine(InputAction.CallbackContext context) {
@@ -37,7 +40,7 @@ public class MiningController : NetworkBehaviour {
         currentToolBehavior?.MineStart(input, this); // Delegate to tool behavior
     }
 
-    //[ServerRpc]
+    [ServerRpc]
     public void CmdRequestDamageTile(Vector3 worldPos, short damageAmount) {
         // TODO: Server-side validation (range, tool, cooldowns, etc.)
 
@@ -47,7 +50,9 @@ public class MiningController : NetworkBehaviour {
     public void SetMineTool(IMiningBehaviour tool) {
         currentToolBehavior = tool;
     }
-
+    private void OnEnable() {
+       
+    }
     private void DEBUGSetMineTool(string tool) {
         if (tool == "god") {
             Debug.Log("Setting Mining tool as GOD");

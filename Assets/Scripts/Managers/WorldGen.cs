@@ -252,34 +252,14 @@ public class WorldGen : MonoBehaviour {
         }));
     }
 
-    internal ChunkData GenerateRestOfChunks(Vector3Int chunkOrigin, out List<EntitySpawnInfo> entitySpawns) {
-        ChunkData chunkData = new ChunkData(CHUNK_TILE_DIMENSION, CHUNK_TILE_DIMENSION);
-        entitySpawns = new List<EntitySpawnInfo>();
-        chunkOriginCell = chunkOrigin;
-        // --- Pass 3: Ore Generation ---
-        // Iterate again, placing ores only on non-cave, non-water tiles
-        
-        
-        SpawnOresInChunk(chunkData, chunkOriginCell, CHUNK_TILE_DIMENSION); // Encapsulate ore logic similar to structures/entities
-
-        // --- Pass 4: Structure Placement ---
-        // This needs careful design. It checks potential anchor points within the chunk.
-        //PlaceStructuresInChunk(chunkData, chunkOriginCell,chunkSize);
-
-        // --- Pass 5: Decorative Entity Spawning ---
-        // Determines WHERE entities should be placed, adds them to chunkData.entitiesToSpawn
-        
-        
-        //SpawnEntitiesInChunk(chunkData, chunkOriginCell, chunkSize, entitySpawns, cm);
-
-
-
-        return chunkData;
-    }
 
     // We can always extend this later if there is a bottleneck somewhere
-    private IEnumerator ProcessChunksWithJobs(Dictionary<Vector2Int,ChunkData> initialChunks, NetworkConnection requester, 
-        System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>, Dictionary<Vector2Int, List<EntitySpawnInfo>>> onProcessingComplete) {
+    private IEnumerator ProcessChunksWithJobs(
+        Dictionary<Vector2Int,ChunkData> initialChunks, // Chunk inputs that might get modified
+        NetworkConnection requester,  // T
+        System.Action<List<ChunkPayload>, // Callback action with the data that the worldgen generated
+        Dictionary<Vector2Int,ChunkData>,  // Chunkcoord to chunkdata, containing the generated chunks 
+        Dictionary<Vector2Int, List<EntitySpawnInfo>>> onProcessingComplete) { // Chunkcoord with entity data incase we need to spawn any entitys in that chunk
         
         if (initialChunks == null || initialChunks.Count == 0) {
             onProcessingComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>(), new Dictionary<Vector2Int, List<EntitySpawnInfo>>());
@@ -439,7 +419,12 @@ public class WorldGen : MonoBehaviour {
         for (int tileIdx = 0; tileIdx < data.OreTileIDs_NA.Length; tileIdx++) {
             finalOreIdsList.Add(data.OreTileIDs_NA[tileIdx]);
         }
-        return new ChunkPayload(data.ChunkCoord, finalTileIdsList, finalOreIdsList, null, null);
+        List<short> durabilities = new List<short>(CHUNK_TILE_DIMENSION*CHUNK_TILE_DIMENSION);
+        for (int i = 0; i < CHUNK_TILE_DIMENSION * CHUNK_TILE_DIMENSION; i++)
+        {
+            durabilities.Add(-1);
+        }
+        return new ChunkPayload(data.ChunkCoord, finalTileIdsList, finalOreIdsList, durabilities, null);
     }
     
 

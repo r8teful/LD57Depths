@@ -28,6 +28,9 @@ public static class App {
         Backdrop = app.GetComponentInChildren<BackdropManager>();
 
         Application.quitting += Shutdown;
+#if UNITY_EDITOR
+        isEditor = true;
+#endif
     }
     private static void Shutdown() {
         Debug.Log("App Shutdown sequence started.");
