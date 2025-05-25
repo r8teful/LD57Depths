@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MiningGun : MonoBehaviour {
+public class MiningLazer : MonoBehaviour, IMiningBehaviour {
     [Header("Raycast Gun Settings")]
     public float innerSpotAngle = 5f;
     public float outerSpotAngle = 30f;
@@ -10,7 +10,8 @@ public class MiningGun : MonoBehaviour {
     public float falloffStrength = 1.5f; // Higher values = faster falloff
     public float frequency = 10f;        // Rays per second
     public float damagePerRay = 10f;     // Base damage per ray
-    public bool CanShoot { get; set; }
+    public bool CanMine { get; set; } = true;
+    private Coroutine miningRoutine;
     private float timer = 0f;
     private AudioSource laser;
     [Header("Visual Settings")]
@@ -30,64 +31,75 @@ public class MiningGun : MonoBehaviour {
     private void Start() {
         laser = AudioController.Instance.PlaySound2D("Laser", 0.0f, looping: true);
     }
-    void Update() {
-        if (!CanShoot) return;
-        if (Input.GetMouseButton(0)) // Left mouse button held down
-        {
-            LaserVisual();
-            timer += Time.deltaTime;
-            if (timer >= 1f / frequency) {
-                timer -= 1f / frequency; // Reset timer, but keep fractional remainder for accuracy
-                CastRays();
-            }
-        } else {
-            if (Particles.isPlaying) { 
-                Particles.Stop();
-                laser.volume = 0.0f;
-            }
+    public void MineStart(InputManager input, MiningController controller) {
+        if (!CanMine) return;
+        if(miningRoutine != null) {
+            Debug.LogWarning("Mining routine is still running even though it should have stopped!");
+            StopCoroutine(MiningRoutine(input,controller));
+        }
+        miningRoutine = StartCoroutine(MiningRoutine(input, controller));
+    }
+    public void MineStop(MiningController controller) {
+        if(miningRoutine != null) {
+            StopCoroutine(miningRoutine);
+            miningRoutine = null;
+            Particles.Stop();
+            laser.volume = 0.0f;
         }
     }
-    private void LaserVisual() {
+    private IEnumerator MiningRoutine(InputManager input, MiningController controller) {
+        while (true) {
+            var pos = input.GetAimInput();
+            //Debug.Log(pos);
+            CastRays(pos, controller); // Todo determine freq here
+            LaserVisual(pos);
+            yield return null;
+        }
+    }
+    private void LaserVisual(Vector2 pos) {
         if (!Particles.isPlaying) { 
             Particles.Play();
             laser.volume = 0.5f;
         }
-        Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorldPosition.z = 0f;
-        Vector2 directionToMouse = (mouseWorldPosition - transform.position).normalized;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToMouse, range);
-        CreateLaserEffect(transform.position, hit.point);
+        Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
+        Vector2 directionToMouse = (pos - objectPos2D).normalized;
+        RaycastHit2D hit = Physics2D.Raycast(objectPos2D, directionToMouse, range, LayerMask.GetMask("MiningHit"));
+        //Debug.Log("objectPos2D" + objectPos2D);
+        if(hit.collider != null) {
+            CreateLaserEffect(transform.position, hit.point);
+        } else {
+            RaycastHit2D hit2 = Physics2D.Raycast(objectPos2D, directionToMouse, range*3, LayerMask.GetMask("MiningHit"));
+            if (hit2.collider != null) {
+                CreateLaserEffect(transform.position, hit2.point);
+            } else {
+                CreateLaserEffect(transform.position, objectPos2D + directionToMouse * 999);
+            }
+        }
         Particles.transform.position = hit.point;
     }
 
-    void CastRays() {
-        Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorldPosition.z = 0f;
-        Vector2 directionToMouse = (mouseWorldPosition - transform.position).normalized;
-
+    void CastRays(Vector2 pos, MiningController controller) {
+        Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
+        Vector2 directionToMouse = (pos - objectPos2D).normalized;
         int numRays = 5;
         ClearPreviousRays(); // Clear old rays before shooting new ones
 
         for (int i = 0; i < numRays; i++) {
             //Vector2 rayDirection = GetConeRayDirection(directionToMouse);
             Vector2 rayDirection = directionToMouse;
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, range);
-
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, range, LayerMask.GetMask("MiningHit"));
+            //Debug.Log("CASTING RAYS");
             if (hit.collider != null) {
-                //TileScript hitTile = hit.collider.GetComponent<TileScript>();
-                TileSO hitTile = null; // TODO obviously
-                if (hitTile != null) {
-                    float distance = hit.distance;
-                    float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloffStrength);
-                    float finalDamage = damagePerRay * falloffFactor;
-
-                    //GridManager.Instance.DamageTileAtGridPosition(hitTile.gridPosition, finalDamage);
-                    //CreateLaserEffect(transform.position, hit.point);
-                } else {
-                   // CreateLaserEffect(transform.position, hit.point);
-                }
+                // Just assuming here that we've hit a tile lol TODODODO
+                float distance = hit.distance;
+                float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloffStrength);
+                float finalDamage = damagePerRay * falloffFactor;
+                controller.CmdRequestDamageTile(new Vector3(hit.point.x,hit.point.y,0), (short)finalDamage);
+                //GridManager.Instance.DamageTileAtGridPosition(hitTile.gridPosition, finalDamage);
+                //CreateLaserEffect(transform.position, hit.point);
+                
             } else {
-               //CreateLaserEffect(transform.position, transform.position + (Vector3)rayDirection * range);
+               CreateLaserEffect(transform.position, transform.position + (Vector3)rayDirection * range);
             }
         }
     }
@@ -158,4 +170,6 @@ public class MiningGun : MonoBehaviour {
         }
         transform.localPosition = position;
     }
+
+    
 }

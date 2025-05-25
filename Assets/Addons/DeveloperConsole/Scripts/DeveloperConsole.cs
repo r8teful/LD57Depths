@@ -85,7 +85,7 @@ namespace Anarkila.DeveloperConsole {
         private void OnValidate() {
             // In the editor, check EventSystem component exists in the scene.
             // Otherwise UI inputs cannot be received.
-            var eventSystem = FindObjectOfType<EventSystem>();
+            var eventSystem = FindFirstObjectByType<EventSystem>();
             if (eventSystem == null) {
                 Debug.Log("Did not find EventSystem in the current scene. EventSystem has been added to current scene.");
 

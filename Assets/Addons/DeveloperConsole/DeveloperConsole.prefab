@@ -5529,7 +5529,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
-    interfaceStyle: 0
+    interfaceStyle: 1
     interfaceTheme: 0
     consoleWindowDefaultSize: 0.9
     scrollSensitivity: 32
@@ -5553,16 +5553,16 @@ MonoBehaviour:
     scanAllAssemblies: 0
     commandsAreCaseSensetive: 0
     allowGUIStyleChangeRuntime: 1
-    UnityLogOption: 5
-    unityThreadedLogOption: 5
+    UnityLogOption: 0
+    unityThreadedLogOption: 0
     maxMessageCount: 128
     allowMultipleCommands: 1
     showInputPredictions: 1
     showContextMenuOnMessageRightClick: 0
-    allowConsoleResize: 1
+    allowConsoleResize: 0
     allowConsoleWindowDrag: 1
-    showCursorOnEnable: 1
-    hideCursorOnDisable: 1
+    showCursorOnEnable: 0
+    hideCursorOnDisable: 0
     scrollToBottomOnEnable: 1
     clearMessagesOnSceneChange: 0
     printMessageTimestamps: 1

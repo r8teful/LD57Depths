@@ -2,8 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class DEBUGGOD : MonoBehaviour
-{
+public class DEBUGGOD : MonoBehaviour, IMiningBehaviour {
     public float moveSpeed = 5f;
 
     private Vector3 currentInput;
@@ -12,6 +11,7 @@ public class DEBUGGOD : MonoBehaviour
     public ChunkManager _chunkManager;
     public TileBase _airTile;
     private bool _toggle;
+    private bool _isDamaging = false;
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
     }
@@ -23,39 +23,20 @@ public class DEBUGGOD : MonoBehaviour
     private void Update() {
         // Get raw input (no smoothing)
         currentInput = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
-        if (Input.GetMouseButton(0) && !_isDamaging) {
-            StartCoroutine(DamageTileRoutine());
-            //Debug.Log($"Hoovering over: {_worldManager.GetTileAtWorldPos(mouseWorldPosition)} which is tile {_worldManager.WorldToCell(mouseWorldPosition)}");
-            //_worldManager.SetTileAtWorldPos(mouseWorldPosition, _airTile);
-            int damageAmount = 1; // Get from player's tool later
-        }
-    
-        if (Input.GetMouseButtonUp(0)) {
-            _isDamaging = false;
-        }
-        if (Input.GetKeyDown(KeyCode.L)) {
-            ToggleArea(_toggle);
-            _toggle = !_toggle;
-        }
     }
-    private bool _isDamaging = false;
-    public void ToggleArea(bool isWorld) {
-        _worldManager.ToggleWorldTilemap(isWorld);
-    }
-    private IEnumerator DamageTileRoutine() {
+ 
+    private IEnumerator DamageTileRoutine(InputManager input) {
         _isDamaging = true;
-
-        while (_isDamaging && Input.GetMouseButton(0)) {
-            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        while (_isDamaging) {
+            Vector3 mouseWorldPosition = input.GetAimInput();
             Vector3Int targetCell = _worldManager.WorldToCell(mouseWorldPosition);
 
-            short damageAmount = 1; // Replace with player tool value
+            short damageAmount = 5; // Replace with player tool value
             CmdRequestDamageTile(targetCell, damageAmount);
 
-            yield return new WaitForSeconds(0.01f); 
+            yield return null; 
         }
     }
-    //  [ServerRpc]
     private void CmdRequestDamageTile(Vector3Int cellPosition, short damageAmount) {
         if (_worldManager != null) {
             // TODO: Server-side validation (range, tool, cooldowns, etc.)
@@ -68,5 +49,13 @@ public class DEBUGGOD : MonoBehaviour
     private void FixedUpdate() {
         // Move the player
         transform.position += currentInput * moveSpeed * Time.fixedDeltaTime;
+    }
+
+    public void MineStart(InputManager manager, MiningController controller) {
+        StartCoroutine(DamageTileRoutine(manager));
+    }
+
+    public void MineStop(MiningController controller) {
+        _isDamaging = false;
     }
 }

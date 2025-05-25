@@ -271,6 +271,8 @@ public class InventoryUIManager : MonoBehaviour {
         }
     }
     private void ToggleInventory(InputAction.CallbackContext context) {
+        if (Console.IsConsoleOpen())
+            return;
         isExpanded = !isExpanded;
         if (isExpanded) {
             //inventoryPanel.SetActive(setEnabled);

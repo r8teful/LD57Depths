@@ -21,7 +21,7 @@ public class PlayerLayerController : NetworkBehaviour {
     private WorldVisibilityManager _visibilityManager;
     private Camera _playerCamera;
     private PixelPerfectCamera _playerCameraPixel;
-    private PlayerController _playerController;
+    private PlayerMovement _playerController;
     private void Awake() {
         _currentLayer.OnChange += OnLayerChanged;
         _currentInteriorId.OnChange += OnInteriorIdChanged;
@@ -30,7 +30,7 @@ public class PlayerLayerController : NetworkBehaviour {
         base.OnStartClient();
         // Find the client-side manager responsible for visibility
         _playerCamera = GetComponentInChildren<Camera>();
-        _playerController = GetComponent<PlayerController>();
+        _playerController = GetComponent<PlayerMovement>();
         _visibilityManager = FindFirstObjectByType<WorldVisibilityManager>();
         WorldVisibilityManager.Instance.RegisterPlayer(this);
         if (_visibilityManager == null) {
@@ -90,8 +90,8 @@ public class PlayerLayerController : NetworkBehaviour {
            _playerCameraPixel = GetComponentInChildren<PixelPerfectCamera>();
         }
         if (_playerController == null)
-            _playerController = GetComponent<PlayerController>();
-        _playerController.ChangeState(PlayerController.PlayerState.Interior);
+            _playerController = GetComponent<PlayerMovement>();
+        _playerController.ChangeState(PlayerMovement.PlayerState.Interior);
         _playerCameraPixel.enabled = false;
         _playerCamera.DOOrthoSize(9, 1).OnComplete(() => CameraTransitionComplete(true));
     }
@@ -119,11 +119,11 @@ public class PlayerLayerController : NetworkBehaviour {
         SetPlayerClientPos(sender, targetInterior.ExteriorSpawnPoint.position);
 
         if (_playerController == null || _playerCameraPixel == null) {
-            _playerController = GetComponent<PlayerController>();
+            _playerController = GetComponent<PlayerMovement>();
             _playerCameraPixel = GetComponentInChildren<PixelPerfectCamera>();
 
         }
-        _playerController.ChangeState(PlayerController.PlayerState.Swimming);
+        _playerController.ChangeState(PlayerMovement.PlayerState.Swimming);
         _playerCameraPixel.enabled = false;
         // We'll have to properly set these values depending on the players zoom value they've set in the settings
         _playerCamera.DOOrthoSize(11.25f, 2).OnComplete(() => CameraTransitionComplete(false));

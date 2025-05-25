@@ -20,7 +20,7 @@ public class DEBUGManager : MonoBehaviour {
 
     private Dictionary<BiomeType, TileBase> tileLookup;
 
-    [SerializeField] PlayerController player;
+    [SerializeField] PlayerMovement player;
     [OnValueChanged("PlayerSpeed")]
     public float playerSpeed;
     private void PlayerSpeed() {
@@ -61,4 +61,5 @@ public class DEBUGManager : MonoBehaviour {
             tilemap.SetTile(tilePos, tile);
         }
     }
+    
 }

@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7061146683119796471
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4967687453420680532}
+  - component: {fileID: 5834443973641991729}
+  m_Layer: 0
+  m_Name: MiningLazer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4967687453420680532
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7061146683119796471}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5834443973641991729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7061146683119796471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97d79e059b644a1408e6f2c5c8a47653, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  innerSpotAngle: 5
+  outerSpotAngle: 30
+  range: 10
+  falloffStrength: 1.5
+  frequency: 10
+  damagePerRay: 10
+  startWidth: 0.02
+  endWidth: 0.07
+  rayColor: {r: 0.4188679, g: 0, b: 0, a: 0}
+  lineRendererPrefab: {fileID: 8204628091933049216, guid: f695f2d52574e6c49935aadb1f38a62a, type: 3}
+  Particles: {fileID: 3697584050806109930, guid: 2fee62432f469004393aa2d63631c7ae, type: 3}

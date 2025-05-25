@@ -161,6 +161,11 @@ public class WorldManager : NetworkBehaviour {
     public Vector3Int WorldToCell(Vector3 worldPosition) {
         return mainTilemap.WorldToCell(worldPosition);
     }
+    public void RequestDamageTile(Vector3 worldPosition,short dmg) {
+        var cell = WorldToCell(worldPosition);
+        Debug.Log($"Requesting processdamage of:{cell} with {dmg}");
+        ChunkManager.ServerProcessDamageTile(cell, dmg);
+    }
 
     internal void ClearAllData() {
         ChunkManager.ClearWorldChunks();
