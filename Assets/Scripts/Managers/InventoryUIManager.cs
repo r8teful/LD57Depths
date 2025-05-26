@@ -10,6 +10,8 @@ using UnityEngine.EventSystems;
 public class InventoryUIManager : MonoBehaviour {
     [Header("UI Elements")]
     [SerializeField] private GameObject inventoryPanel; // The main inventory window panel
+    [SerializeField] private GameObject hotbarPanel; 
+    [SerializeField] private GameObject[] inventoryTabs; 
     [SerializeField] private Transform slotInvContainer; // Parent transform where UI slots will be instantiated
     [SerializeField] private Transform slotHotbarContainer; // Parent transform where UI slots will be instantiated
     [SerializeField] private GameObject slotPrefab; // Prefab for a single inventory slot UI element
@@ -34,6 +36,8 @@ public class InventoryUIManager : MonoBehaviour {
     private InputAction _uiPointAction;       // Mouse position for cursor icon
     private InputAction _uiCancelAction;       // Escape / Gamepad Start (to cancel holding)
     private InputAction _playerInteractAction;       
+    private InputAction _uiTabLeft; 
+    private InputAction _uiTabRight; 
 
     [SerializeField] private int hotbarSize = 5; // How many slots in the first row act as hotbar
 
@@ -43,11 +47,13 @@ public class InventoryUIManager : MonoBehaviour {
     // --- Runtime ---
     private GameObject _playerGameObject; // player that own this UI
     private NetworkedPlayerInventory _playerInventory; // player that own this UI
-    private List<InventorySlotUI> slotUIs = new List<InventorySlotUI>();
+    private List<InventorySlotUI> slotInventoryUIs = new List<InventorySlotUI>();
+    private List<InventorySlotUI> slotHotbarUIs = new List<InventorySlotUI>();
     private Image draggingIconImage;
     private bool isDragging = false;
     private bool isExpanded = false;
-    private int dragSourceIndex = -1;
+    private int dragSourceIndex = -1; 
+    private int currentTabIndex = 0;
     private bool dropHandled;
     private bool _droppedSameSlot;
     private bool _isInventoryOpenForAction = false; // Tracks if panel was open when action started
@@ -84,6 +90,8 @@ public class InventoryUIManager : MonoBehaviour {
             _uiNavigateAction = _playerInput.actions["UI_Navigate"];
             _uiPointAction = _playerInput.actions["UI_Point"];
             _uiCancelAction = _playerInput.actions["UI_Cancel"]; // For cancelling held item
+            _uiTabLeft = _playerInput.actions["UI_TabLeft"]; // Opening containers
+            _uiTabRight = _playerInput.actions["UI_TabRight"]; // Opening containers
             _playerInteractAction = _playerInput.actions["Interact"]; // Opening containers
             // Subscribe to input actions (do this in OnEnable, unsubscribe in OnDisable)
         } else {
@@ -110,8 +118,8 @@ public class InventoryUIManager : MonoBehaviour {
         // Inform ItemSelectionManager about hotbar size
         _itemSelectionManager.Initialize(hotbarSize, _playerGameObject,_localInventoryManager); // Pass player object
         // OR itemSelectionManager.Init(manager.gameObject, manager);
-
-        inventoryPanel.SetActive(true);
+        EnableTab(0); // Set inventory tab as first tab, dissable others
+        inventoryPanel.SetActive(false); // ensure inventory is closed
         SubscribeToEvents();
         CreateSlotUIs();
         Debug.Log("InventoryUIManager Initialized for player: " + _playerGameObject.name);
@@ -123,6 +131,8 @@ public class InventoryUIManager : MonoBehaviour {
         if (_uiInteractAction != null) _uiInteractAction.performed += HandlePrimaryInteractionPerformed;
         if (_uiAltInteractAction != null) _uiAltInteractAction.performed += HandleSecondaryInteractionPerformed;
         if (_uiCancelAction != null) _uiCancelAction.performed += HandleCloseAction;
+        if (_uiTabLeft != null) _uiTabLeft.performed += l => ScrollTabs(-1); // Not unsubscribing but what is the worst that could happen?
+        if (_uiTabRight != null) _uiTabRight.performed += l => ScrollTabs(1);
         if (_playerInteractAction != null) _playerInteractAction.performed += HandleInteractAction;
     }
 
@@ -186,12 +196,12 @@ public class InventoryUIManager : MonoBehaviour {
             return;
         }
 
-        for (int i = 0; i < slotUIs.Count; i++) {
+        for (int i = 0; i < slotInventoryUIs.Count; i++) {
             if (i < _localInventoryManager.Slots.Count) {
-                slotUIs[i].UpdateSlot(_localInventoryManager.GetSlot(i));
+                slotInventoryUIs[i].UpdateSlot(_localInventoryManager.GetSlot(i));
             } else {
                 // Should not happen if UIManager.Initialize correctly sized uiSlots
-                slotUIs[i].UpdateSlot(new InventorySlot()); // Empty slot
+                slotInventoryUIs[i].UpdateSlot(new InventorySlot()); // Empty slot
             }
         }
         UpdateHeldItemVisual();
@@ -275,23 +285,60 @@ public class InventoryUIManager : MonoBehaviour {
             return;
         isExpanded = !isExpanded;
         if (isExpanded) {
-            //inventoryPanel.SetActive(setEnabled);
-            inventoryPanel.GetComponent<RectTransform>().DOMoveY(0, 0.2f);
+            inventoryPanel.SetActive(true);
+            hotbarPanel.SetActive(false); // 
         } else {
-            inventoryPanel.GetComponent<RectTransform>().DOMoveY(-292, 0.2f).OnComplete(SetInvUnactive);
+            //inventoryPanel.GetComponent<RectTransform>().DOMoveY(-292, 0.2f).OnComplete(SetInvUnactive);
             // wait...
+            inventoryPanel.SetActive(false);
+            hotbarPanel.SetActive(true); 
             EventSystem.current.SetSelectedGameObject(null); // Deselect UI when closing
             _playerInventory.HandleClose(context);
         }
-        // Optional: You might want to pause game, lock cursor, etc. when inventory is open
-        Debug.Log($"Inventory Toggled: {inventoryPanel.activeSelf}");
-
         // If closing while dragging, cancel the drag
         if (!inventoryPanel.activeSelf && isDragging) {
            // EndDrag(true); // Force cancel
         }
     }
+    // Called from tab button inspector
+    public void OnTabButtonClicked(int i) {
+        EnableTab(i);
+    }
+    private void EnableTab(int i) {
+        if (inventoryTabs == null || inventoryTabs.Length == 0) {
+            Debug.LogWarning("inventoryTabs array is null or empty!");
+            return;
+        }
 
+        if (i < 0 || i >= inventoryTabs.Length) {
+            Debug.LogWarning($"Tab index {i} is out of range. Valid range: 0 to {inventoryTabs.Length - 1}");
+            return;
+        }
+
+        for (int j = 0; j < inventoryTabs.Length; j++) {
+            if (inventoryTabs[j] != null) {
+                inventoryTabs[j].SetActive(j == i);
+            } else {
+                Debug.LogWarning($"Tab at index {j} is null.");
+            }
+        }
+    }
+    // direction should be either -1 or 1 idealy
+    public void ScrollTabs(int direction) {
+        if (inventoryTabs == null || inventoryTabs.Length == 0) {
+            Debug.LogWarning("inventoryTabs array is null or empty!");
+            return;
+        }
+
+        int newIndex = (currentTabIndex + direction + inventoryTabs.Length) % inventoryTabs.Length;
+
+        // Clamp the value to valid range
+        //newIndex = Mathf.Clamp(newIndex, 0, inventoryTabs.Length - 1);
+
+        if (newIndex != currentTabIndex) {
+            EnableTab(newIndex);
+        }
+    }
     private void SetInvUnactive() {
         // todo possible enable interactions here
         // inventoryPanel.SetActive(false);
@@ -300,74 +347,78 @@ public class InventoryUIManager : MonoBehaviour {
         foreach (Transform child in slotInvContainer) {
             Destroy(child.gameObject);
         }
-        slotUIs.Clear();
+        slotInventoryUIs.Clear();
+        slotHotbarUIs.Clear();
         for (int i = 0; i < hotbarSize; i++) {
             GameObject slotGO = Instantiate(slotPrefab, slotHotbarContainer);
-            slotGO.name = $"Slot_{i}"; // For easier debugging
+            slotGO.name = $"SlotHotbar_{i}"; // For easier debugging
 
             InventorySlotUI slotUI = slotGO.GetComponent<InventorySlotUI>();
             if (slotUI != null) {
-                slotUI.Initialize(this, i); // Pass reference to this manager and the slot index
-                slotUIs.Add(slotUI);
+                slotUI.Initialize(this, i,true); // Hotbar slots behave differently, they "mirror" what is in the actual inventory slot
+                slotHotbarUIs.Add(slotUI);
                 UpdateSlotUI(i); // Update visual state immediately
             } else {
                 Debug.LogError($"Slot prefab '{slotPrefab.name}' is missing InventorySlotUI component!");
             }
         }
         // Instantiate UI slots based on inventory size
-        for (int i = hotbarSize; i < _playerInventory.InventorySize; i++) {
+        for (int i = 0; i < _playerInventory.InventorySize; i++) {
             GameObject slotGO = Instantiate(slotPrefab, slotInvContainer);
             slotGO.name = $"Slot_{i}"; // For easier debugging
 
             InventorySlotUI slotUI = slotGO.GetComponent<InventorySlotUI>();
             if (slotUI != null) {
-                slotUI.Initialize(this, i); // Pass reference to this manager and the slot index
-                slotUIs.Add(slotUI);
+                slotUI.Initialize(this, i,false); // Pass reference to this manager and the slot index
+                slotInventoryUIs.Add(slotUI);
                 UpdateSlotUI(i); // Update visual state immediately
             } else {
                 Debug.LogError($"Slot prefab '{slotPrefab.name}' is missing InventorySlotUI component!");
             }
         }
+        // Controller navigation setup
 
         // TODO will have to do this in two passes just like above because inventory is not a perfect grid
         var columnCount = 4;
-        for (int i = 0; i < slotUIs.Count; i++) {
-            Selectable currentSel = slotUIs[i].GetComponent<Selectable>();
+        for (int i = 0; i < slotInventoryUIs.Count; i++) {
+            Selectable currentSel = slotInventoryUIs[i].GetComponent<Selectable>();
             if (currentSel == null) continue;
 
             Navigation nav = currentSel.navigation;
             nav.mode = Navigation.Mode.Explicit;
 
             // Up
-            if (i >= columnCount) nav.selectOnUp = slotUIs[i - columnCount].GetComponent<Selectable>();
+            if (i >= columnCount) nav.selectOnUp = slotInventoryUIs[i - columnCount].GetComponent<Selectable>();
             else nav.selectOnUp = null; // Or wrap around to bottom?
                                         // Down
-            if (i < slotUIs.Count - columnCount) nav.selectOnDown = slotUIs[i + columnCount].GetComponent<Selectable>();
+            if (i < slotInventoryUIs.Count - columnCount) nav.selectOnDown = slotInventoryUIs[i + columnCount].GetComponent<Selectable>();
             else nav.selectOnDown = null; // Or wrap to top?
                                           // Left
-            if (i % columnCount != 0) nav.selectOnLeft = slotUIs[i - 1].GetComponent<Selectable>();
+            if (i % columnCount != 0) nav.selectOnLeft = slotInventoryUIs[i - 1].GetComponent<Selectable>();
             else nav.selectOnLeft = null; // Or wrap to right end of prev row?
                                           // Right
-            if ((i + 1) % columnCount != 0 && (i + 1) < slotUIs.Count) nav.selectOnRight = slotUIs[i + 1].GetComponent<Selectable>();
+            if ((i + 1) % columnCount != 0 && (i + 1) < slotInventoryUIs.Count) nav.selectOnRight = slotInventoryUIs[i + 1].GetComponent<Selectable>();
             else nav.selectOnRight = null; // Or wrap to left end of next row?
 
             currentSel.navigation = nav;
         }
-        if (IsOpen && slotUIs.Count > 0 && _playerInput != null && _playerInput.currentControlScheme == "Gamepad") {
-            EventSystem.current.SetSelectedGameObject(slotUIs[0].gameObject);
+        if (IsOpen && slotInventoryUIs.Count > 0 && _playerInput != null && _playerInput.currentControlScheme == "Gamepad") {
+            EventSystem.current.SetSelectedGameObject(slotInventoryUIs[0].gameObject);
         }
 
         UpdateHotbarHighlight(_itemSelectionManager.SelectedSlotIndex); 
-        Debug.Log($"Created {slotUIs.Count} UI slots.");
+        Debug.Log($"Created {slotInventoryUIs.Count} UI slots.");
     }
 
     // Updates the visual representation of a single slot
     void UpdateSlotUI(int slotIndex) {
-        if (slotIndex >= 0 && slotIndex < slotUIs.Count) {
-            InventorySlot slotData = _localInventoryManager.GetSlot(slotIndex);
-            slotUIs[slotIndex].UpdateSlot(slotData);
-            if (slotIndex < hotbarSize) {
-                slotUIs[slotIndex].SetSelected(slotIndex == _itemSelectionManager.SelectedSlotIndex && IsOpen);
+        InventorySlot slotData = _localInventoryManager.GetSlot(slotIndex);
+        if (slotIndex >= 0 && slotIndex < slotInventoryUIs.Count) {
+            slotInventoryUIs[slotIndex].UpdateSlot(slotData);
+            if(slotIndex < hotbarSize) {
+                // Also update the hotbar
+                slotHotbarUIs[slotIndex].UpdateSlot(slotData);
+                slotInventoryUIs[slotIndex].SetSelected(slotIndex == _itemSelectionManager.SelectedSlotIndex && IsOpen);
             }
         }
     }
@@ -383,7 +434,7 @@ public class InventoryUIManager : MonoBehaviour {
         // Don't swap with self
         if (dragSourceIndex == dropTargetIndex) {
             // Just reset visuals if needed, but EndDrag handles the rest
-            slotUIs[dragSourceIndex].SetVisualsDuringDrag(false);
+            slotInventoryUIs[dragSourceIndex].SetVisualsDuringDrag(false);
             // No actual data change needed
             return; // Important: Don't proceed to swap!
         }
@@ -401,9 +452,9 @@ public class InventoryUIManager : MonoBehaviour {
         bool showHighlight = IsOpen;
 
         for (int i = 0; i < hotbarSize; i++) {
-            if (i < slotUIs.Count && slotUIs[i] != null) // Ensure slot UI exists
+            if (i < slotInventoryUIs.Count && slotInventoryUIs[i] != null) // Ensure slot UI exists
             {
-                slotUIs[i].SetSelected(showHighlight && i == newSelectedIndex);
+                slotInventoryUIs[i].SetSelected(showHighlight && i == newSelectedIndex);
             }
         }
         Debug.Log($"Updated Hotbar Highlight. Selected: {newSelectedIndex}, Inventory Open: {showHighlight}");

@@ -163,7 +163,7 @@ public class WorldManager : NetworkBehaviour {
     }
     public void RequestDamageTile(Vector3 worldPosition,short dmg) {
         var cell = WorldToCell(worldPosition);
-        Debug.Log($"Requesting processdamage of:{cell} with {dmg}");
+        //Debug.Log($"Requesting processdamage of:{cell} with {dmg}");
         ChunkManager.ServerProcessDamageTile(cell, dmg);
     }
 

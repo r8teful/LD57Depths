@@ -19,10 +19,12 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, ISelectHandl
     private Image backgroundImage; // Reference to self image if needed for color changes
 
     private bool isContainerSlot = false; // New flag
+    private bool isHotBarSlot;
     private bool focusBorder;
 
     public int SlotIndex => slotIndex; 
     public bool IsContainerSlot => isContainerSlot; // Expose context flag
+    public bool IsHotBarSlot => isHotBarSlot; // Expose context flag
     void Awake() {
         backgroundImage = GetComponent<Image>(); // Get Image on this object if needed
         if (!itemIconImage || !quantityText) {
@@ -43,10 +45,11 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, ISelectHandl
     }
 
     // Called by InventoryUIManager during setup
-    public void Initialize(InventoryUIManager manager, int index) {
+    public void Initialize(InventoryUIManager manager, int index, bool isHotbar) {
         uiManager = manager;
         slotIndex = index;
         isContainerSlot = false;
+        isHotBarSlot = isHotbar;
     }
     public void SetContainerContext(InventoryUIManager manager, int index) {
         uiManager = manager; // Still need manager for drag events

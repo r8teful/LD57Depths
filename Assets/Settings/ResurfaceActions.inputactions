@@ -642,6 +642,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "UI_TabLeft",
+                    "type": "Button",
+                    "id": "7ca92f7e-7575-4373-bc03-cc69f2bccfa3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UI_TabRight",
+                    "type": "Button",
+                    "id": "192c1c73-16da-4690-9e99-ba127a091419",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1137,6 +1155,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "UI_Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f14ba93f-81d3-4743-892f-78a583902442",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "UI_TabLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "347a9faf-61ea-44cf-8088-79299f020d78",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "UI_TabRight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

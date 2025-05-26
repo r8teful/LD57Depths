@@ -77,7 +77,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         ushort itemIDToGrab = ResourceSystem.InvalidID;
         InventorySlot sourceDataSlot = null;
 
-        if (!slotUI.IsContainerSlot) // Picking from player inventory
+        if (!slotUI.IsContainerSlot && !slotUI.IsHotBarSlot) // Picking from player inventory
         {
             sourceDataSlot = inventoryManager.GetSlot(slotUI.SlotIndex);
             if (sourceDataSlot == null || sourceDataSlot.IsEmpty())
@@ -92,7 +92,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
 
             inventoryManager.RemoveItem(slotUI.SlotIndex, quantityToGrab); // Update UI
             heldItemStack.SetItem(itemIDToGrab, quantityToGrab, slotUI.SlotIndex);
-        } else // Picking from container
+        } else if(!slotUI.IsHotBarSlot)// Picking from container
           {
             if (currentOpenContainer == null)
                 return;
@@ -108,6 +108,8 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
             }
             currentOpenContainer.CmdTakeItemFromContainer(slotUI.SlotIndex, quantityToGrab);
             //heldItemStack.SetItem(itemIDToGrab, quantityToGrab,slotUI.SlotIndex);
+        } else {
+            // ??? From hotbar, just ignore...
         }
         Debug.Log($"Picked up: ID {itemIDToGrab}, Qty {quantityToGrab} from {(slotUI.IsContainerSlot ? "Container" : "Player")} Slot {slotUI.SlotIndex}");
     }
@@ -322,6 +324,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         bool added = inventoryManager.AddItem(itemID, quantity); // Assume AddItem returns bool for success
         if (added) {
             Debug.Log($"Client: Picked up and added item {itemID} x{quantity} to inventory.");
+            AudioController.Instance.PlaySound2D("popPickup", 0.1f);
         } else {
             Debug.LogWarning($"Client: Could not add item {itemID} x{quantity} to inventory (full?).");
             // Optionally, tell server to re-drop if client can't take it.

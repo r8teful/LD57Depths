@@ -54,18 +54,16 @@ public class MiningLazer : MonoBehaviour, IMiningBehaviour {
     }
     private IEnumerator MiningRoutine(InputManager input, MiningController controller) {
         while (true) {
+            laser.volume = 0.2f;
             var pos = input.GetAimInput();
             //Debug.Log(pos);
             CastRays(pos, controller); // Todo determine freq here
             LaserVisual(pos);
             yield return new WaitForSeconds(0.3f);
+            laser.volume = 0f;
         }
     }
     private void LaserVisual(Vector2 pos) {
-        if (!_particleSystem.isPlaying) {
-            _particleSystem.Play();
-            laser.volume = 0.5f;
-        }
         ClearPreviousRays(); // Clear old rays before shooting new ones
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
         Vector2 directionToMouse = (pos - objectPos2D).normalized;
@@ -73,15 +71,13 @@ public class MiningLazer : MonoBehaviour, IMiningBehaviour {
         //Debug.Log("objectPos2D" + objectPos2D);
         if(hit.collider != null) {
             CreateLaserEffect(transform.position, hit.point);
+            _particleSystem.transform.position = hit.point;
+            _particleSystem.Play();
         } else {
-            RaycastHit2D hit2 = Physics2D.Raycast(objectPos2D, directionToMouse, range*3, LayerMask.GetMask("MiningHit"));
-            if (hit2.collider != null) {
-                CreateLaserEffect(transform.position, hit2.point);
-            } else {
-                CreateLaserEffect(transform.position, objectPos2D + directionToMouse * 999);
-            }
+            // not in reange
+            _particleSystem.Stop();
+            CreateLaserEffect(transform.position, objectPos2D + directionToMouse * range);
         }
-        _particleSystem.transform.position = hit.point;
     }
 
     void CastRays(Vector2 pos, MiningController controller) {
