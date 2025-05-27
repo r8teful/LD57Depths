@@ -13,13 +13,19 @@ public class ResourceSystem {
     private Dictionary<string, GameObject> _prefabDict;
     private Dictionary<string, Sprite> _spriteDict; 
     private Dictionary<string, Material> _materialDict;
+    
     private Dictionary<ushort, TileSO> _tileLookupByID;
     private Dictionary<TileSO, ushort> _idLookupByTile;
+    
     private Dictionary<ushort, ItemData> _itemLookupByID;
     private Dictionary<ItemData, ushort> _idLookupByItem;
 
     private Dictionary<ushort, EntityBaseSO> _entityLookupByID;
     private Dictionary<EntityBaseSO, ushort> _idLookupByEntity;
+
+    private Dictionary<ushort, RecipeBaseSO> _recipeLookupByID;
+    private Dictionary<RecipeBaseSO, ushort> _idLookupByRecipe;
+    
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
     public const ushort AirID = 0; // Air is ALWAYS 0 
     public void AssembleResources() {
@@ -36,6 +42,7 @@ public class ResourceSystem {
         InitializeLookup("ItemData", out _itemLookupByID, out _idLookupByItem);
         InitializeLookup("TileData", out _tileLookupByID, out _idLookupByTile);
         InitializeLookup("EntityData", out _entityLookupByID, out _idLookupByEntity);
+        InitializeLookup("RecipeData", out _recipeLookupByID, out _idLookupByRecipe);
 
         InitializeWorldEntityOffsets();
     }
@@ -104,12 +111,24 @@ public class ResourceSystem {
     }
     public EntityBaseSO GetEntityByID(ushort id) {
         if (id == InvalidID || !_entityLookupByID.TryGetValue(id, out EntityBaseSO entity)) {
-            Debug.LogWarning($"Item ID {id} not found in ItemDatabase.");
+            Debug.LogWarning($"Entity ID {id} not found in database.");
             return null;
         }
         return entity;
     }
+    public RecipeBaseSO GetRecipeByID(ushort id) {
+        if (id == InvalidID || !_recipeLookupByID.TryGetValue(id, out RecipeBaseSO recipe)) {
+            Debug.LogWarning($"Recipe ID {id} not found in database.");
+            return null;
+        }
+        return recipe;
+    }
+
     public GameObject GetPrefab(string s) => _prefabDict[s];
     public Sprite GetSprite(string s) => _spriteDict[s];
-    public Material GetMaterial(string s) => _materialDict[s]; 
+    public Material GetMaterial(string s) => _materialDict[s];
+
+    public List<RecipeBaseSO> GetAllRecipes() {
+        return _recipeLookupByID.Values.ToList();
+    }
 }

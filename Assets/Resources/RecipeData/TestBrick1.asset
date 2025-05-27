@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f67ca37f03bb1d458515a8312aea9ed, type: 3}
+  m_Name: TestBrick1
+  m_EditorClassIdentifier: 
+  RecipeID: 0
+  displayName: Condenced stone
+  description: 
+  recipeIcon: {fileID: 21300000, guid: 790bc32132a1e094294edb2c4954ed96, type: 3}
+  requiredItems:
+  - item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
+    quantity: 2

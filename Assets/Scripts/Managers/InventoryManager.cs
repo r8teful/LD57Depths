@@ -173,6 +173,19 @@ public class InventoryManager {
         }
         return quantityToRemove == 0; // True if all requested items were removed
     }
+    public bool ConsumeItems(List<RequiredItem> itemsToConsume) {
+        // First, check if all items can be consumed
+        foreach (var req in itemsToConsume) {
+            if (!HasItemCount(req.item.ID, req.quantity)) {
+                return false; // Not enough of one item
+            }
+        }
+        // All checks passed, now consume them
+        foreach (var req in itemsToConsume) {
+            RemoveItem(req.item.ID, req.quantity); // We already know this will succeed
+        }
+        return true;
+    }
     /// <summary>
     /// Swaps the contents of two slots.
     /// </summary>
@@ -246,7 +259,7 @@ public class InventoryManager {
         return quantityToAdd - remainingQuantity; // = canAddTotal
     }
 
-    public List<int> FindSlotsContaining(ushort itemID) {
+    private List<int> FindSlotsContaining(ushort itemID) {
         List<int> indices = new List<int>();
         for (int i = 0; i < Slots.Count; ++i) {
             if (!Slots[i].IsEmpty() && Slots[i].itemID == itemID) {
@@ -254,6 +267,17 @@ public class InventoryManager {
             }
         }
         return indices;
+    }
+    public int GetItemCount(ushort itemID) {
+        var slotsToCheck = FindSlotsContaining(itemID);
+        int totalAmount = 0;
+        foreach (var slot in slotsToCheck) {
+            totalAmount += Slots[slot].quantity;
+        }
+        return totalAmount;
+    }
+    public bool HasItemCount(ushort itemID, int quantity) {
+        return GetItemCount(itemID) >= quantity;
     }
     // --- Helper for Debugging ---
     [Button("Add Test Item")]
@@ -270,15 +294,5 @@ public class InventoryManager {
         Debug.Log("Adding item");
         AddItem(1, 1);
         
-    }
-
-    public List<int> FindSlotsContainingID(ushort itemID) {
-        List<int> indices = new List<int>();
-        for (int i = 0; i < Slots.Count; ++i) {
-            if (Slots[i].itemID == itemID && !Slots[i].IsEmpty()) { // Check ID and ensure not accidentally cleared
-                indices.Add(i);
-            }
-        }
-        return indices;
     }
 }

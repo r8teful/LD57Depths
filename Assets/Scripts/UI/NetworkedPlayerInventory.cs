@@ -1,5 +1,4 @@
-﻿// PlayerInventorySyncer.cs
-using UnityEngine;
+﻿using UnityEngine;
 using FishNet.Object;
 using FishNet.Connection; // Required for NetworkConnection
 using System.Collections.Generic;
@@ -54,7 +53,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         for (int i = 0; i < inventorySize; i++) {
             slots.Add(new InventorySlot());
         }
-        inventoryManager = new InventoryManager(slots); // Assuming such a constructor
+        inventoryManager = new InventoryManager(slots); 
         Debug.Log($"Inventory Initialized with {inventorySize} slots.");
     }
 

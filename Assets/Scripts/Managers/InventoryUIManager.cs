@@ -68,6 +68,9 @@ public class InventoryUIManager : MonoBehaviour {
         _itemSelectionManager = GetComponent<ItemSelectionManager>();
         _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage
         _playerInventory = _playerGameObject.GetComponent<NetworkedPlayerInventory>();
+        GetComponent<UICrafting>().Init(_localInventoryManager);
+        //GetComponent<PopupManager>().Init(_localInventoryManager);
+
         if (_localInventoryManager == null || _itemSelectionManager == null || _playerGameObject == null) {
             Debug.LogError("InventoryUIManager received null references during Initialize! UI may not function.", gameObject);
             enabled = false;
@@ -113,7 +116,6 @@ public class InventoryUIManager : MonoBehaviour {
             NetworkedPlayerInventory.OnContainerOpened += HandleContainerOpen; // Static events are tricky, direct ref better if possible
             NetworkedPlayerInventory.OnContainerClosed += CloseCurrentContainerUI;
         } else { Debug.LogError("PlayerInventorySyncer not found on owning player for container events!"); }
-
 
         // Inform ItemSelectionManager about hotbar size
         _itemSelectionManager.Initialize(hotbarSize, _playerGameObject,_localInventoryManager); // Pass player object
@@ -314,7 +316,7 @@ public class InventoryUIManager : MonoBehaviour {
             Debug.LogWarning($"Tab index {i} is out of range. Valid range: 0 to {inventoryTabs.Length - 1}");
             return;
         }
-
+        currentTabIndex = i;
         for (int j = 0; j < inventoryTabs.Length; j++) {
             if (inventoryTabs[j] != null) {
                 inventoryTabs[j].SetActive(j == i);
@@ -325,6 +327,8 @@ public class InventoryUIManager : MonoBehaviour {
     }
     // direction should be either -1 or 1 idealy
     public void ScrollTabs(int direction) {
+        if (!IsOpen)
+            return; // Don't scroll if inventory is not open
         if (inventoryTabs == null || inventoryTabs.Length == 0) {
             Debug.LogWarning("inventoryTabs array is null or empty!");
             return;
