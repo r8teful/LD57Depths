@@ -8,7 +8,7 @@ public class UICrafting : MonoBehaviour {
     public GameObject recipeUIPrefab;    // Prefab for displaying a single recipe
     
     public TextMeshProUGUI statusText; // For displaying craft success/failure
-
+    private InventoryUIManager _parentManager;
     private List<RecipeBaseSO> _availableRecipes = new List<RecipeBaseSO>();
     private InventoryManager _clientInventory; // Your existing client inventory manager
 
@@ -48,10 +48,10 @@ public class UICrafting : MonoBehaviour {
         RefreshRecipeDisplayStatus(0); // Initial status update
     }
 
+    // i is the index of the slot that has changed, optional to use it, we're just updating everything now
     public void RefreshRecipeDisplayStatus(int i) {
         if (_clientInventory == null)
             return;
-
         foreach (Transform child in recipeListContainer) {
             UIRecipeItem displayItem = child.GetComponent<UIRecipeItem>();
             if (displayItem != null) {

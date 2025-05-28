@@ -5,23 +5,23 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+// Recipe icon in the recipe tab in the crafting menu
 public class UIRecipeItem : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler {
     public Image recipeIconImage;
     public Button craftButton;
 
     private RecipeBaseSO _recipe;
     private UICrafting _craftingUIController;
-    private PopupData recipeData;
+    private PopupData popupRecipeData;
     private PopupManager _popupManager;
     public PopupData GetPopupData() {
-        return recipeData;
+        return popupRecipeData; // Updatestatus gets called which edits this and ensures we have the right data
     }
 
     public void Init(RecipeBaseSO recipe, InventoryManager clientInventory, UICrafting craftingUI,PopupManager popupManager) {
         _recipe = recipe;
         _craftingUIController = craftingUI;
         _popupManager = popupManager;
-        recipeData = new PopupData(recipe.displayName, recipe.description, null);
         if (recipeIconImage != null && recipe.recipeIcon != null) {
             recipeIconImage.sprite = recipe.recipeIcon;
             recipeIconImage.enabled = true;
@@ -42,17 +42,15 @@ public class UIRecipeItem : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPo
         _popupManager.OnPointerExitItem();
     }
 
+    // We need to know if we can craft the item when picking up an item
     public void UpdateStatus(InventoryManager clientInventory) {
         if (_recipe == null || clientInventory == null)
             return;
 
-        System.Text.StringBuilder sb = new System.Text.StringBuilder("Requires:\n");
         List<IngredientStatus> statuses = _recipe.GetIngredientStatuses(clientInventory);
         bool canAffordAll = true;
-
+        popupRecipeData = new(_recipe.displayName, _recipe.description, statuses);
         foreach (var status in statuses) {
-            string color = status.HasEnough ? "green" : "red";
-            sb.AppendLine($"<color={color}>{status.Item.itemName}: {status.CurrentAmount}/{status.RequiredAmount}</color>");
             if (!status.HasEnough) {
                 canAffordAll = false;
             }

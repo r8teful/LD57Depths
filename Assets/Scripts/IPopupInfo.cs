@@ -8,9 +8,9 @@ public interface IPopupInfo {
 public class PopupData {
     public string title;
     public string description;
-    public List<RequiredItem> craftingInfo;
+    public List<IngredientStatus> craftingInfo; // int is quantity
 
-    public PopupData(string title, string description, List<RequiredItem> craftingInfo) {
+    public PopupData(string title, string description, List<IngredientStatus> craftingInfo) {
         this.title = title;
         this.description = description;
         this.craftingInfo = craftingInfo;
