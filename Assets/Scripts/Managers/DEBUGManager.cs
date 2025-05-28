@@ -61,5 +61,8 @@ public class DEBUGManager : MonoBehaviour {
             tilemap.SetTile(tilePos, tile);
         }
     }
-    
+    [ConsoleCommand("give", value: "itemID, amount")]
+    private void debugGive(int i, int j) {
+        FindFirstObjectByType<NetworkedPlayerInventory>().DEBUGGIVE(i,j);
+    }
 }

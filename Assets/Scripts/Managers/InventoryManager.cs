@@ -161,19 +161,22 @@ public class InventoryManager {
             if (Slots[i].itemID == itemID) {
                 if (Slots[i].quantity > quantityToRemove) {
                     Slots[i].quantity -= quantityToRemove;
+                    OnSlotChanged?.Invoke(i); // Notify UI
                     return true;
                 } else {
                     quantityToRemove -= Slots[i].quantity;
                     Slots[i].itemID = ResourceSystem.InvalidID;
                     Slots[i].quantity = 0;
-                    if (quantityToRemove == 0)
+                    if (quantityToRemove == 0) {
+                        OnSlotChanged?.Invoke(i); // Notify UI
                         return true;
+                    }
                 }
             }
         }
         return quantityToRemove == 0; // True if all requested items were removed
     }
-    public bool ConsumeItems(List<RequiredItem> itemsToConsume) {
+    public bool ConsumeItems(List<ItemQuantity> itemsToConsume) {
         // First, check if all items can be consumed
         foreach (var req in itemsToConsume) {
             if (!HasItemCount(req.item.ID, req.quantity)) {

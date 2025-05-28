@@ -4,7 +4,7 @@ using UnityEngine;
 public class PopupManager : MonoBehaviour {
     public static PopupManager Instance { get; private set; }
     public UIPopup popupPrefab;
-    private GameObject currentPopup;
+    private UIPopup currentPopup;
     private IPopupInfo currentInfoProvider;
     private IPopupInfo currentHoveredInfoProvider;
     private IPopupInfo currentSelectedInfoProvider;
@@ -18,9 +18,23 @@ public class PopupManager : MonoBehaviour {
     }
 
     private void Start() {
+        GetComponent<InventoryUIManager>().OnInventoryToggle += OnInventoryToggled;
         //EventSystem.current.onSelectedGameObjectChanged.AddListener(OnSelectedGameObjectChanged);
     }
-   
+    private void OnDestroy() {
+        GetComponent<InventoryUIManager>().OnInventoryToggle -= OnInventoryToggled;
+    }
+
+    private void OnInventoryToggled(bool isOpen) {
+        Debug.Log("INVOKED!");
+        if (!isOpen) {
+            // Closing
+            if(currentPopup != null) {
+                HidePopup();
+            }
+        }
+    }
+
     public void OnPointerEnterItem(IPopupInfo infoProvider) {
         currentHoveredInfoProvider = infoProvider;
         ShowPopup(infoProvider);
@@ -68,16 +82,22 @@ public class PopupManager : MonoBehaviour {
         HidePopup();
         currentInfoProvider = infoProvider;
         PopupData data = infoProvider.GetPopupData();
-        var p = Instantiate(popupPrefab, transform);
-        p.SetData(data);
-        currentPopup = p.gameObject;
+        infoProvider.PopupDataChanged += PopupDataChange;
+        currentPopup = Instantiate(popupPrefab, transform);
+        currentPopup.SetData(data);
         // Set up popup UI with data.title, data.description, data.additionalInfo
         PositionPopup(infoProvider);
     }
 
+    private void PopupDataChange() {
+        // Fetch new data
+        currentPopup.SetData(currentInfoProvider.GetPopupData());
+    }
+
     private void HidePopup() {
         if (currentPopup != null) {
-            Destroy(currentPopup);
+            currentInfoProvider.PopupDataChanged -= PopupDataChange;
+            Destroy(currentPopup.gameObject);
             currentPopup = null;
             currentInfoProvider = null;
         }
@@ -85,7 +105,7 @@ public class PopupManager : MonoBehaviour {
 
     private void PositionPopup(IPopupInfo infoProvider) {
         RectTransform itemRT = (infoProvider as MonoBehaviour).GetComponent<RectTransform>();
-        RectTransform popupRT = currentPopup.GetComponent<RectTransform>();
+        RectTransform popupRT = currentPopup.gameObject.GetComponent<RectTransform>();
         // Position popup relative to itemRT, adjust to stay within screen bounds
         Vector2 itemBottomCenter = new Vector2(itemRT.position.x, itemRT.position.y + itemRT.rect.yMin);
         Vector2 itemTopCenter = new Vector2(itemRT.position.x, itemRT.position.y + itemRT.rect.yMax);

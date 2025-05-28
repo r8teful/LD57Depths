@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: testitem2
   m_EditorClassIdentifier: 
   itemName: testitems
+  ID: 3
   description: Item Description
   icon: {fileID: 5380471612366557246, guid: 42885d966f1bcd743bb07bfac8a1c13c, type: 3}
-  ID: 2
   maxStackSize: 6
   droppedPrefab: {fileID: 0}
   isUsable: 0

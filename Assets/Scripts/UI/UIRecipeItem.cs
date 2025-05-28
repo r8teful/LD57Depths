@@ -1,4 +1,5 @@
 ﻿// --- Example RecipeDisplayItem.cs (on your recipeUIPrefab) ---
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -11,19 +12,22 @@ public class UIRecipeItem : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPo
     public Button craftButton;
 
     private RecipeBaseSO _recipe;
-    private UICrafting _craftingUIController;
+    private UICraftingManager _craftingUIController;
     private PopupData popupRecipeData;
     private PopupManager _popupManager;
+
+    public event Action PopupDataChanged;
+
     public PopupData GetPopupData() {
         return popupRecipeData; // Updatestatus gets called which edits this and ensures we have the right data
     }
 
-    public void Init(RecipeBaseSO recipe, InventoryManager clientInventory, UICrafting craftingUI,PopupManager popupManager) {
+    public void Init(RecipeBaseSO recipe, InventoryManager clientInventory, UICraftingManager craftingUI,PopupManager popupManager) {
         _recipe = recipe;
         _craftingUIController = craftingUI;
         _popupManager = popupManager;
-        if (recipeIconImage != null && recipe.recipeIcon != null) {
-            recipeIconImage.sprite = recipe.recipeIcon;
+        if (recipeIconImage != null && recipe.icon != null) {
+            recipeIconImage.sprite = recipe.icon;
             recipeIconImage.enabled = true;
         }
         if (craftButton != null) {
@@ -55,6 +59,7 @@ public class UIRecipeItem : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPo
                 canAffordAll = false;
             }
         }
+        PopupDataChanged?.Invoke();
         craftButton.interactable = canAffordAll; // Enable button only if all ingredients met locally
     }
 

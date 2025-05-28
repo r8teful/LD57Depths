@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using DG.Tweening;
 using TMPro;
 using UnityEngine.EventSystems;
+using System;
 
 public class InventoryUIManager : MonoBehaviour {
     [Header("UI Elements")]
@@ -51,7 +52,7 @@ public class InventoryUIManager : MonoBehaviour {
     private List<InventorySlotUI> slotHotbarUIs = new List<InventorySlotUI>();
     private Image draggingIconImage;
     private bool isDragging = false;
-    private bool isExpanded = false;
+    private bool _isOpen = false;
     private int dragSourceIndex = -1; 
     private int currentTabIndex = 0;
     private bool dropHandled;
@@ -60,15 +61,15 @@ public class InventoryUIManager : MonoBehaviour {
     private InventorySlotUI _currentFocusedSlot = null; // For controller navigation
 
     // --- Properties ---
-    public bool IsOpen => inventoryPanel != null && isExpanded;
+    public bool IsOpen => inventoryPanel != null && _isOpen;
     public int HotbarSize => hotbarSize; // Expose hotbar size
-
+    public event Action<bool> OnInventoryToggle;
     public void Init(InventoryManager localPlayerInvManager, GameObject owningPlayer) {
         _localInventoryManager = localPlayerInvManager;
         _itemSelectionManager = GetComponent<ItemSelectionManager>();
         _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage
         _playerInventory = _playerGameObject.GetComponent<NetworkedPlayerInventory>();
-        GetComponent<UICrafting>().Init(_localInventoryManager);
+        GetComponent<UICraftingManager>().Init(_localInventoryManager);
         //GetComponent<PopupManager>().Init(_localInventoryManager);
 
         if (_localInventoryManager == null || _itemSelectionManager == null || _playerGameObject == null) {
@@ -285,22 +286,29 @@ public class InventoryUIManager : MonoBehaviour {
     private void ToggleInventory(InputAction.CallbackContext context) {
         if (Console.IsConsoleOpen())
             return;
-        isExpanded = !isExpanded;
-        if (isExpanded) {
-            inventoryPanel.SetActive(true);
-            hotbarPanel.SetActive(false); // 
+        _isOpen = !_isOpen;
+        if (_isOpen) {
+            OpenInventory();
         } else {
-            //inventoryPanel.GetComponent<RectTransform>().DOMoveY(-292, 0.2f).OnComplete(SetInvUnactive);
-            // wait...
-            inventoryPanel.SetActive(false);
-            hotbarPanel.SetActive(true); 
-            EventSystem.current.SetSelectedGameObject(null); // Deselect UI when closing
-            _playerInventory.HandleClose(context);
+            CloseInventory(context);
         }
         // If closing while dragging, cancel the drag
         if (!inventoryPanel.activeSelf && isDragging) {
            // EndDrag(true); // Force cancel
         }
+    }
+    private void OpenInventory() {
+        inventoryPanel.SetActive(true);
+        hotbarPanel.SetActive(false); // 
+        OnInventoryToggle?.Invoke(true);
+    }
+    private void CloseInventory(InputAction.CallbackContext c) {
+        inventoryPanel.SetActive(false);
+        hotbarPanel.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(null); // Deselect UI when closing
+        _playerInventory.HandleClose(c);
+        OnInventoryToggle?.Invoke(false);
+
     }
     // Called from tab button inspector
     public void OnTabButtonClicked(int i) {

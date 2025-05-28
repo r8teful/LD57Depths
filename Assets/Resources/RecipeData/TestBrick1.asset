@@ -15,9 +15,10 @@ MonoBehaviour:
   RecipeID: 0
   displayName: Condenced stone
   description: 
-  recipeIcon: {fileID: 21300000, guid: 790bc32132a1e094294edb2c4954ed96, type: 3}
+  icon: {fileID: 1256492919, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
   requiredItems:
   - item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
-    quantity: 2
-  - item: {fileID: 11400000, guid: fba8153d7534bba43bcbf978298368bd, type: 2}
-    quantity: 900
+    quantity: 5
+  CraftingResult:
+    item: {fileID: 11400000, guid: 65de004af01a9b24ab9e2a1413417f65, type: 2}
+    quantity: 1

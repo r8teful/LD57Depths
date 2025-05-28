@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using System.Linq;
-using Sirenix.OdinInspector; // For List
+using Sirenix.OdinInspector;
 
 public class NetworkedPlayerInventory : NetworkBehaviour {
     [Header("References")]
@@ -378,7 +378,18 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         // UIManager.ShowNotification($"Pickup failed: {reason}");
     }
 
-
+    public bool GrantItem(ushort itemID, int quantity) {
+        bool added = inventoryManager.AddItem(itemID, quantity); // Assume AddItem returns bool for success
+        if (added) {
+            Debug.Log($"Client: Added item {itemID} x{quantity} to inventory.");
+        } else {
+            Debug.LogWarning($"Client: Could not add item {itemID} x{quantity} to inventory (full?).");
+            // Optionally, tell server to re-drop if client can't take it.
+        }
+        if (_uiManager != null)
+            _uiManager.RefreshUI();
+        return added;
+    }
     // --- Container Open/Close (VERY simple stub as requested) ---
     // Example: Player interacts with a NetworkObject that is a container
     public void RequestOpenContainer(NetworkObject containerObject) {
@@ -612,4 +623,10 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
     internal void RefreshUI() {
         _uiManager.RefreshUI();
     }
+
+#if UNITY_EDITOR
+    public void DEBUGGIVE(int ID, int amount) {
+        inventoryManager.AddItem((ushort)ID, amount);
+    }
+#endif
 }

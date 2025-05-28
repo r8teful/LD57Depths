@@ -479,7 +479,6 @@ public class ChunkManager : NetworkBehaviour {
     [ObserversRpc]
     private void ObserversUpdateTileDurability(Vector3Int cellPos, short newDurability) {
         // Runs on all clients
-        Debug.Log("OVERSEVER0");
         if(newDurability == -1)
             _lightManager.RequestLightUpdate(); // Tile broke so update lights
                                                 // Update local cache if you have one

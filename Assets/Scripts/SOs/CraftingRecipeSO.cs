@@ -1,9 +1,16 @@
 ﻿using FishNet.Connection;
+using Sirenix.OdinInspector;
 using UnityEngine;
 [CreateAssetMenu(fileName = "CraftingRecipeSO", menuName = "ScriptableObjects/CraftingRecipeSO", order = 9)]
 public class CraftingRecipeSO : RecipeBaseSO {
-    public override bool ExecuteRecipe(NetworkConnection crafterConnection, InventoryManager clientInventory) {
+    [VerticalGroup("Gamepaly/1")]
+    public ItemQuantity CraftingResult;
+    public override bool ExecuteRecipe(InventoryManager playerInv) {
+        var added = false;
         Debug.Log("crafted complete!");
-        return true;
+        if (playerInv != null) {
+            added = playerInv.AddItem(CraftingResult.item.ID, CraftingResult.quantity);
+        }
+        return added;
     }
 }

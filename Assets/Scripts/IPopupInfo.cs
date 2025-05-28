@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 public interface IPopupInfo {
     PopupData GetPopupData();
+    event Action PopupDataChanged;
 }
 
 [System.Serializable]

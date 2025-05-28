@@ -1,4 +1,6 @@
-﻿using FishNet.Object;
+﻿using FishNet.Connection;
+using FishNet.Object;
+using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,16 +9,24 @@ public class MiningController : NetworkBehaviour {
     private IMiningBehaviour currentToolBehavior; // Current tool's mining behavior
     private WorldManager _worldManager;
     public override void OnStartClient() {
-        if (!IsOwner)
+        base.OnStartClient();
+        if (!IsOwner) {
+            base.enabled = false;
             return;
+        }
         Console.RegisterCommand(this, "DEBUGSetMineTool", "setMineTool","god");
         //Console.RegisterCommand(this, "mineGod", "setMineTool", "laser");
-        
+            
         inputManager = GetComponent<InputManager>();
         _worldManager = FindFirstObjectByType<WorldManager>();
         if (App.isEditor) {
             DEBUGSetMineTool("laser");
         }
+        
+    }
+    public override void OnStartServer() {
+        base.OnStartServer();
+        _worldManager = FindFirstObjectByType<WorldManager>();
     }
 
     public void OnMine(InputAction.CallbackContext context) {
@@ -40,11 +50,14 @@ public class MiningController : NetworkBehaviour {
         currentToolBehavior?.MineStart(input, this); // Delegate to tool behavior
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = true)]
     public void CmdRequestDamageTile(Vector3 worldPos, short damageAmount) {
         // TODO: Server-side validation (range, tool, cooldowns, etc.)
-
+        Debug.Log($"worldPos {worldPos}, damageAmount {damageAmount} _Worldmanager: {_worldManager}");
         // Pass request to WorldGenerator for processing
+        // TODO somehow _worldmanager is null here and it cant find it 
+        if (_worldManager == null)
+            _worldManager = FindFirstObjectByType<WorldManager>();
         _worldManager.RequestDamageTile(worldPos, damageAmount);
     }
     public void SetMineTool(IMiningBehaviour tool) {

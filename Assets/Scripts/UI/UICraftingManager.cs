@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class UICrafting : MonoBehaviour {
+public class UICraftingManager : MonoBehaviour {
     public Transform recipeListContainer; // Parent for recipe UI elements
     public GameObject recipeUIPrefab;    // Prefab for displaying a single recipe
     
@@ -18,9 +18,7 @@ public class UICrafting : MonoBehaviour {
 
         // Subscribe to inventory updates to refresh UI
         _clientInventory.OnSlotChanged += RefreshRecipeDisplayStatus;
-        // Subscribe to craft results
-        CraftingManager.OnCraftSuccessClient += HandleCraftSuccess;
-        CraftingManager.OnCraftFailClient += HandleCraftFail;
+        // Subscribe to craft results;
         PopulateRecipeList();
     }
 
@@ -28,8 +26,6 @@ public class UICrafting : MonoBehaviour {
         if (_clientInventory != null) {
             _clientInventory.OnSlotChanged -= RefreshRecipeDisplayStatus;
         }
-        CraftingManager.OnCraftSuccessClient -= HandleCraftSuccess;
-        CraftingManager.OnCraftFailClient -= HandleCraftFail;
     }
 
     void PopulateRecipeList() {
@@ -65,31 +61,37 @@ public class UICrafting : MonoBehaviour {
             return;
 
         // Client-side check (optional, good for immediate feedback but server is authoritative)
-        if (!recipe.CanClientAfford(_clientInventory)) {
+        if (!recipe.CanAfford(_clientInventory)) {
             Debug.Log($"Cannot afford {recipe.displayName} (client check).");
             if (statusText)
                 statusText.text = $"Cannot afford {recipe.displayName}";
+            HandleCraftFail(recipe, $"Cannot afford {recipe.displayName}");
             // You might still allow the request to go to server for a server-denial message
         }
-
+        // Craft the bitch, first remove items
+        _clientInventory.ConsumeItems(recipe.requiredItems);
+        // 2. Resources consumed. Now execute the recipe outcome.
+        bool executionSuccess = recipe.ExecuteRecipe(_clientInventory);
+        if(executionSuccess) {
+            HandleCraftSuccess(recipe);
+        } else {
+            HandleCraftFail(recipe, "Unable to craft!");
+        }
         // Tell the local InventoryManager (or CraftingManager client instance) to send the request
-        CraftingManager.Instance.ClientRequestCraft(recipe.RecipeID);
         if (statusText)
             statusText.text = $"Attempting to craft {recipe.displayName}...";
     }
 
-    private void HandleCraftSuccess(ushort recipeID) {
-        RecipeBaseSO recipe = _availableRecipes.Find(r => r.RecipeID == recipeID);
-        string name = recipe != null ? recipe.displayName : recipeID.ToString();
+    private void HandleCraftSuccess(RecipeBaseSO recipe) {
+        string name = recipe != null ? recipe.displayName : recipe.ID.ToString();
         Debug.Log($"UI: Successfully crafted {name}!");
         if (statusText)
             statusText.text = $"Successfully crafted {name}!";
         RefreshRecipeDisplayStatus(0); // Refresh UI as inventory has changed
     }
 
-    private void HandleCraftFail(ushort recipeID, string reason) {
-        RecipeBaseSO recipe = _availableRecipes.Find(r => r.RecipeID == recipeID);
-        string name = recipe != null ? recipe.displayName : recipeID.ToString();
+    private void HandleCraftFail(RecipeBaseSO recipe, string reason) {
+        string name = recipe != null ? recipe.displayName : recipe.ID.ToString();
         Debug.LogError($"UI: Failed to craft {name}. Reason: {reason}");
         if (statusText)
             statusText.text = $"Failed to craft {name}. Reason: {reason}";

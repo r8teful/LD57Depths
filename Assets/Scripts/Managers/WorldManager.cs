@@ -137,7 +137,6 @@ public class WorldManager : NetworkBehaviour {
         // 1st choice: ore overlay
         TileSO ore = overlayTilemapOre.GetTile(cellPos) as TileSO;
         if (ore != null) {
-            Debug.Log("Returning ore");
             return ore;
         }
 

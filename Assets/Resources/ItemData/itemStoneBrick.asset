@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0875b8093cac994284fe8213a256f45, type: 3}
-  m_Name: itemStone
+  m_Name: itemStoneBrick
   m_EditorClassIdentifier: 
-  itemName: stone
-  ID: 0
+  itemName: stoneBrick
+  ID: 2
   description: Item Description
-  icon: {fileID: 569354257, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
+  icon: {fileID: 1256492919, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
   maxStackSize: 99
   droppedPrefab: {fileID: 6402200259883455465, guid: 9cdb7b99142e92a42bb0a5b41fe345ce, type: 3}
   isUsable: 0

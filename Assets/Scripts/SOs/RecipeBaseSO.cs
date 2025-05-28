@@ -1,10 +1,11 @@
 ﻿using FishNet.Connection;
+using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
 
 // Helper struct for required items
 [System.Serializable]
-public struct RequiredItem {
+public struct ItemQuantity {
     public ItemData item;
     public int quantity;
 }
@@ -22,11 +23,21 @@ public struct IngredientStatus {
     }
 }
 public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
+
+    [BoxGroup("Identification")]
+    [HorizontalGroup("Identification/Left")]
+    [VerticalGroup("Identification/Left/2")]
     public ushort RecipeID; // Unique ID for the recipe
+    [VerticalGroup("Identification/Left/2")]
     public string displayName;
+    [VerticalGroup("Identification/Left/2")]
     public string description;
-    public Sprite recipeIcon; // Optional, for UI
-    public List<RequiredItem> requiredItems = new List<RequiredItem>();
+    [VerticalGroup("Identification/Left/1")]
+    [PreviewField(75), HideLabel, LabelWidth(0)]
+    public Sprite icon;
+    [BoxGroup("Gamepaly")]
+    [VerticalGroup("Gamepaly/1")]
+    public List<ItemQuantity> requiredItems = new List<ItemQuantity>();
 
     public ushort ID => RecipeID;
 
@@ -36,13 +47,13 @@ public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
     /// <param name="crafterConnection">The connection of the player crafting.</param>
     /// <param name="clientInventory">The client-side inventory of the crafter.</param>
     /// <returns>True if execution was successful, false otherwise.</returns>
-    public abstract bool ExecuteRecipe(NetworkConnection crafterConnection, InventoryManager clientInventory);
+    public abstract bool ExecuteRecipe(InventoryManager playerInv);
 
     /// <summary>
     /// Client-side check to see if the player has enough ingredients.
     /// This is primarily for UI feedback. The server will re-validate.
     /// </summary>
-    public bool CanClientAfford(InventoryManager clientInventory) {
+    public bool CanAfford(InventoryManager clientInventory) {
         if (clientInventory == null)
             return false;
         foreach (var req in requiredItems) {
