@@ -20,8 +20,9 @@ public class BackgroundSprite : MonoBehaviour {
         if(_spriteRenderer == null)
             _spriteRenderer = GetComponent<SpriteRenderer>();
         _spriteRenderer.material.SetFloat("_Parallax", backgroundNumber * 0.2f); 
+        _spriteRenderer.material.SetFloat("_PixelSize", 60 + (20 * backgroundNumber)); // Default 60, higher quality the further away we are to get a cool depth effect
         _spriteRenderer.material.SetFloat("_BaseWidth", settings.trenchBaseWidth - (2*backgroundNumber)); 
-        _spriteRenderer.material.SetFloat("_BaseWiden", settings.trenchWidenFactor);
+        _spriteRenderer.material.SetFloat("_BaseWiden", settings.trenchWidenFactor - (0.0001f* backgroundNumber));
         _spriteRenderer.material.SetFloat("_NoiseFreq", settings.trenchEdgeNoiseFrequency * 10f);
         _spriteRenderer.material.SetFloat("_EdgeAmp", settings.trenchEdgeNoiseAmplitude * 0.8f * Random.Range(0.7f,1.2f));
         _spriteRenderer.material.SetColor("_Color", backgroundColor);

@@ -264,13 +264,17 @@ public class ChunkManager : NetworkBehaviour {
             data.Value.hasBeenGenerated = true;
             worldChunks.Add(data.Key, data.Value);
         }
-
+        // Biome data also is stored on the server
+        foreach (var data in severData) {
+            data.Value.hasBeenGenerated = true;
+            _worldManager.BiomeManager.AddNewData(data.Key, data.Value);
+        }
         // Dont need to do this because its already in ChunkPayLoad
         //foreach(var data in entities) {
         //    _entitySpawner.AddGeneratedEntityData(data.Key, data.Value);
         //}
         // FINALLY, we add persistant to the chunkPayLoad and send final result to client
-        
+
         TargetReceiveChunkDataMultiple(requester, payloadData); // send it to requesting client
     }
     // --- Target RPC to send chunk data to a specific client ---

@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 // Data structure to hold calculated biome info for a chunk
 public class BiomeChunkInfo {
@@ -189,5 +191,46 @@ public class BiomeManager : MonoBehaviour
     }
     public Dictionary<Vector2Int, BiomeChunkInfo> GetAllBiomeData() {
         return new Dictionary<Vector2Int, BiomeChunkInfo>(serverBiomeData);
+    }
+
+    internal void AddNewData(Vector2Int chunkCoord, ChunkData data) {
+        // Create a fresh info object
+        Debug.Log("added new data to biomemanager");
+        var info = new BiomeChunkInfo();
+
+        byte[,] ids = data.biomeID;
+        int width = ids.GetLength(0);
+        int height = ids.GetLength(1);
+
+        // 1) Count every tile’s biome
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                // Cast your byte ID into the BiomeType enum
+                BiomeType biome = (BiomeType)ids[x, y];
+
+                // Increment total tiles counter
+                info.totalTilesCounted++;
+
+                // Add or update the count for this biome
+                if (info.biomeCounts.ContainsKey(biome))
+                    info.biomeCounts[biome]++;
+                else
+                    info.biomeCounts[biome] = 1;
+            }
+        }
+
+        // 2) Figure out which biome is dominant
+        if (info.totalTilesCounted > 0) {
+            // Order by count descending and pick the first key
+            info.dominantBiome = info.biomeCounts
+                .OrderByDescending(kvp => kvp.Value)
+                .First()
+                .Key;
+        } else {
+            info.dominantBiome = BiomeType.None;
+        }
+
+        // 3) Store it in chunk lookup 
+        serverBiomeData[chunkCoord] = info;
     }
 }
