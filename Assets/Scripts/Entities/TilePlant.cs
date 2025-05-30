@@ -8,12 +8,12 @@ public class TilePlant : ExteriorObject, ITileChangeReactor {
     [SerializeField] private Transform offset;
     private bool isGrounded = true; // Server state
     private Rigidbody2D rb;
-
+    private Vector3Int cellPos;
 
     
     public void OnTileChangedNearby(Vector3Int cellPosition, int newTileID) {
         if (newTileID == 0) {
-            if(cellPosition == transform.position) {
+            if(cellPosition == cellPos) {
                 Despawn();
             }
         }
@@ -24,6 +24,7 @@ public class TilePlant : ExteriorObject, ITileChangeReactor {
         rb = GetComponent<Rigidbody2D>();
         if (rb) rb.bodyType = RigidbodyType2D.Kinematic; // Start kinematic
         MovePos();
+        cellPos = new Vector3Int(Mathf.RoundToInt(transform.position.x - 0.5f), Mathf.RoundToInt(transform.position.y - 0.5f));
        // CheckGroundedState(); // Initial check
     }
     /*
