@@ -222,18 +222,18 @@ MonoBehaviour:
     m_Value: 1
   threshold:
     m_OverrideState: 1
-    m_Value: 0.63
+    m_Value: 0.71
   intensity:
     m_OverrideState: 1
-    m_Value: 9.01
+    m_Value: 1.46
   scatter:
     m_OverrideState: 1
-    m_Value: 0.6
+    m_Value: 0.346
   clamp:
     m_OverrideState: 0
     m_Value: 65472
   tint:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {r: 0.25471687, g: 0.8438857, b: 1, a: 1}
   highQualityFiltering:
     m_OverrideState: 0
@@ -250,4 +250,4 @@ MonoBehaviour:
     dimension: 1
   dirtIntensity:
     m_OverrideState: 0
-    m_Value: 0
+    m_Value: 0.97

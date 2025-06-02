@@ -24,7 +24,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
 
 
     [Header("Inventory Settings")]
-    [SerializeField] private int inventorySize = 20; // How many slots
+    [SerializeField] private int inventorySize = 6*3; // How many slots
     [ShowInInspector]
     private InventoryManager inventoryManager;
     public HeldItemStack heldItemStack = new HeldItemStack();

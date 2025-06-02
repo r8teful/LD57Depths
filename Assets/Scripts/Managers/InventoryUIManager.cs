@@ -13,7 +13,8 @@ public class InventoryUIManager : MonoBehaviour {
     [SerializeField] private GameObject inventoryPanel; // The main inventory window panel
     [SerializeField] private GameObject hotbarPanel; 
     [SerializeField] private GameObject[] inventoryTabs; 
-    [SerializeField] private Transform slotInvContainer; // Parent transform where UI slots will be instantiated
+    [SerializeField] private Transform slotInvContainerTop; // Parent transform where UI slots will be instantiated
+    [SerializeField] private Transform slotInvContainerRest; // Parent transform where UI slots will be instantiated
     [SerializeField] private Transform slotHotbarContainer; // Parent transform where UI slots will be instantiated
     [SerializeField] private GameObject slotPrefab; // Prefab for a single inventory slot UI element
     [SerializeField] private Image draggingImage; // A UI Image used to show the item being dragged
@@ -40,7 +41,7 @@ public class InventoryUIManager : MonoBehaviour {
     private InputAction _uiTabLeft; 
     private InputAction _uiTabRight; 
 
-    [SerializeField] private int hotbarSize = 5; // How many slots in the first row act as hotbar
+    [SerializeField] private int hotbarSize = 6; // How many slots in the first row act as hotbar
 
     [Header("References")]
     private InventoryManager _localInventoryManager;
@@ -79,7 +80,7 @@ public class InventoryUIManager : MonoBehaviour {
         }
 
         // Validate essential UI components assigned in prefab
-        if (!inventoryPanel || !slotInvContainer || !slotPrefab || !draggingImage || !containerPanel || !containerSlotContainer) {
+        if (!inventoryPanel || !slotInvContainerTop || !slotPrefab || !draggingImage || !containerPanel || !containerSlotContainer) {
             Debug.LogError("One or more UI elements missing in InventoryUIPrefab!", gameObject);
             //enabled = false; return;
         }
@@ -224,9 +225,6 @@ public class InventoryUIManager : MonoBehaviour {
             if (draggingImageText != null) {
                 draggingImageText.gameObject.SetActive(true);
                 draggingImageText.text = _playerInventory.heldItemStack.quantity > 1 ? _playerInventory.heldItemStack.quantity.ToString() : "";
-                // Position quantity text relative to image
-                if (draggingImage != null)
-                    draggingImageText.transform.position = draggingImage.transform.position + new Vector3(15, -15, 0); // Example offset
             }
         } else {
             if (draggingImage != null)
@@ -356,7 +354,7 @@ public class InventoryUIManager : MonoBehaviour {
         // inventoryPanel.SetActive(false);
     }
     void CreateSlotUIs() {
-        foreach (Transform child in slotInvContainer) {
+        foreach (Transform child in slotInvContainerTop) {
             Destroy(child.gameObject);
         }
         slotInventoryUIs.Clear();
@@ -375,18 +373,34 @@ public class InventoryUIManager : MonoBehaviour {
             }
         }
         // Instantiate UI slots based on inventory size
-        for (int i = 0; i < _playerInventory.InventorySize; i++) {
-            GameObject slotGO = Instantiate(slotPrefab, slotInvContainer);
-            slotGO.name = $"Slot_{i}"; // For easier debugging
+        var index = 0;
+        for (int i = 0; i < hotbarSize; i++) {
+            GameObject slotGO = Instantiate(slotPrefab, slotInvContainerTop);
+            slotGO.name = $"SlotTop_{i}"; // For easier debugging
 
             InventorySlotUI slotUI = slotGO.GetComponent<InventorySlotUI>();
             if (slotUI != null) {
-                slotUI.Initialize(this, i,false); // Pass reference to this manager and the slot index
+                slotUI.Initialize(this, index, false); // Pass reference to this manager and the slot index
                 slotInventoryUIs.Add(slotUI);
-                UpdateSlotUI(i); // Update visual state immediately
+                UpdateSlotUI(index); // Update visual state immediately
             } else {
                 Debug.LogError($"Slot prefab '{slotPrefab.name}' is missing InventorySlotUI component!");
             }
+            index++;
+        }
+        for (int i = hotbarSize; i < _playerInventory.InventorySize; i++) {
+            GameObject slotGO = Instantiate(slotPrefab, slotInvContainerRest);
+            slotGO.name = $"Slot_{index}"; // For easier debugging
+
+            InventorySlotUI slotUI = slotGO.GetComponent<InventorySlotUI>();
+            if (slotUI != null) {
+                slotUI.Initialize(this, index, false); // Pass reference to this manager and the slot index
+                slotInventoryUIs.Add(slotUI);
+                UpdateSlotUI(index); // Update visual state immediately
+            } else {
+                Debug.LogError($"Slot prefab '{slotPrefab.name}' is missing InventorySlotUI component!");
+            }
+            index++;
         }
         // Controller navigation setup
 
