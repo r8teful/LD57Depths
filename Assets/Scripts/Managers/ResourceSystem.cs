@@ -125,7 +125,13 @@ public class ResourceSystem {
     }
 
     public GameObject GetPrefab(string s) => _prefabDict[s];
-    public Sprite GetSprite(string s) => _spriteDict[s];
+    public Sprite GetSprite(string s) {
+        if (s == "" || !_spriteDict.TryGetValue(s, out Sprite sprite)) {
+            Debug.LogWarning($"Recipe string {s} not found in database.");
+            return null;
+        }
+        return sprite;
+    }
     public Material GetMaterial(string s) => _materialDict[s];
 
     public List<RecipeBaseSO> GetAllRecipes() {

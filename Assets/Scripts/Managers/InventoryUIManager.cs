@@ -13,6 +13,7 @@ public class InventoryUIManager : MonoBehaviour {
     [SerializeField] private GameObject inventoryPanel; // The main inventory window panel
     [SerializeField] private GameObject hotbarPanel; 
     [SerializeField] private GameObject[] inventoryTabs; 
+    [SerializeField] private GameObject[] inventoryTabButtons; 
     [SerializeField] private Transform slotInvContainerTop; // Parent transform where UI slots will be instantiated
     [SerializeField] private Transform slotInvContainerRest; // Parent transform where UI slots will be instantiated
     [SerializeField] private Transform slotHotbarContainer; // Parent transform where UI slots will be instantiated
@@ -311,6 +312,7 @@ public class InventoryUIManager : MonoBehaviour {
     // Called from tab button inspector
     public void OnTabButtonClicked(int i) {
         EnableTab(i);
+        SetTabButtonVisual(i);
     }
     private void EnableTab(int i) {
         if (inventoryTabs == null || inventoryTabs.Length == 0) {
@@ -331,6 +333,38 @@ public class InventoryUIManager : MonoBehaviour {
             }
         }
     }
+    private void SetTabButtonVisual(int i) {
+        if (inventoryTabButtons == null || inventoryTabButtons.Length == 0) {
+            Debug.LogWarning("inventoryTabs array is null or empty!");
+            return;
+        }
+        if (i < 0 || i >= inventoryTabButtons.Length) {
+            Debug.LogWarning($"Tab index {i} is out of range. Valid range: 0 to {inventoryTabButtons.Length - 1}");
+            return;
+        }
+        for (int j = 0; j < inventoryTabButtons.Length; j++) {
+            if (inventoryTabButtons[j] != null) {
+                SetButtonVisual(j, j == i);
+            } else {
+                Debug.LogWarning($"Tab at index {j} is null.");
+            }
+        }
+    }
+    private void SetButtonVisual(int i,bool setActive) {
+        var button = inventoryTabButtons[i].transform.GetChild(0);
+        Debug.Log("setting button " + i + " TO " + setActive);
+        if(button != null) {
+            if (setActive) {
+                button.GetComponent<Image>().sprite = App.ResourceSystem.GetSprite("InventoryTabButtonActive");
+                button.GetComponent<RectTransform>().DOAnchorPosX(30, 0.3f);
+            } else {
+                button.GetComponent<Image>().sprite = App.ResourceSystem.GetSprite("InventoryTabButtonInactive");
+                button.GetComponent<RectTransform>().DOAnchorPosX(0, 0.3f);
+            }
+        } else {
+            Debug.LogWarning($"Could not find image component!");
+        }
+    }
     // direction should be either -1 or 1 idealy
     public void ScrollTabs(int direction) {
         if (!IsOpen)
@@ -346,7 +380,7 @@ public class InventoryUIManager : MonoBehaviour {
         //newIndex = Mathf.Clamp(newIndex, 0, inventoryTabs.Length - 1);
 
         if (newIndex != currentTabIndex) {
-            EnableTab(newIndex);
+            OnTabButtonClicked(newIndex); // Handle it as a click
         }
     }
     private void SetInvUnactive() {

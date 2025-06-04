@@ -52,7 +52,10 @@ public class WorldLightingManager : NetworkBehaviour {
         Initialize();
         StartCoroutine(ClientMovingRoutine());
     }
-
+    public override void OnStopClient() {
+        base.OnStopClient();
+        WorldVisibilityManager.OnLocalPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
+    }
     void Initialize() {
         // Biome stuff
         _biomeLightSettingsMap = new Dictionary<BiomeType, LightProperties>();
@@ -61,11 +64,25 @@ public class WorldLightingManager : NetworkBehaviour {
                 _biomeLightSettingsMap.Add(config.biome, config.properties);
             }
         }
-        _mainTilemap = _worldManager.GetMainTileMap();
         // References
+        _mainTilemap = _worldManager.GetMainTileMap();
         _compositeCollider = _mainTilemap.GetComponent<CompositeCollider2D>();
+
+        // Subscribe to change lighting when entering interiors
+        WorldVisibilityManager.OnLocalPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
+
+        // Setup starting light
         _currentClientBiome = BiomeType.Trench; // Or biome we left off at
-        SetNewBiomeInstant(_currentClientBiome);
+        SetNewBiomeLightInstant(_currentClientBiome);
+    }
+
+    private void PlayerVisibilityLayerChanged(VisibilityLayerType layer) {
+        if(layer == VisibilityLayerType.Interior) {
+            SetLightingInterior();
+        } else {
+            // change back to what the light level was before
+            SetNewBiomeLightInstant(_currentClientBiome);
+        }
     }
 
    
@@ -84,6 +101,7 @@ public class WorldLightingManager : NetworkBehaviour {
             // Change light depending on player biome
             Vector2Int newClientChunkCoord = _chunkManager.WorldToChunkCoord(localPlayerTransform.position);
             if (newClientChunkCoord != clientCurrentChunkCoord) {
+                //Debug.Log($"New client chunkcoord, it was: {clientCurrentChunkCoord} now it is: {newClientChunkCoord}");
                 clientCurrentChunkCoord = newClientChunkCoord;
                 var newBiome = _worldManager.BiomeManager.GetBiomeInfo(clientCurrentChunkCoord);
                 if(newBiome == null) {
@@ -91,16 +109,19 @@ public class WorldLightingManager : NetworkBehaviour {
                     continue;
                 }
                 if(_currentClientBiome != newBiome.dominantBiome) {
-                    // Transition?
-                    SetNewBiome(_currentClientBiome, newBiome.dominantBiome);
-                    _currentClientBiome = newBiome.dominantBiome;
+                    // Only set if we are in a biome that we know of
+                    if(newBiome.dominantBiome != BiomeType.None) {
+                        SetNewBiomeLight(_currentClientBiome, newBiome.dominantBiome);
+                        _currentClientBiome = newBiome.dominantBiome;
+                    }
                 }
             }
             yield return new WaitForSeconds(checkInterval);
         }
     }
 
-    private void SetNewBiome(BiomeType biomeOld, BiomeType biomeNew) {
+    private void SetNewBiomeLight(BiomeType biomeOld, BiomeType biomeNew) {
+        Debug.Log("Player entered new biome! " + biomeNew);
         // Ensure new biome exists
         if (!_biomeLightSettingsMap.TryGetValue(biomeNew, out var lighting)) {
             Debug.LogWarning($"Could not find biome: {biomeNew} in lighting data!");
@@ -131,7 +152,7 @@ public class WorldLightingManager : NetworkBehaviour {
         // Play the sequence
         transitionSequence.Play();
     }
-    private void SetNewBiomeInstant(BiomeType trench) {
+    private void SetNewBiomeLightInstant(BiomeType trench) {
         if (!_biomeLightSettingsMap.TryGetValue(trench, out var lighting)) {
             Debug.LogWarning($"Could not find biome: {trench} in lighting data!");
             return;
@@ -139,10 +160,14 @@ public class WorldLightingManager : NetworkBehaviour {
         globalLight.intensity = lighting.intensity;
         globalLight.color = lighting.color;
     }
-
+    private void SetLightingInterior() {
+        // exactly like above but just hard coded lol
+        globalLight.intensity = 1;
+        globalLight.color = Color.white;
+    }
 
     public void RequestLightUpdate() {
-        Debug.Log("Updating lights!");
+        //Debug.Log("Updating lights!");
         _needsUpdate = true;
     }
 

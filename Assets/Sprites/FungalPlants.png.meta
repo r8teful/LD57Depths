@@ -1,0 +1,586 @@
+fileFormatVersion: 2
+guid: 9b8fedcc308e83f47aa68dd3262e9144
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3032576050203707294
+    second: Fungal biome plants for unity_0
+  - first:
+      213: -4705284207192275781
+    second: Fungal biome plants for unity_1
+  - first:
+      213: -455871963678365861
+    second: Fungal biome plants for unity_2
+  - first:
+      213: 8909390599511108401
+    second: Fungal biome plants for unity_3
+  - first:
+      213: 4816425078767846652
+    second: Fungal biome plants for unity_4
+  - first:
+      213: 4494726883159870927
+    second: Fungal biome plants for unity_5
+  - first:
+      213: -7087677859662243482
+    second: Fungal biome plants for unity_6
+  - first:
+      213: -715328913296788755
+    second: Fungal biome plants for unity_7
+  - first:
+      213: -8759724871342608637
+    second: Fungal biome plants for unity_8
+  - first:
+      213: 1156442504190865579
+    second: Fungal biome plants for unity_9
+  - first:
+      213: 4130429249773531041
+    second: Fungal biome plants for unity_10
+  - first:
+      213: 7766423633932538667
+    second: Fungal biome plants for unity_11
+  - first:
+      213: 4937142156409256114
+    second: Fungal biome plants for unity_12
+  - first:
+      213: 9138580309445863916
+    second: Fungal biome plants for unity_13
+  - first:
+      213: -106866320109443984
+    second: Fungal biome plants for unity_14
+  - first:
+      213: -4627733216303611162
+    second: Fungal biome plants for unity_15
+  - first:
+      213: 7614521090328822961
+    second: Fungal biome plants for unity_16
+  - first:
+      213: 2279371883038533320
+    second: Fungal biome plants for unity_17
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 8
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: orange morrel
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 72
+        width: 5
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb48c0771f873beb0800000000000000
+      internalID: -4705284207192275781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: big oyster
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 73
+        width: 30
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5724e54dda6ca9f0800000000000000
+      internalID: -455871963678365861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wall oysters
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 72
+        width: 17
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13b6019db8384ab70800000000000000
+      internalID: 8909390599511108401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: red mini
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 56
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcd8421494a706e30800000000000000
+      internalID: 4494726883159870927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: green mini
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 56
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6695e6ce98283ad90800000000000000
+      internalID: -7087677859662243482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blue mini
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 56
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de2f061b424a216f0800000000000000
+      internalID: -715328913296788755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: purple mini
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 56
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30f2879f3a43f6680800000000000000
+      internalID: -8759724871342608637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: beige stick
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 56
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba0b57994528c0010800000000000000
+      internalID: 1156442504190865579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: beige side stick
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 56
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1af62aac48b325930800000000000000
+      internalID: 4130429249773531041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blue side stick
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 56
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b235fb39521e7cb60800000000000000
+      internalID: 7766423633932538667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orange sticks
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 56
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b8316612a0448440800000000000000
+      internalID: 4937142156409256114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blue bunch blob
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 56
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce966e78f52c2de70800000000000000
+      internalID: 9138580309445863916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Big red
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 11
+        width: 20
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0746c67e5a5548ef0800000000000000
+      internalID: -106866320109443984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Big green
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 11
+        width: 20
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e282f6982df6cfb0800000000000000
+      internalID: -4627733216303611162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Big purple
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 11
+        width: 20
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b405c396963ca960800000000000000
+      internalID: 7614521090328822961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: big pinkpurple
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 10
+        width: 23
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c66687a6a4f1af10800000000000000
+      internalID: 2279371883038533320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blue wall big bunch
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 72
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c9f0147d37e1c5244a114d38bdbef533
+      internalID: -189095536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: f07da3578d3261a40a54f02c7c435c68
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Big green: -4627733216303611162
+      Big purple: 7614521090328822961
+      Big red: -106866320109443984
+      Fungal biome plants for unity_0: 3032576050203707294
+      Fungal biome plants for unity_4: 4816425078767846652
+      FungalPlants_0: 1483959674
+      FungalPlants_1: 1881433599
+      FungalPlants_2: -1426228601
+      FungalPlants_3: 1165844380
+      FungalPlants_4: 1948274455
+      FungalPlants_5: 475214464
+      FungalPlants_6: -612441636
+      FungalPlants_7: -40654026
+      FungalPlants_8: 966149289
+      beige side stick: 4130429249773531041
+      beige stick: 1156442504190865579
+      big oyster: -455871963678365861
+      big pinkpurple: 2279371883038533320
+      blue bunch blob: 9138580309445863916
+      blue mini: -715328913296788755
+      blue side stick: 7766423633932538667
+      blue wall big bunch: 1959079047
+      green mini: -7087677859662243482
+      orange morrel: -4705284207192275781
+      orange sticks: 4937142156409256114
+      purple mini: -8759724871342608637
+      red mini: 4494726883159870927
+      wall oysters: 8909390599511108401
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

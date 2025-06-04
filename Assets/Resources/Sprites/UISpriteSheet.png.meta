@@ -361,7 +361,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RikUISpriteSheet_12
+      name: DiscoveryGrid
       rect:
         serializedVersion: 2
         x: 2
@@ -383,7 +383,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RikUISpriteSheet_13
+      name: TrenchProgression
       rect:
         serializedVersion: 2
         x: 119
@@ -405,7 +405,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ButtonActive
+      name: InventoryTabButtonActive
       rect:
         serializedVersion: 2
         x: 158
@@ -427,7 +427,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Button
+      name: InventoryTabButtonInactive
       rect:
         serializedVersion: 2
         x: 178
@@ -514,6 +514,50 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: OxygenBoarder
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 37
+        width: 9
+        height: 49
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6979e8ada12abda4c8cc3bb2b3387324
+      internalID: -268757789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlaceMarker
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 44
+        width: 3
+        height: 3
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86a86ab456c3ed942bc38682e3b886a3
+      internalID: 116054401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -528,8 +572,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Button: -692597868
-      ButtonActive: 726674937
+      DiscoveryGrid: 1687985993
       IconCraft: -275753912
       IconInv: -2061626415
       IconQue: 1378529093
@@ -537,9 +580,11 @@ TextureImporter:
       Inv: -1182525682
       InvHotbar: 716729945
       InvMain: 842701494
+      InventoryTabButtonActive: 726674937
+      InventoryTabButtonInactive: -692597868
+      OxygenBoarder: -268757789
+      PlaceMarker: 116054401
       Popup: 2098033918
-      RikUISpriteSheet_12: 1687985993
-      RikUISpriteSheet_13: 1096135325
       RikUISpriteSheet_16: -1480687458
       RikUISpriteSheet_2: 614448980
       RikUISpriteSheet_3: -927056917
@@ -547,6 +592,7 @@ TextureImporter:
       RikUISpriteSheet_5: -424937040
       RikUISpriteSheet_6: 2131322590
       RikUISpriteSheet_7: 911542164
+      TrenchProgression: 1096135325
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

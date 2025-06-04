@@ -172,7 +172,6 @@ public class PlayerLayerController : NetworkBehaviour {
     // Consolidated handler called by BOTH OnChange callbacks
     private void HandleClientContextChange() {
         if (WorldVisibilityManager.Instance == null) return; // Safety check
-
         if (base.IsOwner) {
             // My context changed, update the entire world view
             WorldVisibilityManager.Instance.LocalPlayerContextChanged();

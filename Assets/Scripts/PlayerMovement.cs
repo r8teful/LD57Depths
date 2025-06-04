@@ -50,6 +50,7 @@ public class PlayerMovement : NetworkBehaviour {
     [Header("Oxygen")]
     public float maxOxygen = 100f;
     public float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
+    private float lightStartIntensity;
     public float currentOxygen;
     private float maxHealth = 15; // amount in seconds the player can survive with 0 oxygen 
     private float playerHealth;
@@ -97,7 +98,7 @@ public class PlayerMovement : NetworkBehaviour {
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         rb.gravityScale = 0; // Disable default gravity
-        
+        lightStartIntensity = lightSpot.intensity;
         // oxygen and slider
         currentOxygen = maxOxygen;
         playerHealth = maxHealth;
@@ -258,7 +259,7 @@ public class PlayerMovement : NetworkBehaviour {
         Collider2D ladderCollider = Physics2D.OverlapBox((Vector2)transform.position + ladderSensorSize, ladderSensorSize, 0, ladderLayer);
         //Collider2D ladderCollider = Physics2D.OverlapCollider(ladderCollider,ladderLayer,results);
         _isOnLadder = ladderCollider != null;
-        Debug.Log("is On Ladder: " + _isOnLadder);
+        //Debug.Log("is On Ladder: " + _isOnLadder);
         if (_isOnLadder) {
             _currentLadder = ladderCollider.gameObject; 
         } else {
@@ -363,9 +364,9 @@ public class PlayerMovement : NetworkBehaviour {
     }
     private void SetLights(bool setOn) {
         if (setOn) {
-            lightSpot.gameObject.SetActive(true);
+            lightSpot.intensity = lightStartIntensity;
         } else {
-            lightSpot.gameObject.SetActive(false);
+            lightSpot.intensity = 0;
         }
     }
 

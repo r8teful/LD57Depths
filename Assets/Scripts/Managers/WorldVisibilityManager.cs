@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
+using System;
 
 
 public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
@@ -15,6 +16,9 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
     private string _currentLocalInteriorId = "";
     // State variable to know if the exterior is currently supposed to be visible
     private bool _isExteriorVisible = true;
+    
+    public static event Action<VisibilityLayerType> OnLocalPlayerVisibilityChanged;
+
     void Start() {
         if (ExteriorWorldRoot == null) {
             Debug.LogError("ExteriorWorldRoot is not assigned in WorldVisibilityManager!");
@@ -152,6 +156,9 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
 
         // Apply the new state to ALL tracked objects
         ApplyVisibilityForAllObjects(newLayer, newInteriorId);
+
+        // Used to update world lighting in worldlightingmanager
+        OnLocalPlayerVisibilityChanged?.Invoke(newLayer);
 
         // Update visibility of remote players relative to the new local context
         foreach (var remotePlayer in _remotePlayers) {
