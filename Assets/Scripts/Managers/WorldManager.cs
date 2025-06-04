@@ -13,7 +13,6 @@ public class WorldManager : NetworkBehaviour {
     public WorldGen WorldGen;
     public ChunkManager ChunkManager;
     public BiomeManager BiomeManager;
-    public BackgroundManager Backgroundmanager;
     [SerializeField] private RenderTexture worldRenderTexture;
     [SerializeField] private Transform _sub;
     [SerializeField] private Transform _worldRoot; // All world entities have this as their parent, used for hiding when entering sub or other interiors
@@ -61,7 +60,6 @@ public class WorldManager : NetworkBehaviour {
         _sub.transform.position = new Vector3(0, -WorldGen.GetDepth() * GetVisualTilemapGridSize() + offset/4);
         //InstanceFinder.ServerManager.Spawn(sub);
         //StartCoroutine(ServerChunkManagementRoutine()); // Not using atm
-        Backgroundmanager.Init(WorldGenSettings);
     }
     public override void OnStartClient() {
         base.OnStartClient();

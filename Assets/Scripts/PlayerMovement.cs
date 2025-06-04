@@ -14,6 +14,8 @@ public class PlayerMovement : NetworkBehaviour {
     private Camera MainCam;
     public Transform insideSubTransform;
     public Transform groundCheck;
+    public Collider2D playerSwimCollider;
+    public Collider2D playerWalkCollider;
     //public CanvasGroup blackout;
     public Light2D lightSpot;
     public static event Action<float,float> OnOxygenChanged;
@@ -284,11 +286,11 @@ public class PlayerMovement : NetworkBehaviour {
     }
 
     void OnStateEnter(PlayerState state, PlayerState oldState) {
+        SetHitbox(state);
         switch (state) {
             case PlayerState.Swimming:
                 rb.gravityScale = 0; // No gravity when swimming
                 SetLights(true);
-                // Potentially change physics material for water drag if needed
                 break;
             case PlayerState.Interior:
                 rb.gravityScale = 2;
@@ -304,6 +306,29 @@ public class PlayerMovement : NetworkBehaviour {
                     // Snap to ladder's X position for better feel
                     //transform.position = new Vector2(_currentLadder.transform.position.x, transform.position.y);
                 }
+                break;
+        }
+    }
+
+    private void SetHitbox(PlayerState state) {
+        switch (state) {
+            case PlayerState.None:
+                break;
+            case PlayerState.Swimming:
+                // Horizontal
+                playerSwimCollider.enabled = true;
+                playerWalkCollider.enabled = false;
+                break;
+            case PlayerState.Interior:
+                // Vertical
+                playerSwimCollider.enabled = false;
+                playerWalkCollider.enabled = true;
+                break;
+            case PlayerState.Cutscene:
+                break;
+            case PlayerState.ClimbingLadder:
+                break;
+            default:
                 break;
         }
     }

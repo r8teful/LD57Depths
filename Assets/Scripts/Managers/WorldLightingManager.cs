@@ -15,6 +15,7 @@ public struct LightProperties {
 public class WorldLightingManager : NetworkBehaviour {
     [SerializeField] private ChunkManager _chunkManager;
     [SerializeField] private WorldManager _worldManager;
+    [SerializeField] private BackgroundManager Backgroundmanager;
     [Header("Light Settings")]
     public Light2D globalLight; 
     public int minRegionSizeForLight = 10;
@@ -51,6 +52,7 @@ public class WorldLightingManager : NetworkBehaviour {
         base.OnStartClient();
         Initialize();
         StartCoroutine(ClientMovingRoutine());
+        Backgroundmanager.Init(_worldManager.WorldGenSettings);
     }
     public override void OnStopClient() {
         base.OnStopClient();
@@ -79,7 +81,9 @@ public class WorldLightingManager : NetworkBehaviour {
     private void PlayerVisibilityLayerChanged(VisibilityLayerType layer) {
         if(layer == VisibilityLayerType.Interior) {
             SetLightingInterior();
+            Backgroundmanager.SetInteriorBackground(true);
         } else {
+            Backgroundmanager.SetInteriorBackground(false);
             // change back to what the light level was before
             SetNewBiomeLightInstant(_currentClientBiome);
         }

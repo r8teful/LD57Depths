@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+// Anything that can give information to the popup on the cursor
 public interface IPopupInfo {
     PopupData GetPopupData();
     event Action PopupDataChanged;
