@@ -18,7 +18,7 @@ public class UIRecipeItem : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPo
 
     public event Action PopupDataChanged;
 
-    public PopupData GetPopupData() {
+    public PopupData GetPopupData(GameObject obj = null) {
         return popupRecipeData; // Updatestatus gets called which edits this and ensures we have the right data
     }
 

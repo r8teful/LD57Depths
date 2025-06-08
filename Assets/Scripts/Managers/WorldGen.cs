@@ -75,7 +75,7 @@ public class WorldGen : MonoBehaviour {
         this.worldmanager = worldmanager;
         this.chunkManager = chunkManager;
         _renderCamera = renderCamera;
-        _entityManager = FindFirstObjectByType<EntityManager>();
+        _entityManager = EntityManager.Instance;
         // This should be in the constructor but I think this works like so?
         InitializeNoise();
         worldSpawnEntities = _settings.worldSpawnEntities;
@@ -566,14 +566,15 @@ public class WorldGen : MonoBehaviour {
                 foreach (var entityDef in worldSpawnEntities) {
                     if (entityDef.entityPrefab == null)
                         continue;
-
+                    if (entityDef.spawnConditions == null)
+                        continue;
                     // 1. Stochastic Check
                     float placementValue = GetNoise(worldX, worldY, entityDef.placementFrequency);
                     if (placementValue < entityDef.placementThreshold)
                         continue;
 
                     // 2. Basic Filters
-                    if (worldY < entityDef.minY || worldY > entityDef.maxY)
+                    if (worldY < entityDef.spawnConditions.minY || worldY > entityDef.spawnConditions.maxY)
                         continue;
 
                     // Biome Check (ensure GetBiomeNameAt is implemented)
@@ -671,7 +672,7 @@ public class WorldGen : MonoBehaviour {
                                     } else if(!canSpawnBiome){
                                         // Non blocking, check if any hit the biome, only if we havent met the requirement yet
                                         var b = GetBiomeFromChunk(chunkData, CHUNK_TILE_DIMENSION, checkLocalX, checkLocalY);
-                                        if (b != byte.MaxValue && entityDef.requiredBiomes.Contains((BiomeType)b))
+                                        if (b != byte.MaxValue && entityDef.spawnConditions.requiredBiomes.Contains((BiomeType)b))
                                             canSpawnBiome = true;
                                     }
                                 }

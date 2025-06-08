@@ -6,10 +6,11 @@ using System;
 using FishNet.Connection;
 using System.Linq;
 
-public class SharedContainer : NetworkBehaviour, IVisibilityEntity {
+public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractable {
     [Header("Settings")]
     [SerializeField] private int containerSize = 12;
     [SerializeField] private float interactionRadius = 2.0f;
+    private CanvasInputWorld instantatiatedCanvas;
 
     // The synchronized list of items. This is the core data.
     public readonly SyncList<InventorySlot> ContainerSlots = new SyncList<InventorySlot>();
@@ -31,6 +32,12 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity {
     public VisibilityLayerType VisibilityScope => throw new NotImplementedException();
 
     public string AssociatedInteriorId => throw new NotImplementedException();
+
+    public Sprite InteractionSprite => throw new NotImplementedException();
+
+    public Vector3 PromptPosition => throw new NotImplementedException();
+
+    public Sprite InteractIcon => throw new NotImplementedException();
 
     // --- Initialization & Sync Callbacks ---
 
@@ -438,5 +445,26 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity {
         foreach (Renderer r in GetComponentsInChildren<Renderer>(true)) // Include inactive children
             if (r != null)
                 r.enabled = isVisible;
+    }
+
+    public void Interact(NetworkObject client) {
+        // Ugly but should work
+        var playerInv = client.GetComponent<NetworkedPlayerInventory>();
+        if (playerInv == null) {
+            Debug.LogError("Could not find inventory on player!");
+            return;
+        }
+        playerInv.CmdInteractWithContainer(base.NetworkObject);
+    }
+
+    public void SetInteractable(bool isInteractable, Sprite interactPrompt) {
+        if (isInteractable) {
+            instantatiatedCanvas = Instantiate(App.ResourceSystem.GetPrefab("CanvasInputWorld"), transform).GetComponent<CanvasInputWorld>();
+            instantatiatedCanvas.Init(this, interactPrompt);
+        } else {
+            if (instantatiatedCanvas != null) {
+                Destroy(instantatiatedCanvas.gameObject);
+            }
+        }
     }
 }

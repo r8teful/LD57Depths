@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f67ca37f03bb1d458515a8312aea9ed, type: 3}
+  m_Name: Ladder
+  m_EditorClassIdentifier: 
+  RecipeID: 2
+  displayName: Broken Ladder
+  description: Yes this is a description if we need it!
+  icon: {fileID: 1256492919, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
+  requiredItems:
+  - item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
+    quantity: 32
+  CraftingResult:
+    item: {fileID: 0}
+    quantity: 1

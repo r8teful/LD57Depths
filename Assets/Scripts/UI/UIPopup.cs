@@ -1,8 +1,11 @@
-﻿using TMPro;
+﻿using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+    [SerializeField] private GameObject popupBackground;
+    [SerializeField] private RectTransform rectTransform;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI descriptionText;
     public Transform ingredientsContent; // VerticalLayoutGroup
@@ -26,8 +29,32 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
             foreach (var ingredient in data.craftingInfo) {
                 Instantiate(ingredientPrefab, ingredientsContent).Init(ingredient);
             }
+            rectTransform.ForceUpdateRectTransforms();
+            //var rect = Instantiate(popupBackground, transform.parent).GetComponent<RectTransform>().sizeDelta;
+            //rect.y = rectTransform.sizeDelta.y;
+            //rectTransform.SetAsLastSibling();
+            StartCoroutine(SetBackgroundSize());
         } else {
             ingredientsContent.gameObject.SetActive(false);
+        }
+    }
+
+    // This has to be a stupid ienumerator because unity is stupid and annoying 
+    private IEnumerator SetBackgroundSize() {
+        while (true) {
+
+        var newHeight = transform.GetComponent<RectTransform>().sizeDelta.y;
+        var rect = transform.GetChild(0).GetComponent<RectTransform>();
+        // Anchored at the top, so offsetMax.y stays the same (usually 0)
+        // We set offsetMin.y to -height to make it the correct height
+        Vector2 offsetMin = rect.offsetMin;
+        offsetMin.y = -newHeight;
+        rect.offsetMin = offsetMin;
+
+        Vector2 offsetMax = rect.offsetMax;
+        offsetMax.y = 0;
+        rect.offsetMax = offsetMax;
+        yield return new WaitForEndOfFrame();
         }
     }
 }

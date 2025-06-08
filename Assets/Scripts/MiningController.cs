@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class MiningController : NetworkBehaviour {
-    private InputManager inputManager;
     private IMiningBehaviour currentToolBehavior; // Current tool's mining behavior
     private WorldManager _worldManager;
     public override void OnStartClient() {
@@ -16,8 +15,6 @@ public class MiningController : NetworkBehaviour {
         }
         Console.RegisterCommand(this, "DEBUGSetMineTool", "setMineTool","god");
         //Console.RegisterCommand(this, "mineGod", "setMineTool", "laser");
-            
-        inputManager = GetComponent<InputManager>();
         _worldManager = FindFirstObjectByType<WorldManager>();
         if (App.isEditor) {
             DEBUGSetMineTool("laser");
@@ -29,15 +26,9 @@ public class MiningController : NetworkBehaviour {
         _worldManager = FindFirstObjectByType<WorldManager>();
     }
 
-    public void OnMine(InputAction.CallbackContext context) {
-        if (context.performed) {
-            PerformMining(inputManager);
-        } else if (context.canceled) {
-            StopMining();
-        }
-    }
 
-    private void StopMining() {
+
+    public void StopMining() {
         currentToolBehavior?.MineStop(this);
     }
 
@@ -46,7 +37,7 @@ public class MiningController : NetworkBehaviour {
         currentToolBehavior = toolBehavior;
     }
 
-    private void PerformMining(InputManager input) {
+    public void PerformMining(InputManager input) {
         currentToolBehavior?.MineStart(input, this); // Delegate to tool behavior
     }
 

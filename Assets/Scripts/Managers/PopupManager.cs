@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FishNet.Object;
+using System;
 using UnityEngine;
 
 public class PopupManager : MonoBehaviour {
@@ -63,7 +64,12 @@ public class PopupManager : MonoBehaviour {
                 HidePopup();
         }
     }
-
+    
+    public void TryShowWorldPopup(IPopupInfo popupInfo, FishNet.Object.NetworkObject client) {
+        if (true) {
+            ShowPopup(popupInfo);
+        }
+    }
     private void OnSelectedGameObjectChanged(GameObject selected) {
         IPopupInfo newInfoProvider = selected?.GetComponent<IPopupInfo>();
         if (newInfoProvider != currentSelectedInfoProvider) {

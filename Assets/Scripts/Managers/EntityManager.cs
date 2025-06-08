@@ -8,6 +8,7 @@ using System.Linq;       // For InstanceFinder
 
 public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to use ServerManager etc.
 {
+    public static EntityManager Instance { get; private set; }
     [Header("References")]
     [SerializeField] private ChunkManager chunkManager;
     [SerializeField] private WorldManager worldManager;
@@ -42,6 +43,13 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             return Idlist;
         } else {
             return null;
+        }
+    }
+    private void Awake() {
+        if (Instance != null && Instance != this) {
+            Destroy(gameObject); // Handle duplicates
+        } else {
+            Instance = this;
         }
     }
     public override void OnStartServer() {
@@ -111,6 +119,8 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
 
         // 3. Iterate through potential entities
         foreach (var data in entitySpawnList) {
+            if (data.spawnConditions == null)
+                continue;
             // Basic chance check
             if (Random.value > data.spawnChance) continue;
 
@@ -120,7 +130,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
 
 
             // Y Level Check
-            if (worldY < data.minY || worldY > data.maxY) continue;
+            if (worldY < data.spawnConditions.minY || worldY > data.spawnConditions.maxY) continue;
 
             // Biome Check
             bool biomeMatch = false;
@@ -130,7 +140,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             //        break;
             //    }
             //}
-            if (!biomeMatch && data.requiredBiomes.Count > 0) continue; // Skip if biome doesn't match
+            if (!biomeMatch && data.spawnConditions.requiredBiomes.Count > 0) continue; // Skip if biome doesn't match
 
             // TODO: Add checks for Surface/Water based on querying WorldGenerator server data for cellPos and cellPos + Up
 
@@ -332,6 +342,15 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
                 }
             }
         }
+    }
+    public PersistentEntityData ServerAddNewPersistentSubEntity(ushort id, Vector3Int pos, Quaternion rot) {
+        ulong unqiueID = GetNextPersistentEntityId();
+        PersistentEntityData newEntityData = new PersistentEntityData(unqiueID, id, pos, rot,
+            new BreakEntityData(true) // Start as broken if we're adding as a new entity
+        );
+        persistentEntityDatabase.Add(unqiueID, newEntityData);
+        Debug.Log($"Added new Sub persistent entity ID:{unqiueID} at {pos}");
+        return newEntityData; // Return the created data
     }
     public PersistentEntityData ServerAddNewPersistentEntity(ushort id, Vector3Int pos, Quaternion rot) {
         ulong unqiueID = GetNextPersistentEntityId();
@@ -713,6 +732,29 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         }
     }
 
+    [Server]
+    public void NotifyNearbyPlayers(Vector3Int changedCellPosition, Vector2Int chunkCoord, int newTileID) {
+        List<ulong> candidateIds = GetEntityIDsByChunkCoord(chunkCoord);
+        if (candidateIds == null)
+            return; // No entities registered in this chunk
+        candidateIds = candidateIds.ToList();
+        float sqrNotifyRadius = 5 * 5; //default of 5 tiles now
+        Vector3 changeWorldPos = worldManager.GetCellCenterWorld(changedCellPosition);
+
+        foreach (ulong entityId in candidateIds) {
+            PersistentEntityData entityData = persistentEntityDatabase[entityId];
+            // Check if entity is ACTIVE and within notification radius
+            if (entityData != null && entityData.activeInstance != null && entityData.activeInstance.IsSpawned) {
+                if (Vector3.SqrMagnitude(entityData.activeInstance.transform.position - changeWorldPos) <= sqrNotifyRadius) {
+                    // Found a nearby active entity, notify its components
+                    NotifyEntityComponents<ITileChangeReactor>(
+                         entityData.activeInstance,
+                         (reactor) => reactor.OnTileChangedNearby(changedCellPosition, newTileID)
+                     );
+                }
+            }
+        }
+    }
     #endregion
 }
 // --- Helper Component for Entities ---

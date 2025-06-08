@@ -6,7 +6,6 @@ using FishNet.Object;
 using FishNet.Connection;
 using Sirenix.OdinInspector;
 using UnityEditor;
-using System.Linq;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
     public ushort[,] tiles; // The ground layer 
@@ -103,6 +102,7 @@ public class ChunkManager : NetworkBehaviour {
 
     public const int CHUNK_SIZE = 16; // Size of chunks (16x16 tiles) - Power of 2 often good
     public int GetChunkSize() => CHUNK_SIZE;
+    public Dictionary<Vector2Int, ChunkData> GetWorldChunks() => worldChunks; // Used by save manager
     public bool IsChunkActive(Vector2Int c) => activeChunks.Contains(c);
     // --- Chunk Data ---
     [ShowInInspector]
@@ -141,7 +141,7 @@ public class ChunkManager : NetworkBehaviour {
         } else {
             Debug.LogError("ChunkManager needs a reference to world manager!");
         }
-        _entitySpawner = FindFirstObjectByType<EntityManager>();
+        _entitySpawner = EntityManager.Instance;
         _lightManager = FindFirstObjectByType<WorldLightingManager>();
         StartCoroutine(ClientChunkLoadingRoutine());
     }

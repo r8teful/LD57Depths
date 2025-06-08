@@ -1,6 +1,8 @@
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor.Overlays;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 [System.Serializable]
@@ -17,6 +19,7 @@ public class ChunkSaveData {
 public class WorldSaveData {
     // Use string keys for JSON compatibility across different serializers more easily
     public Dictionary<string, ChunkSaveData> savedChunks;
+    public Dictionary<string, PersistentEntityData> savedInteriorEntities;
     public Vector3 playerPosition; // Save player position too
 
     public WorldSaveData() {
@@ -29,10 +32,35 @@ public class WorldDataManager {
     [SerializeField] private string saveFileName = "world.json"; // Name of the save file    
 
 
-    public void SaveWorld(Dictionary<Vector2Int, ChunkData> worldChunks, Vector3 playerPos) {
+    public void SaveWorld(Vector3 playerPos) {
         WorldSaveData saveData = new WorldSaveData();
-        var chunkSize = _chunkManager.GetChunkSize();
         // --- Save Chunks ---
+        SaveChunks(saveData);
+
+        // --- Save Entities ---
+        SaveEntities(saveData);
+        // --- Save Player Position ---
+        if (playerPos != null) {
+            saveData.playerPosition = playerPos;
+        }
+
+        // --- Serialize and Write to File ---
+        try {
+            string filePath = GetSaveFilePath();
+            string json = JsonConvert.SerializeObject(saveData, Formatting.Indented, new JsonSerializerSettings() {
+                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            }); // Use Newtonsoft
+            //string json = JsonUtility.ToJson(saveData, true); // Use Unity's (needs Dictionary workaround)
+            File.WriteAllText(filePath, json);
+            Debug.Log($"World saved to {filePath}");
+        } catch (System.Exception e) {
+            Debug.LogError($"Failed to save world: {e.Message}\n{e.StackTrace}");
+        }
+    }
+
+    private void SaveChunks(WorldSaveData saveData) {
+        var chunkSize = _chunkManager.GetChunkSize();
+        var worldChunks = _chunkManager.GetWorldChunks();
         foreach (KeyValuePair<Vector2Int, ChunkData> chunkPair in worldChunks) {
             // Only save chunks that have been generated/loaded AND potentially modified
             if (chunkPair.Value.hasBeenGenerated) // Or save all in worldChunks if memory isn't a concern
@@ -58,27 +86,22 @@ public class WorldDataManager {
                 saveData.savedChunks.Add(chunkKey, chunkSave);
             }
         }
-
-        // --- Save Player Position ---
-        if (playerPos != null) {
-            saveData.playerPosition = playerPos;
-        }
-
-
-        // --- Serialize and Write to File ---
-        try {
-            string filePath = GetSaveFilePath();
-            string json = JsonConvert.SerializeObject(saveData, Formatting.Indented, new JsonSerializerSettings() {
-                ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            }); // Use Newtonsoft
-            //string json = JsonUtility.ToJson(saveData, true); // Use Unity's (needs Dictionary workaround)
-            File.WriteAllText(filePath, json);
-            Debug.Log($"World saved to {filePath}");
-        } catch (System.Exception e) {
-            Debug.LogError($"Failed to save world: {e.Message}\n{e.StackTrace}");
-        }
     }
 
+    // Save entities to JSON
+    public string SaveEntities(WorldSaveData saveData) {
+        List<PersistentEntityData> entities = null;
+        return JsonConvert.SerializeObject(entities, Formatting.Indented, new JsonSerializerSettings {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
+    }
+
+    // Load entities from JSON
+    public List<PersistentEntityData> LoadEntities(string json) {
+        return JsonConvert.DeserializeObject<List<PersistentEntityData>>(json, new JsonSerializerSettings {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
+    }
 
     public void LoadWorld() {
         string filePath = GetSaveFilePath();

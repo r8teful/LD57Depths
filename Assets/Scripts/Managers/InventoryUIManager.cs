@@ -8,7 +8,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using System;
 
-public class InventoryUIManager : MonoBehaviour {
+public class InventoryUIManager : Singleton<InventoryUIManager> {
     [Header("UI Elements")]
     [SerializeField] private GameObject inventoryPanel; // The main inventory window panel
     [SerializeField] private GameObject hotbarPanel; 
@@ -38,7 +38,6 @@ public class InventoryUIManager : MonoBehaviour {
     private InputAction _uiNavigateAction;    // D-Pad / Arrow Keys
     private InputAction _uiPointAction;       // Mouse position for cursor icon
     private InputAction _uiCancelAction;       // Escape / Gamepad Start (to cancel holding)
-    private InputAction _playerInteractAction;       
     private InputAction _uiTabLeft; 
     private InputAction _uiTabRight; 
 
@@ -98,7 +97,6 @@ public class InventoryUIManager : MonoBehaviour {
             _uiCancelAction = _playerInput.actions["UI_Cancel"]; // For cancelling held item
             _uiTabLeft = _playerInput.actions["UI_TabLeft"]; // Opening containers
             _uiTabRight = _playerInput.actions["UI_TabRight"]; // Opening containers
-            _playerInteractAction = _playerInput.actions["Interact"]; // Opening containers
             // Subscribe to input actions (do this in OnEnable, unsubscribe in OnDisable)
         } else {
             Debug.LogWarning("PlayerInput component not found on player. Mouse-only or manual input bindings needed.", gameObject);
@@ -138,7 +136,6 @@ public class InventoryUIManager : MonoBehaviour {
         if (_uiCancelAction != null) _uiCancelAction.performed += HandleCloseAction;
         if (_uiTabLeft != null) _uiTabLeft.performed += l => ScrollTabs(-1); // Not unsubscribing but what is the worst that could happen?
         if (_uiTabRight != null) _uiTabRight.performed += l => ScrollTabs(1);
-        if (_playerInteractAction != null) _playerInteractAction.performed += HandleInteractAction;
     }
 
     private void UnsubscribeFromEvents() {
@@ -148,7 +145,6 @@ public class InventoryUIManager : MonoBehaviour {
         if (_uiCancelAction != null) _uiCancelAction.performed -= HandleCloseAction;
         if (_localInventoryManager != null) _localInventoryManager.OnSlotChanged -= UpdateSlotUI;
         if (_itemSelectionManager != null) _itemSelectionManager.OnSelectionChanged -= UpdateHotbarHighlight;
-        if (_playerInteractAction != null) _playerInteractAction.performed -= HandleInteractAction;
         if (currentViewedContainer != null) currentViewedContainer.OnContainerInventoryChanged -= RefreshUIContents;
     }
   
@@ -189,11 +185,6 @@ public class InventoryUIManager : MonoBehaviour {
                 _playerInventory.HandlePickupFromSlot(clickedOrFocusedSlot, button);
             }
         }
-    }
-    // For containers
-    private void HandleInteractAction(InputAction.CallbackContext context) {
-        Debug.Log("HAndleinteraction!!1");
-        _playerInventory.HandleInteractionInput();
     }
     public void RefreshUI() {
         if (_localInventoryManager == null || _localInventoryManager.Slots == null) {

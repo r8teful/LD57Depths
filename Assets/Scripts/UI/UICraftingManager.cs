@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class UICraftingManager : MonoBehaviour {
+public class UICraftingManager : Singleton<UICraftingManager> {
     public Transform recipeListContainer; // Parent for recipe UI elements
     public GameObject recipeUIPrefab;    // Prefab for displaying a single recipe
     

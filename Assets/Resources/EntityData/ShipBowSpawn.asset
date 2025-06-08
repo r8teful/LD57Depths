@@ -313,10 +313,11 @@ MonoBehaviour:
   entityID: 0
   entityName: Generic Entity
   entityPrefab: {fileID: 7150689297503102772, guid: a13009b9e6e384a42bab7d679c094e99, type: 3}
-  requiredBiomes: 0102
-  minY: -2000
-  maxY: 2000
-  specificSpawnTiles: []
+  spawnConditions:
+    requiredBiomes: 
+    minY: -1000
+    maxY: 2000
+    specificSpawnTiles: []
   placementFrequency: 1.4
   placementThreshold: 0.367
   allowedAttachmentTypes: 01000000

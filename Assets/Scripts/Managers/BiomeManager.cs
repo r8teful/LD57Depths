@@ -195,7 +195,7 @@ public class BiomeManager : MonoBehaviour
 
     internal void AddNewData(Vector2Int chunkCoord, ChunkData data) {
         // Create a fresh info object
-        Debug.Log("added new data to biomemanager");
+        //Debug.Log("added new data to biomemanager");
         var info = new BiomeChunkInfo();
 
         byte[,] ids = data.biomeID;

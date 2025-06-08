@@ -31,6 +31,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
     private bool hasRequestedPickup;
 
     public int InventorySize => inventorySize;
+    public InventoryManager GetInventoryManager() => inventoryManager;
     public override void OnStartClient() {
         base.OnStartClient();
         if (base.IsOwner) {
@@ -463,7 +464,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         } 
     }
     [ServerRpc(RequireOwnership = true)]
-    private void CmdInteractWithContainer(NetworkObject containerNob) {
+    public void CmdInteractWithContainer(NetworkObject containerNob) {
         if (containerNob == null) return;
         SharedContainer container = containerNob.GetComponent<SharedContainer>();
         if (container == null) return;

@@ -119,16 +119,16 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Popup
+      name: PopupBox
       rect:
         serializedVersion: 2
         x: 134
         y: 140
         width: 64
-        height: 46
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 2, y: 5, z: 5, w: 0}
       customData: 
       outline: []
       physicsShape: []
@@ -545,7 +545,7 @@ TextureImporter:
         width: 3
         height: 3
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -554,6 +554,28 @@ TextureImporter:
       bones: []
       spriteID: 86a86ab456c3ed942bc38682e3b886a3
       internalID: 116054401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PopupTop
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 173
+        width: 64
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 7, y: 3, z: 2, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c27211f0b71e434994b3df6998e98a3
+      internalID: 1523963916
       vertices: []
       indices: 
       edges: []
@@ -584,7 +606,8 @@ TextureImporter:
       InventoryTabButtonInactive: -692597868
       OxygenBoarder: -268757789
       PlaceMarker: 116054401
-      Popup: 2098033918
+      PopupBox: 2098033918
+      PopupTop: 1523963916
       RikUISpriteSheet_16: -1480687458
       RikUISpriteSheet_2: 614448980
       RikUISpriteSheet_3: -927056917

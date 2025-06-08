@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 // Anything that can give information to the popup on the cursor
 public interface IPopupInfo {
-    PopupData GetPopupData();
+    PopupData GetPopupData(GameObject obj = null);
     event Action PopupDataChanged;
 }
 
