@@ -9,16 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f67ca37f03bb1d458515a8312aea9ed, type: 3}
+  m_Script: {fileID: 11500000, guid: c4e42f4a6172dee45a98851a98e9fea3, type: 3}
   m_Name: Ladder
   m_EditorClassIdentifier: 
   RecipeID: 2
   displayName: Broken Ladder
   description: Yes this is a description if we need it!
-  icon: {fileID: 1256492919, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
+  icon: {fileID: 0}
   requiredItems:
   - item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
-    quantity: 32
-  CraftingResult:
-    item: {fileID: 0}
-    quantity: 1
+    quantity: 50

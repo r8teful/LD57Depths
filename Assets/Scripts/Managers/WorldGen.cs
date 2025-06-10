@@ -1,5 +1,6 @@
 using FishNet.Connection;
 using Sirenix.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -549,6 +550,9 @@ public class WorldGen : MonoBehaviour {
     private List<EntitySpawnInfo> SpawnEntitiesInChunk(ChunkData chunkData, Vector2Int chunkOriginCell, ChunkManager cm) {
         List<EntitySpawnInfo> entities = new List<EntitySpawnInfo>();
         HashSet<Vector2Int> occupiedAnchors = new HashSet<Vector2Int>();
+        List<WorldSpawnEntitySO> entityList = new List<WorldSpawnEntitySO>(worldSpawnEntities);
+        Shuffle(entityList);  // So it doesn't just always try to spawn the first entity first
+
         for (int y = 0; y < CHUNK_TILE_DIMENSION; y++) {
             for (int x = 0; x < CHUNK_TILE_DIMENSION; x++) {
                 ushort anchorTileID = chunkData.tiles[x, y];
@@ -563,13 +567,13 @@ public class WorldGen : MonoBehaviour {
                 int worldY = chunkOriginCell.y * CHUNK_TILE_DIMENSION + y;
 
                 // --- Iterate through Entity Definitions ---
-                foreach (var entityDef in worldSpawnEntities) {
+                foreach (var entityDef in entityList) {
                     if (entityDef.entityPrefab == null)
                         continue;
                     if (entityDef.spawnConditions == null)
                         continue;
                     // 1. Stochastic Check
-                    float placementValue = GetNoise(worldX, worldY, entityDef.placementFrequency);
+                    float placementValue = GetNoise(worldX, worldY, entityDef.placementFrequency,entityDef.ID);
                     if (placementValue < entityDef.placementThreshold)
                         continue;
 
@@ -756,10 +760,13 @@ public class WorldGen : MonoBehaviour {
         }
         return false;
     }
-    private float GetNoise(float x, float y, float frequency) {
+    private float GetNoise(float x, float y, float frequency, int seed = 0) {
         // Apply seed offsets and frequency
-        float sampleX = (x + seedOffsetX) * frequency;
-        float sampleY = (y + seedOffsetY) * frequency;
+        System.Random random = new System.Random(seed);
+        var rx = random.Next(-10000, 10000); // min inclusive, max exclusive
+        var ry = random.Next(-10000, 10000); // min inclusive, max exclusive
+        float sampleX = (x + seedOffsetX + rx) * frequency;
+        float sampleY = (y + seedOffsetY + ry) * frequency;
         // noise.snoise returns value in range [-1, 1], remap to [0, 1]
         return (noise.snoise(new float2(sampleX, sampleY)) + 1f) * 0.5f;
     }
@@ -772,5 +779,14 @@ public class WorldGen : MonoBehaviour {
         hash ^= (uint)(x * y) * 83492791;
         return (hash & 0x0FFFFFFF) / (float)0x0FFFFFFF; // Convert to [0, 1] float
     }
-
+    // Simple Fisher-Yates shuffle method
+    void Shuffle<T>(List<T> list) {
+        int n = list.Count;
+        for (int i = n - 1; i > 0; i--) {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            T temp = list[i];
+            list[i] = list[j];
+            list[j] = temp;
+        }
+    }
 }

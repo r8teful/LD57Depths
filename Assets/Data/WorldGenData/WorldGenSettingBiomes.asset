@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WorldGenSettingBiomes
   m_EditorClassIdentifier: 
   seed: 4728
-  trenchBaseWidth: 140
+  trenchBaseWidth: 174.5
   trenchWidenFactor: -0.05
   trenchEdgeNoiseFrequency: 0.03
   trenchEdgeNoiseAmplitude: 8
@@ -32,7 +32,9 @@ MonoBehaviour:
     clusterThreshold: 0.135
     requireCluster: 1
   worldSpawnEntities:
+  - {fileID: 11400000, guid: d38c04f5644b5fe4b8577fdbaeedb3c3, type: 2}
   - {fileID: 11400000, guid: d43c3f02f91b332498b32a9be1ee129e, type: 2}
+  - {fileID: 11400000, guid: c5137d53643422042a3e53d1f214cb16, type: 2}
   - {fileID: 11400000, guid: 14a577ad9c82e3349939b493e617616d, type: 2}
   - {fileID: 11400000, guid: 5306525d2d402954a8574ca58825fc96, type: 2}
   - {fileID: 11400000, guid: bf06109c54242e345b60ac88fc937303, type: 2}

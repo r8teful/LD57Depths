@@ -9,8 +9,9 @@ using UnityEditor.ShaderGraph;
 public class InputManager : NetworkBehaviour {
     private PlayerInput _playerInput;
     private InputAction _interact;
+    private ShootMode _currentShootMode = ShootMode.Mining;
     [SerializeField] private LayerMask _interactableLayerMask;
-    [SerializeField] private MiningController _miningController;
+    [SerializeField] private ToolController _toolController;
     private Vector2 movementInput;   // For character movement
     private Vector2 rawAimInput;     // Raw input for aiming (mouse position or joystick)
     private IInteractable currentInteractable;
@@ -78,6 +79,20 @@ public class InputManager : NetworkBehaviour {
         rawAimInput = context.ReadValue<Vector2>();
     }
 
+    public void OnSwitchTool(InputAction.CallbackContext context) {
+        if (!base.IsOwner)
+            return;
+        if (context.performed) {
+            // Just switch between for now
+            if (_toolController != null)
+                _toolController.StopCurrentTool();
+            if(_currentShootMode == ShootMode.Mining) {
+                _currentShootMode = ShootMode.Cleaning;
+            } else {
+                _currentShootMode = ShootMode.Mining;
+            }
+        }
+    }
     // Get movement input (e.g., WASD, joystick)
     public Vector2 GetMovementInput() {
         return movementInput;
@@ -94,11 +109,20 @@ public class InputManager : NetworkBehaviour {
             return rawAimInput.normalized;
         }
     }
-    public void OnMine(InputAction.CallbackContext context) {
+    // Could either be mining or cleaning!
+    public void OnShoot(InputAction.CallbackContext context) {
         if (context.performed) {
-            _miningController.PerformMining(this);
+            if (_currentShootMode == ShootMode.Mining) {
+                _toolController.PerformMining(this);
+            } else {
+                _toolController.PerformCleaning(this);
+            }
         } else if (context.canceled) {
-            _miningController.StopMining();
+            if (_currentShootMode == ShootMode.Mining) {
+                _toolController.StopMining();
+            } else {
+                _toolController.StopCleaning();
+            }
         }
     }
     public void OnInteract(InputAction.CallbackContext context) {
@@ -120,4 +144,9 @@ public class InputManager : NetworkBehaviour {
         // If format is not as expected, return input as fallback
         return input;
     }
+}
+
+public enum ShootMode {
+    Mining,
+    Cleaning
 }

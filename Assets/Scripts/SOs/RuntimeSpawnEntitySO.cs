@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[CreateAssetMenu(fileName = "Runtime Entity", menuName = "ScriptableObjects/Entities/RuntimeSpawnEntitySO")]
 public class RuntimeSpawnEntitySO : EntityBaseSO {
 
     [Range(0f, 1f)] public float spawnChance = 0.1f; // Base chance per spawn tick check

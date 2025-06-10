@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MiningLazer : MonoBehaviour, IMiningBehaviour {
+public class MiningLazer : MonoBehaviour, IToolBehaviour {
     [Header("Raycast Gun Settings")]
     public float innerSpotAngle = 5f;
     public float outerSpotAngle = 30f;
@@ -36,15 +36,15 @@ public class MiningLazer : MonoBehaviour, IMiningBehaviour {
 
         laser = AudioController.Instance.PlaySound2D("Laser", 0.0f, looping: true);
     }
-    public void MineStart(InputManager input, MiningController controller) {
+    public void ToolStart(InputManager input, ToolController controller) {
         if (!CanMine) return;
         if(miningRoutine != null) {
             Debug.LogWarning("Mining routine is still running even though it should have stopped!");
-            StopCoroutine(MiningRoutine(input,controller));
+            StopCoroutine(miningRoutine);
         }
         miningRoutine = StartCoroutine(MiningRoutine(input, controller));
     }
-    public void MineStop(MiningController controller) {
+    public void ToolStop() {
         if(miningRoutine != null) {
             StopCoroutine(miningRoutine);
             miningRoutine = null;
@@ -52,7 +52,7 @@ public class MiningLazer : MonoBehaviour, IMiningBehaviour {
             laser.volume = 0.0f;
         }
     }
-    private IEnumerator MiningRoutine(InputManager input, MiningController controller) {
+    private IEnumerator MiningRoutine(InputManager input, ToolController controller) {
         while (true) {
             laser.volume = 0.2f;
             var pos = input.GetAimInput();
@@ -80,7 +80,7 @@ public class MiningLazer : MonoBehaviour, IMiningBehaviour {
         }
     }
 
-    void CastRays(Vector2 pos, MiningController controller) {
+    void CastRays(Vector2 pos, ToolController controller) {
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
         Vector2 directionToMouse = (pos - objectPos2D).normalized;
         //Vector2 rayDirection = GetConeRayDirection(directionToMouse);

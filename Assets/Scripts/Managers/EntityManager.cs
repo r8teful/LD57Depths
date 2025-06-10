@@ -16,7 +16,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
     [SerializeField] private List<RuntimeSpawnEntitySO> entitySpawnList;
 
     [Header("Spawner Settings")]
-    [SerializeField] private float spawnCheckInterval = 2.0f; // How often to check for spawns
+    [SerializeField] private float spawnCheckInterval = 0.01f; // How often to check for spawns
     [SerializeField] private int spawnCheckRadius = 10; // In chunks, around each player
     [SerializeField] private int checksPerInterval = 5;  // How many random locations to check each interval
     [SerializeField] private int maxTotalEntities = 99999; // Global cap for all spawned entities managed by this spawner
@@ -62,15 +62,15 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             return;
         }
         // Only using these two for runtime spawning
-        //StartCoroutine(SpawnCheckLoop());
-        //StartCoroutine(DespawnCheckLoop());
+        StartCoroutine(SpawnCheckLoop());
+        StartCoroutine(DespawnCheckLoop());
     }
 
     #region Runtime spawning
     IEnumerator SpawnCheckLoop() {
         // Safety check: Ensure this only runs on the server.
         if (!IsServerInitialized) yield break;
-
+        yield return new WaitUntil(() => chunkManager.DidOnStart());
         while (true) {
             yield return new WaitForSeconds(spawnCheckInterval);
 
@@ -116,7 +116,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         // For simplicity now, we might have to skip specific tile checks or add that method to WG.
         // Let's focus on biome for now. We also need the world pos Y.
         int worldY = cellPos.y; // Assuming tilemap Y corresponds to world Y
-
+        Debug.Log("Trying to spawn entity at:" + cellPos);
         // 3. Iterate through potential entities
         foreach (var data in entitySpawnList) {
             if (data.spawnConditions == null)
@@ -134,12 +134,12 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
 
             // Biome Check
             bool biomeMatch = false;
-            //foreach (BiomeType requiredBiome in data.requiredBiomes) {
-            //    if (biomeInfo.GetBiomeRate(requiredBiome) >= data.minBiomeRate) {
-            //        biomeMatch = true;
-            //        break;
-            //    }
-            //}
+            foreach (BiomeType requiredBiome in data.spawnConditions.requiredBiomes) {
+                if (biomeInfo.dominantBiome == requiredBiome) {
+                    biomeMatch = true;
+                    break;
+                }
+            }
             if (!biomeMatch && data.spawnConditions.requiredBiomes.Count > 0) continue; // Skip if biome doesn't match
 
             // TODO: Add checks for Surface/Water based on querying WorldGenerator server data for cellPos and cellPos + Up
@@ -157,6 +157,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
 
         int groupSize = Random.Range(data.spawnGroupSizeMin, data.spawnGroupSizeMax + 1);
 
+        Debug.Log("Passed spawn checks, spawning enemy at:" + position);
         for (int i = 0; i < groupSize; ++i) {
             if (spawnedEntities.Count >= maxTotalEntities) break; // Check global cap
 

@@ -102,6 +102,8 @@ public class ChunkManager : NetworkBehaviour {
 
     public const int CHUNK_SIZE = 16; // Size of chunks (16x16 tiles) - Power of 2 often good
     public int GetChunkSize() => CHUNK_SIZE;
+    public bool DidOnStart() => _didOnStart;
+    private bool _didOnStart;
     public Dictionary<Vector2Int, ChunkData> GetWorldChunks() => worldChunks; // Used by save manager
     public bool IsChunkActive(Vector2Int c) => activeChunks.Contains(c);
     // --- Chunk Data ---
@@ -143,6 +145,7 @@ public class ChunkManager : NetworkBehaviour {
         }
         _entitySpawner = EntityManager.Instance;
         _lightManager = FindFirstObjectByType<WorldLightingManager>();
+        _didOnStart = true;
         StartCoroutine(ClientChunkLoadingRoutine());
     }
     IEnumerator ServerChunkManagementRoutine() {

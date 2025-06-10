@@ -12,6 +12,7 @@ public class BackgroundManager : MonoBehaviour {
         // Centre
         trenchContainer.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, 0);
         trenchContainer.transform.SetParent(Camera.main.transform);
+        _blackSprite.enabled = false;
     }
 
     public void SetInteriorBackground(bool isInterior) {

@@ -3,9 +3,8 @@ using Sirenix.Utilities;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI.Table;
 
-[CreateAssetMenu(fileName = "WorldSpawnEntitySO", menuName = "ScriptableObjects/WorldSpawnEntitySO", order = 4)]
+[CreateAssetMenu(fileName = "WorldSpawnEntitySO", menuName = "ScriptableObjects/Entities/WorldSpawnEntitySO", order = 4)]
 // An entity that is predetermined to spawn from within the world generation
 public class WorldSpawnEntitySO : EntityBaseSO {
     [Header("Placement Rules")]

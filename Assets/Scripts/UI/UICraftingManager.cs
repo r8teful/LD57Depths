@@ -9,12 +9,12 @@ public class UICraftingManager : Singleton<UICraftingManager> {
     
     public TextMeshProUGUI statusText; // For displaying craft success/failure
     private InventoryUIManager _parentManager;
-    private List<RecipeBaseSO> _availableRecipes = new List<RecipeBaseSO>();
+    private List<CraftingRecipeSO> _availableRecipes = new List<CraftingRecipeSO>();
     private InventoryManager _clientInventory; // Your existing client inventory manager
 
     public void Init(InventoryManager clientInv) {
         _clientInventory = clientInv;
-        _availableRecipes = App.ResourceSystem.GetAllRecipes();
+        _availableRecipes = App.ResourceSystem.GetAllCraftingRecipes();
 
         // Subscribe to inventory updates to refresh UI
         _clientInventory.OnSlotChanged += RefreshRecipeDisplayStatus;

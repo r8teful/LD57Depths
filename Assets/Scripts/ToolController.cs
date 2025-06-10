@@ -1,11 +1,15 @@
-﻿using FishNet.Connection;
+﻿using FishNet;
+using FishNet.Connection;
 using FishNet.Object;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
 
-public class MiningController : NetworkBehaviour {
-    private IMiningBehaviour currentToolBehavior; // Current tool's mining behavior
+// Controls what happens when the player presses the left mouse button, which usually will activate a specific tool
+public class ToolController : NetworkBehaviour {
+    private IToolBehaviour currentMiningToolBehavior;
+    private IToolBehaviour currentCleaningToolBehavior;
     private WorldManager _worldManager;
     public override void OnStartClient() {
         base.OnStartClient();
@@ -13,32 +17,41 @@ public class MiningController : NetworkBehaviour {
             base.enabled = false;
             return;
         }
-        Console.RegisterCommand(this, "DEBUGSetMineTool", "setMineTool","god");
+        Console.RegisterCommand(this, "DEBUGSetMineTool", "setMineTool", "god");
         //Console.RegisterCommand(this, "mineGod", "setMineTool", "laser");
         _worldManager = FindFirstObjectByType<WorldManager>();
-        if (App.isEditor) {
-            DEBUGSetMineTool("laser");
-        }
-        
+      
+
     }
     public override void OnStartServer() {
         base.OnStartServer();
         _worldManager = FindFirstObjectByType<WorldManager>();
+        if (App.isEditor) {
+            DEBUGSetMineTool("laser");
+            DEBUGSetDefaultCleanTool();
+        }
     }
 
 
 
     public void StopMining() {
-        currentToolBehavior?.MineStop(this);
+        currentMiningToolBehavior?.ToolStop();
+    }
+    public void StopCleaning() {
+        currentCleaningToolBehavior?.ToolStop();
     }
 
+
     // Set the current tool's behavior (called when equipping a tool)
-    public void SetToolBehavior(IMiningBehaviour toolBehavior) {
-        currentToolBehavior = toolBehavior;
+    public void SetToolBehavior(IToolBehaviour toolBehavior) {
+        currentMiningToolBehavior = toolBehavior;
     }
 
     public void PerformMining(InputManager input) {
-        currentToolBehavior?.MineStart(input, this); // Delegate to tool behavior
+        currentMiningToolBehavior?.ToolStart(input, this); // Delegate to tool behavior
+    }
+    public void PerformCleaning(InputManager input) {
+        currentCleaningToolBehavior?.ToolStart(input, this);
     }
 
     [ServerRpc(RequireOwnership = true)]
@@ -51,8 +64,13 @@ public class MiningController : NetworkBehaviour {
             _worldManager = FindFirstObjectByType<WorldManager>();
         _worldManager.RequestDamageTile(worldPos, damageAmount);
     }
-    public void SetMineTool(IMiningBehaviour tool) {
-        currentToolBehavior = tool;
+    
+    
+    public void SetMineTool(IToolBehaviour tool) {
+        currentMiningToolBehavior = tool;
+    }
+    public void SetCleanTool(IToolBehaviour tool) {
+        currentCleaningToolBehavior = tool;
     }
     private void OnEnable() {
        
@@ -69,5 +87,15 @@ public class MiningController : NetworkBehaviour {
             Debug.Log("Setting Mining tool as laser");
             SetMineTool(Instantiate(App.ResourceSystem.GetPrefab("MiningLazer"),transform).GetComponent<MiningLazer>());
         }
+    }
+    private void DEBUGSetDefaultCleanTool() {
+        var g = Instantiate(App.ResourceSystem.GetPrefab("CleaningTool"), transform);
+        base.Spawn(g, Owner);
+        SetCleanTool(g.GetComponent<CleaningTool>());
+    }
+
+    internal void StopCurrentTool() {
+        currentCleaningToolBehavior?.ToolStop();
+        currentMiningToolBehavior?.ToolStop();
     }
 }

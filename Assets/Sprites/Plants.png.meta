@@ -138,12 +138,12 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 20
+        y: 183
+        width: 45
         height: 30
       alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 2}
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
@@ -159,13 +159,13 @@ TextureImporter:
       name: Plants_1
       rect:
         serializedVersion: 2
-        x: 20
-        y: 0
-        width: 20
-        height: 30
+        x: 12
+        y: 158
+        width: 17
+        height: 20
       alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 10}
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
@@ -181,12 +181,12 @@ TextureImporter:
       name: Plants_2
       rect:
         serializedVersion: 2
-        x: 40
-        y: 0
+        x: 14
+        y: 124
         width: 20
         height: 30
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -203,13 +203,13 @@ TextureImporter:
       name: Plants_3
       rect:
         serializedVersion: 2
-        x: 60
-        y: 0
+        x: 14
+        y: 97
         width: 20
-        height: 30
+        height: 20
       alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 10}
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
@@ -225,13 +225,13 @@ TextureImporter:
       name: Plants_4
       rect:
         serializedVersion: 2
-        x: 80
-        y: 0
-        width: 21
-        height: 30
+        x: 16
+        y: 72
+        width: 16
+        height: 20
       alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 1, y: 0, z: 4, w: 10}
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
@@ -247,12 +247,12 @@ TextureImporter:
       name: Plants_5
       rect:
         serializedVersion: 2
-        x: 101
-        y: 0
-        width: 19
-        height: 30
+        x: 17
+        y: 51
+        width: 20
+        height: 14
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -269,12 +269,12 @@ TextureImporter:
       name: Plants_6
       rect:
         serializedVersion: 2
-        x: 120
-        y: 0
-        width: 20
-        height: 30
+        x: 17
+        y: 31
+        width: 16
+        height: 13
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -291,12 +291,12 @@ TextureImporter:
       name: Plants_7
       rect:
         serializedVersion: 2
-        x: 140
-        y: 0
+        x: 17
+        y: 7
         width: 20
-        height: 30
+        height: 20
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -305,28 +305,6 @@ TextureImporter:
       bones: []
       spriteID: a99ff87b78985cb50800000000000000
       internalID: 6612842843856697754
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Plants_8
-      rect:
-        serializedVersion: 2
-        x: 160
-        y: 0
-        width: 20
-        height: 30
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a0c5e3a9e027a42499df3b3927206603
-      internalID: -1533401293
       vertices: []
       indices: 
       edges: []

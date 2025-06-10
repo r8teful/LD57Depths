@@ -310,12 +310,12 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  entityID: 4
+  entityID: 203
   entityName: Plant2
   entityPrefab: {fileID: 401910264597585571, guid: c771f7c1fdcd79b458519d4ea4529bb1, type: 3}
   spawnConditions:
     requiredBiomes: 07
-    minY: -1000
+    minY: -10000
     maxY: 2000
     specificSpawnTiles: []
   placementFrequency: 0.24

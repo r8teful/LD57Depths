@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 using System;
 using Newtonsoft.Json;
 
-[CreateAssetMenu(fileName = "EntityBaseSO", menuName = "ScriptableObjects/EntityBaseSO")]
+[CreateAssetMenu(fileName = "EntityBaseSO", menuName = "ScriptableObjects/Entities/EntityBaseSO")]
 // An entity that can be spawned, either dynamically, or with the world generation 
 public class EntityBaseSO : SerializedScriptableObject, IIdentifiable {
     [TitleGroup("Identification")]

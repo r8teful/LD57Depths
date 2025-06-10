@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class DEBUGGOD : MonoBehaviour, IMiningBehaviour {
+public class DEBUGGOD : MonoBehaviour, IToolBehaviour {
     public float moveSpeed = 5f;
 
     private Vector3 currentInput;
@@ -51,11 +51,11 @@ public class DEBUGGOD : MonoBehaviour, IMiningBehaviour {
         transform.position += currentInput * moveSpeed * Time.fixedDeltaTime;
     }
 
-    public void MineStart(InputManager manager, MiningController controller) {
+    public void ToolStart(InputManager manager, ToolController controller) {
         StartCoroutine(DamageTileRoutine(manager));
     }
 
-    public void MineStop(MiningController controller) {
+    public void ToolStop() {
         _isDamaging = false;
     }
 }

@@ -134,7 +134,7 @@ public class ResourceSystem {
     }
     public Material GetMaterial(string s) => _materialDict[s];
 
-    public List<RecipeBaseSO> GetAllRecipes() {
-        return _recipeLookupByID.Values.ToList();
+    public List<CraftingRecipeSO> GetAllCraftingRecipes() {
+        return _recipeLookupByID.Values.OfType<CraftingRecipeSO>().ToList();
     }
 }
