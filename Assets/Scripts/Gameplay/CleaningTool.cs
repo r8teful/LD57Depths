@@ -1,4 +1,5 @@
-﻿using FishNet.Object;
+﻿using DG.Tweening;
+using FishNet.Object;
 using System;
 using System.Collections;
 using Unity.VisualScripting;
@@ -7,6 +8,7 @@ using UnityEngine;
 public class CleaningTool : NetworkBehaviour, IToolBehaviour {
     private bool cleaning;
     private InputManager inputManager;
+    [SerializeField] private BoxCollider2D _triggerBox;
     public ParticleSystem _particleSystem;
     public SpriteRenderer _visual;
     public LayerMask _wasteMask;
@@ -17,13 +19,15 @@ public class CleaningTool : NetworkBehaviour, IToolBehaviour {
     private void Start() {
         _particleSystem.Stop();
         _visual.enabled = false;
+        _triggerBox.enabled = false;
     }
     public void ToolStart(InputManager input, ToolController controller) {
         if (base.IsOwner) {
             inputManager = input; // Store input manager localy
             CmdStartCleaning();
             _particleSystem.Play();
-                _visual.enabled = true;
+            _visual.enabled = true;
+            _triggerBox.enabled = true;
             if (!base.IsServerInitialized) {
                 // local visuals on client
                 cleaning = true; 
@@ -68,8 +72,6 @@ public class CleaningTool : NetworkBehaviour, IToolBehaviour {
         foreach (Collider2D hit in hits) {
             Vector2 toTarget = ((Vector2)hit.transform.position - objectPos2D).normalized;
             float angleToTarget = Vector2.Angle(directionToMouse, toTarget);
-                Debug.Log("HIT SOMETHING!");
-
             if (angleToTarget <= coneAngle / 2f) {
                 Rigidbody2D rb = hit.attachedRigidbody;
                 if (rb != null) {
@@ -98,5 +100,10 @@ public class CleaningTool : NetworkBehaviour, IToolBehaviour {
             // Visuals!
             CleaningVisual(inputManager.GetAimInput());
         }
+    }
+
+    internal void OnTriggerWasteEnter(GameObject gameObject) {
+        // Visually shrink and pickup (should be networked later)
+        gameObject.transform.DOScale(0, 0.5f).OnComplete(() => Destroy(gameObject)) ;
     }
 }

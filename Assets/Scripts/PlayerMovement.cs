@@ -47,7 +47,7 @@ public class PlayerMovement : NetworkBehaviour {
 
     #endregion
     public enum PlayerState {None, Swimming, Interior, Cutscene, ClimbingLadder}
-    private PlayerState _currentState = PlayerState.Swimming;
+    private PlayerState _currentState;
     private InputManager _inputManager;
     [Header("Oxygen")]
     public float maxOxygen = 100f;
@@ -76,6 +76,7 @@ public class PlayerMovement : NetworkBehaviour {
             MainCam = Camera.main;
             MainCam.transform.SetParent(transform);
             MainCam.transform.localPosition = new Vector3(0,0,-10);
+            ChangeState(PlayerState.Swimming);
             _inputManager = GetComponent<InputManager>();
             // Enable input, camera controls ONLY for the local player
             // Example: GetComponent<PlayerInputHandler>().enabled = true;

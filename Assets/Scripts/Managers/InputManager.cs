@@ -97,7 +97,7 @@ public class InputManager : NetworkBehaviour {
     public Vector2 GetMovementInput() {
         return movementInput;
     }
-
+  
     // Get aim input, processed based on control scheme
     public Vector2 GetAimInput() {
         if (_playerInput.currentControlScheme == "Keyboard&Mouse") {
