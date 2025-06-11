@@ -1,11 +1,6 @@
 ﻿using DG.Tweening;
-using GameKit.Dependencies.Utilities;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Windows;
-using static UnityEditor.PlayerSettings;
 
 public class MiningLazer : MonoBehaviour, IToolBehaviour {
     [Header("Raycast Gun Settings")]

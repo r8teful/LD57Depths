@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 
 // Data structure to hold calculated biome info for a chunk

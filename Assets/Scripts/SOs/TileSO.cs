@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 
 [CreateAssetMenu(fileName = "TileSO", menuName = "ScriptableObjects/TileSO")]
 public class TileSO : RuleTile, IIdentifiable {

@@ -2,7 +2,6 @@
 using Unity.Jobs;
 using Unity.Burst; // Optional, for Burst compilation
 using UnityEngine;
-using System.Collections.Generic;
 
 // --- Job for Ore Generation ---
 [BurstCompile] // Optional: Apply Burst for significant speedups

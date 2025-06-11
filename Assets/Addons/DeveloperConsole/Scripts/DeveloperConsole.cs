@@ -1,5 +1,4 @@
-﻿using UnityEngine.EventSystems;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Anarkila.DeveloperConsole {
 

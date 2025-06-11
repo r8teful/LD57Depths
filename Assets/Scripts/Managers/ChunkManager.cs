@@ -11,7 +11,9 @@ public class ChunkData {
     public ushort[,] tiles; // The ground layer 
     public ushort[,] oreID;      // Second "ore" layer
     public short[,] tileDurability; // Third "dmg" layer
+#if UNITY_EDITOR
     [TableMatrix(DrawElementMethod = "DrawElement")]
+#endif
     public byte[,] biomeID;
     public bool isModified = false; // Flag to track if chunk has changed since load/generation
     public bool hasBeenGenerated = false; // Flag to prevent regenerating loaded chunks
@@ -52,7 +54,7 @@ public class ChunkData {
         }
         //entitiesToSpawn = new List<PersistentEntityData>(); // Initialize the list
     }
-
+#if UNITY_EDITOR
     static byte DrawElement(Rect rect, byte value) {
         // Draw an int field in the given rect, initializing with the current byte value
         int intVal = EditorGUI.IntField(rect, value);
@@ -61,6 +63,7 @@ public class ChunkData {
         // Cast back to byte and return as the new cell value
         return (byte)intVal;
     }
+#endif
 }
 // Used by CLIENT
 public struct ChunkPayload {

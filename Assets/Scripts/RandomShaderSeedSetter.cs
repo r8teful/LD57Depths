@@ -1,6 +1,4 @@
-﻿using GameKit.Dependencies.Utilities;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 [RequireComponent(typeof(Renderer))]
 public class RandomShaderSeedSetter : MonoBehaviour {
     // Note that this script also creates a new copy of the material

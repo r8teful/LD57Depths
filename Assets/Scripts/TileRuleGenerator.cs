@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+
+#if UNITY_EDITOR
 public class TileRulegenerator : MonoBehaviour {
     public List<Sprite> spriteList;
     public string FileName;
@@ -665,3 +667,4 @@ public class TileRulegenerator : MonoBehaviour {
     }
 
 }
+#endif

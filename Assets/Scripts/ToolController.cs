@@ -1,10 +1,5 @@
-﻿using FishNet;
-using FishNet.Connection;
-using FishNet.Object;
-using UnityEditor.PackageManager.Requests;
+﻿using FishNet.Object;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.Windows;
 
 // Controls what happens when the player presses the left mouse button, which usually will activate a specific tool
 public class ToolController : NetworkBehaviour {

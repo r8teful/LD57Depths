@@ -1,8 +1,6 @@
 ﻿using FishNet.Object;
 using UnityEngine.InputSystem;
 using UnityEngine;
-using System;
-using UnityEditor.ShaderGraph;
 
 // UI input handling is in inventoryUIManager
 // This script sits on the player client

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+#if UNITY_EDITOR
 public class DEBUGManager : MonoBehaviour {
     [Header("References")]
     public BiomeManager biomeManager;
@@ -66,3 +67,4 @@ public class DEBUGManager : MonoBehaviour {
         FindFirstObjectByType<NetworkedPlayerInventory>().DEBUGGIVE(i,j);
     }
 }
+#endif

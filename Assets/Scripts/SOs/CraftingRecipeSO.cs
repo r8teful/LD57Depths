@@ -1,5 +1,4 @@
-﻿using FishNet.Connection;
-using Sirenix.OdinInspector;
+﻿using Sirenix.OdinInspector;
 using UnityEngine;
 [CreateAssetMenu(fileName = "CraftingRecipeSO", menuName = "ScriptableObjects/CraftingRecipeSO", order = 9)]
 public class CraftingRecipeSO : RecipeBaseSO {

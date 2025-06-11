@@ -1,8 +1,6 @@
 ﻿using DG.Tweening;
 using FishNet.Object;
-using System;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class CleaningTool : NetworkBehaviour, IToolBehaviour {

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
-
-public interface IToolBehaviour {
+﻿public interface IToolBehaviour {
     /// <summary>
     /// Called once when the button is pressed
     /// </summary>

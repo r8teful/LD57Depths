@@ -4,7 +4,6 @@ using FishNet.Object.Synchronizing;
 using FishNet.Connection;
 using DG.Tweening;
 using UnityEngine.Rendering.Universal;
-using System;
 
 
 public class PlayerLayerController : NetworkBehaviour {

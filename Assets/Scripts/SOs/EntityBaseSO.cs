@@ -16,7 +16,9 @@ public class EntityBaseSO : SerializedScriptableObject, IIdentifiable {
     [VerticalGroup("Identification/Split/Right")]
     public string entityName = "Generic Entity";
     [VerticalGroup("Identification/Split/Right")]
+#if UNITY_EDITOR
     [OnValueChanged(nameof(UpdatePreview))]
+#endif
     public GameObject entityPrefab; // Must have NetworkObject!
 #if UNITY_EDITOR
     [VerticalGroup("Identification/Split/Left")]

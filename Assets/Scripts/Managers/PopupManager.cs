@@ -1,6 +1,4 @@
-﻿using FishNet.Object;
-using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PopupManager : MonoBehaviour {
     public static PopupManager Instance { get; private set; }

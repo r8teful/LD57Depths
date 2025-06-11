@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
-using UnityEngine.InputSystem;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class InputPromptIcon : MonoBehaviour {
