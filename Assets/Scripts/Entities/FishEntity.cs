@@ -29,19 +29,19 @@ public class FishEntity : NetworkBehaviour, IPlayerAwareness {
     [SerializeField] private float roamDistance = 15f;
 
     [Header("Movement Speeds")]
-    [SerializeField] private float idleSpeed = 1f;
-    [SerializeField] private float roamSpeed = 3f;
-    [SerializeField] private float fleeSpeed = 6f;
-    [SerializeField] private float turnSpeed = 2f;
-
+    [SerializeField] private float maxSpeed = 10f;
+    [Header("Trust Intervals")]
+    [SerializeField] private float thrustIntervalIdle = 0.5f; 
+    [SerializeField] private float thrustIntervalRoam = 0.25f; 
+    [SerializeField] private float thrustIntervalFlee = 0.1f; 
     [Header("Physics & Steering")]
-    [Tooltip("How quickly the fish accelerates. Higher is more responsive.")]
-    [SerializeField] private float acceleration = 5f;
+    [Tooltip("How powerfull of movements the fish can do. Higher is quier.")]
+    [SerializeField] private float fishPower = 5f;
     [Tooltip("How quickly the fish turns. Higher is more agile.")]
     [SerializeField] private float turnTorque = 200f;
-    [Tooltip("How much the fish slows down when not accelerating.")]
-    [SerializeField] private float velocityDampening = 0.5f;
 
+    private float thrustTimer = 0f;
+    private float impulseMagnitude; // Calculated impulse strength
     // --- IMPROVED: Obstacle Avoidance ---
     [Header("Environment Awareness")]
     [Tooltip("The layer mask for walls and other obstacles.")]
@@ -58,7 +58,6 @@ public class FishEntity : NetworkBehaviour, IPlayerAwareness {
     private SpriteRenderer spriteRenderer;
     private List<NetworkObject> _nearbyPlayers;
 
-    private Vector2 _avoidanceDir;
     private Vector2 _finalMoveDir;
     public override void OnStartServer() {
         base.OnStartServer();
@@ -80,7 +79,7 @@ public class FishEntity : NetworkBehaviour, IPlayerAwareness {
         PerformStateAction();
     }
     private void Start() {
-        StartCoroutine(FishWiggle());
+        //StartCoroutine(FishWiggle());
     }
 
     // --- Core AI Logic ---
@@ -135,7 +134,6 @@ public class FishEntity : NetworkBehaviour, IPlayerAwareness {
 
     private void PerformStateAction() {
         Vector2 primaryTargetDirection = CalculatePrimaryTargetDirection();
-        float targetSpeed = GetTargetSpeedForCurrentState();
 
         // 1. Get an avoidance direction if we are about to hit a wall
         Vector2 avoidanceDirection = CalculateAvoidanceDirection();
@@ -146,12 +144,12 @@ public class FishEntity : NetworkBehaviour, IPlayerAwareness {
         if (avoidanceDirection == Vector2.zero) {
             finalDirection = primaryTargetDirection;
         }
-        _finalMoveDir = finalDirection;
+        _finalMoveDir = avoidanceDirection;
         // 3. Move the fish using torque and force for smooth, physical movement
-        MoveWithPhysics(finalDirection, targetSpeed);
+        MoveWithPhysics(finalDirection, maxSpeed);
 
         // 4. Flip the sprite
-        //FlipSprite(rb.velocity); // Flip based on actual velocity now
+        FlipSprite(); 
     }
 
     // --- State-Specific Helper Methods ---
@@ -169,31 +167,20 @@ public class FishEntity : NetworkBehaviour, IPlayerAwareness {
                 return (correction + perpendicular).normalized;
 
             case FishState.Roaming:
-                if (closestClient != null) {
-                    return (closestClient.position - transform.position).normalized;
-                } else {
+                //if (closestClient != null) {
+                //    return (closestClient.position - transform.position).normalized;
+                //} else {
                     // If no clients, just wander. To prevent spinning, only change direction periodically.
-                    if (rb.linearVelocity.magnitude < 0.1f || Random.Range(0, 200) < 1) {
+                    if (rb.linearVelocity.magnitude < 0.1f && Random.Range(0, 200) < 1) {
+                    Debug.Log("random target");
                         return Random.insideUnitCircle.normalized;
                     }
                     return rb.linearVelocity.normalized; // Continue in the same direction
-                }
+               // }
         }
         return transform.up; // Default case
     }
 
-    private float GetTargetSpeedForCurrentState() {
-        switch (currentState) {
-            case FishState.Fleeing:
-                return fleeSpeed;
-            case FishState.Idle:
-                return idleSpeed;
-            case FishState.Roaming:
-                return roamSpeed;
-            default:
-                return idleSpeed;
-        }
-    }
 
     // --- IMPROVED: Movement and Avoidance ---
 
@@ -201,79 +188,93 @@ public class FishEntity : NetworkBehaviour, IPlayerAwareness {
     /// Calculates a direction to steer to avoid obstacles using three "feeler" raycasts.
     /// </summary>
     private Vector2 CalculateAvoidanceDirection() {
-        // We cast rays in the direction the fish is currently FACING (transform.up)
-        Vector2 forwardDirection = transform.up;
+        Vector2 forwardDirection = transform.right; // Fish's forward direction
+
         Vector2 avoidanceDir = Vector2.zero;
 
-        // Create feeler directions
+        // Define feeler directions
         Vector2 leftFeelerDir = Quaternion.Euler(0, 0, avoidanceFeelerAngle) * forwardDirection;
         Vector2 rightFeelerDir = Quaternion.Euler(0, 0, -avoidanceFeelerAngle) * forwardDirection;
 
-        // Cast the rays
+        // Cast rays from fish position
         RaycastHit2D hitForward = Physics2D.Raycast(transform.position, forwardDirection, avoidanceRayDistance, obstacleLayer);
         RaycastHit2D hitLeft = Physics2D.Raycast(transform.position, leftFeelerDir, avoidanceRayDistance, obstacleLayer);
         RaycastHit2D hitRight = Physics2D.Raycast(transform.position, rightFeelerDir, avoidanceRayDistance, obstacleLayer);
 
-        // If a feeler hits a wall, we want to steer away from the wall's normal
-        // By adding the normals together, we get a composite direction away from all nearby obstacles
+        // Add repulsion vector for each hit
         if (hitForward.collider != null) {
-            avoidanceDir += (Vector2)hitForward.normal;
+            Vector2 repulsion = ((Vector2)transform.position - hitForward.point).normalized / (hitForward.distance + 0.001f);
+            avoidanceDir += repulsion;
         }
         if (hitLeft.collider != null) {
-            avoidanceDir += (Vector2)hitLeft.normal;
+            Vector2 repulsion = ((Vector2)transform.position - hitLeft.point).normalized / (hitLeft.distance + 0.001f);
+            avoidanceDir += repulsion;
         }
         if (hitRight.collider != null) {
-            avoidanceDir += (Vector2)hitRight.normal;
+            Vector2 repulsion = ((Vector2)transform.position - hitRight.point).normalized / (hitRight.distance + 0.001f);
+            avoidanceDir += repulsion;
         }
-        _avoidanceDir = avoidanceDir.normalized;
-        // Return the normalized direction, or Vector2.zero if no obstacles were hit
-        return avoidanceDir.normalized;
+
+        // Return normalized direction, or zero if no avoidance needed
+        return avoidanceDir != Vector2.zero ? avoidanceDir.normalized : Vector2.zero;
     }
 
 
     /// <summary>
     /// Moves the Rigidbody using torque for rotation and force for translation. This creates smooth, natural movement.
     /// </summary>
-    private void MoveWithPhysics(Vector2 moveDirection, float targetSpeed) {
+    private void MoveWithPhysics(Vector2 moveDirection, float maxSpeed) {
         // --- ROTATION ---
-        // Calculate the angle difference between where we are facing and where we want to go
-        float angleDifference = Vector2.SignedAngle(transform.up, moveDirection);
-        // Apply torque to close this angle. The amount of torque is proportional to the angle difference.
-        float rotationAmount = angleDifference * (turnTorque / 100f) * Time.fixedDeltaTime; // Scaled torque
+        float angleDifference = Vector2.SignedAngle(transform.right, moveDirection);
+        float rotationAmount = angleDifference * (turnTorque / 100f) * Time.fixedDeltaTime;
         rb.AddTorque(rotationAmount);
+        // Dampen angular velocity to prevent overshooting
+        rb.angularVelocity *= 0.9f;
 
-        // --- FORWARD MOVEMENT ---
-        // Apply force in the direction the fish is currently facing
-        Vector2 forwardForce = (Vector2)transform.up * acceleration;
-        rb.AddForce(forwardForce * Time.fixedDeltaTime);
+        // --- THRUST ---
+        var thrustInterval = GetTrustIntervalForCurrentState();
+        float averageForce = rb.mass * fishPower;
+        impulseMagnitude = averageForce;// * thrustInterval; // Don't really want to scale it because it will just result in the same quanitity of movement
 
-        // --- SPEED & DRAG CONTROL ---
-        // Clamp the velocity to the maximum speed for the current state
-        if (rb.linearVelocity.magnitude > targetSpeed) {
-            rb.linearVelocity = rb.linearVelocity.normalized * targetSpeed;
+        thrustTimer -= Time.fixedDeltaTime;
+        if (thrustTimer <= 0f) {
+            Vector2 impulse = (Vector2)transform.right * impulseMagnitude;
+            rb.AddForce(impulse, ForceMode2D.Impulse);
+            DoFishWiggle();
+            thrustTimer += thrustInterval;
         }
 
-        // Apply a dampening force if we are not trying to accelerate (or are already fast enough)
-        // This acts like water resistance and prevents the fish from sliding forever.
-        if (forwardForce.magnitude == 0 || rb.linearVelocity.magnitude > targetSpeed) {
-            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, velocityDampening * Time.fixedDeltaTime);
+        // --- SPEED CONTROL ---
+        if (rb.linearVelocity.magnitude > maxSpeed) {
+            rb.linearVelocity = rb.linearVelocity.normalized * maxSpeed;
         }
     }
 
+    private float GetTrustIntervalForCurrentState() {
+        switch (currentState) {
+            case FishState.Idle:
+                return thrustIntervalIdle;
+            case FishState.Roaming:
+                return thrustIntervalRoam;
+            case FishState.Fleeing:
+                return thrustIntervalFlee;
+            default:
+                return thrustIntervalIdle;
+        }
+    }
 
-    /// <summary>
-    /// Flips the sprite horizontally based on movement direction (optional but looks good).
-    /// </summary>
-    private void FlipSprite(Vector2 direction) {
+    private void FlipSprite() {
         if (spriteRenderer == null)
             return;
+        float zRotation = transform.localEulerAngles.z;
 
-        // Note: This assumes your sprite faces right by default.
-        // If it moves left (x < 0), flip it. If it moves right (x > 0), unflip it.
-        if (direction.x < -0.1f) {
-            spriteRenderer.flipX = true;
-        } else if (direction.x > 0.1f) {
-            spriteRenderer.flipX = false;
+        // Normalize rotation to [0, 360)
+        zRotation = zRotation % 360;
+
+        if (zRotation > 90f && zRotation < 270f) {
+            spriteRenderer.flipY = true;
+        } else {
+            spriteRenderer.flipY = false;
         }
     }
 
@@ -292,7 +293,7 @@ public class FishEntity : NetworkBehaviour, IPlayerAwareness {
 
 
         // This is VITAL for debugging your avoidance behavior!
-        Vector2 forwardDirection = transform.up;
+        Vector2 forwardDirection = transform.right;
         Vector2 leftFeelerDir = Quaternion.Euler(0, 0, avoidanceFeelerAngle) * forwardDirection;
         Vector2 rightFeelerDir = Quaternion.Euler(0, 0, -avoidanceFeelerAngle) * forwardDirection;
 
@@ -300,7 +301,7 @@ public class FishEntity : NetworkBehaviour, IPlayerAwareness {
         Gizmos.DrawLine(transform.position, transform.position + (Vector3)forwardDirection * avoidanceRayDistance);
         Gizmos.DrawLine(transform.position, transform.position + (Vector3)leftFeelerDir * avoidanceRayDistance);
         Gizmos.DrawLine(transform.position, transform.position + (Vector3)rightFeelerDir * avoidanceRayDistance);
-        Gizmos.color = Color.green;
+        Gizmos.color = Color.magenta;
         //Gizmos.DrawLine(transform.position, transform.position + (Vector3)_avoidanceDir * avoidanceRayDistance);
         Gizmos.DrawLine(transform.position, transform.position + (Vector3)_finalMoveDir * avoidanceRayDistance);
         if (closestClient != null) {
@@ -309,16 +310,19 @@ public class FishEntity : NetworkBehaviour, IPlayerAwareness {
         }
     }
     private IEnumerator FishWiggle() {
-        Sequence moveSeq = DOTween.Sequence();
-        moveSeq.Append(transform.DOScaleX(0.8f, 0.2f));
-        moveSeq.Insert(0.05f, transform.DOScaleY(1.2f, 0.2f));
-        moveSeq.Append(transform.DOScaleX(1,0.2f).SetEase(Ease.OutBounce));
-        moveSeq.Join(transform.DOScaleY(1,0.2f).SetEase(Ease.OutBounce));
-        yield return moveSeq.WaitForCompletion();
+        yield return DoFishWiggle().WaitForCompletion();
         yield return new WaitForSeconds(2);
         StartCoroutine(FishWiggle());
     }
+    private Sequence DoFishWiggle() {
 
+        Sequence moveSeq = DOTween.Sequence();
+        moveSeq.Append(transform.DOScaleX(0.8f, 0.2f));
+        moveSeq.Insert(0.05f, transform.DOScaleY(1.2f, 0.2f));
+        moveSeq.Append(transform.DOScaleX(1, 0.2f).SetEase(Ease.OutBounce));
+        moveSeq.Join(transform.DOScaleY(1, 0.2f).SetEase(Ease.OutBounce));
+        return moveSeq;
+    }
     public void UpdateNearbyPlayers(List<NetworkObject> nearbyPlayerNobs) {
         _nearbyPlayers = nearbyPlayerNobs;
     }

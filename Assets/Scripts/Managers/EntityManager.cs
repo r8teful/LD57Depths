@@ -116,7 +116,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         // For simplicity now, we might have to skip specific tile checks or add that method to WG.
         // Let's focus on biome for now. We also need the world pos Y.
         int worldY = cellPos.y; // Assuming tilemap Y corresponds to world Y
-        Debug.Log("Trying to spawn entity at:" + cellPos);
+        //Debug.Log("Trying to spawn entity at:" + cellPos);
         // 3. Iterate through potential entities
         foreach (var data in entitySpawnList) {
             if (data.spawnConditions == null)
