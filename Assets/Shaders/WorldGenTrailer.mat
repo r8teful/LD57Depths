@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: WorldGenTrailer
+  m_Shader: {fileID: -6465566751694194690, guid: 9923efd5d09773c489c27463359946de, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BaseWiden: -0.122
+    - _BaseWidth: 69.57
+    - _BiomeAmp: 0
+    - _BiomeCutof2: 0.343
+    - _BiomeCutoff: 0.468
+    - _BiomeNoiseScale: 0.0579
+    - _CaveNoise: 0.09
+    - _CaveNoiseAmp: 2.66
+    - _CaveNoiseFreq: 0.0537
+    - _CaveThreshold: 0.247
+    - _EdgeAmp: 7.52
+    - _FungalHeight: 54.3
+    - _FungalaStart: -199.4
+    - _LumienceWarpAmp: 0
+    - _LuminesenceHeight: 68.2
+    - _LuminesenceStart: -353.7
+    - _NoiseFreq: 0.164
+    - _NoiseScale: 0.343
+    - _Parallax: 0
+    - _PixelSize: 0
+    - _Seed: 0
+    - _SilverFreq: 0.655
+    - _SilverThe: 0.19
+    - _SilverThreshold: 0.227
+    - _SurfaceNoiseAmp: 16.46
+    - _SurfaceNoiseFreq: 0.127
+    - _SurfaceNoiseScale: 0.5
+    - _Test: 0.57
+    - _WarpAmp: 9.5
+    m_Colors:
+    - _CamPos: {r: 0, g: 0, b: 0, a: 0}
+    - _Color: {r: 0.003921569, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!114 &1056823255451202380
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 9

@@ -101,7 +101,8 @@ public class PlayerMovement : NetworkBehaviour {
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         rb.gravityScale = 0; // Disable default gravity
-        lightStartIntensity = lightSpot.intensity;
+        if (lightSpot != null)
+            lightStartIntensity = lightSpot.intensity;
         // oxygen and slider
         currentOxygen = maxOxygen;
         playerHealth = maxHealth;

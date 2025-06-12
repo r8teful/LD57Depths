@@ -21,12 +21,12 @@ public class BackgroundSprite : MonoBehaviour {
             _spriteRenderer = GetComponent<SpriteRenderer>();
         _spriteRenderer.material.SetFloat("_Parallax", backgroundNumber * 0.2f); 
         _spriteRenderer.material.SetFloat("_PixelSize", 60 + (20 * backgroundNumber)); // Default 60, higher quality the further away we are to get a cool depth effect
-        _spriteRenderer.material.SetFloat("_BaseWidth", settings.trenchBaseWidth - (2*backgroundNumber)); 
-        _spriteRenderer.material.SetFloat("_BaseWiden", settings.trenchWidenFactor - (0.0001f* backgroundNumber));
-        _spriteRenderer.material.SetFloat("_NoiseFreq", settings.trenchEdgeNoiseFrequency * 10f);
-        _spriteRenderer.material.SetFloat("_EdgeAmp", settings.trenchEdgeNoiseAmplitude * 0.8f * Random.Range(0.7f,1.2f));
+        _spriteRenderer.material.SetFloat("_BaseWidth", settings.GetTrenchWidth() - (2*backgroundNumber)); 
+        _spriteRenderer.material.SetFloat("_BaseWiden", settings.GetTrenchWiden() - (0.0001f* backgroundNumber));
+        _spriteRenderer.material.SetFloat("_NoiseFreq", settings.GetTrenchEdgeFreq()* 10f);
+        _spriteRenderer.material.SetFloat("_EdgeAmp", settings.GetTrenchEdgeNoiseAmp()* 0.13333f * (backgroundNumber*0.15f + 0.7f));
         _spriteRenderer.material.SetColor("_Color", backgroundColor);
-        _spriteRenderer.material.SetFloat("_Seed", Random.Range(-1000,1000));
+        _spriteRenderer.material.SetFloat("_Seed", backgroundNumber);//Random.Range(-1000,1000));
         _spriteRenderer.sortingOrder -= backgroundNumber; 
     }
 

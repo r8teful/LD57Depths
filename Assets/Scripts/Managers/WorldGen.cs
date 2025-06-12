@@ -40,7 +40,7 @@ public class WorldGen : MonoBehaviour {
     public const int CHUNK_TILE_DIMENSION = 16; // Size of a chunk in tiles (e.g., 16x16)
 
     // These are derived from the problem statement but made const for clarity
-    public const int RENDER_TEXTURE_DIMENSION = 96; // Fixed size of the RenderTexture (e.g., 96x96)
+    public const int RENDER_TEXTURE_DIMENSION = 96*2; // Fixed size of the RenderTexture (e.g., 96x96)
     public const int CHUNKS_IN_VIEW_DIMENSION = RENDER_TEXTURE_DIMENSION / CHUNK_TILE_DIMENSION; // 96/16 = 6
 
     private bool _isProcessingChunks = false;
@@ -69,8 +69,7 @@ public class WorldGen : MonoBehaviour {
         _renderTexture = renderTexture;
         _settings = settings;
         Material worldGenMat = _settings.associatedMaterial;
-        _settings.trenchWidenFactor = worldGenMat.GetFloat("_BaseWiden");
-        _settings.trenchBaseWidth = worldGenMat.GetFloat("_BaseWidth");
+        _settings.initTrenchSettings(worldGenMat.GetFloat("_BaseWidth"), worldGenMat.GetFloat("_BaseWiden"), worldGenMat.GetFloat("_NoiseScale"), worldGenMat.GetFloat("_EdgeAmp"));
         this.worldmanager = worldmanager;
         this.chunkManager = chunkManager;
         _renderCamera = renderCamera;
@@ -78,7 +77,7 @@ public class WorldGen : MonoBehaviour {
         // This should be in the constructor but I think this works like so?
         InitializeNoise();
         worldSpawnEntities = _settings.worldSpawnEntities;
-        var maxD = -_settings.trenchBaseWidth / _settings.trenchWidenFactor;
+        var maxD = -_settings.GetTrenchWidth() / _settings.GetTrenchWiden();
         maxDepth = Mathf.Abs(maxD) * 0.90f; // 90% of the max theoretical depth
         biomeLookup.Clear();
        
