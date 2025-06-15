@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7883093916689972625
+--- !u!114 &-3730272364123503055
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,9 +20,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TrenchBackgroundPlant0
-  m_Shader: {fileID: -6465566751694194690, guid: 748262a3954fea94d9e9b6ec0fc0af9e, type: 3}
-  m_Parent: {fileID: 2100000, guid: 3cd91600b2ed83e42b3b6e957ec3f0da, type: 2}
+  m_Name: Shader Graphs_TrenchProceduralPlants
+  m_Shader: {fileID: -6465566751694194690, guid: 81a8a4f74f38f8d4e91f8e10250c81d8, type: 3}
+  m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -35,10 +35,30 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _BaseWiden: 1
+    - _BaseWidth: 0
+    - _EdgeAmp: 0
+    - _NoiseFreq: 0
+    - _Parallax: 0
+    - _PixelSize: 0
+    - _Seed: 0
     m_Colors:
+    - _CamPos: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

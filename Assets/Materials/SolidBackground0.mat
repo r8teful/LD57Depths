@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7197670301991525863
+--- !u!114 &-5462489514807831244
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TrenchProdecural
-  m_Shader: {fileID: -6465566751694194690, guid: 1afe8294d7d6044469765870d1c5a7bb, type: 3}
+  m_Name: SolidBackground0
+  m_Shader: {fileID: -6465566751694194690, guid: 748262a3954fea94d9e9b6ec0fc0af9e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -36,8 +36,20 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _PlantTest:
-        m_Texture: {fileID: 2800000, guid: 2ca324e162b0d1b49b72633846b91146, type: 3}
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -54,20 +66,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Angleoffset: 1.26
-    - _BaseWiden: -13.13
-    - _BaseWidth: 69.57
-    - _CellDebsutty: 0.21
-    - _DecorationSpawns: 0
-    - _DecorationSpawnsMax: 0.3
-    - _EdgeAmp: 11.2
-    - _NoiseFreq: 5.37
-    - _Parallax: 0
-    - _PixelSize: 60
-    - _PlantScale: 0.156
-    - _Seed: 0
+    - _EnableExternalAlpha: 0
+    - _ZWrite: 0
     m_Colors:
-    - _CamPos: {r: 0, g: -507.2213, b: -10, a: 0}
-    - _Color: {r: 0, g: 0.03529412, b: 0.14117648, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
