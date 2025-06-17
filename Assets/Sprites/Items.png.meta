@@ -100,10 +100,10 @@ TextureImporter:
       name: Diamond
       rect:
         serializedVersion: 2
-        x: 0
-        y: 24
-        width: 5
-        height: 5
+        x: 33
+        y: 1
+        width: 12
+        height: 12
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -122,10 +122,10 @@ TextureImporter:
       name: Emerald
       rect:
         serializedVersion: 2
-        x: 6
-        y: 24
-        width: 5
-        height: 5
+        x: 33
+        y: 1
+        width: 12
+        height: 12
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -144,10 +144,10 @@ TextureImporter:
       name: Gold
       rect:
         serializedVersion: 2
-        x: 12
-        y: 24
-        width: 5
-        height: 5
+        x: 29
+        y: 17
+        width: 12
+        height: 12
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -166,10 +166,10 @@ TextureImporter:
       name: Ruby
       rect:
         serializedVersion: 2
-        x: 18
-        y: 24
-        width: 5
-        height: 5
+        x: 33
+        y: 1
+        width: 12
+        height: 12
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -188,10 +188,10 @@ TextureImporter:
       name: Silver
       rect:
         serializedVersion: 2
-        x: 24
-        y: 24
-        width: 5
-        height: 5
+        x: 15
+        y: 17
+        width: 12
+        height: 12
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -210,10 +210,10 @@ TextureImporter:
       name: Stone
       rect:
         serializedVersion: 2
-        x: 0
-        y: 18
-        width: 5
-        height: 5
+        x: 1
+        y: 5
+        width: 12
+        height: 10
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -232,12 +232,12 @@ TextureImporter:
       name: StoneBrick
       rect:
         serializedVersion: 2
-        x: 6
-        y: 18
-        width: 6
-        height: 5
+        x: 33
+        y: 1
+        width: 12
+        height: 12
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -246,6 +246,28 @@ TextureImporter:
       bones: []
       spriteID: b45c3543dae3ef0449f8d9b91642372c
       internalID: 1256492919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoneDrop
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 12
+        width: 3
+        height: 3
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b2afbc5cddeddae46a4e63868142b0ee
+      internalID: -1511702172
       vertices: []
       indices: 
       edges: []
@@ -271,6 +293,7 @@ TextureImporter:
       Silver: 1049858802
       Stone: 569354257
       StoneBrick: 1256492919
+      StoneDrop: -1511702172
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

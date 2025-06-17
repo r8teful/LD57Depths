@@ -27,6 +27,7 @@ public class BackgroundSprite : MonoBehaviour {
         _spriteRenderer.material.SetFloat("_EdgeAmp", settings.GetTrenchEdgeNoiseAmp()* 0.13333f * (backgroundNumber*0.15f + 0.7f));
         _spriteRenderer.material.SetColor("_Color", backgroundColor);
         _spriteRenderer.material.SetFloat("_Seed", backgroundNumber);//Random.Range(-1000,1000));
+        _spriteRenderer.material.SetFloat("_PlantScale", 0.2f - (0.05f*backgroundNumber));//Random.Range(-1000,1000));
         _spriteRenderer.sortingOrder -= backgroundNumber; 
     }
 

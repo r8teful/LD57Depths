@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c3212ffa71f554b4e9e261c23f491883
+guid: cd50bda386e7641458c9e9a84c0f6937
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,45 +97,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Sub3_Glass
+      name: surfaceBackgroundGradientt_0
       rect:
         serializedVersion: 2
-        x: 7
-        y: 48
-        width: 29
-        height: 10
+        x: 0
+        y: 0
+        width: 640
+        height: 286
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6701a134adc2d4b47976ac47ab5d4eb9
-      internalID: -1707157411
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Sub3_1
-      rect:
-        serializedVersion: 2
-        x: 9
-        y: 8
-        width: 72
-        height: 37
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 82237f48052aeca41863aa72201ad974
-      internalID: 964890407
+      spriteID: 4cb49d1fa50ba1547a2c1e6adf72a65e
+      internalID: 2052611008
       vertices: []
       indices: 
       edges: []
@@ -144,20 +122,17 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 39855249c1126844da801da7ecddf85f
+    spriteID: 4aad5b1058c31944fa0cc679046b33a3
     internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
-    secondaryTextures:
-    - texture: {fileID: 2800000, guid: 47a2f780e0e5efb45b3f1645f627409c, type: 3}
-      name: _DamagedTex
+    secondaryTextures: []
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Sub3_1: 964890407
-      Sub3_Glass: -1707157411
+      surfaceBackgroundGradientt_0: 2052611008
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

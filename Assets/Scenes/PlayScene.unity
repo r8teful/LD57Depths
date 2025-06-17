@@ -257,7 +257,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6577536551770996436, guid: b5fbf8417053cf343a54a8bfb1069a55, type: 3}
       propertyPath: playButtonTime
-      value: 638853480484987086
+      value: 638856639082533038
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3548,7 +3548,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 8183
 --- !u!114 &1475801688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4892,6 +4892,30 @@ PrefabInstance:
       propertyPath: <SceneId>k__BackingField
       value: 2012865221
       objectReference: {fileID: 0}
+    - target: {fileID: 1026936339878363354, guid: cb1d22d29425b6c478b547779ad68824, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ad833c6b3f6c9254fab06ca0135b62ff, type: 2}
+    - target: {fileID: 4406182312518830667, guid: cb1d22d29425b6c478b547779ad68824, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4406182312518830667, guid: cb1d22d29425b6c478b547779ad68824, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4406182312518830667, guid: cb1d22d29425b6c478b547779ad68824, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4406182312518830667, guid: cb1d22d29425b6c478b547779ad68824, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4406182312518830667, guid: cb1d22d29425b6c478b547779ad68824, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ad833c6b3f6c9254fab06ca0135b62ff, type: 2}
     - target: {fileID: 4911502174890961625, guid: cb1d22d29425b6c478b547779ad68824, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.176

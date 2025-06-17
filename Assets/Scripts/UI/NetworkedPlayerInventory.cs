@@ -324,7 +324,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         bool added = inventoryManager.AddItem(itemID, quantity); // Assume AddItem returns bool for success
         if (added) {
             Debug.Log($"Client: Picked up and added item {itemID} x{quantity} to inventory.");
-            AudioController.Instance.PlaySound2D("popPickup", 0.1f);
+            AudioController.Instance.PlaySound2D("popPickup", 0.1f, pitch: new AudioParams.Pitch(AudioParams.Pitch.Variation.Small));
         } else {
             Debug.LogWarning($"Client: Could not add item {itemID} x{quantity} to inventory (full?).");
             // Optionally, tell server to re-drop if client can't take it.
@@ -590,7 +590,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
             // Initialize the WorldItem component on the server
             DroppedEntity worldItem = spawnedItem.GetComponent<DroppedEntity>();
             if (worldItem != null) {
-                worldItem.ServerInitialize(itemID, quantity);
+                worldItem.ServerInitialize(itemID, quantity,false);
                 Debug.Log($"[Server] Player {base.Owner.ClientId} dropped {quantity} of {worldItem.name}.");
                 // No need to send TargetRpc for success IF Server_RemoveItem sends update
             } else {

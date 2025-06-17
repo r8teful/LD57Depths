@@ -374,6 +374,9 @@
         },
         {
             "m_Id": "43ba06e14b73400199ce9af4d9fe5aa6"
+        },
+        {
+            "m_Id": "dd978faad88d4c2ab343b189310bcb1c"
         }
     ],
     "m_GroupDatas": [
@@ -1028,21 +1031,7 @@
             },
             "m_InputSlot": {
                 "m_Node": {
-                    "m_Id": "d310040eebfb40d99233e8dc07122104"
-                },
-                "m_SlotId": 0
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
-                    "m_Id": "7e4b5205696d4e61ac2782fa29380c6e"
-                },
-                "m_SlotId": 2
-            },
-            "m_InputSlot": {
-                "m_Node": {
-                    "m_Id": "d92c0b14dd8a4e1a8b93b783bca64e86"
+                    "m_Id": "dd978faad88d4c2ab343b189310bcb1c"
                 },
                 "m_SlotId": 0
             }
@@ -1547,6 +1536,34 @@
             "m_InputSlot": {
                 "m_Node": {
                     "m_Id": "c60ad70e11274831abfb1f3ba7536291"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "dd978faad88d4c2ab343b189310bcb1c"
+                },
+                "m_SlotId": 1
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "d310040eebfb40d99233e8dc07122104"
+                },
+                "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "dd978faad88d4c2ab343b189310bcb1c"
+                },
+                "m_SlotId": 1
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "d92c0b14dd8a4e1a8b93b783bca64e86"
                 },
                 "m_SlotId": 0
             }
@@ -4035,6 +4052,20 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.BooleanMaterialSlot",
+    "m_ObjectId": "32c808ac09474189a6a5529a27482596",
+    "m_Id": 1,
+    "m_DisplayName": "",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "",
+    "m_StageCapability": 3,
+    "m_Value": false,
+    "m_DefaultValue": false
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicValueMaterialSlot",
     "m_ObjectId": "3332511e999946e2943e20c26d223506",
     "m_Id": 1,
@@ -5341,6 +5372,20 @@
         "e32": 0.0,
         "e33": 1.0
     }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.BooleanMaterialSlot",
+    "m_ObjectId": "4ce12a7c31454b6f9bb92886603733d5",
+    "m_Id": 0,
+    "m_DisplayName": "",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "",
+    "m_StageCapability": 3,
+    "m_Value": false,
+    "m_DefaultValue": false
 }
 
 {
@@ -9048,7 +9093,7 @@
     "m_Title": "Caves World",
     "m_Position": {
         "x": 1353.5999755859375,
-        "y": 643.2000122070313
+        "y": 643.199951171875
     }
 }
 
@@ -9502,8 +9547,8 @@
     "m_ObjectId": "aa56826f03e949df9160f358db0501ce",
     "m_Title": "Trench",
     "m_Position": {
-        "x": -910.4000854492188,
-        "y": -457.5999450683594
+        "x": -910.3999633789063,
+        "y": -457.5999755859375
     }
 }
 
@@ -11129,10 +11174,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -266.3999328613281,
-            "y": 1008.0000610351563,
-            "width": 169.5999755859375,
-            "height": 141.59991455078126
+            "x": 2132.0,
+            "y": 330.3999938964844,
+            "width": 169.599853515625,
+            "height": 141.60000610351563
         }
     },
     "m_Slots": [
@@ -11494,6 +11539,42 @@
         "y": 0.0,
         "z": 0.0,
         "w": 0.0
+    }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.RedirectNodeData",
+    "m_ObjectId": "dd978faad88d4c2ab343b189310bcb1c",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Redirect Node",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": 1077.5999755859375,
+            "y": 555.199951171875,
+            "width": 55.9998779296875,
+            "height": 24.00006103515625
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "4ce12a7c31454b6f9bb92886603733d5"
+        },
+        {
+            "m_Id": "32c808ac09474189a6a5529a27482596"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
     }
 }
 

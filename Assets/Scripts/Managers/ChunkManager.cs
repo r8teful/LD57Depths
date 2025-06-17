@@ -592,7 +592,7 @@ public class ChunkManager : NetworkBehaviour {
                     var worldItem = dropInstance.GetComponent<DroppedEntity>();
                     if (worldItem != null) {
                         var id = App.ResourceSystem.GetIDByItem(dropInfo.ItemData);
-                        worldItem.ServerInitialize(id, 1); // we either drop 1, or just specify amountToDrop and don't loop
+                        worldItem.ServerInitialize(id, 1,true); // we either drop 1, or just specify amountToDrop and don't loop
                         Debug.Log($"[Server] Player {base.Owner.ClientId} dropped {1} of {worldItem.name}.");
                         // No need to send TargetRpc for success IF Server_RemoveItem sends update
                     } else {

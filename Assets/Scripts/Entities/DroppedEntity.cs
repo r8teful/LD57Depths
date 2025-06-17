@@ -7,6 +7,7 @@ public class DroppedEntity : NetworkBehaviour {
     // Make sure your ItemData ScriptableObjects exist in the build!
     private readonly SyncVar<ushort> _itemID = new SyncVar<ushort>(new SyncTypeSettings(ReadPermission.Observers)); 
     private readonly SyncVar<int> _quantity = new SyncVar<int>(new SyncTypeSettings(ReadPermission.Observers));
+    
 
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private float pickupDelay = 0.5f; // Prevent insta-pickup after drop
@@ -50,7 +51,7 @@ public class DroppedEntity : NetworkBehaviour {
 
     // Called on SERVER when spawning the item
     [Server] // Ensures this only runs on the server
-    public void ServerInitialize(ushort id, int quantity) {
+    public void ServerInitialize(ushort id, int quantity, bool fromBlock) {
         if (id == ResourceSystem.InvalidID || quantity <= 0) {
             Debug.LogError("ServerInitialize called with invalid data.", this.gameObject);
             // Despawn immediately if invalid
@@ -94,7 +95,6 @@ public class DroppedEntity : NetworkBehaviour {
         if (spriteRenderer == null) return;
 
         if (data != null && quantity > 0) {
-            spriteRenderer.sprite = data.icon;
             spriteRenderer.enabled = true;
         } else {
             spriteRenderer.enabled = false;

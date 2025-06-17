@@ -85,8 +85,10 @@ float GenerateMaskValue2(float2 uv, float baseWiden, float baseWidth, float nois
     float noisyHalfWidth = max(0.0, halfTrenchWidth + edgeNoise * edgeAmp);
     
     // TODO calculate max depth
-    
-    bool mask = abs(uv.x) < noisyHalfWidth;
+    float surfaceNoise = ((Unity_SimpleNoise_float(float2(uv.x, uv.y + 2000.0), 1.32) - 0.5) * 2.0) * 3.0;
+    if (uv.y > surfaceNoise)
+        return 0;
+    bool mask = (abs(uv.x) < noisyHalfWidth);
     //return mask2 ? 1.0 : 0.0;
     return mask ? 0.0 : 1.0;
 }
@@ -150,7 +152,7 @@ void CustomVoronoi_Edge_Procedural_float(
 {
     int2 cell = floor(UV * CellDensity);
     float2 posInCell = frac(UV * CellDensity);
-
+    const float epsilon2 = 0.002;
     // Initialize distances for our prioritized search
     float edgeDist = 8.0f;
     float2 edgeClosestOffset;
@@ -174,35 +176,48 @@ void CustomVoronoi_Edge_Procedural_float(
 
             // --- Prioritized Logic ---
 
-            // Tier 1: Check if the point is on an edge by calling our procedural function
+            // --- Step 1: Minimum calculation. Is the point inside the mask at all?
+            float centerMaskValue = GenerateMaskValue(pointWorldUV, baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+            bool isInside = centerMaskValue > 0.5;
             float2 currentEdgeDir;
-            if (IsOnEdgeProcedural(pointWorldUV, baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon,currentEdgeDir)) 
-                {
-                if (distToPoint < edgeDist)
-                {
-                    edgeDist = distToPoint;
-                    edgeClosestOffset = totalOffset;
-                    chosenEdgeDirection = currentEdgeDir;
-
-                }
-            }
             
-            // Tier 2: Check if the point is inside the mask by calling the procedural function
-            if (GenerateMaskValue(pointWorldUV, baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon) > 0.5)
+                 // --- Step 2: If it is inside, check if it's an edge and get its direction.
+            if (isInside)
             {
+                // Check neighbors
+                float top = GenerateMaskValue(pointWorldUV + float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+                float bottom = GenerateMaskValue(pointWorldUV - float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+                float right = GenerateMaskValue(pointWorldUV + float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+                float left = GenerateMaskValue(pointWorldUV - float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+
+                bool isEdge = (top < 0.5 || bottom < 0.5 || left < 0.5 || right < 0.5);
+
+                if (isEdge)
+                {
+                    // It's an edge point. Update the highest priority tier.
+                    if (distToPoint < edgeDist)
+                    {
+                        edgeDist = distToPoint;
+                        edgeClosestOffset = totalOffset;
+                        // Calculate direction and store it
+                        float gradX = right - left;
+                        float gradY = top - bottom;
+                        chosenEdgeDirection = -normalize(float2(gradX, gradY));
+                    }
+                }
+
+                // It's an inside point (could be an edge or not). Update the second priority tier.
                 if (distToPoint < insideDist)
                 {
                     insideDist = distToPoint;
                     insideClosestOffset = totalOffset;
                 }
             }
-            
-            
             // Tier 3: Always check for the absolute closest point as a failsafe
             if (distToPoint < absoluteDist)
             {
                 absoluteDist = 1;
-                absoluteClosestOffset = float2(0, 0); 
+                absoluteClosestOffset = float2(0, 0);
                 //totalOffset;
             }
         }
@@ -232,7 +247,83 @@ void CustomVoronoi_Edge_Procedural_float(
     TrenchMask = GenerateMaskValue2(UV, baseWiden, baseWidth, noiseFreq, edgeAmp);
 
 }
+void CustomVoronoi_Edge_Procedural_Fast_float(
+     // INPUTS
+    float2 UV,
+    float AngleOffset,
+    float CellDensity,
+    float baseWiden,
+    float baseWidth,
+    float noiseFreq,
+    float edgeAmp,
+    float epsilon,
+    // OUTPUTS
+    out float DistFromCenter,
+    out float TrenchMask,
+    out float2 EdgeDirection,
+    out float2 ClosestPoint)
+{
+    int2 cell = floor(UV * CellDensity);
+    float2 posInCell = frac(UV * CellDensity);
 
+    float closestDistSq = 8.0f;
+    float2 closestOffset;
+
+    // *** STEP 1: FAST, 'DUMB' VORONOI SEARCH ***
+    // This loop does no mask checks at all. It just finds the single
+    // closest random point, making it extremely fast.
+    for (int y = -1; y <= 1; ++y)
+    {
+        for (int x = -1; x <= 1; ++x)
+        {
+            int2 cellToCheck = int2(x, y);
+            float2 randomPointOffset = randomVector(cell + cellToCheck, AngleOffset);
+            float2 totalOffset = float2(cellToCheck) - posInCell + randomPointOffset;
+            float distSq = dot(totalOffset, totalOffset);
+
+            if (distSq < closestDistSq)
+            {
+                closestDistSq = distSq;
+                closestOffset = totalOffset;
+            }
+        }
+    }
+
+    // --- We now have the single closest point and its distance ---
+    DistFromCenter = closestDistSq; // This is still the squared distance
+    ClosestPoint = UV + closestOffset / CellDensity;
+    EdgeDirection = float2(0, 0); // Default to no direction
+
+    // *** STEP 2: VALIDATE THE CHOSEN POINT ***
+    // Now we do a small, fixed number of mask checks ONLY on the point we found.
+    float centerMaskValue = GenerateMaskValue(ClosestPoint, baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+    
+    // If the closest point is OUTSIDE the mask, we are done. This will create a 'hole'.
+    // We return the point anyway but it can be culled later by checking if EdgeDirection is zero.
+    if (centerMaskValue < 0.5)
+    {
+        // To signify this is an invalid point, you can set DistFromCenter to a magic number
+        // your graph can check, e.g., DistFromCenter = -1. For now, we leave it.
+        return;
+    }
+    TrenchMask = GenerateMaskValue2(UV, baseWiden, baseWidth, noiseFreq, edgeAmp);
+
+    // --- The point is inside the mask. Now check if it's an edge. ---
+    const float epsilon2 = 0.002;
+    float top = GenerateMaskValue(ClosestPoint + float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+    float bottom = GenerateMaskValue(ClosestPoint - float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+    float right = GenerateMaskValue(ClosestPoint + float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+    float left = GenerateMaskValue(ClosestPoint - float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+    
+    bool isEdge = (top < 0.5 || bottom < 0.5 || left < 0.5 || right < 0.5);
+
+    if (isEdge)
+    {
+        float gradX = right - left;
+        float gradY = top - bottom;
+        EdgeDirection = -normalize(float2(gradX, gradY));
+    }
+}
 
 // Based on code by Inigo Quilez: https://iquilezles.org/articles/voronoilines/
 void CustomVoronoi_float(float2 UV, float AngleOffset, float CellDensity, out float DistFromCenter, out float DistFromEdge, out float2 ClosestPoint)
