@@ -41,12 +41,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _DistortionAmount: 0.001
+    - _DistortionAmount: 0.0075
     - _DistortionDirx: 1
     - _DistortionDiry: 1
     - _DistortionSpeed: 0.025
     - _OffsetX: -0.02
-    - _Scale: 20
+    - _Scale: 15.1
     - _Seed: 0
     m_Colors: []
   m_BuildTextureStacks: []

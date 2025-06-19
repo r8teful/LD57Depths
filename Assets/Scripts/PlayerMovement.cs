@@ -50,7 +50,7 @@ public class PlayerMovement : NetworkBehaviour {
     private PlayerState _currentState;
     private InputManager _inputManager;
     [Header("Oxygen")]
-    public float maxOxygen = 100f;
+    public float maxOxygen = 250f;
     public float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
     private float lightStartIntensity;
     public float currentOxygen;

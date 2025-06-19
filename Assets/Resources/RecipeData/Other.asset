@@ -10,10 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9f67ca37f03bb1d458515a8312aea9ed, type: 3}
-  m_Name: TestSilver
+  m_Name: Other
   m_EditorClassIdentifier: 
-  RecipeID: 1
-  displayName: condenced silver
+  RecipeID: 99
+  displayName: Condenced stone
   description: 
-  recipeIcon: {fileID: 6125451436942524247, guid: 357a9e6ef768a90409f1b503c32c708f, type: 3}
-  requiredItems: []
+  icon: {fileID: 569354257, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
+  requiredItems:
+  - item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
+    quantity: 5
+  CraftingResult:
+    item: {fileID: 11400000, guid: 65de004af01a9b24ab9e2a1413417f65, type: 2}
+    quantity: 1

@@ -9,13 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4e42f4a6172dee45a98851a98e9fea3, type: 3}
-  m_Name: Ladder
+  m_Script: {fileID: 11500000, guid: 9f67ca37f03bb1d458515a8312aea9ed, type: 3}
+  m_Name: RecyclerRecipe
   m_EditorClassIdentifier: 
-  RecipeID: 100
-  displayName: Broken Ladder
-  description: Yes this is a description if we need it!
-  icon: {fileID: 0}
+  RecipeID: 2
+  displayName: Recycler
+  description: 
+  icon: {fileID: -498045542, guid: 5ff90e3e2b75374439d8acfde48498aa, type: 3}
   requiredItems:
   - item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
-    quantity: 50
+    quantity: 5
+  CraftingResult:
+    item: {fileID: 11400000, guid: 65de004af01a9b24ab9e2a1413417f65, type: 2}
+    quantity: 1
