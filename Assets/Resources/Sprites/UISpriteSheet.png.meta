@@ -580,6 +580,50 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: InvSelectionBoarder
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 51
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 449bedd4ca17d4946bb4074fd8395d06
+      internalID: -276321925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvSelectionBoarderBig
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 51
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e1145eae782bd8458e11ff1c7caae35
+      internalID: 27749576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -602,6 +646,8 @@ TextureImporter:
       Inv: -1182525682
       InvHotbar: 716729945
       InvMain: 842701494
+      InvSelectionBoarder: -276321925
+      InvSelectionBoarderBig: 27749576
       InventoryTabButtonActive: 726674937
       InventoryTabButtonInactive: -692597868
       OxygenBoarder: -268757789

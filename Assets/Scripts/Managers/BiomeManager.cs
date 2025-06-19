@@ -1,6 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections;
+using FishNet.Object;
+using System;
 
 // Data structure to hold calculated biome info for a chunk
 public class BiomeChunkInfo {
@@ -42,14 +45,16 @@ public class BiomeChunkInfo {
     }
 }
 
-public class BiomeManager : MonoBehaviour 
+public class BiomeManager : NetworkBehaviour 
 {
-    private WorldManager worldManager; 
-    private int chunkSize; 
-
+    private WorldManager _worldManager;
+    private ChunkManager _chunkManager;
+    private int chunkSize;
+    public event Action<BiomeType, BiomeType> OnNewClientBiome;
     // Server-side cache of calculated biome data per chunk
     private Dictionary<Vector2Int, BiomeChunkInfo> serverBiomeData = new Dictionary<Vector2Int, BiomeChunkInfo>();
-    
+    private BiomeType _currentClientBiome;
+    public BiomeType GetCurrentClientBiome() => _currentClientBiome;
     // DIRECTIONS to look for neighbours (4-way). 
     private static readonly Vector2Int[] NeighbourDirs = {
         new Vector2Int( 1,  0),
@@ -58,10 +63,47 @@ public class BiomeManager : MonoBehaviour
         new Vector2Int( 0, -1),
     };
     public void SetWorldManager(WorldManager parent) {
-        worldManager = parent;
-        chunkSize = worldManager.GetChunkSize();
+        _worldManager = parent;
+        _chunkManager = parent.ChunkManager;
+        chunkSize = _worldManager.GetChunkSize();
+    }
+    public override void OnStartClient() {
+        base.OnStartClient();
+        StartCoroutine(ClientMovingRoutine());
     }
 
+    private IEnumerator ClientMovingRoutine() {
+        var checkInterval = 0.2f;
+        Vector2Int clientCurrentChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
+        // Wait until the player object owned by this client is spawned and available
+        yield return new WaitUntil(() => PlayerMovement.LocalInstance != null);
+        Transform localPlayerTransform = PlayerMovement.LocalInstance.transform;
+        while (true) {
+            if (localPlayerTransform == null) { // Safety check if player despawns
+                yield return new WaitForSeconds(checkInterval);
+                continue;
+            }
+            // Change light depending on player biome
+            Vector2Int newClientChunkCoord = _chunkManager.WorldToChunkCoord(localPlayerTransform.position);
+            if (newClientChunkCoord != clientCurrentChunkCoord) {
+                //Debug.Log($"New client chunkcoord, it was: {clientCurrentChunkCoord} now it is: {newClientChunkCoord}");
+                clientCurrentChunkCoord = newClientChunkCoord;
+                var newBiome = _worldManager.BiomeManager.GetBiomeInfo(clientCurrentChunkCoord);
+                if (newBiome == null) {
+                    yield return new WaitForSeconds(checkInterval);
+                    continue;
+                }
+                if (_currentClientBiome != newBiome.dominantBiome) {
+                    // Only set if we are in a biome that we know of
+                    if (newBiome.dominantBiome != BiomeType.None) {
+                        OnNewClientBiome?.Invoke(_currentClientBiome, newBiome.dominantBiome);
+                        _currentClientBiome = newBiome.dominantBiome;
+                    }
+                }
+            }
+            yield return new WaitForSeconds(checkInterval);
+        }
+    }
     // Method called by WorldGenerator when a chunk is generated/loaded/modified on server
     public void CalculateBiomeForChunk(Vector2Int chunkCoord, ChunkData chunkData) {
         if (chunkData == null || chunkData.tiles == null) {

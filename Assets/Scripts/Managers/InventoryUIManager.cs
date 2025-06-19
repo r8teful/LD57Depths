@@ -11,9 +11,9 @@ using System;
 public class InventoryUIManager : Singleton<InventoryUIManager> {
     [Header("UI Elements")]
     [SerializeField] private GameObject inventoryPanel; // The main inventory window panel
-    [SerializeField] private GameObject hotbarPanel; 
-    [SerializeField] private GameObject[] inventoryTabs; 
-    [SerializeField] private GameObject[] inventoryTabButtons; 
+    [SerializeField] private GameObject hotbarPanel;
+    [SerializeField] private GameObject[] inventoryTabs;
+    [SerializeField] private GameObject[] inventoryTabButtons;
     [SerializeField] private Transform slotInvContainerTop; // Parent transform where UI slots will be instantiated
     [SerializeField] private Transform slotInvContainerRest; // Parent transform where UI slots will be instantiated
     [SerializeField] private Transform slotHotbarContainer; // Parent transform where UI slots will be instantiated
@@ -30,22 +30,10 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
     private List<InventorySlotUI> containerSlotUIs = new List<InventorySlotUI>();
     private SharedContainer currentViewedContainer = null;
 
-    private InputAction _UItoggleInventoryAction; // Assign your toggle input action asset
-    private PlayerInput _playerInput; // Get reference if Input System PlayerInput component is used
-    private InputAction _uiInteractAction;   // e.g., Left Mouse / Gamepad A
-    private InputAction _uiAltInteractAction; // e.g., Right Mouse / Gamepad X
-    private InputAction _uiDropOneAction;     // e.g., Right Mouse (when holding) / Gamepad B
-    private InputAction _uiNavigateAction;    // D-Pad / Arrow Keys
-    private InputAction _uiPointAction;       // Mouse position for cursor icon
-    private InputAction _uiCancelAction;       // Escape / Gamepad Start (to cancel holding)
-    private InputAction _uiTabLeft; 
-    private InputAction _uiTabRight; 
-
     [SerializeField] private int hotbarSize = 6; // How many slots in the first row act as hotbar
 
-    [Header("References")]
     private InventoryManager _localInventoryManager;
-    private ItemSelectionManager _itemSelectionManager;
+    public ItemSelectionManager ItemSelectionManager { get; private set; }
     // --- Runtime ---
     private GameObject _playerGameObject; // player that own this UI
     private NetworkedPlayerInventory _playerInventory; // player that own this UI
@@ -54,7 +42,7 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
     private Image draggingIconImage;
     private bool isDragging = false;
     private bool _isOpen = false;
-    private int dragSourceIndex = -1; 
+    private int dragSourceIndex = -1;
     private int currentTabIndex = 0;
     private bool dropHandled;
     private bool _droppedSameSlot;
@@ -63,17 +51,18 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
 
     // --- Properties ---
     public bool IsOpen => inventoryPanel != null && _isOpen;
+    public bool IsDraggingItem => !_playerInventory.heldItemStack.IsEmpty();
     public int HotbarSize => hotbarSize; // Expose hotbar size
     public event Action<bool> OnInventoryToggle;
     public void Init(InventoryManager localPlayerInvManager, GameObject owningPlayer) {
         _localInventoryManager = localPlayerInvManager;
-        _itemSelectionManager = GetComponent<ItemSelectionManager>();
+        ItemSelectionManager = GetComponent<ItemSelectionManager>();
         _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage
         _playerInventory = _playerGameObject.GetComponent<NetworkedPlayerInventory>();
         GetComponent<UICraftingManager>().Init(_localInventoryManager);
         //GetComponent<PopupManager>().Init(_localInventoryManager);
 
-        if (_localInventoryManager == null || _itemSelectionManager == null || _playerGameObject == null) {
+        if (_localInventoryManager == null || ItemSelectionManager == null || _playerGameObject == null) {
             Debug.LogError("InventoryUIManager received null references during Initialize! UI may not function.", gameObject);
             enabled = false;
             return;
@@ -84,33 +73,28 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
             Debug.LogError("One or more UI elements missing in InventoryUIPrefab!", gameObject);
             //enabled = false; return;
         }
-        // Attempt to find PlayerInput component on the owning player
-        _playerInput = _playerGameObject.GetComponent<PlayerInput>();
-        if (_playerInput != null) {
-            // Assuming action map "UI" and actions named like "Interact", "AltInteract"
-            _UItoggleInventoryAction = _playerInput.actions["UI_Toggle"];
-            _uiInteractAction = _playerInput.actions["UI_Interact"];
-            _uiAltInteractAction = _playerInput.actions["UI_AltInteract"];
-            _uiDropOneAction = _playerInput.actions["UI_DropOne"];
-            _uiNavigateAction = _playerInput.actions["UI_Navigate"];
-            _uiPointAction = _playerInput.actions["UI_Point"];
-            _uiCancelAction = _playerInput.actions["UI_Cancel"]; // For cancelling held item
-            _uiTabLeft = _playerInput.actions["UI_TabLeft"]; // Opening containers
-            _uiTabRight = _playerInput.actions["UI_TabRight"]; // Opening containers
-            // Subscribe to input actions (do this in OnEnable, unsubscribe in OnDisable)
-        } else {
-            Debug.LogWarning("PlayerInput component not found on player. Mouse-only or manual input bindings needed.", gameObject);
-        }
         draggingIconImage = draggingImage.GetComponent<Image>();
         if (draggingIconImage == null) { /* Error */ enabled = false; return; }
         draggingImage.gameObject.SetActive(false);
 
         containerPanel.SetActive(false);
-        
-        // Subscribe to LOCAL events from THIS player's managers
-        _localInventoryManager.OnSlotChanged += UpdateSlotUI;
-        _itemSelectionManager.OnSelectionChanged += UpdateHotbarHighlight;
 
+        SubscribeToEvents();
+
+        // Inform ItemSelectionManager about hotbar size
+        ItemSelectionManager.Initialize(hotbarSize, _playerGameObject, _localInventoryManager); // Pass player object
+        // OR itemSelectionManager.Init(manager.gameObject, manager);
+        EnableTab(0); // Set inventory tab as first tab, dissable others
+        inventoryPanel.SetActive(false); // ensure inventory is closed
+        CreateSlotUIs();
+        Debug.Log("InventoryUIManager Initialized for player: " + _playerGameObject.name);
+    }
+    private void OnDestroy() {
+        UnsubscribeToEvents();
+    }
+    private void SubscribeToEvents() {
+        _localInventoryManager.OnSlotChanged += UpdateSlotUI;
+        ItemSelectionManager.OnSelectionChanged += UpdateHotbarHighlight;
         // If player syncer is on the same player object, find it for container events
         NetworkedPlayerInventory playerSyncer = _playerGameObject.GetComponent<NetworkedPlayerInventory>();
         if (playerSyncer != null) {
@@ -118,50 +102,19 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
             NetworkedPlayerInventory.OnContainerClosed += CloseCurrentContainerUI;
         } else { Debug.LogError("PlayerInventorySyncer not found on owning player for container events!"); }
 
-        // Inform ItemSelectionManager about hotbar size
-        _itemSelectionManager.Initialize(hotbarSize, _playerGameObject,_localInventoryManager); // Pass player object
-        // OR itemSelectionManager.Init(manager.gameObject, manager);
-        EnableTab(0); // Set inventory tab as first tab, dissable others
-        inventoryPanel.SetActive(false); // ensure inventory is closed
-        SubscribeToEvents();
-        CreateSlotUIs();
-        Debug.Log("InventoryUIManager Initialized for player: " + _playerGameObject.name);
     }
-    void OnEnable() { SubscribeToEvents(); }
-    void OnDisable() { UnsubscribeFromEvents(); }
-    private void SubscribeToEvents() {
-        if (_UItoggleInventoryAction != null) _UItoggleInventoryAction.performed += ToggleInventory;
-        if (_uiInteractAction != null) _uiInteractAction.performed += HandlePrimaryInteractionPerformed;
-        if (_uiAltInteractAction != null) _uiAltInteractAction.performed += HandleSecondaryInteractionPerformed;
-        if (_uiCancelAction != null) _uiCancelAction.performed += HandleCloseAction;
-        if (_uiTabLeft != null) _uiTabLeft.performed += l => ScrollTabs(-1); // Not unsubscribing but what is the worst that could happen?
-        if (_uiTabRight != null) _uiTabRight.performed += l => ScrollTabs(1);
-    }
-
-    private void UnsubscribeFromEvents() {
-        if (_UItoggleInventoryAction != null) _UItoggleInventoryAction.performed -= ToggleInventory;
-        if (_uiInteractAction != null) _uiInteractAction.performed -= HandlePrimaryInteractionPerformed;
-        if (_uiAltInteractAction != null) _uiAltInteractAction.performed -= HandleSecondaryInteractionPerformed;
-        if (_uiCancelAction != null) _uiCancelAction.performed -= HandleCloseAction;
-        if (_localInventoryManager != null) _localInventoryManager.OnSlotChanged -= UpdateSlotUI;
-        if (_itemSelectionManager != null) _itemSelectionManager.OnSelectionChanged -= UpdateHotbarHighlight;
-        if (currentViewedContainer != null) currentViewedContainer.OnContainerInventoryChanged -= RefreshUIContents;
+    private void UnsubscribeToEvents() {
+        if (_localInventoryManager != null)
+            _localInventoryManager.OnSlotChanged -= UpdateSlotUI;
+        if (ItemSelectionManager != null)
+            ItemSelectionManager.OnSelectionChanged -= UpdateHotbarHighlight;
+        if (currentViewedContainer != null)
+            currentViewedContainer.OnContainerInventoryChanged -= RefreshUIContents;
     }
   
-    // --- Input Handlers called by PlayerInput actions ---
-    private void HandlePrimaryInteractionPerformed(InputAction.CallbackContext context) {
-        // This is Left Mouse Click / Gamepad A
-        //Debug.Log("Primary Interaction Performed");
-        ProcessInteraction(PointerEventData.InputButton.Left);
-    }
-    private void HandleSecondaryInteractionPerformed(InputAction.CallbackContext context) {
-        // This is Right Mouse Click / Gamepad X
-        Debug.Log("Secondary Interaction Performed");
-        ProcessInteraction(PointerEventData.InputButton.Right);
-    }
     // --- Central Interaction Logic ---
-    private void ProcessInteraction(PointerEventData.InputButton button) {
-        InventorySlotUI clickedOrFocusedSlot = GetSlotUnderCursorOrFocused();
+    public void ProcessInteraction(PointerEventData.InputButton button, InputAction _uiPointAction, bool isGamepad) {
+        InventorySlotUI clickedOrFocusedSlot = GetSlotUnderCursorOrFocused(_uiPointAction, isGamepad);
 
         if (!_playerInventory.heldItemStack.IsEmpty()) // Currently "holding" an item
         {
@@ -225,23 +178,15 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
                 draggingImageText.gameObject.SetActive(false);
         }
     }
-    public void HandleSlotClick(InventorySlotUI clickedSlot, PointerEventData.InputButton button) {
-        // This method is now more of a direct call if slots still have IPointerClickHandler
-        // It's better if primary/secondary interaction actions directly call ProcessInteraction.
-        // This method could be deprecated if PlayerInput actions are used exclusively.
-        // For now, let's assume it might still be called by mouse clicks.
-        Debug.Log($"Legacy HandleSlotClick on {clickedSlot.name} with button {button}");
-        ProcessInteraction(button); // Requires GetSlotUnderCursorOrFocused to resolve to clickedSlot
-    }
 
-    private InventorySlotUI GetSlotUnderCursorOrFocused() {
-        if (_playerInput != null && _playerInput.currentControlScheme == "Gamepad") {
+    private InventorySlotUI GetSlotUnderCursorOrFocused(InputAction uiPointAction, bool isGamepad) {
+        if (isGamepad) {
             // For gamepad, return the currently focused slot by navigation
             return _currentFocusedSlot;
         } else // Mouse
           {
             PointerEventData eventData = new PointerEventData(EventSystem.current);
-            eventData.position = _uiPointAction != null ? _uiPointAction.ReadValue<Vector2>() : (Vector2)Input.mousePosition;
+            eventData.position = uiPointAction != null ? uiPointAction.ReadValue<Vector2>() : (Vector2)Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(eventData, results);
             foreach (RaycastResult result in results) {
@@ -264,29 +209,7 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
         }
         slotUI.SetFocus(false);
     }
-
-    private void HandleCloseAction(InputAction.CallbackContext context) {
-        // E.g., Escape key or Gamepad B/Start (if configured to cancel)
-        _playerInventory.HandleClose(context);
-        if (IsOpen) {
-            // If inventory is open and nothing held, maybe toggle it closed
-            ToggleInventory(new InputAction.CallbackContext()); // Pass dummy context
-        }
-    }
-    private void ToggleInventory(InputAction.CallbackContext context) {
-        if (Console.IsConsoleOpen())
-            return;
-        _isOpen = !_isOpen;
-        if (_isOpen) {
-            OpenInventory();
-        } else {
-            CloseInventory(context);
-        }
-        // If closing while dragging, cancel the drag
-        if (!inventoryPanel.activeSelf && isDragging) {
-           // EndDrag(true); // Force cancel
-        }
-    }
+ 
     private void OpenInventory() {
         inventoryPanel.SetActive(true);
         hotbarPanel.SetActive(false); // 
@@ -357,7 +280,7 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
         }
     }
     // direction should be either -1 or 1 idealy
-    public void ScrollTabs(int direction) {
+    public void HandleScrollTabs(int direction) {
         if (!IsOpen)
             return; // Don't scroll if inventory is not open
         if (inventoryTabs == null || inventoryTabs.Length == 0) {
@@ -453,11 +376,11 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
 
             currentSel.navigation = nav;
         }
-        if (IsOpen && slotInventoryUIs.Count > 0 && _playerInput != null && _playerInput.currentControlScheme == "Gamepad") {
-            EventSystem.current.SetSelectedGameObject(slotInventoryUIs[0].gameObject);
-        }
+        //if (IsOpen && slotInventoryUIs.Count > 0 && _playerInput != null && _playerInput.currentControlScheme == "Gamepad") {
+        //    EventSystem.current.SetSelectedGameObject(slotInventoryUIs[0].gameObject);
+        //}
 
-        UpdateHotbarHighlight(_itemSelectionManager.SelectedSlotIndex); 
+        UpdateHotbarHighlight(ItemSelectionManager.SelectedSlotIndex); 
         Debug.Log($"Created {slotInventoryUIs.Count} UI slots.");
     }
 
@@ -469,7 +392,7 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
             if(slotIndex < hotbarSize) {
                 // Also update the hotbar
                 slotHotbarUIs[slotIndex].UpdateSlot(slotData);
-                slotInventoryUIs[slotIndex].SetSelected(slotIndex == _itemSelectionManager.SelectedSlotIndex && IsOpen);
+                slotInventoryUIs[slotIndex].SetSelected(slotIndex == ItemSelectionManager.SelectedSlotIndex);
             }
         }
     }
@@ -500,12 +423,14 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
 
     private void UpdateHotbarHighlight(int newSelectedIndex) {
         // Only show highlight if the inventory panel is open
-        bool showHighlight = IsOpen;
+        //bool showHighlight = IsOpen;
+        bool showHighlight = true;
 
         for (int i = 0; i < hotbarSize; i++) {
             if (i < slotInventoryUIs.Count && slotInventoryUIs[i] != null) // Ensure slot UI exists
             {
-                slotInventoryUIs[i].SetSelected(showHighlight && i == newSelectedIndex);
+                slotInventoryUIs[i].SetSelected(i == newSelectedIndex);
+                slotHotbarUIs[i].SetSelected(i == newSelectedIndex);
             }
         }
         Debug.Log($"Updated Hotbar Highlight. Selected: {newSelectedIndex}, Inventory Open: {showHighlight}");
@@ -546,7 +471,7 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
         // Ensure player inventory is ALSO open when container is open
         if (!inventoryPanel.activeSelf) {
             inventoryPanel.SetActive(true);
-            UpdateHotbarHighlight(_itemSelectionManager.SelectedSlotIndex); // Update highlights if opened this way
+            UpdateHotbarHighlight(ItemSelectionManager.SelectedSlotIndex); // Update highlights if opened this way
         }
     }
     private void HandleInteractionStateChanged(bool isOpenForThisPlayer, List<InventorySlot> initialSlots) {
@@ -609,4 +534,25 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
         containerSlotUIs.Clear(); // Clean up UI elements if needed, or just hide parent
     }
     public bool IsCurrentlyDragging() => isDragging;
+
+    internal void HandleToggleInventory(InputAction.CallbackContext context) {
+        _isOpen = !_isOpen;
+        if (_isOpen) {
+            OpenInventory();
+        } else {
+            CloseInventory(context);
+        }
+        // If closing while dragging, cancel the drag
+        if (!inventoryPanel.activeSelf && isDragging) {
+            // EndDrag(true); // Force cancel
+        }
+    }
+
+    internal void HandleCloseInventory(InputAction.CallbackContext context) {
+        _playerInventory.HandleClose(context);
+        if (IsOpen) {
+            // If inventory is open and nothing held, maybe toggle it closed
+            HandleToggleInventory(new InputAction.CallbackContext()); // Pass dummy context
+        }
+    }
 }

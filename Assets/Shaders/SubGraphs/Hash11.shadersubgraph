@@ -88,6 +88,7 @@
     "m_OutputNode": {
         "m_Id": "7cd81ecf6c3a4fc7af5d969b135c5117"
     },
+    "m_SubDatas": [],
     "m_ActiveTargets": []
 }
 
@@ -321,6 +322,7 @@
     "m_SourceType": 1,
     "m_FunctionName": "Hash11Tchou",
     "m_FunctionSource": "",
+    "m_FunctionSourceUsePragmas": true,
     "m_FunctionBody": "uint v = (uint) (int) round(p);\r\nv ^= 1103515245U;\r\nv += v;\r\nv *= v;                        \nv ^= v >> 5u;             \nv *= 0x27d4eb2du;     \r\nOut = v * (1.0 / float(0xffffffff));"
 }
 

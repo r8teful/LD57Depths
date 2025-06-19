@@ -60,11 +60,11 @@ float Unity_SimpleNoise_float(float2 UV, float Scale)
 // SECTION 1: YOUR CUSTOMIZABLE MASK LOGIC
 // =================================================================================
 //
-float GenerateMaskValue(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float epsilon)
+float GenerateMaskValue(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float epsilon,float seed)
 {
 
     float halfTrenchWidth = (baseWidth + abs(uv.y) * baseWiden) / 2.0;
-    float edgeNoise = (Unity_SimpleNoise_float(float2(uv.x, uv.y + 5000.0), noiseFreq) - 0.5) * 2.0;
+    float edgeNoise = (Unity_SimpleNoise_float(float2(uv.x, uv.y + seed), noiseFreq) - 0.5) * 2.0;
     float noisyHalfWidth = max(0.0, halfTrenchWidth + edgeNoise * edgeAmp);
     
     // TODO calculate max depth
@@ -77,11 +77,11 @@ float GenerateMaskValue(float2 uv, float baseWiden, float baseWidth, float noise
     //return mask2 ? 1.0 : 0.0;
     return mask ? 1.0 : 0.0;
 }
-float GenerateMaskValue2(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp)
+float GenerateMaskValue2(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float seed)
 {
 
     float halfTrenchWidth = (baseWidth + abs(uv.y) * baseWiden) / 2.0;
-    float edgeNoise = (Unity_SimpleNoise_float(float2(uv.x, uv.y + 5000.0), noiseFreq) - 0.5) * 2.0;
+    float edgeNoise = (Unity_SimpleNoise_float(float2(uv.x, uv.y + seed), noiseFreq) - 0.5) * 2.0;
     float noisyHalfWidth = max(0.0, halfTrenchWidth + edgeNoise * edgeAmp);
     
     // TODO calculate max depth
@@ -93,10 +93,10 @@ float GenerateMaskValue2(float2 uv, float baseWiden, float baseWidth, float nois
     return mask ? 0.0 : 1.0;
 }
 // Procedural edge detection. It calls GenerateMaskValue() for the point and its neighbors.
-bool IsOnEdgeProcedural(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float epsilon2, out float2 edgeDirection)
+bool IsOnEdgeProcedural(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float epsilon2,float seed, out float2 edgeDirection)
 {
     // The point itself must be inside the mask.
-    if (GenerateMaskValue(uv, baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2) < 0.5)
+    if (GenerateMaskValue(uv, baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2, seed) < 0.5)
     {
         return false;
     }
@@ -106,10 +106,10 @@ bool IsOnEdgeProcedural(float2 uv, float baseWiden, float baseWidth, float noise
     const float epsilon = 0.002;
 
     // Check the four neighbors by re-running the mask logic at offset positions.
-    float top = GenerateMaskValue(uv + float2(0, epsilon), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2);
-    float bottom = GenerateMaskValue(uv - float2(0, epsilon), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2);
-    float right = GenerateMaskValue(uv + float2(epsilon, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2);
-    float left = GenerateMaskValue(uv - float2(epsilon, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2);
+    float top = GenerateMaskValue(uv + float2(0, epsilon), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2, seed);
+    float bottom = GenerateMaskValue(uv - float2(0, epsilon), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2, seed);
+    float right = GenerateMaskValue(uv + float2(epsilon, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2, seed);
+    float left = GenerateMaskValue(uv - float2(epsilon, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2, seed);
 
     // An edge exists if any neighbor is outside the mask.
     bool isEdge = (top < 0.5 || bottom < 0.5 || left < 0.5 || right < 0.5);
@@ -144,6 +144,7 @@ void CustomVoronoi_Edge_Procedural_float(
     float noiseFreq,
     float edgeAmp,
     float epsilon,
+    float seed,
     // OUTPUTS
     out float DistFromCenter,
     out float TrenchMask,
@@ -177,7 +178,7 @@ void CustomVoronoi_Edge_Procedural_float(
             // --- Prioritized Logic ---
 
             // --- Step 1: Minimum calculation. Is the point inside the mask at all?
-            float centerMaskValue = GenerateMaskValue(pointWorldUV, baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+            float centerMaskValue = GenerateMaskValue(pointWorldUV, baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon,seed);
             bool isInside = centerMaskValue > 0.5;
             float2 currentEdgeDir;
             
@@ -185,10 +186,10 @@ void CustomVoronoi_Edge_Procedural_float(
             if (isInside)
             {
                 // Check neighbors
-                float top = GenerateMaskValue(pointWorldUV + float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
-                float bottom = GenerateMaskValue(pointWorldUV - float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
-                float right = GenerateMaskValue(pointWorldUV + float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
-                float left = GenerateMaskValue(pointWorldUV - float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+                float top = GenerateMaskValue(pointWorldUV + float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
+                float bottom = GenerateMaskValue(pointWorldUV - float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
+                float right = GenerateMaskValue(pointWorldUV + float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
+                float left = GenerateMaskValue(pointWorldUV - float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
 
                 bool isEdge = (top < 0.5 || bottom < 0.5 || left < 0.5 || right < 0.5);
 
@@ -244,7 +245,7 @@ void CustomVoronoi_Edge_Procedural_float(
         ClosestPoint = float2(0, 0);
         EdgeDirection = float2(0, 0);
     }
-    TrenchMask = GenerateMaskValue2(UV, baseWiden, baseWidth, noiseFreq, edgeAmp);
+    TrenchMask = GenerateMaskValue2(UV, baseWiden, baseWidth, noiseFreq, edgeAmp, seed);
 
 }
 void CustomVoronoi_Edge_Procedural_Fast_float(
@@ -257,6 +258,7 @@ void CustomVoronoi_Edge_Procedural_Fast_float(
     float noiseFreq,
     float edgeAmp,
     float epsilon,
+    float seed,
     // OUTPUTS
     out float DistFromCenter,
     out float TrenchMask,
@@ -296,7 +298,7 @@ void CustomVoronoi_Edge_Procedural_Fast_float(
 
     // *** STEP 2: VALIDATE THE CHOSEN POINT ***
     // Now we do a small, fixed number of mask checks ONLY on the point we found.
-    float centerMaskValue = GenerateMaskValue(ClosestPoint, baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+    float centerMaskValue = GenerateMaskValue(ClosestPoint, baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
     
     // If the closest point is OUTSIDE the mask, we are done. This will create a 'hole'.
     // We return the point anyway but it can be culled later by checking if EdgeDirection is zero.
@@ -306,14 +308,14 @@ void CustomVoronoi_Edge_Procedural_Fast_float(
         // your graph can check, e.g., DistFromCenter = -1. For now, we leave it.
         return;
     }
-    TrenchMask = GenerateMaskValue2(UV, baseWiden, baseWidth, noiseFreq, edgeAmp);
+    TrenchMask = GenerateMaskValue2(UV, baseWiden, baseWidth, noiseFreq, edgeAmp, seed);
 
     // --- The point is inside the mask. Now check if it's an edge. ---
     const float epsilon2 = 0.002;
-    float top = GenerateMaskValue(ClosestPoint + float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
-    float bottom = GenerateMaskValue(ClosestPoint - float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
-    float right = GenerateMaskValue(ClosestPoint + float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
-    float left = GenerateMaskValue(ClosestPoint - float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon);
+    float top = GenerateMaskValue(ClosestPoint + float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
+    float bottom = GenerateMaskValue(ClosestPoint - float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
+    float right = GenerateMaskValue(ClosestPoint + float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
+    float left = GenerateMaskValue(ClosestPoint - float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
     
     bool isEdge = (top < 0.5 || bottom < 0.5 || left < 0.5 || right < 0.5);
 

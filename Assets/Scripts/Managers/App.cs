@@ -26,7 +26,7 @@ public static class App {
         AudioController = app.GetComponentInChildren<AudioController>();
         //SaveManager = app.GetComponentInChildren<SaveManager>();
         Backdrop = app.GetComponentInChildren<BackdropManager>();
-
+        Cursor.SetCursor(Resources.Load<Texture2D>("cursorMenu"), new Vector2(3, 3), CursorMode.Auto);
         Application.quitting += Shutdown;
 #if UNITY_EDITOR
         isEditor = true;

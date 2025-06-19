@@ -38,6 +38,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
             InitializeInventory();
             _uiManager = Instantiate(inventoryUIPrefab);
             _uiManager.Init(inventoryManager, gameObject);
+            GetComponent<InputManager>().SetUIManager(_uiManager);
         } else {
             base.enabled = false;
         }

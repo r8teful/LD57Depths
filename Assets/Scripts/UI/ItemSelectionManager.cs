@@ -8,10 +8,6 @@ public class ItemSelectionManager : MonoBehaviour {
     private InventoryManager inventoryManager;
     private GameObject playerObject; // The object that uses the items (needed for ItemData.Use)
 
-    [Header("Input Action")]
-    [SerializeField] private InputActionReference useItemAction; // Action to trigger item usage
-    [SerializeField] private InputActionReference hotbarSelection; // Action to trigger hotbar selection 
-
     // --- Runtime Data ---
     private int hotbarSize;
     private int currentSelectedIndex = 0; // Start with the first slot selected
@@ -43,13 +39,7 @@ public class ItemSelectionManager : MonoBehaviour {
         Debug.Log($"ItemSelectionManager Initialized for player: {owningPlayerObject.name} with Hotbar Size: {hotbarSize}");
     }
     void Start() {
-        if (useItemAction != null) {
-            useItemAction.action.performed += HandleUseInput;
-            useItemAction.action.Enable();
-        } else {
-            Debug.LogError("Use Item Action is not assigned!", gameObject);
-        }
-        hotbarSelection.action.performed += OnHotbarSelection;
+      
         // Initialization called by HotbarUIManager AFTER it determines the size
     }
 
@@ -64,16 +54,6 @@ public class ItemSelectionManager : MonoBehaviour {
         }
     }
 
-    void OnDestroy() {
-        if (useItemAction != null) {
-            useItemAction.action.performed -= HandleUseInput;
-        }
-    }
-
-    private void OnHotbarSelection(InputAction.CallbackContext context) {
-        int slotIndex = (int)context.ReadValue<float>() - 1;
-        SetSelectedSlot(slotIndex);
-    }
     /// <summary>
     /// Sets the currently selected hotbar slot index.
     /// </summary>
@@ -109,7 +89,7 @@ public class ItemSelectionManager : MonoBehaviour {
         int prevIndex = (currentSelectedIndex - 1 + hotbarSize) % hotbarSize; // Modulo handles wrap-around correctly
         SetSelectedSlot(prevIndex);
     }
-    private void HandleUseInput(InputAction.CallbackContext context) {
+    public void HandleUseInput(InputAction.CallbackContext context) {
         if (!isInitialized || playerObject == null) {
             Debug.LogWarning("Cannot use item: Manager not initialized or player object missing.");
             return;
@@ -117,20 +97,11 @@ public class ItemSelectionManager : MonoBehaviour {
 
         Debug.Log($"Use Input Received. Selected Slot: {currentSelectedIndex}");
 
-        InventorySlot selectedSlot = inventoryManager.GetSlot(currentSelectedIndex);
-
-        if (selectedSlot == null || selectedSlot.IsEmpty()) {
-            Debug.Log("Selected slot is empty.");
+        if (!CanUseSelectedSlotItem()) {
             return;
         }
-
-        ItemData itemToUse = selectedSlot.ItemData;
-
-        if (itemToUse == null || !itemToUse.isUsable) {
-            Debug.Log($"{itemToUse?.itemName ?? "Item"} is not usable.");
-            return;
-        }
-
+        // We can call this because it passed the checks
+        var itemToUse = inventoryManager.GetSlot(currentSelectedIndex).ItemData;
         // --- !!! MULTIPLAYER NOTE !!! ---
         // THIS is where you would send a ServerRpc to the server asking to use the item.
         // The server would validate, perform the action, update inventory, and sync back.
@@ -165,5 +136,28 @@ public class ItemSelectionManager : MonoBehaviour {
             Debug.Log($"{itemToUse.itemName} use failed.");
             // Use failed (e.g., couldn't apply effect, conditions not met in derived Use method)
         }
+    }
+    public bool CanUseSelectedSlotItem() {
+        InventorySlot selectedSlot = inventoryManager.GetSlot(currentSelectedIndex);
+
+        if (selectedSlot == null || selectedSlot.IsEmpty()) {
+            return false;
+        }
+
+        ItemData itemToUse = selectedSlot.ItemData;
+
+        if (itemToUse == null) {
+            Debug.LogWarning($"ItemData Null!");
+            return false;
+        }
+        if (!itemToUse.isUsable) {
+            //Debug.Log($"{itemToUse.itemName ?? "Item"} is not usable.");
+            return false;
+        }
+        return true;
+    }
+    public void HandleHotbarSelection(InputAction.CallbackContext context) {
+        int slotIndex = (int)context.ReadValue<float>() - 1;
+        SetSelectedSlot(slotIndex);
     }
 }

@@ -257,7 +257,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6577536551770996436, guid: b5fbf8417053cf343a54a8bfb1069a55, type: 3}
       propertyPath: playButtonTime
-      value: 638856639082533038
+      value: 638859386290302298
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -275,7 +275,7 @@ GameObject:
   - component: {fileID: 114097703}
   - component: {fileID: 114097704}
   m_Layer: 0
-  m_Name: ParallaxObjects1
+  m_Name: ParallaxObjects2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -561,6 +561,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7391594a9031b74da8685241c773b3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 187924541}
+  _networkObjectCache: {fileID: 0}
 --- !u!114 &187924545
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -909,7 +912,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backgroundNumber: 0
-  backgroundColor: {r: 0, g: 0.03529412, b: 0.14117648, a: 1}
+  BackgroundColor: {r: 0, g: 0.03529412, b: 0.13725491, a: 1}
   _spriteRenderer: {fileID: 377801333}
 --- !u!212 &377801333
 SpriteRenderer:
@@ -1113,8 +1116,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86f08b9b0e75b1a418332da8edd4c150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trenchContainer: {fileID: 183584960}
+  trenchBackgroundContainer: {fileID: 183584960}
+  parallaxObjectsContainer: {fileID: 1278595213}
   _blackSprite: {fileID: 711844750}
+  spawnRadius: 10
+  despawnRadius: 15
+  spawnInterval: 0.1
+  despawnInterval: 1
 --- !u!4 &453340123
 Transform:
   m_ObjectHideFlags: 0
@@ -1176,7 +1184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backgroundNumber: 1
-  backgroundColor: {r: 0.015686275, g: 0.105882354, b: 0.21960784, a: 1}
+  BackgroundColor: {r: 0.007843138, g: 0.101960786, b: 0.21176471, a: 1}
   _spriteRenderer: {fileID: 464688938}
 --- !u!212 &464688938
 SpriteRenderer:
@@ -2356,8 +2364,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 974839758}
+  - component: {fileID: 974839759}
   m_Layer: 0
-  m_Name: ParallaxObjects2
+  m_Name: ParallaxObjects1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2378,6 +2387,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1278595214}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &974839759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974839757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 737f4bf2b794569479acbd3205cd5190, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shaderParallaxFactor: 0.2
+  startOffset: {x: 0, y: 0}
+  infinateWrap: 0
+  yMovement: 0
 --- !u!1001 &988413042
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2831,7 +2856,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backgroundNumber: 3
-  backgroundColor: {r: 0.05490196, g: 0.27450982, b: 0.39607844, a: 1}
+  BackgroundColor: {r: 0.05490196, g: 0.27058825, b: 0.4, a: 1}
   _spriteRenderer: {fileID: 1086128978}
 --- !u!212 &1086128978
 SpriteRenderer:
@@ -3255,10 +3280,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1688205259}
-  - {fileID: 114097703}
-  - {fileID: 974839758}
   - {fileID: 2097048684}
+  - {fileID: 974839758}
+  - {fileID: 114097703}
+  - {fileID: 1688205259}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1321545955
@@ -4218,7 +4243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backgroundNumber: 2
-  backgroundColor: {r: 0.03529412, g: 0.21176471, b: 0.34901962, a: 1}
+  BackgroundColor: {r: 0.03529412, g: 0.20784314, b: 0.34901962, a: 1}
   _spriteRenderer: {fileID: 1604972183}
 --- !u!212 &1604972183
 SpriteRenderer:
@@ -4284,10 +4309,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1688205259}
-  - component: {fileID: 1688205261}
   - component: {fileID: 1688205260}
   m_Layer: 0
-  m_Name: ParallaxObjects0
+  m_Name: ParallaxObjects3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4324,61 +4348,6 @@ MonoBehaviour:
   startOffset: {x: 0, y: 0}
   infinateWrap: 0
   yMovement: 0
---- !u!212 &1688205261
-SpriteRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1688205258}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
 --- !u!1 &1696825753
 GameObject:
   m_ObjectHideFlags: 0
@@ -5825,8 +5794,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2097048684}
+  - component: {fileID: 2097048685}
   m_Layer: 0
-  m_Name: ParallaxObjects3
+  m_Name: ParallaxObjects0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5847,6 +5817,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1278595214}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2097048685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097048683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 737f4bf2b794569479acbd3205cd5190, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shaderParallaxFactor: 0
+  startOffset: {x: 0, y: 0}
+  infinateWrap: 0
+  yMovement: 0
 --- !u!1 &436056579818387395
 GameObject:
   m_ObjectHideFlags: 0

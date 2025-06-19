@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.Rendering.Universal; 
+using UnityEngine.Rendering.Universal;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
 using FishNet.Object;
@@ -51,12 +51,12 @@ public class WorldLightingManager : NetworkBehaviour {
     public override void OnStartClient() {
         base.OnStartClient();
         Initialize();
-        StartCoroutine(ClientMovingRoutine());
-        Backgroundmanager.Init(_worldManager.WorldGenSettings);
+        Backgroundmanager.Init(_worldManager.WorldGenSettings,_worldManager.BiomeManager);
     }
     public override void OnStopClient() {
         base.OnStopClient();
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
+        _worldManager.BiomeManager.OnNewClientBiome -= SetNewBiomeLight;
     }
     void Initialize() {
         // Biome stuff
@@ -72,7 +72,7 @@ public class WorldLightingManager : NetworkBehaviour {
 
         // Subscribe to change lighting when entering interiors
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
-
+        _worldManager.BiomeManager.OnNewClientBiome += SetNewBiomeLight;
         // Setup starting light
         _currentClientBiome = BiomeType.Trench; // Or biome we left off at
         SetNewBiomeLightInstant(_currentClientBiome);
@@ -90,40 +90,6 @@ public class WorldLightingManager : NetworkBehaviour {
     }
 
    
-
-    private IEnumerator ClientMovingRoutine() {
-        var checkInterval = 0.2f;
-        Vector2Int clientCurrentChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
-        // Wait until the player object owned by this client is spawned and available
-        yield return new WaitUntil(() => base.Owner != null && PlayerMovement.LocalInstance != null);
-        Transform localPlayerTransform = PlayerMovement.LocalInstance.transform; 
-        while (true) {
-            if (localPlayerTransform == null) { // Safety check if player despawns
-                yield return new WaitForSeconds(checkInterval);
-                continue;
-            }
-            // Change light depending on player biome
-            Vector2Int newClientChunkCoord = _chunkManager.WorldToChunkCoord(localPlayerTransform.position);
-            if (newClientChunkCoord != clientCurrentChunkCoord) {
-                //Debug.Log($"New client chunkcoord, it was: {clientCurrentChunkCoord} now it is: {newClientChunkCoord}");
-                clientCurrentChunkCoord = newClientChunkCoord;
-                var newBiome = _worldManager.BiomeManager.GetBiomeInfo(clientCurrentChunkCoord);
-                if(newBiome == null) {
-                    yield return new WaitForSeconds(checkInterval);
-                    continue;
-                }
-                if(_currentClientBiome != newBiome.dominantBiome) {
-                    // Only set if we are in a biome that we know of
-                    if(newBiome.dominantBiome != BiomeType.None) {
-                        SetNewBiomeLight(_currentClientBiome, newBiome.dominantBiome);
-                        _currentClientBiome = newBiome.dominantBiome;
-                    }
-                }
-            }
-            yield return new WaitForSeconds(checkInterval);
-        }
-    }
-
     private void SetNewBiomeLight(BiomeType biomeOld, BiomeType biomeNew) {
         Debug.Log("Player entered new biome! " + biomeNew);
         // Ensure new biome exists

@@ -78,7 +78,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "HotbarSellect",
+                    "name": "HotbarSelect",
                     "type": "Value",
                     "id": "e8b0fe31-1c6a-488a-a6b0-a8b74e74d605",
                     "expectedControlType": "Axis",
@@ -447,7 +447,7 @@
                     "interactions": "",
                     "processors": "Scale",
                     "groups": ";Keyboard&Mouse",
-                    "action": "HotbarSellect",
+                    "action": "HotbarSelect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -458,7 +458,7 @@
                     "interactions": "",
                     "processors": "Scale(factor=2)",
                     "groups": ";Keyboard&Mouse",
-                    "action": "HotbarSellect",
+                    "action": "HotbarSelect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -469,7 +469,7 @@
                     "interactions": "",
                     "processors": "Scale(factor=3)",
                     "groups": ";Keyboard&Mouse",
-                    "action": "HotbarSellect",
+                    "action": "HotbarSelect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -480,7 +480,7 @@
                     "interactions": "",
                     "processors": "Scale(factor=4)",
                     "groups": ";Keyboard&Mouse",
-                    "action": "HotbarSellect",
+                    "action": "HotbarSelect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

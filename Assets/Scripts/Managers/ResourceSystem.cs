@@ -9,6 +9,7 @@ public class ResourceSystem {
     public List<GameObject> Prefabs { get; private set; }
     public List<Sprite> Sprites { get; private set; }
     public List<Material> Materials { get; private set; }
+    public List<BackgroundObjectSO> BackgroundObjects { get; private set; }
 
     private Dictionary<string, GameObject> _prefabDict;
     private Dictionary<string, Sprite> _spriteDict; 
@@ -38,6 +39,8 @@ public class ResourceSystem {
         
         Materials = Resources.LoadAll<Material>("Materials").ToList(); 
         _materialDict = Materials.ToDictionary(r => r.name, r => r);
+
+        BackgroundObjects = Resources.LoadAll<BackgroundObjectSO>("BackgroundObjectData").ToList();
 
         InitializeLookup("ItemData", out _itemLookupByID, out _idLookupByItem);
         InitializeLookup("TileData", out _tileLookupByID, out _idLookupByTile);
