@@ -107,6 +107,7 @@ public class InputManager : NetworkBehaviour {
         _hotbarSelection.performed -= OnHotbarSelection;
     }
     private void Update() {
+        if (_inventoryUIManager == null) return;
         UpdateInteractionContext();
         UpdateCursor();
         //UpdatePlayerFeedback(); // Optional but recommended: change cursor, etc.

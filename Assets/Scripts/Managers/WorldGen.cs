@@ -216,12 +216,16 @@ public class WorldGen : MonoBehaviour {
                             tileID = 0;  // AIR
                         } else if (color.r == 90) {
                             tileID = 5; // Bioluminence
+                        } else if (color.r == 95) {
+                            tileID = 6; // Fungal block
                         }
                         // Biome    
-                        if(color.g == 254) {
+                        if (color.g == 254) {
                             biomeID = 1; // Trench
                         } else if(color.g == 253) {
                             biomeID = 7; // Bioluminence
+                        } else if (color.g == 133) {
+                            biomeID = 8; // Fungal
                         }
                         currentChunkData.tiles[xTileInChunk, yTileInChunk] = tileID;
                         currentChunkData.biomeID[xTileInChunk, yTileInChunk] = biomeID;

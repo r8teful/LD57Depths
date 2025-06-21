@@ -42,17 +42,24 @@ Material:
     - _BiomeAmp: 0
     - _BiomeCutof2: 0.343
     - _BiomeCutoff: 0.404
-    - _BiomeNoiseScale: 0.0675
+    - _BiomeNoiseScale: 0.0203
     - _CaveNoise: 0.09
     - _CaveNoiseAmp: 2.66
     - _CaveNoiseFreq: 0.1395
     - _CaveThreshold: 0.257
     - _EdgeAmp: 17.3
+    - _FungalHeight: 218.3
+    - _FungalScale: 0.064
+    - _FungalaStart: -2693.7
+    - _LumienceWarpAmp: 22.42
+    - _LuminenceWarpAmp2: 37.5
+    - _LuminesenceHeight: 191.76
     - _LuminesenceStart: -3035.04
     - _NoiseFreq: 0.164
     - _NoiseScale: 0.164
     - _Parallax: 0
     - _PixelSize: 0
+    - _Rotation: 276
     - _Seed: 0.22
     - _SilverFreq: 0.227
     - _SilverThe: 0.19
@@ -65,6 +72,7 @@ Material:
     m_Colors:
     - _CamPos: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.003921569, g: 0, b: 0, a: 1}
+    - _OffsetTEST: {r: 0.26, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &1056823255451202380
