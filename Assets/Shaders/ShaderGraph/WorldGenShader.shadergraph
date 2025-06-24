@@ -71,6 +71,9 @@
         },
         {
             "m_Id": "7501d4b4783f45bb97f9236ee1012bd2"
+        },
+        {
+            "m_Id": "28169ad410254d47a921781f701ccad3"
         }
     ],
     "m_Keywords": [],
@@ -413,6 +416,9 @@
         },
         {
             "m_Id": "21067eb88f184a27a1564dd504899f3a"
+        },
+        {
+            "m_Id": "39e4f6f5b4634035867d84c412800e03"
         }
     ],
     "m_GroupDatas": [
@@ -891,6 +897,20 @@
                     "m_Id": "3925ffbed6c049d3b5b22ea730d2fa56"
                 },
                 "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "39e4f6f5b4634035867d84c412800e03"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "c707ac0f796a42d6b90bd5952e79d80c"
+                },
+                "m_SlotId": 1570391033
             }
         },
         {
@@ -4196,6 +4216,34 @@
 }
 
 {
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "28169ad410254d47a921781f701ccad3",
+    "m_Guid": {
+        "m_GuidSerialized": "3f6da6d5-2df2-4c69-a21a-eae563cac244"
+    },
+    "m_Name": "LuminenceScale2",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "LuminenceScale2",
+    "m_DefaultReferenceName": "_LuminenceScale2",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 0.0,
+    "m_FloatType": 1,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 0.5
+    }
+}
+
+{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.MultiplyNode",
     "m_ObjectId": "281f5bad04cf40adad4284e4edd87141",
@@ -5090,6 +5138,42 @@
     "m_PreviewMode": 0,
     "m_CustomColors": {
         "m_SerializableColors": []
+    }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "39e4f6f5b4634035867d84c412800e03",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -221.59999084472657,
+            "y": 2052.000244140625,
+            "width": 166.39999389648438,
+            "height": 33.599853515625
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "ebbc970484c44473b9a195e2571ed566"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "28169ad410254d47a921781f701ccad3"
     }
 }
 
@@ -9654,7 +9738,7 @@
     "m_Title": "Caves World",
     "m_Position": {
         "x": 1353.5999755859375,
-        "y": 643.2001953125
+        "y": 643.1998291015625
     }
 }
 
@@ -10678,6 +10762,9 @@
     "m_ObjectId": "b3ea0c8fc5ff46589fbc61b273f6ac7d",
     "m_Name": "Lumience",
     "m_ChildObjectList": [
+        {
+            "m_Id": "28169ad410254d47a921781f701ccad3"
+        },
         {
             "m_Id": "7289839ee7154e4cae4015a951892828"
         },
@@ -13173,6 +13260,21 @@
         "b": 0.5,
         "a": 1.0
     }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "ebbc970484c44473b9a195e2571ed566",
+    "m_Id": 0,
+    "m_DisplayName": "LuminenceScale2",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
 }
 
 {

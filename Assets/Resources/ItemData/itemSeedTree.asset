@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0875b8093cac994284fe8213a256f45, type: 3}
+  m_Name: itemSeedTree
+  m_EditorClassIdentifier: 
+  itemName: Tree Seed
+  ID: 5
+  description: Used in a planter to grow a tree
+  icon: {fileID: -1671793989, guid: 261eb66d818e3254f9a7acc170acf751, type: 3}
+  maxStackSize: 19
+  droppedPrefab: {fileID: 0}
+  isUsable: 1
+  isConsumable: 0
+  usageCooldown: 0

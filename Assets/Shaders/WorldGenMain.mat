@@ -19,7 +19,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties: _LuminenceScale2
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -42,7 +42,7 @@ Material:
     - _BiomeAmp: 0
     - _BiomeCutof2: 0.343
     - _BiomeCutoff: 0.404
-    - _BiomeNoiseScale: 0.0203
+    - _BiomeNoiseScale: 0.0301
     - _CaveNoise: 0.09
     - _CaveNoiseAmp: 2.66
     - _CaveNoiseFreq: 0.1395
@@ -51,8 +51,9 @@ Material:
     - _FungalHeight: 218.3
     - _FungalScale: 0.064
     - _FungalaStart: -2693.7
-    - _LumienceWarpAmp: 22.42
-    - _LuminenceWarpAmp2: 37.5
+    - _LumienceWarpAmp: 6.1
+    - _LuminenceScale2: 0.473
+    - _LuminenceWarpAmp2: 38.7
     - _LuminesenceHeight: 191.76
     - _LuminesenceStart: -3035.04
     - _NoiseFreq: 0.164

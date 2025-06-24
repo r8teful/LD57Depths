@@ -14,9 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RecipeID: 1
   displayName: Planter
-  description: 
+  description: Can grow plants with the help of seeds
   icon: {fileID: -1951563257, guid: 5ff90e3e2b75374439d8acfde48498aa, type: 3}
-  requiredItems: []
+  requiredItems:
+  - item: {fileID: 11400000, guid: b327d2e1bfd069440827e5e356ca8e83, type: 2}
+    quantity: 10
+  - item: {fileID: 11400000, guid: fba8153d7534bba43bcbf978298368bd, type: 2}
+    quantity: 3
+  - item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
+    quantity: 5
   CraftingResult:
-    item: {fileID: 0}
-    quantity: 0
+    item: {fileID: 11400000, guid: 6bae34a4bb3b186418aca63a227e3d9d, type: 2}
+    quantity: 1
