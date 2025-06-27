@@ -19,7 +19,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: _LuminenceScale2
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -39,29 +39,33 @@ Material:
     m_Floats:
     - _BaseWiden: -0.05
     - _BaseWidth: 174.5
-    - _BiomeAmp: 0
+    - _BiomeAmp: 1.06
     - _BiomeCutof2: 0.343
-    - _BiomeCutoff: 0.404
-    - _BiomeNoiseScale: 0.0301
+    - _BiomeCutoff: 1
+    - _BiomeNoiseScale: 0.421
     - _CaveNoise: 0.09
     - _CaveNoiseAmp: 2.66
     - _CaveNoiseFreq: 0.1395
-    - _CaveThreshold: 0.257
-    - _EdgeAmp: 17.3
-    - _FungalHeight: 218.3
-    - _FungalScale: 0.064
-    - _FungalaStart: -2693.7
-    - _LumienceWarpAmp: 6.1
-    - _LuminenceScale2: 0.473
-    - _LuminenceWarpAmp2: 38.7
-    - _LuminesenceHeight: 191.76
-    - _LuminesenceStart: -3035.04
+    - _CaveThreshold: 0.237
+    - _Cutoff: 0
+    - _EdgeAmp: 11.98
+    - _FungalHeight: 53
+    - _FungalScale: 0.2
+    - _FungalaStart: -235.4
+    - _LumienceWarpAmp: 18.43
+    - _LuminenceBlockAmp: 2.34
+    - _LuminenceHorSize: 514.7
+    - _LuminenceScale2: 0.213
+    - _LuminenceWarpAmp2: 1
+    - _LuminesenceHeight: 131.88
+    - _LuminesenceNoiseScale: 0.299
+    - _LuminesenceStart: -2986.1
     - _NoiseFreq: 0.164
     - _NoiseScale: 0.164
     - _Parallax: 0
     - _PixelSize: 0
-    - _Rotation: 276
-    - _Seed: 0.22
+    - _Rotation: 0
+    - _Seed: 5
     - _SilverFreq: 0.227
     - _SilverThe: 0.19
     - _SilverThreshold: 0.195
@@ -73,7 +77,6 @@ Material:
     m_Colors:
     - _CamPos: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.003921569, g: 0, b: 0, a: 1}
-    - _OffsetTEST: {r: 0.26, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &1056823255451202380

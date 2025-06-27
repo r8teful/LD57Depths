@@ -154,20 +154,20 @@ public class WorldGen : MonoBehaviour {
 
         // Request readback. The callback 'OnReadbackCompleted' will be invoked when data is ready.
         // Using RGBA32 as it's a common, flexible format. Shader should output accordingly.
-        AsyncGPUReadback.Request(_renderTexture, 0, TextureFormat.RGBA32, request => OnGPUReadbackCompleted(request, context));
+         // 8 to 32
+        AsyncGPUReadback.Request(_renderTexture, 0, TextureFormat.RGBAFloat, request => OnGPUReadbackCompleted(request, context));
     }
-
+    
     private void OnGPUReadbackCompleted(AsyncGPUReadbackRequest request, ReadbackContext context) {
         Dictionary<Vector2Int, ChunkData> generatedChunks = new Dictionary<Vector2Int, ChunkData>();
         if (request.hasError) {
             Debug.LogError("GPU Readback Error!");
         } else if (request.done) // Check if 'done' just in case, though Request usually ensures it.
           {
-            NativeArray<Color32> pixelData = request.GetData<Color32>();
+            NativeArray<float4> pixelData = request.GetData<float4>();
             // pixelData is a 1D array representing the 2D texture.
             // For a 96x96 texture, it has 96*96 = 9216 elements.
             // Pixels are typically ordered row by row, starting from bottom-left (0,0).
-
             foreach (Vector2Int requestedChunkCoord in context.ChunksToRequestBatch) {
                 // Calculate where this chunk's data starts within the 96x96 RenderTexture.
                 // Offset of the requested chunk from the origin chunk of the render texture (in chunk units)
@@ -202,31 +202,33 @@ public class WorldGen : MonoBehaviour {
                             Debug.LogError($"Pixel index out of bounds: ({pixelX_in_RT}, {pixelY_in_RT}) -> index {pixelIndex}. RT dim: {RENDER_TEXTURE_DIMENSION}. Data length: {pixelData.Length}");
                             continue;
                         }
-                        Color32 color = pixelData[pixelIndex];
-
+                        float4 color = pixelData[pixelIndex];
+                        color = new float4(Mathf.RoundToInt(color.x * 255.0f), Mathf.RoundToInt(color.y * 255.0f), 
+                                           Mathf.RoundToInt(color.z * 255.0f), Mathf.RoundToInt(color.w * 255.0f));
                         // --- Convert color to tile ID ---
                         // Simplest assumption: tile ID is stored in the R channel (0-255).
                         ushort tileID = 0;
                         byte biomeID = 0;
                         // Tile first
-
-                        if (color.r == 1) {
-                            tileID = 1; // BASIC TILE
-                        } else if (color.r == 0 || color.r==255) {
-                            tileID = 0;  // AIR
-                        } else if (color.r == 90) {
-                            tileID = 5; // Bioluminence
-                        } else if (color.r == 95) {
-                            tileID = 6; // Fungal block
-                        }
-                        // Biome    
-                        if (color.g == 254) {
-                            biomeID = 1; // Trench
-                        } else if(color.g == 253) {
-                            biomeID = 7; // Bioluminence
-                        } else if (color.g == 133) {
-                            biomeID = 8; // Fungal
-                        }
+                        
+                        Debug.Log(color); // TODO make this work tomorrow!
+                        //if (color.r == 1) {
+                        //    tileID = 1; // BASIC TILE
+                        //} else if (color.r == 0 || color.r==255) {
+                        //    tileID = 0;  // AIR
+                        //} else if (color.r == 90) {
+                        //    tileID = 5; // Bioluminence
+                        //} else if (color.r == 95) {
+                        //    tileID = 6; // Fungal block
+                        //}
+                        //// Biome    
+                        //if (color.g == 254) {
+                        //    biomeID = 1; // Trench
+                        //} else if(color.g == 253) {
+                        //    biomeID = 7; // Bioluminence
+                        //} else if (color.g == 133) {
+                        //    biomeID = 8; // Fungal
+                        //}
                         currentChunkData.tiles[xTileInChunk, yTileInChunk] = tileID;
                         currentChunkData.biomeID[xTileInChunk, yTileInChunk] = biomeID;
                     }
