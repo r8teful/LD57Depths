@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class BackgroundManager : MonoBehaviour {
     public GameObject trenchBackgroundContainer;
-    public GameObject parallaxObjectsContainer; 
-    private Transform[] layers; // The four parallax layers
+    public GameObject parallaxObjectsContainer;
+    public ParticleSystem trashParticles;
+    private Transform[] _parallaxLayers; // The four parallax layers
     public SpriteRenderer _blackSprite;
     private List<TranchBackgroundSprite> _trenchSprites= new List<TranchBackgroundSprite>();
 
@@ -22,16 +23,16 @@ public class BackgroundManager : MonoBehaviour {
     private int[] objectsPerLayer;
     internal void Init(WorldGenSettingSO worldGenSettings, BiomeManager bio) {
         var parallaxCount = parallaxObjectsContainer.transform.childCount;
-        layers = new Transform[parallaxCount];
-        objectsPerLayer = new int[layers.Length];
+        _parallaxLayers = new Transform[parallaxCount];
+        objectsPerLayer = new int[_parallaxLayers.Length];
         foreach(var t in trenchBackgroundContainer.GetComponentsInChildren<TranchBackgroundSprite>()) {
             t.SetTrenchSettings(worldGenSettings);
             _trenchSprites.Add(t);
         }
-       
+        
         for (int i = 0; i < parallaxCount; i++)
         {
-            layers[i] = parallaxObjectsContainer.transform.GetChild(i).transform;
+            _parallaxLayers[i] = parallaxObjectsContainer.transform.GetChild(i).transform;
         }
 
         // Centre
@@ -39,7 +40,24 @@ public class BackgroundManager : MonoBehaviour {
         trenchBackgroundContainer.transform.SetParent(Camera.main.transform);
         _blackSprite.enabled = false;
         biomeManager = bio;
-       
+
+        // Spawn particle systems
+        var parMain = Instantiate(trashParticles, Camera.main.transform).main;
+        parMain.simulationSpace = ParticleSystemSimulationSpace.World;
+        
+
+        var parMain2 = Instantiate(trashParticles, Camera.main.transform).main;
+        parMain2.startSize = new ParticleSystem.MinMaxCurve(0.02f, 0.04f);
+        parMain2.simulationSpace = ParticleSystemSimulationSpace.Custom;
+        parMain2.customSimulationSpace = _parallaxLayers[1];
+        parMain2.maxParticles = 200;
+        
+        var parMain3 = Instantiate(trashParticles, Camera.main.transform).main;
+        parMain3.startSize = new ParticleSystem.MinMaxCurve(0.01f, 0.02f);
+        parMain3.simulationSpace = ParticleSystemSimulationSpace.Custom;
+        parMain3.customSimulationSpace = _parallaxLayers[3];
+        parMain3.maxParticles = 100;
+    
     }
 
     public void SetInteriorBackground(bool isInterior) {
@@ -107,7 +125,7 @@ public class BackgroundManager : MonoBehaviour {
                             // iComp is your interface reference
                             iBackground.Init(_trenchSprites[layerIndex].BackgroundColor,layerIndex, _trenchSprites[layerIndex].OrderInLayer);
                         }
-                        newObj.transform.SetParent(layers[layerIndex], true);
+                        newObj.transform.SetParent(_parallaxLayers[layerIndex], true);
                         spawnedObjects[data].Add(newObj);
                         objectsPerLayer[layerIndex]++;
                     }
@@ -129,7 +147,7 @@ public class BackgroundManager : MonoBehaviour {
             }
             // Remove and destroy objects outside despawn radius
             foreach (var obj in toRemove) {
-                int layerIndex = System.Array.IndexOf(layers, obj.transform.parent);
+                int layerIndex = System.Array.IndexOf(_parallaxLayers, obj.transform.parent);
                 if (layerIndex >= 0) {
                     objectsPerLayer[layerIndex]--;
                 }
@@ -144,20 +162,20 @@ public class BackgroundManager : MonoBehaviour {
     }
 
     private int SelectLayerIndex() {
-        float[] weights = new float[layers.Length];
+        float[] weights = new float[_parallaxLayers.Length];
         float totalWeight = 0f;
-        for (int i = 0; i < layers.Length; i++) {
+        for (int i = 0; i < _parallaxLayers.Length; i++) {
             weights[i] = 1f / (objectsPerLayer[i] + 1f);
             totalWeight += weights[i];
         }
         float rand = Random.Range(0f, totalWeight);
         float cumulative = 0f;
-        for (int i = 0; i < layers.Length; i++) {
+        for (int i = 0; i < _parallaxLayers.Length; i++) {
             cumulative += weights[i];
             if (rand < cumulative) {
                 return i;
             }
         }
-        return layers.Length - 1; // Fallback
+        return _parallaxLayers.Length - 1; // Fallback
     }
 }
