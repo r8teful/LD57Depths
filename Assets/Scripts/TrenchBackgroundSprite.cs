@@ -27,10 +27,27 @@ public class TranchBackgroundSprite : MonoBehaviour {
         _spriteRenderer.material.SetFloat("_NoiseFreq", settings.GetTrenchEdgeFreq()* 10f);
         _spriteRenderer.material.SetFloat("_EdgeAmp", settings.GetTrenchEdgeNoiseAmp()* 0.13333f * (backgroundNumber*0.15f + 0.7f));
         _spriteRenderer.material.SetColor("_Color", BackgroundColor);
-        _spriteRenderer.material.SetFloat("_Seed", backgroundNumber);//Random.Range(-1000,1000));
-        _spriteRenderer.material.SetFloat("_PlantScale", 0.2f - (0.05f*backgroundNumber));//Random.Range(-1000,1000));
-        _spriteRenderer.material.SetFloat("_CellDensity",0.8f + (0.2f*backgroundNumber));//Random.Range(-1000,1000));
-        _spriteRenderer.material.SetFloat("_DecorationSpawnsMax", 0.3f - (0.05f*backgroundNumber));//Random.Range(-1000,1000));
+        _spriteRenderer.material.SetFloat("_SeedBackground", backgroundNumber);
+        _spriteRenderer.material.SetFloat("_SeedWorld", settings.seed);
+        _spriteRenderer.material.SetFloat("_PlantScale", 0.2f - (0.05f*backgroundNumber));
+        _spriteRenderer.material.SetFloat("_caveNoiseScale", settings.caveNoiseScale);
+        _spriteRenderer.material.SetFloat("_caveAmp", settings.caveAmp);
+        _spriteRenderer.material.SetFloat("_caveCutoff", settings.caveCutoff);
+        // BIOME
+        _spriteRenderer.material.SetFloat("_edgeNoiseScale", settings.biomeEdgeNoiseScale);
+        _spriteRenderer.material.SetFloat("_edgeNoiseAmp", settings.biomeEdgeNoiseAmp);
+        _spriteRenderer.material.SetFloat("_blockNoiseScale", settings.biomeblockNoiseScale);
+        _spriteRenderer.material.SetFloat("_blockNoiseAmp", settings.biomeblockNoiseAmp);
+                                                                                            // -0.1 if background number is 1, else 0
+        //_spriteRenderer.material.SetFloat("_blockCutoff", settings.biomeblockCutoff - 0.1f * backgroundNumber <= 1 ? backgroundNumber : 0);
+        _spriteRenderer.material.SetFloat("_blockCutoff", settings.biomeblockCutoff - 0.1f * backgroundNumber);
+        _spriteRenderer.material.SetFloat("_YStart", settings.biomeYStart);
+        _spriteRenderer.material.SetFloat("_YHeight", settings.biomeYHeight);
+        _spriteRenderer.material.SetFloat("_horSize", settings.biomeHorSize);
+        
+
+
+        //_spriteRenderer.material.SetFloat("_DecorationSpawnsMax", 0.3f - (0.05f*backgroundNumber));
         _spriteRenderer.sortingOrder -= backgroundNumber; 
     }
 

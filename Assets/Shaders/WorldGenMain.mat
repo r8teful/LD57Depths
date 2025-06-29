@@ -41,11 +41,14 @@ Material:
     - _BaseWidth: 174.5
     - _BiomeAmp: 1.06
     - _BiomeCutof2: 0.343
-    - _BiomeCutoff: 1
+    - _BiomeCutoff: 0.766
     - _BiomeNoiseScale: 0.421
+    - _CaveAmp: 1.08
+    - _CaveCutoff: 0.716
     - _CaveNoise: 0.09
     - _CaveNoiseAmp: 2.66
     - _CaveNoiseFreq: 0.1395
+    - _CaveScale: 0.072
     - _CaveThreshold: 0.237
     - _Cutoff: 0
     - _EdgeAmp: 11.98
@@ -53,19 +56,22 @@ Material:
     - _FungalScale: 0.2
     - _FungalaStart: -235.4
     - _LumienceWarpAmp: 18.43
-    - _LuminenceBlockAmp: 2.34
+    - _LuminenceBlockAmp: 4.19
+    - _LuminenceBlockNoiseAmp: 1.72
+    - _LuminenceEdgeNoiseAmp: 4.19
+    - _LuminenceEdgeNoiseScale: 0.7
     - _LuminenceHorSize: 514.7
     - _LuminenceScale2: 0.213
     - _LuminenceWarpAmp2: 1
     - _LuminesenceHeight: 131.88
-    - _LuminesenceNoiseScale: 0.299
+    - _LuminesenceNoiseScale: 0.5
     - _LuminesenceStart: -2986.1
     - _NoiseFreq: 0.164
     - _NoiseScale: 0.164
     - _Parallax: 0
     - _PixelSize: 0
     - _Rotation: 0
-    - _Seed: 5
+    - _Seed: 0
     - _SilverFreq: 0.227
     - _SilverThe: 0.19
     - _SilverThreshold: 0.195

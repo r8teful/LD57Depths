@@ -15,12 +15,7 @@ inline float unity_noise_interpolate(float a, float b, float t)
 {
     return (1.0 - t) * a + (t * b);
 }
-inline float3 Unity_ColorspaceConversion_RGB_Linear(float3 In)
-{
-    float3 linearRGBLo = In / 12.92;;
-    float3 linearRGBHi = pow(max(abs((In + 0.055) / 1.055), 1.192092896e-07), float3(2.4, 2.4, 2.4));
-    return float3(In <= 0.04045) ? linearRGBLo : linearRGBHi;
-}
+
 float ByteToLinear(uint B)
 {
     float sRGB = B / 255.0;
@@ -55,7 +50,15 @@ inline float unity_valueNoise(float2 uv)
     float t = unity_noise_interpolate(bottomOfGrid, topOfGrid, f.y);
     return t;
 }
-
+float unity_hash(float p) {
+    uint v = (uint) (int) round(p);
+    v ^= 1103515245U;
+    v += v;
+    v *= v;
+    v ^= v >> 5u;
+    v *= 0x27d4eb2du;
+    return v * (1.0 / float(0xffffffff));
+}
 float Unity_SimpleNoise_float(float2 UV, float Scale)
 {
     float t = 0.0;
@@ -78,7 +81,7 @@ float Unity_SimpleNoise_float(float2 UV, float Scale)
 // SECTION 1: YOUR CUSTOMIZABLE MASK LOGIC
 // =================================================================================
 //
-float GenerateMaskValue(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float epsilon,float seed)
+float GenerateTrenchAndSurface(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float parallax ,bool useEdge, float seed)
 {
 
     float halfTrenchWidth = (baseWidth + abs(uv.y) * baseWiden) / 2.0;
@@ -86,28 +89,63 @@ float GenerateMaskValue(float2 uv, float baseWiden, float baseWidth, float noise
     float noisyHalfWidth = max(0.0, halfTrenchWidth + edgeNoise * edgeAmp);
     
     
-    float maxDepth = abs( -1 * baseWidth / baseWiden) * 0.9;
+    float maxDepth = abs(-1 * baseWidth / baseWiden) * 0.9 * (1 + parallax);
     float surfaceNoise = ((Unity_SimpleNoise_float(float2(uv.x, uv.y + 2000.0), 1.32) - 0.5) * 2.0) * 3.0;
     if (uv.y > surfaceNoise)
         return 0;
     if (abs(uv.y) > maxDepth)
         return 1;
     // Distance to trench edge
-    if (epsilon < 0) {
+    if (!useEdge)
+    {
         // Don't use epsilon
         bool mask2 = (abs(uv.x) < noisyHalfWidth);
         return mask2 ? 0.0 : 1.0;
     }
     float distanceToEdge = abs(abs(uv.x) - noisyHalfWidth);
     //MaskYes = 0.0;
-    bool mask = distanceToEdge<epsilon;
+    bool mask = distanceToEdge < 0.1;
     return mask ? 1.0 : 0.0;
 }
-void BiomeNear_float(float2 uv, float edgeNoiseScale, float edgeNoiseAmp, float blockNoiseScale, float blockNoiseAmp, float blockCutoff, float YStart, float YHeight, float horSize, float seed, out
-float4 Color)
+
+float4 WorldGenFull(
+float2 uv,
+// CAVES
+float caveNoiseScale,
+float caveAmp,
+float caveCutoff,
+// BIOME
+float edgeNoiseScale,
+float edgeNoiseAmp,
+float blockNoiseScale,
+float blockNoiseAmp,
+float blockCutoff,
+float YStart,
+float YHeight,
+float horSize,
+// TRENCH
+float trenchBaseWiden,
+float trenchBaseWidth,
+float trenchNoiseScale,
+float trenchEdgeAmp,
+// OTHER
+float seed)
 {
-    float edgeNoiseX = (Unity_SimpleNoise_float(float2(uv.x, uv.y + seed * 5000), edgeNoiseScale) - 0.5) * 2.0;
-    float edgeNoiseY = (Unity_SimpleNoise_float(float2(uv.x, uv.y + seed * 2000), edgeNoiseScale) - 0.5) * 2.0;
+    float uniqueSeed = unity_hash(seed);
+    // Start the world as solid
+    float4 Color = float4(1, 0, 0, 0) / 255.0;
+    
+    // Add caves
+    float caveNoise = step(Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed *4000), caveNoiseScale) * caveAmp, caveCutoff);
+    if (caveNoise < 0.5)
+    {
+        // Cave
+        Color = float4(0, 1, 1, 1);
+    }
+    
+    // Add biomes (just one supported for now)
+    float edgeNoiseX = (Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed * 5000), edgeNoiseScale) - 0.5) * 2.0;
+    float edgeNoiseY = (Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed * 2000), edgeNoiseScale) - 0.5) * 2.0;
     float width = max(0.0, horSize + edgeNoiseX * edgeNoiseAmp);
     
     float heightTop = YStart + YHeight + edgeNoiseY * edgeNoiseAmp;
@@ -115,72 +153,118 @@ float4 Color)
     if ((width > abs(uv.x)) && (uv.y >= heightBottom && uv.y < heightTop))
     {
         // Inside the biome 
-        float biomeBlocks = step(Unity_SimpleNoise_float(float2(uv.x, uv.y + seed * 5000), blockNoiseScale) * blockNoiseAmp, blockCutoff);
+        float biomeBlocks = step(Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed * 5000), blockNoiseScale) * blockNoiseAmp, blockCutoff);
         if (biomeBlocks < 0.5)
         {
             // biome tile
-            Color = float4(90,253, 1, 1) /255;
+            Color = float4(90, 253, 255, 255) / 255.0;
         }
         else
         {
-            Color = float4(255, 253, 255, 255) /255;
+            Color = float4(255, 253, 255, 255) / 255.0;
             // biome air tile
         }
     }
-    else
+    
+    // Add thrench TODO this is generating both trench and surface which will just assign the same trench biome to all of it, which is not what we ultimatelly want
+    float trenchAndSurface = GenerateTrenchAndSurface(uv, trenchBaseWiden, trenchBaseWidth, trenchNoiseScale, trenchEdgeAmp, 0, false, uniqueSeed);
+    if (trenchAndSurface < 0.5)
     {
-        Color = float4(0, 0, 0, 1); // black
+        Color = float4(255, 254.0, 255, 255) / 255.0;
     }
+    return Color;
 }
-
-// Procedural edge detection. It calls GenerateMaskValue() for the point and its neighbors.
-bool IsOnEdgeProcedural(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float epsilon2,float seed, out float2 edgeDirection)
+// Order doesn't matter in this one
+float WorldGenMaskOnly(
+float2 uv,
+// CAVES
+float caveNoiseScale,
+float caveAmp,
+float caveCutoff,
+// BIOME
+float edgeNoiseScale,
+float edgeNoiseAmp,
+float blockNoiseScale,
+float blockNoiseAmp,
+float blockCutoff,
+float YStart,
+float YHeight,
+float horSize,
+// TRENCH
+float trenchBaseWiden,
+float trenchBaseWidth,
+float trenchNoiseScale,
+float trenchEdgeAmp,
+// OTHER
+float parallax, // Used for background only for proper max depth 
+float seed)
 {
-    // The point itself must be inside the mask.
-    if (GenerateMaskValue(uv, baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2, seed) < 0.5)
+    float uniqueSeed = unity_hash(seed);
+    // Add caves
+    float caveNoise = step(Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed * 4000), caveNoiseScale) * caveAmp, caveCutoff);
+    if (caveNoise < 0.5)
     {
-        return false;
+        // Cave
+        return 1;
     }
-
-    // Define a small offset to check "neighboring" positions.
-    // This is the procedural equivalent of looking at the next texel.
-    const float epsilon = 0.002;
-
-    // Check the four neighbors by re-running the mask logic at offset positions.
-    float top = GenerateMaskValue(uv + float2(0, epsilon), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2, seed);
-    float bottom = GenerateMaskValue(uv - float2(0, epsilon), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2, seed);
-    float right = GenerateMaskValue(uv + float2(epsilon, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2, seed);
-    float left = GenerateMaskValue(uv - float2(epsilon, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon2, seed);
-
-    // An edge exists if any neighbor is outside the mask.
-    bool isEdge = (top < 0.5 || bottom < 0.5 || left < 0.5 || right < 0.5);
-
-    if (isEdge)
+    // Add thrench TODO this is generating both trench and surface which will just assign the same trench biome to all of it, which is not what we ultimatelly want
+    float trenchAndSurface = GenerateTrenchAndSurface(uv, trenchBaseWiden, trenchBaseWidth, trenchNoiseScale, trenchEdgeAmp, parallax, false, uniqueSeed);
+    if (trenchAndSurface < 0.5)
     {
-        // Calculate the gradient. It points towards higher values (inward).
-        float gradX = right - left;
-        float gradY = top - bottom;
-        float2 gradient = float2(gradX, gradY);
-        
-        // We want the direction pointing AWAY from the mask, so we negate the gradient.
-        // We also normalize it to get a clean direction vector.
-        // We add a tiny value in length() to prevent division by zero.
-        edgeDirection = -normalize(gradient);
-        return true;
+        return 1;
     }
-
-    edgeDirection = float2(0, 0);
-    return false;
-    return false;
+    // Add biomes (just one supported for now)
+    float edgeNoiseX = (Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed * 5000), edgeNoiseScale) - 0.5) * 2.0;
+    float edgeNoiseY = (Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed * 2000), edgeNoiseScale) - 0.5) * 2.0;
+    float width = max(0.0, horSize + edgeNoiseX * edgeNoiseAmp);
+    
+    float heightTop = YStart + YHeight + edgeNoiseY * edgeNoiseAmp;
+    float heightBottom = YStart + edgeNoiseY * edgeNoiseAmp;
+    if ((width > abs(uv.x)) && (uv.y >= heightBottom && uv.y < heightTop))
+    {
+        // Inside the biome 
+        float biomeBlocks = step(Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed * 5000), blockNoiseScale) * blockNoiseAmp, blockCutoff);
+        if (biomeBlocks < 0.5)
+        {
+            // biome tile
+            return 0; // solid
+        }
+        else
+        {
+            return 1;
+        }
+    }
+    return 0;
 }
-void WorldGenTrench_float(float2 UV, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float seed, out bool IsTrench)
+// Used as a custom node
+void WorldGenFull_float (
+float2 uv,
+// CAVES
+float caveNoiseScale, 
+float caveAmp, 
+float caveCutoff,
+// BIOME
+float edgeNoiseScale, 
+float edgeNoiseAmp, 
+float blockNoiseScale, 
+float blockNoiseAmp, 
+float blockCutoff, 
+float YStart, 
+float YHeight, 
+float horSize,
+// TRENCH
+float trenchBaseWiden, 
+float trenchBaseWidth, 
+float trenchNoiseScale, 
+float trenchEdgeAmp,
+// OTHER
+float seed, 
+out float4 Color)
 {
-    if (GenerateMaskValue(UV, baseWiden, baseWidth, noiseFreq, edgeAmp, -1, seed) < 0.5) {
-        // Trench
-        IsTrench = true;// = float4(255, 254, 255, 255) / 255;
-    } else {
-        IsTrench = false; //= float4(255, 254, 255, 255) / 255;
-    }
+    Color = WorldGenFull(uv, caveNoiseScale, caveAmp, caveCutoff, edgeNoiseScale, edgeNoiseAmp, blockNoiseScale, blockNoiseAmp, blockCutoff, YStart, YHeight, horSize, trenchBaseWiden, trenchBaseWidth, trenchNoiseScale, trenchEdgeAmp, seed);
+    //float gen = WorldGenMaskOnly(uv, caveNoiseScale, caveAmp, caveCutoff, edgeNoiseScale, edgeNoiseAmp, blockNoiseScale, blockNoiseAmp,
+    //                              blockCutoff, YStart, YHeight, horSize, trenchBaseWiden, trenchBaseWidth, edgeNoiseScale, edgeNoiseAmp, seed);
+    //Color = float4(gen, gen, gen, 1);
 }
 
 void CustomVoronoi_Edge_Procedural_float(
@@ -188,12 +272,28 @@ void CustomVoronoi_Edge_Procedural_float(
     float2 UV,
     float AngleOffset,
     float CellDensity,
+    // CAVES
+    float caveNoiseScale,
+    float caveAmp,
+    float caveCutoff,
+    // BIOME
+    float edgeNoiseScale,
+    float edgeNoiseAmp,
+    float blockNoiseScale,
+    float blockNoiseAmp,
+    float blockCutoff,
+    float YStart,
+    float YHeight,
+    float horSize,
+    // TRENCH
     float baseWiden,
     float baseWidth,
     float noiseFreq,
     float edgeAmp,
-    float epsilon,
-    float seed,
+    // OTHER
+    float parallax, // needed for correct calculation of maxdepth
+    float seedWorld,
+    float seedBackground,
     // OUTPUTS
     out float DistFromCenter,
     out float TrenchMask,
@@ -211,6 +311,8 @@ void CustomVoronoi_Edge_Procedural_float(
     float absoluteDist = 8.0f;
     float2 absoluteClosestOffset;
     float2 chosenEdgeDirection = float2(0, 0);
+    float uniqueSeedWorld = unity_hash(seedWorld);
+    float uniqueSeedBackground = unity_hash(seedWorld+seedBackground);
     // The standard 3x3 cell search loop
     for (int y = -1; y <= 1; ++y)
     {
@@ -227,20 +329,21 @@ void CustomVoronoi_Edge_Procedural_float(
             // --- Prioritized Logic ---
 
             // --- Step 1: Minimum calculation. Is the point inside the mask at all?
-            float centerMaskValue = GenerateMaskValue(pointWorldUV, baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon,seed);
+            float centerMaskValue = GenerateTrenchAndSurface(pointWorldUV, baseWiden, baseWidth, noiseFreq, edgeAmp, parallax,true, uniqueSeedBackground);
             bool isInside = centerMaskValue > 0.5;
             float2 currentEdgeDir;
-            
-                 // --- Step 2: If it is inside, check if it's an edge and get its direction.
+            if (edgeDist < 0.1)
+                break;
+            // --- Step 2: If it is inside, check if it's an edge and get its direction.
             if (isInside)
             {
                 // Check neighbors
-                float top = GenerateMaskValue(pointWorldUV + float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
-                float bottom = GenerateMaskValue(pointWorldUV - float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
-                float right = GenerateMaskValue(pointWorldUV + float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
-                float left = GenerateMaskValue(pointWorldUV - float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
+                //float top = GenerateMaskValue(pointWorldUV + float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
+                //float bottom = GenerateMaskValue(pointWorldUV - float2(0, epsilon2), baseWiden, baseWidth, noiseFreq, edgeAmp, epsilon, seed);
+                float right = GenerateTrenchAndSurface(pointWorldUV + float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, parallax,true, uniqueSeedBackground);
+                float left = GenerateTrenchAndSurface(pointWorldUV - float2(epsilon2, 0), baseWiden, baseWidth, noiseFreq, edgeAmp, parallax, true, uniqueSeedBackground);
 
-                bool isEdge = (top < 0.5 || bottom < 0.5 || left < 0.5 || right < 0.5);
+                bool isEdge = (left < 0.5 || right < 0.5);
 
                 if (isEdge)
                 {
@@ -250,9 +353,9 @@ void CustomVoronoi_Edge_Procedural_float(
                         edgeDist = distToPoint;
                         edgeClosestOffset = totalOffset;
                         // Calculate direction and store it
-                        float gradX = right - left;
-                        float gradY = top - bottom;
-                        chosenEdgeDirection = -normalize(float2(gradX, gradY));
+                        //float gradX = right - left;
+                        //float gradY = top - bottom;
+                        //chosenEdgeDirection = -normalize(float2(gradX, gradY));
                     }
                 }
 
@@ -294,6 +397,13 @@ void CustomVoronoi_Edge_Procedural_float(
         ClosestPoint = float2(0, 0);
         EdgeDirection = float2(0, 0);
     }
-    TrenchMask = GenerateMaskValue(UV, baseWiden, baseWidth, noiseFreq, edgeAmp, -1, seed);
+    if (parallax > 0.3)
+    {
+        // Kind of uggly to test it like this, but we only folllow the world seed with the two first layers, then it is just random, otherwise it becomes very trippy and looks
+        // Too unrealistic
+        uniqueSeedWorld = uniqueSeedBackground;
+    }
+    TrenchMask = WorldGenMaskOnly(UV, caveNoiseScale, caveAmp, caveCutoff, edgeNoiseScale, edgeNoiseAmp, blockNoiseScale, blockNoiseAmp, 
+                                  blockCutoff, YStart, YHeight, horSize, baseWiden, baseWidth, edgeNoiseScale, edgeNoiseAmp, parallax,uniqueSeedWorld);
 
 }
