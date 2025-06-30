@@ -21,6 +21,11 @@ public struct IngredientStatus {
         CurrentAmount = currentAmount;
     }
 }
+// Usefull class for the actual result of a recipe. Will add more here later like research, upgrade etc..
+public class RecipeExecutionContext {
+    public InventoryManager PlayerInventory { get; set; }
+    public FixableEntity Entity { get; set; }
+}
 public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
 
     [BoxGroup("Identification")]
@@ -46,7 +51,7 @@ public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
     /// <param name="crafterConnection">The connection of the player crafting.</param>
     /// <param name="clientInventory">The client-side inventory of the crafter.</param>
     /// <returns>True if execution was successful, false otherwise.</returns>
-    public abstract bool ExecuteRecipe(InventoryManager playerInv);
+    public abstract bool ExecuteRecipe(RecipeExecutionContext context);
 
     /// <summary>
     /// Client-side check to see if the player has enough ingredients.

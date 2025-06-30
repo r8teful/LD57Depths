@@ -1,5 +1,6 @@
 using FishNet.Object;
 using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 [RequireComponent (typeof(BoxCollider2D))]
@@ -9,7 +10,7 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
     [SerializeField] private Sprite FixIcon;
     private CanvasInputWorld instantatiatedCanvas;
     private UIPopup instantatiatedPopup;
-
+    private bool isFixed;
     public event Action PopupDataChanged;
 
     public Sprite InteractIcon => FixIcon;
@@ -20,6 +21,9 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
     }
     public void SetIsBrokenBool(bool isBroken) {
         SpriteRenderer.material.SetInt("_Damaged", isBroken ? 1 : 0);
+        if (!isBroken) {
+            Destroy(this); // This makes sence right?
+        }
     }
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.gameObject.CompareTag("Player")) {
@@ -32,6 +36,11 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
         Debug.Log("EXIT!");
             //SubInside.Instance.ExitCollider();
         }
+    }
+    public void SetFixed() {
+        isFixed = true;
+        SetIsBrokenBool(false);
+        // TODO other functionality etc etc...
     }
 
     public void SetInteractable(bool isInteractable, Sprite interactPrompt = null) {
@@ -48,6 +57,10 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
     // The best would be to use the already existing popup manager to setup the thing but I don't know what the real benefits are atm, this works for now
     public void Interact(NetworkObject client) {
         if(instantatiatedCanvas != null && instantatiatedPopup == null) {
+            if (isFixed) {
+                // Open the UI for this object?
+                return; 
+            }
             var clientInventory = client.GetComponent<NetworkedPlayerInventory>().GetInventoryManager(); // Probably really bad to do this but EH?
             instantatiatedPopup = Instantiate(App.ResourceSystem.GetPrefab("PopupWorld"), instantatiatedCanvas.transform).GetComponent<UIPopup>();
             instantatiatedPopup.SetData(new(fixRecipe.name, fixRecipe.description, fixRecipe.GetIngredientStatuses(clientInventory)));
@@ -56,7 +69,8 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
             // Basically pressing again while the popup is already open
             // TODO use PopupManager.CurrentPopup!!
             // Passing the instantiated popup so we can show visual feedback BTW, this should probably be handled by PopupManager, it already has a CurrentPopup variable
-            UICraftingManager.Instance.AttemptCraft(fixRecipe,instantatiatedPopup);
+            var context = new RecipeExecutionContext { Entity = this };
+            UICraftingManager.Instance.AttemptCraft(fixRecipe,instantatiatedPopup, context);
         }
         //PopupManager.Instance.TryShowWorldPopup(this,client);
     }

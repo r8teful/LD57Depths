@@ -55,10 +55,15 @@ public class UICraftingManager : Singleton<UICraftingManager> {
         }
     }
 
-    public void AttemptCraft(RecipeBaseSO recipe, UIPopup instantatiatedPopup) {
+    public void AttemptCraft(RecipeBaseSO recipe, UIPopup instantatiatedPopup, RecipeExecutionContext context) {
+        // TODO possible use client inventoy from context here. But no, we don't really want to change that, or have other scripts store it, just have it be stored here and create a new context each time
+        // We call ExecuteRecipe
         if (recipe == null || _clientInventory == null)
             return;
-
+        if(context == null) {
+            // Popuplate it with
+            context = new RecipeExecutionContext { PlayerInventory = _clientInventory };
+        }
         // Client-side check (optional, good for immediate feedback but server is authoritative)
         if (!recipe.CanAfford(_clientInventory)) {
             Debug.Log($"Cannot afford {recipe.displayName} (client check).");
@@ -70,7 +75,7 @@ public class UICraftingManager : Singleton<UICraftingManager> {
         // Craft the bitch, first remove items
         _clientInventory.ConsumeItems(recipe.requiredItems);
         // 2. Resources consumed. Now execute the recipe outcome.
-        bool executionSuccess = recipe.ExecuteRecipe(_clientInventory);
+        bool executionSuccess = recipe.ExecuteRecipe(context);
         if(executionSuccess) {
             HandleCraftSuccess(recipe);
         } else {
