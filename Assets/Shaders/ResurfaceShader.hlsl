@@ -261,10 +261,42 @@ float trenchEdgeAmp,
 float seed, 
 out float4 Color)
 {
-    Color = WorldGenFull(uv, caveNoiseScale, caveAmp, caveCutoff, edgeNoiseScale, edgeNoiseAmp, blockNoiseScale, blockNoiseAmp, blockCutoff, YStart, YHeight, horSize, trenchBaseWiden, trenchBaseWidth, trenchNoiseScale, trenchEdgeAmp, seed);
+    Color = WorldGenFull(uv, caveNoiseScale, caveAmp, caveCutoff, edgeNoiseScale, edgeNoiseAmp, blockNoiseScale, blockNoiseAmp, 
+    blockCutoff, YStart, YHeight, horSize, trenchBaseWiden, trenchBaseWidth, trenchNoiseScale, trenchEdgeAmp, seed);
     //float gen = WorldGenMaskOnly(uv, caveNoiseScale, caveAmp, caveCutoff, edgeNoiseScale, edgeNoiseAmp, blockNoiseScale, blockNoiseAmp,
     //                              blockCutoff, YStart, YHeight, horSize, trenchBaseWiden, trenchBaseWidth, edgeNoiseScale, edgeNoiseAmp, seed);
     //Color = float4(gen, gen, gen, 1);
+}
+// Used as a custom node
+void WorldGenMask_float(
+float2 uv,
+// CAVES
+float caveNoiseScale,
+float caveAmp,
+float caveCutoff,
+// BIOME
+float edgeNoiseScale,
+float edgeNoiseAmp,
+float blockNoiseScale,
+float blockNoiseAmp,
+float blockCutoff,
+float YStart,
+float YHeight,
+float horSize,
+// TRENCH
+float trenchBaseWiden,
+float trenchBaseWidth,
+float trenchNoiseScale,
+float trenchEdgeAmp,
+// OTHER
+float parallax,
+float seed,
+out float Mask)
+{
+    // Also this now is FUCKED because the background need unique seeds for the trench, but not the other world gen stuff THIS IS SOMETHING FOR LATER
+    // BECAUSE I CAN'T BE FUCKED AND LUCY SAID IM NOT ALLOWED TO DO ANY SHADER CODING TODAY!!
+    Mask = WorldGenMaskOnly(uv, caveNoiseScale, caveAmp, caveCutoff, edgeNoiseScale, edgeNoiseAmp, blockNoiseScale, blockNoiseAmp,
+                                  blockCutoff, YStart, YHeight, horSize, trenchBaseWiden, trenchBaseWidth, edgeNoiseScale, edgeNoiseAmp, parallax, seed);
 }
 
 void CustomVoronoi_Edge_Procedural_float(
@@ -403,7 +435,17 @@ void CustomVoronoi_Edge_Procedural_float(
         // Too unrealistic
         uniqueSeedWorld = uniqueSeedBackground;
     }
+    
+    // OKAY FOR FUTURE RIK: 
+    /*
+    Right now the WorldGenMaskOnly does the whole of the world gen, I tried putting it instead of GenerateTrenchAndSurface above but then it runs at like 30 fps. Which is not good
+    We could still do it with just the trench I supose, but right now using WorldGenMaskOnly for the TrenchMask variable doesn't work. Then thing is, we need to do it once for the 
+    biomes and caves, and another time for the trench. We want the uniqueTrenchSeed for the trench, and the worldseed for the other things. This way, the trench is unique for each 
+    layer, while the world background stays similar to how the actual world generation works, which allows us to have this extra layer that follows the world generation nicely.
+    I like the unique look, but it will be quite complicated ( and comptitationally heavy ) to ALSO have plants spawn on those different layers aswel, the  ones for the world that is.
+    There might be another way to place plants, or other object, in the background  like that, but I have no clue. For now, we just have the background without plants 
+    
+    */
     TrenchMask = WorldGenMaskOnly(UV, caveNoiseScale, caveAmp, caveCutoff, edgeNoiseScale, edgeNoiseAmp, blockNoiseScale, blockNoiseAmp, 
                                   blockCutoff, YStart, YHeight, horSize, baseWiden, baseWidth, edgeNoiseScale, edgeNoiseAmp, parallax,uniqueSeedWorld);
-
 }

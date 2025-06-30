@@ -54,9 +54,9 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
             instantatiatedCanvas.SetPromptNextStage(instantatiatedPopup.transform);
         } else if(instantatiatedPopup != null) {
             // Basically pressing again while the popup is already open
-            Debug.Log("trying to fix!!");
-            // Should not not happen really
-            UICraftingManager.Instance.AttemptCraft(fixRecipe);
+            // TODO use PopupManager.CurrentPopup!!
+            // Passing the instantiated popup so we can show visual feedback BTW, this should probably be handled by PopupManager, it already has a CurrentPopup variable
+            UICraftingManager.Instance.AttemptCraft(fixRecipe,instantatiatedPopup);
         }
         //PopupManager.Instance.TryShowWorldPopup(this,client);
     }

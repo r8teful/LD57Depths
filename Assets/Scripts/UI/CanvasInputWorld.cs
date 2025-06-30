@@ -6,6 +6,7 @@ public class CanvasInputWorld : MonoBehaviour {
     public void Init(IInteractable interactable,Sprite interactPrompt) {
         _instantiatedPrompt = Instantiate(App.ResourceSystem.GetPrefab("InteractIndicator"),transform).GetComponent<InputPromptIcon>();
         _instantiatedPrompt.Init(interactable.InteractIcon, interactPrompt);
+        GetComponent<Canvas>().sortingOrder = 99;
     }
     // Don't think we actually have to do this because it is a child but eh I've written it now
     public void OnDestroy() {

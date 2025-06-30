@@ -10,14 +10,13 @@ public class UIIngredientVisual : MonoBehaviour {
     public TextMeshProUGUI resourceHaveText;
 
     internal void Init(IngredientStatus ingredient) {
-        string color = ingredient.HasEnough ? "green" : "red";
-        //sb.AppendLine($"<color={color}>{status.Item.itemName}: {status.CurrentAmount}/{status.RequiredAmount}</color>");
+        string color = ingredient.HasEnough ? "white" : "red";
         Sprite sprite = ingredient.Item.icon;
         if (sprite != null) {
             resourceIcon.sprite = sprite;
         }
         resourceAmountText.text = ingredient.RequiredAmount.ToString();
-        resourceNameText.text = ingredient.Item.itemName.ToString();
-        resourceHaveText.text = ingredient.CurrentAmount.ToString();
+        resourceNameText.text = $"<color=\"{color}\">{ingredient.Item.itemName}";
+        resourceHaveText.text = $"<color=\"{color}\">{ingredient.CurrentAmount}";
     }
 }

@@ -8,7 +8,7 @@ public class PopupManager : MonoBehaviour {
     private IPopupInfo currentHoveredInfoProvider;
     private IPopupInfo currentSelectedInfoProvider;
     private bool isMouseOverPopup;
-
+    public UIPopup CurrentPopup => currentPopup;
     private void Awake() {
         if (Instance == null)
             Instance = this;
@@ -54,6 +54,7 @@ public class PopupManager : MonoBehaviour {
     }
 
     public void OnPointerExitPopup() {
+        Debug.Log("EXitPopup!");
         isMouseOverPopup = false;
         if (currentHoveredInfoProvider == null) {
             if (currentSelectedInfoProvider != null)

@@ -63,6 +63,6 @@ public class UIRecipeItem : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPo
     }
 
     void OnCraftButtonClicked() {
-        _craftingUIController.AttemptCraft(_recipe);
+        _craftingUIController.AttemptCraft(_recipe,_popupManager.CurrentPopup);
     }
 }

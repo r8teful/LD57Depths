@@ -31,6 +31,9 @@ public class MiningLazer : MonoBehaviour, IToolBehaviour {
         _hitParticleSystem = Instantiate(ParticlesPrefabHit);
         _hitParticleSystem.Stop();
         _lineLazerParticleSystem.Stop();
+        var pMain = _lineLazerParticleSystem.main;
+        pMain.simulationSpace = ParticleSystemSimulationSpace.Custom;
+        pMain.customSimulationSpace = WorldManager.Instance.GetWorldRoot(); // For some reason just setting it as world doesn't work, but this does
         lineRenderer.enabled = false;
         laser = AudioController.Instance.PlaySound2D("Laser", 0.0f, looping: true);
     }

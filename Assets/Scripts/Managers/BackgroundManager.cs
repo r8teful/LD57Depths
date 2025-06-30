@@ -47,16 +47,16 @@ public class BackgroundManager : MonoBehaviour {
         
 
         var parMain2 = Instantiate(trashParticles, Camera.main.transform).main;
-        parMain2.startSize = new ParticleSystem.MinMaxCurve(0.02f, 0.04f);
+        parMain2.startSize = new ParticleSystem.MinMaxCurve(0.05f, 0.08f);
         parMain2.simulationSpace = ParticleSystemSimulationSpace.Custom;
         parMain2.customSimulationSpace = _parallaxLayers[1];
-        parMain2.maxParticles = 200;
+        parMain2.maxParticles = 500;
         
         var parMain3 = Instantiate(trashParticles, Camera.main.transform).main;
-        parMain3.startSize = new ParticleSystem.MinMaxCurve(0.01f, 0.02f);
+        parMain3.startSize = new ParticleSystem.MinMaxCurve(0.03f, 0.05f);
         parMain3.simulationSpace = ParticleSystemSimulationSpace.Custom;
         parMain3.customSimulationSpace = _parallaxLayers[3];
-        parMain3.maxParticles = 100;
+        parMain3.maxParticles = 500;
     
     }
 
@@ -119,7 +119,7 @@ public class BackgroundManager : MonoBehaviour {
                         int layerIndex = SelectLayerIndex();
                         // Generate a random position within spawn radius
                         Vector2 spawnPos = playerPos + Random.insideUnitCircle * spawnRadius;
-                        Debug.Log("Spawned entitty");
+                        //Debug.Log("Spawned entitty");
                         GameObject newObj = Instantiate(data.prefab, new Vector3(spawnPos.x, spawnPos.y, 0), Quaternion.identity);
                         if (newObj.TryGetComponent<IBackgroundObject>(out var iBackground)) {
                             // iComp is your interface reference
@@ -151,7 +151,6 @@ public class BackgroundManager : MonoBehaviour {
                 if (layerIndex >= 0) {
                     objectsPerLayer[layerIndex]--;
                 }
-                Destroy(obj,4f);
                 if (obj.TryGetComponent<IBackgroundObject>(out var iBackground)) {
                     // iComp is your interface reference
                     iBackground.BeforeDestroy();

@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Sirenix.OdinInspector;
+using UnityEngine.Windows;
+using System.Linq;
 public enum PlayerInteractionContext {
     None,                 // Default state, no specific interaction available
     InteractingWithUI,    // Highest priority: Mouse is over any UI element
@@ -20,6 +22,7 @@ public class InputManager : NetworkBehaviour {
     private InputAction _useItemAction;
     private InputAction _hotbarSelection;
     private InventoryUIManager _inventoryUIManager;
+    private InputDevice lastUsedDevice;
     // UI
     private InputAction _UItoggleInventoryAction; // Assign your toggle input action asset
     private InputAction _uiInteractAction;   // e.g., Left Mouse / Gamepad A
@@ -169,7 +172,7 @@ public class InputManager : NetworkBehaviour {
             if (_currentInteractable != null) {
                 // Show prompt on new one
                 // You can get the binding string here as you did before
-                string key = _interactAction.GetBindingDisplayString();
+                string key = _interactAction.GetBindingDisplayString(InputBinding.DisplayStringOptions.DontOmitDevice);
                 _currentInteractable.SetInteractable(true, App.ResourceSystem.GetSprite(FormatBindingDisplayString(key)));
             }
         }
@@ -257,6 +260,7 @@ public class InputManager : NetworkBehaviour {
         }
     }
     public void OnPrimaryInteractionPerformed(InputAction.CallbackContext context) {
+        lastUsedDevice = context.control.device;
         // Todo some kind of checks to see if this is allowed..
         // This is Left Mouse Click / Gamepad A
         // Switch on the context to decide what Left Click does
@@ -331,8 +335,6 @@ public class InputManager : NetworkBehaviour {
         // If format is not as expected, return input as fallback
         return input;
     }
-
-   
 }
 
 public enum ShootMode {

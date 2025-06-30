@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+// Should be generic enough to display any kind of data that popups up on the screen, either in world space, or on the canvas, for example next to the cursor 
 public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] private GameObject popupBackground;
     [SerializeField] private RectTransform rectTransform;
@@ -11,6 +13,22 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
     public Transform ingredientsContent; // VerticalLayoutGroup
     public UIIngredientVisual ingredientPrefab;
     public ItemData itemData;
+    private bool _isWorldPopup; // Is this popup on a world space canvas?
+    private void Start() {
+        // Try and find the canvas lol
+        Canvas c0 = null;
+        Canvas c1 = null;
+        c0 = GetComponentInParent<Canvas>();
+        var t = transform.parent;
+        if (t != null) {
+            c1 = t.GetComponentInParent<Canvas>();
+        }
+        if (c0 != null) {
+            _isWorldPopup = c0.renderMode == RenderMode.WorldSpace;
+        }  else if (c1 != null){
+            _isWorldPopup = c0.renderMode == RenderMode.WorldSpace;
+        }
+    }
     public void OnPointerEnter(PointerEventData eventData) {
         PopupManager.Instance.OnPointerEnterPopup();
     }
@@ -55,6 +73,14 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         offsetMax.y = 0;
         rect.offsetMax = offsetMax;
         yield return new WaitForEndOfFrame();
+        }
+    }
+    public void HandleFailVisual() {
+        if (_isWorldPopup) {
+            transform.DOShakePosition(0.2f,0.3f,50);
+        } else {
+            Debug.LogWarning("Canvas space fail visual not implemented!");
+            throw new System.NotImplementedException();
         }
     }
 }

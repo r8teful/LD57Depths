@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 65d7707cc94b0554dbfb2afaee39f60f
+guid: 7b403547239788b48aea16e7e2af2295
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,13 +97,35 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Sub2_0
+      name: SubHull
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 37
-        height: 36
+        x: 7
+        y: 4
+        width: 216
+        height: 69
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f9857edb1c32c190800000000000000
+      internalID: -7943720702334105097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SubDome
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 78
+        width: 118
+        height: 42
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -112,8 +134,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fe60d2a16017030448bff3a37e3abab4
-      internalID: -208055226
+      spriteID: bceafe7d8f09651439e49c27f1a3a3cb
+      internalID: -2083350553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SubWall0
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 85
+        width: 77
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 55515991271a1874fb3fdea3f585790b
+      internalID: 1935464519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SubWall1
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 42
+        width: 77
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b365c81f9a5ac444eaf6540c9d9db2e4
+      internalID: -1269531543
       vertices: []
       indices: 
       edges: []
@@ -122,7 +188,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: c00299c9fd445854a8186aedae069524
+    spriteID: 90b298d24882cde4cbb8a9bda696bbf8
     internalID: 0
     vertices: []
     indices: 
@@ -132,7 +198,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Sub2_0: -208055226
+      SubDome: -2083350553
+      SubHull: -7943720702334105097
+      SubWall0: 1935464519
+      SubWall1: -1269531543
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

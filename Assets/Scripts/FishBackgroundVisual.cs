@@ -106,6 +106,8 @@ public class FishBackgroundVisual : MonoBehaviour, IBackgroundObject {
         }
     }
     private Sequence DoFishWiggle() {
+        if (transform == null)
+            return null;
         var xScale = transform.localScale.x;
         var yScale = transform.localScale.y;
         Sequence moveSeq = DOTween.Sequence();
@@ -131,6 +133,6 @@ public class FishBackgroundVisual : MonoBehaviour, IBackgroundObject {
     }
 
     public void BeforeDestroy() {
-        spriteRenderer.DOFade(0, 3);
+        spriteRenderer.DOFade(0, 3).OnComplete(() => Destroy(gameObject));
     }
 }

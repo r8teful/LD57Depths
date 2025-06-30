@@ -55,7 +55,7 @@ public class UICraftingManager : Singleton<UICraftingManager> {
         }
     }
 
-    public void AttemptCraft(RecipeBaseSO recipe) {
+    public void AttemptCraft(RecipeBaseSO recipe, UIPopup instantatiatedPopup) {
         if (recipe == null || _clientInventory == null)
             return;
 
@@ -64,8 +64,8 @@ public class UICraftingManager : Singleton<UICraftingManager> {
             Debug.Log($"Cannot afford {recipe.displayName} (client check).");
             if (statusText)
                 statusText.text = $"Cannot afford {recipe.displayName}";
-            HandleCraftFail(recipe, $"Cannot afford {recipe.displayName}");
-            // You might still allow the request to go to server for a server-denial message
+            HandleCraftFail(recipe, instantatiatedPopup,$"Cannot afford {recipe.displayName}");
+            return;
         }
         // Craft the bitch, first remove items
         _clientInventory.ConsumeItems(recipe.requiredItems);
@@ -74,7 +74,7 @@ public class UICraftingManager : Singleton<UICraftingManager> {
         if(executionSuccess) {
             HandleCraftSuccess(recipe);
         } else {
-            HandleCraftFail(recipe, "Unable to craft!");
+            HandleCraftFail(recipe, instantatiatedPopup, "Unable to craft!");
         }
         // Tell the local InventoryManager (or CraftingManager client instance) to send the request
         if (statusText)
@@ -89,9 +89,10 @@ public class UICraftingManager : Singleton<UICraftingManager> {
         RefreshRecipeDisplayStatus(0); // Refresh UI as inventory has changed
     }
 
-    private void HandleCraftFail(RecipeBaseSO recipe, string reason) {
+    private void HandleCraftFail(RecipeBaseSO recipe, UIPopup instantatiatedPopup, string reason) {
         string name = recipe != null ? recipe.displayName : recipe.ID.ToString();
-        Debug.LogError($"UI: Failed to craft {name}. Reason: {reason}");
+        Debug.Log($"UI: Failed to craft {name}. Reason: {reason}");
+        instantatiatedPopup.HandleFailVisual();
         if (statusText)
             statusText.text = $"Failed to craft {name}. Reason: {reason}";
         RefreshRecipeDisplayStatus(0); // Refresh in case some partial state needs updating
