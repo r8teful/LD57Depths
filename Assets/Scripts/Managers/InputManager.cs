@@ -136,7 +136,9 @@ public class InputManager : NetworkBehaviour {
         // 1. HIGHEST PRIORITY: Check for UI interaction
         if (EventSystem.current.IsPointerOverGameObject() || _inventoryUIManager.IsOpen) {
             _currentContext = PlayerInteractionContext.InteractingWithUI;
-            ClearInteractable(); // Can't interact with world objects if UI is in the way
+            // TODO this should sometimes clear the interactable, but sometimes not. As the UI could be the interactable!
+            
+            //ClearInteractable(); // Can't interact with world objects if UI is in the way
             return;
         }
 

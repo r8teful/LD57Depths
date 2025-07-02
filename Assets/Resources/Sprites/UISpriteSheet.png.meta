@@ -646,7 +646,7 @@ TextureImporter:
         width: 55
         height: 10
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -655,6 +655,28 @@ TextureImporter:
       bones: []
       spriteID: db37846551e50b44bbc37d89ee225cd4
       internalID: 2124238485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IconLook
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 114
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aaa1067abe2ca964eba3a4219cdd6fe9
+      internalID: 54682694
       vertices: []
       indices: 
       edges: []
@@ -676,6 +698,7 @@ TextureImporter:
       DiscoveryGrid: 1687985993
       IconCraft: -275753912
       IconInv: -2061626415
+      IconLook: 54682694
       IconQue: 1378529093
       IconSheck: -523140508
       Inv: -1182525682

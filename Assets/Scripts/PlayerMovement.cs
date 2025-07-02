@@ -253,7 +253,22 @@ public class PlayerMovement : NetworkBehaviour {
     }
     private Collider2D[] LadderCheck() {
         Vector2 detectionCenter = (Vector2)transform.position;
-        return  Physics2D.OverlapBoxAll(detectionCenter, ladderSensorSize, 0, ladderLayer);    
+        var ladders = Physics2D.OverlapBoxAll(detectionCenter, ladderSensorSize, 0, ladderLayer);
+        SubLadder ladderComponent = null;
+        if (ladders.Length > 0) {
+            // Try and find the subladder component in the hitbox
+            foreach (var collider in ladders) {
+                ladderComponent = collider.GetComponentInParent<SubLadder>();
+                if(ladderComponent != null) {
+                    break; // Found it!
+                }
+            }
+        }
+        if (ladderComponent != null) {
+            if(!ladderComponent.CanUse) 
+                return null;  // if the found one is broken, we can't climb the ladder, so just say we didn't find anything
+        }
+        return ladders; // Passed checks and just return the ladder hitboxes we found
     }
     #endregion
 
