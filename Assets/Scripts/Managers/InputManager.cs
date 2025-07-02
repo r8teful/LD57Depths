@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using Sirenix.OdinInspector;
 using UnityEngine.Windows;
 using System.Linq;
+using Unity.VisualScripting;
 public enum PlayerInteractionContext {
     None,                 // Default state, no specific interaction available
     InteractingWithUI,    // Highest priority: Mouse is over any UI element
@@ -38,6 +39,7 @@ public class InputManager : NetworkBehaviour {
     private ShootMode _currentShootMode = ShootMode.Mining;
     [SerializeField] private LayerMask _interactableLayerMask;
     [SerializeField] private ToolController _toolController;
+    [SerializeField] private float _interactionRadius;
     private Vector2 movementInput;   // For character movement
     private Vector2 rawAimInput;     // Raw input for aiming (mouse position or joystick)
     private IInteractable _currentInteractable;
@@ -160,7 +162,7 @@ public class InputManager : NetworkBehaviour {
         _currentContext = PlayerInteractionContext.UsingToolOnWorld;
     }
     private void CheckForNearbyInteractables() {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1.5f, _interactableLayerMask);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, _interactionRadius, _interactableLayerMask);
         IInteractable closestInteractable = FindClosestInteractable(colliders);
 
         if (closestInteractable != _currentInteractable) {
@@ -191,7 +193,11 @@ public class InputManager : NetworkBehaviour {
                     closest = collider;
                 }
             }
-            return closest.GetComponent<IInteractable>();
+            if(closest.TryGetComponent<IInteractable>(out var i)) {
+                if (i.CanInteract) {
+                    return closest.GetComponent<IInteractable>();
+                }
+            }
         }
         return null;
     }
@@ -335,7 +341,12 @@ public class InputManager : NetworkBehaviour {
         // If format is not as expected, return input as fallback
         return input;
     }
+    void OnDrawGizmosSelected() {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(new(transform.position.x,transform.position.y+_interactionRadius,0), _interactionRadius);
+    }
 }
+
 
 public enum ShootMode {
     Mining,

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class DroppedEntity : NetworkBehaviour {
     // SyncVars automatically synchronize from server to clients
-    // Make sure your ItemData ScriptableObjects exist in the build!
     private readonly SyncVar<ushort> _itemID = new SyncVar<ushort>(new SyncTypeSettings(ReadPermission.Observers)); 
     private readonly SyncVar<int> _quantity = new SyncVar<int>(new SyncTypeSettings(ReadPermission.Observers));
     

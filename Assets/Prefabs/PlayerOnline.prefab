@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 2569735854207979515}
   - component: {fileID: 7286018076648654246}
   - component: {fileID: 2511403419373690701}
-  - component: {fileID: 4772185344624608086}
+  - component: {fileID: 6917722311285614130}
   m_Layer: 2
   m_Name: PlayerOnline
   m_TagString: Player
@@ -38,7 +38,7 @@ Transform:
   m_GameObject: {fileID: 1228294681075539138}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.82, y: -17.02, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -91,8 +91,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: -7943720702334105097, guid: df1dde7b5fad595409e2e9fdaeeef128, type: 3}
+  m_SortingOrder: 9
+  m_Sprite: {fileID: 1381347595757834392, guid: 32453a67e730b6c43abda00f6ed91216, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -125,18 +125,15 @@ MonoBehaviour:
   lightSpot: {fileID: 8774488322261225542}
   swimSpeed: 1.5
   walkSpeed: 5
-  climbSpeed: 5
+  climbSpeed: 4
   accelerationForce: 5
   decelerationForce: 0.7
   directionalChangeSpeed: 0.3
-  ladderSensorSize: {x: 0.31, y: 2.05}
-  ladderTopExitCheckPoint: {fileID: 5559968206278809909}
-  ladderSensorOffset: {x: 0, y: 0, z: 0}
-  groundCheckRadius: 0.33
-  ladderTopExitCheckRadius: 0.12
+  ladderSensorSize: {x: 0.29, y: 0.67}
+  groundCheckRadius: 0.51
   ladderLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 512
   ladderExitLayer:
     serializedVersion: 2
     m_Bits: 512
@@ -564,6 +561,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _toolController: {fileID: 2511403419373690701}
+  _interactionRadius: 0.2
 --- !u!114 &2511403419373690701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -579,7 +577,7 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 6962948237969374493}
   _networkObjectCache: {fileID: 0}
---- !u!61 &4772185344624608086
+--- !u!61 &6917722311285614130
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -613,11 +611,11 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 1.8125}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.75, y: 3}
+    pivot: {x: 0.5, y: -0.08}
+    oldSize: {x: 1.375, y: 3.125}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -650,7 +648,7 @@ Transform:
   m_GameObject: {fileID: 5741266127992731626}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.004, z: 0}
+  m_LocalPosition: {x: 0, y: 0.61, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -668,7 +666,7 @@ GameObject:
   - component: {fileID: 1368393615559994162}
   m_Layer: 2
   m_Name: ColliderWalk
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -737,7 +735,7 @@ GameObject:
   - component: {fileID: 2107403869247240461}
   m_Layer: 2
   m_Name: ColliderSwim
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

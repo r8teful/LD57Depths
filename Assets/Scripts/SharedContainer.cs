@@ -39,6 +39,16 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
 
     public Sprite InteractIcon => throw new NotImplementedException();
 
+    public bool CanInteract {
+        get {
+            throw new NotImplementedException();
+        }
+
+        set {
+            throw new NotImplementedException();
+        }
+    }
+
     // --- Initialization & Sync Callbacks ---
 
     #region Initialization & Sync Callbacks

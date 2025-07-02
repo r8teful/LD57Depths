@@ -3,21 +3,40 @@ using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-[RequireComponent (typeof(BoxCollider2D))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
     public SpriteRenderer SpriteRenderer;
     public RecipeBaseSO fixRecipe;
     [SerializeField] private Sprite FixIcon;
+    [SerializeField] private Transform _popupPos;
     private CanvasInputWorld instantatiatedCanvas;
     private UIPopup instantatiatedPopup;
     private bool isFixed;
     public event Action PopupDataChanged;
-
+    private SubInterior _subParent;
     public Sprite InteractIcon => FixIcon;
 
+
+    bool IInteractable.CanInteract {
+        get {
+            return _canInteract;
+        }
+
+        set {
+            _canInteract = value;
+        }
+    }
+
+    private bool _canInteract = true;
     private void Start() {
         // Create a copy of the material
         SpriteRenderer.material = new Material(SpriteRenderer.material);
+    }
+    public void InitParent(SubInterior subParent) {
+        // This is now obviously tied to the sub interior only. All we really need is some sort of manager that handles the state of this object
+        // So we can call manager.ThisObjectIsFixed and then the manager will handle the rest
+        //SetIsBrokenBool(isBroke);
+        _subParent = subParent;
     }
     public void SetIsBrokenBool(bool isBroken) {
         SpriteRenderer.material.SetInt("_Damaged", isBroken ? 1 : 0);
@@ -39,13 +58,14 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
     }
     public void SetFixed() {
         isFixed = true;
+        _subParent.EntityFixed(this);
         SetIsBrokenBool(false);
         // TODO other functionality etc etc...
     }
 
     public void SetInteractable(bool isInteractable, Sprite interactPrompt = null) {
         if (isInteractable) {
-            instantatiatedCanvas = Instantiate(App.ResourceSystem.GetPrefab("CanvasInputWorld"), transform).GetComponent<CanvasInputWorld>();
+            instantatiatedCanvas = Instantiate(App.ResourceSystem.GetPrefab("CanvasInputWorld"), _popupPos.position,Quaternion.identity,transform).GetComponent<CanvasInputWorld>();
             instantatiatedCanvas.Init(this, interactPrompt);
         } else {
             if (instantatiatedCanvas != null) {
