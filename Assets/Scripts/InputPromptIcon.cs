@@ -6,8 +6,9 @@ public class InputPromptIcon : MonoBehaviour {
     [SerializeField] private Image _interactPromptImage;
 
     public void Init(Sprite interactIcon, Sprite InteractPrompt) {
-        if(interactIcon !=null)
-            _interactIconImage.sprite = interactIcon;
+        _interactIconImage.sprite = interactIcon;
+        if (interactIcon == null)
+            Destroy(_interactIconImage.gameObject);
         if(InteractPrompt != null)
             _interactPromptImage.sprite = InteractPrompt;
     }

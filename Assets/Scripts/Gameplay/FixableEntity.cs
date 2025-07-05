@@ -44,18 +44,7 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
             Destroy(this); // This makes sence right?
         }
     }
-    private void OnTriggerEnter2D(Collider2D collision) {
-        if (collision.gameObject.CompareTag("Player")) {
-        Debug.Log("ENTER!");
-            //SubInside.Instance.EnterExit();
-        }
-    }
-    private void OnTriggerExit2D(Collider2D collision) {
-        if (collision.gameObject.CompareTag("Player")) {
-        Debug.Log("EXIT!");
-            //SubInside.Instance.ExitCollider();
-        }
-    }
+    
     public void SetFixed() {
         isFixed = true;
         _subParent.EntityFixed(this);
@@ -83,7 +72,7 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
             }
             var clientInventory = client.GetComponent<NetworkedPlayerInventory>().GetInventoryManager(); // Probably really bad to do this but EH?
             instantatiatedPopup = Instantiate(App.ResourceSystem.GetPrefab("PopupWorld"), instantatiatedCanvas.transform).GetComponent<UIPopup>();
-            instantatiatedPopup.SetData(new(fixRecipe.name, fixRecipe.description, fixRecipe.GetIngredientStatuses(clientInventory)));
+            instantatiatedPopup.SetData(new(fixRecipe.displayName, fixRecipe.description, fixRecipe.GetIngredientStatuses(clientInventory)));
             instantatiatedCanvas.SetPromptNextStage(instantatiatedPopup.transform);
         } else if(instantatiatedPopup != null) {
             // Basically pressing again while the popup is already open

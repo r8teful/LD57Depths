@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System;
 using FishNet.Connection;
 using System.Linq;
+using UnityEditor.PackageManager;
 
 public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractable {
-    [Header("Settings")]
     [SerializeField] private int containerSize = 12;
-    [SerializeField] private float interactionRadius = 2.0f;
+    [SerializeField] private Transform _popupPos;
     private CanvasInputWorld instantatiatedCanvas;
 
     // The synchronized list of items. This is the core data.
@@ -33,15 +33,11 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
 
     public string AssociatedInteriorId => throw new NotImplementedException();
 
-    public Sprite InteractionSprite => throw new NotImplementedException();
-
-    public Vector3 PromptPosition => throw new NotImplementedException();
-
-    public Sprite InteractIcon => throw new NotImplementedException();
+    public Sprite InteractIcon => null;
 
     public bool CanInteract {
         get {
-            throw new NotImplementedException();
+            return true; // TODO should be false if someone else is interacting!
         }
 
         set {
@@ -345,7 +341,7 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
     public bool ServerTryInteract(NetworkObject interactor) {
         // Server validates distance before allowing interaction / UI open
         float distSq = (transform.position - interactor.transform.position).sqrMagnitude;
-        if (distSq > (interactionRadius * interactionRadius)) {
+        if (distSq > (12 * 12)) {
             Debug.LogWarning($"[Server] Client {interactor.Owner.ClientId} tried to interact with container {gameObject.name} from too far.");
             // Maybe send TargetRpc failure message to player?
             return false;
@@ -467,14 +463,19 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
         playerInv.CmdInteractWithContainer(base.NetworkObject);
     }
 
+    private void CloseContainer() {
+        // Ugly 
+        Debug.LogWarning("Need close logic");
+    }
     public void SetInteractable(bool isInteractable, Sprite interactPrompt) {
         if (isInteractable) {
-            instantatiatedCanvas = Instantiate(App.ResourceSystem.GetPrefab("CanvasInputWorld"), transform).GetComponent<CanvasInputWorld>();
+            instantatiatedCanvas = Instantiate(App.ResourceSystem.GetPrefab("CanvasInputWorld"), _popupPos.position, Quaternion.identity,transform).GetComponent<CanvasInputWorld>();
             instantatiatedCanvas.Init(this, interactPrompt);
         } else {
             if (instantatiatedCanvas != null) {
                 Destroy(instantatiatedCanvas.gameObject);
             }
+            CloseContainer();
         }
     }
 }

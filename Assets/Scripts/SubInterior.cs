@@ -45,7 +45,7 @@ public class SubInterior : NetworkBehaviour {
 
     private void InitLadder() {
         // This is stupid but the ladder should not be interactable until we have fixed the control pannel 
-        var firstMatch = persistentSubEntities.Values.FirstOrDefault(entity => entity.entityID == 5); // 5 is ladder lol
+        var firstMatch = persistentSubEntities.Values.FirstOrDefault(entity => entity.entityID == 501); // 501 is ladder lol
         if (firstMatch != null) {
             if (persistentIDToData.TryGetValue(firstMatch.persistentId, out var v)) {
                 v.go.GetComponent<IInteractable>().CanInteract = false;

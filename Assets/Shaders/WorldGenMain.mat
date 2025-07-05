@@ -41,14 +41,14 @@ Material:
     - _BaseWidth: 174.5
     - _BiomeAmp: 1.06
     - _BiomeCutof2: 0.343
-    - _BiomeCutoff: 0.766
+    - _BiomeCutoff: 0.688
     - _BiomeNoiseScale: 0.421
-    - _CaveAmp: 1.08
-    - _CaveCutoff: 0.716
+    - _CaveAmp: 1.31
+    - _CaveCutoff: 0.669
     - _CaveNoise: 0.09
     - _CaveNoiseAmp: 2.66
     - _CaveNoiseFreq: 0.1395
-    - _CaveScale: 0.072
+    - _CaveScale: 0.173
     - _CaveThreshold: 0.237
     - _Cutoff: 0
     - _EdgeAmp: 11.98
@@ -58,14 +58,14 @@ Material:
     - _LumienceWarpAmp: 18.43
     - _LuminenceBlockAmp: 4.19
     - _LuminenceBlockNoiseAmp: 1.72
-    - _LuminenceEdgeNoiseAmp: 4.19
+    - _LuminenceEdgeNoiseAmp: 41
     - _LuminenceEdgeNoiseScale: 0.7
-    - _LuminenceHorSize: 514.7
+    - _LuminenceHorSize: 360.57
     - _LuminenceScale2: 0.213
     - _LuminenceWarpAmp2: 1
-    - _LuminesenceHeight: 131.88
-    - _LuminesenceNoiseScale: 0.5
-    - _LuminesenceStart: -2986.1
+    - _LuminesenceHeight: 94.7
+    - _LuminesenceNoiseScale: 0.389
+    - _LuminesenceStart: -3127
     - _NoiseFreq: 0.164
     - _NoiseScale: 0.164
     - _Parallax: 0
@@ -80,6 +80,7 @@ Material:
     - _SurfaceNoiseScale: 0.5
     - _Test: 0.57
     - _WarpAmp: 2.12
+    - _xOffset: -425.3
     m_Colors:
     - _CamPos: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.003921569, g: 0, b: 0, a: 1}

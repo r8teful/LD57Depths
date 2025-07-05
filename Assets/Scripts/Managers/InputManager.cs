@@ -66,7 +66,7 @@ public class InputManager : NetworkBehaviour {
             _uiDropOneAction = _playerInput.actions["UI_DropOne"];
             _uiNavigateAction = _playerInput.actions["UI_Navigate"];
             _uiPointAction = _playerInput.actions["UI_Point"];
-            _uiCancelAction = _playerInput.actions["UI_Cancel"]; // For cancelling held item
+            _uiCancelAction = _playerInput.actions["UI_Cancel"]; 
             _uiTabLeft = _playerInput.actions["UI_TabLeft"]; // Opening containers
             _uiTabRight = _playerInput.actions["UI_TabRight"]; // Opening containers
             _hotbarSelection = _playerInput.actions["HotbarSelect"];
@@ -169,7 +169,7 @@ public class InputManager : NetworkBehaviour {
 
         if (closestInteractable != _currentInteractable) {
             _previousInteractable?.SetInteractable(false); // Hide prompt on old one
-
+            Debug.Log("Found new interactable!: " + closestInteractable);
             _currentInteractable = closestInteractable;
             _previousInteractable = _currentInteractable;
 
@@ -240,7 +240,9 @@ public class InputManager : NetworkBehaviour {
     }
     // Get movement input (e.g., WASD, joystick)
     public Vector2 GetMovementInput() {
-        return movementInput;
+        // Dissable movement if we are in a menu
+        return _currentContext != PlayerInteractionContext.DraggingItem && _currentContext != PlayerInteractionContext.InteractingWithUI 
+            ? movementInput : Vector2.zero;
     }
   
     // Get aim input, processed based on control scheme
@@ -323,7 +325,7 @@ public class InputManager : NetworkBehaviour {
 
     private void UIHandleCloseAction(InputAction.CallbackContext context) {
         // E.g., Escape key or Gamepad B/Start (if configured to cancel)
-        _inventoryUIManager.HandleCloseInventory(context);
+        _inventoryUIManager.HandleCloseAction(context);
      
     }
     #endregion

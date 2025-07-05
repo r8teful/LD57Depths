@@ -444,9 +444,8 @@ public class PlayerMovement : NetworkBehaviour {
             // Slowly fade out and then teleport player back to base?
             playerHealth -= 1 * Time.deltaTime;
             if(playerHealth <= 0) {
-                // Lose some resources and go back to base
-                if (UpgradeManager.Instance != null)
-                    UpgradeManager.Instance.RemoveAllResources(0.5f);
+                // Todo remove resources?
+                Debug.LogWarning("No logic for resource removement");
                 Resurect();
             }
             UpdateFadeOutVisual();

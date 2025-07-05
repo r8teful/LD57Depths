@@ -7,11 +7,14 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine.EventSystems;
 using System;
+using Unity.VisualScripting;
 
 public class InventoryUIManager : Singleton<InventoryUIManager> {
     [Header("UI Elements")]
-    [SerializeField] private GameObject inventoryPanel; // The main inventory window panel
+    [SerializeField] private GameObject playerUIPanel; // The main window panel
     [SerializeField] private GameObject hotbarPanel;
+    [SerializeField] private GameObject inventoryPanel; // The actual inventory grid, we move this around into the inventory, or at the bottom for containers
+    [SerializeField] private Image inventoryPanelBackground;
     [SerializeField] private GameObject[] inventoryTabs;
     [SerializeField] private GameObject[] inventoryTabButtons;
     [SerializeField] private Transform slotInvContainerTop; // Parent transform where UI slots will be instantiated
@@ -50,7 +53,7 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
     private InventorySlotUI _currentFocusedSlot = null; // For controller navigation
 
     // --- Properties ---
-    public bool IsOpen => inventoryPanel != null && _isOpen;
+    public bool IsOpen => playerUIPanel != null && _isOpen;
     public bool IsDraggingItem => !_playerInventory.heldItemStack.IsEmpty();
     public int HotbarSize => hotbarSize; // Expose hotbar size
     public event Action<bool> OnInventoryToggle;
@@ -69,7 +72,7 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
         }
 
         // Validate essential UI components assigned in prefab
-        if (!inventoryPanel || !slotInvContainerTop || !slotPrefab || !draggingImage || !containerPanel || !containerSlotContainer) {
+        if (!playerUIPanel || !slotInvContainerTop || !slotPrefab || !draggingImage || !containerPanel || !containerSlotContainer) {
             Debug.LogError("One or more UI elements missing in InventoryUIPrefab!", gameObject);
             //enabled = false; return;
         }
@@ -85,7 +88,7 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
         ItemSelectionManager.Initialize(hotbarSize, _playerGameObject, _localInventoryManager); // Pass player object
         // OR itemSelectionManager.Init(manager.gameObject, manager);
         EnableTab(0); // Set inventory tab as first tab, dissable others
-        inventoryPanel.SetActive(false); // ensure inventory is closed
+        playerUIPanel.SetActive(false); // ensure inventory is closed
         CreateSlotUIs();
         Debug.Log("InventoryUIManager Initialized for player: " + _playerGameObject.name);
     }
@@ -98,8 +101,8 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
         // If player syncer is on the same player object, find it for container events
         NetworkedPlayerInventory playerSyncer = _playerGameObject.GetComponent<NetworkedPlayerInventory>();
         if (playerSyncer != null) {
-            NetworkedPlayerInventory.OnContainerOpened += HandleContainerOpen; // Static events are tricky, direct ref better if possible
-            NetworkedPlayerInventory.OnContainerClosed += CloseCurrentContainerUI;
+            playerSyncer.OnContainerOpened += HandleContainerOpen;
+            playerSyncer.OnContainerClosed += HandleContainerClose;
         } else { Debug.LogError("PlayerInventorySyncer not found on owning player for container events!"); }
 
     }
@@ -163,6 +166,7 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
         if (!_playerInventory.heldItemStack.IsEmpty()) {
             if (draggingImage != null) {
                 draggingImage.gameObject.SetActive(true);
+                draggingImage.transform.SetAsLastSibling();
                 ItemData data = _playerInventory.heldItemStack.ItemData; // Uses the property from InventorySlot
                 draggingImage.sprite = data != null ? data.icon : null;
                 draggingImage.transform.position = Input.mousePosition;
@@ -211,17 +215,16 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
     }
  
     private void OpenInventory() {
-        inventoryPanel.SetActive(true);
+        playerUIPanel.SetActive(true);
+        SetInventoryInTab();
         hotbarPanel.SetActive(false); // 
         OnInventoryToggle?.Invoke(true);
     }
     private void CloseInventory(InputAction.CallbackContext c) {
-        inventoryPanel.SetActive(false);
+        playerUIPanel.SetActive(false);
         hotbarPanel.SetActive(true);
         EventSystem.current.SetSelectedGameObject(null); // Deselect UI when closing
-        _playerInventory.HandleClose(c);
         OnInventoryToggle?.Invoke(false);
-
     }
     // Called from tab button inspector
     public void OnTabButtonClicked(int i) {
@@ -440,9 +443,9 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
 
     private void HandleContainerOpen(SharedContainer containerToView) {
         if (!containerPanel || !containerSlotContainer) return; // Container UI not setup
-
+        TryCloseInventory();
         if (currentViewedContainer != null && currentViewedContainer != containerToView) {
-            CloseCurrentContainerUI(); // Close UI current viewed container
+            HandleContainerClose(); // Close UI current viewed container
         }
         Debug.Log($"[UI] Opening Container View: {containerToView.name}");
 
@@ -467,13 +470,20 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
         // Make the container panel visible
         containerPanel.SetActive(true);
 
+        // Move the Inventory so we can see it without the PlayerMenu being open 
+        SetInventoryInUI();
 
-        // Ensure player inventory is ALSO open when container is open
-        if (!inventoryPanel.activeSelf) {
-            inventoryPanel.SetActive(true);
-            UpdateHotbarHighlight(ItemSelectionManager.SelectedSlotIndex); // Update highlights if opened this way
+        // Disable hotbar
+
+        hotbarPanel.SetActive(false); 
+        // Ensure playermenu is CLOSED when container is open
+        if (!playerUIPanel.activeSelf) {
+            playerUIPanel.SetActive(false);
         }
     }
+
+   
+
     private void HandleInteractionStateChanged(bool isOpenForThisPlayer, List<InventorySlot> initialSlots) {
         if (isOpenForThisPlayer) {
             if (containerPanel == null)
@@ -481,7 +491,7 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
             containerPanel.SetActive(true);
             PopulateContainerSlots(initialSlots ?? new List<InventorySlot>(currentViewedContainer.ContainerSlots)); // Use initial if provided
         } else {
-            CloseCurrentContainerUI(false); // Don't send close command again if server initiated closure
+            HandleContainerClose(false); // Don't send close command again if server initiated closure
         }
     }
     private void PopulateContainerSlots(List<InventorySlot> slotsToDisplay) {
@@ -517,11 +527,16 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
             }
         }
     }
-
-    public void CloseCurrentContainerUI(bool sendServerCommand = true) {
+    private void TryCloseInventory() {
+        if (IsOpen) {
+            HandleToggleInventory(new InputAction.CallbackContext()); // Pass dummy context
+        }
+    }
+    public void HandleContainerClose(bool sendServerCommand = true) {
         if (containerPanel != null)
             containerPanel.SetActive(false);
-
+        SetInventoryInTab(); // Set the inventory back to its "home". Ugly but works?
+        hotbarPanel.SetActive(true); // also uggly?
         if (currentViewedContainer != null) {
             if (_playerInventory != null && _playerInventory.IsOwner && currentViewedContainer.InteractingClientId == _playerInventory.OwnerId) {
                 currentViewedContainer.CmdRequestCloseContainer();
@@ -543,16 +558,33 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
             CloseInventory(context);
         }
         // If closing while dragging, cancel the drag
-        if (!inventoryPanel.activeSelf && isDragging) {
+        if (!playerUIPanel.activeSelf && isDragging) {
             // EndDrag(true); // Force cancel
         }
     }
 
-    internal void HandleCloseInventory(InputAction.CallbackContext context) {
-        _playerInventory.HandleClose(context);
+    internal void HandleCloseAction(InputAction.CallbackContext context) {
         if (IsOpen) {
             // If inventory is open and nothing held, maybe toggle it closed
-            HandleToggleInventory(new InputAction.CallbackContext()); // Pass dummy context
-        }
+            HandleToggleInventory(context);
+        } 
+        _playerInventory.CloseContainer();
+    }
+    private void SetInventoryInTab() {
+        inventoryPanel.transform.SetParent(inventoryTabs[0].transform);
+        inventoryPanelBackground.enabled = false;
+        var pos = inventoryPanel.transform.localPosition;
+        pos.x = 200;
+        pos.y = 42;
+        inventoryPanel.transform.localPosition = pos;
+    }
+    
+    private void SetInventoryInUI() {
+        inventoryPanel.transform.SetParent(gameObject.transform);
+        inventoryPanelBackground.enabled = true;
+        var pos = inventoryPanel.transform.localPosition;
+        pos.x = 0;
+        pos.y = -300;
+        inventoryPanel.transform.localPosition = pos;
     }
 }

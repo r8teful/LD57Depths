@@ -122,6 +122,7 @@ float blockNoiseAmp,
 float blockCutoff,
 float YStart,
 float YHeight,
+float XOffset,
 float horSize,
 // TRENCH
 float trenchBaseWiden,
@@ -150,7 +151,7 @@ float seed)
     
     float heightTop = YStart + YHeight + edgeNoiseY * edgeNoiseAmp;
     float heightBottom = YStart + edgeNoiseY * edgeNoiseAmp;
-    if ((width > abs(uv.x)) && (uv.y >= heightBottom && uv.y < heightTop))
+    if ((width > abs(uv.x - XOffset)) && (uv.y >= heightBottom && uv.y < heightTop))
     {
         // Inside the biome 
         float biomeBlocks = step(Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed * 5000), blockNoiseScale) * blockNoiseAmp, blockCutoff);
@@ -189,6 +190,7 @@ float blockNoiseAmp,
 float blockCutoff,
 float YStart,
 float YHeight,
+float XOffset,
 float horSize,
 // TRENCH
 float trenchBaseWiden,
@@ -220,7 +222,7 @@ float seed)
     
     float heightTop = YStart + YHeight + edgeNoiseY * edgeNoiseAmp;
     float heightBottom = YStart + edgeNoiseY * edgeNoiseAmp;
-    if ((width > abs(uv.x)) && (uv.y >= heightBottom && uv.y < heightTop))
+    if ((width > abs(uv.x - XOffset)) && (uv.y >= heightBottom && uv.y < heightTop))
     {
         // Inside the biome 
         float biomeBlocks = step(Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed * 5000), blockNoiseScale) * blockNoiseAmp, blockCutoff);
@@ -251,6 +253,7 @@ float blockNoiseAmp,
 float blockCutoff, 
 float YStart, 
 float YHeight, 
+float XOffset,
 float horSize,
 // TRENCH
 float trenchBaseWiden, 
@@ -262,7 +265,7 @@ float seed,
 out float4 Color)
 {
     Color = WorldGenFull(uv, caveNoiseScale, caveAmp, caveCutoff, edgeNoiseScale, edgeNoiseAmp, blockNoiseScale, blockNoiseAmp, 
-    blockCutoff, YStart, YHeight, horSize, trenchBaseWiden, trenchBaseWidth, trenchNoiseScale, trenchEdgeAmp, seed);
+    blockCutoff, YStart, YHeight, XOffset,horSize, trenchBaseWiden, trenchBaseWidth, trenchNoiseScale, trenchEdgeAmp, seed);
     //float gen = WorldGenMaskOnly(uv, caveNoiseScale, caveAmp, caveCutoff, edgeNoiseScale, edgeNoiseAmp, blockNoiseScale, blockNoiseAmp,
     //                              blockCutoff, YStart, YHeight, horSize, trenchBaseWiden, trenchBaseWidth, edgeNoiseScale, edgeNoiseAmp, seed);
     //Color = float4(gen, gen, gen, 1);
@@ -282,6 +285,7 @@ float blockNoiseAmp,
 float blockCutoff,
 float YStart,
 float YHeight,
+float XOffset,
 float horSize,
 // TRENCH
 float trenchBaseWiden,
@@ -296,7 +300,7 @@ out float Mask)
     // Also this now is FUCKED because the background need unique seeds for the trench, but not the other world gen stuff THIS IS SOMETHING FOR LATER
     // BECAUSE I CAN'T BE FUCKED AND LUCY SAID IM NOT ALLOWED TO DO ANY SHADER CODING TODAY!!
     Mask = WorldGenMaskOnly(uv, caveNoiseScale, caveAmp, caveCutoff, edgeNoiseScale, edgeNoiseAmp, blockNoiseScale, blockNoiseAmp,
-                                  blockCutoff, YStart, YHeight, horSize, trenchBaseWiden, trenchBaseWidth, edgeNoiseScale, edgeNoiseAmp, parallax, seed);
+                                  blockCutoff, YStart, YHeight, XOffset,horSize, trenchBaseWiden, trenchBaseWidth, edgeNoiseScale, edgeNoiseAmp, parallax, seed);
 }
 
 void CustomVoronoi_Edge_Procedural_float(
@@ -316,6 +320,7 @@ void CustomVoronoi_Edge_Procedural_float(
     float blockCutoff,
     float YStart,
     float YHeight,
+    float XOffset,
     float horSize,
     // TRENCH
     float baseWiden,
@@ -447,5 +452,5 @@ void CustomVoronoi_Edge_Procedural_float(
     
     */
     TrenchMask = WorldGenMaskOnly(UV, caveNoiseScale, caveAmp, caveCutoff, edgeNoiseScale, edgeNoiseAmp, blockNoiseScale, blockNoiseAmp, 
-                                  blockCutoff, YStart, YHeight, horSize, baseWiden, baseWidth, edgeNoiseScale, edgeNoiseAmp, parallax,uniqueSeedWorld);
+                                  blockCutoff, YStart, YHeight, XOffset ,horSize, baseWiden, baseWidth, edgeNoiseScale, edgeNoiseAmp, parallax, uniqueSeedWorld);
 }
