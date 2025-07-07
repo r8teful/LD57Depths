@@ -4,7 +4,7 @@ using UnityEngine;
 
 // Anything that can give information to the popup on the cursor
 public interface IPopupInfo {
-    PopupData GetPopupData(GameObject obj = null);
+    PopupData GetPopupData(InventoryManager inv);
     event Action PopupDataChanged;
     event Action<IPopupInfo,bool> OnPopupShow;
 }

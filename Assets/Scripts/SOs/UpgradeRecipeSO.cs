@@ -12,62 +12,72 @@ public class UpgradeRecipeSO : RecipeBaseSO {
 
     public Dictionary<ushort, int> costData; // Array to hold costs for different resource
 
-    public override void PrepareRecipe(int tier, UpgradeTreeCosts costsValues) {
-        base.PrepareRecipe(tier,costsValues);
-        // Todo actually calculate the thing here
-        var item = new ItemQuantity() { item = App.ResourceSystem.GetItemByID(0), quantity = 3 };
-        requiredItems = new List<ItemQuantity>() {item };
+    public override void PrepareRecipe(float value, List<ItemQuantity> resourcePool) {
+        base.PrepareRecipe(value, resourcePool);
+        requiredItems = CalculateItemQuantities(Mathf.RoundToInt(value), resourcePool);
     }
-    // The node should handle the calculation of the costs itself
-    public Dictionary<ushort, int> CalculateItemQuantities(
-        int level,
-        float baseValue,
-        float linearIncrease,
-        float expIncrease,
-        Dictionary<ushort, int> resourcePool) {
-        // Calculate total cost
-        float cost = UpgradeCalculator.CalculateTotalPoints(level, baseValue, linearIncrease, expIncrease);
-        float remaining = cost;
 
-        // Prepare result dictionary
-        var result = new Dictionary<ushort, int>();
+    public static List<ItemQuantity> CalculateItemQuantities(
+        int targetValue,
+        List<ItemQuantity> resourcePool,
+        QuantityCalculationOptions options = null
+    ) {
+        if (options == null)
+            options = new QuantityCalculationOptions();
 
-        // Get item values and sort by descending value
-        var sortedItems = resourcePool.Keys
-            .Select(id => new {
-                Id = id,
-                Data = App.ResourceSystem.GetItemByID(id)
-            })
-            .OrderByDescending(x => x.Data.value)
-            .ToList();
+        float remaining = targetValue;
+        var result = new List<ItemQuantity>();
 
-        // Iterate highest to lowest
-        foreach (var entry in sortedItems) {
+        // Sort by descending itemValue
+        var sorted = resourcePool
+            .Where(iq => iq.item.itemValue > 0f)
+            .OrderByDescending(iq => iq.item.itemValue);
+
+        foreach (var iq in sorted) {
             if (remaining <= 0f)
                 break;
 
-            ushort itemId = entry.Id;
-            float itemValue = entry.Data.value;
-            int available = resourcePool[itemId];
+            float valuePerItem = iq.item.itemValue;
+            // Determine how many are "available" by option
+            int availableLimit = options.RespectAvailability ? iq.quantity : int.MaxValue;
 
-            if (available <= 0 || itemValue <= 0f)
-                continue;
+            // Maximum needed purely by remaining points
+            int maxNeeded = Mathf.FloorToInt(remaining / valuePerItem);
 
-            // Calculate max count of this item we can use
-            int maxNeeded = (int)Mathf.Floor(remaining / itemValue);
-            int count = Mathf.Min(available, maxNeeded);
+            // Maximum allowed by percentage cap
+            int maxByPercentage = Mathf.FloorToInt((targetValue * options.MaxContributionPercentage) / valuePerItem);
 
-            if (count > 0) {
-                result[itemId] = count;
-                remaining -= count * itemValue;
+            // Final count is min of need, availability, and percentage cap
+            int take = Mathf.Min(maxNeeded, availableLimit, maxByPercentage);
+
+            if (take > 0) {
+                result.Add(new ItemQuantity {
+                    item = iq.item,
+                    quantity = take
+                });
+                remaining -= take * valuePerItem;
             }
         }
 
-        // Optionally, we can handle leftover cost here if remaining > 0
+        // TODO: handle leftover if remaining > 0, if desired
         return result;
     }
-
     public override bool ExecuteRecipe(RecipeExecutionContext context) {
         throw new System.NotImplementedException();
     }
+}
+public class QuantityCalculationOptions {
+    /// <summary>
+    /// If true, will cap usage of each item by its available quantity in the pool.
+    /// If false, ignores availability and assumes infinite supply.
+    /// </summary>
+    public bool RespectAvailability { get; set; } = true;
+
+    /// <summary>
+    /// Maximum fraction (0 to 1) of the targetValue that any single item may contribute.
+    /// For example, 0.5 means an item cannot cover more than 50% of the total points.
+    /// </summary>
+    public float MaxContributionPercentage { get; set; } = 1f;
+
+    // Future optional parameters can go here...
 }

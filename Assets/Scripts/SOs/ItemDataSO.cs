@@ -30,7 +30,7 @@ public class ItemData : ScriptableObject, IIdentifiable {
     [VerticalGroup("Gamepaly/1")]
     public int usageCooldown = 0;
     [VerticalGroup("Gamepaly/1")]
-    public int value = 0; // Used for upgrade calculations
+    public int itemValue = 0; // Used for upgrade calculations
     
     ushort IIdentifiable.ID => ID;
 

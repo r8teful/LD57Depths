@@ -129,7 +129,9 @@ public class ResourceSystem {
         }
         return recipe;
     }
-
+    public UpgradeRecipeSO[] GetAllRecipeByType(UpgradeTreeType type) {
+        return Resources.LoadAll<UpgradeRecipeSO>($"UpgradeData/{type}").ToArray();
+    }
     public GameObject GetPrefab(string s) => _prefabDict[s];
     public T GetPrefab<T>(string key) where T : Component {
         if (!_prefabDict.TryGetValue(key, out GameObject prefab))
@@ -154,5 +156,18 @@ public class ResourceSystem {
 
     public List<CraftingRecipeSO> GetAllCraftingRecipes() {
         return _recipeLookupByID.Values.OfType<CraftingRecipeSO>().ToList();
+    }
+
+    internal List<ItemData> GetAllItems() {
+        return _itemLookupByID.Values.OfType<ItemData>().ToList();
+    }
+    internal Dictionary<ushort,int> GetMaxItemPool() {
+        var items = GetAllItems();
+        var d = new Dictionary<ushort, int>();
+        foreach (var item in items)
+        {
+            d.Add(item.ID, 999);
+        }
+        return d;
     }
 }

@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 08d8bdbe60c43c64e8eafe5c7dc8491e, type: 3}
-  m_Name: UpgradeDataSO
+  m_Name: UpgradeRecipeSOSpeed_LVL5
   m_EditorClassIdentifier: 
-  RecipeID: 0
-  displayName: 
-  description: 
+  RecipeID: 205
+  displayName: Upgrade 5
+  description: Level 5 upgrade
   icon: {fileID: 0}
   requiredItems: []
   type: 0
   increaseType: 0
-  value: 0.2
+  value: 0

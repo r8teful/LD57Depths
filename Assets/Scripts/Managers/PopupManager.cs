@@ -8,6 +8,7 @@ public class PopupManager : MonoBehaviour {
     private IPopupInfo currentHoveredInfoProvider;
     private IPopupInfo currentSelectedInfoProvider;
     private bool isMouseOverPopup;
+    private InventoryManager inventoryManager;
     public UIPopup CurrentPopup => currentPopup;
     //private void Awake() {
     //    if (Instance == null)
@@ -15,7 +16,9 @@ public class PopupManager : MonoBehaviour {
     //    else
     //        Destroy(gameObject);
     //}
-
+    public void Init(InventoryManager clientInv) {
+        inventoryManager = clientInv; // need it for popup box info
+    }
     private void Start() {
         GetComponent<UIManager>().UIManagerInventory.OnInventoryToggle += OnInventoryToggled;
         //EventSystem.current.onSelectedGameObjectChanged.AddListener(OnSelectedGameObjectChanged);
@@ -86,7 +89,7 @@ public class PopupManager : MonoBehaviour {
 
         HidePopup();
         currentInfoProvider = infoProvider;
-        PopupData data = infoProvider.GetPopupData();
+        PopupData data = infoProvider.GetPopupData(inventoryManager);
         infoProvider.PopupDataChanged += PopupDataChange;
         currentPopup = Instantiate(popupPrefab, transform);
         currentPopup.SetData(data);
@@ -96,7 +99,7 @@ public class PopupManager : MonoBehaviour {
 
     private void PopupDataChange() {
         // Fetch new data
-        currentPopup.SetData(currentInfoProvider.GetPopupData());
+        currentPopup.SetData(currentInfoProvider.GetPopupData(inventoryManager));
     }
 
     private void HidePopup() {

@@ -87,8 +87,7 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
         //PopupManager.Instance.TryShowWorldPopup(this,client);
     }
 
-    public PopupData GetPopupData(GameObject obj) {
-        var clientInventory = obj.GetComponent<NetworkedPlayerInventory>().GetInventoryManager(); // Probably really bad to do this but EH?
-        return new(fixRecipe.name, fixRecipe.description, fixRecipe.GetIngredientStatuses(clientInventory));
+    public PopupData GetPopupData(InventoryManager clientInv) {
+        return new(fixRecipe.name, fixRecipe.description, fixRecipe.GetIngredientStatuses(clientInv));
     }
 }

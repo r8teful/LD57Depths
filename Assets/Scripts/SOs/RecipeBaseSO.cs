@@ -7,6 +7,10 @@ using UnityEngine;
 public struct ItemQuantity {
     public ItemData item;
     public int quantity;
+    public ItemQuantity(ItemData item) {
+        this.item = item;
+        quantity = 99;
+    }
 }
 // Helper struct for UI status
 public struct IngredientStatus {
@@ -53,7 +57,7 @@ public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
     /// <returns>True if execution was successful, false otherwise.</returns>
     public abstract bool ExecuteRecipe(RecipeExecutionContext context);
 
-    public virtual void PrepareRecipe(int tier, UpgradeTreeCosts c) {
+    public virtual void PrepareRecipe(float value, List<ItemQuantity> resourcePool) {
 
     }
     /// <summary>

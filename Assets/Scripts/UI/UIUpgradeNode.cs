@@ -33,8 +33,8 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
        // UICraftingManager.Instance.AttemptCraft(upgradeData, null, null);
     }
 
-    public PopupData GetPopupData(GameObject obj = null) {
-        return null;
-        //new PopupData(upgradeData.displayName, upgradeData.description, upgradeData.GetIngredientStatuses());
+    public PopupData GetPopupData(InventoryManager clientInv) {
+        return new PopupData(upgradeData.displayName, upgradeData.description, upgradeData.GetIngredientStatuses(clientInv));
+        //return null;
     }
 }

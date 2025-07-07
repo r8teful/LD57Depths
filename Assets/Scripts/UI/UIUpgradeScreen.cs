@@ -10,13 +10,13 @@ public class UIUpgradeScreen : MonoBehaviour {
     private void Start() {
         _upgradePanel.SetActive(false);
     }
-    internal void Init(UpgradeRecipeSO upgrade,UIManager UIManager) {
+    internal void Init(UIManager UIManager) {
         var treeData = App.ResourceSystem.UpgradeTreeData;
         _UIManagerParent = UIManager;
         foreach(var tree in treeData) {
             var treeObj = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeTree>("UpgradeTree"), _upgradeContainer);
             treeObj.Init(this,tree);
-
+            treeObj.name = $"UpgradeTree_{tree.type}";
             // Should call UpgradeRecipeSO.PrepareRecipe on all recipes here!
         }
     }

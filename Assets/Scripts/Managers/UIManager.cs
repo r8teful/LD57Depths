@@ -29,7 +29,8 @@ public class UIManager : MonoBehaviour {
 
 
         // Init managers
-        UpgradeScreen.Init(null, this);
+        UpgradeScreen.Init(this);
         UIManagerInventory.Init(this, localPlayerInvManager, owningPlayer);
+        PopupManager.Init(localPlayerInvManager);
     }
 }
