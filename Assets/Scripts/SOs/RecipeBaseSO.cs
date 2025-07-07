@@ -53,6 +53,9 @@ public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
     /// <returns>True if execution was successful, false otherwise.</returns>
     public abstract bool ExecuteRecipe(RecipeExecutionContext context);
 
+    public virtual void PrepareRecipe(int tier, UpgradeTreeCosts c) {
+
+    }
     /// <summary>
     /// Client-side check to see if the player has enough ingredients.
     /// This is primarily for UI feedback. The server will re-validate.

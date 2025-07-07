@@ -22,7 +22,7 @@ public class InputManager : NetworkBehaviour {
     private InputAction _playerClickAction;
     private InputAction _useItemAction;
     private InputAction _hotbarSelection;
-    private InventoryUIManager _inventoryUIManager;
+    private UIManagerInventory _inventoryUIManager;
     private InputDevice lastUsedDevice;
     // UI
     private InputAction _UItoggleInventoryAction; // Assign your toggle input action asset
@@ -47,7 +47,7 @@ public class InputManager : NetworkBehaviour {
     [ShowInInspector]
     private PlayerInteractionContext _currentContext;
 
-    internal void SetUIManager(InventoryUIManager uiManager) {
+    internal void SetUIManager(UIManagerInventory uiManager) {
         _inventoryUIManager  = uiManager;
     }
     public override void OnStartClient() {

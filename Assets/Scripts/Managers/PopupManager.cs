@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PopupManager : MonoBehaviour {
-    public static PopupManager Instance { get; private set; }
     public UIPopup popupPrefab;
     private UIPopup currentPopup;
     private IPopupInfo currentInfoProvider;
@@ -9,19 +9,19 @@ public class PopupManager : MonoBehaviour {
     private IPopupInfo currentSelectedInfoProvider;
     private bool isMouseOverPopup;
     public UIPopup CurrentPopup => currentPopup;
-    private void Awake() {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
-    }
+    //private void Awake() {
+    //    if (Instance == null)
+    //        Instance = this;
+    //    else
+    //        Destroy(gameObject);
+    //}
 
     private void Start() {
-        GetComponent<InventoryUIManager>().OnInventoryToggle += OnInventoryToggled;
+        GetComponent<UIManager>().UIManagerInventory.OnInventoryToggle += OnInventoryToggled;
         //EventSystem.current.onSelectedGameObjectChanged.AddListener(OnSelectedGameObjectChanged);
     }
     private void OnDestroy() {
-        GetComponent<InventoryUIManager>().OnInventoryToggle -= OnInventoryToggled;
+        GetComponent<UIManager>().UIManagerInventory.OnInventoryToggle -= OnInventoryToggled;
     }
 
     private void OnInventoryToggled(bool isOpen) {
@@ -126,6 +126,22 @@ public class PopupManager : MonoBehaviour {
             // Position above
             position = new Vector2(itemTopCenter.x, itemTopCenter.y + popupHeight);
             popupRT.position = new Vector3(position.x, position.y, 0);
+        }
+    }
+
+    internal void RegisterIPopupInfo(IPopupInfo popupInfo) {
+        popupInfo.OnPopupShow += OnPopupShow;
+    }
+    // We really should unsuscribe here 
+    public void UnregisterIPopupInfo(IPopupInfo popupInfo) {
+        popupInfo.OnPopupShow -= OnPopupShow;
+    }
+
+    private void OnPopupShow(IPopupInfo popup, bool shouldShow) {
+        if (shouldShow) {
+            OnPointerEnterItem(popup);
+        } else {
+            OnPointerExitItem();
         }
     }
 }

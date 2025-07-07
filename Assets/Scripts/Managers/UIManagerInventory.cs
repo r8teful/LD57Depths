@@ -9,14 +9,14 @@ using UnityEngine.EventSystems;
 using System;
 using Unity.VisualScripting;
 
-public class InventoryUIManager : Singleton<InventoryUIManager> {
+public class UIManagerInventory : Singleton<UIManagerInventory> {
     [Header("UI Elements")]
     [SerializeField] private GameObject playerUIPanel; // The main window panel
     [SerializeField] private GameObject hotbarPanel;
     [SerializeField] private GameObject inventoryPanel; // The actual inventory grid, we move this around into the inventory, or at the bottom for containers
     [SerializeField] private Image inventoryPanelBackground;
     [SerializeField] private GameObject[] inventoryTabs;
-    [SerializeField] private GameObject[] inventoryTabButtons;
+    [SerializeField] private Button[] inventoryTabButtons;
     [SerializeField] private Transform slotInvContainerTop; // Parent transform where UI slots will be instantiated
     [SerializeField] private Transform slotInvContainerRest; // Parent transform where UI slots will be instantiated
     [SerializeField] private Transform slotHotbarContainer; // Parent transform where UI slots will be instantiated
@@ -57,12 +57,12 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
     public bool IsDraggingItem => !_playerInventory.heldItemStack.IsEmpty();
     public int HotbarSize => hotbarSize; // Expose hotbar size
     public event Action<bool> OnInventoryToggle;
-    public void Init(InventoryManager localPlayerInvManager, GameObject owningPlayer) {
+    public void Init(UIManager uiManagerParent, InventoryManager localPlayerInvManager, GameObject owningPlayer) {
         _localInventoryManager = localPlayerInvManager;
         ItemSelectionManager = GetComponent<ItemSelectionManager>();
         _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage
         _playerInventory = _playerGameObject.GetComponent<NetworkedPlayerInventory>();
-        GetComponent<UICraftingManager>().Init(_localInventoryManager);
+        GetComponent<UICraftingManager>().Init(_localInventoryManager, uiManagerParent.PopupManager);
         //GetComponent<PopupManager>().Init(_localInventoryManager);
 
         if (_localInventoryManager == null || ItemSelectionManager == null || _playerGameObject == null) {
@@ -92,6 +92,11 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
         CreateSlotUIs();
         Debug.Log("InventoryUIManager Initialized for player: " + _playerGameObject.name);
     }
+
+    private void OnInvSlotChanged(int obj) {
+        throw new NotImplementedException();
+    }
+
     private void OnDestroy() {
         UnsubscribeToEvents();
     }
@@ -105,6 +110,12 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
             playerSyncer.OnContainerClosed += HandleContainerClose;
         } else { Debug.LogError("PlayerInventorySyncer not found on owning player for container events!"); }
 
+        // Subscribe each tab button with its own captured index:
+        for (int i = 0; i < inventoryTabButtons.Length; i++) {
+            var button = inventoryTabButtons[i];
+            int index = i;  // capture a fresh copy of i
+            button.onClick.AddListener(() => OnTabButtonClicked(index));
+        }
     }
     private void UnsubscribeToEvents() {
         if (_localInventoryManager != null)
@@ -226,7 +237,8 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
         EventSystem.current.SetSelectedGameObject(null); // Deselect UI when closing
         OnInventoryToggle?.Invoke(false);
     }
-    // Called from tab button inspector
+
+
     public void OnTabButtonClicked(int i) {
         EnableTab(i);
         SetTabButtonVisual(i);
@@ -389,6 +401,7 @@ public class InventoryUIManager : Singleton<InventoryUIManager> {
 
     // Updates the visual representation of a single slot
     void UpdateSlotUI(int slotIndex) {
+        //RefreshUI(); // Uncoment this if UI isn't changing properly
         InventorySlot slotData = _localInventoryManager.GetSlot(slotIndex);
         if (slotIndex >= 0 && slotIndex < slotInventoryUIs.Count) {
             slotInventoryUIs[slotIndex].UpdateSlot(slotData);

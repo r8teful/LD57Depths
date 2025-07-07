@@ -14,7 +14,7 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, ISelectHandl
     [SerializeField] private Color draggingMaskColor = new Color(0.5f, 0.5f, 0.5f, 0.5f); // Color when being dragged from
 
     // --- Runtime ---
-    private InventoryUIManager uiManager;
+    private UIManagerInventory uiManager;
     private int slotIndex = -1;
     private Image backgroundImage; // Reference to self image if needed for color changes
 
@@ -45,13 +45,13 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, ISelectHandl
     }
 
     // Called by InventoryUIManager during setup
-    public void Initialize(InventoryUIManager manager, int index, bool isHotbar) {
+    public void Initialize(UIManagerInventory manager, int index, bool isHotbar) {
         uiManager = manager;
         slotIndex = index;
         isContainerSlot = false;
         isHotBarSlot = isHotbar;
     }
-    public void SetContainerContext(InventoryUIManager manager, int index) {
+    public void SetContainerContext(UIManagerInventory manager, int index) {
         uiManager = manager; // Still need manager for drag events
         slotIndex = index; // Index *within the container*
         isContainerSlot = true;

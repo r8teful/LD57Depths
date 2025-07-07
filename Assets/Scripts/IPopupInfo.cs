@@ -6,6 +6,7 @@ using UnityEngine;
 public interface IPopupInfo {
     PopupData GetPopupData(GameObject obj = null);
     event Action PopupDataChanged;
+    event Action<IPopupInfo,bool> OnPopupShow;
 }
 
 [System.Serializable]

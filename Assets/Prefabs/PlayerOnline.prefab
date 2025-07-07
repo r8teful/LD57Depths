@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 7286018076648654246}
   - component: {fileID: 2511403419373690701}
   - component: {fileID: 6917722311285614130}
+  - component: {fileID: 1329228130332512456}
   m_Layer: 2
   m_Name: PlayerOnline
   m_TagString: Player
@@ -336,7 +337,6 @@ MonoBehaviour:
   _componentIndexCache: 4
   _addedNetworkObject: {fileID: 6962948237969374493}
   _networkObjectCache: {fileID: 6962948237969374493}
-  inventoryUIPrefab: {fileID: 7227914051332170767, guid: c1db4f0b98c6bef4b96a523182ce73e3, type: 3}
   dropPoint: {fileID: 0}
   pickupRadius: 2
   pickupLayerMask:
@@ -623,6 +623,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 2, y: 2}
   m_EdgeRadius: 0
+--- !u!114 &1329228130332512456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228294681075539138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3db15bf3c79a7234bbea7c0111e6cdf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 6962948237969374493}
+  _networkObjectCache: {fileID: 0}
+  inventoryUIPrefab: {fileID: 2402324419998552674, guid: c1db4f0b98c6bef4b96a523182ce73e3, type: 3}
 --- !u!1 &5741266127992731626
 GameObject:
   m_ObjectHideFlags: 0

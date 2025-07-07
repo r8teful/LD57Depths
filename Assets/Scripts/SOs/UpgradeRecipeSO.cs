@@ -4,7 +4,7 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "UpgradeDataSO", menuName = "ScriptableObjects/UpgradeDataSO", order = 2)]
 // Holds data for one specific upgrade node
-public class UpgradeDataSO : ScriptableObject {
+public class UpgradeRecipeSO : RecipeBaseSO {
 
     public UpgradeType type;
     public IncreaseType increaseType;
@@ -12,8 +12,14 @@ public class UpgradeDataSO : ScriptableObject {
 
     public Dictionary<ushort, int> costData; // Array to hold costs for different resource
 
+    public override void PrepareRecipe(int tier, UpgradeTreeCosts costsValues) {
+        base.PrepareRecipe(tier,costsValues);
+        // Todo actually calculate the thing here
+        var item = new ItemQuantity() { item = App.ResourceSystem.GetItemByID(0), quantity = 3 };
+        requiredItems = new List<ItemQuantity>() {item };
+    }
     // The node should handle the calculation of the costs itself
-    public static Dictionary<ushort, int> CalculateItemQuantities(
+    public Dictionary<ushort, int> CalculateItemQuantities(
         int level,
         float baseValue,
         float linearIncrease,
@@ -61,4 +67,7 @@ public class UpgradeDataSO : ScriptableObject {
         return result;
     }
 
+    public override bool ExecuteRecipe(RecipeExecutionContext context) {
+        throw new System.NotImplementedException();
+    }
 }

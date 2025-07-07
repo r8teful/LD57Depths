@@ -12,12 +12,14 @@ public class SubInterior : NetworkBehaviour {
     private List<InteriorEntityData> interiorEntitieData; // This data gets saved
     private List<SubEntity> interiorEntities; // Runtime only data, not sure if we'll actually need this?
     public Grid SubGrid;
+    private CraftingComponent _craftingComponent;
     public override void OnStartServer() {
         base.OnStartServer();
         // TODO you'll first have to LOAD the existing server entity data, if it doesn't exist, then only create the new ones
         // You'll only create new entities a few times, like when starting the game for the first time.
         // Or maybe later when you unlock a new area or interior. something like that
         _entityManager = EntityManager.Instance;
+        _craftingComponent = gameObject.AddComponent<CraftingComponent>();// I guess this works? We need a way to execute the fixing of the enteriors, we could make a separate FixableManager script or something but we could just have this one here
         interiorEntitieData = new List<InteriorEntityData>();
 
         var interior = GetAllInteriorEntities();
@@ -69,8 +71,8 @@ public class SubInterior : NetworkBehaviour {
         return (interiorData,interiorEntities);
     }
 
-    public void FixEntity(ulong persistentEntityID) {
-        persistentSubEntities[persistentEntityID].specificData.ApplyTo(persistentIDToData[persistentEntityID].go);
+    public void TryFixEntity(RecipeBaseSO fixRecipe, UIPopup instantatiatedPopup, RecipeExecutionContext context) {
+        _craftingComponent.AttemptCraft(fixRecipe, instantatiatedPopup, context);
     }
 
     public void EntityFixed(FixableEntity fixableEntity) {
@@ -91,6 +93,8 @@ public class SubInterior : NetworkBehaviour {
             Debug.LogError("Entity does not have a SubMachine component attached!");
         }
     }
+
+    
 }
 internal struct InteriorEntityData {
     public GameObject go;

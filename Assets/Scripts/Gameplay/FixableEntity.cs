@@ -13,6 +13,8 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
     private UIPopup instantatiatedPopup;
     private bool isFixed;
     public event Action PopupDataChanged;
+    public event Action<IPopupInfo, bool> OnPopupShow; // This IPopupInfo is different because we instantiate the popup directly
+
     private SubInterior _subParent;
     public Sprite InteractIcon => FixIcon;
 
@@ -35,6 +37,7 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
     public void InitParent(SubInterior subParent) {
         // This is now obviously tied to the sub interior only. All we really need is some sort of manager that handles the state of this object
         // So we can call manager.ThisObjectIsFixed and then the manager will handle the rest
+        // -- Update -- So this object now is even more tied to the sub interior, because, again, it needs some kind of manager that handles the execution of the fixing
         //SetIsBrokenBool(isBroke);
         _subParent = subParent;
     }
@@ -79,7 +82,7 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
             // TODO use PopupManager.CurrentPopup!!
             // Passing the instantiated popup so we can show visual feedback BTW, this should probably be handled by PopupManager, it already has a CurrentPopup variable
             var context = new RecipeExecutionContext { Entity = this };
-            UICraftingManager.Instance.AttemptCraft(fixRecipe,instantatiatedPopup, context);
+            _subParent.TryFixEntity(fixRecipe, instantatiatedPopup, context);
         }
         //PopupManager.Instance.TryShowWorldPopup(this,client);
     }

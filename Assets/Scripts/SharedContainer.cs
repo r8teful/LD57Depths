@@ -326,7 +326,8 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
                     }
                 }*/
             }
-            playerInv.RefreshUI(); // Refresh player inventory UI
+            // Not even sure if we need this but not using it for now
+            //playerInv.RefreshUI(); // Refresh player inventory UI
         } else {
             Debug.LogWarning($"Client: Item transfer failed - {message}");
             // Optionally, provide feedback to the player via UI

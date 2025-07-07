@@ -9,8 +9,7 @@ using Sirenix.OdinInspector;
 
 public class NetworkedPlayerInventory : NetworkBehaviour {
     [Header("References")]
-    [SerializeField] private InventoryUIManager inventoryUIPrefab; // Players spawn their own inventory UIs 
-    private InventoryUIManager _uiManager; 
+   
     [SerializeField] private Transform dropPoint; // Where items are physically dropped
     [SerializeField] private float pickupRadius = 1.5f;
     [SerializeField] private LayerMask pickupLayerMask; // Set this to the layer your WorldItem prefabs are on
@@ -36,30 +35,11 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         base.OnStartClient();
         if (base.IsOwner) {
             InitializeInventory();
-            _uiManager = Instantiate(inventoryUIPrefab);
-            _uiManager.Init(inventoryManager, gameObject);
-            _uiManager.OnInventoryToggle += OnInventoryToggled;
-            GetComponent<InputManager>().SetUIManager(_uiManager);
         } else {
             base.enabled = false;
         }
     }
 
-    private void OnInventoryToggled(bool hasOpened) {
-        if (hasOpened) {
-            // Close any other open UI
-            CloseContainer();
-        }
-    }
-
-    public override void OnStopClient() {
-        base.OnStopClient();
-        // Clean up instantiated UI if this player object is destroyed (and was owner)
-        if (_uiManager != null) {
-            _uiManager.OnInventoryToggle -= OnInventoryToggled;
-            Destroy(_uiManager);
-        }
-    }
     private void InitializeInventory() {
         List<InventorySlot> slots = new List<InventorySlot>(inventorySize);
         for (int i = 0; i < inventorySize; i++) {
@@ -68,18 +48,11 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         inventoryManager = new InventoryManager(slots); 
         Debug.Log($"Inventory Initialized with {inventorySize} slots.");
     }
-
-    void Update() {
-        if (!IsOwner)
-            return;
-        // UImanager handles visuals
-        _uiManager.UpdateHeldItemVisual();
-    }
     private void FixedUpdate() {
         if (!base.IsOwner) return;
         // Client checks for nearby items first (reduces unnecessary server calls)
         TryClientPickupCheck();
-        Debug.Log(currentOpenContainer);
+        //Debug.Log(currentOpenContainer);
     }
     // --- Drag and Drop Handling ---
     // --- Pickup/Place/Drop Logic ---
@@ -341,15 +314,12 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
             Debug.LogWarning($"Client: Could not add item {itemID} x{quantity} to inventory (full?).");
             // Optionally, tell server to re-drop if client can't take it.
         }
-        if (_uiManager != null)
-            _uiManager.RefreshUI();
     }
     // --- Target RPCs (Server sending messages to a specific client) ---
 
     [TargetRpc] // Specify connection in the call: Target_UpdateSlot(connectionToClient, ...)
     public void Target_UpdateSlot(NetworkConnection conn, int slotIndex, ushort itemID, int quantity) {
         // This code runs ONLY on the client specified by 'conn'
-        if (_uiManager == null) return;
 
         Debug.Log($"[Client {base.Owner.ClientId}] Received update for Slot {slotIndex}: {itemID} x{quantity}");
 
@@ -399,8 +369,6 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
             Debug.LogWarning($"Client: Could not add item {itemID} x{quantity} to inventory (full?).");
             // Optionally, tell server to re-drop if client can't take it.
         }
-        if (_uiManager != null)
-            _uiManager.RefreshUI();
         return added;
     }
     // --- Container Open/Close (VERY simple stub as requested) ---
@@ -593,10 +561,6 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
 
     internal void RemoveItem(ushort itemId, int quantityTransferred) {
         inventoryManager.RemoveItem(itemId, quantityTransferred);
-    }
-
-    internal void RefreshUI() {
-        _uiManager.RefreshUI();
     }
 
 #if UNITY_EDITOR
