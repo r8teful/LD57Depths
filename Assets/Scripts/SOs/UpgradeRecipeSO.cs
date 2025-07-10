@@ -67,7 +67,8 @@ public class UpgradeRecipeSO : RecipeBaseSO {
         return result;
     }
     public override bool ExecuteRecipe(RecipeExecutionContext context) {
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
+        return false;
     }
 }
 public class QuantityCalculationOptions {

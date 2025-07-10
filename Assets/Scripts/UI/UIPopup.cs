@@ -80,8 +80,6 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
             transform.DOShakePosition(0.2f,0.3f,50);
         } else {
             transform.DOShakePosition(0.2f,15f,30);
-            Debug.LogWarning("Canvas space fail visual not implemented!");
-            throw new System.NotImplementedException();
         }
     }
 }

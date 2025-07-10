@@ -37,6 +37,7 @@ public class CraftingComponent : MonoBehaviour {
             HandleCraftSuccess(recipe);
         } else {
             HandleCraftFail(recipe, instantatiatedPopup, "Unable to craft!");
+            return false;
         }
         return true;
     }

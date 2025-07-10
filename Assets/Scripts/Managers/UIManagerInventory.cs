@@ -86,7 +86,7 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
         // Inform ItemSelectionManager about hotbar size
         ItemSelectionManager.Initialize(hotbarSize, _playerGameObject, _localInventoryManager); // Pass player object
         // OR itemSelectionManager.Init(manager.gameObject, manager);
-        EnableTab(0); // Set inventory tab as first tab, dissable others
+        OnTabButtonClicked(0); // Set inventory tab as first tab, dissable others
         playerUIPanel.SetActive(false); // ensure inventory is closed
         CreateSlotUIs();
         Debug.Log("InventoryUIManager Initialized for player: " + _playerGameObject.name);
@@ -278,19 +278,10 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
             }
         }
     }
-    private void SetButtonVisual(int i,bool setActive) {
-        var button = inventoryTabButtons[i].transform.GetChild(0);
-        Debug.Log("setting button " + i + " TO " + setActive);
-        if(button != null) {
-            if (setActive) {
-                button.GetComponent<Image>().sprite = App.ResourceSystem.GetSprite("InventoryTabButtonActive");
-                button.GetComponent<RectTransform>().DOAnchorPosX(30, 0.3f);
-            } else {
-                button.GetComponent<Image>().sprite = App.ResourceSystem.GetSprite("InventoryTabButtonInactive");
-                button.GetComponent<RectTransform>().DOAnchorPosX(0, 0.3f);
-            }
-        } else {
-            Debug.LogWarning($"Could not find image component!");
+    private void SetButtonVisual(int i, bool setActive) {
+        var button = inventoryTabButtons[i];
+        if (button != null) {
+            button.GetComponent<UITabButton>().SetButtonVisual(setActive);
         }
     }
     // direction should be either -1 or 1 idealy

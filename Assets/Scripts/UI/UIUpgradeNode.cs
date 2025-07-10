@@ -7,16 +7,17 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     [SerializeField] private Button _buttonBig;
     [SerializeField] private Button _buttonSmall;
     [SerializeField] private Button _buttonCurrent;
-    [SerializeField] private Transform _resourceContainer;
+    [SerializeField] private Image _imageCurrent;
     private RectTransform _rectTransform;
-    private UpgradeRecipeSO upgradeData;
+    private UpgradeRecipeSO _upgradeData;
+    private UIUpgradeTree _treeParent;
     public bool IsBig;
     public event Action PopupDataChanged;
     public event Action<IPopupInfo, bool> OnPopupShow;
 
-    internal void Init(UpgradeRecipeSO upgradeRecipeSO,bool isBig) {
-        _resourceContainer.gameObject.SetActive(false);
-        upgradeData = upgradeRecipeSO;
+    internal void Init(UpgradeRecipeSO upgradeRecipeSO, UIUpgradeTree parent, bool isBig) {
+        _treeParent = parent;
+        _upgradeData = upgradeRecipeSO;
         _rectTransform = GetComponent<RectTransform>();
         IsBig = isBig;
         if(IsBig && _buttonBig != null) {
@@ -24,6 +25,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonBig.onClick.AddListener(OnUpgradeButtonClicked);
             _buttonSmall.gameObject.SetActive(false);
             _buttonCurrent = _buttonBig;
+            _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
             var r = _rectTransform.sizeDelta;
             r.x = 120f;
             _rectTransform.sizeDelta = r;
@@ -31,6 +33,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonSmall.onClick.RemoveAllListeners();
             _buttonSmall.onClick.AddListener(OnUpgradeButtonClicked);
             _buttonCurrent = _buttonSmall;
+            _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
             _buttonBig.gameObject.SetActive(false);
             var r = _rectTransform.sizeDelta;
             r.x = 65f;
@@ -47,19 +50,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // IMPORTANT: Always unsubscribe to prevent memory leaks
         UpgradeManager.OnUpgradePurchased -= HandleUpgradePurchased;
     }
-    public void DisplayResources() {
-        foreach (var item in upgradeData.requiredItems) {
-            Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeResourceDisplay>("UpgradeResourceDisplay"), _resourceContainer)
-                .Init(item.item.icon,item.quantity);
-        }
-        _resourceContainer.gameObject.SetActive(true);
-    }
-    public void DestroyDisplayedResources() {
-        foreach (Transform child in _resourceContainer)
-        {
-            Destroy(child.gameObject);
-        }
-    }
+
     public void OnPointerEnter(PointerEventData eventData) {
         OnPopupShow?.Invoke(this, true);
     }
@@ -68,7 +59,8 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         OnPopupShow?.Invoke(this, false);
     }
     private void OnUpgradeButtonClicked() {
-       // UICraftingManager.Instance.AttemptCraft(upgradeData, null, null);
+        // UICraftingManager.Instance.AttemptCraft(upgradeData, null, null);
+        UpgradeManager.Instance.PurchaseUpgrade(_upgradeData);
     }
     // This method is called by the event from the UpgradeManager
     private void HandleUpgradePurchased(UpgradeRecipeSO purchasedRecipe) {
@@ -79,21 +71,25 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
     // The core logic for how this node should look based on game state
     private void UpdateVisualState() {
-        if (upgradeData == null)
+        if (_upgradeData == null)
             return;
 
-        bool isPurchased = UpgradeManager.Instance.IsUpgradePurchased(upgradeData);
+        bool isPurchased = UpgradeManager.Instance.IsUpgradePurchased(_upgradeData);
 
         if (isPurchased) {
             // State: Purchased
+            var c = _buttonCurrent.colors;
+            c.disabledColor = Color.white;
+            _buttonCurrent.colors = c;
             _buttonCurrent.interactable = false;
-            // You might change the background color, show a checkmark, etc.
-            GetComponent<Image>().color = Color.green;
+            _imageCurrent.sprite = App.ResourceSystem.GetSprite($"UpgradeNode{(IsBig ? "Big" : "Small")}Purchased");
+            //GetComponent<Image>().color = Color.green;
         } else {
-            bool prerequisitesMet = UpgradeManager.Instance.ArePrerequisitesMet(upgradeData);
+            bool prerequisitesMet = UpgradeManager.Instance.ArePrerequisitesMet(_upgradeData);
             if (prerequisitesMet) {
+                // Available
                 _buttonCurrent.interactable = true;
-                //GetComponent<Image>().color = Color.yellow;
+                _treeParent.SetNodeAvailable(_upgradeData);
             } else {
                 _buttonCurrent.interactable = false;
                // GetComponent<Image>().color = Color.gray;
@@ -101,7 +97,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         }
     }
     public PopupData GetPopupData(InventoryManager clientInv) {
-        return new PopupData(upgradeData.displayName, upgradeData.description, upgradeData.GetIngredientStatuses(clientInv));
+        return new PopupData(_upgradeData.displayName, _upgradeData.description, _upgradeData.GetIngredientStatuses(clientInv));
         //return null;
     }
 }

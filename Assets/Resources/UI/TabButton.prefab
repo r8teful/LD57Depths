@@ -198,6 +198,7 @@ GameObject:
   - component: {fileID: 9175979452539693797}
   - component: {fileID: 2317987326484196697}
   - component: {fileID: 4034699423483196601}
+  - component: {fileID: 289134441852457263}
   m_Layer: 5
   m_Name: TabButton
   m_TagString: Untagged
@@ -289,3 +290,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &289134441852457263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7257197132927001705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85203cba57f3855429962a8d85189e7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _backgroundImage: {fileID: 1761895427576496655}
+  _rectTransform: {fileID: 7667973365018728270}
