@@ -1,6 +1,4 @@
 ﻿using FishNet.Object;
-using System.Collections;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class MachineControlPanel : MonoBehaviour, IInteractable {

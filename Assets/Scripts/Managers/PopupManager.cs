@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PopupManager : StaticInstance<PopupManager> {
     public UIPopup popupPrefab;

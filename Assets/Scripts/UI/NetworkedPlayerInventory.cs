@@ -3,7 +3,6 @@ using FishNet.Object;
 using FishNet.Connection; // Required for NetworkConnection
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 using System.Linq;
 using Sirenix.OdinInspector;
 

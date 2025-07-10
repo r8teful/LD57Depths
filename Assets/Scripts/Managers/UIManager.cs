@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Globalization;
-using UnityEngine;
+﻿using UnityEngine;
 
 // Root of all player UI
 public class UIManager : Singleton<UIManager> {

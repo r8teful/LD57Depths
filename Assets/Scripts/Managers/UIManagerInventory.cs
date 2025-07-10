@@ -7,7 +7,6 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine.EventSystems;
 using System;
-using Unity.VisualScripting;
 
 public class UIManagerInventory : Singleton<UIManagerInventory> {
     [Header("UI Elements")]

@@ -3,9 +3,6 @@ using UnityEngine.InputSystem;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Sirenix.OdinInspector;
-using UnityEngine.Windows;
-using System.Linq;
-using Unity.VisualScripting;
 public enum PlayerInteractionContext {
     None,                 // Default state, no specific interaction available
     InteractingWithUI,    // Highest priority: Mouse is over any UI element

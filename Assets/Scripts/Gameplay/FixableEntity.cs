@@ -1,6 +1,5 @@
 using FishNet.Object;
 using System;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]

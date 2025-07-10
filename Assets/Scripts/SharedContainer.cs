@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System;
 using FishNet.Connection;
 using System.Linq;
-using UnityEditor.PackageManager;
 
 public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractable {
     [SerializeField] private int containerSize = 12;
