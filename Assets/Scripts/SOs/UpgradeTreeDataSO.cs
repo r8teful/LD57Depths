@@ -36,7 +36,7 @@ public class UpgradeTreeDataSO : ScriptableObject {
     }
 
     // Creates the actual data of the tree
-    public Dictionary<int, UpgradeRecipeSO> GenerateUpgradeTree() {
+    private Dictionary<int, UpgradeRecipeSO> GenerateUpgradeTree() {
         // TODO, here you need to aquire the UpgradeRecipeSO's for the specific UpgradeTreeType we got.
         // We could for example do this by having a dictionary in the resourceSystem that contains all the upgradeRecipes for 
         // the specific type, then here we would get them. Then we would call UpgradeRecipeSO.PrepareRecipe on each
@@ -49,10 +49,11 @@ public class UpgradeTreeDataSO : ScriptableObject {
             if (recipes[i] == null) Debug.LogError("Recipes likely out of bounds");
             dictionaryOutput.Add(i, recipes[i]);
             dictionaryOutput[i].PrepareRecipe(l[i], d[i]);
+            dictionaryOutput[i].SetPrerequisites(i==0 ? null : recipes[i-1]); // Link to the previous node
         }
         return dictionaryOutput;
     }
-    public List<ItemQuantity> GetItemPoolForTier(int i) {
+    private List<ItemQuantity> GetItemPoolForTier(int i) {
         var d = new List<ItemQuantity>();
             // Get available items based on tiers
             foreach (var tier in tiers) {
@@ -66,7 +67,7 @@ public class UpgradeTreeDataSO : ScriptableObject {
         }
         return d;
     }
-    public Dictionary<int,List<ItemQuantity>> GetItemPoolForAllTiers() {
+    private Dictionary<int,List<ItemQuantity>> GetItemPoolForAllTiers() {
         var d = new Dictionary<int, List<ItemQuantity>>();
         for (int i = 0; i < length; i++) {
             d.Add(i,GetItemPoolForTier(i));
@@ -75,10 +76,13 @@ public class UpgradeTreeDataSO : ScriptableObject {
     }
 }
 public enum UpgradeTreeType {
-    Speed,
+    PlayerSpeed,
     Mining,
-    Light
-    // etc
+    Oxygen,
+    Utility,
+    TreeFarm,
+    Lamp,
+    Pollution,
 }
 public enum UpgradeType {
     MiningSpeed,

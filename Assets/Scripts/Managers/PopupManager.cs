@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class PopupManager : MonoBehaviour {
+public class PopupManager : StaticInstance<PopupManager> {
     public UIPopup popupPrefab;
     private UIPopup currentPopup;
     private IPopupInfo currentInfoProvider;
@@ -114,7 +114,8 @@ public class PopupManager : MonoBehaviour {
     private void PositionPopup(IPopupInfo infoProvider) {
         RectTransform itemRT = (infoProvider as MonoBehaviour).GetComponent<RectTransform>();
         RectTransform popupRT = currentPopup.gameObject.GetComponent<RectTransform>();
-        // Position popup relative to itemRT, adjust to stay within screen bounds
+
+        // Calculate item bottom and top centers
         Vector2 itemBottomCenter = new Vector2(itemRT.position.x, itemRT.position.y + itemRT.rect.yMin);
         Vector2 itemTopCenter = new Vector2(itemRT.position.x, itemRT.position.y + itemRT.rect.yMax);
         float popupHeight = popupRT.rect.height;
@@ -130,6 +131,12 @@ public class PopupManager : MonoBehaviour {
             position = new Vector2(itemTopCenter.x, itemTopCenter.y + popupHeight);
             popupRT.position = new Vector3(position.x, position.y, 0);
         }
+
+        // Clamp x to stay within screen horizontally
+        float leftBound = -popupRT.rect.xMin;
+        float rightBound = Screen.width - popupRT.rect.xMax;
+        float clampedX = Mathf.Clamp(popupRT.position.x, leftBound, rightBound);
+        popupRT.position = new Vector3(clampedX, popupRT.position.y, 0);
     }
 
     internal void RegisterIPopupInfo(IPopupInfo popupInfo) {

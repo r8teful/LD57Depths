@@ -66,5 +66,11 @@ public class DEBUGManager : MonoBehaviour {
     private void debugGive(int i, int j) {
         FindFirstObjectByType<NetworkedPlayerInventory>().DEBUGGIVE(i,j);
     }
+
+
+    [ConsoleCommand("showupgrade")]
+    private void debugShowUpgradeScreen() {
+        FindFirstObjectByType<UIUpgradeScreen>().DEBUGShowScreen();
+    }
 }
 #endif

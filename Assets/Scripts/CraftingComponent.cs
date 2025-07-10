@@ -1,21 +1,21 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-// Common logic needed for various crafting 
+// Just on the player for now because fuck it
 public class CraftingComponent : MonoBehaviour {
     private InventoryManager _clientInventory; // Your existing client inventory manager
     private PopupManager _popupManager;
 
-    public void Init(InventoryManager clientInv) {
-        _clientInventory = clientInv;
-        _popupManager = GetComponent<PopupManager>();
+    public void Init(InventoryManager inv) {
+        _clientInventory = inv;
+        _popupManager = PopupManager.Instance;
     }
-    public void AttemptCraft(RecipeBaseSO recipe, UIPopup instantatiatedPopup, RecipeExecutionContext context) {
+    public bool AttemptCraft(RecipeBaseSO recipe, UIPopup instantatiatedPopup = null, RecipeExecutionContext context = null) {
         // TODO possible use client inventoy from context here. But no, we don't really want to change that, or have other scripts store it, just have it be stored here and create a new context each time
         // We call ExecuteRecipe
         Debug.Log("AttemptCraft!");
         if (recipe == null || _clientInventory == null)
-            return;
+            return false;
         if (context == null) {
             // Popuplate it with
             context = new RecipeExecutionContext { PlayerInventory = _clientInventory };
@@ -28,7 +28,7 @@ public class CraftingComponent : MonoBehaviour {
         if (!recipe.CanAfford(_clientInventory)) {
             Debug.Log($"Cannot afford {recipe.displayName} (client check).");
             HandleCraftFail(recipe, instantatiatedPopup, $"Cannot afford {recipe.displayName}");
-            return;
+            return false;
         }
         // Craft the bitch, first remove items
         _clientInventory.ConsumeItems(recipe.requiredItems);
@@ -39,6 +39,7 @@ public class CraftingComponent : MonoBehaviour {
         } else {
             HandleCraftFail(recipe, instantatiatedPopup, "Unable to craft!");
         }
+        return true;
     }
 
     private void HandleCraftSuccess(RecipeBaseSO recipe) {

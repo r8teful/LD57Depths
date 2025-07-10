@@ -8,11 +8,15 @@ public class NetworkedPlayer : NetworkBehaviour {
     private UIManager _uiManager;
     private NetworkedPlayerInventory _inventoryN;
     private InputManager _inputManager;
+    private UpgradeManager _upgradeManager;
+    private CraftingComponent _crafting;
     public override void OnStartClient() {
         base.OnStartClient();
         if (base.IsOwner) {
             _inventoryN = GetComponent<NetworkedPlayerInventory>();
             _inputManager = GetComponent<InputManager>();
+            _crafting = GetComponent<CraftingComponent>();
+            _upgradeManager = UpgradeManager.Instance;
             StartCoroutine(StartRoutine());
         } else {
             base.enabled = false;
@@ -22,7 +26,9 @@ public class NetworkedPlayer : NetworkBehaviour {
         // Wait until inventory is setup
         yield return new WaitUntil(() => _inventoryN.OnStartClientCalled);
         _uiManager = Instantiate(inventoryUIPrefab);
-        _uiManager.Init(_inventoryN.GetInventoryManager(), gameObject);
+        _crafting.Init(_inventoryN.GetInventoryManager()); // Crafting needs player inventory obviously
+        _uiManager.Init(_inventoryN.GetInventoryManager(), gameObject,_upgradeManager); // UI needs inv to suscribe to events and display it 
+        _upgradeManager.Init(_crafting); // UpgradeManager needs crafting component for checking recipes
         _inputManager.SetUIManager(_uiManager.UIManagerInventory);
     }
     public override void OnStopClient() {

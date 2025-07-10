@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 2511403419373690701}
   - component: {fileID: 6917722311285614130}
   - component: {fileID: 1329228130332512456}
+  - component: {fileID: -5341967399187731641}
   m_Layer: 2
   m_Name: PlayerOnline
   m_TagString: Player
@@ -216,6 +217,9 @@ MonoBehaviour:
   - {fileID: -5283526655762208488}
   - {fileID: -7626533647889685779}
   - {fileID: 8161649982983680990}
+  - {fileID: 7286018076648654246}
+  - {fileID: 2511403419373690701}
+  - {fileID: 1329228130332512456}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -245,7 +249,7 @@ MonoBehaviour:
   <AssetPathHash>k__BackingField: 1549268581126571255
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
-    Position: {x: 1.82, y: -17.02, z: 0}
+    Position: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
     Scale: {x: 1, y: 1, z: 1}
     IsValid: 1
@@ -554,9 +558,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bbf288f2b3bef74d97c69b54e5ebfe4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 5
   _addedNetworkObject: {fileID: 6962948237969374493}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 6962948237969374493}
   _interactableLayerMask:
     serializedVersion: 2
     m_Bits: 128
@@ -574,9 +578,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac99a17a16dc2a44aa4404675c5791d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 6
   _addedNetworkObject: {fileID: 6962948237969374493}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 6962948237969374493}
 --- !u!61 &6917722311285614130
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -635,10 +639,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3db15bf3c79a7234bbea7c0111e6cdf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 7
   _addedNetworkObject: {fileID: 6962948237969374493}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 6962948237969374493}
   inventoryUIPrefab: {fileID: 2402324419998552674, guid: c1db4f0b98c6bef4b96a523182ce73e3, type: 3}
+--- !u!114 &-5341967399187731641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228294681075539138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa25af19fa6465e4185c467c00dbc8f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5741266127992731626
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,7 +4,7 @@ using System.Globalization;
 using UnityEngine;
 
 // Root of all player UI
-public class UIManager : MonoBehaviour {
+public class UIManager : Singleton<UIManager> {
     private InventoryManager _localInventoryManager;
     public PopupManager PopupManager { get; private set; }
     [field:SerializeField] public UIUpgradeScreen UpgradeScreen { get; private set; }
@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour {
     void Update() {
         UIManagerInventory.UpdateHeldItemVisual();
     }
-    public void Init(InventoryManager localPlayerInvManager, GameObject owningPlayer) {
+    public void Init(InventoryManager localPlayerInvManager, GameObject owningPlayer, UpgradeManager upgradeManager) {
         _localInventoryManager = localPlayerInvManager;
         PopupManager = GetComponent<PopupManager>();
         _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage
@@ -29,7 +29,7 @@ public class UIManager : MonoBehaviour {
 
 
         // Init managers
-        UpgradeScreen.Init(this);
+        UpgradeScreen.Init(this,upgradeManager);
         UIManagerInventory.Init(this, localPlayerInvManager, owningPlayer);
         PopupManager.Init(localPlayerInvManager);
     }

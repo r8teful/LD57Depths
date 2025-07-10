@@ -21,12 +21,16 @@ public class MiningLazer : MonoBehaviour, IToolBehaviour {
     public ParticleSystem _lineLazerParticleSystem;
     private ParticleSystem _hitParticleSystem;
 
-    private void Awake() {
-        UpgradeManager.UpgradeBought += OnUpgraded;
+    private void OnEnable() {
+        // Subscribe to the event to recalculate stats when a NEW upgrade is bought
+        UpgradeManager.OnUpgradePurchased += HandleUpgradePurchased;
     }
-    private void OnDestroy() {
-        UpgradeManager.UpgradeBought -= OnUpgraded;
+
+
+    private void OnDisable() {
+        UpgradeManager.OnUpgradePurchased -= HandleUpgradePurchased;
     }
+
     private void Start() {
         _hitParticleSystem = Instantiate(ParticlesPrefabHit);
         _hitParticleSystem.Stop();
@@ -168,13 +172,7 @@ public class MiningLazer : MonoBehaviour, IToolBehaviour {
         shape.radius = distance / 2;
     }
   
-    public void OnUpgraded(UpgradeType t) {
-        if(t == UpgradeType.MiningDamange) {
-            damagePerRay = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MiningDamange);
-        } else if (t == UpgradeType.MiningSpeed) {
-            frequency = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MiningSpeed);
-        }
-    }
+
     Vector2 GetConeRayDirection(Vector2 baseDirection) {
         float randomAngle = Random.Range(-outerSpotAngle / 2f, outerSpotAngle / 2f); // Angle variation within outer cone
         float innerAngleThreshold = innerSpotAngle / 2f;
@@ -198,5 +196,19 @@ public class MiningLazer : MonoBehaviour, IToolBehaviour {
         transform.localPosition = position;
     }
 
-    
+    private void HandleUpgradePurchased(UpgradeRecipeSO sO) {
+        RecalculateStats();
+    }
+
+    private void RecalculateStats() {
+        Debug.LogWarning("Missing logic!");
+    }
+
+    public void OnUpgraded(UpgradeType t) {
+        if (t == UpgradeType.MiningDamange) {
+            damagePerRay = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MiningDamange);
+        } else if (t == UpgradeType.MiningSpeed) {
+            frequency = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MiningSpeed);
+        }
+    }
 }

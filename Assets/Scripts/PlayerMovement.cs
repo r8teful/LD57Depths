@@ -105,15 +105,6 @@ public class PlayerMovement : NetworkBehaviour {
         playerHealth = maxHealth;
     }
 
-
-
-    private void Awake() {
-        UpgradeManager.UpgradeBought += OnUpgraded;
-    }
-    private void OnDestroy() {
-        UpgradeManager.UpgradeBought -= OnUpgraded;
-    }
-
     private void OnUpgraded(UpgradeType type) {
         if(type == UpgradeType.MovementSpeed) {
             swimSpeed = UpgradeManager.Instance.GetUpgradeValue(type);

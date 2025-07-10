@@ -9,12 +9,16 @@ public class UpgradeRecipeSO : RecipeBaseSO {
     public UpgradeType type;
     public IncreaseType increaseType;
     public float value; // how much to increase the attribute by
-
+    public UpgradeRecipeSO prerequisite; // upgrades that need to be unlocked before this one will be available
     public Dictionary<ushort, int> costData; // Array to hold costs for different resource
 
     public override void PrepareRecipe(float value, List<ItemQuantity> resourcePool) {
         base.PrepareRecipe(value, resourcePool);
-        requiredItems = CalculateItemQuantities(Mathf.RoundToInt(value), resourcePool);
+        requiredItems = CalculateItemQuantities(Mathf.RoundToInt(value), resourcePool,
+            new QuantityCalculationOptions{ RespectAvailability = false, MaxContributionPercentage = 0.75f });
+    }
+    public void SetPrerequisites(UpgradeRecipeSO parent) {
+        prerequisite = parent;
     }
 
     public static List<ItemQuantity> CalculateItemQuantities(
