@@ -7,17 +7,12 @@ using UnityEngine.Rendering.Universal;
 
 public class PlayerMovement : NetworkBehaviour {
     public static PlayerMovement LocalInstance { get; private set; } // Singleton for local player
-    private Animator animator;
-    private string currentAnimation = "";
+
     private Rigidbody2D rb;
-    private SpriteRenderer sprite;
     private Camera MainCam;
     public Transform insideSubTransform;
     public Transform groundCheck;
-    public Collider2D playerSwimCollider;
-    public Collider2D playerWalkCollider;
     //public CanvasGroup blackout;
-    public Light2D lightSpot;
     public static event Action<float,float> OnOxygenChanged;
     #region Movement Parameters
 
@@ -46,10 +41,10 @@ public class PlayerMovement : NetworkBehaviour {
     public enum PlayerState {None, Swimming, Grounded, Cutscene, ClimbingLadder}
     private PlayerState _currentState;
     private InputManager _inputManager;
+    private PlayerVisualHandler _visualHandler;
     [Header("Oxygen")]
     public float maxOxygen = 250f;
     public float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
-    private float lightStartIntensity;
     public float currentOxygen;
     private float maxHealth = 15; // amount in seconds the player can survive with 0 oxygen 
     private float playerHealth;
@@ -75,6 +70,7 @@ public class PlayerMovement : NetworkBehaviour {
             MainCam.transform.localPosition = new Vector3(0,0,-10);
             ChangeState(PlayerState.Swimming);
             _inputManager = GetComponent<InputManager>();
+            _visualHandler = GetComponent<PlayerVisualHandler>();
             // Enable input, camera controls ONLY for the local player
             // Example: GetComponent<PlayerInputHandler>().enabled = true;
             // Example: playerCamera.SetActive(true);
@@ -104,11 +100,7 @@ public class PlayerMovement : NetworkBehaviour {
     private void Start() {
         //LocalInstance = this;
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        sprite = GetComponent<SpriteRenderer>();
         rb.gravityScale = 0; // Disable default gravity
-        if (lightSpot != null)
-            lightStartIntensity = lightSpot.intensity;
         // oxygen and slider
         currentOxygen = maxOxygen;
         playerHealth = maxHealth;
@@ -124,7 +116,7 @@ public class PlayerMovement : NetworkBehaviour {
             currentOxygen = maxOxygen;
             UpdateSlider();
         } else if(type == UpgradeType.Light) {
-            lightSpot.pointLightOuterRadius = UpgradeManager.Instance.GetUpgradeValue(type);
+            //lightSpot.pointLightOuterRadius = UpgradeManager.Instance.GetUpgradeValue(type);
         }
         
     }
@@ -178,11 +170,11 @@ public class PlayerMovement : NetworkBehaviour {
     #region SWIMMING
     private void HandleSwimmingUpdate() {
         if (_currentInput.magnitude != 0) {
-            ChangeAnimation("Swim");
+            _visualHandler.ChangeAnimation("Swim");
         } else {
-            ChangeAnimation("SwimIdle");
+            _visualHandler.ChangeAnimation("SwimIdle");
         }
-        FlipSprite(_currentInput.x);
+        _visualHandler.FlipSprite(_currentInput.x);
         DepleteOxygen();
     }
 
@@ -220,8 +212,8 @@ public class PlayerMovement : NetworkBehaviour {
 
             }
         }
-        FlipSprite(_currentInput.x);
-        ChangeAnimation(Mathf.Abs(_currentInput.x) > 0.01f ? "Walk" : "Idle");
+        _visualHandler.FlipSprite(_currentInput.x);
+        _visualHandler.ChangeAnimation(Mathf.Abs(_currentInput.x) > 0.01f ? "Walk" : "Idle");
     }
     private void HandleGroundedPhysics() {
         // Horizontal movement
@@ -255,9 +247,9 @@ public class PlayerMovement : NetworkBehaviour {
 
         // Climbing animation logic
         if (Mathf.Abs(_currentInput.y) > 0.01f) {
-            ChangeAnimation("Climb");
+            _visualHandler.ChangeAnimation("Climb");
         } else {
-            ChangeAnimation("ClimbIdle"); // Or just stop animator speed for Climb animation
+            _visualHandler.ChangeAnimation("ClimbIdle"); // Or just stop animator speed for Climb animation
         }
     }
     private void HandleClimbingLadderPhysics() {
@@ -325,15 +317,15 @@ public class PlayerMovement : NetworkBehaviour {
     }
 
     void OnStateEnter(PlayerState state, PlayerState oldState) {
-        SetHitbox(state);
+        _visualHandler.SetHitbox(state);
         switch (state) {
             case PlayerState.Swimming:
                 rb.gravityScale = 0; // No gravity when swimming
-                SetLights(true);
+                _visualHandler.SetLights(true);
                 break;
             case PlayerState.Grounded:
                 rb.gravityScale = 2;
-                SetLights(false);
+                _visualHandler.SetLights(false);
                 //MainCam.transform.SetParent(insideSubTransform);
                 //MainCam.transform.localPosition = new Vector3(0, 0, -10);
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0); // Reset vertical velocity when entering from climb
@@ -360,28 +352,6 @@ public class PlayerMovement : NetworkBehaviour {
         }
     }
 
-    private void SetHitbox(PlayerState state) {
-        switch (state) {
-            case PlayerState.None:
-                break;
-            case PlayerState.Swimming:
-                // Horizontal
-                playerSwimCollider.enabled = true;
-                playerWalkCollider.enabled = false;
-                break;
-            case PlayerState.Grounded:
-                // Vertical
-                playerSwimCollider.enabled = false;
-                playerWalkCollider.enabled = true;
-                break;
-            case PlayerState.Cutscene:
-                break;
-            case PlayerState.ClimbingLadder:
-                break;
-            default:
-                break;
-        }
-    }
 
     void OnStateExit(PlayerState state, PlayerState newState) {
         // Clean up from the state we are leaving
@@ -419,29 +389,8 @@ public class PlayerMovement : NetworkBehaviour {
         Gizmos.DrawWireCube(transform.position, new Vector3(ladderSensorSize.x, ladderSensorSize.y, 0));
     }
     // --- Helper Functions ---
-    void FlipSprite(float horizontalInput) {
-        if (horizontalInput > 0.01f) {
-            sprite.flipX = false;
-        } else if (horizontalInput < -0.01f) {
-            sprite.flipX = true;
-        }
-    }
-    void ChangeAnimation(string animationName) {
-        if (animator == null)
-            return;
-        if (currentAnimation != animationName) {
-            currentAnimation = animationName;
-            animator.CrossFade(animationName, 0.2f, 0);
-            // animator.Play(animationName); // Or use this one instead of crossfade
-        }
-    }
-    private void SetLights(bool setOn) {
-        if (setOn) {
-            lightSpot.intensity = lightStartIntensity;
-        } else {
-            lightSpot.intensity = 0;
-        }
-    }
+   
+  
 
     void DepleteOxygen() {
         currentOxygen -= oxygenDepletionRate * Time.deltaTime;

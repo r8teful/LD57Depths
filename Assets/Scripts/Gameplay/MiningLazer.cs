@@ -2,33 +2,23 @@
 using System.Collections;
 using UnityEngine;
 
-public class MiningLazer : MonoBehaviour, IToolBehaviour {
+public class MiningLazer : MiningBase {
     [Header("Raycast Gun Settings")]
     public float innerSpotAngle = 5f;
     public float outerSpotAngle = 30f;
-    public float range = 10f;
+    public override float Range { get; set; } = 10f;
+    public override float DamagePerHit { get; set; } = 10f;
     public float falloffStrength = 1.5f; // Higher values = faster falloff
-    public float frequency = 10f;        // Rays per second
-    public float damagePerRay = 10f;     // Base damage per ray
     public bool CanMine { get; set; } = true;
-    private bool _isMining;
-    private InputManager _inputManager;
-    private Coroutine miningRoutine;
-    private float timer = 0f;
+
+
     private AudioSource laser;
     public LineRenderer lineRenderer; 
     public ParticleSystem ParticlesPrefabHit;
     public ParticleSystem _lineLazerParticleSystem;
     private ParticleSystem _hitParticleSystem;
 
-    private void OnEnable() {
-        // Subscribe to the event to recalculate stats when a NEW upgrade is bought
-        UpgradeManager.OnUpgradePurchased += HandleUpgradePurchased;
-    }
 
-    private void OnDisable() {
-        UpgradeManager.OnUpgradePurchased -= HandleUpgradePurchased;
-    }
 
     private void Start() {
         _hitParticleSystem = Instantiate(ParticlesPrefabHit);
@@ -40,30 +30,25 @@ public class MiningLazer : MonoBehaviour, IToolBehaviour {
         lineRenderer.enabled = false;
         laser = AudioController.Instance.PlaySound2D("Laser", 0.0f, looping: true);
     }
-    public void ToolStart(InputManager input, ToolController controller) {
+    public override void ToolStart(InputManager input, ToolController controller) {
+        base.ToolStart(input, controller);
         if (!CanMine) return;
-        if(miningRoutine != null) {
-            Debug.LogWarning("Mining routine is still running even though it should have stopped!");
-            StopCoroutine(miningRoutine);
-        }
-        _inputManager = input;
-        _isMining = true;
+        laser.volume = 0.2f;
         FadeInLine(lineRenderer);
-        miningRoutine = StartCoroutine(MiningRoutine(controller));
     }
-    public void ToolStop() {
-        if(miningRoutine != null) {
-            StopCoroutine(miningRoutine);
-            miningRoutine = null;
-            _hitParticleSystem.Stop();
-            laser.volume = 0.0f;
-            _isMining = false;
-            FadeOutLine(lineRenderer);
-            if (_lineLazerParticleSystem.isPlaying)
-                _lineLazerParticleSystem.Stop();
+    public override void ToolStop() {
+        if(base.miningRoutine != null) {
+            HandleLaserVisualStop();
+            base.ToolStop();
         }
     }
-
+    private void HandleLaserVisualStop() {
+        _hitParticleSystem.Stop();
+        laser.volume = 0.0f;
+        FadeOutLine(lineRenderer);
+        if (_lineLazerParticleSystem.isPlaying)
+            _lineLazerParticleSystem.Stop();
+    }
     private void FadeOutLine(LineRenderer lineRenderer) {
         Color2 startColor = new(lineRenderer.startColor,lineRenderer.endColor);
         var alphaStart0 = lineRenderer.startColor;
@@ -83,22 +68,10 @@ public class MiningLazer : MonoBehaviour, IToolBehaviour {
         lineRenderer.DOColor(startColor, endColor, 0.07f).OnComplete(() => lineRenderer.enabled = true);
     }
 
-    private IEnumerator MiningRoutine(ToolController controller) {
-        while (true) {
-            laser.volume = 0.2f;
-            var pos = _inputManager.GetAimInput();
-            //Debug.Log(pos);
-            var isFlipped = false;
-            var horizontalInput = _inputManager.GetMovementInput().x;
-           
-            CastRays(pos, controller, isFlipped); // Todo determine freq here
-            //LaserVisual(pos);
-            yield return new WaitForSeconds(0.3f);
-            laser.volume = 0f;
-        }
-    }
+
     private void Update() {
-        if (_isMining) {
+        if (base._isMining) {
+            // Update visuals each frame when mining
             var pos = _inputManager.GetAimInput();
             SetCorrectLaserPos(_inputManager.GetMovementInput().x);
             LaserVisual(pos);
@@ -122,7 +95,7 @@ public class MiningLazer : MonoBehaviour, IToolBehaviour {
             _lineLazerParticleSystem.Play();
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
         Vector2 directionToMouse = (pos - objectPos2D).normalized;
-        RaycastHit2D hit = Physics2D.Raycast(objectPos2D, directionToMouse, range, LayerMask.GetMask("MiningHit"));
+        RaycastHit2D hit = Physics2D.Raycast(objectPos2D, directionToMouse, Range, LayerMask.GetMask("MiningHit"));
         //Debug.Log("objectPos2D" + objectPos2D);
         if(hit.collider != null) {
             CreateLaserEffect(transform.InverseTransformPoint(objectPos2D), transform.InverseTransformPoint(hit.point));
@@ -133,25 +106,11 @@ public class MiningLazer : MonoBehaviour, IToolBehaviour {
             // not in reange
             if (_hitParticleSystem.isPlaying)
                 _hitParticleSystem.Stop();
-            CreateLaserEffect(transform.InverseTransformPoint(objectPos2D), transform.InverseTransformPoint(objectPos2D + directionToMouse * range));
+            CreateLaserEffect(transform.InverseTransformPoint(objectPos2D), transform.InverseTransformPoint(objectPos2D + directionToMouse * Range));
         }
     }
 
-    void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {
-        Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
-        Vector2 directionToMouse = (pos - objectPos2D).normalized;
-        //Vector2 rayDirection = GetConeRayDirection(directionToMouse);
-        Vector2 rayDirection = directionToMouse;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, range, LayerMask.GetMask("MiningHit"));
-        if (hit.collider != null) {
-            // Just assuming here that we've hit a tile, but should be fine because of the mask
-            Vector2 nudgedPoint = hit.point - rayDirection * -0.1f;
-            //float distance = hit.distance;
-            //float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloffStrength);
-            //float finalDamage = damagePerRay * falloffFactor;
-            controller.CmdRequestDamageTile(new Vector3(nudgedPoint.x, nudgedPoint.y,0), (short)damagePerRay);
-        }
-    }
+
     void CreateLaserEffect(Vector3 start, Vector3 end) {
         lineRenderer.SetPosition(0, start);
         lineRenderer.SetPosition(1, end);
@@ -195,13 +154,12 @@ public class MiningLazer : MonoBehaviour, IToolBehaviour {
         transform.localPosition = position;
     }
 
-    private void HandleUpgradePurchased(UpgradeRecipeBase data) {
-        if(data.type == UpgradeType.MiningRange) {
-            range = UpgradeCalculator.CalculateUpgradeIncrease(range, data as UpgradeRecipeValue);
-            Debug.Log("Increase range to " + range);
-        } else if (data.type == UpgradeType.MiningDamage) {
-            damagePerRay = UpgradeCalculator.CalculateUpgradeIncrease(damagePerRay, data as UpgradeRecipeValue);
-            Debug.Log("Increase damage to " + damagePerRay);
-        }
+    // todo
+    public override void ToolHide() {
+
+    }
+
+    public override void ToolShow() {
+    
     }
 }

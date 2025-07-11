@@ -60,15 +60,19 @@ public class ToolController : NetworkBehaviour {
         _worldManager.RequestDamageTile(worldPos, damageAmount);
     }
     
+    public void HandleMineToolChange(IToolBehaviour old, IToolBehaviour newTool) {
+        old.ToolHide();
+        newTool.ToolShow();
+    }
     
     public void SetMineTool(IToolBehaviour tool) {
-        currentMiningToolBehavior = tool;
+        if(currentMiningToolBehavior != tool) {
+            HandleMineToolChange(currentMiningToolBehavior, tool);
+            currentMiningToolBehavior = tool;
+        }
     }
     public void SetCleanTool(IToolBehaviour tool) {
         currentCleaningToolBehavior = tool;
-    }
-    private void OnEnable() {
-       
     }
     private void DEBUGSetMineTool(string tool) {
         if (tool == "god") {

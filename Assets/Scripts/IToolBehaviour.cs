@@ -10,14 +10,7 @@
     /// </summary>
     /// <param name="controller"></param>
     void ToolStop();
-}
+    void ToolHide(); // Hide the inactive visual of the tool
+    void ToolShow(); // show the inactive visual of the tool
 
-public class DrillBehavior : IToolBehaviour {
-    public void ToolStart(InputManager input, ToolController controller) {
-       // todo
-    }
-
-    public void ToolStop() {
-        return;
-    }
 }
