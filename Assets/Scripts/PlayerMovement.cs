@@ -91,6 +91,15 @@ public class PlayerMovement : NetworkBehaviour {
        //     Debug.LogError("PlayerController could not find WorldGenerator!");
        // }
     }
+    private void OnEnable() {
+        // Subscribe to the event to recalculate stats when a NEW upgrade is bought
+        UpgradeManager.OnUpgradePurchased += HandleUpgradePurchased;
+    }
+
+
+    private void OnDisable() {
+        UpgradeManager.OnUpgradePurchased -= HandleUpgradePurchased;
+    }
 
     private void Start() {
         //LocalInstance = this;
@@ -106,7 +115,7 @@ public class PlayerMovement : NetworkBehaviour {
     }
 
     private void OnUpgraded(UpgradeType type) {
-        if(type == UpgradeType.MovementSpeed) {
+        if(type == UpgradeType.MaxSpeed) {
             swimSpeed = UpgradeManager.Instance.GetUpgradeValue(type);
             // Also increase acceleration slightly
             accelerationForce += 0.1f;
@@ -151,6 +160,19 @@ public class PlayerMovement : NetworkBehaviour {
                 HandleClimbingLadderPhysics();
                 CheckEnvironment(); // For ladder checks
                 break;
+        }
+    }
+
+    private void HandleUpgradePurchased(UpgradeRecipeBase data) {
+        if (data.type == UpgradeType.MaxSpeed) {
+            swimSpeed = UpgradeCalculator.CalculateUpgradeIncrease(swimSpeed, data as UpgradeRecipeValue);
+            Debug.Log("Increase swimSpeed to " + swimSpeed);
+        } else if (data.type == UpgradeType.Acceleration) {
+            accelerationForce = UpgradeCalculator.CalculateUpgradeIncrease(accelerationForce, data as UpgradeRecipeValue);
+            Debug.Log("Increase accelerationForce to " + accelerationForce);
+        } else if (data.type == UpgradeType.OxygenCapacity) {
+            maxOxygen = UpgradeCalculator.CalculateUpgradeIncrease(maxOxygen, data as UpgradeRecipeValue);
+            Debug.Log("Increase maxOxygen to " + maxOxygen);
         }
     }
     #region SWIMMING

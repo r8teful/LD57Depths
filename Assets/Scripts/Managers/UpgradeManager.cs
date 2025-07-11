@@ -5,26 +5,25 @@ using UnityEngine;
 // Has to hold upgrade info!
 public class UpgradeManager : StaticInstance<UpgradeManager> {
 
-    private HashSet<int> unlockedUpgrades = new HashSet<int>(); // this could be usefull but maybe just the dictionary
-    private Dictionary<int,UpgradeStatus> upgradeStatus = new Dictionary<int,UpgradeStatus>();
+    private Dictionary<int,UpgradeRecipeBase> unlockedUpgrades = new Dictionary<int, UpgradeRecipeBase>(); 
+    public static event Action<UpgradeRecipeBase> OnUpgradePurchased;
     private CraftingComponent _crafting;
 
-    public static event Action<UpgradeRecipeSO> OnUpgradePurchased;
     internal void Init(CraftingComponent crafting) {
         _crafting = crafting;
     }
-    public bool ArePrerequisitesMet(UpgradeRecipeSO recipe) {
+    public bool ArePrerequisitesMet(UpgradeRecipeBase recipe) {
         if (recipe.prerequisite == null) {
             return true; // No prerequisites needed.
         }
-        if (!unlockedUpgrades.Contains(recipe.prerequisite.ID)) {
+        if (!unlockedUpgrades.ContainsKey(recipe.prerequisite.ID)) {
             return false; // A prerequisite is missing.
         }
         return true;
     }
-    public void PurchaseUpgrade(UpgradeRecipeSO recipe) {
+    public void PurchaseUpgrade(UpgradeRecipeBase recipe) {
         // 1. Check if already purchased
-        if (unlockedUpgrades.Contains(recipe.ID)) {
+        if (unlockedUpgrades.ContainsKey(recipe.ID)) {
             Debug.LogWarning($"Attempted to purchase an already owned upgrade: {recipe.name}");
             return;
         }
@@ -41,7 +40,7 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         }
 
         // 4. Add upgrade to player's data
-        unlockedUpgrades.Add(recipe.ID);
+        unlockedUpgrades.Add(recipe.ID,recipe);
 
         // 5. Fire the event to notify listeners
         Debug.Log($"Successfully purchased upgrade: {recipe.name}");
@@ -52,15 +51,9 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         throw new NotImplementedException();
     }
 
-   
 
-    internal bool IsUpgradePurchased(UpgradeRecipeSO upgradeData) {
-        return unlockedUpgrades.Contains(upgradeData.ID);
-    }
-
-    // Check if a node is unlocked
-    private bool IsUnlocked(int id) {
-        return unlockedUpgrades.Contains(id);
+    internal bool IsUpgradePurchased(UpgradeRecipeBase upgradeData) {
+        return unlockedUpgrades.ContainsKey(upgradeData.ID);
     }
 
 }

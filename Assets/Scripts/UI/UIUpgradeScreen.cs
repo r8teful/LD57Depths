@@ -51,8 +51,9 @@ public class UIUpgradeScreen : MonoBehaviour {
     }
     // Uggly but works lol 
     private void SetTabVisual(bool isPlayerTab) {
-        _buttonTreePlayer.GetComponent<UITabButton>().SetButtonVisual(isPlayerTab);
-        _buttonTreeEnv.GetComponent<UITabButton>().SetButtonVisual(!isPlayerTab);
+        // These buttons move less
+        _buttonTreePlayer.GetComponent<UITabButton>().SetButtonVisual(isPlayerTab,0.4f);
+        _buttonTreeEnv.GetComponent<UITabButton>().SetButtonVisual(!isPlayerTab,0.4f);
     }
     public void DEBUGShowScreen() {
         _upgradePanel.SetActive(!_upgradePanel.activeSelf);

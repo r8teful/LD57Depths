@@ -129,8 +129,8 @@ public class ResourceSystem {
         }
         return recipe;
     }
-    public UpgradeRecipeSO[] GetAllRecipeByType(UpgradeTreeType type) {
-        return Resources.LoadAll<UpgradeRecipeSO>($"UpgradeData/{type}").ToArray();
+    public UpgradeRecipeBase[] GetAllRecipeByType(UpgradeTreeType type) {
+        return Resources.LoadAll<UpgradeRecipeBase>($"UpgradeData/{type}").OrderBy(r => r.ID).ToArray();
     }
     public GameObject GetPrefab(string s) => _prefabDict[s];
     public T GetPrefab<T>(string key) where T : Component {

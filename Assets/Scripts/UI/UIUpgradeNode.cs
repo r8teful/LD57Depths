@@ -9,13 +9,13 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     [SerializeField] private Button _buttonCurrent;
     [SerializeField] private Image _imageCurrent;
     private RectTransform _rectTransform;
-    private UpgradeRecipeSO _upgradeData;
+    private UpgradeRecipeBase _upgradeData;
     private UIUpgradeTree _treeParent;
     public bool IsBig;
     public event Action PopupDataChanged;
     public event Action<IPopupInfo, bool> OnPopupShow;
 
-    internal void Init(UpgradeRecipeSO upgradeRecipeSO, UIUpgradeTree parent, bool isBig) {
+    internal void Init(UpgradeRecipeBase upgradeRecipeSO, UIUpgradeTree parent, bool isBig) {
         _treeParent = parent;
         _upgradeData = upgradeRecipeSO;
         _rectTransform = GetComponent<RectTransform>();
@@ -63,7 +63,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         UpgradeManager.Instance.PurchaseUpgrade(_upgradeData);
     }
     // This method is called by the event from the UpgradeManager
-    private void HandleUpgradePurchased(UpgradeRecipeSO purchasedRecipe) {
+    private void HandleUpgradePurchased(UpgradeRecipeBase purchasedRecipe) {
         // When any upgrade is purchased, re-evaluate our state.
         // This is important for unlocking nodes when a prerequisite is met.
         UpdateVisualState();

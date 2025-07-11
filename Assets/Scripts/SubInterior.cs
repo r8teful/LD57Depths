@@ -71,7 +71,7 @@ public class SubInterior : NetworkBehaviour {
     }
 
     public void TryFixEntity(RecipeBaseSO fixRecipe, UIPopup instantatiatedPopup, RecipeExecutionContext context) {
-        _craftingComponent.AttemptCraft(fixRecipe, instantatiatedPopup, context);
+        _craftingComponent.AttemptCraft(fixRecipe, context, instantatiatedPopup);
     }
 
     public void EntityFixed(FixableEntity fixableEntity) {

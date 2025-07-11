@@ -21,7 +21,7 @@ public class UIUpgradeTree : MonoBehaviour {
         }
     }
 
-    internal void SetNodeAvailable(UpgradeRecipeSO upgradeData) {
+    internal void SetNodeAvailable(UpgradeRecipeBase upgradeData) {
         foreach(Transform child in _resourceContainer) {
             Destroy(child.gameObject);
         }

@@ -26,7 +26,6 @@ public class MiningLazer : MonoBehaviour, IToolBehaviour {
         UpgradeManager.OnUpgradePurchased += HandleUpgradePurchased;
     }
 
-
     private void OnDisable() {
         UpgradeManager.OnUpgradePurchased -= HandleUpgradePurchased;
     }
@@ -196,19 +195,13 @@ public class MiningLazer : MonoBehaviour, IToolBehaviour {
         transform.localPosition = position;
     }
 
-    private void HandleUpgradePurchased(UpgradeRecipeSO sO) {
-        RecalculateStats();
-    }
-
-    private void RecalculateStats() {
-        Debug.LogWarning("Missing logic!");
-    }
-
-    public void OnUpgraded(UpgradeType t) {
-        if (t == UpgradeType.MiningDamange) {
-            damagePerRay = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MiningDamange);
-        } else if (t == UpgradeType.MiningSpeed) {
-            frequency = UpgradeManager.Instance.GetUpgradeValue(UpgradeType.MiningSpeed);
+    private void HandleUpgradePurchased(UpgradeRecipeBase data) {
+        if(data.type == UpgradeType.MiningRange) {
+            range = UpgradeCalculator.CalculateUpgradeIncrease(range, data as UpgradeRecipeValue);
+            Debug.Log("Increase range to " + range);
+        } else if (data.type == UpgradeType.MiningDamage) {
+            damagePerRay = UpgradeCalculator.CalculateUpgradeIncrease(damagePerRay, data as UpgradeRecipeValue);
+            Debug.Log("Increase damage to " + damagePerRay);
         }
     }
 }

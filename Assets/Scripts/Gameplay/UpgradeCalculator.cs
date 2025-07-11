@@ -12,5 +12,16 @@ public static class UpgradeCalculator {
         }
         return points;
     }
-
+    public static float CalculateUpgradeIncrease(float current, IncreaseType type, float increaseAmount) {
+        if(type== IncreaseType.Add) {
+            return current + increaseAmount;
+        } else if (type == IncreaseType.Multiply) {
+            return current * increaseAmount;
+        }
+        //fallback
+        return current;
+    }
+    public static float CalculateUpgradeIncrease(float current, UpgradeRecipeValue data) {
+        return CalculateUpgradeIncrease(current,data.increaseType,data.value);
+    }
 }

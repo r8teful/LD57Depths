@@ -25,9 +25,9 @@ public class UpgradeTreeDataSO : ScriptableObject {
     public UpgradeTreeCosts costsValues; // How the costs of the upgrades increases
     public List<UpgradeTreeTiers> tiers;
     // Dictionary<Level,Upgrade that level>
-    private Dictionary<int,UpgradeRecipeSO> upgradeTree; // The actual nodes of the tree
+    private Dictionary<int,UpgradeRecipeBase> upgradeTree; // The actual nodes of the tree
 
-    public Dictionary<int, UpgradeRecipeSO> UpgradeTree {
+    public Dictionary<int, UpgradeRecipeBase> UpgradeTree {
         get {
             upgradeTree ??= GenerateUpgradeTree(); // If we haven't made it yet create it
             return upgradeTree;
@@ -35,12 +35,12 @@ public class UpgradeTreeDataSO : ScriptableObject {
     }
 
     // Creates the actual data of the tree
-    private Dictionary<int, UpgradeRecipeSO> GenerateUpgradeTree() {
+    private Dictionary<int, UpgradeRecipeBase> GenerateUpgradeTree() {
         // TODO, here you need to aquire the UpgradeRecipeSO's for the specific UpgradeTreeType we got.
         // We could for example do this by having a dictionary in the resourceSystem that contains all the upgradeRecipes for 
         // the specific type, then here we would get them. Then we would call UpgradeRecipeSO.PrepareRecipe on each
         var recipes = App.ResourceSystem.GetAllRecipeByType(type);
-        var dictionaryOutput = new Dictionary<int, UpgradeRecipeSO>();
+        var dictionaryOutput = new Dictionary<int, UpgradeRecipeBase>();
         var l = UpgradeCalculator.CalculatePointArray(length, costsValues.baseValue,costsValues.linearIncrease,costsValues.expIncrease);
         var d = GetItemPoolForAllTiers();
         for (int i = 0; i < l.Length; i++) {
@@ -84,9 +84,10 @@ public enum UpgradeTreeType {
     Pollution,
 }
 public enum UpgradeType {
-    MiningSpeed,
-    MiningDamange,
-    MovementSpeed,
+    MiningRange,
+    MiningDamage,
+    MaxSpeed,
+    Acceleration,
     OxygenCapacity,
     ResourceCapacity,
     Light

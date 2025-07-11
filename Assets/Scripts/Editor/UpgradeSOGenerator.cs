@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,14 +10,28 @@ public class UpgradeSOGenerator : Editor {
         int upgradeTreeTypeCount = Enum.GetValues(typeof(UpgradeTreeType)).Length;
         for (int n = 0; n < upgradeTreeTypeCount; n++) { 
             string upgradeTreeType = ((UpgradeTreeType)n).ToString(); // lol
+            string folderPath = $"Assets/Resources/UpgradeData/{upgradeTreeType}";
+            // Ensure folder exists
+            if (!AssetDatabase.IsValidFolder(folderPath)) {
+                Directory.CreateDirectory(folderPath);
+                AssetDatabase.Refresh();
+            }
+
+            // Delete existing assets in the folder
+            string[] assetPaths = Directory.GetFiles(folderPath, "*.asset");
+            foreach (var assetPath in assetPaths) {
+                string relativePath = assetPath.Replace("\\", "/"); // Handle Windows paths
+                AssetDatabase.DeleteAsset(relativePath);
+            }
+
             for (int i = 1; i <= treeLength; i++) {
-                UpgradeRecipeSO upgrade = ScriptableObject.CreateInstance<UpgradeRecipeSO>();
+                UpgradeRecipeValue upgrade = ScriptableObject.CreateInstance<UpgradeRecipeValue>();
                 upgrade.RecipeID = (ushort)(i+200+(treeLength * n));
                 upgrade.displayName = $"Upgrade {i}";
                 upgrade.description = $"Level {i} upgrade";
                 upgrade.icon = null; // Set an icon if desired
 
-                string path = $"Assets/Resources/UpgradeData/{upgradeTreeType}/UpgradeRecipeSO{upgradeTreeType}_LVL{i}.asset";
+                string path = $"{folderPath}/UpgradeRecipeValue{upgradeTreeType}_LVL{i}.asset";
                 AssetDatabase.CreateAsset(upgrade, path);
             }
         }

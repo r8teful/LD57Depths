@@ -9,7 +9,7 @@ public class CraftingComponent : MonoBehaviour {
         _clientInventory = inv;
         _popupManager = PopupManager.Instance;
     }
-    public bool AttemptCraft(RecipeBaseSO recipe, UIPopup instantatiatedPopup = null, RecipeExecutionContext context = null) {
+    public bool AttemptCraft(RecipeBaseSO recipe, RecipeExecutionContext context = null, UIPopup instantatiatedPopup = null) {
         // TODO possible use client inventoy from context here. But no, we don't really want to change that, or have other scripts store it, just have it be stored here and create a new context each time
         // We call ExecuteRecipe
         Debug.Log("AttemptCraft!");
@@ -29,12 +29,11 @@ public class CraftingComponent : MonoBehaviour {
             HandleCraftFail(recipe, instantatiatedPopup, $"Cannot afford {recipe.displayName}");
             return false;
         }
-        // Craft the bitch, first remove items
-        _clientInventory.ConsumeItems(recipe.requiredItems);
-        // 2. Resources consumed. Now execute the recipe outcome.
+        // Craft the bitch
         bool executionSuccess = recipe.ExecuteRecipe(context);
         if (executionSuccess) {
             HandleCraftSuccess(recipe);
+            _clientInventory.ConsumeItems(recipe.requiredItems); // Only consume when recipe success
         } else {
             HandleCraftFail(recipe, instantatiatedPopup, "Unable to craft!");
             return false;
