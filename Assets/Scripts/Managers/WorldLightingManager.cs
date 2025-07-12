@@ -247,16 +247,15 @@ public class WorldLightingManager : NetworkBehaviour {
             return caster;
         }
         // Pool is empty, create a new one (and it won't be added to the pool queue until returned)
-        GameObject newShadowCasterGO = new GameObject("ShadowCaster2D_New");
+        GameObject newShadowCasterGO = Instantiate(App.ResourceSystem.GetPrefab("ShadowCaster2DTilemap"));
+
         // Consider if isStatic is appropriate if the tilemap itself moves.
         // If the tilemap is truly static in the world, then newShadowCasterGO.isStatic = true is good.
         // If the tilemap (and thus the composite collider) can move, set isStatic = false.
         newShadowCasterGO.isStatic = true; // Or false, see comment above
         newShadowCasterGO.transform.SetParent(_compositeCollider.transform, false);
-        ShadowCaster2D component = newShadowCasterGO.AddComponent<ShadowCaster2D>();
-        component.selfShadows = true;
         // No need to set active true here, it will be used immediately
-        return component;
+        return newShadowCasterGO.GetComponent<ShadowCaster2D>();
     }
     void ReturnShadowCasterToPool(ShadowCaster2D caster) {
         if (caster != null) {

@@ -32,9 +32,12 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         if (!ArePrerequisitesMet(recipe)) {
             return;
         }
-        
+        // Ugly but works for now
+        RecipeExecutionContext context = new RecipeExecutionContext {
+            ToolController = NetworkedPlayer.LocalInstance.ToolController
+        };
         // 3. Try Execute recipe
-        if (!_crafting.AttemptCraft(recipe)) {
+        if (!_crafting.AttemptCraft(recipe,context)) {
             Debug.Log($"Failed to purchase {recipe.name}. Not enough currency.");
             return;
         }

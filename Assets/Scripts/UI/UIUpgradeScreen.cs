@@ -16,7 +16,7 @@ public class UIUpgradeScreen : MonoBehaviour {
     private UIManager _UIManagerParent;
     public UIManager GetUIManager() => _UIManagerParent;
     private void Start() {
-        _upgradePanel.SetActive(true);
+        _upgradePanel.SetActive(false);
         _upgradePanelPlayer.SetActive(true);
         _upgradePanelEnv.SetActive(false);
     }

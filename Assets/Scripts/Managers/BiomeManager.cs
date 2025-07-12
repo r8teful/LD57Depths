@@ -76,8 +76,8 @@ public class BiomeManager : NetworkBehaviour
         var checkInterval = 0.2f;
         Vector2Int clientCurrentChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
         // Wait until the player object owned by this client is spawned and available
-        yield return new WaitUntil(() => PlayerMovement.LocalInstance != null);
-        Transform localPlayerTransform = PlayerMovement.LocalInstance.transform;
+        yield return new WaitUntil(() => NetworkedPlayer.LocalInstance != null);
+        Transform localPlayerTransform = NetworkedPlayer.LocalInstance.transform;
         while (true) {
             if (localPlayerTransform == null) { // Safety check if player despawns
                 yield return new WaitForSeconds(checkInterval);

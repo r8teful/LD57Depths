@@ -7,6 +7,7 @@ using static PlayerMovement;
 public class PlayerVisualHandler : MonoBehaviour {
 
     private SpriteRenderer sprite; 
+    [SerializeField] private SpriteRenderer _bobHand; 
     private Animator animator;
     private string currentAnimation = "";
     public Collider2D playerSwimCollider;
@@ -44,8 +45,10 @@ public class PlayerVisualHandler : MonoBehaviour {
     public void FlipSprite(float horizontalInput) {
         if (horizontalInput > 0.01f) {
             sprite.flipX = false;
+            _bobHand.gameObject.transform.parent.localScale = new Vector3(1, 1, 1);
         } else if (horizontalInput < -0.01f) {
             sprite.flipX = true;
+            _bobHand.gameObject.transform.parent.localScale = new Vector3(-1, 1, 1);
         }
     }
     public void ChangeAnimation(string animationName) {
@@ -65,12 +68,8 @@ public class PlayerVisualHandler : MonoBehaviour {
         }
     }
 
-    // TODO
-    internal void DrillHide() {
-        throw new NotImplementedException();
+    public void SetBobHand(bool activateHand) {
+        _bobHand.enabled = activateHand;
     }
-
-    internal void DrillShow() {
-        throw new NotImplementedException();
-    }
+    
 }

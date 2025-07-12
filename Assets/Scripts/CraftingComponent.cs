@@ -16,8 +16,11 @@ public class CraftingComponent : MonoBehaviour {
         if (recipe == null || _clientInventory == null)
             return false;
         if (context == null) {
-            // Popuplate it with
+            // Popuplate it with inv
             context = new RecipeExecutionContext { PlayerInventory = _clientInventory };
+        } else if (context.PlayerInventory == null) {
+            // If context was passed but PlayerInventory is null, set it
+            context.PlayerInventory = _clientInventory;
         }
         if (instantatiatedPopup == null) {
             // Just take the current popup from the popupManager

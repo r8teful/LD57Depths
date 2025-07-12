@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "UpgradeDataSO", menuName = "ScriptableObjects/UpgradeDataSO", order = 2)]
+[CreateAssetMenu(fileName = "UpgradeRecipeValue", menuName = "ScriptableObjects/Upgrades/UpgradeRecipeValue", order = 2)]
 public class UpgradeRecipeValue : UpgradeRecipeBase {
     public IncreaseType increaseType;
     public float value;

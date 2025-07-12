@@ -3,7 +3,7 @@ using FishNet.Object;
 using System.Collections;
 using UnityEngine;
 
-public class CleaningTool : NetworkBehaviour, IToolBehaviour {
+public class CleaningTool : MonoBehaviour, IToolBehaviour {
     private bool cleaning;
     private InputManager inputManager;
     [SerializeField] private BoxCollider2D _triggerBox;
@@ -23,48 +23,22 @@ public class CleaningTool : NetworkBehaviour, IToolBehaviour {
         _triggerBox.enabled = false;
     }
     public void ToolStart(InputManager input, ToolController controller) {
-        if (base.IsOwner) {
-            inputManager = input; // Store input manager localy
-            CmdStartCleaning();
-            _particleSystem.Play();
-            _visual.enabled = true;
-            _triggerBox.enabled = true;
-            if (!base.IsServerInitialized) {
-                // local visuals on client
-                cleaning = true; 
-
-            } 
-        }
-    }
-    [ServerRpc(RequireOwnership = true)]
-    private void CmdStartCleaning() {
-        // Server side stuff
-        cleaning = true;
-    }
-    [ServerRpc(RequireOwnership = true)]
-    private void CmdStopCleaning() {
-        // Server side stuff
-        cleaning = false;
-    }
-    private IEnumerator CleaningRoutine(InputManager input, ToolController controller) {
-        while (true) {
-            //laser.volume = 0.2f;
-            var pos = input.GetAimInput();
-            //Debug.Log(pos);
-            CastRays(pos); // Todo determine freq here
-            CleaningVisual(pos);
-            yield return new WaitForFixedUpdate();
-            //laser.volume = 0f;
-        }
+        inputManager = input; // Store input manager localy
+        _particleSystem.Play();
+        _visual.enabled = true;
+        _triggerBox.enabled = true;
+        cleaning = true; 
+  
     }
 
     public void ToolStop() {
-        CmdStopCleaning();
+        cleaning = true; 
         _particleSystem.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
         //laser.volume = 0.0f;
         _visual.enabled = false;    
     }
 
+    // THIS NEED TO BE HANDLED BY SERVER OR SOMETHING
     private void CastRays(Vector2 pos) {
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
         Vector2 directionToMouse = (pos - objectPos2D).normalized;
@@ -92,11 +66,17 @@ public class CleaningTool : NetworkBehaviour, IToolBehaviour {
     }
 
     private void FixedUpdate() {
-        if (base.IsServerInitialized && cleaning) {
+        if (inputManager == null) {
+            return;
+        }
+        if (cleaning) {
             CastRays(inputManager.GetAimInput());
         }
     }
     private void Update() {
+        if(inputManager == null) {
+            return;
+        }
         if (cleaning) {
             // Visuals!
             CleaningVisual(inputManager.GetAimInput());

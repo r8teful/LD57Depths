@@ -25,7 +25,7 @@ public class ToolController : NetworkBehaviour {
         base.OnStartServer();
         _worldManager = FindFirstObjectByType<WorldManager>();
         if (App.isEditor) {
-            DEBUGSetMineTool("laser");
+            DEBUGSetMineTool("drill");
             DEBUGSetDefaultCleanTool();
         }
     }
@@ -111,7 +111,6 @@ public class ToolController : NetworkBehaviour {
 
         // 4. Instantiate the tool and parent it to the designated slot.
         GameObject toolInstance = Instantiate(toolPrefab, slot); // Should use fishnet spawning here aswell!
-
         // 5. Get the behavior component and assign it.
         toolBehaviorReference = toolInstance.GetComponent<IToolBehaviour>();
 
@@ -134,5 +133,21 @@ public class ToolController : NetworkBehaviour {
 
         // Clear the behavior reference
         toolBehaviorReference = null;
+    }
+
+    internal bool UnlockTool(string unlockName) {
+        var toolPrefab = App.ResourceSystem.GetPrefab(unlockName);
+        if (toolPrefab == null) {
+            Debug.LogError($"Tool prefab '{unlockName}' not found in ResourceSystem.");
+            return false;
+        }
+        // Check if the tool prefab has the required component
+        if (toolPrefab.GetComponent<IToolBehaviour>() == null) {
+            Debug.LogError($"Tool prefab '{unlockName}' is missing a component that implements IToolBehaviour.", toolPrefab);
+            return false;
+        }
+        // Else set the tool 
+        EquipMiningToolFromPrefab(toolPrefab);
+        return true;
     }
 }

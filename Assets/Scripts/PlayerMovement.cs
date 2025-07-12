@@ -1,4 +1,6 @@
 ﻿using FishNet.Object;
+using FishNet.Object.Prediction;
+using GameKit.Dependencies.Utilities;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -6,7 +8,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
 
 public class PlayerMovement : NetworkBehaviour {
-    public static PlayerMovement LocalInstance { get; private set; } // Singleton for local player
 
     private Rigidbody2D rb;
     private Camera MainCam;
@@ -64,7 +65,6 @@ public class PlayerMovement : NetworkBehaviour {
         if (base.IsOwner) // Check if this NetworkObject is owned by the local client
         {
             Debug.Log("We are the owner!");
-            LocalInstance = this;
             MainCam = Camera.main;
             MainCam.transform.SetParent(transform);
             MainCam.transform.localPosition = new Vector3(0,0,-10);

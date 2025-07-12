@@ -29,6 +29,7 @@ public struct IngredientStatus {
 public class RecipeExecutionContext {
     public InventoryManager PlayerInventory { get; set; }
     public FixableEntity Entity { get; set; }
+    public ToolController ToolController { get; set; }
 }
 public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
 

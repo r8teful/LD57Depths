@@ -10,17 +10,25 @@ public class NetworkedPlayer : NetworkBehaviour {
     private InputManager _inputManager;
     private UpgradeManager _upgradeManager;
     private CraftingComponent _crafting;
+    public PlayerVisualHandler PlayerVisuals { get; private set; }
+    public ToolController ToolController { get; private set; }
+    public static NetworkedPlayer LocalInstance { get; private set; } // Singleton for local player
+
     public override void OnStartClient() {
         base.OnStartClient();
-        if (base.IsOwner) {
-            _inventoryN = GetComponent<NetworkedPlayerInventory>();
-            _inputManager = GetComponent<InputManager>();
-            _crafting = GetComponent<CraftingComponent>();
-            _upgradeManager = UpgradeManager.Instance;
-            StartCoroutine(StartRoutine());
-        } else {
+        if (!base.IsOwner) {
             base.enabled = false;
+            return;
         }
+        LocalInstance = this;
+        _inventoryN = GetComponent<NetworkedPlayerInventory>();
+        _inputManager = GetComponent<InputManager>();
+        _crafting = GetComponent<CraftingComponent>();
+        PlayerVisuals = GetComponent<PlayerVisualHandler>();
+        ToolController = GetComponent<ToolController>();
+        _upgradeManager = UpgradeManager.Instance;
+        StartCoroutine(StartRoutine());
+        
     }
     private IEnumerator StartRoutine() {
         // Wait until inventory is setup
@@ -36,5 +44,6 @@ public class NetworkedPlayer : NetworkBehaviour {
         if (_uiManager != null) {
             Destroy(_uiManager);
         }
+        LocalInstance = null;
     }
 }
