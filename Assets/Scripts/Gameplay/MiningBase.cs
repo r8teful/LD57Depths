@@ -8,8 +8,8 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
     protected bool _isMining;
     public abstract float Range { get; set; }
     public abstract float DamagePerHit { get; set; }
-    public abstract void ToolHide();
-    public abstract void ToolShow();
+    public abstract GameObject GO { get;}
+
     private void OnEnable() {
         // Subscribe to the event to recalculate stats when a NEW upgrade is bought
         UpgradeManager.OnUpgradePurchased += HandleUpgradePurchased;

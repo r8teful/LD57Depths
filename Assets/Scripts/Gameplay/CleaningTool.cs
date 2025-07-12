@@ -14,6 +14,9 @@ public class CleaningTool : NetworkBehaviour, IToolBehaviour {
     public float range = 5f;
     public float coneAngle = 45f;
     public float pullForce = 10f;
+
+    public GameObject GO => gameObject;
+
     private void Start() {
         _particleSystem.Stop();
         _visual.enabled = false;
@@ -103,5 +106,12 @@ public class CleaningTool : NetworkBehaviour, IToolBehaviour {
     internal void OnTriggerWasteEnter(GameObject gameObject) {
         // Visually shrink and pickup (should be networked later)
         gameObject.transform.DOScale(0, 0.5f).OnComplete(() => Destroy(gameObject)) ;
+    }
+
+    // Clean tool always hidden for now
+    public void ToolHide() {
+    }
+
+    public void ToolShow() {
     }
 }

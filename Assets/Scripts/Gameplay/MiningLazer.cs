@@ -8,9 +8,10 @@ public class MiningLazer : MiningBase {
     public float outerSpotAngle = 30f;
     public override float Range { get; set; } = 10f;
     public override float DamagePerHit { get; set; } = 10f;
+    public override GameObject GO => gameObject;
+
     public float falloffStrength = 1.5f; // Higher values = faster falloff
     public bool CanMine { get; set; } = true;
-
 
     private AudioSource laser;
     public LineRenderer lineRenderer; 
@@ -154,12 +155,5 @@ public class MiningLazer : MiningBase {
         transform.localPosition = position;
     }
 
-    // todo
-    public override void ToolHide() {
 
-    }
-
-    public override void ToolShow() {
-    
-    }
 }

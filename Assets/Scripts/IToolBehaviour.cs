@@ -1,4 +1,6 @@
-﻿public interface IToolBehaviour {
+﻿using UnityEngine;
+
+public interface IToolBehaviour {
     /// <summary>
     /// Called once when the button is pressed
     /// </summary>
@@ -10,7 +12,5 @@
     /// </summary>
     /// <param name="controller"></param>
     void ToolStop();
-    void ToolHide(); // Hide the inactive visual of the tool
-    void ToolShow(); // show the inactive visual of the tool
-
+    public GameObject GO { get;}
 }

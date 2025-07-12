@@ -12,6 +12,7 @@ public class DEBUGGOD : MonoBehaviour, IToolBehaviour {
     public TileBase _airTile;
     private bool _toggle;
     private bool _isDamaging = false;
+    public GameObject GO => null;
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
     }

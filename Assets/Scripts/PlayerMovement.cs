@@ -68,9 +68,9 @@ public class PlayerMovement : NetworkBehaviour {
             MainCam = Camera.main;
             MainCam.transform.SetParent(transform);
             MainCam.transform.localPosition = new Vector3(0,0,-10);
-            ChangeState(PlayerState.Swimming);
             _inputManager = GetComponent<InputManager>();
             _visualHandler = GetComponent<PlayerVisualHandler>();
+            ChangeState(PlayerState.Swimming);
             // Enable input, camera controls ONLY for the local player
             // Example: GetComponent<PlayerInputHandler>().enabled = true;
             // Example: playerCamera.SetActive(true);
