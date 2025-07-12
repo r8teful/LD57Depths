@@ -113,8 +113,8 @@ TextureImporter:
       name: InvMain
       rect:
         serializedVersion: 2
-        x: 8
-        y: 125
+        x: 9
+        y: 151
         width: 118
         height: 81
       alignment: 0
@@ -135,8 +135,8 @@ TextureImporter:
       name: PopupBox
       rect:
         serializedVersion: 2
-        x: 134
-        y: 140
+        x: 135
+        y: 166
         width: 64
         height: 31
       alignment: 0
@@ -154,13 +154,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RikUISpriteSheet_2
+      name: IconFish
       rect:
         serializedVersion: 2
-        x: 7
-        y: 112
-        width: 11
-        height: 11
+        x: 95
+        y: 138
+        width: 9
+        height: 8
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -176,13 +176,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RikUISpriteSheet_3
+      name: IconPlant
       rect:
         serializedVersion: 2
-        x: 23
-        y: 112
-        width: 11
-        height: 11
+        x: 109
+        y: 139
+        width: 7
+        height: 8
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -198,13 +198,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RikUISpriteSheet_4
+      name: IconObsidian
       rect:
         serializedVersion: 2
-        x: 39
-        y: 112
-        width: 11
-        height: 11
+        x: 120
+        y: 139
+        width: 5
+        height: 7
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -220,13 +220,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RikUISpriteSheet_5
+      name: iconIcor
       rect:
         serializedVersion: 2
-        x: 55
-        y: 112
-        width: 11
-        height: 11
+        x: 130
+        y: 138
+        width: 6
+        height: 9
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -242,13 +242,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RikUISpriteSheet_6
+      name: IconPresent
       rect:
         serializedVersion: 2
-        x: 71
-        y: 112
-        width: 11
-        height: 11
+        x: 139
+        y: 138
+        width: 7
+        height: 7
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -264,13 +264,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RikUISpriteSheet_7
+      name: IconBob
       rect:
         serializedVersion: 2
-        x: 87
-        y: 112
-        width: 11
-        height: 11
+        x: 150
+        y: 138
+        width: 7
+        height: 7
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -289,8 +289,8 @@ TextureImporter:
       name: IconInv
       rect:
         serializedVersion: 2
-        x: 159
-        y: 112
+        x: 160
+        y: 138
         width: 7
         height: 8
       alignment: 0
@@ -311,8 +311,8 @@ TextureImporter:
       name: IconCraft
       rect:
         serializedVersion: 2
-        x: 169
-        y: 113
+        x: 170
+        y: 139
         width: 5
         height: 7
       alignment: 0
@@ -333,8 +333,8 @@ TextureImporter:
       name: IconSheck
       rect:
         serializedVersion: 2
-        x: 178
-        y: 114
+        x: 179
+        y: 140
         width: 6
         height: 5
       alignment: 0
@@ -355,8 +355,8 @@ TextureImporter:
       name: IconQue
       rect:
         serializedVersion: 2
-        x: 187
-        y: 114
+        x: 188
+        y: 140
         width: 5
         height: 9
       alignment: 0
@@ -377,8 +377,8 @@ TextureImporter:
       name: DiscoveryGrid
       rect:
         serializedVersion: 2
-        x: 2
-        y: 60
+        x: 3
+        y: 86
         width: 100
         height: 46
       alignment: 0
@@ -399,8 +399,8 @@ TextureImporter:
       name: TrenchProgression
       rect:
         serializedVersion: 2
-        x: 119
-        y: 36
+        x: 120
+        y: 62
         width: 27
         height: 66
       alignment: 0
@@ -421,8 +421,8 @@ TextureImporter:
       name: InventoryTabButtonActive
       rect:
         serializedVersion: 2
-        x: 158
-        y: 91
+        x: 159
+        y: 117
         width: 13
         height: 15
       alignment: 0
@@ -443,8 +443,8 @@ TextureImporter:
       name: InventoryTabButtonInactive
       rect:
         serializedVersion: 2
-        x: 178
-        y: 91
+        x: 179
+        y: 117
         width: 13
         height: 15
       alignment: 0
@@ -465,8 +465,8 @@ TextureImporter:
       name: RikUISpriteSheet_16
       rect:
         serializedVersion: 2
-        x: 1
-        y: 10
+        x: 2
+        y: 36
         width: 43
         height: 43
       alignment: 0
@@ -487,8 +487,8 @@ TextureImporter:
       name: InvHotbar
       rect:
         serializedVersion: 2
-        x: 47
-        y: 40
+        x: 48
+        y: 66
         width: 55
         height: 10
       alignment: 0
@@ -509,8 +509,8 @@ TextureImporter:
       name: Inv
       rect:
         serializedVersion: 2
-        x: 47
-        y: 17
+        x: 48
+        y: 43
         width: 55
         height: 19
       alignment: 0
@@ -531,8 +531,8 @@ TextureImporter:
       name: OxygenBoarder
       rect:
         serializedVersion: 2
-        x: 182
-        y: 37
+        x: 183
+        y: 63
         width: 9
         height: 49
       alignment: 0
@@ -553,8 +553,8 @@ TextureImporter:
       name: PlaceMarker
       rect:
         serializedVersion: 2
-        x: 111
-        y: 44
+        x: 112
+        y: 70
         width: 3
         height: 3
       alignment: 0
@@ -575,8 +575,8 @@ TextureImporter:
       name: PopupTop
       rect:
         serializedVersion: 2
-        x: 134
-        y: 173
+        x: 135
+        y: 199
         width: 64
         height: 15
       alignment: 0
@@ -597,8 +597,8 @@ TextureImporter:
       name: InvSelectionBoarder
       rect:
         serializedVersion: 2
-        x: 94
-        y: 51
+        x: 95
+        y: 77
         width: 8
         height: 8
       alignment: 0
@@ -619,8 +619,8 @@ TextureImporter:
       name: InvSelectionBoarderBig
       rect:
         serializedVersion: 2
-        x: 105
-        y: 51
+        x: 106
+        y: 77
         width: 10
         height: 10
       alignment: 0
@@ -641,12 +641,12 @@ TextureImporter:
       name: InvHotbar_1
       rect:
         serializedVersion: 2
-        x: 47
-        y: 4
+        x: 48
+        y: 30
         width: 55
         height: 10
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -655,6 +655,402 @@ TextureImporter:
       bones: []
       spriteID: db37846551e50b44bbc37d89ee225cd4
       internalID: 2124238485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IconLook
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 140
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aaa1067abe2ca964eba3a4219cdd6fe9
+      internalID: 54682694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvTiny
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 166
+        width: 64
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 2, y: 2, z: 2, w: 2}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de951d7cdf720c84280d90cb587a623d
+      internalID: 164083627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InvMed
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 130
+        width: 50
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 3, y: 3, z: 3, w: 3}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e9fb642699ec2ec41804e80b20041ff1
+      internalID: -850858008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeNodeBigActive
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 106
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ea663508928f924683ad9565fd1ad17
+      internalID: -925140935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeNodeBigInactive
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 106
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 56eb89cffd308f64fb38e0a7632be3ec
+      internalID: 654996915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeNodeSmallActive
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 88
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc7c57442683c834e8bf323105a5da7c
+      internalID: -2138730293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeNodeSmallInactive
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 88
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 10d812ddcf439b549b3e7e0b4b21ee6f
+      internalID: 624703488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeNodeBigPurchased
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 106
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8ef1e21d4ad948d43915a9f351341d47
+      internalID: 1267944118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeNodeSmallPurchased
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 88
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e0273274adc67154b80fc061928d6094
+      internalID: -176935646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISpriteSheet_0
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 58
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bd1870beb67fee54e8877a0c101c718f
+      internalID: 1187898083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISpriteSheet_1
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 65
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 600dff86850504848a0f647a568ee4bc
+      internalID: 1573820211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISpriteSheet_2
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 66
+        width: 15
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bd0b4dd34f0ed4a4c968b873a7781306
+      internalID: -329476615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISpriteSheet_3
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 61
+        width: 3
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b7b70a7a8b3f924a83cfd8003f429ab
+      internalID: -1923053130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISpriteSheet_4
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 61
+        width: 5
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34ef17629187e9f42a49e246f5ed6d2e
+      internalID: 161349368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISpriteSheet_5
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 61
+        width: 5
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5a98aa7951257a42af6192176ab6fcb
+      internalID: 868697242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISpriteSheet_6
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 52
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38abd6624ecb9af438a9f68bdcb95b8f
+      internalID: -717515431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISpriteSheet_7
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 52
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d064c1c1b68359458ab90167ff230b9
+      internalID: -819378468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISpriteSheet_8
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 52
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81bf5f6b8c6d23c4a8fa927dc910938f
+      internalID: -883147538
       vertices: []
       indices: 
       edges: []
@@ -674,16 +1070,24 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       DiscoveryGrid: 1687985993
+      IconBob: 911542164
       IconCraft: -275753912
+      IconFish: 614448980
       IconInv: -2061626415
+      IconLook: 54682694
+      IconObsidian: -883859110
+      IconPlant: -927056917
+      IconPresent: 2131322590
       IconQue: 1378529093
       IconSheck: -523140508
       Inv: -1182525682
       InvHotbar: 716729945
       InvHotbar_1: 2124238485
       InvMain: 842701494
+      InvMed: -850858008
       InvSelectionBoarder: -276321925
       InvSelectionBoarderBig: 27749576
+      InvTiny: 164083627
       InventoryTabButtonActive: 726674937
       InventoryTabButtonInactive: -692597868
       OxygenBoarder: -268757789
@@ -691,13 +1095,24 @@ TextureImporter:
       PopupBox: 2098033918
       PopupTop: 1523963916
       RikUISpriteSheet_16: -1480687458
-      RikUISpriteSheet_2: 614448980
-      RikUISpriteSheet_3: -927056917
-      RikUISpriteSheet_4: -883859110
-      RikUISpriteSheet_5: -424937040
-      RikUISpriteSheet_6: 2131322590
-      RikUISpriteSheet_7: 911542164
       TrenchProgression: 1096135325
+      UISpriteSheet_0: 1187898083
+      UISpriteSheet_1: 1573820211
+      UISpriteSheet_2: -329476615
+      UISpriteSheet_3: -1923053130
+      UISpriteSheet_4: 161349368
+      UISpriteSheet_5: 868697242
+      UISpriteSheet_6: -717515431
+      UISpriteSheet_7: -819378468
+      UISpriteSheet_8: -883147538
+      UISpriteSheet_9: -623491169
+      UpgradeNodeBigActive: -925140935
+      UpgradeNodeBigInactive: 654996915
+      UpgradeNodeBigPurchased: 1267944118
+      UpgradeNodeSmallActive: -2138730293
+      UpgradeNodeSmallInactive: 624703488
+      UpgradeNodeSmallPurchased: -176935646
+      iconIcor: -424937040
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -29,6 +29,8 @@ public class ItemData : ScriptableObject, IIdentifiable {
     public bool isConsumable = true; // Is it used up after one use?
     [VerticalGroup("Gamepaly/1")]
     public int usageCooldown = 0;
+    [VerticalGroup("Gamepaly/1")]
+    public int itemValue = 0; // Used for upgrade calculations
     
     ushort IIdentifiable.ID => ID;
 

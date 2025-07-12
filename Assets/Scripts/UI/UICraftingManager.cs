@@ -1,20 +1,17 @@
 ﻿using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class UICraftingManager : Singleton<UICraftingManager> {
     public Transform recipeListContainer; // Parent for recipe UI elements
     public GameObject recipeUIPrefab;    // Prefab for displaying a single recipe
-    
-    public TextMeshProUGUI statusText; // For displaying craft success/failure
-    private InventoryUIManager _parentManager;
     private List<CraftingRecipeSO> _availableRecipes = new List<CraftingRecipeSO>();
     private InventoryManager _clientInventory; // Your existing client inventory manager
-
-    public void Init(InventoryManager clientInv) {
+    private PopupManager _popupManager;
+    public void Init(InventoryManager clientInv,PopupManager popupManager) {
         _clientInventory = clientInv;
+        _popupManager = popupManager;
         _availableRecipes = App.ResourceSystem.GetAllCraftingRecipes();
-
+        // PopupManager should be on same component
         // Subscribe to inventory updates to refresh UI
         _clientInventory.OnSlotChanged += RefreshRecipeDisplayStatus;
         // Subscribe to craft results;
@@ -37,7 +34,8 @@ public class UICraftingManager : Singleton<UICraftingManager> {
             // Assuming your recipeUIPrefab has a script like 'RecipeDisplayItem.cs'
             UIRecipeItem displayItem = recipeGO.GetComponent<UIRecipeItem>();
             if (displayItem != null) {
-                displayItem.Init(recipe, _clientInventory, this,GetComponent<PopupManager>()); // PopupManager should be on same component
+                displayItem.Init(recipe, _clientInventory, this);
+                _popupManager.RegisterIPopupInfo(displayItem);
             }
         }
         RefreshRecipeDisplayStatus(0); // Initial status update
@@ -53,48 +51,5 @@ public class UICraftingManager : Singleton<UICraftingManager> {
                 displayItem.UpdateStatus(_clientInventory);
             }
         }
-    }
-
-    public void AttemptCraft(RecipeBaseSO recipe, UIPopup instantatiatedPopup) {
-        if (recipe == null || _clientInventory == null)
-            return;
-
-        // Client-side check (optional, good for immediate feedback but server is authoritative)
-        if (!recipe.CanAfford(_clientInventory)) {
-            Debug.Log($"Cannot afford {recipe.displayName} (client check).");
-            if (statusText)
-                statusText.text = $"Cannot afford {recipe.displayName}";
-            HandleCraftFail(recipe, instantatiatedPopup,$"Cannot afford {recipe.displayName}");
-            return;
-        }
-        // Craft the bitch, first remove items
-        _clientInventory.ConsumeItems(recipe.requiredItems);
-        // 2. Resources consumed. Now execute the recipe outcome.
-        bool executionSuccess = recipe.ExecuteRecipe(_clientInventory);
-        if(executionSuccess) {
-            HandleCraftSuccess(recipe);
-        } else {
-            HandleCraftFail(recipe, instantatiatedPopup, "Unable to craft!");
-        }
-        // Tell the local InventoryManager (or CraftingManager client instance) to send the request
-        if (statusText)
-            statusText.text = $"Attempting to craft {recipe.displayName}...";
-    }
-
-    private void HandleCraftSuccess(RecipeBaseSO recipe) {
-        string name = recipe != null ? recipe.displayName : recipe.ID.ToString();
-        Debug.Log($"UI: Successfully crafted {name}!");
-        if (statusText)
-            statusText.text = $"Successfully crafted {name}!";
-        RefreshRecipeDisplayStatus(0); // Refresh UI as inventory has changed
-    }
-
-    private void HandleCraftFail(RecipeBaseSO recipe, UIPopup instantatiatedPopup, string reason) {
-        string name = recipe != null ? recipe.displayName : recipe.ID.ToString();
-        Debug.Log($"UI: Failed to craft {name}. Reason: {reason}");
-        instantatiatedPopup.HandleFailVisual();
-        if (statusText)
-            statusText.text = $"Failed to craft {name}. Reason: {reason}";
-        RefreshRecipeDisplayStatus(0); // Refresh in case some partial state needs updating
     }
 }

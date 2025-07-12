@@ -3,14 +3,12 @@ using FishNet.Object;
 using FishNet.Connection; // Required for NetworkConnection
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 using System.Linq;
 using Sirenix.OdinInspector;
 
 public class NetworkedPlayerInventory : NetworkBehaviour {
     [Header("References")]
-    [SerializeField] private InventoryUIManager inventoryUIPrefab; // Players spawn their own inventory UIs 
-    private InventoryUIManager _uiManager; 
+   
     [SerializeField] private Transform dropPoint; // Where items are physically dropped
     [SerializeField] private float pickupRadius = 1.5f;
     [SerializeField] private LayerMask pickupLayerMask; // Set this to the layer your WorldItem prefabs are on
@@ -19,8 +17,8 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
     [Header("Container Interaction")]
     [SerializeField] private LayerMask containerLayerMask; // Layer your containers are on
     private SharedContainer currentOpenContainer = null; // Track which container UI is open LOCALLY
-    public static event System.Action<SharedContainer> OnContainerOpened; // UI listens to this
-    public static event System.Action<bool> OnContainerClosed;       // UI listens to this
+    public event System.Action<SharedContainer> OnContainerOpened; // UI listens to this
+    public event System.Action<bool> OnContainerClosed;       // UI listens to this
 
 
     [Header("Inventory Settings")]
@@ -36,20 +34,11 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         base.OnStartClient();
         if (base.IsOwner) {
             InitializeInventory();
-            _uiManager = Instantiate(inventoryUIPrefab);
-            _uiManager.Init(inventoryManager, gameObject);
-            GetComponent<InputManager>().SetUIManager(_uiManager);
         } else {
             base.enabled = false;
         }
     }
-    public override void OnStopClient() {
-        base.OnStopClient();
-        // Clean up instantiated UI if this player object is destroyed (and was owner)
-        if (_uiManager != null) {
-            Destroy(_uiManager);
-        }
-    }
+
     private void InitializeInventory() {
         List<InventorySlot> slots = new List<InventorySlot>(inventorySize);
         for (int i = 0; i < inventorySize; i++) {
@@ -58,17 +47,11 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         inventoryManager = new InventoryManager(slots); 
         Debug.Log($"Inventory Initialized with {inventorySize} slots.");
     }
-
-    void Update() {
-        if (!IsOwner)
-            return;
-        // UImanager handles visuals
-        _uiManager.UpdateHeldItemVisual();
-    }
     private void FixedUpdate() {
         if (!base.IsOwner) return;
         // Client checks for nearby items first (reduces unnecessary server calls)
         TryClientPickupCheck();
+        //Debug.Log(currentOpenContainer);
     }
     // --- Drag and Drop Handling ---
     // --- Pickup/Place/Drop Logic ---
@@ -330,15 +313,12 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
             Debug.LogWarning($"Client: Could not add item {itemID} x{quantity} to inventory (full?).");
             // Optionally, tell server to re-drop if client can't take it.
         }
-        if (_uiManager != null)
-            _uiManager.RefreshUI();
     }
     // --- Target RPCs (Server sending messages to a specific client) ---
 
     [TargetRpc] // Specify connection in the call: Target_UpdateSlot(connectionToClient, ...)
     public void Target_UpdateSlot(NetworkConnection conn, int slotIndex, ushort itemID, int quantity) {
         // This code runs ONLY on the client specified by 'conn'
-        if (_uiManager == null) return;
 
         Debug.Log($"[Client {base.Owner.ClientId}] Received update for Slot {slotIndex}: {itemID} x{quantity}");
 
@@ -388,8 +368,6 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
             Debug.LogWarning($"Client: Could not add item {itemID} x{quantity} to inventory (full?).");
             // Optionally, tell server to re-drop if client can't take it.
         }
-        if (_uiManager != null)
-            _uiManager.RefreshUI();
         return added;
     }
     // --- Container Open/Close (VERY simple stub as requested) ---
@@ -434,36 +412,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
             Debug.Log($"Client: Failed to interact with container {containerNetObj.ObjectId}.");
         }
     }
-    // Called by Player Input when Interact key is pressed
-    public void HandleInteractionInput() {
-        if (!base.IsOwner) return;
-
-        // If a container is already open, maybe close it? Or require explicit close action.
-        if (currentOpenContainer != null) {
-            CloseContainer(); // Simple: Interact again closes.
-            return;
-        }
-        // Check for nearby containers
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, pickupRadius*2, containerLayerMask); // Reuse pickupRadius? Or separate radius?
-        SharedContainer targetContainer = null;
-        float closestDistSq = float.MaxValue;
-
-        foreach (Collider2D hit in hits) {
-            Debug.Log("HIT");
-            SharedContainer container = hit.GetComponentInParent<SharedContainer>();
-            if (container != null) {
-                float distSq = (container.transform.position - transform.position).sqrMagnitude;
-                if (distSq < closestDistSq) {
-                    closestDistSq = distSq;
-                    targetContainer = container;
-                }
-            }
-        }
-        if (targetContainer != null) {
-            // Found container, request interaction from server
-            CmdInteractWithContainer(targetContainer.NetworkObject);
-        } 
-    }
+    
     [ServerRpc(RequireOwnership = true)]
     public void CmdInteractWithContainer(NetworkObject containerNob) {
         if (containerNob == null) return;
@@ -497,6 +446,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
 
     // Method to close container (called by InteractInput or UI button)
     public void CloseContainer() {
+        Debug.Log("CLOSE CONTAINRE"+ currentOpenContainer); // conainer -> UI -> container, breaks, must not set currentopenctainer correctly
         if (currentOpenContainer != null) {
             Debug.Log($"[Client {base.Owner.ClientId}] Closing container {currentOpenContainer.name} UI.");
             currentOpenContainer = null;
@@ -604,26 +554,12 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         // If dataToDrop.droppedPrefab == null, item just vanishes silently (or add TargetRpc notification)
     }
 
-    internal void HandleClose(InputAction.CallbackContext context) {
-        if (!heldItemStack.IsEmpty()) {
-            // TODO we could keep it in hand if there is space in the hotbar, right now just do nothing and keep it in the hand
-            // Player probably closed inventory with something in the hand for a reason
-            Debug.Log("Close Action");
-            //ReturnHeldItemToSource(); // Or just clear if no return logic
-            //heldItemStack.Clear();
-        }
-    }
-
     internal void AddItem(ushort itemId, int quantityTransferred) {
         inventoryManager.AddItem(itemId, quantityTransferred);
     }
 
     internal void RemoveItem(ushort itemId, int quantityTransferred) {
         inventoryManager.RemoveItem(itemId, quantityTransferred);
-    }
-
-    internal void RefreshUI() {
-        _uiManager.RefreshUI();
     }
 
 #if UNITY_EDITOR

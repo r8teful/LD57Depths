@@ -7,9 +7,8 @@ using FishNet.Connection;
 using System.Linq;
 
 public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractable {
-    [Header("Settings")]
     [SerializeField] private int containerSize = 12;
-    [SerializeField] private float interactionRadius = 2.0f;
+    [SerializeField] private Transform _popupPos;
     private CanvasInputWorld instantatiatedCanvas;
 
     // The synchronized list of items. This is the core data.
@@ -33,11 +32,17 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
 
     public string AssociatedInteriorId => throw new NotImplementedException();
 
-    public Sprite InteractionSprite => throw new NotImplementedException();
+    public Sprite InteractIcon => null;
 
-    public Vector3 PromptPosition => throw new NotImplementedException();
+    public bool CanInteract {
+        get {
+            return true; // TODO should be false if someone else is interacting!
+        }
 
-    public Sprite InteractIcon => throw new NotImplementedException();
+        set {
+            throw new NotImplementedException();
+        }
+    }
 
     // --- Initialization & Sync Callbacks ---
 
@@ -320,7 +325,8 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
                     }
                 }*/
             }
-            playerInv.RefreshUI(); // Refresh player inventory UI
+            // Not even sure if we need this but not using it for now
+            //playerInv.RefreshUI(); // Refresh player inventory UI
         } else {
             Debug.LogWarning($"Client: Item transfer failed - {message}");
             // Optionally, provide feedback to the player via UI
@@ -335,7 +341,7 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
     public bool ServerTryInteract(NetworkObject interactor) {
         // Server validates distance before allowing interaction / UI open
         float distSq = (transform.position - interactor.transform.position).sqrMagnitude;
-        if (distSq > (interactionRadius * interactionRadius)) {
+        if (distSq > (12 * 12)) {
             Debug.LogWarning($"[Server] Client {interactor.Owner.ClientId} tried to interact with container {gameObject.name} from too far.");
             // Maybe send TargetRpc failure message to player?
             return false;
@@ -457,14 +463,19 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
         playerInv.CmdInteractWithContainer(base.NetworkObject);
     }
 
+    private void CloseContainer() {
+        // Ugly 
+        Debug.LogWarning("Need close logic");
+    }
     public void SetInteractable(bool isInteractable, Sprite interactPrompt) {
         if (isInteractable) {
-            instantatiatedCanvas = Instantiate(App.ResourceSystem.GetPrefab("CanvasInputWorld"), transform).GetComponent<CanvasInputWorld>();
+            instantatiatedCanvas = Instantiate(App.ResourceSystem.GetPrefab("CanvasInputWorld"), _popupPos.position, Quaternion.identity,transform).GetComponent<CanvasInputWorld>();
             instantatiatedCanvas.Init(this, interactPrompt);
         } else {
             if (instantatiatedCanvas != null) {
                 Destroy(instantatiatedCanvas.gameObject);
             }
+            CloseContainer();
         }
     }
 }

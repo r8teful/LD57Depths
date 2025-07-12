@@ -4,11 +4,11 @@ using UnityEngine;
 public class CraftingRecipeSO : RecipeBaseSO {
     [VerticalGroup("Gamepaly/1")]
     public ItemQuantity CraftingResult;
-    public override bool ExecuteRecipe(InventoryManager playerInv) {
+    public override bool ExecuteRecipe(RecipeExecutionContext context) {
         var added = false;
         Debug.Log("crafted complete!");
-        if (playerInv != null) {
-            added = playerInv.AddItem(CraftingResult.item.ID, CraftingResult.quantity);
+        if (context.PlayerInventory != null) {
+            added = context.PlayerInventory.AddItem(CraftingResult.item.ID, CraftingResult.quantity);
         }
         return added;
     }

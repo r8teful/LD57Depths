@@ -74,7 +74,7 @@ public class WorldGen : MonoBehaviour {
             worldGenMat.GetFloat("_CaveAmp"), worldGenMat.GetFloat("_CaveCutoff"), worldGenMat.GetFloat("_LuminenceEdgeNoiseScale"), 
             worldGenMat.GetFloat("_LuminenceEdgeNoiseAmp"), worldGenMat.GetFloat("_LuminesenceNoiseScale"), worldGenMat.GetFloat("_LuminenceBlockNoiseAmp"), 
             worldGenMat.GetFloat("_BiomeCutoff"), worldGenMat.GetFloat("_LuminesenceStart"), worldGenMat.GetFloat("_LuminesenceHeight"), 
-            worldGenMat.GetFloat("_LuminenceHorSize"),worldGenMat.GetFloat("_Seed"));
+            worldGenMat.GetFloat("_xOffset"), worldGenMat.GetFloat("_LuminenceHorSize"),worldGenMat.GetFloat("_Seed"));
         this.worldmanager = worldmanager;
         this.chunkManager = chunkManager;
         _renderCamera = renderCamera;

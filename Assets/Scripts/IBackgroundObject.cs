@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 // Right now I see a background object as being able to spawn on different layers, and having a solid color 
 public interface IBackgroundObject {

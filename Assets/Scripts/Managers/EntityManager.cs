@@ -344,10 +344,12 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             }
         }
     }
+
+    // Not much different than adding a generig persistent entity, we just set the data to be broken at the start
     public PersistentEntityData ServerAddNewPersistentSubEntity(ushort id, Vector3Int pos, Quaternion rot) {
         ulong unqiueID = GetNextPersistentEntityId();
         PersistentEntityData newEntityData = new PersistentEntityData(unqiueID, id, pos, rot,
-            new BreakEntityData(true) // Start as broken if we're adding as a new entity
+            new BreakEntityData(true) 
         );
         persistentEntityDatabase.Add(unqiueID, newEntityData);
         Debug.Log($"Added new Sub persistent entity ID:{unqiueID} at {pos}");

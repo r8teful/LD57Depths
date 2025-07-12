@@ -10,6 +10,7 @@ public class ResourceSystem {
     public List<Sprite> Sprites { get; private set; }
     public List<Material> Materials { get; private set; }
     public List<BackgroundObjectSO> BackgroundObjects { get; private set; }
+    public List<UpgradeTreeDataSO> UpgradeTreeData { get; private set; }
 
     private Dictionary<string, GameObject> _prefabDict;
     private Dictionary<string, Sprite> _spriteDict; 
@@ -41,6 +42,8 @@ public class ResourceSystem {
         _materialDict = Materials.ToDictionary(r => r.name, r => r);
 
         BackgroundObjects = Resources.LoadAll<BackgroundObjectSO>("BackgroundObjectData").ToList();
+
+        UpgradeTreeData = Resources.LoadAll<UpgradeTreeDataSO>("UpgradeTreeData").ToList();
 
         InitializeLookup("ItemData", out _itemLookupByID, out _idLookupByItem);
         InitializeLookup("TileData", out _tileLookupByID, out _idLookupByTile);
@@ -126,8 +129,22 @@ public class ResourceSystem {
         }
         return recipe;
     }
-
+    public UpgradeRecipeBase[] GetAllRecipeByType(UpgradeTreeType type) {
+        return Resources.LoadAll<UpgradeRecipeBase>($"UpgradeData/{type}").OrderBy(r => r.ID).ToArray();
+    }
     public GameObject GetPrefab(string s) => _prefabDict[s];
+    public T GetPrefab<T>(string key) where T : Component {
+        if (!_prefabDict.TryGetValue(key, out GameObject prefab))
+            throw new KeyNotFoundException($"No prefab found in _prefabDict with key '{key}'");
+
+        T component = prefab.GetComponent<T>();
+        if (component == null)
+            throw new System.InvalidOperationException(
+                $"Prefab '{key}' does not have a component of type {typeof(T).Name}"
+            );
+
+        return component;
+    }
     public Sprite GetSprite(string s) {
         if (s == "" || !_spriteDict.TryGetValue(s, out Sprite sprite)) {
             Debug.LogWarning($"Recipe string {s} not found in database.");
@@ -139,5 +156,18 @@ public class ResourceSystem {
 
     public List<CraftingRecipeSO> GetAllCraftingRecipes() {
         return _recipeLookupByID.Values.OfType<CraftingRecipeSO>().ToList();
+    }
+
+    internal List<ItemData> GetAllItems() {
+        return _itemLookupByID.Values.OfType<ItemData>().ToList();
+    }
+    internal Dictionary<ushort,int> GetMaxItemPool() {
+        var items = GetAllItems();
+        var d = new Dictionary<ushort, int>();
+        foreach (var item in items)
+        {
+            d.Add(item.ID, 999);
+        }
+        return d;
     }
 }

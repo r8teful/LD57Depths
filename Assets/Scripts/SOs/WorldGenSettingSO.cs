@@ -25,13 +25,14 @@ public class WorldGenSettingSO : ScriptableObject {
     public float biomeblockNoiseAmp;
     public float biomeYStart;
     public float biomeYHeight;
+    public float biomeXOffset;
     public float biomeHorSize;
     private float worldSeed;
     public float GetTrenchWidth() => trenchBaseWidth;
     public float GetTrenchWiden() => trenchWidenFactor;
     public float GetTrenchEdgeFreq() => trenchEdgeNoiseFrequency;
     public float GetTrenchEdgeNoiseAmp() => trenchEdgeNoiseAmplitude;
-    public void initWorldSettings(float width, float widen, float edgeFreq, float edgeAmp, float caveNoiseScale,float caveAmp, float caveCutoff, float edgeNoiseScale, float edgeNoiseAmp, float blockNoiseScale, float blockNoiseAmp, float blockCutoff, float YStart, float YHeight, float horSize,float worldSeed) {
+    public void initWorldSettings(float width, float widen, float edgeFreq, float edgeAmp, float caveNoiseScale,float caveAmp, float caveCutoff, float edgeNoiseScale, float edgeNoiseAmp, float blockNoiseScale, float blockNoiseAmp, float blockCutoff, float YStart, float YHeight, float xOffset, float horSize,float worldSeed) {
         trenchBaseWidth = width;
         trenchWidenFactor = widen;
         trenchEdgeNoiseFrequency = edgeFreq;
@@ -46,6 +47,7 @@ public class WorldGenSettingSO : ScriptableObject {
         this.biomeblockCutoff = blockCutoff;
         this.biomeYStart = YStart;
         this.biomeYHeight = YHeight;
+        this.biomeXOffset = xOffset;
         this.biomeHorSize = horSize;
         this.worldSeed = worldSeed;
     }

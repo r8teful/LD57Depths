@@ -1,8 +1,11 @@
 ﻿using FishNet.Object;
+using System.Security.Cryptography;
 using UnityEngine;
 
 // Controls what happens when the player presses the left mouse button, which usually will activate a specific tool
 public class ToolController : NetworkBehaviour {
+    [SerializeField] private Transform _toolSlotMining; // Instantiated slot for the current mining tool
+    [SerializeField] private Transform _toolSlotCleaning;
     private IToolBehaviour currentMiningToolBehavior;
     private IToolBehaviour currentCleaningToolBehavior;
     private WorldManager _worldManager;
@@ -26,8 +29,6 @@ public class ToolController : NetworkBehaviour {
             DEBUGSetDefaultCleanTool();
         }
     }
-
-
 
     public void StopMining() {
         currentMiningToolBehavior?.ToolStop();
@@ -60,37 +61,78 @@ public class ToolController : NetworkBehaviour {
         _worldManager.RequestDamageTile(worldPos, damageAmount);
     }
     
-    
-    public void SetMineTool(IToolBehaviour tool) {
-        currentMiningToolBehavior = tool;
-    }
+
     public void SetCleanTool(IToolBehaviour tool) {
         currentCleaningToolBehavior = tool;
-    }
-    private void OnEnable() {
-       
     }
     private void DEBUGSetMineTool(string tool) {
         if (tool == "god") {
             Debug.Log("Setting Mining tool as GOD");
-            SetMineTool(FindFirstObjectByType<DEBUGGOD>());
+            EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("DEBUGGOD"));
         } else if (tool == "drill") {
             // todo
             Debug.Log("Setting Mining tool as drill");
-            SetMineTool(FindFirstObjectByType<DEBUGGOD>());
+            EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("MiningDrill"));
         } else if (tool == "laser") { 
             Debug.Log("Setting Mining tool as laser");
-            SetMineTool(Instantiate(App.ResourceSystem.GetPrefab("MiningLazer"),transform).GetComponent<MiningLazer>());
+            EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("MiningLazer"));
         }
     }
     private void DEBUGSetDefaultCleanTool() {
-        var g = Instantiate(App.ResourceSystem.GetPrefab("CleaningTool"), transform);
-        base.Spawn(g, Owner);
-        SetCleanTool(g.GetComponent<CleaningTool>());
+        EquipCleaningToolFromPrefab(App.ResourceSystem.GetPrefab("CleaningTool"));
+        // var g = Instantiate(App.ResourceSystem.GetPrefab("CleaningTool"), transform);
+        // base.Spawn(g, Owner); // This will be how you'd do it in multiplayer
     }
 
     internal void StopCurrentTool() {
         currentCleaningToolBehavior?.ToolStop();
         currentMiningToolBehavior?.ToolStop();
+    }
+
+    public void EquipMiningToolFromPrefab(GameObject toolPrefab) {
+        EquipTool(toolPrefab, _toolSlotMining, ref currentMiningToolBehavior);
+    }
+    public void EquipCleaningToolFromPrefab(GameObject toolPrefab) {
+        EquipTool(toolPrefab, _toolSlotCleaning, ref currentCleaningToolBehavior);
+    }
+    private void EquipTool(GameObject toolPrefab, Transform slot, ref IToolBehaviour toolBehaviorReference) {
+        // 1. Clear out any existing tool in the slot first.
+        ClearSlot(slot, ref toolBehaviorReference);
+
+        // 2. If the prefab is null, we are just unequipping the slot. Exit early.
+        if (toolPrefab == null)
+            return;
+
+        // 3. Validate that the prefab has the required component.
+        if (toolPrefab.GetComponent<IToolBehaviour>() == null) {
+            Debug.LogError($"Tool prefab '{toolPrefab.name}' is missing a component that implements IToolBehaviour.", toolPrefab);
+            return;
+        }
+
+        // 4. Instantiate the tool and parent it to the designated slot.
+        GameObject toolInstance = Instantiate(toolPrefab, slot); // Should use fishnet spawning here aswell!
+
+        // 5. Get the behavior component and assign it.
+        toolBehaviorReference = toolInstance.GetComponent<IToolBehaviour>();
+
+    }
+    public void ClearMiningSlot() {
+        ClearSlot(_toolSlotMining, ref currentMiningToolBehavior);
+    }
+
+    public void ClearCleaningSlot() {
+        ClearSlot(_toolSlotCleaning, ref currentCleaningToolBehavior);
+    }
+
+
+    private void ClearSlot(Transform slot, ref IToolBehaviour toolBehaviorReference) {
+
+        // Destroy all GameObjects that are children of the slot
+        foreach (Transform child in slot) {
+            Destroy(child.gameObject);
+        }
+
+        // Clear the behavior reference
+        toolBehaviorReference = null;
     }
 }

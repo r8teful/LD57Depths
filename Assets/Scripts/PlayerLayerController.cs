@@ -90,7 +90,7 @@ public class PlayerLayerController : NetworkBehaviour {
         }
         if (_playerController == null)
             _playerController = GetComponent<PlayerMovement>();
-        _playerController.ChangeState(PlayerMovement.PlayerState.Interior);
+        _playerController.ChangeState(PlayerMovement.PlayerState.Grounded);
         _playerCameraPixel.enabled = false;
         _playerCamera.DOOrthoSize(9, 1).OnComplete(() => CameraTransitionComplete(true));
     }

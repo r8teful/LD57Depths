@@ -7,6 +7,10 @@ using UnityEngine;
 public struct ItemQuantity {
     public ItemData item;
     public int quantity;
+    public ItemQuantity(ItemData item) {
+        this.item = item;
+        quantity = 99;
+    }
 }
 // Helper struct for UI status
 public struct IngredientStatus {
@@ -20,6 +24,11 @@ public struct IngredientStatus {
         RequiredAmount = requiredAmount;
         CurrentAmount = currentAmount;
     }
+}
+// Usefull class for the actual result of a recipe. Will add more here later like research, upgrade etc..
+public class RecipeExecutionContext {
+    public InventoryManager PlayerInventory { get; set; }
+    public FixableEntity Entity { get; set; }
 }
 public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
 
@@ -46,8 +55,11 @@ public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
     /// <param name="crafterConnection">The connection of the player crafting.</param>
     /// <param name="clientInventory">The client-side inventory of the crafter.</param>
     /// <returns>True if execution was successful, false otherwise.</returns>
-    public abstract bool ExecuteRecipe(InventoryManager playerInv);
+    public abstract bool ExecuteRecipe(RecipeExecutionContext context);
 
+    public virtual void PrepareRecipe(float value, List<ItemQuantity> resourcePool) {
+
+    }
     /// <summary>
     /// Client-side check to see if the player has enough ingredients.
     /// This is primarily for UI feedback. The server will re-validate.

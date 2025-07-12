@@ -30,11 +30,11 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         }
     }
     public void OnPointerEnter(PointerEventData eventData) {
-        PopupManager.Instance.OnPointerEnterPopup();
+       // PopupManager.Instance.OnPointerEnterPopup();
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        PopupManager.Instance.OnPointerExitPopup();
+        //PopupManager.Instance.OnPointerExitPopup();
     }
     public void SetData(PopupData data) {
         nameText.text = data.title;
@@ -79,8 +79,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         if (_isWorldPopup) {
             transform.DOShakePosition(0.2f,0.3f,50);
         } else {
-            Debug.LogWarning("Canvas space fail visual not implemented!");
-            throw new System.NotImplementedException();
+            transform.DOShakePosition(0.2f,15f,30);
         }
     }
 }

@@ -3,8 +3,6 @@ using UnityEngine.InputSystem;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Sirenix.OdinInspector;
-using UnityEngine.Windows;
-using System.Linq;
 public enum PlayerInteractionContext {
     None,                 // Default state, no specific interaction available
     InteractingWithUI,    // Highest priority: Mouse is over any UI element
@@ -21,7 +19,7 @@ public class InputManager : NetworkBehaviour {
     private InputAction _playerClickAction;
     private InputAction _useItemAction;
     private InputAction _hotbarSelection;
-    private InventoryUIManager _inventoryUIManager;
+    private UIManagerInventory _inventoryUIManager;
     private InputDevice lastUsedDevice;
     // UI
     private InputAction _UItoggleInventoryAction; // Assign your toggle input action asset
@@ -38,6 +36,7 @@ public class InputManager : NetworkBehaviour {
     private ShootMode _currentShootMode = ShootMode.Mining;
     [SerializeField] private LayerMask _interactableLayerMask;
     [SerializeField] private ToolController _toolController;
+    [SerializeField] private float _interactionRadius;
     private Vector2 movementInput;   // For character movement
     private Vector2 rawAimInput;     // Raw input for aiming (mouse position or joystick)
     private IInteractable _currentInteractable;
@@ -45,7 +44,7 @@ public class InputManager : NetworkBehaviour {
     [ShowInInspector]
     private PlayerInteractionContext _currentContext;
 
-    internal void SetUIManager(InventoryUIManager uiManager) {
+    internal void SetUIManager(UIManagerInventory uiManager) {
         _inventoryUIManager  = uiManager;
     }
     public override void OnStartClient() {
@@ -64,7 +63,7 @@ public class InputManager : NetworkBehaviour {
             _uiDropOneAction = _playerInput.actions["UI_DropOne"];
             _uiNavigateAction = _playerInput.actions["UI_Navigate"];
             _uiPointAction = _playerInput.actions["UI_Point"];
-            _uiCancelAction = _playerInput.actions["UI_Cancel"]; // For cancelling held item
+            _uiCancelAction = _playerInput.actions["UI_Cancel"]; 
             _uiTabLeft = _playerInput.actions["UI_TabLeft"]; // Opening containers
             _uiTabRight = _playerInput.actions["UI_TabRight"]; // Opening containers
             _hotbarSelection = _playerInput.actions["HotbarSelect"];
@@ -134,7 +133,9 @@ public class InputManager : NetworkBehaviour {
         // 1. HIGHEST PRIORITY: Check for UI interaction
         if (EventSystem.current.IsPointerOverGameObject() || _inventoryUIManager.IsOpen) {
             _currentContext = PlayerInteractionContext.InteractingWithUI;
-            ClearInteractable(); // Can't interact with world objects if UI is in the way
+            // TODO this should sometimes clear the interactable, but sometimes not. As the UI could be the interactable!
+            
+            //ClearInteractable(); // Can't interact with world objects if UI is in the way
             return;
         }
 
@@ -160,12 +161,12 @@ public class InputManager : NetworkBehaviour {
         _currentContext = PlayerInteractionContext.UsingToolOnWorld;
     }
     private void CheckForNearbyInteractables() {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1.5f, _interactableLayerMask);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, _interactionRadius, _interactableLayerMask);
         IInteractable closestInteractable = FindClosestInteractable(colliders);
 
         if (closestInteractable != _currentInteractable) {
             _previousInteractable?.SetInteractable(false); // Hide prompt on old one
-
+            Debug.Log("Found new interactable!: " + closestInteractable);
             _currentInteractable = closestInteractable;
             _previousInteractable = _currentInteractable;
 
@@ -191,7 +192,11 @@ public class InputManager : NetworkBehaviour {
                     closest = collider;
                 }
             }
-            return closest.GetComponent<IInteractable>();
+            if(closest.TryGetComponent<IInteractable>(out var i)) {
+                if (i.CanInteract) {
+                    return closest.GetComponent<IInteractable>();
+                }
+            }
         }
         return null;
     }
@@ -232,7 +237,9 @@ public class InputManager : NetworkBehaviour {
     }
     // Get movement input (e.g., WASD, joystick)
     public Vector2 GetMovementInput() {
-        return movementInput;
+        // Dissable movement if we are in a menu
+        return _currentContext != PlayerInteractionContext.DraggingItem && _currentContext != PlayerInteractionContext.InteractingWithUI 
+            ? movementInput : Vector2.zero;
     }
   
     // Get aim input, processed based on control scheme
@@ -315,7 +322,7 @@ public class InputManager : NetworkBehaviour {
 
     private void UIHandleCloseAction(InputAction.CallbackContext context) {
         // E.g., Escape key or Gamepad B/Start (if configured to cancel)
-        _inventoryUIManager.HandleCloseInventory(context);
+        _inventoryUIManager.HandleCloseAction(context);
      
     }
     #endregion
@@ -335,7 +342,12 @@ public class InputManager : NetworkBehaviour {
         // If format is not as expected, return input as fallback
         return input;
     }
+    void OnDrawGizmosSelected() {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(new(transform.position.x,transform.position.y+_interactionRadius,0), _interactionRadius);
+    }
 }
+
 
 public enum ShootMode {
     Mining,

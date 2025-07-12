@@ -1,4 +1,6 @@
-﻿public interface IToolBehaviour {
+﻿using UnityEngine;
+
+public interface IToolBehaviour {
     /// <summary>
     /// Called once when the button is pressed
     /// </summary>
@@ -10,14 +12,5 @@
     /// </summary>
     /// <param name="controller"></param>
     void ToolStop();
-}
-
-public class DrillBehavior : IToolBehaviour {
-    public void ToolStart(InputManager input, ToolController controller) {
-       // todo
-    }
-
-    public void ToolStop() {
-        return;
-    }
+    public GameObject GO { get;}
 }

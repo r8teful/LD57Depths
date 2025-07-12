@@ -2,7 +2,13 @@
 
 [CreateAssetMenu(fileName = "FixRecipeSO", menuName = "ScriptableObjects/FixRecipeSO", order = 9)]
 public class FixRecipeSO : RecipeBaseSO {
-    public override bool ExecuteRecipe(InventoryManager playerInv) {
-        throw new System.NotImplementedException();
+    public override bool ExecuteRecipe(RecipeExecutionContext context) {
+        if(context.Entity != null) {
+            // Do it through 
+            context.Entity.SetFixed();
+            return true;
+        } else {
+            return false;
+        }
     }
 }

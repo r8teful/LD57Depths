@@ -16,7 +16,8 @@ public class PauseScreen : MonoBehaviour
         SceneManager.LoadScene(1);
     }
     public void OnPauseCloseClicked() {
-        UIMenuManager.Instance.OnPauseClose();
+        Debug.LogWarning("No pause logic!");
+        //UIMenuManager.Instance.OnPauseClose();
     }
     public void OnSFXChanged() {
         SFXMixer.audioMixer.SetFloat("sfx", Mathf.Log10(SFXSlider.value) * 20);

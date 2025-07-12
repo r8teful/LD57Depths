@@ -20,6 +20,7 @@ public class SOEditorWindow : OdinMenuEditorWindow {
         // Load and sort assets for each category
         AddSortedAssets<ItemData>(tree, "Items", "Assets/Resources/ItemData");
         AddSortedAssets<RecipeBaseSO>(tree, "Recipies", "Assets/Resources/RecipeData");
+        AddSortedAssets<RecipeBaseSO>(tree, "RecipiesUpgrade", "Assets/Resources/UpgradeData");
         AddSortedAssets<EntityBaseSO>(tree, "Entities", "Assets/Resources/EntityData");
         AddSortedAssets<TileSO>(tree, "Tiles", "Assets/Resources/TileData");
 
