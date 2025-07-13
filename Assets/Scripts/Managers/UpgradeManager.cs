@@ -34,7 +34,7 @@ public class UpgradeManager : StaticInstance<UpgradeManager> {
         }
         // Ugly but works for now
         RecipeExecutionContext context = new RecipeExecutionContext {
-            ToolController = NetworkedPlayer.LocalInstance.ToolController
+            ToolController = NetworkedPlayer.LocalInstance.ToolController,
         };
         // 3. Try Execute recipe
         if (!_crafting.AttemptCraft(recipe,context)) {

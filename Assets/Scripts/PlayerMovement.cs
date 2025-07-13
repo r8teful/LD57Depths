@@ -25,7 +25,7 @@ public class PlayerMovement : NetworkBehaviour {
 
     [Tooltip("Acceleration force applied when moving.")]
     public float accelerationForce = 20f;
-    public float dashForce = 5f;
+    public float dashForce = 8f;
     [SerializeField] private float dashDuration = 0.25f;          // How long the dash lasts (seconds)
     [SerializeField] private float cooldownDuration = 2f;        // Cooldown period after dash (seconds)
     [Tooltip("Deceleration force applied when no input is given, simulating water resistance.")]
@@ -64,6 +64,8 @@ public class PlayerMovement : NetworkBehaviour {
     private float dashTimer = 0f;
     private float cooldownTimer = 0f;
     private Collider2D _topTrigger;
+    private bool _dashUnlocked;
+    private bool _isInsideOxygenZone;
 
     public override void OnStartClient() {
         base.OnStartClient();
@@ -127,7 +129,14 @@ public class PlayerMovement : NetworkBehaviour {
                 HandleClimbingLadderUpdate();
                 break;
         }
+        if (ShouldDepleteOxygen()) {
+            DepleteOxygen();
+        } else {
+            ReplenishOxygen();
+        }
     }
+
+   
 
     void FixedUpdate() {
         // Handle state-specific physics logic in FixedUpdate
@@ -160,11 +169,13 @@ public class PlayerMovement : NetworkBehaviour {
         } else if (data.type == UpgradeType.OxygenMax) {
             maxOxygen = UpgradeCalculator.CalculateUpgradeIncrease(maxOxygen, data as UpgradeRecipeValue);
             Debug.Log("Increase maxOxygen to " + maxOxygen);
+        } else if (data.type == UpgradeType.SpeedDashUnlock) {
+            _dashUnlocked = true;
         }
     }
     #region SWIMMING
     private void HandleSwimmingUpdate() {
-        if (_inputManager.GetDashInput() && !_isDashing && cooldownTimer <= 0f && _currentInput != Vector2.zero) {
+        if (_dashUnlocked && _inputManager.GetDashInput() && !_isDashing && cooldownTimer <= 0f && _currentInput != Vector2.zero) {
             // Start dashing
             _isDashing = true;
             dashTimer = dashDuration; // Reset dash timer
@@ -405,9 +416,20 @@ public class PlayerMovement : NetworkBehaviour {
         Gizmos.DrawWireCube(transform.position, new Vector3(ladderSensorSize.x, ladderSensorSize.y, 0));
     }
     // --- Helper Functions ---
-   
-  
 
+
+    private bool ShouldDepleteOxygen() {
+        if( _currentState == PlayerState.Swimming ) {
+            if (_isInsideOxygenZone) {
+                return false; 
+            } else {
+                return true; 
+            }
+        } else if (_currentState == PlayerState.Grounded || _currentState == PlayerState.ClimbingLadder) {
+            return false; // Replenish oxygen when grounded
+        }
+        return true;
+    }
     void DepleteOxygen() {
         currentOxygen -= oxygenDepletionRate * Time.deltaTime;
         currentOxygen = Mathf.Clamp(currentOxygen, 0, maxOxygen);
@@ -429,7 +451,15 @@ public class PlayerMovement : NetworkBehaviour {
             UpdateFadeOutVisual();
         }
     }
-
+    void ReplenishOxygen() {
+        peepPlayed = false;
+        //SliderFlash(false);
+        currentOxygen += oxygenDepletionRate * 50 * Time.deltaTime;
+        currentOxygen = Mathf.Clamp(currentOxygen, 0, maxOxygen);
+        playerHealth = maxHealth;
+        UpdateSlider();
+        UpdateFadeOutVisual();
+    }
     // Call this function to start or stop the flashing
     public void SliderFlash(bool shouldFlash) {
         if (OxygenWarning == null) {
@@ -479,15 +509,7 @@ public class PlayerMovement : NetworkBehaviour {
         currentOxygen = maxOxygen;
         UpdateFadeOutVisual();
     }
-    void ReplenishOxygen() {
-        peepPlayed = false;
-        //SliderFlash(false);
-        currentOxygen += oxygenDepletionRate*50 * Time.deltaTime;
-        currentOxygen = Mathf.Clamp(currentOxygen, 0, maxOxygen);
-        playerHealth = maxHealth;
-        UpdateSlider();
-        UpdateFadeOutVisual();
-    }
+
     private void UpdateFadeOutVisual() {
         float healthRatio = playerHealth / maxHealth;
         float easedValue = 1 - Mathf.Pow(healthRatio, 2); // Quadratic ease-out
@@ -496,5 +518,9 @@ public class PlayerMovement : NetworkBehaviour {
     }
     private void UpdateSlider() {
         OnOxygenChanged?.Invoke(currentOxygen,maxOxygen);
+    }
+
+    internal void SetOxygenZone(bool v) {
+        _isInsideOxygenZone = v;
     }
 }

@@ -119,6 +119,7 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
 
 
         // 1. Handle STATIC Exterior Root (if used)
+        
         SetExteriorWorldActive(_currentLocalLayer == VisibilityLayerType.Exterior);
 
         // 2. Handle ALL dynamically tracked objects (Interior & Exterior)
@@ -203,8 +204,10 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
         // Example: Disable Renderers and Colliders
         foreach (Renderer r in go.GetComponentsInChildren<Renderer>(true)) // Include inactive children
             r.enabled = isActive;
-        foreach (Collider2D c in go.GetComponentsInChildren<Collider2D>(true))
+        foreach (Collider2D c in go.GetComponentsInChildren<Collider2D>(true)) {
             c.enabled = isActive;
+
+        }
         // Optionally disable specific Behaviours/Scripts too
         // foreach (NetworkBehaviour nb in go.GetComponentsInChildren<NetworkBehaviour>(true))
         //     if(!(nb is PlayerLayerController)) // Don't disable the controller itself!
@@ -226,7 +229,7 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
         SetComponentsActiveRecursive<TilemapCollider2D>(ExteriorWorldRoot, isActive); // For Tilemaps
         SetComponentsActiveRecursive<UnityEngine.Rendering.Universal.Light2D>(ExteriorWorldRoot, isActive); // Example URP Lights
 
-        //Debug.Log($"Setting Exterior World Active: {isActive}");
+        Debug.Log($"Setting Exterior World Active: {isActive}");
     }
 
     // Generic recursive component activation/deactivation helper
@@ -234,10 +237,18 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
         // Find components ONLY within the target object and its children
         T[] components = targetObject.GetComponentsInChildren<T>(true); // include inactive ones
         foreach (T component in components) {
+            // Skip if this or any parent has PreserveComponentToggle
+            if (component.GetComponentInParent<PreserveVisibility>() != null)
+                continue;
             // Enable/disable based on the component type's relevant property
-            if (component is Behaviour behaviour) behaviour.enabled = isActive;
-            else if (component is Renderer renderer) renderer.enabled = isActive;
-            else if (component is Collider2D collider) collider.enabled = isActive;
+            if (component is Behaviour behaviour)
+                behaviour.enabled = isActive;
+            else if (component is Renderer renderer)
+                renderer.enabled = isActive;
+            else if (component is Collider2D collider) { 
+                if(!collider.isTrigger)
+                    collider.enabled = isActive;
+            }
             // Add more types if necessary (Light, ParticleSystem, etc.)
         }
     }

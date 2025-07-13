@@ -30,8 +30,10 @@ public class ExteriorObject : NetworkBehaviour, IVisibilityEntity {
     public void SetObjectVisibility(bool isVisible) {
         foreach (Renderer r in GetComponentsInChildren<Renderer>(true)) // Include inactive children
             if (r != null) r.enabled = isVisible;
-        foreach (Collider2D c in GetComponentsInChildren<Collider2D>(true))
-            if (c != null) c.enabled = isVisible;
+        foreach (Collider2D c in GetComponentsInChildren<Collider2D>(true)) {
+           if (c != null) c.enabled = isVisible;
+
+        }
         foreach (UnityEngine.Rendering.Universal.Light2D l2d in GetComponentsInChildren<UnityEngine.Rendering.Universal.Light2D>(true))
             if (l2d != null) l2d.enabled = isVisible;
     }
