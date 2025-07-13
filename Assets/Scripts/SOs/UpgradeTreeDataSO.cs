@@ -84,14 +84,64 @@ public enum UpgradeTreeType {
     Pollution,
 }
 public enum UpgradeType {
+    // MINING
     MiningRange,
     MiningDamage,
-    MaxSpeed,
-    Acceleration,
-    OxygenCapacity,
-    ResourceCapacity,
-    Light,
-    Unlock
+    MiningLazerUnlock,
+    MiningLazerT2,
+    MiningLazerT3,
+    MiningPickupRange,
+    MinigLuck,
+    MiningGems,
+    // PLAYER SPEED
+    SpeedMax,
+    SpeedAcceleration,
+    SpeedDashUnlock,
+    SpeedDashSpeed,
+    SpeedDashLength,
+    SpeedDashCooldown,
+    SpeedFlipperUnlock,
+    SpeedLowerDrag,
+    SpeedJetpackUnlock,
+    // OXYGEN
+    OxygenMax,
+    OxygenZoneUnlock,
+    OxygenZoneWider,
+    OxygenPortableUnlock,
+    OxygenPortableRange,
+    OxygenGillsUnlock,
+    // UTILITY  
+    UtilityLightRange,
+    UtilityLightIntensity,
+    UtilityInventorySize,
+    UtilityMiniMapUnlock,
+    UtilityMiniMapRange,
+    UtilityMiniMapDetails,
+    UtilityInventoryT2,
+    // TREE FARM
+    TreeOutput,
+    TreeGrowth,
+    TreeYield,
+    TreeT2,
+    TreeSpecial,
+    TreeT3,
+    // LIGHT
+    LightBrighter,
+    LightRange,
+    LightT2,
+    LightMoreFish,
+    LightTreeSynergy,
+    LightMoreTree,
+    LightT3,
+    // WATER FILTER. 
+    FilterExtracted,
+    FilterResourceOutput,
+    FilterExtractorRange,
+    FilterExtractorForce,
+    FilterRecycleValue,
+    FilterT2,
+    FilterExtractorT2,
+    FilterT3
 }
 public enum IncreaseType {
     Add,

@@ -1,13 +1,16 @@
 using System;
+using System.Drawing;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Color = UnityEngine.Color;
 
 public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] private Button _buttonBig;
     [SerializeField] private Button _buttonSmall;
-    [SerializeField] private Button _buttonCurrent;
-    [SerializeField] private Image _imageCurrent;
+    private Image _iconImage;
+    private Button _buttonCurrent;
+    private Image _imageCurrent;
     private RectTransform _rectTransform;
     private UpgradeRecipeBase _upgradeData;
     private UIUpgradeTree _treeParent;
@@ -25,7 +28,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonBig.onClick.AddListener(OnUpgradeButtonClicked);
             _buttonSmall.gameObject.SetActive(false);
             _buttonCurrent = _buttonBig;
-            _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
             var r = _rectTransform.sizeDelta;
             r.x = 120f;
             _rectTransform.sizeDelta = r;
@@ -33,11 +35,30 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonSmall.onClick.RemoveAllListeners();
             _buttonSmall.onClick.AddListener(OnUpgradeButtonClicked);
             _buttonCurrent = _buttonSmall;
-            _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
             _buttonBig.gameObject.SetActive(false);
             var r = _rectTransform.sizeDelta;
             r.x = 65f;
             _rectTransform.sizeDelta = r;
+        }
+        _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
+        _iconImage = _buttonCurrent.transform.GetChild(1).GetComponent<Image>();// Even worse
+
+        // Set icon
+        var icon = App.ResourceSystem.GetSprite($"Upgrade{_upgradeData.type}");
+        if(icon != null) {
+            _iconImage.sprite = icon;
+            _iconImage.SetNativeSize();
+            Vector2 size = icon.rect.size *0.8f; // Just been doing 80% of the original size for the whole ui 
+            _iconImage.rectTransform.sizeDelta = size;
+            RectTransform rt = _iconImage.rectTransform;
+            rt.anchorMin = new Vector2(0.5f, 0.5f);   // anchor at center
+            rt.anchorMax = new Vector2(0.5f, 0.5f);   // anchor at center
+            rt.pivot = new Vector2(0.5f, 0.5f);   // pivot at center
+            rt.anchoredPosition = Vector2.zero;      // zero offset from anchor
+            //_iconImage.rectTransform.sizeDelta = new Vector2(icon. texture.width, icon.texture.height);
+        } else {
+            Debug.LogError($"Icon for upgrade type {_upgradeData.type} not found!");
+            return;
         }
         UpdateVisualState();
     }
@@ -82,6 +103,10 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             c.disabledColor = Color.white;
             _buttonCurrent.colors = c;
             _buttonCurrent.interactable = false;
+            Color color;
+            if (ColorUtility.TryParseHtmlString("#D58141", out color)) {
+                _iconImage.color = color;
+            }
             _imageCurrent.sprite = App.ResourceSystem.GetSprite($"UpgradeNode{(IsBig ? "Big" : "Small")}Purchased");
             //GetComponent<Image>().color = Color.green;
         } else {
@@ -90,11 +115,23 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
                 // Available
                 _buttonCurrent.interactable = true;
                 _treeParent.SetNodeAvailable(_upgradeData);
+                if (ColorUtility.TryParseHtmlString("#237C8A", out var color)) {
+                    _iconImage.color = color;
+                }
             } else {
                 _buttonCurrent.interactable = false;
-               // GetComponent<Image>().color = Color.gray;
+                if (ColorUtility.TryParseHtmlString("#124553", out var color)) {
+                    _iconImage.color = color;
+                }
+                // GetComponent<Image>().color = Color.gray;
             }
         }
+        // BIG INACTIVE 077263
+        // BIG ACTIVE 0CD8BA
+
+        // SMALL INACTIVE 124553
+        // SMALL ACTIVE 237C8A
+        // SMALL Purchad D58141
     }
     public PopupData GetPopupData(InventoryManager clientInv) {
         return new PopupData(_upgradeData.displayName, _upgradeData.description, _upgradeData.GetIngredientStatuses(clientInv));

@@ -17,6 +17,7 @@ public class InputManager : NetworkBehaviour {
     private PlayerInput _playerInput;
     private InputAction _interactAction;
     private InputAction _playerClickAction;
+    private InputAction _playerDashAction;
     private InputAction _useItemAction;
     private InputAction _hotbarSelection;
     private UIManagerInventory _inventoryUIManager;
@@ -37,6 +38,7 @@ public class InputManager : NetworkBehaviour {
     [SerializeField] private LayerMask _interactableLayerMask;
     [SerializeField] private ToolController _toolController;
     [SerializeField] private float _interactionRadius;
+    private bool _dashPefromed;
     private Vector2 movementInput;   // For character movement
     private Vector2 rawAimInput;     // Raw input for aiming (mouse position or joystick)
     private IInteractable _currentInteractable;
@@ -57,6 +59,7 @@ public class InputManager : NetworkBehaviour {
         if (_playerInput != null) {
             _interactAction = _playerInput.actions["Interact"]; // E
             _playerClickAction = _playerInput.actions["Shoot"];
+            _playerDashAction = _playerInput.actions["Dash"];
             _UItoggleInventoryAction = _playerInput.actions["UI_Toggle"]; // I
             _uiInteractAction = _playerInput.actions["UI_Interact"]; // LMB
             _uiAltInteractAction = _playerInput.actions["UI_AltInteract"]; // RMB
@@ -89,11 +92,14 @@ public class InputManager : NetworkBehaviour {
             _uiTabRight.performed += l => UIScrollTabs(1);
         _playerClickAction.performed += OnPrimaryInteractionPerformed;
         _playerClickAction.canceled += OnPrimaryInteractionPerformed;
+        _playerDashAction.performed += OnDashPerformed;
+        _playerDashAction.canceled += OnDashPerformed;
         _useItemAction.performed += OnUseHotbarInput;
         _hotbarSelection.performed += OnHotbarSelection;
     }
 
-  
+   
+
     private void UnsubscribeFromEvents() {
         if (_UItoggleInventoryAction != null)
             _UItoggleInventoryAction.performed -= UIOnToggleInventory;
@@ -235,6 +241,8 @@ public class InputManager : NetworkBehaviour {
             }
         }
     }
+    public bool GetDashInput() => _dashPefromed;
+
     // Get movement input (e.g., WASD, joystick)
     public Vector2 GetMovementInput() {
         // Dissable movement if we are in a menu
@@ -264,6 +272,13 @@ public class InputManager : NetworkBehaviour {
     private void OnUseHotbarInput(InputAction.CallbackContext context) {
         if(_currentContext == PlayerInteractionContext.HotebarItemSelected) {
             _inventoryUIManager.ItemSelectionManager.HandleUseInput(context);
+        }
+    }
+    private void OnDashPerformed(InputAction.CallbackContext context) {
+        if (context.performed) {
+            _dashPefromed = true;
+        } else if(context.canceled) {
+            _dashPefromed = false;
         }
     }
     public void OnPrimaryInteractionPerformed(InputAction.CallbackContext context) {

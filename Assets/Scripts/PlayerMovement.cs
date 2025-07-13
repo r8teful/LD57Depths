@@ -25,7 +25,9 @@ public class PlayerMovement : NetworkBehaviour {
 
     [Tooltip("Acceleration force applied when moving.")]
     public float accelerationForce = 20f;
-
+    public float dashForce = 5f;
+    [SerializeField] private float dashDuration = 0.25f;          // How long the dash lasts (seconds)
+    [SerializeField] private float cooldownDuration = 2f;        // Cooldown period after dash (seconds)
     [Tooltip("Deceleration force applied when no input is given, simulating water resistance.")]
     public float decelerationForce = 15f;
 
@@ -58,6 +60,9 @@ public class PlayerMovement : NetworkBehaviour {
     private bool _isOnLadder;
     private bool _isGrounded;
     private Vector2 _currentInput;
+    private bool _isDashing;
+    private float dashTimer = 0f;
+    private float cooldownTimer = 0f;
     private Collider2D _topTrigger;
 
     public override void OnStartClient() {
@@ -106,20 +111,6 @@ public class PlayerMovement : NetworkBehaviour {
         playerHealth = maxHealth;
     }
 
-    private void OnUpgraded(UpgradeType type) {
-        if(type == UpgradeType.MaxSpeed) {
-            swimSpeed = UpgradeManager.Instance.GetUpgradeValue(type);
-            // Also increase acceleration slightly
-            accelerationForce += 0.1f;
-        } else if (type == UpgradeType.OxygenCapacity) {
-            maxOxygen = UpgradeManager.Instance.GetUpgradeValue(type);
-            currentOxygen = maxOxygen;
-            UpdateSlider();
-        } else if(type == UpgradeType.Light) {
-            //lightSpot.pointLightOuterRadius = UpgradeManager.Instance.GetUpgradeValue(type);
-        }
-        
-    }
 
     void Update() {
         // Get input for movement
@@ -153,22 +144,31 @@ public class PlayerMovement : NetworkBehaviour {
                 CheckEnvironment(); // For ladder checks
                 break;
         }
+        // Always update dash cooldown
+        if (cooldownTimer > 0f) {
+            cooldownTimer -= Time.fixedDeltaTime;
+        }
     }
 
     private void HandleUpgradePurchased(UpgradeRecipeBase data) {
-        if (data.type == UpgradeType.MaxSpeed) {
+        if (data.type == UpgradeType.SpeedMax) {
             swimSpeed = UpgradeCalculator.CalculateUpgradeIncrease(swimSpeed, data as UpgradeRecipeValue);
             Debug.Log("Increase swimSpeed to " + swimSpeed);
-        } else if (data.type == UpgradeType.Acceleration) {
+        } else if (data.type == UpgradeType.SpeedAcceleration) {
             accelerationForce = UpgradeCalculator.CalculateUpgradeIncrease(accelerationForce, data as UpgradeRecipeValue);
             Debug.Log("Increase accelerationForce to " + accelerationForce);
-        } else if (data.type == UpgradeType.OxygenCapacity) {
+        } else if (data.type == UpgradeType.OxygenMax) {
             maxOxygen = UpgradeCalculator.CalculateUpgradeIncrease(maxOxygen, data as UpgradeRecipeValue);
             Debug.Log("Increase maxOxygen to " + maxOxygen);
         }
     }
     #region SWIMMING
     private void HandleSwimmingUpdate() {
+        if (_inputManager.GetDashInput() && !_isDashing && cooldownTimer <= 0f && _currentInput != Vector2.zero) {
+            // Start dashing
+            _isDashing = true;
+            dashTimer = dashDuration; // Reset dash timer
+        }
         if (_currentInput.magnitude != 0) {
             _visualHandler.ChangeAnimation("Swim");
         } else {
@@ -192,8 +192,24 @@ public class PlayerMovement : NetworkBehaviour {
                 rb.linearVelocity = Vector2.zero;
             }
         }
-        // Limit maximum speed
-        rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, swimSpeed);
+        if (_isDashing) {
+            // Set velocity directly to dash speed in the direction of current input
+            rb.linearVelocity = moveDirection * dashForce;
+
+            // Decrease dash timer and check if dash should end
+            dashTimer -= Time.fixedDeltaTime;
+            if (dashTimer <= 0f) {
+                _isDashing = false;
+                cooldownTimer = cooldownDuration;
+            }
+        } else {
+            float speed = rb.linearVelocity.magnitude;
+            if (speed > swimSpeed) {
+                // lerp the magnitude down toward swimSpeed each FixedUpdate
+                float newSpeed = Mathf.Lerp(speed, swimSpeed, 5 * Time.fixedDeltaTime);
+                rb.linearVelocity = rb.linearVelocity.normalized * newSpeed;
+            }
+        }
     }
     #endregion
 
