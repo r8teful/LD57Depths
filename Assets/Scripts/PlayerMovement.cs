@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
 
-public class PlayerMovement : NetworkBehaviour {
+public class PlayerMovement : MonoBehaviour {
 
     private Rigidbody2D rb;
     private Camera MainCam;
@@ -67,32 +67,18 @@ public class PlayerMovement : NetworkBehaviour {
     private bool _dashUnlocked;
     private bool _isInsideOxygenZone;
 
-    public override void OnStartClient() {
-        base.OnStartClient();
-        if (base.IsOwner) // Check if this NetworkObject is owned by the local client
-        {
-            Debug.Log("We are the owner!");
-            MainCam = Camera.main;
-            MainCam.transform.SetParent(transform);
-            MainCam.transform.localPosition = new Vector3(0,0,-10);
-            _inputManager = GetComponent<InputManager>();
-            _visualHandler = GetComponent<PlayerVisualHandler>();
-            ChangeState(PlayerState.Swimming);
-            // Enable input, camera controls ONLY for the local player
-            // Example: GetComponent<PlayerInputHandler>().enabled = true;
-            // Example: playerCamera.SetActive(true);
-        } else {
-            // Disable controls for remote players on this client
-            Debug.Log("We are NOT the owner!");
-            GetComponent<PlayerMovement>().enabled = false;
-            // Example: GetComponent<PlayerInputHandler>().enabled = false;
-        }
-
-        // Try to find the WorldGenerator - might need adjustment based on your scene setup
-       // worldGenerator = FindObjectOfType<WorldGenerator>();
-       // if (worldGenerator == null) {
-       //     Debug.LogError("PlayerController could not find WorldGenerator!");
-       // }
+    public void Init() {
+        MainCam = Camera.main;
+        MainCam.transform.SetParent(transform);
+        MainCam.transform.localPosition = new Vector3(0,0,-10);
+        _inputManager = GetComponent<InputManager>();
+        Debug.Log("Init input manager: " + _inputManager);
+        _visualHandler = GetComponent<PlayerVisualHandler>();
+        rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = 0;
+        currentOxygen = maxOxygen;
+        playerHealth = maxHealth;
+        ChangeState(PlayerState.Swimming);
     }
     private void OnEnable() {
         // Subscribe to the event to recalculate stats when a NEW upgrade is bought
@@ -104,17 +90,10 @@ public class PlayerMovement : NetworkBehaviour {
         UpgradeManager.OnUpgradePurchased -= HandleUpgradePurchased;
     }
 
-    private void Start() {
-        //LocalInstance = this;
-        rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 0; // Disable default gravity
-        // oxygen and slider
-        currentOxygen = maxOxygen;
-        playerHealth = maxHealth;
-    }
-
 
     void Update() {
+        if (_inputManager == null)
+            return;
         // Get input for movement
         _currentInput = _inputManager.GetMovementInput();
         // Handle state-specific logic in Update (mostly non-physics like animations, input processing)
@@ -139,6 +118,8 @@ public class PlayerMovement : NetworkBehaviour {
    
 
     void FixedUpdate() {
+        if (_inputManager == null)
+            return;
         // Handle state-specific physics logic in FixedUpdate
         switch (_currentState) {
             case PlayerState.Swimming:
@@ -345,6 +326,7 @@ public class PlayerMovement : NetworkBehaviour {
 
     void OnStateEnter(PlayerState state, PlayerState oldState) {
         _visualHandler.SetHitbox(state);
+        Debug.Log(_visualHandler);
         switch (state) {
             case PlayerState.Swimming:
                 rb.gravityScale = 0; // No gravity when swimming

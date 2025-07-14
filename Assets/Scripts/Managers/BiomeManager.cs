@@ -69,7 +69,11 @@ public class BiomeManager : NetworkBehaviour
     }
     public override void OnStartClient() {
         base.OnStartClient();
-        StartCoroutine(ClientMovingRoutine());
+        if(!IsOwner) {
+            enabled = false; 
+            return;
+        }
+            StartCoroutine(ClientMovingRoutine());
     }
 
     private IEnumerator ClientMovingRoutine() {

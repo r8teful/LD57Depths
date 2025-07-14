@@ -11,7 +11,7 @@ public struct LightProperties {
     public float intensity;
     // Potentially falloff, etc.
 }
-public class WorldLightingManager : NetworkBehaviour {
+public class WorldLightingManager : MonoBehaviour {
     [SerializeField] private ChunkManager _chunkManager;
     [SerializeField] private WorldManager _worldManager;
     [SerializeField] private BackgroundManager Backgroundmanager;
@@ -47,13 +47,12 @@ public class WorldLightingManager : NetworkBehaviour {
     private Vector3[] _pathArrayForSetter; // Reusable array for SetPathOptimized
                                            // --- Methods ---
 
-    public override void OnStartClient() {
-        base.OnStartClient();
+    public void Awake() {
         Initialize();
         Backgroundmanager.Init(_worldManager.WorldGenSettings,_worldManager.BiomeManager);
     }
-    public override void OnStopClient() {
-        base.OnStopClient();
+    
+    public void OnDisable() {
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
         _worldManager.BiomeManager.OnNewClientBiome -= SetNewBiomeLight;
     }

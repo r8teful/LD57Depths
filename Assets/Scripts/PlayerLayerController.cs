@@ -17,7 +17,6 @@ public class PlayerLayerController : NetworkBehaviour {
     public SyncVar<string> CurrentInteriorId => _currentInteriorId;
 
     // --- Client-Side References & Logic ---
-    private WorldVisibilityManager _visibilityManager;
     private Camera _playerCamera;
     private PixelPerfectCamera _playerCameraPixel;
     private PlayerMovement _playerController;
@@ -30,19 +29,14 @@ public class PlayerLayerController : NetworkBehaviour {
         // Find the client-side manager responsible for visibility
         _playerCamera = GetComponentInChildren<Camera>();
         _playerController = GetComponent<PlayerMovement>();
-        _visibilityManager = FindFirstObjectByType<WorldVisibilityManager>();
         WorldVisibilityManager.Instance.RegisterPlayer(this);
-        if (_visibilityManager == null) {
-            Debug.LogError("WorldVisibilityManager not found on the scene!");
-            return;
-        }
 
         // Apply initial state visibility if this is the local player
         if (base.IsOwner) {
             HandleClientContextChange();
         }
         // Apply visibility state for this (potentially remote) player from the perspective of the local player
-        _visibilityManager.UpdateRemotePlayerVisibility(this);
+        WorldVisibilityManager.Instance.UpdateRemotePlayerVisibility(this);
     }
     public override void OnStopClient() {
         base.OnStopClient();

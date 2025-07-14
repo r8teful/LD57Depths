@@ -119,7 +119,7 @@ TextureImporter:
         height: 81
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 13, y: 10, z: 10, w: 9}
       customData: 
       outline: []
       physicsShape: []
@@ -537,7 +537,7 @@ TextureImporter:
         height: 49
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 2, y: 3, z: 3, w: 3}
       customData: 
       outline: []
       physicsShape: []
@@ -553,7 +553,7 @@ TextureImporter:
       name: PlaceMarker
       rect:
         serializedVersion: 2
-        x: 112
+        x: 110
         y: 171
         width: 3
         height: 3
@@ -735,7 +735,7 @@ TextureImporter:
         height: 17
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 3, y: 3, z: 3, w: 3}
       customData: 
       outline: []
       physicsShape: []
@@ -757,7 +757,7 @@ TextureImporter:
         height: 17
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 3, y: 3, z: 3, w: 3}
       customData: 
       outline: []
       physicsShape: []
@@ -779,7 +779,7 @@ TextureImporter:
         height: 11
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 3, y: 3, z: 3, w: 3}
       customData: 
       outline: []
       physicsShape: []
@@ -801,7 +801,7 @@ TextureImporter:
         height: 11
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 3, y: 3, z: 3, w: 3}
       customData: 
       outline: []
       physicsShape: []
@@ -823,7 +823,7 @@ TextureImporter:
         height: 17
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 3, y: 3, z: 3, w: 3}
       customData: 
       outline: []
       physicsShape: []
@@ -845,7 +845,7 @@ TextureImporter:
         height: 11
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 3, y: 3, z: 3, w: 3}
       customData: 
       outline: []
       physicsShape: []
@@ -1869,6 +1869,182 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UIButton
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 240
+        width: 39
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 5, y: 4, z: 5, w: 4}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be349e2dba5e6b140a47ad2c9364bcbe
+      internalID: -1863908995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IconYT
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 109
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2d8d147fa873d154ea524d0061196c21
+      internalID: -1170136416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IconDiscord
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 109
+        width: 15
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbc3af9c059322f4e940f7dbb2bf925a
+      internalID: 1300576516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IconWeb
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 109
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 624270facaa20f24e9863ed95db3c983
+      internalID: -634363359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IconBluesky
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 109
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7fdc2fefa0a0b2d4ea5d7faa88306ce4
+      internalID: 2113114063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IconSteam
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 109
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e97066122e7fe44e96df4f99f5fa1d0
+      internalID: 1996035210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IconInstagram
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 109
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c397d33785da724fbb47db0cddcd0ae
+      internalID: 425630960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISliderBall
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 170
+        width: 5
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58b3a28b696d0374eab7c88e1e6c2d58
+      internalID: 401562208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -1884,9 +2060,12 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       DiscoveryGrid: 1687985993
+      IconBluesky: 2113114063
       IconBob: 911542164
       IconCraft: -275753912
+      IconDiscord: 1300576516
       IconFish: 614448980
+      IconInstagram: 425630960
       IconInv: -2061626415
       IconLook: 54682694
       IconObsidian: -883859110
@@ -1894,6 +2073,9 @@ TextureImporter:
       IconPresent: 2131322590
       IconQue: 1378529093
       IconSheck: -523140508
+      IconSteam: 1996035210
+      IconWeb: -634363359
+      IconYT: -1170136416
       Inv: -1182525682
       InvHotbar: 716729945
       InvHotbar_1: 2124238485
@@ -1911,27 +2093,29 @@ TextureImporter:
       RikUISpriteSheet_16: -1480687458
       Speed: -2053248459
       TrenchProgression: 1096135325
+      UIButton: -1863908995
+      UISliderBall: 401562208
       UISpriteSheet_0: 1187898083
-      UISpriteSheet_11: -806453839
-      UISpriteSheet_12: 1011398237
-      UISpriteSheet_22: -456176506
-      UISpriteSheet_29: 95172676
-      UISpriteSheet_30: 1724811011
-      UISpriteSheet_31: -2035977888
-      UISpriteSheet_32: -1399553872
-      UISpriteSheet_33: 1097820610
-      UISpriteSheet_34: -1249927303
-      UISpriteSheet_39: -573598121
-      UISpriteSheet_41: 661567738
-      UISpriteSheet_42: 86907270
-      UISpriteSheet_44: 835169427
-      UISpriteSheet_45: -199721970
-      UISpriteSheet_46: -73913140
-      UISpriteSheet_47: 1213983346
-      UISpriteSheet_54: -1815012057
-      UISpriteSheet_64: 1366749088
-      UISpriteSheet_8: -883147538
-      UISpriteSheet_9: -623491169
+      UISpriteSheet_11: -1526417567
+      UISpriteSheet_12: 856023279
+      UISpriteSheet_22: 1119508909
+      UISpriteSheet_29: -1235848716
+      UISpriteSheet_30: 1351635612
+      UISpriteSheet_31: -574358388
+      UISpriteSheet_32: -1337891661
+      UISpriteSheet_33: -1364514849
+      UISpriteSheet_34: 1113426587
+      UISpriteSheet_39: -1803626126
+      UISpriteSheet_41: -1469973752
+      UISpriteSheet_42: 704647196
+      UISpriteSheet_44: -1652793387
+      UISpriteSheet_45: 838914152
+      UISpriteSheet_46: 409607285
+      UISpriteSheet_47: 1004585764
+      UISpriteSheet_54: -2113293868
+      UISpriteSheet_64: 650904156
+      UISpriteSheet_8: -129748685
+      UISpriteSheet_9: 566716964
       UpgradeFilterExtracted: 1228492800
       UpgradeFilterExtractorForce: -1012180492
       UpgradeFilterExtractorRange: 1350617202

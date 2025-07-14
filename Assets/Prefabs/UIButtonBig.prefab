@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3198710282498340930}
   - component: {fileID: 8531117264426475635}
   - component: {fileID: 5759961428202028593}
-  - component: {fileID: 656728373329731445}
   m_Layer: 5
   m_Name: UIButtonBig
   m_TagString: Untagged
@@ -68,8 +67,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 6182443410152869186, guid: 9922e14cadbe91c4ea7bc57372448db4, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: -1863908995, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -77,7 +76,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 2.42
 --- !u!114 &5759961428202028593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,18 +133,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &656728373329731445
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4739607249889882928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 447253aa94d29f34c96bfcd19db55866, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7905901170007017159
 GameObject:
   m_ObjectHideFlags: 0
@@ -220,8 +207,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282400832
-  m_fontColor: {r: 0.2528302, g: 0.2528302, b: 0.2528302, a: 1}
+    rgba: 4294965136
+  m_fontColor: {r: 0.5647059, g: 0.9686275, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

@@ -1,3 +1,7 @@
+using FishNet.Managing;
+using FishNet.Managing.Scened;
+using FishNet.Transporting;
+using System;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
@@ -8,8 +12,28 @@ public class MainMenu : MonoBehaviour {
     public AudioMixerGroup MusicMixer;
     public Slider SFXSlider;
     public Slider MusicSlider;
+    [SerializeField] NetworkManager _networkManager;
+    private void Start() {
+        // Subscribe to client connection events to know when we are connected.
+        _networkManager.ClientManager.OnClientConnectionState += OnClientConnectionState;
+    }
+
+    private void OnClientConnectionState(ClientConnectionStateArgs args) {
+        if (args.ConnectionState == LocalConnectionState.Started) {
+            // If we are the host/server, we need to load the scene.
+            // The server will automatically tell connecting clients to do the same.
+            if (_networkManager.IsServerStarted) {
+                // This will load the scene on the server and all connected clients.
+                //_networkManager.SceneManager.LoadGlobalScenes(new SceneLoadData("PlayScene"));
+            }
+        }
+    }
+
+    // Starting new hosting game
     public void OnPlayClicked() {
-        SceneManager.LoadScene(1);
+        _networkManager.ServerManager.StartConnection();
+        _networkManager.ClientManager.StartConnection();
+        //SceneManager.LoadScene(1);
     }
     public void OnSFXChanged(float v) {
         SFXMixer.audioMixer.SetFloat("sfx", Mathf.Log10(SFXSlider.value) * 20);

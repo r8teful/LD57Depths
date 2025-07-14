@@ -13,14 +13,18 @@ public enum PlayerInteractionContext {
 }
 // UI input handling is in inventoryUIManager
 // This script sits on the player client
-public class InputManager : NetworkBehaviour {
+public class InputManager : MonoBehaviour {
     private PlayerInput _playerInput;
     private InputAction _interactAction;
     private InputAction _playerClickAction;
+    private InputAction _playerMoveAction;
+    private InputAction _playerAimAction;
+    private InputAction _playerSwitchAction;
     private InputAction _playerDashAction;
     private InputAction _useItemAction;
     private InputAction _hotbarSelection;
     private UIManagerInventory _inventoryUIManager;
+    private NetworkObject _clientObject;
     private InputDevice lastUsedDevice;
     // UI
     private InputAction _UItoggleInventoryAction; // Assign your toggle input action asset
@@ -35,9 +39,9 @@ public class InputManager : NetworkBehaviour {
     
     
     private ShootMode _currentShootMode = ShootMode.Mining;
-    [SerializeField] private LayerMask _interactableLayerMask;
-    [SerializeField] private ToolController _toolController;
-    [SerializeField] private float _interactionRadius;
+    private LayerMask _interactableLayerMask;
+    private ToolController _toolController;
+    private float _interactionRadius = 0.4f;
     private bool _dashPefromed;
     private Vector2 movementInput;   // For character movement
     private Vector2 rawAimInput;     // Raw input for aiming (mouse position or joystick)
@@ -46,19 +50,20 @@ public class InputManager : NetworkBehaviour {
     [ShowInInspector]
     private PlayerInteractionContext _currentContext;
 
-    internal void SetUIManager(UIManagerInventory uiManager) {
+    internal void Init(UIManagerInventory uiManager, NetworkedPlayer networkedPlayer, ToolController toolController) {
         _inventoryUIManager  = uiManager;
+        _clientObject = networkedPlayer.PlayerNetworkedObject;
+        _toolController = toolController;
+        _interactableLayerMask = LayerMask.NameToLayer("Interactables");
     }
-    public override void OnStartClient() {
-        base.OnStartClient();
-        if (!base.IsOwner) {
-            enabled = false;
-            return;
-        }
+    public void Awake() {
         _playerInput = GetComponent<PlayerInput>();
         if (_playerInput != null) {
             _interactAction = _playerInput.actions["Interact"]; // E
             _playerClickAction = _playerInput.actions["Shoot"];
+            _playerMoveAction = _playerInput.actions["Move"];
+            _playerAimAction = _playerInput.actions["Aim"];
+            _playerSwitchAction = _playerInput.actions["SwitchTool"];
             _playerDashAction = _playerInput.actions["Dash"];
             _UItoggleInventoryAction = _playerInput.actions["UI_Toggle"]; // I
             _uiInteractAction = _playerInput.actions["UI_Interact"]; // LMB
@@ -76,7 +81,7 @@ public class InputManager : NetworkBehaviour {
         }
         SubscribeToEvents();
     }
-    void OnDisable() { UnsubscribeFromEvents(); }
+    void OnDisable() { if(_playerInput !=null) UnsubscribeFromEvents(); }
     private void SubscribeToEvents() {
         if (_UItoggleInventoryAction != null)
             _UItoggleInventoryAction.performed += UIOnToggleInventory;
@@ -96,6 +101,13 @@ public class InputManager : NetworkBehaviour {
         _playerDashAction.canceled += OnDashPerformed;
         _useItemAction.performed += OnUseHotbarInput;
         _hotbarSelection.performed += OnHotbarSelection;
+        _hotbarSelection.performed += OnHotbarSelection;
+        _playerMoveAction.performed += OnMove;
+        _playerMoveAction.canceled += OnMove;
+        _playerAimAction.performed += OnAim;
+        _playerAimAction.canceled += OnAim;
+        _playerSwitchAction.performed += OnSwitchTool;
+        _playerSwitchAction.canceled += OnSwitchTool;
     }
 
    
@@ -109,10 +121,25 @@ public class InputManager : NetworkBehaviour {
             _uiAltInteractAction.performed -= UIOnSecondaryInteractionPerformed;
         if (_uiCancelAction != null)
             _uiCancelAction.performed -= UIHandleCloseAction;
-        _playerClickAction.performed -= OnPrimaryInteractionPerformed;
-        _playerClickAction.canceled -= OnPrimaryInteractionPerformed;
-        _useItemAction.performed -= OnUseHotbarInput;
-        _hotbarSelection.performed -= OnHotbarSelection;
+        if (_playerClickAction != null) {
+            _playerClickAction.performed -= OnPrimaryInteractionPerformed;
+            _playerClickAction.canceled -= OnPrimaryInteractionPerformed;
+        }
+        if (_useItemAction != null) {
+            _useItemAction.performed -= OnUseHotbarInput;
+        }
+        if (_hotbarSelection != null) {
+            _hotbarSelection.performed -= OnHotbarSelection;
+        }
+        if (_playerMoveAction != null) { 
+            _playerMoveAction.performed -= OnMove;
+        }
+        if (_playerAimAction != null) {
+            _playerAimAction.performed -= OnAim;
+        }
+        if (_playerSwitchAction != null) {
+            _playerSwitchAction.performed -= OnSwitchTool;
+        }
     }
     private void Update() {
         if (_inventoryUIManager == null) return;
@@ -121,7 +148,7 @@ public class InputManager : NetworkBehaviour {
         //UpdatePlayerFeedback(); // Optional but recommended: change cursor, etc.
         // Handle interaction input
         if (_currentInteractable != null && _interactAction.WasPerformedThisFrame()) {
-            _currentInteractable.Interact(NetworkObject);
+            _currentInteractable.Interact(_clientObject);
         }
     }
 
@@ -215,21 +242,15 @@ public class InputManager : NetworkBehaviour {
     }
     // Called by Input System for movement input
     public void OnMove(InputAction.CallbackContext context) {
-        if (!base.IsOwner)
-            return; // Only process inputs for the owning client
         movementInput = context.ReadValue<Vector2>();
     }
 
     // Called by Input System for aim input
     public void OnAim(InputAction.CallbackContext context) {
-        if (!base.IsOwner)
-            return;
         rawAimInput = context.ReadValue<Vector2>();
     }
 
     public void OnSwitchTool(InputAction.CallbackContext context) {
-        if (!base.IsOwner)
-            return;
         if (context.performed) {
             // Just switch between for now
             if (_toolController != null)
