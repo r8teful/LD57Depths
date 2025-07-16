@@ -13,7 +13,7 @@ public enum PlayerInteractionContext {
 }
 // UI input handling is in inventoryUIManager
 // This script sits on the player client
-public class InputManager : MonoBehaviour {
+public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private PlayerInput _playerInput;
     private InputAction _interactAction;
     private InputAction _playerClickAction;
@@ -50,13 +50,17 @@ public class InputManager : MonoBehaviour {
     [ShowInInspector]
     private PlayerInteractionContext _currentContext;
 
-    internal void Init(UIManagerInventory uiManager, NetworkedPlayer networkedPlayer, ToolController toolController) {
-        _inventoryUIManager  = uiManager;
-        _clientObject = networkedPlayer.PlayerNetworkedObject;
-        _toolController = toolController;
+    public int InitializationOrder => 10;
+
+    public void Initialize(NetworkedPlayer playerParent) {
+        _inventoryUIManager = playerParent.UiManager.UIManagerInventory;
+        _clientObject = playerParent.PlayerNetworkedObject;
+        _toolController = playerParent.ToolController;
         _interactableLayerMask = LayerMask.NameToLayer("Interactables");
+        SetupInputs();
+        SubscribeToEvents();
     }
-    public void Awake() {
+    private void SetupInputs() {
         _playerInput = GetComponent<PlayerInput>();
         if (_playerInput != null) {
             _interactAction = _playerInput.actions["Interact"]; // E
@@ -71,7 +75,7 @@ public class InputManager : MonoBehaviour {
             _uiDropOneAction = _playerInput.actions["UI_DropOne"];
             _uiNavigateAction = _playerInput.actions["UI_Navigate"];
             _uiPointAction = _playerInput.actions["UI_Point"];
-            _uiCancelAction = _playerInput.actions["UI_Cancel"]; 
+            _uiCancelAction = _playerInput.actions["UI_Cancel"];
             _uiTabLeft = _playerInput.actions["UI_TabLeft"]; // Opening containers
             _uiTabRight = _playerInput.actions["UI_TabRight"]; // Opening containers
             _hotbarSelection = _playerInput.actions["HotbarSelect"];
@@ -79,7 +83,6 @@ public class InputManager : MonoBehaviour {
         } else {
             Debug.LogWarning("PlayerInput component not found on player. Mouse-only or manual input bindings needed.", gameObject);
         }
-        SubscribeToEvents();
     }
     void OnDisable() { if(_playerInput !=null) UnsubscribeFromEvents(); }
     private void SubscribeToEvents() {

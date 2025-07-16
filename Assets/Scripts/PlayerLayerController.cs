@@ -6,7 +6,7 @@ using DG.Tweening;
 using UnityEngine.Rendering.Universal;
 
 
-public class PlayerLayerController : NetworkBehaviour {
+public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
     // --- State ---
     // Synced variable to track the current layer across the network.
     private readonly SyncVar<VisibilityLayerType> _currentLayer = 
@@ -16,10 +16,8 @@ public class PlayerLayerController : NetworkBehaviour {
     public SyncVar<VisibilityLayerType> CurrentLayer => _currentLayer;
     public SyncVar<string> CurrentInteriorId => _currentInteriorId;
 
-    // --- Client-Side References & Logic ---
-    private Camera _playerCamera;
-    private PixelPerfectCamera _playerCameraPixel;
-    private PlayerMovement _playerController;
+    public int InitializationOrder => 90;
+
     private void OnEnable() {
         _currentLayer.OnChange += OnLayerChanged;
         _currentInteriorId.OnChange += OnInteriorIdChanged;
@@ -28,18 +26,13 @@ public class PlayerLayerController : NetworkBehaviour {
         _currentLayer.OnChange -= OnLayerChanged;
         _currentInteriorId.OnChange -= OnInteriorIdChanged;
     }
+    public void Initialize(NetworkedPlayer playerParent) {
+        // Apply initial state visibility if this is the local player
+        HandleClientContextChange();    
+    }
     public override void OnStartClient() {
         base.OnStartClient();
-        // Find the client-side manager responsible for visibility
-        WorldVisibilityManager.Instance.RegisterPlayer(this);
-
-        // Apply initial state visibility if this is the local player
-        if (base.IsOwner) {
-            _playerController = GetComponent<PlayerMovement>();
-            _playerCamera = GetComponentInChildren<Camera>();
-            HandleClientContextChange();
-        }
-        // Apply visibility state for this (potentially remote) player from the perspective of the local player
+       // WorldVisibilityManager.Instance.RegisterPlayer(this);
         WorldVisibilityManager.Instance.UpdateRemotePlayerVisibility(this);
     }
     public override void OnStopClient() {
@@ -82,27 +75,9 @@ public class PlayerLayerController : NetworkBehaviour {
 
         // Optional: Notify other server systems if needed
         // Observer broadcast of SyncVars handles client updates automatically.
-        if (_playerCamera == null || _playerCameraPixel == null) {
-            _playerCamera = GetComponentInChildren<Camera>();
-           _playerCameraPixel = GetComponentInChildren<PixelPerfectCamera>();
-        }
-        if (_playerController == null)
-            _playerController = GetComponent<PlayerMovement>();
-        // ERROR HERE PLAYERCONTROLLER IS NULL
-        _playerController.ChangeState(PlayerMovement.PlayerState.Grounded);
-        _playerCameraPixel.enabled = false;
-        _playerCamera.DOOrthoSize(9, 1).OnComplete(() => CameraTransitionComplete(true));
     }
 
-    private TweenCallback CameraTransitionComplete(bool isEnterior) {
-        if (isEnterior) {
-            _playerCameraPixel.assetsPPU = 10;
-        } else {
-            _playerCameraPixel.assetsPPU = 8;
-        }
-        _playerCameraPixel.enabled = true;
-        return null;
-    }
+
 
     [ServerRpc(RequireOwnership = true)]
     public void RequestExitInterior(string interiorID, NetworkConnection sender) {
@@ -116,17 +91,6 @@ public class PlayerLayerController : NetworkBehaviour {
         var targetInterior = InteriorManager.Instance.GetInteriorById(interiorID);
         SetPlayerClientPos(sender, targetInterior.ExteriorSpawnPoint.position);
 
-        if (_playerController == null || _playerCameraPixel == null) {
-            _playerController = GetComponent<PlayerMovement>();
-            _playerCameraPixel = GetComponentInChildren<PixelPerfectCamera>();
-
-        }
-        // ERROR HERE PLAYERCONTROLLER IS NULL
-        _playerController.ChangeState(PlayerMovement.PlayerState.Swimming);
-        _playerCameraPixel.enabled = false;
-        // We'll have to properly set these values depending on the players zoom value they've set in the settings
-        _playerCamera.DOOrthoSize(11.25f, 2).OnComplete(() => CameraTransitionComplete(false));
-        Debug.Log($"Server: Player {OwnerId} exiting Interior '{previousInteriorId}' to {interiorID}");
         // Optional: Server logic after exiting (e.g., maybe tell InteriorManager the interior might be empty now)
     }
     [TargetRpc]
@@ -136,12 +100,12 @@ public class PlayerLayerController : NetworkBehaviour {
     }
     // --- SyncVar Callbacks (Triggered on Clients) ---
     private void OnLayerChanged(VisibilityLayerType prev, VisibilityLayerType next, bool asServer) {
-        if (asServer) return;
+        //if (asServer) return;
         HandleClientContextChange();
     }
     private void OnInteriorIdChanged(string prev, string next, bool asServer)
     {
-        if (asServer) return;
+        //if (asServer) return;
         HandleClientContextChange();
     }
 

@@ -29,12 +29,15 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
     private bool hasRequestedPickup;
 
     public int InventorySize => inventorySize;
+
     public InventoryManager GetInventoryManager() => inventoryManager;
+    public void Initialize() {
+
+        InitializeInventory();
+    }
     public override void OnStartClient() {
         base.OnStartClient();
-        if (base.IsOwner) {
-            InitializeInventory();
-        } else {
+        if (!base.IsOwner) {
             base.enabled = false;
         }
     }

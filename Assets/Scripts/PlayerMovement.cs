@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
 
-public class PlayerMovement : MonoBehaviour {
+public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
     private Rigidbody2D rb;
     private Camera MainCam;
@@ -67,10 +67,13 @@ public class PlayerMovement : MonoBehaviour {
     private bool _dashUnlocked;
     private bool _isInsideOxygenZone;
 
-    public void Init() {
+    public int InitializationOrder => 80;
+
+
+    public void Initialize(NetworkedPlayer playerParent) {
         MainCam = Camera.main;
         MainCam.transform.SetParent(transform);
-        MainCam.transform.localPosition = new Vector3(0,0,-10);
+        MainCam.transform.localPosition = new Vector3(0, 0, -10);
         _inputManager = GetComponent<InputManager>();
         Debug.Log("Init input manager: " + _inputManager);
         _visualHandler = GetComponent<PlayerVisualHandler>();
@@ -83,10 +86,24 @@ public class PlayerMovement : MonoBehaviour {
     private void OnEnable() {
         // Subscribe to the event to recalculate stats when a NEW upgrade is bought
         UpgradeManager.OnUpgradePurchased += HandleUpgradePurchased;
+        WorldVisibilityManager.OnLocalPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
+    }
+    
+    private void PlayerVisibilityLayerChanged(VisibilityLayerType type) {
+        switch (type) {
+            case VisibilityLayerType.Exterior:
+                ChangeState(PlayerState.Swimming);
+                break;
+            case VisibilityLayerType.Interior:
+                ChangeState(PlayerState.Grounded);
+                break;
+            default:
+                break;
+        }
     }
 
-
     private void OnDisable() {
+        WorldVisibilityManager.OnLocalPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
         UpgradeManager.OnUpgradePurchased -= HandleUpgradePurchased;
     }
 

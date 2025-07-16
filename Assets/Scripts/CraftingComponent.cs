@@ -1,12 +1,15 @@
-﻿using UnityEngine;
+﻿using NUnit;
+using UnityEngine;
 
 // Just on the player for now because fuck it
-public class CraftingComponent : MonoBehaviour {
+public class CraftingComponent : MonoBehaviour, INetworkedPlayerModule {
     private InventoryManager _clientInventory; // Your existing client inventory manager
     private PopupManager _popupManager;
 
-    public void Init(InventoryManager inv) {
-        _clientInventory = inv;
+    public int InitializationOrder => 3;
+
+    public void Initialize(NetworkedPlayer playerParent) {
+        _clientInventory = playerParent.InventoryN.GetInventoryManager();
         _popupManager = PopupManager.Instance;
     }
     public bool AttemptCraft(RecipeBaseSO recipe, RecipeExecutionContext context = null, UIPopup instantatiatedPopup = null) {

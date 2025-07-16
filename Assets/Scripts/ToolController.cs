@@ -3,23 +3,27 @@ using System.Security.Cryptography;
 using UnityEngine;
 
 // Controls what happens when the player presses the left mouse button, which usually will activate a specific tool
-public class ToolController : NetworkBehaviour {
+public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     [SerializeField] private Transform _toolSlotMining; // Instantiated slot for the current mining tool
     [SerializeField] private Transform _toolSlotCleaning;
     private IToolBehaviour currentMiningToolBehavior;
     private IToolBehaviour currentCleaningToolBehavior;
     private WorldManager _worldManager;
+
+    public int InitializationOrder => 9;
+
+
+    public void Initialize(NetworkedPlayer playerParent) {
+        Console.RegisterCommand(this, "DEBUGSetMineTool", "setMineTool", "god");
+        //Console.RegisterCommand(this, "mineGod", "setMineTool", "laser");
+        _worldManager = FindFirstObjectByType<WorldManager>();
+    }
     public override void OnStartClient() {
         base.OnStartClient();
         if (!IsOwner) {
             base.enabled = false;
             return;
         }
-        Console.RegisterCommand(this, "DEBUGSetMineTool", "setMineTool", "god");
-        //Console.RegisterCommand(this, "mineGod", "setMineTool", "laser");
-        _worldManager = FindFirstObjectByType<WorldManager>();
-      
-
     }
     public override void OnStartServer() {
         base.OnStartServer();

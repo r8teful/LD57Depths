@@ -158,7 +158,7 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
         // Apply the new state to ALL tracked objects
         ApplyVisibilityForAllObjects(newLayer, newInteriorId);
 
-        // Used to update world lighting in worldlightingmanager
+        // Used to update world lighting in worldlightingmanager, also in player movement to change player state
         OnLocalPlayerVisibilityChanged?.Invoke(newLayer);
 
         // Update visibility of remote players relative to the new local context

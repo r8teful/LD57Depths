@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using static PlayerMovement;
 // Handles how the player looks visualy, and also make sure the hitboxes are correct
-public class PlayerVisualHandler : NetworkBehaviour {
+public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
 
     private SpriteRenderer sprite; 
     [SerializeField] private SpriteRenderer _bobHand; 
@@ -17,6 +17,12 @@ public class PlayerVisualHandler : NetworkBehaviour {
     public Light2D lightSpot;
     private float lightStartIntensity;
     private readonly SyncVar<bool> _isFlipped = new SyncVar<bool>(false);
+
+    public int InitializationOrder => 60;
+
+    public void Initialize(NetworkedPlayer playerParent) {
+        // Do nothing because it's not client specific
+    }
     private void OnEnable() {
         _isFlipped.OnChange += OnFlipChanged;
     }
@@ -32,7 +38,7 @@ public class PlayerVisualHandler : NetworkBehaviour {
         sprite = GetComponent<SpriteRenderer>();
         lightStartIntensity = lightSpot.intensity;
     }
-    
+
     public void SetHitbox(PlayerState state) {
         switch (state) {
             case PlayerState.None:
@@ -94,5 +100,5 @@ public class PlayerVisualHandler : NetworkBehaviour {
     public void SetBobHand(bool activateHand) {
         _bobHand.enabled = activateHand;
     }
-    
+
 }
