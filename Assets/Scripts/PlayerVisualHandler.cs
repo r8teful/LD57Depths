@@ -1,10 +1,12 @@
-﻿using System;
+﻿using FishNet.Object;
+using FishNet.Object.Synchronizing;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using static PlayerMovement;
 // Handles how the player looks visualy, and also make sure the hitboxes are correct
-public class PlayerVisualHandler : MonoBehaviour {
+public class PlayerVisualHandler : NetworkBehaviour {
 
     private SpriteRenderer sprite; 
     [SerializeField] private SpriteRenderer _bobHand; 
@@ -14,12 +16,23 @@ public class PlayerVisualHandler : MonoBehaviour {
     public Collider2D playerWalkCollider;
     public Light2D lightSpot;
     private float lightStartIntensity;
-    private void Start() {
+    private readonly SyncVar<bool> _isFlipped = new SyncVar<bool>(false);
+    private void OnEnable() {
+        _isFlipped.OnChange += OnFlipChanged;
+    }
 
+    private void OnFlipChanged(bool prev, bool next, bool asServer) {
+        if (sprite == null) return;
+        FlipSprite(next);
+    }
+
+    public override void OnStartClient() {
+        base.OnStartClient();
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         lightStartIntensity = lightSpot.intensity;
     }
+    
     public void SetHitbox(PlayerState state) {
         switch (state) {
             case PlayerState.None:
@@ -42,13 +55,23 @@ public class PlayerVisualHandler : MonoBehaviour {
                 break;
         }
     }
-    public void FlipSprite(float horizontalInput) {
+
+    // Run on the server, but called by the client
+    [ServerRpc(RequireOwnership = true)]
+    public void CheckFlipSprite(float horizontalInput) {
         if (horizontalInput > 0.01f) {
-            sprite.flipX = false;
-            _bobHand.gameObject.transform.parent.localScale = new Vector3(1, 1, 1);
+            _isFlipped.Value = false; // Flip to right
         } else if (horizontalInput < -0.01f) {
+            _isFlipped.Value = true; // Flip to left
+        }
+    }
+    public void FlipSprite(bool shouldFlip) {
+        if (shouldFlip) {
             sprite.flipX = true;
             _bobHand.gameObject.transform.parent.localScale = new Vector3(-1, 1, 1);
+        } else {             
+            sprite.flipX = false;
+            _bobHand.gameObject.transform.parent.localScale = new Vector3(1, 1, 1);
         }
     }
     public void ChangeAnimation(string animationName) {

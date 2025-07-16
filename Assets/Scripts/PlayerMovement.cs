@@ -166,7 +166,7 @@ public class PlayerMovement : MonoBehaviour {
         } else {
             _visualHandler.ChangeAnimation("SwimIdle");
         }
-        _visualHandler.FlipSprite(_currentInput.x);
+        _visualHandler.CheckFlipSprite(_currentInput.x);
         DepleteOxygen();
     }
 
@@ -220,7 +220,7 @@ public class PlayerMovement : MonoBehaviour {
 
             }
         }
-        _visualHandler.FlipSprite(_currentInput.x);
+        _visualHandler.CheckFlipSprite(_currentInput.x);
         _visualHandler.ChangeAnimation(Mathf.Abs(_currentInput.x) > 0.01f ? "Walk" : "Idle");
     }
     private void HandleGroundedPhysics() {

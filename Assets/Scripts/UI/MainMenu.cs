@@ -1,7 +1,9 @@
 using FishNet.Managing;
 using FishNet.Managing.Scened;
 using FishNet.Transporting;
+using Steamworks;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
@@ -13,9 +15,23 @@ public class MainMenu : MonoBehaviour {
     public Slider SFXSlider;
     public Slider MusicSlider;
     [SerializeField] NetworkManager _networkManager;
+    [SerializeField] Button _buttonHost;
+    [SerializeField] Button _buttonJoin;
+    
+    [SerializeField] private TMP_InputField _addressField;
     private void Start() {
         // Subscribe to client connection events to know when we are connected.
         _networkManager.ClientManager.OnClientConnectionState += OnClientConnectionState;
+    }
+    private void OnEnable() {
+        _buttonHost.onClick.AddListener(OnHostClicked);
+        _buttonJoin.onClick.AddListener(OnJoinClicked);
+    }
+    private void OnDisable() {
+        _buttonHost.onClick.RemoveListener(OnHostClicked);
+        _buttonJoin.onClick.RemoveListener(OnJoinClicked);
+        // Unsubscribe from client connection events to avoid memory leaks.
+        _networkManager.ClientManager.OnClientConnectionState -= OnClientConnectionState;
     }
 
     private void OnClientConnectionState(ClientConnectionStateArgs args) {
@@ -30,9 +46,13 @@ public class MainMenu : MonoBehaviour {
     }
 
     // Starting new hosting game
-    public void OnPlayClicked() {
+    public void OnHostClicked() {
         _networkManager.ServerManager.StartConnection();
         _networkManager.ClientManager.StartConnection();
+        //SceneManager.LoadScene(1);
+    }
+    public void OnJoinClicked() {
+        _networkManager.ClientManager.StartConnection(_addressField.text);
         //SceneManager.LoadScene(1);
     }
     public void OnSFXChanged(float v) {

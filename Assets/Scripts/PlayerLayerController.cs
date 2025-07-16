@@ -20,19 +20,23 @@ public class PlayerLayerController : NetworkBehaviour {
     private Camera _playerCamera;
     private PixelPerfectCamera _playerCameraPixel;
     private PlayerMovement _playerController;
-    private void Awake() {
+    private void OnEnable() {
         _currentLayer.OnChange += OnLayerChanged;
         _currentInteriorId.OnChange += OnInteriorIdChanged;
+    }
+    private void OnDisable() {
+        _currentLayer.OnChange -= OnLayerChanged;
+        _currentInteriorId.OnChange -= OnInteriorIdChanged;
     }
     public override void OnStartClient() {
         base.OnStartClient();
         // Find the client-side manager responsible for visibility
-        _playerCamera = GetComponentInChildren<Camera>();
-        _playerController = GetComponent<PlayerMovement>();
         WorldVisibilityManager.Instance.RegisterPlayer(this);
 
         // Apply initial state visibility if this is the local player
         if (base.IsOwner) {
+            _playerController = GetComponent<PlayerMovement>();
+            _playerCamera = GetComponentInChildren<Camera>();
             HandleClientContextChange();
         }
         // Apply visibility state for this (potentially remote) player from the perspective of the local player
@@ -84,6 +88,7 @@ public class PlayerLayerController : NetworkBehaviour {
         }
         if (_playerController == null)
             _playerController = GetComponent<PlayerMovement>();
+        // ERROR HERE PLAYERCONTROLLER IS NULL
         _playerController.ChangeState(PlayerMovement.PlayerState.Grounded);
         _playerCameraPixel.enabled = false;
         _playerCamera.DOOrthoSize(9, 1).OnComplete(() => CameraTransitionComplete(true));
@@ -116,6 +121,7 @@ public class PlayerLayerController : NetworkBehaviour {
             _playerCameraPixel = GetComponentInChildren<PixelPerfectCamera>();
 
         }
+        // ERROR HERE PLAYERCONTROLLER IS NULL
         _playerController.ChangeState(PlayerMovement.PlayerState.Swimming);
         _playerCameraPixel.enabled = false;
         // We'll have to properly set these values depending on the players zoom value they've set in the settings
@@ -140,7 +146,9 @@ public class PlayerLayerController : NetworkBehaviour {
     }
 
     public void InteractWithPortal(InteriorPortal portal) {
+        Debug.Log($"Interacting with portal: {portal.gameObject.name} - CurrentLayer={_currentLayer.Value}, AssociatedInteriorId={portal.AssociatedInteriorId}, IsEntrance={portal.IsEntrance}");
         if (!base.IsOwner) return; // Only owner initiates
+        Debug.Log($"We are owner interacting with portal: {portal.gameObject.name} - CurrentLayer={_currentLayer.Value}, AssociatedInteriorId={portal.AssociatedInteriorId}, IsEntrance={portal.IsEntrance}");
                                    
         string portalInteriorId = portal.AssociatedInteriorId;
         if (string.IsNullOrEmpty(portalInteriorId)) {
