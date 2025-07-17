@@ -1,71 +1,33 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using UnityEngine.Tilemaps;
+﻿using FishNet;
+using FishNet.Connection;
+using FishNet.Transporting;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Tilemaps;
 
 
 public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
     [Tooltip("Drag the root GameObject containing all exterior world elements (chunks, scenery, etc.)")]
     public GameObject ExteriorWorldRoot;
-    private string PlayerTag = "Player"; 
-    private PlayerLayerController _localPlayerController = null;
-    private List<PlayerLayerController> _remotePlayers = new List<PlayerLayerController>(); // Keep track of others
     private readonly HashSet<IVisibilityEntity> _trackedEntities = new HashSet<IVisibilityEntity>();
-
     private VisibilityLayerType _currentLocalLayer = VisibilityLayerType.Exterior;
     private string _currentLocalInteriorId = "";
     // State variable to know if the exterior is currently supposed to be visible
     private bool _isExteriorVisible = true;
-    
     public static event Action<VisibilityLayerType> OnLocalPlayerVisibilityChanged;
+    private PlayerLayerController _localPlayerController;
 
-    void Start() {
+    public void InitLocal(PlayerLayerController localLayerController) {
         if (ExteriorWorldRoot == null) {
             Debug.LogError("ExteriorWorldRoot is not assigned in WorldVisibilityManager!");
             this.enabled = false; // Disable script if misconfigured
             return;
         }
-        // Optionally find and cache players initially
-        // FindAllPlayers(); // Better to dynamically track via OnStartClient/OnStopClient events maybe
-
+        _localPlayerController = localLayerController;
         // Ensure exterior is initially visible if nothing else dictates state
         ApplyVisibilityForAllObjects(VisibilityLayerType.Exterior, "");
         InteriorManager.Instance.DeactivateAllInteriors(); // Ensure interiors start deactivated
-
-    }
-    public void RegisterPlayer(PlayerLayerController playerController) {
-        if (playerController.IsOwner) // It's the Local Player
-        {
-            if (_localPlayerController != null && _localPlayerController != playerController) {
-                Debug.LogWarning($"WorldVisibilityManager: Trying to register a new local player when one ({_localPlayerController.OwnerId}) is already registered. Replacing.");
-                // Potentially deregister the old one first if needed
-            }
-            _localPlayerController = playerController;
-            Debug.Log($"WorldVisibilityManager: Local Player {playerController.OwnerId} Registered.");
-            // Immediately apply visibility based on the local player's *current* state
-            ApplyVisibilityForAllObjects(playerController.CurrentLayer.Value,playerController.CurrentInteriorId.Value);
-        } else // It's a Remote Player
-          {
-            if (!_remotePlayers.Contains(playerController)) {
-                _remotePlayers.Add(playerController);
-                Debug.Log($"WorldVisibilityManager: Remote Player {playerController.OwnerId} Registered.");
-                // Immediately apply visibility *for this remote player* based on local player's state
-                UpdateRemotePlayerVisibility(playerController);
-            }
-        }
-    }
-
-    // Called by PlayerLayerController.OnStopClient
-    public void DeregisterPlayer(PlayerLayerController playerController) {
-        if (_localPlayerController == playerController) {
-            Debug.Log($"WorldVisibilityManager: Local Player {playerController.OwnerId} Deregistered.");
-            _localPlayerController = null;
-            //ApplyVisibilityState(PlayerWorldLayer.Exterior, "");
-        } else {
-            if (_remotePlayers.Remove(playerController)) {
-                Debug.Log($"WorldVisibilityManager: Remote Player {playerController.OwnerId} Deregistered.");
-            }
-        }
     }
     public void RegisterObject(IVisibilityEntity obj) {
         if (obj != null && _trackedEntities.Add(obj)) {
@@ -81,33 +43,6 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
             // Debug.Log($"WVM Deregistered: {obj.NetworkObject.name}");
         }
     }
-    /*
-    void Update() {
-        // Simple periodic check for players joining/leaving.
-        // A better approach uses callbacks from FishNet's ClientManager.OnClientStarted/Stopped events
-        // or SceneManager.OnClientPresenceChangeEvent if you track players globally.
-        if (Time.frameCount % 60 == 0) // Check roughly once per second
-        {
-            RefreshPlayerReferences();
-        }
-
-        // Continuously update visibility based on the local player's current state.
-        // This might be redundant if OnChanged handles everything, but good for safety.
-        if (_localPlayerController != null && _localPlayerController.IsOwner) {
-            UpdateVisibilityForLocalPlayer(_localPlayerController.CurrentLayer.Value, _localPlayerController.CurrentInteriorId.Value);
-            // Update visibility of remote players from local player's perspective
-            foreach (var remotePlayer in _remotePlayers) {
-                UpdateRemotePlayerVisibility(remotePlayer);
-            }
-        } else {
-            // Attempt to find local player if not found yet
-            if (InstanceFinder.IsClientStarted && InstanceFinder.ClientManager != null && InstanceFinder.ClientManager.Connection.FirstObject != null) {
-                _localPlayerController = InstanceFinder.ClientManager.Connection.FirstObject.GetComponent<PlayerLayerController>();
-            }
-        }
-    }*/
-
-    // Apply the visibility rules based on the local player's context
 
     // Note to self, this and LocalPlayerConttextChanged replaces UpdateVisibilityForLocalPlayer
     private void ApplyVisibilityForAllObjects(VisibilityLayerType localPlayerLayer, string localPlayerInteriorId) {
@@ -140,14 +75,16 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
             // InteriorManager handles positioning and activation of the specific interior *instance*
             InteriorManager.Instance.ActivateInterior(_currentLocalInteriorId);
         }
-        foreach (var remotePlayer in _remotePlayers) UpdateRemotePlayerVisibility(remotePlayer);
+        foreach (var remotePlayer in NetworkedPlayersManager.Instance.GetAllPlayers()) {
+            if(remotePlayer.PlayerLayerController != null) {
+                UpdateRemotePlayerVisibility(remotePlayer.PlayerLayerController);
+            }
+        }
     }
     // Called when local player state CHANGES (via OnChange)
     public void LocalPlayerContextChanged() {
         if (_localPlayerController == null) {
-            // This case should ideally be handled by DeregisterPlayer setting default view
-            ApplyVisibilityForAllObjects(VisibilityLayerType.Exterior, "");
-            HideAllRemotePlayers();
+            Debug.LogWarning("Local Player Controller, maybe disconnected?");
             return;
         }
 
@@ -162,8 +99,12 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
         OnLocalPlayerVisibilityChanged?.Invoke(newLayer);
 
         // Update visibility of remote players relative to the new local context
-        foreach (var remotePlayer in _remotePlayers) {
-            UpdateRemotePlayerVisibility(remotePlayer);
+        foreach (var remotePlayer in NetworkedPlayersManager.Instance.GetAllPlayers()) {
+            if (remotePlayer.Owner == _localPlayerController.Owner)
+                continue; // Only valid, remote players
+            if (remotePlayer.PlayerLayerController != null) {
+                UpdateRemotePlayerVisibility(remotePlayer.PlayerLayerController);
+            }
         }
     }
 
@@ -198,7 +139,6 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
         SetGameObjectComponentsActive(remotePlayer.gameObject, shouldBeVisible);
         //Debug.Log($"Setting remote player {remotePlayer.OwnerId} visibility to {shouldBeVisible} (Local: {localLayer}/{localInteriorId}, Remote: {remoteLayer}/{remoteInteriorId})");
     }
-    private void HideAllRemotePlayers() { foreach (var remote in _remotePlayers) if (remote != null) SetGameObjectComponentsActive(remote.gameObject, false); }
 
     private void SetGameObjectComponentsActive(GameObject go, bool isActive) {
         // Example: Disable Renderers and Colliders

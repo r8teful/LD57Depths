@@ -15,6 +15,7 @@ public class NetworkedPlayer : NetworkBehaviour {
     public NetworkedPlayerInventory InventoryN { get; private set; }
     public UIManager UiManager { get; private set; }
     public PlayerVisualHandler PlayerVisuals { get; private set; }
+    public PlayerLayerController PlayerLayerController { get; private set; }
     public PlayerCameraController PlayerCamera { get; private set; }
     public ToolController ToolController { get; private set; }
     public static NetworkedPlayer LocalInstance { get; private set; } // Singleton for local player
@@ -22,6 +23,8 @@ public class NetworkedPlayer : NetworkBehaviour {
 
     public override void OnStartClient() {
         base.OnStartClient();
+        // Register the player
+        CacheSharedComponents();
         if (!base.IsOwner) {
             GetComponent<PlayerMovement>().enabled = false; 
             base.enabled = false;
@@ -29,10 +32,19 @@ public class NetworkedPlayer : NetworkBehaviour {
         }
         LocalInstance = this;
         InitializePlayer();
+        CmdNotifyServerOfInitialization();
     }
+
+    // All clients have access to this
+    private void CacheSharedComponents() {
+        PlayerLayerController = GetComponent<PlayerLayerController>();
+        PlayerVisuals = GetComponent<PlayerVisualHandler>();
+    }
+
     private void InitializePlayer() {
         Debug.Log("Starting Player Initialization...");
 
+        gameObject.name = $"PlayerOnline: {LocalConnection.ClientId}";
         // Add local behaviours that are required for the player.
 
         CraftingComponent = gameObject.AddComponent<CraftingComponent>();
@@ -45,7 +57,11 @@ public class NetworkedPlayer : NetworkBehaviour {
 
         // Cache core components for easy access.
         InventoryN = GetComponent<NetworkedPlayerInventory>();
+        ToolController = GetComponent<ToolController>();
 
+        // Cache core components for easy access.
+        InventoryN = GetComponent<NetworkedPlayerInventory>();
+        PlayerLayerController = GetComponent<PlayerLayerController>();
         PlayerVisuals = GetComponent<PlayerVisualHandler>();
         ToolController = GetComponent<ToolController>();
         _upgradeManager = UpgradeManager.Instance;
@@ -70,5 +86,13 @@ public class NetworkedPlayer : NetworkBehaviour {
             Destroy(UiManager);
         }
         LocalInstance = null;
+    }
+
+    [ServerRpc(RequireOwnership = true)]
+    private void CmdNotifyServerOfInitialization() {
+        NetworkedPlayersManager.Instance.Server_RegisterPlayer(base.Owner, this);
+
+        // This is also a great place to trigger any "local player is ready" logic
+
     }
 }

@@ -79,6 +79,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
 
             // Iterate through all connected players
             foreach (var conn in InstanceFinder.ServerManager.Clients.Values) {
+                if(conn.IsAuthenticated == false) continue; // Skip unauthenticated connections
                 if (conn.FirstObject == null) continue; // Player object not spawned/found?
                 Vector3 playerPos = conn.FirstObject.transform.position; // Get player's position
                 Vector2Int playerChunk = chunkManager.WorldToChunkCoord(playerPos);

@@ -100,5 +100,5 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     public void SetBobHand(bool activateHand) {
         _bobHand.enabled = activateHand;
     }
-
+  
 }

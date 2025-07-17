@@ -2,8 +2,6 @@ using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using FishNet.Connection;
-using DG.Tweening;
-using UnityEngine.Rendering.Universal;
 
 
 public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
@@ -27,20 +25,9 @@ public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
         _currentInteriorId.OnChange -= OnInteriorIdChanged;
     }
     public void Initialize(NetworkedPlayer playerParent) {
+        WorldVisibilityManager.Instance.InitLocal(this);
         // Apply initial state visibility if this is the local player
         HandleClientContextChange();    
-    }
-    public override void OnStartClient() {
-        base.OnStartClient();
-       // WorldVisibilityManager.Instance.RegisterPlayer(this);
-        WorldVisibilityManager.Instance.UpdateRemotePlayerVisibility(this);
-    }
-    public override void OnStopClient() {
-        base.OnStopClient();
-        // Deregister from the manager when the object is destroyed/disabled on the client
-        if (WorldVisibilityManager.Instance != null) {
-            WorldVisibilityManager.Instance.DeregisterPlayer(this);
-        }
     }
     // --- Server-Side Transition Logic ---
     [ServerRpc(RequireOwnership = true)] // Only owner should trigger transitions for themselves
