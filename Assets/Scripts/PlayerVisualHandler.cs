@@ -15,13 +15,14 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     public Collider2D playerSwimCollider;
     public Collider2D playerWalkCollider;
     public Light2D lightSpot;
-    private float lightStartIntensity;
+    private float lightIntensityOn;
     private readonly SyncVar<bool> _isFlipped = new SyncVar<bool>(false);
 
     public int InitializationOrder => 60;
 
     public void Initialize(NetworkedPlayer playerParent) {
         // Do nothing because it's not client specific
+        lightIntensityOn = lightSpot.intensity;
     }
     private void OnEnable() {
         _isFlipped.OnChange += OnFlipChanged;
@@ -36,7 +37,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         base.OnStartClient();
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
-        lightStartIntensity = lightSpot.intensity;
+        lightIntensityOn = lightSpot.intensity;
     }
 
     public void SetHitbox(PlayerState state) {
@@ -91,7 +92,10 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     }
     public void SetLights(bool setOn) {
         if (setOn) {
-            lightSpot.intensity = lightStartIntensity;
+            if (lightIntensityOn <= 0) {
+                lightIntensityOn = 1; // 
+            }
+            lightSpot.intensity = lightIntensityOn;
         } else {
             lightSpot.intensity = 0;
         }

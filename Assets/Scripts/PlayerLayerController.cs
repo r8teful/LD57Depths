@@ -18,11 +18,9 @@ public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
 
     private void OnEnable() {
         _currentLayer.OnChange += OnLayerChanged;
-        _currentInteriorId.OnChange += OnInteriorIdChanged;
     }
     private void OnDisable() {
         _currentLayer.OnChange -= OnLayerChanged;
-        _currentInteriorId.OnChange -= OnInteriorIdChanged;
     }
     public void Initialize(NetworkedPlayer playerParent) {
         WorldVisibilityManager.Instance.InitLocal(this);
@@ -87,12 +85,6 @@ public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
     }
     // --- SyncVar Callbacks (Triggered on Clients) ---
     private void OnLayerChanged(VisibilityLayerType prev, VisibilityLayerType next, bool asServer) {
-        //if (asServer) return;
-        HandleClientContextChange();
-    }
-    private void OnInteriorIdChanged(string prev, string next, bool asServer)
-    {
-        //if (asServer) return;
         HandleClientContextChange();
     }
 

@@ -5,18 +5,24 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 // Handles camera related things
-public class PlayerCameraController : MonoBehaviour {
+public class PlayerCameraController : MonoBehaviour, INetworkedPlayerModule {
     // --- Client-Side References & Logic ---
     private Camera _playerCamera;
     private PixelPerfectCamera _playerCameraPixel;
-    private void Start() {
+
+    public int InitializationOrder => 6;
+
+    public void Initialize(NetworkedPlayer playerParent) {
         _playerCamera = GetComponentInChildren<Camera>();
+        WorldVisibilityManager.OnLocalPlayerVisibilityChanged += OnPlayerVisibilityLayerChanged;
     }
-    private void OnEnable() {
+    
+    private void OnDisable() {
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged += OnPlayerVisibilityLayerChanged;
     }
 
     private void OnPlayerVisibilityLayerChanged(VisibilityLayerType obj) {
+        Debug.Log("OnPlayerVisibilityLayerChanged called with: " + obj);
         float size = 11.25f;
         float time = 2f;
         switch (obj) {
@@ -43,6 +49,9 @@ public class PlayerCameraController : MonoBehaviour {
         _playerCamera.DOOrthoSize(9, 1).OnComplete(() => CameraTransitionComplete(true));
         _playerCameraPixel.enabled = false;
          */
+        if (_playerCamera == null) {
+            _playerCamera = GetComponentInChildren<Camera>();
+        }
         _playerCamera.DOOrthoSize(orthoSize, time);
     }
     private TweenCallback CameraTransitionComplete(bool isEnterior) {
