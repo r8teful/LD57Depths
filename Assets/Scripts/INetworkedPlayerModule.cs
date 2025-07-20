@@ -9,5 +9,5 @@ public interface INetworkedPlayerModule {
     /// Called by the NetworkedPlayerSetup orchestrator to initialize the module.
     /// </summary>
     /// <param name="playerParent">A reference to the main setup script, which can be used to access other modules or shared data.</param>
-    void Initialize(NetworkedPlayer playerParent);
+    void InitializeOnOwner(NetworkedPlayer playerParent);
 }

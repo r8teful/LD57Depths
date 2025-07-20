@@ -15,14 +15,14 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     public Collider2D playerSwimCollider;
     public Collider2D playerWalkCollider;
     public Light2D lightSpot;
+    public NetworkedPlayer _remotePlayer;
     private float lightIntensityOn;
     private readonly SyncVar<bool> _isFlipped = new SyncVar<bool>(false);
-
     public int InitializationOrder => 60;
+    private bool hasInitializedNonOwner; // Sometimes the init function gets called twice so this is just for that
 
-    public void Initialize(NetworkedPlayer playerParent) {
-        // Do nothing because it's not client specific
-        lightIntensityOn = lightSpot.intensity;
+    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+        InitCommon();
     }
     private void OnEnable() {
         _isFlipped.OnChange += OnFlipChanged;
@@ -32,12 +32,52 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         if (sprite == null) return;
         FlipSprite(next);
     }
-
-    public override void OnStartClient() {
-        base.OnStartClient();
+    private void InitCommon() {
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         lightIntensityOn = lightSpot.intensity;
+    }
+    public void InitializeOnNotOwner() {
+        if (hasInitializedNonOwner)
+            return;
+        InitCommon();
+        Debug.Log("setting up remote player on non owning client!");
+        // Set remote client specific visuals
+        // Cache remotclient networkedPlayer script.
+        if (NetworkedPlayersManager.Instance.TryGetPlayer(base.OwnerId, out NetworkedPlayer remoteClient)) {
+            _remotePlayer = remoteClient;
+        } else {
+            Debug.LogError("Could not find networkedPlayer on remote client!");
+            return;
+        }
+        HandleRemoteToolSetup();
+        hasInitializedNonOwner = true;
+    }
+
+    // For remote remote client, tools should be generic, first know which tool they are using, then enable it, then sync it and have the specific tool
+    // Logic handle the rest
+    public void HandleRemoteToolSetup() {
+        // We have to subscribe to the onchange on the toolController so we can know when to enable/disable the tools
+        _remotePlayer.ToolController.IsUsingTool.OnChange += RemoteClientToolChange;
+        _remotePlayer.ToolController.EquipAllToolsVisualOnly();
+
+        /* What we want is the following:
+        - Know WHICH tool they are using over the network
+        - Know WHEN that tool is being used
+        - Know WHERE they are aiming that tool
+         */
+    }
+
+    private void RemoteClientToolChange(bool prev, bool next, bool asServer) {
+        if (next) {
+            // tool enabled
+            _remotePlayer.ToolController.GetCurrentTool().HandleVisualStart();
+
+        } else {
+            // Tool disabled
+            _remotePlayer.ToolController.GetCurrentTool().HandleVisualStop();
+        }
+        // TODO then somehow we would need to set what input they have and communicate it over the network, Thats about it
     }
 
     public void SetHitbox(PlayerState state) {

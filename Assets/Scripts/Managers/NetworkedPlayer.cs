@@ -1,4 +1,5 @@
 ﻿using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,24 +22,35 @@ public class NetworkedPlayer : NetworkBehaviour {
     public static NetworkedPlayer LocalInstance { get; private set; } // Singleton for local player
     public NetworkObject PlayerNetworkedObject => base.NetworkObject; // Expose NetworkObject for other scripts to use
 
+    // To avoid any wierd bugs, this should be the only OnStartClient on the player
     public override void OnStartClient() {
         base.OnStartClient();
-        // Register the player
+        Debug.Log("Start Client on: " + OwnerId + " Are we owner?: " + IsOwner);
         CacheSharedComponents();
+        NetworkedPlayersManager.OnPlayersListChanged += OnPlayersChanged;
         if (!base.IsOwner) {
-            GetComponent<PlayerMovement>().enabled = false; 
-            base.enabled = false;
+            GetComponent<PlayerMovement>().enabled = false;
             return;
         }
         LocalInstance = this;
         InitializePlayer();
         CmdNotifyServerOfInitialization();
-    }
+        // Subscribe to other clients joining so we can properly initialize our local version of them
 
+    }
+    public override void OnStopClient() {
+        base.OnStopClient();
+        if (UiManager != null) {
+            Destroy(UiManager);
+        }
+        LocalInstance = null;
+        NetworkedPlayersManager.OnPlayersListChanged -= OnPlayersChanged;
+    }
     // All clients have access to this
     private void CacheSharedComponents() {
         PlayerLayerController = GetComponent<PlayerLayerController>();
         PlayerVisuals = GetComponent<PlayerVisualHandler>();
+        ToolController = GetComponent<ToolController>();
     }
 
     private void InitializePlayer() {
@@ -57,7 +69,6 @@ public class NetworkedPlayer : NetworkBehaviour {
 
         // Cache core components for easy access.
         InventoryN = GetComponent<NetworkedPlayerInventory>();
-        ToolController = GetComponent<ToolController>();
 
         // Cache core components for easy access.
         InventoryN = GetComponent<NetworkedPlayerInventory>();
@@ -74,24 +85,36 @@ public class NetworkedPlayer : NetworkBehaviour {
 
         // Initialize all modules in the determined order.
         foreach (var module in _modules) {
-            module.Initialize(this);
+            module.InitializeOnOwner(this);
             //Debug.Log($"Initialized Module: {module.GetType().Name} (Order: {module.InitializationOrder})");
 
         }
         Debug.Log($"Player Initialization Complete! Initialized {_modules.Count} modules");
     }
-    public override void OnStopClient() {
-        base.OnStopClient();
-        if (UiManager != null) {
-            Destroy(UiManager);
+   
+    private void OnPlayersChanged(SyncDictionaryOperation operation, int clientID, NetworkedPlayer clientObject, bool isServer) {
+        if (base.IsOwner)
+            return;
+        switch (operation) {
+            case SyncDictionaryOperation.Add:
+                PlayerVisuals.InitializeOnNotOwner();
+                break;
+            case SyncDictionaryOperation.Clear:
+                break;
+            case SyncDictionaryOperation.Remove:
+                break;
+            case SyncDictionaryOperation.Set:
+                break;
+            case SyncDictionaryOperation.Complete:
+                break;
+            default:
+                break;
         }
-        LocalInstance = null;
     }
 
     [ServerRpc(RequireOwnership = true)]
     private void CmdNotifyServerOfInitialization() {
         NetworkedPlayersManager.Instance.Server_RegisterPlayer(base.Owner, this);
-
         // This is also a great place to trigger any "local player is ready" logic
 
     }

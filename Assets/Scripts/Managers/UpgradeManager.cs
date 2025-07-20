@@ -11,7 +11,7 @@ public class UpgradeManager : StaticInstance<UpgradeManager>, INetworkedPlayerMo
 
     public int InitializationOrder => 6;
 
-    public void Initialize(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _crafting = playerParent.CraftingComponent;
     }
     public bool ArePrerequisitesMet(UpgradeRecipeBase recipe) {

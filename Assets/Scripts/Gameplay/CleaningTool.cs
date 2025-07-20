@@ -14,9 +14,20 @@ public class CleaningTool : MonoBehaviour, IToolBehaviour {
     public float range = 5f;
     public float coneAngle = 45f;
     public float pullForce = 10f;
-
     public GameObject GO => gameObject;
+    public IToolVisual toolVisual => throw new System.NotImplementedException();
 
+    public ToolType toolType => ToolType.CleaningTool;
+
+    public ushort toolID => (ushort)toolType;
+
+    public MiningToolData GetToolData() {
+        throw new System.NotImplementedException();
+    }
+
+    public void InitVisualTool(IToolBehaviour toolBehaviourParent) {
+        throw new System.NotImplementedException();
+    }
     private void Start() {
         _particleSystem.Stop();
         _visual.enabled = false;
@@ -88,10 +99,4 @@ public class CleaningTool : MonoBehaviour, IToolBehaviour {
         gameObject.transform.DOScale(0, 0.5f).OnComplete(() => Destroy(gameObject)) ;
     }
 
-    // Clean tool always hidden for now
-    public void ToolHide() {
-    }
-
-    public void ToolShow() {
-    }
 }

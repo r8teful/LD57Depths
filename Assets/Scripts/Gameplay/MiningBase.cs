@@ -1,15 +1,36 @@
-﻿using System;
+﻿using FishNet.Object;
+using System;
 using System.Collections;
 using UnityEngine;
-
+// Created and sent to the Visual part so that we know how to draw it properly
+public struct MiningToolData {
+    public float ToolRange;
+    public int toolTier;
+    // Add more as needed
+}
 public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
     protected InputManager _inputManager;
     protected Coroutine miningRoutine;
     protected bool _isMining;
     public abstract float Range { get; set; }
     public abstract float DamagePerHit { get; set; }
-    public abstract GameObject GO { get;}
+    public abstract GameObject GO { get; }
+    public abstract IToolVisual toolVisual { get; }
+    public abstract ToolType toolType { get; }
+    public ushort toolID => (ushort)toolType;
 
+    public MiningToolData GetToolData() {
+        return new MiningToolData {
+            ToolRange = Range,
+            toolTier = 0 //TODO
+        };
+    }
+    private void Start() {
+        InitVisualTool(this);
+    }
+    public void InitVisualTool(IToolBehaviour toolBehaviourParent) {
+        toolVisual.Init(toolBehaviourParent);
+    }
     private void OnEnable() {
         // Subscribe to the event to recalculate stats when a NEW upgrade is bought
         UpgradeManager.OnUpgradePurchased += HandleUpgradePurchased;
@@ -17,6 +38,11 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
 
     private void OnDisable() {
         UpgradeManager.OnUpgradePurchased -= HandleUpgradePurchased;
+    }
+    protected virtual void Update() {
+        if (_isMining) {
+            toolVisual.HandleVisualUpdate(_inputManager);
+        }
     }
     protected virtual void HandleUpgradePurchased(UpgradeRecipeBase data) {
         if (data.type == UpgradeType.MiningRange) {
@@ -35,6 +61,7 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
         _inputManager = input;
         _isMining = true;
         miningRoutine = StartCoroutine(MiningRoutine(controller));
+        toolVisual.HandleVisualStart();
     }
     public virtual void ToolStop() {
         if (miningRoutine != null) {
@@ -42,6 +69,7 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
             miningRoutine = null;
             _isMining = false;
         }
+        toolVisual.HandleVisualStop();
     }
     private IEnumerator MiningRoutine(ToolController controller) {
         while (true) {

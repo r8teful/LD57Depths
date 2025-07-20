@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2872522043412705023}
   - component: {fileID: 7322792910144717697}
+  - component: {fileID: 8513912024655949872}
   m_Layer: 2
   m_Name: MiningDrill
   m_TagString: Untagged
@@ -46,6 +47,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handVisual: {fileID: 5934183826178453241}
+--- !u!114 &8513912024655949872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5194426730334375580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57ceeb0ead2a5694393a5008911f7440, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sprite: {fileID: 2774053153203999356}
 --- !u!1 &5934183826178453241
 GameObject:
   m_ObjectHideFlags: 0

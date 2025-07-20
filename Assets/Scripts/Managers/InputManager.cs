@@ -52,7 +52,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
 
     public int InitializationOrder => 10;
 
-    public void Initialize(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _inventoryUIManager = playerParent.UiManager.UIManagerInventory;
         _clientObject = playerParent.PlayerNetworkedObject;
         _toolController = playerParent.ToolController;

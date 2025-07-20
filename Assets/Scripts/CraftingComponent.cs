@@ -8,7 +8,7 @@ public class CraftingComponent : MonoBehaviour, INetworkedPlayerModule {
 
     public int InitializationOrder => 3;
 
-    public void Initialize(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _clientInventory = playerParent.InventoryN.GetInventoryManager();
         _popupManager = PopupManager.Instance;
     }

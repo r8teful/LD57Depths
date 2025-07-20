@@ -143,6 +143,7 @@ public class BackgroundManager : MonoBehaviour {
                 // Check if object is outside despawn radius
                 if (Vector2.Distance(objPos, playerPos) > despawnRadius) {
                     toRemove.Add(obj);
+                    //Debug.Log($"Despawned object: {obj.name} at position {objPos} outside radius {despawnRadius}");
                 }
             }
             // Remove and destroy objects outside despawn radius

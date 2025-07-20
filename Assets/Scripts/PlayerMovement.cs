@@ -70,7 +70,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     public int InitializationOrder => 80;
 
 
-    public void Initialize(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(NetworkedPlayer playerParent) {
         MainCam = Camera.main;
         MainCam.transform.SetParent(transform);
         MainCam.transform.localPosition = new Vector3(0, 0, -10);

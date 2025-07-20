@@ -39,9 +39,6 @@ public class FishBackgroundVisual : MonoBehaviour, IBackgroundObject {
         transform.localRotation = Quaternion.Euler(0, 0, Random.Range(0, 360));
         spriteRenderer.DOFade(1, 3);
     }
-    private void OnDestroy() {
-        transform.DOKill();
-    }
     private void FixedUpdate() {
         // AI logic should only run on the server. FishNet handles synchronization.
         UpdateState();
@@ -111,6 +108,7 @@ public class FishBackgroundVisual : MonoBehaviour, IBackgroundObject {
         var xScale = transform.localScale.x;
         var yScale = transform.localScale.y;
         Sequence moveSeq = DOTween.Sequence();
+        moveSeq.SetLink(gameObject);
         moveSeq.Append(transform.DOScaleX(xScale * 0.8f, 0.2f));
         moveSeq.Insert(0.05f, transform.DOScaleY(yScale * 1.2f, 0.2f));
         moveSeq.Append(transform.DOScaleX(xScale, 0.2f).SetEase(Ease.OutBounce));
@@ -133,6 +131,12 @@ public class FishBackgroundVisual : MonoBehaviour, IBackgroundObject {
     }
 
     public void BeforeDestroy() {
-        spriteRenderer.DOFade(0, 3).OnComplete(() => Destroy(gameObject));
+        spriteRenderer.DOFade(0, 3).OnComplete(() => DestroyObject());
+    }
+
+    private void DestroyObject() {
+        _currentSeq.Kill();
+        transform.DOKill();
+        Destroy(gameObject, 0.1f);
     }
 }

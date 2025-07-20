@@ -13,6 +13,20 @@ public class DEBUGGOD : MonoBehaviour, IToolBehaviour {
     private bool _toggle;
     private bool _isDamaging = false;
     public GameObject GO => null;
+
+    public IToolVisual toolVisual => throw new System.NotImplementedException();
+
+    public ToolType toolType => ToolType.GOD;
+
+    public ushort toolID => (ushort)toolType;
+
+    public MiningToolData GetToolData() {
+        throw new System.NotImplementedException();
+    }
+
+    public void InitVisualTool(IToolBehaviour toolBehaviourParent) {
+        throw new System.NotImplementedException();
+    }
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
     }
@@ -59,4 +73,5 @@ public class DEBUGGOD : MonoBehaviour, IToolBehaviour {
     public void ToolStop() {
         _isDamaging = false;
     }
+
 }

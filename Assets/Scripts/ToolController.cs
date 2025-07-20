@@ -1,4 +1,8 @@
-﻿using FishNet.Object;
+﻿using FishNet;
+using FishNet.Connection;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
 
@@ -6,52 +10,77 @@ using UnityEngine;
 public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     [SerializeField] private Transform _toolSlotMining; // Instantiated slot for the current mining tool
     [SerializeField] private Transform _toolSlotCleaning;
-    private IToolBehaviour currentMiningToolBehavior;
+
+    // local only!
+    private IToolBehaviour currentMiningToolBehavior; 
     private IToolBehaviour currentCleaningToolBehavior;
     private WorldManager _worldManager;
 
+    // local for remote
+    private Dictionary<ushort,IToolVisual> _idToToolVisual = new Dictionary<ushort, IToolVisual>();
+
+    // Server
+    private readonly SyncVar<ushort> _currentToolID = new SyncVar<ushort>();
+    private readonly SyncVar<bool> _isUsingTool = new SyncVar<bool>(false);
+    public SyncVar<ushort> CurrentToolID => _currentToolID;
+    public SyncVar<bool> IsUsingTool => _isUsingTool;
+
     public int InitializationOrder => 9;
 
+    public IToolVisual GetCurrentTool() {
+        var id = CurrentToolID.Value;
+        return _idToToolVisual.GetValueOrDefault(id);
 
-    public void Initialize(NetworkedPlayer playerParent) {
-        Console.RegisterCommand(this, "DEBUGSetMineTool", "setMineTool", "god");
-        //Console.RegisterCommand(this, "mineGod", "setMineTool", "laser");
-        _worldManager = FindFirstObjectByType<WorldManager>();
     }
-    public override void OnStartClient() {
-        base.OnStartClient();
-        if (!IsOwner) {
-            base.enabled = false;
-            return;
-        }
+    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+        Console.RegisterCommand(this, "DEBUGSetMineTool", "setMineTool", "god");
+        _worldManager = FindFirstObjectByType<WorldManager>();
+        EquipDrill(); // Todo this would have to take from some kind of save file obviously
     }
     public override void OnStartServer() {
         base.OnStartServer();
         _worldManager = FindFirstObjectByType<WorldManager>();
-        if (App.isEditor) {
-            DEBUGSetMineTool("drill");
-            DEBUGSetDefaultCleanTool();
-        }
+        //if (App.isEditor) {
+        //    DEBUGSetMineTool("drill");
+        //    DEBUGSetDefaultCleanTool();
+        //}
     }
 
     public void StopMining() {
         currentMiningToolBehavior?.ToolStop();
+        StopUsingToolServerRpc(); // Let others know we've stopped 
     }
     public void StopCleaning() {
         currentCleaningToolBehavior?.ToolStop();
+        StopUsingToolServerRpc(); // Let others know we've stopped 
     }
 
-
-    // Set the current tool's behavior (called when equipping a tool)
-    public void SetToolBehavior(IToolBehaviour toolBehavior) {
-        currentMiningToolBehavior = toolBehavior;
+    /*
+     * These two functions are called by the owning player, then, in PlayerVisualHandler attached to this playerObject on the 
+     * remove client will recieve an OnChangeEvent saying "This player just started/stopped using their tool!" and then they
+     * will locally simulate that tools visuals
+    */
+    [ServerRpc]
+    private void StartUsingToolServerRpc() {
+        _isUsingTool.Value = true;
+    }
+    [ServerRpc]
+    private void StopUsingToolServerRpc() {
+        _isUsingTool.Value = false;
     }
 
     public void PerformMining(InputManager input) {
+        // Don't think we have to check this, because its called from the input manager, which will only be called by the owner
+        if (!base.IsOwner)
+            return;
         currentMiningToolBehavior?.ToolStart(input, this); // Delegate to tool behavior
+        StartUsingToolServerRpc();
     }
     public void PerformCleaning(InputManager input) {
+        if (!base.IsOwner)
+            return;
         currentCleaningToolBehavior?.ToolStart(input, this);
+        StartUsingToolServerRpc();
     }
 
     [ServerRpc(RequireOwnership = true)]
@@ -64,10 +93,8 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
             _worldManager = FindFirstObjectByType<WorldManager>();
         _worldManager.RequestDamageTile(worldPos, damageAmount);
     }
-    
-
-    public void SetCleanTool(IToolBehaviour tool) {
-        currentCleaningToolBehavior = tool;
+    private void EquipDrill() {
+        EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("MiningDrill"));
     }
     private void DEBUGSetMineTool(string tool) {
         if (tool == "god") {
@@ -112,12 +139,31 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
             Debug.LogError($"Tool prefab '{toolPrefab.name}' is missing a component that implements IToolBehaviour.", toolPrefab);
             return;
         }
-
         // 4. Instantiate the tool and parent it to the designated slot.
         GameObject toolInstance = Instantiate(toolPrefab, slot); // Should use fishnet spawning here aswell!
+
         // 5. Get the behavior component and assign it.
         toolBehaviorReference = toolInstance.GetComponent<IToolBehaviour>();
-
+        _currentToolID.Value = toolBehaviorReference.toolID;
+    }
+  
+    // Will be called by a remote client so they can see the tool
+    private void EquipToolVisual(GameObject toolPrefab) {
+        // remote doesn't use slots
+        GameObject toolInstance = Instantiate(toolPrefab, transform);
+        IToolBehaviour toolBehaviour = null;
+        if(toolInstance.TryGetComponent<IToolBehaviour>(out var b)) {
+            toolBehaviour = b;
+        } else {
+            Debug.LogError("Could not find Interface on instantiated tool gameobject!");
+        }
+        // Store the instance so we can reference to it later
+        _idToToolVisual.TryAdd(toolBehaviour.toolID, toolBehaviour.toolVisual);
+    }
+    public void EquipAllToolsVisualOnly() {
+        EquipToolVisual(App.ResourceSystem.GetPrefab("MiningDrill"));
+        EquipToolVisual(App.ResourceSystem.GetPrefab("MiningLazer"));
+        //EquipToolVisual(App.ResourceSystem.GetPrefab("CleaningTool"));
     }
     public void ClearMiningSlot() {
         ClearSlot(_toolSlotMining, ref currentMiningToolBehavior);

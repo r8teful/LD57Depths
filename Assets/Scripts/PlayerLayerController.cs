@@ -22,7 +22,7 @@ public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
     private void OnDisable() {
         _currentLayer.OnChange -= OnLayerChanged;
     }
-    public void Initialize(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(NetworkedPlayer playerParent) {
         WorldVisibilityManager.Instance.InitLocal(this);
         // Apply initial state visibility if this is the local player
         HandleClientContextChange();    

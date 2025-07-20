@@ -12,7 +12,7 @@ public class PlayerCameraController : MonoBehaviour, INetworkedPlayerModule {
 
     public int InitializationOrder => 6;
 
-    public void Initialize(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _playerCamera = GetComponentInChildren<Camera>();
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged += OnPlayerVisibilityLayerChanged;
     }
