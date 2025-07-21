@@ -16,8 +16,9 @@ public interface IToolVisual {
      * effecting any gameplay, but still visually syncing with what the other player is doing.
      */
     public void HandleVisualUpdate(InputManager inputManager);
-    public void HandleVisualStart();
-    public void HandleVisualStop();
+    public void HandleVisualUpdateRemote(Vector2 nextInput);
+    public void HandleVisualStart(PlayerVisualHandler playerVisualHandler);
+    public void HandleVisualStop(PlayerVisualHandler playerVisualHandler);
 
     // Should stash the IToolBehaviour so we can call GetToolData for visuals, because they change and depend on the tool
     public void Init(IToolBehaviour parent);

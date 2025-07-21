@@ -59,6 +59,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     public void HandleRemoteToolSetup() {
         // We have to subscribe to the onchange on the toolController so we can know when to enable/disable the tools
         _remotePlayer.ToolController.IsUsingTool.OnChange += RemoteClientToolChange;
+        _remotePlayer.ToolController.Input.OnChange += RemoteClientInputChange;
         _remotePlayer.ToolController.EquipAllToolsVisualOnly();
 
         /* What we want is the following:
@@ -68,14 +69,18 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
          */
     }
 
+    private void RemoteClientInputChange(Vector2 prev, Vector2 next, bool asServer) {
+        Debug.Log("RemoteClient input is now: " + next);
+        _remotePlayer.ToolController.GetCurrentTool().HandleVisualUpdateRemote(next);
+    }
+
     private void RemoteClientToolChange(bool prev, bool next, bool asServer) {
         if (next) {
             // tool enabled
-            _remotePlayer.ToolController.GetCurrentTool().HandleVisualStart();
-
+            _remotePlayer.ToolController.GetCurrentTool().HandleVisualStart(this);
         } else {
             // Tool disabled
-            _remotePlayer.ToolController.GetCurrentTool().HandleVisualStop();
+            _remotePlayer.ToolController.GetCurrentTool().HandleVisualStop(this);
         }
         // TODO then somehow we would need to set what input they have and communicate it over the network, Thats about it
     }

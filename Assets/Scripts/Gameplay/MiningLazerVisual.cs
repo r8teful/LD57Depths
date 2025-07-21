@@ -26,14 +26,14 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         lineRenderer.enabled = false;
         laser = AudioController.Instance.PlaySound2D("Laser", 0.0f, looping: true);
     }
-    public void HandleVisualStart() {
+    public void HandleVisualStart(PlayerVisualHandler playerVisualHandler) {
         // Update the stats, this is ugly but it works I think, we could add an event when we change it and only then update it, but this also works
         _range = _toolBehaviour.GetToolData().ToolRange;
         laser.volume = 0.2f;
         FadeInLine(lineRenderer);
     }
 
-    public void HandleVisualStop() {
+    public void HandleVisualStop(PlayerVisualHandler playerVisualHandler) {
         HandleLaserVisualStop();
     }
 
@@ -119,5 +119,9 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         var shape = _lineLazerParticleSystem.shape;
         shape.shapeType = ParticleSystemShapeType.SingleSidedEdge;
         shape.radius = distance / 2;
+    }
+
+    public void HandleVisualUpdateRemote(Vector2 nextInput) {
+        throw new System.NotImplementedException();
     }
 }

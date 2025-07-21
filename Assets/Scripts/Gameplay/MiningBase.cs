@@ -61,15 +61,15 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
         _inputManager = input;
         _isMining = true;
         miningRoutine = StartCoroutine(MiningRoutine(controller));
-        toolVisual.HandleVisualStart();
+        toolVisual.HandleVisualStart(controller.GetPlayerParent().PlayerVisuals);
     }
-    public virtual void ToolStop() {
+    public virtual void ToolStop(ToolController controller) {
         if (miningRoutine != null) {
             StopCoroutine(miningRoutine);
             miningRoutine = null;
             _isMining = false;
         }
-        toolVisual.HandleVisualStop();
+        toolVisual.HandleVisualStop(controller.GetPlayerParent().PlayerVisuals);
     }
     private IEnumerator MiningRoutine(ToolController controller) {
         while (true) {

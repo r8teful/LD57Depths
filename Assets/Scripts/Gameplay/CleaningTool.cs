@@ -42,7 +42,7 @@ public class CleaningTool : MonoBehaviour, IToolBehaviour {
   
     }
 
-    public void ToolStop() {
+    public void ToolStop(ToolController controller) {
         cleaning = true; 
         _particleSystem.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
         //laser.volume = 0.0f;

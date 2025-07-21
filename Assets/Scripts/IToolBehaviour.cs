@@ -11,7 +11,7 @@ public interface IToolBehaviour {
     /// Called ONCE when player has released the mining button
     /// </summary>
     /// <param name="controller"></param>
-    void ToolStop();
+    void ToolStop(ToolController toolController);
     MiningToolData GetToolData();
     void InitVisualTool(IToolBehaviour toolBehaviourParent);
     public IToolVisual toolVisual { get; }

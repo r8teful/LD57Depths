@@ -8,10 +8,10 @@ using UnityEngine;
 
 // All players have this script, this handles references and setup of relevant things all players should have
 public class NetworkedPlayer : NetworkBehaviour {
-    private InputManager _inputManager;
     private UpgradeManager _upgradeManager;
     private List<INetworkedPlayerModule> _modules;
 
+    public InputManager InputManager { get; private set; }
     public CraftingComponent CraftingComponent { get; private set; }
     public NetworkedPlayerInventory InventoryN { get; private set; }
     public UIManager UiManager { get; private set; }
@@ -61,7 +61,7 @@ public class NetworkedPlayer : NetworkBehaviour {
 
         CraftingComponent = gameObject.AddComponent<CraftingComponent>();
         PlayerCamera = gameObject.AddComponent<PlayerCameraController>();
-        _inputManager = gameObject.AddComponent<InputManager>();
+        InputManager = gameObject.AddComponent<InputManager>();
 
         // Discover all modules on this GameObject and sort based on initialization order.
         _modules = GetComponents<INetworkedPlayerModule>().ToList();

@@ -70,7 +70,7 @@ public class DEBUGGOD : MonoBehaviour, IToolBehaviour {
         StartCoroutine(DamageTileRoutine(manager));
     }
 
-    public void ToolStop() {
+    public void ToolStop(ToolController controller) {
         _isDamaging = false;
     }
 

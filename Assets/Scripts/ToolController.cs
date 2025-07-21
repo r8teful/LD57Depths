@@ -5,25 +5,31 @@ using FishNet.Object.Synchronizing;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.Windows;
 
 // Controls what happens when the player presses the left mouse button, which usually will activate a specific tool
 public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     [SerializeField] private Transform _toolSlotMining; // Instantiated slot for the current mining tool
     [SerializeField] private Transform _toolSlotCleaning;
 
-    // local only!
+    // local owner only!
     private IToolBehaviour currentMiningToolBehavior; 
     private IToolBehaviour currentCleaningToolBehavior;
     private WorldManager _worldManager;
-
+    private bool _isUsingToolRemote;
+    private NetworkedPlayer _playerParent;
+    public NetworkedPlayer GetPlayerParent() => _playerParent;
     // local for remote
     private Dictionary<ushort,IToolVisual> _idToToolVisual = new Dictionary<ushort, IToolVisual>();
+    private float _inputSendTimer;
 
     // Server
     private readonly SyncVar<ushort> _currentToolID = new SyncVar<ushort>();
     private readonly SyncVar<bool> _isUsingTool = new SyncVar<bool>(false);
+    private readonly SyncVar<Vector2> _input = new SyncVar<Vector2>(Vector2.zero,new SyncTypeSettings(0.4f));
     public SyncVar<ushort> CurrentToolID => _currentToolID;
     public SyncVar<bool> IsUsingTool => _isUsingTool;
+    public SyncVar<Vector2> Input => _input;
 
     public int InitializationOrder => 9;
 
@@ -33,6 +39,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
 
     }
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
+        _playerParent = playerParent;
         Console.RegisterCommand(this, "DEBUGSetMineTool", "setMineTool", "god");
         _worldManager = FindFirstObjectByType<WorldManager>();
         EquipDrill(); // Todo this would have to take from some kind of save file obviously
@@ -45,21 +52,53 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         //    DEBUGSetDefaultCleanTool();
         //}
     }
-
+    public void PerformMining(InputManager input) {
+        // Don't think we have to check this, because its called from the input manager, which will only be called by the owner
+        if (!base.IsOwner)
+            return;
+        currentMiningToolBehavior?.ToolStart(input, this); // Delegate to tool behavior
+        StartUsingToolServerRpc();
+        _isUsingToolRemote = true;
+    }
+    public void PerformCleaning(InputManager input) {
+        if (!base.IsOwner)
+            return;
+        currentCleaningToolBehavior?.ToolStart(input, this);
+        StartUsingToolServerRpc();
+        _isUsingToolRemote = true;
+    }
     public void StopMining() {
-        currentMiningToolBehavior?.ToolStop();
+        currentMiningToolBehavior?.ToolStop(this);
         StopUsingToolServerRpc(); // Let others know we've stopped 
+        _isUsingToolRemote = false;
     }
     public void StopCleaning() {
-        currentCleaningToolBehavior?.ToolStop();
+        currentCleaningToolBehavior?.ToolStop(this);
         StopUsingToolServerRpc(); // Let others know we've stopped 
+        _isUsingToolRemote = false;
     }
 
+    // We have to somehow send the current local input over the network so others can simulate it, because the tools themselves
+    // are not NetworkBehaviours we just do it here in the ToolController. Quite ugly but works
+    private void Update() {
+        if (!base.IsOwner) {
+            return;
+        }
+        _inputSendTimer += Time.deltaTime;
+        if (_inputSendTimer >= 0.4f) {
+            if (_isUsingToolRemote) {
+                _inputSendTimer = 0f;
+                ToolInputServerRpc(_playerParent.InputManager.GetAimInput());
+            }
+        }
+    }
+
+
     /*
-     * These two functions are called by the owning player, then, in PlayerVisualHandler attached to this playerObject on the 
-     * remove client will recieve an OnChangeEvent saying "This player just started/stopped using their tool!" and then they
-     * will locally simulate that tools visuals
-    */
+* These two functions are called by the owning player, then, in PlayerVisualHandler attached to this playerObject on the 
+* remove client will recieve an OnChangeEvent saying "This player just started/stopped using their tool!" and then they
+* will locally simulate that tools visuals
+*/
     [ServerRpc]
     private void StartUsingToolServerRpc() {
         _isUsingTool.Value = true;
@@ -69,19 +108,11 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         _isUsingTool.Value = false;
     }
 
-    public void PerformMining(InputManager input) {
-        // Don't think we have to check this, because its called from the input manager, which will only be called by the owner
-        if (!base.IsOwner)
-            return;
-        currentMiningToolBehavior?.ToolStart(input, this); // Delegate to tool behavior
-        StartUsingToolServerRpc();
+    [ServerRpc]
+    private void ToolInputServerRpc(Vector2 input) {
+        _input.Value = input;
     }
-    public void PerformCleaning(InputManager input) {
-        if (!base.IsOwner)
-            return;
-        currentCleaningToolBehavior?.ToolStart(input, this);
-        StartUsingToolServerRpc();
-    }
+  
 
     [ServerRpc(RequireOwnership = true)]
     public void CmdRequestDamageTile(Vector3 worldPos, short damageAmount) {
@@ -115,9 +146,9 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         // base.Spawn(g, Owner); // This will be how you'd do it in multiplayer
     }
 
-    internal void StopCurrentTool() {
-        currentCleaningToolBehavior?.ToolStop();
-        currentMiningToolBehavior?.ToolStop();
+    internal void StopAllTools() {
+        StopMining();
+        StopCleaning();
     }
 
     public void EquipMiningToolFromPrefab(GameObject toolPrefab) {

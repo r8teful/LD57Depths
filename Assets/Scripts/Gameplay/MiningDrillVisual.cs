@@ -2,22 +2,51 @@
 using UnityEngine;
 
 public class MiningDrillVisual : MonoBehaviour, IToolVisual {
-    [SerializeField] private SpriteRenderer _sprite;
-    public void HandleVisualStart() {
+    [SerializeField] private SpriteRenderer _spriteDrill;
+    [SerializeField] private SpriteRenderer _spriteHand;
+    private Vector2 _inputPrev;
+    private Vector2 _inputCurrent;
+    private Coroutine _currentRoutine;
+    public void HandleVisualStart(PlayerVisualHandler playerVisualHandler) {
         // Show the drill
-        _sprite.color = Color.black;
-        // So this up here is not working, it should show up on the remote client but I don't know why it isn't
-        // We should start by looking if we actually listen to the onchange in the start. It must be somewhere there
+        playerVisualHandler.SetBobHand(false);
+        _spriteDrill.enabled = true;
+        _spriteHand.enabled = true;
     }
-    public void HandleVisualStop() {
+    public void HandleVisualStop(PlayerVisualHandler playerVisualHandler) {
         // Hide the drill
-        _sprite.color = Color.white;
+        playerVisualHandler.SetBobHand(true);
+        _spriteDrill.enabled = false;
+        _spriteHand.enabled = false;
     }
 
     public void HandleVisualUpdate(InputManager inputManager) {
         DrillVisual(inputManager.GetAimInput());
     }
 
+    public void HandleVisualUpdateRemote(Vector2 nextInput) {
+        _inputCurrent = nextInput;
+        if (_inputCurrent != _inputPrev) {
+            if (_currentRoutine != null) {
+                StopCoroutine(_currentRoutine);
+            }
+            _currentRoutine = StartCoroutine(SmoothInterpolate(_inputPrev, _inputCurrent));
+        }
+    }
+    private IEnumerator SmoothInterpolate(Vector2 from, Vector2 to) {
+        float duration = 0.4f; // This should match the syncvar update frequency
+        float elapsed = 0f;
+
+        while (elapsed < duration) {
+            elapsed += Time.deltaTime;
+            Vector2 lerped = Vector2.Lerp(from, to, elapsed / duration);
+            _inputPrev = lerped; // This makes sense right?
+            DrillVisual(lerped);
+            yield return null;
+        }
+        DrillVisual(to);
+        _currentRoutine = null;// Cleanup
+    }
     public void Init(IToolBehaviour parent) {
         // Don't need any special visuals atm
     }

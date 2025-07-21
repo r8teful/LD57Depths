@@ -257,7 +257,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         if (context.performed) {
             // Just switch between for now
             if (_toolController != null)
-                _toolController.StopCurrentTool();
+                _toolController.StopAllTools();
             if(_currentShootMode == ShootMode.Mining) {
                 _currentShootMode = ShootMode.Cleaning;
             } else {
