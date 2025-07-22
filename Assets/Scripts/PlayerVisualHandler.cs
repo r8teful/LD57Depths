@@ -1,4 +1,5 @@
-﻿using FishNet.Object;
+﻿using FishNet.Component.Animating;
+using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System;
 using System.Collections;
@@ -11,6 +12,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     private SpriteRenderer sprite; 
     [SerializeField] private SpriteRenderer _bobHand; 
     private Animator animator;
+    private NetworkAnimator animatorNetwork;
     private string currentAnimation = "";
     public Collider2D playerSwimCollider;
     public Collider2D playerWalkCollider;
@@ -34,6 +36,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     }
     private void InitCommon() {
         animator = GetComponent<Animator>();
+        animatorNetwork = GetComponent<NetworkAnimator>();
         sprite = GetComponent<SpriteRenderer>();
         lightIntensityOn = lightSpot.intensity;
     }
@@ -131,7 +134,8 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
             return;
         if (currentAnimation != animationName) {
             currentAnimation = animationName;
-            animator.CrossFade(animationName, 0.2f, 0);
+            animator.CrossFade(animationName, 0.2f,0);
+            animatorNetwork.CrossFade(animationName, 0.2f, 0);
             // animator.Play(animationName); // Or use this one instead of crossfade
         }
     }

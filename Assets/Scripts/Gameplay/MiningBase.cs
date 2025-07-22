@@ -25,7 +25,8 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
             toolTier = 0 //TODO
         };
     }
-    private void Start() {
+    protected virtual void Start() {
+        Debug.Log("StartBase called on: " + toolType);
         InitVisualTool(this);
     }
     public void InitVisualTool(IToolBehaviour toolBehaviourParent) {

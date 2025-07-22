@@ -10,9 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4967687453420680532}
   - component: {fileID: 5834443973641991729}
-  - component: {fileID: 8938240556587285323}
   - component: {fileID: 8924407976115634318}
-  - component: {fileID: -3680364883450468238}
   m_Layer: 0
   m_Name: MiningLazer
   m_TagString: Untagged
@@ -52,57 +50,6 @@ MonoBehaviour:
   innerSpotAngle: 5
   outerSpotAngle: 30
   falloffStrength: 1.5
---- !u!114 &8938240556587285323
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7061146683119796471}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <IsNested>k__BackingField: 0
-  <ComponentIndex>k__BackingField: 0
-  <PredictedSpawn>k__BackingField: {fileID: 0}
-  <PredictedOwner>k__BackingField: {fileID: 0}
-  NetworkBehaviours:
-  - {fileID: -3680364883450468238}
-  InitializedParentNetworkBehaviour: {fileID: 0}
-  InitializedNestedNetworkObjects: []
-  RuntimeParentNetworkBehaviour: {fileID: 0}
-  RuntimeChildNetworkBehaviours: []
-  _isNetworked: 1
-  _isSpawnable: 1
-  _isGlobal: 0
-  _initializeOrder: 0
-  _preventDespawnOnDisconnect: 0
-  _defaultDespawnType: 0
-  NetworkObserver: {fileID: 0}
-  _enablePrediction: 0
-  _predictionType: 0
-  _graphicalObject: {fileID: 0}
-  _detachGraphicalObject: 0
-  _enableStateForwarding: 1
-  _networkTransform: {fileID: 0}
-  _ownerInterpolation: 1
-  _ownerSmoothedProperties: 255
-  _adaptiveInterpolation: 3
-  _spectatorSmoothedProperties: 255
-  _spectatorInterpolation: 2
-  _enableTeleport: 0
-  _teleportThreshold: 1
-  <PrefabId>k__BackingField: 7
-  <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 4693442883248160609
-  <SceneId>k__BackingField: 0
-  SerializedTransformProperties:
-    Position: {x: -0.25, y: 0.56, z: 0}
-    Rotation: {x: 0, y: 0, z: 0, w: 1}
-    Scale: {x: 1, y: 1, z: 1}
-    IsValid: 1
 --- !u!114 &8924407976115634318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,21 +65,6 @@ MonoBehaviour:
   lineRenderer: {fileID: 3106166544025707308}
   ParticlesPrefabHit: {fileID: 3697584050806109930, guid: 2fee62432f469004393aa2d63631c7ae, type: 3}
   _lineLazerParticleSystem: {fileID: 5685291242158257173}
---- !u!114 &-3680364883450468238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7061146683119796471}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a6a39c46bf52104ba8efe3100bce3f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 8938240556587285323}
-  _networkObjectCache: {fileID: 8938240556587285323}
 --- !u!1001 &536339242502272052
 PrefabInstance:
   m_ObjectHideFlags: 0

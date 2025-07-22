@@ -17,12 +17,14 @@ public class MiningLazer : MiningBase {
 
     public override ToolType toolType => ToolType.Lazer;
 
-    private void Start() {
-        if(gameObject.TryGetComponent<IToolVisual>(out var c)){
+    protected override void Start() {
+        Debug.Log("Start called on: " + toolType);
+        if (gameObject.TryGetComponent<IToolVisual>(out var c)){
             _toolVisual = c;
         } else {
             Debug.LogError("Could not find minglazerVisual on gameobject!");
         }
+        base.Start(); // We call base after here because we need to have set the toolVisual reference 
     }
     Vector2 GetConeRayDirection(Vector2 baseDirection) {
         float randomAngle = Random.Range(-outerSpotAngle / 2f, outerSpotAngle / 2f); // Angle variation within outer cone

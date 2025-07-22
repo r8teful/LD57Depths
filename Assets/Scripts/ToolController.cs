@@ -33,6 +33,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
 
     public int InitializationOrder => 9;
 
+    // Problem lies here because we don't properly populate the remote _idToToolVisual dictionary
     public IToolVisual GetCurrentTool() {
         var id = CurrentToolID.Value;
         return _idToToolVisual.GetValueOrDefault(id);
@@ -43,6 +44,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         Console.RegisterCommand(this, "DEBUGSetMineTool", "setMineTool", "god");
         _worldManager = FindFirstObjectByType<WorldManager>();
         EquipDrill(); // Todo this would have to take from some kind of save file obviously
+        EquipCleanTool(); // Todo this would have to take from some kind of save file obviously
     }
     public override void OnStartServer() {
         base.OnStartServer();
@@ -57,24 +59,24 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         if (!base.IsOwner)
             return;
         currentMiningToolBehavior?.ToolStart(input, this); // Delegate to tool behavior
-        StartUsingToolServerRpc();
+        ToolStartServerRpc(currentMiningToolBehavior.toolID);
         _isUsingToolRemote = true;
     }
     public void PerformCleaning(InputManager input) {
         if (!base.IsOwner)
             return;
         currentCleaningToolBehavior?.ToolStart(input, this);
-        StartUsingToolServerRpc();
+        ToolStartServerRpc(currentCleaningToolBehavior.toolID);
         _isUsingToolRemote = true;
     }
     public void StopMining() {
         currentMiningToolBehavior?.ToolStop(this);
-        StopUsingToolServerRpc(); // Let others know we've stopped 
+        ToolStopServerRpc(); // Let others know we've stopped 
         _isUsingToolRemote = false;
     }
     public void StopCleaning() {
         currentCleaningToolBehavior?.ToolStop(this);
-        StopUsingToolServerRpc(); // Let others know we've stopped 
+        ToolStopServerRpc(); // Let others know we've stopped 
         _isUsingToolRemote = false;
     }
 
@@ -100,11 +102,12 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
 * will locally simulate that tools visuals
 */
     [ServerRpc]
-    private void StartUsingToolServerRpc() {
+    private void ToolStartServerRpc(ushort ID) {
+        _currentToolID.Value = ID; // Gues we don't have to set this value all the time, probably just when switching, but like this is easy
         _isUsingTool.Value = true;
     }
     [ServerRpc]
-    private void StopUsingToolServerRpc() {
+    private void ToolStopServerRpc() {
         _isUsingTool.Value = false;
     }
 
@@ -112,7 +115,10 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     private void ToolInputServerRpc(Vector2 input) {
         _input.Value = input;
     }
-  
+    [ServerRpc]
+    private void ToolChangeServerRpc(ushort ID) {
+        _currentToolID.Value = ID;
+    }
 
     [ServerRpc(RequireOwnership = true)]
     public void CmdRequestDamageTile(Vector3 worldPos, short damageAmount) {
@@ -126,6 +132,9 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     }
     private void EquipDrill() {
         EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("MiningDrill"));
+    }
+    private void EquipCleanTool() {
+        EquipCleaningToolFromPrefab(App.ResourceSystem.GetPrefab("CleaningTool"));
     }
     private void DEBUGSetMineTool(string tool) {
         if (tool == "god") {
@@ -175,7 +184,8 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
 
         // 5. Get the behavior component and assign it.
         toolBehaviorReference = toolInstance.GetComponent<IToolBehaviour>();
-        _currentToolID.Value = toolBehaviorReference.toolID;
+
+        ToolChangeServerRpc(toolBehaviorReference.toolID); // Send what tool we have to the server so others can know
     }
   
     // Will be called by a remote client so they can see the tool
@@ -189,7 +199,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
             Debug.LogError("Could not find Interface on instantiated tool gameobject!");
         }
         // Store the instance so we can reference to it later
-        _idToToolVisual.TryAdd(toolBehaviour.toolID, toolBehaviour.toolVisual);
+        _idToToolVisual.TryAdd(toolBehaviour.toolID, toolBehaviour.toolVisual); // ID 2 is null!
     }
     public void EquipAllToolsVisualOnly() {
         EquipToolVisual(App.ResourceSystem.GetPrefab("MiningDrill"));
