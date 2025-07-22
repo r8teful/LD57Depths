@@ -16,7 +16,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     private IToolBehaviour currentMiningToolBehavior; 
     private IToolBehaviour currentCleaningToolBehavior;
     private WorldManager _worldManager;
-    private bool _isUsingToolRemote;
+    private bool _isUsingToolLocal;
     private NetworkedPlayer _playerParent;
     public NetworkedPlayer GetPlayerParent() => _playerParent;
     // local for remote
@@ -43,9 +43,18 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         _playerParent = playerParent;
         Console.RegisterCommand(this, "DEBUGSetMineTool", "setMineTool", "god");
         _worldManager = FindFirstObjectByType<WorldManager>();
+        _playerParent.PlayerLayerController.CurrentLayer.OnChange += PlayerLayerChange;
         EquipDrill(); // Todo this would have to take from some kind of save file obviously
         EquipCleanTool(); // Todo this would have to take from some kind of save file obviously
     }
+
+    private void PlayerLayerChange(VisibilityLayerType prev, VisibilityLayerType next, bool asServer) {
+        if (_isUsingToolLocal && next==VisibilityLayerType.Interior) {
+            // Stop using the tool
+            ForceStopAllTools();
+        }
+    }
+
     public override void OnStartServer() {
         base.OnStartServer();
         _worldManager = FindFirstObjectByType<WorldManager>();
@@ -58,26 +67,45 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         // Don't think we have to check this, because its called from the input manager, which will only be called by the owner
         if (!base.IsOwner)
             return;
+        // Is this action allowed?
+        if (!_playerParent.PlayerMovement.CanUseTool())
+            return;
         currentMiningToolBehavior?.ToolStart(input, this); // Delegate to tool behavior
         ToolStartServerRpc(currentMiningToolBehavior.toolID);
-        _isUsingToolRemote = true;
+        _isUsingToolLocal = true;
     }
     public void PerformCleaning(InputManager input) {
         if (!base.IsOwner)
             return;
+        if (!_playerParent.PlayerMovement.CanUseTool())
+            return;
         currentCleaningToolBehavior?.ToolStart(input, this);
         ToolStartServerRpc(currentCleaningToolBehavior.toolID);
-        _isUsingToolRemote = true;
+        _isUsingToolLocal = true;
     }
     public void StopMining() {
+        if (!base.IsOwner)
+            return;
+        if (!_playerParent.PlayerMovement.CanUseTool())
+            return;
+        EndMining();
+    }
+    private void EndMining() {
         currentMiningToolBehavior?.ToolStop(this);
         ToolStopServerRpc(); // Let others know we've stopped 
-        _isUsingToolRemote = false;
+        _isUsingToolLocal = false;
     }
     public void StopCleaning() {
+        if (!base.IsOwner)
+            return;
+        if (!_playerParent.PlayerMovement.CanUseTool())
+            return;
+        EndCleaning();
+    }
+    private void EndCleaning() {
         currentCleaningToolBehavior?.ToolStop(this);
         ToolStopServerRpc(); // Let others know we've stopped 
-        _isUsingToolRemote = false;
+        _isUsingToolLocal = false;
     }
 
     // We have to somehow send the current local input over the network so others can simulate it, because the tools themselves
@@ -88,7 +116,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         }
         _inputSendTimer += Time.deltaTime;
         if (_inputSendTimer >= 0.4f) {
-            if (_isUsingToolRemote) {
+            if (_isUsingToolLocal) {
                 _inputSendTimer = 0f;
                 ToolInputServerRpc(_playerParent.InputManager.GetAimInput());
             }
@@ -155,8 +183,9 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         // base.Spawn(g, Owner); // This will be how you'd do it in multiplayer
     }
 
-    internal void StopAllTools() {
-        StopMining();
+    // Doesn't look at any logic, just stops
+    internal void ForceStopAllTools() {
+        EndMining();
         StopCleaning();
     }
 

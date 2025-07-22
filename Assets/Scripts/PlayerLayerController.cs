@@ -2,9 +2,12 @@ using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using FishNet.Connection;
+using System;
 
 
 public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
+    private NetworkedPlayer _playerParent;
+
     // --- State ---
     // Synced variable to track the current layer across the network.
     private readonly SyncVar<VisibilityLayerType> _currentLayer = 
@@ -16,6 +19,7 @@ public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
 
     public int InitializationOrder => 90;
 
+
     private void OnEnable() {
         _currentLayer.OnChange += OnLayerChanged;
     }
@@ -23,6 +27,7 @@ public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
         _currentLayer.OnChange -= OnLayerChanged;
     }
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
+        _playerParent = playerParent;
         WorldVisibilityManager.Instance.InitLocal(this);
         // Apply initial state visibility if this is the local player
         HandleClientContextChange();    
@@ -121,7 +126,19 @@ public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
             WorldVisibilityManager.Instance.LocalPlayerContextChanged();
         } else {
             // A remote player's context changed, just update *their* visibility relative to me
-            WorldVisibilityManager.Instance.UpdateRemotePlayerVisibility(this);
+            if(_playerParent == null) {
+                InitPlayerParent();
+            }
+            WorldVisibilityManager.Instance.UpdateRemotePlayerVisibility(_playerParent);
+        }
+    }
+
+    private void InitPlayerParent() {
+        if (NetworkedPlayersManager.Instance.TryGetPlayer(base.OwnerId, out NetworkedPlayer remoteClient)) {
+            _playerParent = remoteClient;
+        } else {
+            Debug.LogError("Could not find networkedPlayer on remote client!");
+            return;
         }
     }
 }

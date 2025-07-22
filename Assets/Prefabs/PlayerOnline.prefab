@@ -620,10 +620,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333514cc182728469f170a484caaa89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 6962948237969374493}
+  _networkObjectCache: {fileID: 0}
   _bobHand: {fileID: 6053458303575230055}
   playerSwimCollider: {fileID: 2107403869247240461}
   playerWalkCollider: {fileID: 1368393615559994162}
   lightSpot: {fileID: 8774488322261225542}
+  _remotePlayer: {fileID: 0}
+  _localPlayer: {fileID: 0}
 --- !u!114 &6902581419565130942
 MonoBehaviour:
   m_ObjectHideFlags: 0

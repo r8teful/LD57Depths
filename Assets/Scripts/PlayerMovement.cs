@@ -1,11 +1,7 @@
-﻿using FishNet.Object;
-using FishNet.Object.Prediction;
-using GameKit.Dependencies.Utilities;
-using System;
+﻿using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering.Universal;
 
 public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
@@ -68,7 +64,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     private bool _isInsideOxygenZone;
 
     public int InitializationOrder => 80;
-
+    internal bool CanUseTool() => _currentState == PlayerState.Swimming;
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         MainCam = Camera.main;
@@ -125,6 +121,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
                 HandleClimbingLadderUpdate();
                 break;
         }
+        _visualHandler.HandleVisualUpdate(_currentState, _currentInput);
         if (ShouldDepleteOxygen()) {
             DepleteOxygen();
         } else {
@@ -178,12 +175,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
             _isDashing = true;
             dashTimer = dashDuration; // Reset dash timer
         }
-        if (_currentInput.magnitude != 0) {
-            _visualHandler.ChangeAnimation("Swim");
-        } else {
-            _visualHandler.ChangeAnimation("SwimIdle");
-        }
-        _visualHandler.CheckFlipSprite(_currentInput.x);
         DepleteOxygen();
     }
 
@@ -237,8 +228,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
             }
         }
-        _visualHandler.CheckFlipSprite(_currentInput.x);
-        _visualHandler.ChangeAnimation(Mathf.Abs(_currentInput.x) > 0.01f ? "Walk" : "Idle");
     }
     private void HandleGroundedPhysics() {
         // Horizontal movement
@@ -268,13 +257,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
             ChangeState(PlayerState.Grounded); // Assumes platform at top
         } else if (feetY < ladderBottomY && _currentInput.y < 0) {
             ChangeState(PlayerState.Grounded); // Or falling
-        }
-
-        // Climbing animation logic
-        if (Mathf.Abs(_currentInput.y) > 0.01f) {
-            _visualHandler.ChangeAnimation("Climb");
-        } else {
-            _visualHandler.ChangeAnimation("ClimbIdle"); // Or just stop animator speed for Climb animation
         }
     }
     private void HandleClimbingLadderPhysics() {
@@ -342,16 +324,13 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     }
 
     void OnStateEnter(PlayerState state, PlayerState oldState) {
-        _visualHandler.SetHitbox(state);
-        Debug.Log(_visualHandler);
+        _visualHandler.OnStateEnter(state);
         switch (state) {
             case PlayerState.Swimming:
                 rb.gravityScale = 0; // No gravity when swimming
-                _visualHandler.SetLights(true);
                 break;
             case PlayerState.Grounded:
                 rb.gravityScale = 2;
-                _visualHandler.SetLights(false);
                 //MainCam.transform.SetParent(insideSubTransform);
                 //MainCam.transform.localPosition = new Vector3(0, 0, -10);
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0); // Reset vertical velocity when entering from climb
@@ -383,7 +362,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
         // Clean up from the state we are leaving
         switch (state) {
             case PlayerState.ClimbingLadder:
-                
                 _currentLadder.GetComponentInParent<SubLadder>().SetPlatform(true);
                 rb.gravityScale = 2; // Restore gravity when leaving ladder
                 if (newState == PlayerState.None || newState == PlayerState.Grounded) {

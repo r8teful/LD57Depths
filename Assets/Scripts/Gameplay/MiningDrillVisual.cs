@@ -9,13 +9,13 @@ public class MiningDrillVisual : MonoBehaviour, IToolVisual {
     private Coroutine _currentRoutine;
     public void HandleVisualStart(PlayerVisualHandler playerVisualHandler) {
         // Show the drill
-        playerVisualHandler.SetBobHand(false);
+        playerVisualHandler.OnStartDrilling();
         _spriteDrill.enabled = true;
         _spriteHand.enabled = true;
     }
     public void HandleVisualStop(PlayerVisualHandler playerVisualHandler) {
         // Hide the drill
-        playerVisualHandler.SetBobHand(true);
+        playerVisualHandler.OnStopDrilling();
         _spriteDrill.enabled = false;
         _spriteHand.enabled = false;
     }

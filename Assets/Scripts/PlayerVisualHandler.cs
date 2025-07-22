@@ -17,7 +17,10 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     public Collider2D playerSwimCollider;
     public Collider2D playerWalkCollider;
     public Light2D lightSpot;
+    // There could every only be two references for a player here, we are either owner, which would be the localPlayer reference
+    // Or we are not the owner, in which case it would be a remote.
     public NetworkedPlayer _remotePlayer;
+    public NetworkedPlayer _localPlayer;
     private float lightIntensityOn;
     private readonly SyncVar<bool> _isFlipped = new SyncVar<bool>(false);
     public int InitializationOrder => 60;
@@ -25,14 +28,10 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         InitCommon();
+        _localPlayer = playerParent;
     }
     private void OnEnable() {
         _isFlipped.OnChange += OnFlipChanged;
-    }
-
-    private void OnFlipChanged(bool prev, bool next, bool asServer) {
-        if (sprite == null) return;
-        FlipSprite(next);
     }
     private void InitCommon() {
         animator = GetComponent<Animator>();
@@ -40,21 +39,93 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         sprite = GetComponent<SpriteRenderer>();
         lightIntensityOn = lightSpot.intensity;
     }
-    public void InitializeOnNotOwner() {
+    public void InitializeOnNotOwner(NetworkedPlayer remoteClient) {
         if (hasInitializedNonOwner)
             return;
         InitCommon();
-        Debug.Log("setting up remote player on non owning client!");
+        _remotePlayer = remoteClient;
         // Set remote client specific visuals
-        // Cache remotclient networkedPlayer script.
-        if (NetworkedPlayersManager.Instance.TryGetPlayer(base.OwnerId, out NetworkedPlayer remoteClient)) {
-            _remotePlayer = remoteClient;
-        } else {
-            Debug.LogError("Could not find networkedPlayer on remote client!");
-            return;
-        }
+        // Cache remotclient networkedPlayer script. We could say GetComponentInParent but this seems like a more official way
+        
+        //if (NetworkedPlayersManager.Instance.TryGetPlayer(base.OwnerId, out NetworkedPlayer remoteClient)) {
+        //    _remotePlayer = remoteClient;
+        //} else {
+        //    Debug.LogError("Could not find networkedPlayer on remote client!");
+        //    return;
+        //}
+        
         HandleRemoteToolSetup();
         hasInitializedNonOwner = true;
+    }
+
+    // Called every frame, handles approriate visuals depending on each state
+    public void HandleVisualUpdate(PlayerState currentState, Vector2 currentInput) {
+        switch (currentState) {
+            case PlayerState.None:
+                break;
+            case PlayerState.Swimming:
+                HandleSwimVisual(currentInput);
+                break;
+            case PlayerState.Grounded:
+                HandleGroundVisual(currentInput);
+                break;
+            case PlayerState.Cutscene:
+                HandleSwimVisual(currentInput);
+                break;
+            case PlayerState.ClimbingLadder:
+                HandleClimbingLadderVisual(currentInput);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void HandleClimbingLadderVisual(Vector2 currentInput) { 
+        if (Mathf.Abs(currentInput.y) > 0.01f) {
+            ChangeAnimation("Climb");
+        } else {
+            ChangeAnimation("ClimbIdle"); // Or just stop animator speed for Climb animation
+        }
+    }
+
+    private void HandleGroundVisual(Vector2 currentInput) {
+        CheckFlipSprite(currentInput.x);
+        ChangeAnimation(Mathf.Abs(currentInput.x) > 0.01f ? "Walk" : "Idle");
+    }
+
+    private void HandleSwimVisual(Vector2 currentInput) {
+
+        if (currentInput.magnitude != 0) {
+            ChangeAnimation("Swim");
+        } else {
+            ChangeAnimation("SwimIdle");
+        }
+        CheckFlipSprite(currentInput.x);
+    }
+    internal void OnStateEnter(PlayerState state) {
+        SetHitbox(state);
+        switch (state) {
+            case PlayerState.Swimming:
+                SetLights(true);
+                SetBobHand(true);
+                break;
+            case PlayerState.Grounded:
+                SetLights(false);
+                SetBobHand(false);
+                break;
+            case PlayerState.Cutscene:
+                SetLights(false);
+                SetBobHand(false);
+                break;
+            case PlayerState.ClimbingLadder:
+                SetLights(false);
+                SetBobHand(false);
+                break;
+            case PlayerState.None:
+                break;
+            default:
+                break;
+        }
     }
 
     // For remote remote client, tools should be generic, first know which tool they are using, then enable it, then sync it and have the specific tool
@@ -120,7 +191,12 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
             _isFlipped.Value = true; // Flip to left
         }
     }
-    public void FlipSprite(bool shouldFlip) {
+    private void OnFlipChanged(bool prev, bool next, bool asServer) {
+        if (sprite == null)
+            return;
+        FlipSprite(next);
+    }
+    private void FlipSprite(bool shouldFlip) {
         if (shouldFlip) {
             sprite.flipX = true;
             _bobHand.gameObject.transform.parent.localScale = new Vector3(-1, 1, 1);
@@ -129,7 +205,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
             _bobHand.gameObject.transform.parent.localScale = new Vector3(1, 1, 1);
         }
     }
-    public void ChangeAnimation(string animationName) {
+    private void ChangeAnimation(string animationName) {
         if (animator == null)
             return;
         if (currentAnimation != animationName) {
@@ -139,7 +215,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
             // animator.Play(animationName); // Or use this one instead of crossfade
         }
     }
-    public void SetLights(bool setOn) {
+    private void SetLights(bool setOn) {
         if (setOn) {
             if (lightIntensityOn <= 0) {
                 lightIntensityOn = 1; // 
@@ -150,8 +226,78 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         }
     }
 
-    public void SetBobHand(bool activateHand) {
+    private void SetBobHand(bool activateHand) {
         _bobHand.enabled = activateHand;
     }
-  
+    /*
+    This is so fucked we need to rethink it because I'm just going in circles and there must be a better structure for this to be less fucking
+    buggy. The visuals should be shown when: 
+    
+    For local visual: Only show when we are actually using a tool
+    For remote visual: Show when they are using the tool & we have vibility over them
+    
+    We can only use a tool when we are swimming, if we are using a tool and go out of swimming mode, the tool should stop
+
+    That's it. That is all the logic. We just need an easy variable that is "Can we see client X" which pretty much just boils down to if we are 
+    on the same layer and internal ID
+    */ 
+    public void OnStartDrilling() {
+        if (!base.IsOwner) {
+            if (!HasVisibility()) {
+                return; // we are a remote player and don't have vibility, don't do any visual updates 
+            }
+        }
+        SetBobHand(false);
+    }
+
+    private bool HasVisibility() {
+        if (_localPlayer == null) {
+            if (NetworkedPlayersManager.Instance.TryGetPlayer(base.LocalConnection.ClientId, out var localPlayer)) {
+                _localPlayer = localPlayer;
+            }
+        }
+        if (_localPlayer == null || _remotePlayer == null) {
+            Debug.LogError("Need both local and remote reference to check if a non owner can set visuals properly!");
+            return false;
+        }
+        var localLayer = _localPlayer.PlayerLayerController.CurrentLayer.Value;
+        var remoteLayer = _remotePlayer.PlayerLayerController.CurrentLayer.Value;
+        // Todo also check layerID
+        if (localLayer != remoteLayer) {
+            return false;
+        }
+        return true;
+    }
+
+    public void OnStopDrilling() {
+        if (!base.IsOwner) {
+            if (!HasVisibility()) {
+                return; // we are a remote player and don't have vibility, don't do any visual updates 
+            }
+        }
+        if(_localPlayer.PlayerLayerController.CurrentLayer.Value == VisibilityLayerType.Interior) {
+            return; // Don't enable the hand if we are in the interior
+        }
+        SetBobHand(true);
+    }
+    public void HandleBobLayerChange(bool shouldBeVisible, VisibilityLayerType layer) {
+        foreach (Renderer r in GetComponentsInChildren<Renderer>(true)) // Include inactive children
+            r.enabled = shouldBeVisible;
+        foreach (Collider2D c in GetComponentsInChildren<Collider2D>(true)) {
+            c.enabled = shouldBeVisible;
+        }
+        if (shouldBeVisible) {
+            // Only really makes sence to change the visuals if we are visible otherwise it might cause wierd visual bugs
+            switch (layer) {
+                case VisibilityLayerType.Exterior:
+                    OnStateEnter(PlayerState.Swimming);
+                    break;
+                case VisibilityLayerType.Interior:
+                    OnStateEnter(PlayerState.Grounded);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }

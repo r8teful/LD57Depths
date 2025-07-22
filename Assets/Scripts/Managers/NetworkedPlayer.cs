@@ -18,6 +18,7 @@ public class NetworkedPlayer : NetworkBehaviour {
     public PlayerVisualHandler PlayerVisuals { get; private set; }
     public PlayerLayerController PlayerLayerController { get; private set; }
     public PlayerCameraController PlayerCamera { get; private set; }
+    public PlayerMovement PlayerMovement { get; private set; }
     public ToolController ToolController { get; private set; }
     public static NetworkedPlayer LocalInstance { get; private set; } // Singleton for local player
     public NetworkObject PlayerNetworkedObject => base.NetworkObject; // Expose NetworkObject for other scripts to use
@@ -27,9 +28,10 @@ public class NetworkedPlayer : NetworkBehaviour {
         base.OnStartClient();
         Debug.Log("Start Client on: " + OwnerId + " Are we owner?: " + IsOwner);
         CacheSharedComponents();
-        NetworkedPlayersManager.OnPlayersListChanged += OnPlayersChanged;
+        //NetworkedPlayersManager.OnPlayersListChanged += OnPlayersChanged;
         if (!base.IsOwner) {
             GetComponent<PlayerMovement>().enabled = false;
+            PlayerVisuals.InitializeOnNotOwner(this);
             return;
         }
         LocalInstance = this;
@@ -75,6 +77,8 @@ public class NetworkedPlayer : NetworkBehaviour {
         PlayerLayerController = GetComponent<PlayerLayerController>();
         PlayerVisuals = GetComponent<PlayerVisualHandler>();
         ToolController = GetComponent<ToolController>();
+        PlayerMovement = GetComponent<PlayerMovement>();
+
         _upgradeManager = UpgradeManager.Instance;
 
         InventoryN.Initialize(); // We have to do this first before everything else, then spawn the UI manager, and then start the other inits 
@@ -97,7 +101,6 @@ public class NetworkedPlayer : NetworkBehaviour {
             return;
         switch (operation) {
             case SyncDictionaryOperation.Add:
-                PlayerVisuals.InitializeOnNotOwner();
                 break;
             case SyncDictionaryOperation.Clear:
                 break;

@@ -75,10 +75,11 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
             // InteriorManager handles positioning and activation of the specific interior *instance*
             InteriorManager.Instance.ActivateInterior(_currentLocalInteriorId);
         }
+        // 4. Handle players!
         foreach (var remotePlayer in NetworkedPlayersManager.Instance.GetAllPlayers()) {
-            if(remotePlayer.PlayerLayerController != null) {
-                UpdateRemotePlayerVisibility(remotePlayer.PlayerLayerController);
-            }
+            if (remotePlayer.Owner == _localPlayerController.Owner)
+                continue; // Only valid, remote players
+            UpdateRemotePlayerVisibility(remotePlayer);
         }
     }
     // Called when local player state CHANGES (via OnChange)
@@ -100,28 +101,26 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
 
         // Update visibility of remote players relative to the new local context
         foreach (var remotePlayer in NetworkedPlayersManager.Instance.GetAllPlayers()) {
+            // Don't have to check for owner here because we are always owner when in this method
             if (remotePlayer.Owner == _localPlayerController.Owner)
                 continue; // Only valid, remote players
-            if (remotePlayer.PlayerLayerController != null) {
-                UpdateRemotePlayerVisibility(remotePlayer.PlayerLayerController);
-            }
+            UpdateRemotePlayerVisibility(remotePlayer);
         }
     }
 
     // Determines if a REMOTE player should be visible to the LOCAL player
-    public void UpdateRemotePlayerVisibility(PlayerLayerController remotePlayer) {
-        if (remotePlayer == null || remotePlayer.IsOwner || _localPlayerController == null) {
-            Debug.Log("Returning...");
-            return; // Ignore local player or if local player isn't known
+    public void UpdateRemotePlayerVisibility(NetworkedPlayer remotePlayer) {
+        if (remotePlayer == null || remotePlayer.IsOwner || _localPlayerController == null || remotePlayer.PlayerLayerController == null) {
+            Debug.LogWarning("One or more important variables is invalid...");
+            return; 
         }
-
-        Debug.Log("Trying to set remote player visibility");
         bool shouldBeVisible = false;
         var localLayer = _localPlayerController.CurrentLayer.Value;
         string localInteriorId = _localPlayerController.CurrentInteriorId.Value;
 
-        var remoteLayer = remotePlayer.CurrentLayer.Value;
-        string remoteInteriorId = remotePlayer.CurrentInteriorId.Value;
+        // Fetch their layer
+        var remoteLayer = remotePlayer.PlayerLayerController.CurrentLayer.Value;
+        string remoteInteriorId = remotePlayer.PlayerLayerController.CurrentInteriorId.Value;
 
         if (localLayer == VisibilityLayerType.Interior && remoteLayer == VisibilityLayerType.Interior) {
             shouldBeVisible = (localInteriorId == remoteInteriorId);
@@ -133,28 +132,10 @@ public class WorldVisibilityManager : Singleton<WorldVisibilityManager> {
             // One is inside, one is outside? Hide remote player.
             shouldBeVisible = false;
         }
-        // Apply visibility (enable/disable renderers, colliders, maybe the whole GameObject)
-        // Disabling the whole GO is simplest but might interfere with other logic.
-        // Disabling components is safer.
-        SetGameObjectComponentsActive(remotePlayer.gameObject, shouldBeVisible);
+        // Now delegate logic to PlayerVisualHandler
+        remotePlayer.PlayerVisuals.HandleBobLayerChange(shouldBeVisible, remoteLayer);
         //Debug.Log($"Setting remote player {remotePlayer.OwnerId} visibility to {shouldBeVisible} (Local: {localLayer}/{localInteriorId}, Remote: {remoteLayer}/{remoteInteriorId})");
     }
-
-    private void SetGameObjectComponentsActive(GameObject go, bool isActive) {
-        // Example: Disable Renderers and Colliders
-        foreach (Renderer r in go.GetComponentsInChildren<Renderer>(true)) // Include inactive children
-            r.enabled = isActive;
-        foreach (Collider2D c in go.GetComponentsInChildren<Collider2D>(true)) {
-            c.enabled = isActive;
-
-        }
-        // Optionally disable specific Behaviours/Scripts too
-        // foreach (NetworkBehaviour nb in go.GetComponentsInChildren<NetworkBehaviour>(true))
-        //     if(!(nb is PlayerLayerController)) // Don't disable the controller itself!
-        //          nb.enabled = isActive; // Be careful with this - might break sync
-    }
-
-
     // Helper to activate/deactivate the EXTERIOR world elements
     private void SetExteriorWorldActive(bool isActive) {
         if (ExteriorWorldRoot == null) return;
