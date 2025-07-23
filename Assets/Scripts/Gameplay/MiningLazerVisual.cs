@@ -9,10 +9,14 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
     public ParticleSystem _lineLazerParticleSystem;
     private ParticleSystem _hitParticleSystem;
 
+    private Vector2 _inputPrev;
+    private Vector2 _inputCurrent;
     private AudioSource laser;
 
     private float _range;
     private IToolBehaviour _toolBehaviour;
+    private Coroutine _currentRoutine;
+
     public void Init(IToolBehaviour parent) {
         _toolBehaviour = parent;
     }
@@ -122,6 +126,26 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
     }
 
     public void HandleVisualUpdateRemote(Vector2 nextInput) {
-        throw new System.NotImplementedException();
+        _inputCurrent = nextInput;
+        if (_inputCurrent != _inputPrev) {
+            if (_currentRoutine != null) {
+                StopCoroutine(_currentRoutine);
+            }
+            _currentRoutine = StartCoroutine(SmoothInterpolate(_inputPrev, _inputCurrent));
+        }
+    }
+    private IEnumerator SmoothInterpolate(Vector2 from, Vector2 to) {
+        float duration = 0.4f; // This should match the syncvar update frequency
+        float elapsed = 0f;
+
+        while (elapsed < duration) {
+            elapsed += Time.deltaTime;
+            Vector2 lerped = Vector2.Lerp(from, to, elapsed / duration);
+            _inputPrev = lerped; // This makes sense right?
+            LaserVisual(lerped);
+            yield return null;
+        }
+        LaserVisual(to);
+        _currentRoutine = null;// Cleanup
     }
 }

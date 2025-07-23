@@ -41,7 +41,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private ShootMode _currentShootMode = ShootMode.Mining;
     private LayerMask _interactableLayerMask;
     private ToolController _toolController;
-    private float _interactionRadius = 0.4f;
+    private float _interactionRadius = 2f;
     private bool _dashPefromed;
     private Vector2 movementInput;   // For character movement
     private Vector2 rawAimInput;     // Raw input for aiming (mouse position or joystick)
@@ -56,7 +56,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         _inventoryUIManager = playerParent.UiManager.UIManagerInventory;
         _clientObject = playerParent.PlayerNetworkedObject;
         _toolController = playerParent.ToolController;
-        _interactableLayerMask = LayerMask.NameToLayer("Interactables");
+        _interactableLayerMask = 1 << LayerMask.NameToLayer("Interactables"); // Don't ask me why
         SetupInputs();
         SubscribeToEvents();
     }
@@ -360,9 +360,9 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     }
 
     private void UIHandleCloseAction(InputAction.CallbackContext context) {
-        // E.g., Escape key or Gamepad B/Start (if configured to cancel)
-        _inventoryUIManager.HandleCloseAction(context);
-     
+        // E.g., Escape key or Gamepad B/Start 
+        _inventoryUIManager.HandleCloseAction(context); // For UI related
+        ClearInteractable(); // Also clear interactable
     }
     #endregion
     public static string FormatBindingDisplayString(string input) {

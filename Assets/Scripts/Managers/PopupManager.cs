@@ -85,7 +85,6 @@ public class PopupManager : StaticInstance<PopupManager> {
     private void ShowPopup(IPopupInfo infoProvider) {
         if (currentPopup != null && currentInfoProvider == infoProvider)
             return;
-
         HidePopup();
         currentInfoProvider = infoProvider;
         PopupData data = infoProvider.GetPopupData(inventoryManager);

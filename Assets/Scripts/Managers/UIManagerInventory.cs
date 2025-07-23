@@ -570,7 +570,7 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
         if (IsOpen) {
             // If inventory is open and nothing held, maybe toggle it closed
             HandleToggleInventory(context);
-        } 
+        }
         _playerInventory.CloseContainer();
     }
     private void SetInventoryInTab() {

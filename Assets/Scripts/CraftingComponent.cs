@@ -15,9 +15,10 @@ public class CraftingComponent : MonoBehaviour, INetworkedPlayerModule {
     public bool AttemptCraft(RecipeBaseSO recipe, RecipeExecutionContext context = null, UIPopup instantatiatedPopup = null) {
         // TODO possible use client inventoy from context here. But no, we don't really want to change that, or have other scripts store it, just have it be stored here and create a new context each time
         // We call ExecuteRecipe
-        Debug.Log("AttemptCraft!");
-        if (recipe == null || _clientInventory == null)
+        if (recipe == null || _clientInventory == null) {
+            Debug.LogWarning("recipe or Inventory null!");
             return false;
+        }
         if (context == null) {
             // Popuplate it with inv
             context = new RecipeExecutionContext { PlayerInventory = _clientInventory };

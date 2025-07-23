@@ -80,7 +80,7 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
             // Basically pressing again while the popup is already open
             // TODO use PopupManager.CurrentPopup!!
             // Passing the instantiated popup so we can show visual feedback BTW, this should probably be handled by PopupManager, it already has a CurrentPopup variable
-            var context = new RecipeExecutionContext { Entity = this };
+            var context = new RecipeExecutionContext { Entity = this, NetworkedPlayer = client.GetComponent<NetworkedPlayer>()};
             _subParent.TryFixEntity(fixRecipe, instantatiatedPopup, context);
         }
         //PopupManager.Instance.TryShowWorldPopup(this,client);
