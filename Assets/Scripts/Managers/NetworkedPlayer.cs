@@ -10,7 +10,6 @@ using UnityEngine;
 public class NetworkedPlayer : NetworkBehaviour {
     private UpgradeManager _upgradeManager;
     private List<INetworkedPlayerModule> _modules;
-
     public InputManager InputManager { get; private set; }
     public CraftingComponent CraftingComponent { get; private set; }
     public NetworkedPlayerInventory InventoryN { get; private set; }

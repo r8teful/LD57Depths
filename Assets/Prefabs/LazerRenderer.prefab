@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7132360167251629663}
   - component: {fileID: 6928524665540981689}
+  - component: {fileID: 4349725035370177202}
   m_Layer: 0
   m_Name: LazerRenderer
   m_TagString: Untagged
@@ -139,3 +140,15 @@ LineRenderer:
   m_UseWorldSpace: 0
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &4349725035370177202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5878991902508071253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92e6327af2928954c8efae55372a195b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

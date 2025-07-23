@@ -149,6 +149,8 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     }
 
     private void RemoteClientToolChange(bool prev, bool next, bool asServer) {
+        if (!HasVisibility())
+            return;
         if (next) {
             // tool enabled
             _remotePlayer.ToolController.GetCurrentTool().HandleVisualStart(this);
@@ -281,11 +283,12 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         SetBobHand(true);
     }
     public void HandleBobLayerChange(bool shouldBeVisible, VisibilityLayerType layer) {
-        foreach (Renderer r in GetComponentsInChildren<Renderer>(true)) // Include inactive children
-            r.enabled = shouldBeVisible;
-        foreach (Collider2D c in GetComponentsInChildren<Collider2D>(true)) {
-            c.enabled = shouldBeVisible;
-        }
+        SetComponentsActiveRecursive<Renderer>(shouldBeVisible);
+        //foreach (Renderer r in GetComponentsInChildren<Renderer>(true)) // Include inactive children
+        //    r.enabled = shouldBeVisible;
+        //foreach (Collider2D c in GetComponentsInChildren<Collider2D>(true)) {
+        //    c.enabled = shouldBeVisible;
+        //}
         if (shouldBeVisible) {
             // Only really makes sence to change the visuals if we are visible otherwise it might cause wierd visual bugs
             switch (layer) {
@@ -298,6 +301,25 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
                 default:
                     break;
             }
+        }
+    } // Generic recursive component activation/deactivation helper
+    private void SetComponentsActiveRecursive<T>(bool isActive) where T : Component {
+        // Find components ONLY within the target object and its children
+        T[] components = GetComponentsInChildren<T>(true); // include inactive ones
+        foreach (T component in components) {
+            // Skip if this or any parent has PreserveComponentToggle
+            if (component.GetComponentInParent<PreserveVisibility>() != null)
+                continue;
+            // Enable/disable based on the component type's relevant property
+            if (component is Behaviour behaviour)
+                behaviour.enabled = isActive;
+            else if (component is Renderer renderer)
+                renderer.enabled = isActive;
+            else if (component is Collider2D collider) {
+                if (!collider.isTrigger)
+                    collider.enabled = isActive;
+            }
+            // Add more types if necessary (Light, ParticleSystem, etc.)
         }
     }
 }
