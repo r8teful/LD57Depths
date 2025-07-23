@@ -14,10 +14,10 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
     // The synchronized list of items. This is the core data.
     public readonly SyncList<InventorySlot> ContainerSlots = new SyncList<InventorySlot>();
     // Tracks which client connection is currently interacting. -1 if none.
-    private readonly SyncVar<int> _interactingClientId = new SyncVar<int>(-1, new SyncTypeSettings(WritePermission.ServerOnly));
+    private readonly SyncVar<int> _interactingClientId = new SyncVar<int>(-1);
 
     // Visual state, can be observed by all.
-    private readonly SyncVar<bool> _isVisuallyOpen = new SyncVar<bool>(new SyncTypeSettings(WritePermission.ServerOnly));
+    private readonly SyncVar<bool> _isVisuallyOpen = new SyncVar<bool>();
     public bool IsVisuallyOpen => _isVisuallyOpen.Value;
     public int InteractingClientId => _interactingClientId.Value; // Who is currently allowed to send commands
 
@@ -28,7 +28,7 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
 
     public int ContainerSize => containerSize;
 
-    public VisibilityLayerType VisibilityScope => throw new NotImplementedException();
+    public VisibilityLayerType VisibilityScope => VisibilityLayerType.Interior;
 
     public string AssociatedInteriorId => throw new NotImplementedException();
 

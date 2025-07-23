@@ -1,21 +1,25 @@
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using System;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
-public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
-    public SpriteRenderer SpriteRenderer;
-    public RecipeBaseSO fixRecipe;
+public class FixableEntity : NetworkBehaviour, IInteractable, IPopupInfo {
     [SerializeField] private Sprite FixIcon;
     [SerializeField] private Transform _popupPos;
     private CanvasInputWorld instantatiatedCanvas;
     private UIPopup instantatiatedPopup;
-    private bool isFixed;
-    public event Action PopupDataChanged;
-    public event Action<IPopupInfo, bool> OnPopupShow; // This IPopupInfo is different because we instantiate the popup directly
-
     private SubInterior _subParent;
+    public RecipeBaseSO fixRecipe;
+    public event Action<IPopupInfo, bool> OnPopupShow; // This IPopupInfo is different because we instantiate the popup directly
+    public event Action PopupDataChanged;
+    public SpriteRenderer SpriteRenderer;
     public Sprite InteractIcon => FixIcon;
+
+    private readonly SyncVar<bool> _isFixed = new SyncVar<bool>(false);
+    private readonly SyncVar<int> _interactingClient = new SyncVar<int>(-1);
+    public SyncVar<bool> IsFixed => _isFixed;
+    public SyncVar<int> InteractingClient => _interactingClient;
 
 
     bool IInteractable.CanInteract {
@@ -40,17 +44,21 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
         //SetIsBrokenBool(isBroke);
         _subParent = subParent;
     }
-    public void SetIsBrokenBool(bool isBroken) {
+    public void SetMaterialBrokenBool(bool isBroken) {
         SpriteRenderer.material.SetInt("_Damaged", isBroken ? 1 : 0);
         if (!isBroken) {
             Destroy(this); // This makes sence right?
         }
     }
+    [ServerRpc]
+    private void SetFixedRpc() {
+        _isFixed.Value = true;
+    }
     
     public void SetFixed() {
-        isFixed = true;
         _subParent.EntityFixed(this);
-        SetIsBrokenBool(false);
+        SetMaterialBrokenBool(false);
+        SetFixedRpc();
         // TODO other functionality etc etc...
     }
 
@@ -68,7 +76,7 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
     // The best would be to use the already existing popup manager to setup the thing but I don't know what the real benefits are atm, this works for now
     public void Interact(NetworkObject client) {
         if(instantatiatedCanvas != null && instantatiatedPopup == null) {
-            if (isFixed) {
+            if (_isFixed) {
                 // Open the UI for this object?
                 return; 
             }
