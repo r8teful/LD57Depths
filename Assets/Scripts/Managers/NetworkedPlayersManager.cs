@@ -36,11 +36,11 @@ public class NetworkedPlayersManager : NetworkBehaviour {
         Players.OnChange += OnPlayersDictionaryChange;
     }
 
-    private void OnDestroy() {
-        if (Players != null) {
-            Players.OnChange -= OnPlayersDictionaryChange;
-        }
-    }
+  // private void OnDestroy() {
+  //     if (Players != null) {
+  //         Players.OnChange -= OnPlayersDictionaryChange;
+  //     }
+  // }
     public override void OnStartServer() {
         base.OnStartServer();
         InstanceFinder.ServerManager.OnRemoteConnectionState += HandleRemoteConnectionState;
