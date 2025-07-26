@@ -1,4 +1,5 @@
 using FishNet.Object;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,13 +12,16 @@ public class SubInterior : NetworkBehaviour {
     private List<InteriorEntityData> interiorEntitieData; // This data gets saved
     private List<SubEntity> interiorEntities; // Runtime only data, not sure if we'll actually need this?
     public Grid SubGrid;
+
+    // TODO We'll have to change this when we're adding several subs but wont be in a while
+    public static SubInterior Instance { get; private set; }
     public override void OnStartServer() {
         base.OnStartServer();
         // TODO you'll first have to LOAD the existing server entity data, if it doesn't exist, then only create the new ones
         // You'll only create new entities a few times, like when starting the game for the first time.
         // Or maybe later when you unlock a new area or interior. something like that
         _entityManager = EntityManager.Instance;
-       interiorEntitieData = new List<InteriorEntityData>();
+        interiorEntitieData = new List<InteriorEntityData>();
 
         var interior = GetAllInteriorEntities();
         interiorEntities = interior.Item2;
@@ -30,21 +34,16 @@ public class SubInterior : NetworkBehaviour {
             // Add to other dictionary
             persistentIDToData.Add(createdEntityData.persistentId, item);
         }
-        InitSubEntities();
-    }
-
-    private void InitSubEntities() {
-        foreach (var entity in interiorEntities) {
-            if(entity.TryGetComponent<FixableEntity>(out var e)) {
-                e.InitParent(this); // Not sure about this, it would be better if we set it within the specificData but this works?
-            }
-        }
         InitLadder();
     }
-
+    private void Awake() {
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else Instance = this;
+    }
     private void InitLadder() {
         // This is stupid but the ladder should not be interactable until we have fixed the control pannel 
-        var firstMatch = persistentSubEntities.Values.FirstOrDefault(entity => entity.entityID == 501); // 501 is ladder lol
+        Debug.Log("persistentSubEntities: " + persistentSubEntities);
+        var firstMatch = persistentSubEntities.Values.FirstOrDefault(entity => entity.entityID == ResourceSystem.LadderID); 
         if (firstMatch != null) {
             if (persistentIDToData.TryGetValue(firstMatch.persistentId, out var v)) {
                 v.go.GetComponent<IInteractable>().CanInteract = false;
@@ -68,31 +67,23 @@ public class SubInterior : NetworkBehaviour {
         return (interiorData,interiorEntities);
     }
 
-    public void TryFixEntity(RecipeBaseSO fixRecipe, UIPopup instantatiatedPopup, RecipeExecutionContext context) {
-        context.NetworkedPlayer.CraftingComponent.AttemptCraft(fixRecipe, context, instantatiatedPopup); // This seems messy but atm we have clients handle the crafting
-    }
+    // Not sure how we're going to handle interaction state through the network but we just have to make sure this is run on all the clients
 
-    public void EntityFixed(FixableEntity fixableEntity) {
-        // If this is called the object should have a subentity attached to it
-        if(fixableEntity.TryGetComponent<SubMachine>(out var ent)){
-            if(ent.type == SubMachineType.ControlPanell) {
-                // control panell fixed! Enable ladder next
-                var firstMatch = persistentSubEntities.Values.FirstOrDefault(entity => entity.entityID == 5); // 5 is ladder lol
-                if(firstMatch != null) {
-                    if(persistentIDToData.TryGetValue(firstMatch.persistentId, out var v)){
-                        v.go.GetComponent<IInteractable>().CanInteract = true;
-                    }
-                } else {
-                    Debug.LogError("Could not find ladder");
-                }
+    // CanInteract must be a network variable here,  how else will we know if the ladder is interactable?
+    [ServerRpc(RequireOwnership = false)]
+    internal void SetLadderActiveRpc() {
+        Debug.Log("persistentSubEntities: " + persistentSubEntities);
+        var firstMatch = persistentSubEntities.Values.FirstOrDefault(entity => entity.entityID == ResourceSystem.LadderID);
+        if (firstMatch != null) {
+            if (persistentIDToData.TryGetValue(firstMatch.persistentId, out var v)) {
+                v.go.GetComponent<IInteractable>().CanInteract = true;
             }
         } else {
-            Debug.LogError("Entity does not have a SubMachine component attached!");
+            Debug.LogError("Could not find ladder");
         }
     }
-
-    
 }
+
 internal struct InteriorEntityData {
     public GameObject go;
     public ushort id;

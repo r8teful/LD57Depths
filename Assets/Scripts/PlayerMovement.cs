@@ -71,7 +71,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
         MainCam.transform.SetParent(transform);
         MainCam.transform.localPosition = new Vector3(0, 0, -10);
         _inputManager = GetComponent<InputManager>();
-        Debug.Log("Init input manager: " + _inputManager);
         _visualHandler = GetComponent<PlayerVisualHandler>();
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0;

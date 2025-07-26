@@ -1,10 +1,11 @@
+using FishNet.Object;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 #if UNITY_EDITOR
-public class DEBUGManager : MonoBehaviour {
+public class DEBUGManager : StaticInstance<DEBUGManager> {
     [Header("References")]
     public BiomeManager biomeManager;
     public ChunkManager chunkManager;
@@ -24,12 +25,19 @@ public class DEBUGManager : MonoBehaviour {
     [SerializeField] PlayerMovement player;
     [OnValueChanged("PlayerSpeed")]
     public float playerSpeed;
+    private NetworkedPlayer _player;
+
     private void PlayerSpeed() {
         player.accelerationForce = playerSpeed;
         player.swimSpeed = playerSpeed;
     }
-       
-    void Awake() {
+
+    public void RegisterOwningPlayer(NetworkedPlayer player) {
+        _player = player;
+    }
+
+    protected override void Awake() {
+        base.Awake();
         tileLookup = new Dictionary<BiomeType, TileBase>();
         foreach (var mapping in biomeTileMappings) {
             tileLookup[mapping.biome] = mapping.tile;
@@ -64,13 +72,13 @@ public class DEBUGManager : MonoBehaviour {
     }
     [ConsoleCommand("give", value: "itemID, amount")]
     private void debugGive(int i, int j) {
-        FindFirstObjectByType<NetworkedPlayerInventory>().DEBUGGIVE(i,j);
+        _player.InventoryN.DEBUGGIVE(i,j);
     }
 
 
     [ConsoleCommand("showupgrade")]
     private void debugShowUpgradeScreen() {
-        FindFirstObjectByType<UIUpgradeScreen>().DEBUGShowScreen();
+        _player.UiManager.UpgradeScreen.DEBUGShowScreen();
     }
 }
 #endif

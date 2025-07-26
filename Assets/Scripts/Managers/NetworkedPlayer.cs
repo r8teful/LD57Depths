@@ -38,6 +38,9 @@ public class NetworkedPlayer : NetworkBehaviour {
         CmdNotifyServerOfInitialization();
         // Subscribe to other clients joining so we can properly initialize our local version of them
 
+#if UNITY_EDITOR
+        DEBUGManager.Instance.RegisterOwningPlayer(this);
+#endif
     }
     public override void OnStopClient() {
         base.OnStopClient();

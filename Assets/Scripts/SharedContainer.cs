@@ -19,7 +19,7 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
     // Visual state, can be observed by all.
     private readonly SyncVar<bool> _isVisuallyOpen = new SyncVar<bool>();
     public bool IsVisuallyOpen => _isVisuallyOpen.Value;
-    public int InteractingClientId => _interactingClientId.Value; // Who is currently allowed to send commands
+    public SyncVar<int> InteractingClient => _interactingClientId; // Who is currently allowed to send commands
 
     // Client-side event for UI to react to data changes
     public event Action OnContainerInventoryChanged;

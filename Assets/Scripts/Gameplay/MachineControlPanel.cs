@@ -1,7 +1,8 @@
 ﻿using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using UnityEngine;
 
-public class MachineControlPanel : MonoBehaviour, IInteractable {
+public class MachineControlPanel : NetworkBehaviour, IInteractable {
     [SerializeField] private Sprite interactIcon;
     private CanvasInputWorld instantiatedWorldCanvas;
     private GameObject instantiatedUI;
@@ -10,13 +11,16 @@ public class MachineControlPanel : MonoBehaviour, IInteractable {
     private bool _canInteract = true;
     public bool CanInteract {
         get {
-            return _canInteract && gameObject.GetComponent<FixableEntity>() == null;
+            return _canInteract && IsFixed();
         }
 
         set {
             _canInteract = value;
         }
     }
+  
+    private readonly SyncVar<int> _interactingClient = new SyncVar<int>(-1);
+    public SyncVar<int> InteractingClient => _interactingClient;
 
     public void Interact(NetworkObject client) {
         if (!CanInteract)
@@ -47,6 +51,13 @@ public class MachineControlPanel : MonoBehaviour, IInteractable {
                 Destroy(instantiatedWorldCanvas.gameObject);
             }
             CloseUI();
+        }
+    }
+    private bool IsFixed() {
+        if (gameObject.TryGetComponent<FixableEntity>(out var fixEnt)) {
+            return fixEnt.IsFixed;
+        } else {
+            return false;
         }
     }
 }

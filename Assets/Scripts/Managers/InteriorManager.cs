@@ -13,7 +13,7 @@ public class InteriorManager : Singleton<InteriorManager> {
             _registeredInteriors[interior.InteriorId] = interior; // Overwrite or update
         } else {
             _registeredInteriors.Add(interior.InteriorId, interior);
-            Debug.Log($"Interior Manager: Registered '{interior.InteriorId}'.");
+           // Debug.Log($"Interior Manager: Registered '{interior.InteriorId}'.");
         }
     }
 

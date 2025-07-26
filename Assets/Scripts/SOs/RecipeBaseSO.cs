@@ -28,7 +28,7 @@ public struct IngredientStatus {
 // Usefull class for the actual result of a recipe. Will add more here later like research, upgrade etc..
 public class RecipeExecutionContext {
     public InventoryManager PlayerInventory { get; set; }
-    public FixableEntity Entity { get; set; }
+    public FixableEntity FixableEntity { get; set; }
     public ToolController ToolController { get; set; }
     public NetworkedPlayer NetworkedPlayer { get; set; }
 }

@@ -1,8 +1,9 @@
 ﻿using FishNet.Object;
-using UnityEngine.InputSystem;
+using Sirenix.OdinInspector;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Sirenix.OdinInspector;
+using UnityEngine.InputSystem;
 public enum PlayerInteractionContext {
     None,                 // Default state, no specific interaction available
     InteractingWithUI,    // Highest priority: Mouse is over any UI element
@@ -63,23 +64,23 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private void SetupInputs() {
         _playerInput = GetComponent<PlayerInput>();
         if (_playerInput != null) {
-            _interactAction = _playerInput.actions["Interact"]; // E
-            _playerClickAction = _playerInput.actions["Shoot"];
-            _playerMoveAction = _playerInput.actions["Move"];
-            _playerAimAction = _playerInput.actions["Aim"];
-            _playerSwitchAction = _playerInput.actions["SwitchTool"];
-            _playerDashAction = _playerInput.actions["Dash"];
-            _UItoggleInventoryAction = _playerInput.actions["UI_Toggle"]; // I
-            _uiInteractAction = _playerInput.actions["UI_Interact"]; // LMB
-            _uiAltInteractAction = _playerInput.actions["UI_AltInteract"]; // RMB
-            _uiDropOneAction = _playerInput.actions["UI_DropOne"];
-            _uiNavigateAction = _playerInput.actions["UI_Navigate"];
-            _uiPointAction = _playerInput.actions["UI_Point"];
-            _uiCancelAction = _playerInput.actions["UI_Cancel"];
-            _uiTabLeft = _playerInput.actions["UI_TabLeft"]; // Opening containers
-            _uiTabRight = _playerInput.actions["UI_TabRight"]; // Opening containers
-            _hotbarSelection = _playerInput.actions["HotbarSelect"];
-            _useItemAction = _playerInput.actions["Shoot"];
+            _interactAction = _playerInput.actions.FindAction("Interact",true); // E
+            _playerClickAction = _playerInput.actions.FindAction("Shoot",true);
+            _playerMoveAction = _playerInput.actions.FindAction("Move",true);
+            _playerAimAction = _playerInput.actions.FindAction("Aim",true);
+            _playerSwitchAction = _playerInput.actions.FindAction("SwitchTool",true);
+            _playerDashAction = _playerInput.actions.FindAction("Dash",true);
+            _UItoggleInventoryAction = _playerInput.actions.FindAction("UI_Toggle",true); // I
+            _uiInteractAction = _playerInput.actions.FindAction("UI_Interact",true); // LMB
+            _uiAltInteractAction = _playerInput.actions.FindAction("UI_AltInteract",true); // RMB
+            _uiDropOneAction = _playerInput.actions.FindAction("UI_DropOne",true);
+            _uiNavigateAction = _playerInput.actions.FindAction("UI_Navigate",true);
+            _uiPointAction = _playerInput.actions.FindAction("UI_Point",true);
+            _uiCancelAction = _playerInput.actions.FindAction("UI_Cancel",true);
+            _uiTabLeft = _playerInput.actions.FindAction("UI_TabLeft",true); // Opening containers
+            _uiTabRight = _playerInput.actions.FindAction("UI_TabRight",true); // Opening containers
+            _hotbarSelection = _playerInput.actions.FindAction("HotbarSelect",true);
+            _useItemAction = _playerInput.actions.FindAction("Shoot",true);
         } else {
             Debug.LogWarning("PlayerInput component not found on player. Mouse-only or manual input bindings needed.", gameObject);
         }
@@ -216,22 +217,21 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     }
 
     private IInteractable FindClosestInteractable(Collider2D[] colliders) {
-        if (colliders.Length > 0) {
-            // Find the closest interactable
-            Collider2D closest = null;
-            float minDistance = float.MaxValue;
+        if (colliders == null || colliders.Length == 0)
+            return null;
 
-            foreach (var collider in colliders) {
-                float distance = Vector2.Distance(transform.position, collider.transform.position);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closest = collider;
-                }
-            }
-            if(closest.TryGetComponent<IInteractable>(out var i)) {
-                if (i.CanInteract) {
-                    return closest.GetComponent<IInteractable>();
-                }
+        // 1) Sort colliders by distance to this object
+        var sorted = colliders
+            .OrderBy(c => Vector2.SqrMagnitude((Vector2)transform.position - (Vector2)c.transform.position));
+
+        // 2) For each collider, check all its IInteractable components
+        foreach (var col in sorted) {
+            // 3) GetComponents returns every IInteractable on that GameObject
+            var interactables = col.GetComponents<IInteractable>();
+            foreach (var interactable in interactables) {
+                // 4) Return the first one we can actually interact with
+                if (interactable.CanInteract)
+                    return interactable;
             }
         }
         return null;
@@ -360,6 +360,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     }
 
     private void UIHandleCloseAction(InputAction.CallbackContext context) {
+        Debug.Log("Cancel!");
         // E.g., Escape key or Gamepad B/Start 
         _inventoryUIManager.HandleCloseAction(context); // For UI related
         ClearInteractable(); // Also clear interactable

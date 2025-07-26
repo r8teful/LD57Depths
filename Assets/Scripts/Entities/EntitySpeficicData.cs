@@ -16,6 +16,6 @@ public class BreakEntityData : EntitySpecificData {
     }
 
     public override void ApplyTo(GameObject go) {
-        go.GetComponent<FixableEntity>().SetMaterialBrokenBool(isBroken);
+        go.GetComponent<FixableEntity>().SetFixedRpc(!isBroken);
     }
 }

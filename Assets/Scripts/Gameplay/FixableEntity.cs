@@ -9,57 +9,72 @@ public class FixableEntity : NetworkBehaviour, IInteractable, IPopupInfo {
     [SerializeField] private Transform _popupPos;
     private CanvasInputWorld instantatiatedCanvas;
     private UIPopup instantatiatedPopup;
-    private SubInterior _subParent;
     public RecipeBaseSO fixRecipe;
     public event Action<IPopupInfo, bool> OnPopupShow; // This IPopupInfo is different because we instantiate the popup directly
     public event Action PopupDataChanged;
     public SpriteRenderer SpriteRenderer;
+    private bool _currentlyInteracting;
+
     public Sprite InteractIcon => FixIcon;
 
     private readonly SyncVar<bool> _isFixed = new SyncVar<bool>(false);
-    private readonly SyncVar<int> _interactingClient = new SyncVar<int>(-1);
-    public SyncVar<bool> IsFixed => _isFixed;
-    public SyncVar<int> InteractingClient => _interactingClient;
+    private readonly SyncVar<bool> _canInteract = new SyncVar<bool>(true);
+    public bool IsFixed => _isFixed.Value;
 
 
     bool IInteractable.CanInteract {
         get {
-            return _canInteract;
+            return _canInteract.Value && !_isFixed.Value; // Can't interact if fixed. Keeping the script so we can properly initialize it
         }
-
         set {
-            _canInteract = value;
+            SetInteractRpc(value); // This seems like we are cheating but it should work
         }
     }
 
-    private bool _canInteract = true;
     private void Start() {
         // Create a copy of the material
+        _isFixed.OnChange += OnFixChange;
         SpriteRenderer.material = new Material(SpriteRenderer.material);
     }
-    public void InitParent(SubInterior subParent) {
-        // This is now obviously tied to the sub interior only. All we really need is some sort of manager that handles the state of this object
-        // So we can call manager.ThisObjectIsFixed and then the manager will handle the rest
-        // -- Update -- So this object now is even more tied to the sub interior, because, again, it needs some kind of manager that handles the execution of the fixing
-        //SetIsBrokenBool(isBroke);
-        _subParent = subParent;
-    }
-    public void SetMaterialBrokenBool(bool isBroken) {
-        SpriteRenderer.material.SetInt("_Damaged", isBroken ? 1 : 0);
-        if (!isBroken) {
-            Destroy(this); // This makes sence right?
+
+    private void OnFixChange(bool isFixedPrev, bool isFixedNext, bool asServer) {
+        Debug.Log($"OnFixed Change prev: {isFixedPrev}, next {isFixedNext}, CALLED ON CLIENT: {OwnerId}");
+        if (asServer) return; // Mostly visual and interaction only so no need to do anything on server
+        if(isFixedNext) {
+            SetFixedLocal(true);
         }
     }
-    [ServerRpc]
-    private void SetFixedRpc() {
-        _isFixed.Value = true;
+    public override void OnStartClient() {
+        base.OnStartClient();
+        // Set the material broken bool based on the current state
+        SetMaterialBrokenBool(!_isFixed.Value); // Fixed is inverted because fixed != broken
     }
-    
-    public void SetFixed() {
-        _subParent.EntityFixed(this);
-        SetMaterialBrokenBool(false);
-        SetFixedRpc();
-        // TODO other functionality etc etc...
+
+    public void SetMaterialBrokenBool(bool isBroken) {
+        SpriteRenderer.material.SetInt("_Damaged", isBroken ? 1 : 0);
+    }
+    [ServerRpc(RequireOwnership =false)]
+    public void SetFixedRpc(bool isFixed) {
+        _isFixed.Value = isFixed;
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void SetInteractRpc(bool canInteract) {
+        _canInteract.Value = canInteract;
+    }
+
+
+    // Called from the recipe execution when the entity is fixed
+    private void SetFixedLocal(bool isFixed) {
+        // Set visuals locally
+        SetMaterialBrokenBool(!isFixed); // Fixed is inverted because fixed != broken
+        if (_currentlyInteracting) {
+            // If we are currently interacting with this entity, we should close the popup
+            if (instantatiatedCanvas != null) {
+                Destroy(instantatiatedCanvas.gameObject);
+                instantatiatedCanvas = null;
+                _currentlyInteracting = false;
+            }
+        }
     }
 
     public void SetInteractable(bool isInteractable, Sprite interactPrompt = null) {
@@ -70,17 +85,24 @@ public class FixableEntity : NetworkBehaviour, IInteractable, IPopupInfo {
             if (instantatiatedCanvas != null) {
                 Destroy(instantatiatedCanvas.gameObject);
             }
+            _currentlyInteracting = false;
         }
     }
 
     // The best would be to use the already existing popup manager to setup the thing but I don't know what the real benefits are atm, this works for now
     public void Interact(NetworkObject client) {
+        if(!client.TryGetComponent<NetworkedPlayer>(out var player)) {
+            Debug.LogError("Client does not have a NetworkedPlayer component, cannot interact with FixableEntity.");
+            return;
+        }
+
         if(instantatiatedCanvas != null && instantatiatedPopup == null) {
             if (_isFixed.Value) {
                 // Open the UI for this object?
                 return; 
             }
-            var clientInventory = client.GetComponent<NetworkedPlayerInventory>().GetInventoryManager(); // Probably really bad to do this but EH?
+            _currentlyInteracting = true;
+            var clientInventory = player.InventoryN.GetInventoryManager(); // Probably really bad to do this but EH?
             instantatiatedPopup = Instantiate(App.ResourceSystem.GetPrefab("PopupWorld"), instantatiatedCanvas.transform).GetComponent<UIPopup>();
             instantatiatedPopup.SetData(new(fixRecipe.displayName, fixRecipe.description, fixRecipe.GetIngredientStatuses(clientInventory)));
             instantatiatedCanvas.SetPromptNextStage(instantatiatedPopup.transform);
@@ -88,8 +110,8 @@ public class FixableEntity : NetworkBehaviour, IInteractable, IPopupInfo {
             // Basically pressing again while the popup is already open
             // TODO use PopupManager.CurrentPopup!!
             // Passing the instantiated popup so we can show visual feedback BTW, this should probably be handled by PopupManager, it already has a CurrentPopup variable
-            var context = new RecipeExecutionContext { Entity = this, NetworkedPlayer = client.GetComponent<NetworkedPlayer>()};
-            _subParent.TryFixEntity(fixRecipe, instantatiatedPopup, context);
+            var context = new RecipeExecutionContext { FixableEntity = this, NetworkedPlayer = client.GetComponent<NetworkedPlayer>()};
+            player.CraftingComponent.AttemptCraft(fixRecipe, context, instantatiatedPopup);
         }
         //PopupManager.Instance.TryShowWorldPopup(this,client);
     }

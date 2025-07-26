@@ -36,7 +36,7 @@ public class ItemSelectionManager : MonoBehaviour {
         currentSelectedIndex = Mathf.Clamp(currentSelectedIndex, 0, hotbarSize - 1);
         isInitialized = true;
         OnSelectionChanged?.Invoke(currentSelectedIndex); // Trigger initial highlight
-        Debug.Log($"ItemSelectionManager Initialized for player: {owningPlayerObject.name} with Hotbar Size: {hotbarSize}");
+        //Debug.Log($"ItemSelectionManager Initialized for player: {owningPlayerObject.name} with Hotbar Size: {hotbarSize}");
     }
     void Start() {
       

@@ -386,7 +386,7 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
         //}
 
         UpdateHotbarHighlight(ItemSelectionManager.SelectedSlotIndex); 
-        Debug.Log($"Created {slotInventoryUIs.Count} UI slots.");
+        //Debug.Log($"Created {slotInventoryUIs.Count} UI slots.");
     }
 
     // Updates the visual representation of a single slot
@@ -439,7 +439,7 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
                 slotHotbarUIs[i].SetSelected(i == newSelectedIndex);
             }
         }
-        Debug.Log($"Updated Hotbar Highlight. Selected: {newSelectedIndex}, Inventory Open: {showHighlight}");
+        //Debug.Log($"Updated Hotbar Highlight. Selected: {newSelectedIndex}, Inventory Open: {showHighlight}");
     }
 
     // --- Container UI Handling ---
@@ -541,7 +541,7 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
         SetInventoryInTab(); // Set the inventory back to its "home". Ugly but works?
         hotbarPanel.SetActive(true); // also uggly?
         if (currentViewedContainer != null) {
-            if (_playerInventory != null && _playerInventory.IsOwner && currentViewedContainer.InteractingClientId == _playerInventory.OwnerId) {
+            if (_playerInventory != null && _playerInventory.IsOwner && currentViewedContainer.InteractingClient.Value == _playerInventory.OwnerId) {
                 currentViewedContainer.CmdRequestCloseContainer();
             }
             currentViewedContainer.OnContainerInventoryChanged -= RefreshUIContents;
