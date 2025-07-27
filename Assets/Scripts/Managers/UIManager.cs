@@ -12,7 +12,7 @@ public class UIManager : Singleton<UIManager> {
     void Update() {
         UIManagerInventory.UpdateHeldItemVisual();
     }
-    public void Init(InventoryManager localPlayerInvManager, GameObject owningPlayer, UpgradeManager upgradeManager) {
+    public void Init(InventoryManager localPlayerInvManager, GameObject owningPlayer, UpgradeManagerPlayer upgradeManager) {
         _localInventoryManager = localPlayerInvManager;
         PopupManager = GetComponent<PopupManager>();
         _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage

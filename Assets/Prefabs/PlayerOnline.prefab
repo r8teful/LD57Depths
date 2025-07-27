@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 2511403419373690701}
   - component: {fileID: 3312860346397150876}
   - component: {fileID: 6902581419565130942}
+  - component: {fileID: 7835090482241713945}
   m_Layer: 2
   m_Name: PlayerOnline
   m_TagString: Player
@@ -313,80 +314,80 @@ MonoBehaviour:
     m_ActionName: 'Player/HotbarSellect[/Keyboard/1,/Keyboard/2,/Keyboard/3,/Keyboard/4]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: c95b2375-e6d9-4b88-9c4c-c5e76515df4b
-    m_ActionName: 'UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
+    m_ActionId: 6013b5e9-90e9-436a-9da3-c52313607e3f
+    m_ActionName: 'Player/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 7607c7b6-cd76-4816-beef-bd0341cfe950
-    m_ActionName: 'UI/Submit[/Keyboard/enter]'
+    m_ActionId: 80e66421-f2bd-4ca2-8dda-536e3a35f289
+    m_ActionName: 'Player/Submit[/Keyboard/enter]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 15cef263-9014-4fd5-94d9-4e4a6234a6ef
-    m_ActionName: 'UI/Cancel[/Keyboard/escape]'
+    m_ActionId: 4f35e811-4d0b-48b0-944a-734f0b2835fb
+    m_ActionName: 'Player/Cancel[/Keyboard/escape]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 32b35790-4ed0-4e9a-aa41-69ac6d629449
-    m_ActionName: 'UI/Point[/Mouse/position,/Pen/position]'
+    m_ActionId: a0a14992-5c26-4a08-9750-7698b90aa4b3
+    m_ActionName: 'Player/Point[/Mouse/position]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 3c7022bf-7922-4f7c-a998-c437916075ad
-    m_ActionName: 'UI/Click[/Mouse/leftButton,/Pen/tip]'
+    m_ActionId: b5382918-8d80-4e2c-8404-ef8459e79de2
+    m_ActionName: 'Player/RightClick[/Mouse/rightButton]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 44b200b1-1557-4083-816c-b22cbdf77ddf
-    m_ActionName: 'UI/RightClick[/Mouse/rightButton]'
+    m_ActionId: ce750a0d-8c65-4a98-9f01-b7088bc81ff7
+    m_ActionName: 'Player/Click[/Mouse/leftButton]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: dad70c86-b58c-4b17-88ad-f5e53adf419e
-    m_ActionName: 'UI/MiddleClick[/Mouse/middleButton]'
+    m_ActionId: a3924ac1-2e18-4ae9-b72b-8be29a0f4aa4
+    m_ActionName: 'Player/ScrollWheel[/Mouse/scroll]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 0489e84a-4833-4c40-bfae-cea84b696689
-    m_ActionName: 'UI/ScrollWheel[/Mouse/scroll]'
+    m_ActionId: fbe7ce1c-6473-411d-9832-07cd0e144915
+    m_ActionName: 'Player/MiddleClick[/Mouse/middleButton]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 24908448-c609-4bc3-a128-ea258674378a
-    m_ActionName: UI/TrackedDevicePosition
+    m_ActionId: e04b5c97-0d55-433c-9f8a-e4ee0fbf1adb
+    m_ActionName: Player/TrackedDeviceOrientation
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
-    m_ActionName: UI/TrackedDeviceOrientation
+    m_ActionId: 7722c8e2-c0ce-4448-a33c-42e48fa8f95a
+    m_ActionName: Player/TrackedDevicePosition
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 4db37daa-bf00-4612-af03-fdfd549f94be
-    m_ActionName: 'UI/UI_Toggle[/Keyboard/i]'
+    m_ActionId: ff763d6f-cbdf-406d-ba4c-ba3eb5572a04
+    m_ActionName: 'Player/UI_Toggle[/Keyboard/i]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 1d12cbd1-71d0-48cb-b2b0-1faab541c7c1
-    m_ActionName: 'UI/UI_Interact[/Mouse/leftButton]'
+    m_ActionId: 30c1e9a7-3876-4714-87b6-9e02dc3f2594
+    m_ActionName: 'Player/UI_AltInteract[/Mouse/rightButton]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 0aa50351-22bd-45c8-9bc9-2bdb7380ce7a
-    m_ActionName: 'UI/UI_AltInteract[/Mouse/rightButton]'
+    m_ActionId: 4070f8bf-9ce3-4e89-86cb-7cb9a82945c6
+    m_ActionName: 'Player/UI_Interact[/Mouse/leftButton]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 6a73c28a-4a7c-4334-8b2d-6772bae03661
-    m_ActionName: 'UI/UI_DropOne[/Mouse/rightButton]'
+    m_ActionId: 31fbf3b3-f1a9-45d7-a432-afac021171cc
+    m_ActionName: Player/UI_Navigate
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 688a9534-e6de-43a5-9b56-33da28eaa40f
-    m_ActionName: UI/UI_Navigate
+    m_ActionId: 924d32d2-92cd-4051-b7f2-1abcf7c61ac6
+    m_ActionName: 'Player/UI_DropOne[/Mouse/rightButton]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 1b757650-1191-4edf-8ee1-aaa9c57954e2
-    m_ActionName: 'UI/UI_Point[/Mouse/position]'
+    m_ActionId: 84edd794-857c-462d-baf6-453ec34ef04c
+    m_ActionName: 'Player/UI_Cancel[/Keyboard/escape,/Keyboard/backspace]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: bc87b7f6-9632-40ea-89bb-3e3dc12a688f
-    m_ActionName: UI/UI_Cancel
+    m_ActionId: d6f5ca37-a151-4393-81e5-d1c5bee60728
+    m_ActionName: 'Player/UI_Point[/Mouse/position]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 7ca92f7e-7575-4373-bc03-cc69f2bccfa3
-    m_ActionName: 'UI/UI_TabLeft[/Keyboard/leftArrow]'
+    m_ActionId: a90f853c-8344-4563-b1d7-4a1570c740a0
+    m_ActionName: 'Player/UI_TabRight[/Keyboard/rightArrow]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 192c1c73-16da-4690-9e99-ba127a091419
-    m_ActionName: 'UI/UI_TabRight[/Keyboard/rightArrow]'
+    m_ActionId: dd27f868-6ef3-4dfb-861a-f5fa12f2dd92
+    m_ActionName: 'Player/UI_TabLeft[/Keyboard/leftArrow]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -651,6 +652,18 @@ MonoBehaviour:
   _interpolation: 2
   _clientAuthoritative: 1
   _sendToOwner: 0
+--- !u!114 &7835090482241713945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228294681075539138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac2502eda4dc07a46ac41907a95f2a08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3576249979241912492
 GameObject:
   m_ObjectHideFlags: 0
@@ -811,7 +824,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: -0.15, y: 0}
-  m_Size: {x: 3.18, y: 1.35}
+  m_Size: {x: 3.18, y: 0.9}
   m_Direction: 1
 --- !u!1 &8664934994935814639
 GameObject:

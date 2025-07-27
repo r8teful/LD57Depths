@@ -4,7 +4,20 @@ public interface INetworkedPlayerModule {
     /// The initialization order for this module. Lower numbers execute first.
     /// </summary>
     int InitializationOrder { get; }
+    /* We want to start by initializing all the component that don't do any logic, because that could cause null reference exceptions
+    these for now are: Crafting, PlayerVisual, PlayerCameraController
 
+    Note:
+    PlayerCameraController needs WorldVisibilityManager
+    
+    These script do have logic:
+    UpgradeManager: needs CraftingComponent when initialized 
+    PlayerLayerController: Calls HandleClientContextChange() on Init which relies on some scripts to be setup
+    UIManager: Relies on Upgrade, Inventory, 
+    InputManager: Relies on UI & ToolController
+    PlayerMovement: Sets state when initialize which calls PlayerVisualHandler
+
+    */
     /// <summary>
     /// Called by the NetworkedPlayerSetup orchestrator to initialize the module.
     /// </summary>

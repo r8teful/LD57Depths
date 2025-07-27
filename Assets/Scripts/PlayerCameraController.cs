@@ -10,7 +10,7 @@ public class PlayerCameraController : MonoBehaviour, INetworkedPlayerModule {
     private Camera _playerCamera;
     private PixelPerfectCamera _playerCameraPixel;
 
-    public int InitializationOrder => 6;
+    public int InitializationOrder => 3;
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _playerCamera = GetComponentInChildren<Camera>();
@@ -52,7 +52,8 @@ public class PlayerCameraController : MonoBehaviour, INetworkedPlayerModule {
         if (_playerCamera == null) {
             _playerCamera = GetComponentInChildren<Camera>();
         }
-        _playerCamera.DOOrthoSize(orthoSize, time);
+        if (_playerCamera != null) 
+            _playerCamera.DOOrthoSize(orthoSize, time);
     }
     private TweenCallback CameraTransitionComplete(bool isEnterior) {
         if (isEnterior) {

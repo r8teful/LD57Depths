@@ -20,7 +20,7 @@ public class UIUpgradeScreen : MonoBehaviour {
         _upgradePanelPlayer.SetActive(true);
         _upgradePanelEnv.SetActive(false);
     }
-    internal void Init(UIManager UIManager, UpgradeManager upgradeManager) {
+    internal void Init(UIManager UIManager, UpgradeManagerPlayer upgradeManager) {
         _UIManagerParent = UIManager;
         var treeData = App.ResourceSystem.UpgradeTreeData;
         var playerTrees = treeData.Where(d => (int)d.type < 4).ToList(); // Only the player upgrades

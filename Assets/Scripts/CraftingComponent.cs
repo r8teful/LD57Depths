@@ -4,13 +4,11 @@ using UnityEngine;
 // Just on the player for now because fuck it
 public class CraftingComponent : MonoBehaviour, INetworkedPlayerModule {
     private InventoryManager _clientInventory; // Your existing client inventory manager
-    private PopupManager _popupManager;
 
-    public int InitializationOrder => 3;
+    public int InitializationOrder => 1;
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _clientInventory = playerParent.InventoryN.GetInventoryManager();
-        _popupManager = PopupManager.Instance;
     }
     public bool AttemptCraft(RecipeBaseSO recipe, RecipeExecutionContext context = null, UIPopup instantatiatedPopup = null) {
         // TODO possible use client inventoy from context here. But no, we don't really want to change that, or have other scripts store it, just have it be stored here and create a new context each time
@@ -28,7 +26,7 @@ public class CraftingComponent : MonoBehaviour, INetworkedPlayerModule {
         }
         if (instantatiatedPopup == null) {
             // Just take the current popup from the popupManager
-            instantatiatedPopup = _popupManager.CurrentPopup;
+            instantatiatedPopup = PopupManager.Instance.CurrentPopup;
         }
         // Client-side check, WE ARE NOT CHECKING ON SERVER NOW!!
         if (!recipe.CanAfford(_clientInventory)) {

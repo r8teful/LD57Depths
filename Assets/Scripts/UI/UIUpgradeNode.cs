@@ -1,3 +1,4 @@
+using FishNet.Object.Synchronizing;
 using System;
 using System.Drawing;
 using UnityEngine;
@@ -14,16 +15,22 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private RectTransform _rectTransform;
     private UpgradeRecipeBase _upgradeData;
     private UIUpgradeTree _treeParent;
+
+    // If we are networked we will subscribe to when an upgrade is purchased from the communal upgrade manager.
+    // Also, when we purchase an upgrade we will notify the communal upgrade manager. 
+    private bool _isNetworked; 
+    
     public bool IsBig;
     public event Action PopupDataChanged;
     public event Action<IPopupInfo, bool> OnPopupShow;
 
-    internal void Init(UpgradeRecipeBase upgradeRecipeSO, UIUpgradeTree parent, bool isBig) {
+    internal void Init(UpgradeRecipeBase upgradeRecipeSO, UIUpgradeTree parent, bool isBig, bool isNetworked) {
         _treeParent = parent;
         _upgradeData = upgradeRecipeSO;
         _rectTransform = GetComponent<RectTransform>();
         IsBig = isBig;
-        if(IsBig && _buttonBig != null) {
+        _isNetworked = isNetworked;
+        if (IsBig && _buttonBig != null) {
             _buttonBig.onClick.RemoveAllListeners();
             _buttonBig.onClick.AddListener(OnUpgradeButtonClicked);
             _buttonSmall.gameObject.SetActive(false);
@@ -61,15 +68,33 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             return;
         }
         UpdateVisualState();
+        SubscribeToEvents();
     }
     private void OnEnable() {
-        // Subscribe to the event when the object becomes active
-        UpgradeManager.OnUpgradePurchased += HandleUpgradePurchased;
+        
+            UpgradeManagerPlayer.OnUpgradePurchased += HandleUpgradePurchased;
+    }
+
+    private void SubscribeToEvents() {
+        if (_isNetworked) {
+            UpgradeManagerCommunal.Instance.UnlockedCommunalUpgrades.OnChange += HandleCommunalUpgradePurchased;
+        } else {
+        }
+    }
+
+    private void HandleCommunalUpgradePurchased(SyncHashSetOperation op, ushort item, bool asServer) {
+        if (op == SyncHashSetOperation.Add) {
+            // When a communal upgrade is purchased, re-evaluate our state.
+            UpdateVisualState();
+        }
     }
 
     private void OnDisable() {
-        // IMPORTANT: Always unsubscribe to prevent memory leaks
-        UpgradeManager.OnUpgradePurchased -= HandleUpgradePurchased;
+        if (_isNetworked) {
+            UpgradeManagerCommunal.Instance.UnlockedCommunalUpgrades.OnChange -= HandleCommunalUpgradePurchased;
+        } else {
+            UpgradeManagerPlayer.OnUpgradePurchased -= HandleUpgradePurchased;
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
@@ -81,7 +106,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
     private void OnUpgradeButtonClicked() {
         // UICraftingManager.Instance.AttemptCraft(upgradeData, null, null);
-        UpgradeManager.Instance.PurchaseUpgrade(_upgradeData);
+        UpgradeManagerPlayer.Instance.PurchaseUpgrade(_upgradeData);
     }
     // This method is called by the event from the UpgradeManager
     private void HandleUpgradePurchased(UpgradeRecipeBase purchasedRecipe) {
@@ -95,7 +120,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         if (_upgradeData == null)
             return;
 
-        bool isPurchased = UpgradeManager.Instance.IsUpgradePurchased(_upgradeData);
+        bool isPurchased = _isNetworked ? UpgradeManagerCommunal.Instance.IsUpgradePurchased(_upgradeData) : UpgradeManagerPlayer.Instance.IsUpgradePurchased(_upgradeData);
 
         if (isPurchased) {
             // State: Purchased
@@ -110,7 +135,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _imageCurrent.sprite = App.ResourceSystem.GetSprite($"UpgradeNode{(IsBig ? "Big" : "Small")}Purchased");
             //GetComponent<Image>().color = Color.green;
         } else {
-            bool prerequisitesMet = UpgradeManager.Instance.ArePrerequisitesMet(_upgradeData);
+            bool prerequisitesMet = UpgradeManagerPlayer.Instance.ArePrerequisitesMet(_upgradeData);
             if (prerequisitesMet) {
                 // Available
                 _buttonCurrent.interactable = true;

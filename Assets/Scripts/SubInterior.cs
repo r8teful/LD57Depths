@@ -34,12 +34,14 @@ public class SubInterior : NetworkBehaviour {
             // Add to other dictionary
             persistentIDToData.Add(createdEntityData.persistentId, item);
         }
-        InitLadder();
+        //InitLadder();
     }
     private void Awake() {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
     }
+
+    // Fuck this we just enable the ladder from the start
     private void InitLadder() {
         // This is stupid but the ladder should not be interactable until we have fixed the control pannel 
         Debug.Log("persistentSubEntities: " + persistentSubEntities);

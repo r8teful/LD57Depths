@@ -150,7 +150,7 @@ public class InventoryManager {
             //PlayerInventorySyncer.CmdUpdateSlotAfterLocalRemove(...); // Not how it works currently
         }
         Slots[slotIndex].RemoveQuantity(quantityToRemove); // Let InventorySlot handle clamping and clearing
-        Debug.Log($"Server removed: {quantityToRemove} from slot {slotIndex}");
+        Debug.Log($"Removed: {quantityToRemove} from slot {slotIndex}");
         OnSlotChanged?.Invoke(slotIndex); // Notify UI
     }
     public bool RemoveItem(ushort itemID, int quantityToRemove) {

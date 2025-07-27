@@ -8,12 +8,13 @@ using UnityEngine;
 
 // All players have this script, this handles references and setup of relevant things all players should have
 public class NetworkedPlayer : NetworkBehaviour {
-    private UpgradeManager _upgradeManager;
     private List<INetworkedPlayerModule> _modules;
+    private PlayerUISpawner _uiSpawner;
+    public UpgradeManagerPlayer UpgradeManager { get; private set; }
     public InputManager InputManager { get; private set; }
     public CraftingComponent CraftingComponent { get; private set; }
     public NetworkedPlayerInventory InventoryN { get; private set; }
-    public UIManager UiManager { get; private set; }
+    public UIManager UiManager => _uiSpawner.UiManager; // Expose UIManager from the PlayerUISpawner
     public PlayerVisualHandler PlayerVisuals { get; private set; }
     public PlayerLayerController PlayerLayerController { get; private set; }
     public PlayerCameraController PlayerCamera { get; private set; }
@@ -64,37 +65,32 @@ public class NetworkedPlayer : NetworkBehaviour {
         // Add local behaviours that are required for the player.
 
         CraftingComponent = gameObject.AddComponent<CraftingComponent>();
+        UpgradeManager = gameObject.AddComponent<UpgradeManagerPlayer>();
         PlayerCamera = gameObject.AddComponent<PlayerCameraController>();
         InputManager = gameObject.AddComponent<InputManager>();
-
         // Discover all modules on this GameObject and sort based on initialization order.
         _modules = GetComponents<INetworkedPlayerModule>().ToList();
         _modules.Sort((a, b) => a.InitializationOrder.CompareTo(b.InitializationOrder));
 
-        // Cache core components for easy access.
-        InventoryN = GetComponent<NetworkedPlayerInventory>();
 
         // Cache core components for easy access.
+        InventoryN = GetComponent<NetworkedPlayerInventory>();
+        _uiSpawner = GetComponent<PlayerUISpawner>();
         InventoryN = GetComponent<NetworkedPlayerInventory>();
         PlayerLayerController = GetComponent<PlayerLayerController>();
         PlayerVisuals = GetComponent<PlayerVisualHandler>();
         ToolController = GetComponent<ToolController>();
         PlayerMovement = GetComponent<PlayerMovement>();
 
-        _upgradeManager = UpgradeManager.Instance;
-
         InventoryN.Initialize(); // We have to do this first before everything else, then spawn the UI manager, and then start the other inits 
         
-        // Spawn the UIManager.
-        UiManager = Instantiate(App.ResourceSystem.GetPrefab<UIManager>("UIManager"));
-        UiManager.Init(InventoryN.GetInventoryManager(), gameObject, _upgradeManager); // UI needs inv to suscribe to events and display it 
-
         // Initialize all modules in the determined order.
         foreach (var module in _modules) {
             module.InitializeOnOwner(this);
             //Debug.Log($"Initialized Module: {module.GetType().Name} (Order: {module.InitializationOrder})");
 
         }
+        
         Debug.Log($"Player Initialization Complete! Initialized {_modules.Count} modules");
     }
    

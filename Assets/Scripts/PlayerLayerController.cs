@@ -17,7 +17,7 @@ public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
     public SyncVar<VisibilityLayerType> CurrentLayer => _currentLayer;
     public SyncVar<string> CurrentInteriorId => _currentInteriorId;
 
-    public int InitializationOrder => 90;
+    public int InitializationOrder => 100;
 
 
     private void OnEnable() {

@@ -51,7 +51,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     [ShowInInspector]
     private PlayerInteractionContext _currentContext;
 
-    public int InitializationOrder => 10;
+    public int InitializationOrder => 101;
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _inventoryUIManager = playerParent.UiManager.UIManagerInventory;

@@ -63,24 +63,25 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     private bool _dashUnlocked;
     private bool _isInsideOxygenZone;
 
-    public int InitializationOrder => 80;
+    public int InitializationOrder => 999; 
     internal bool CanUseTool() => _currentState == PlayerState.Swimming;
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         MainCam = Camera.main;
         MainCam.transform.SetParent(transform);
         MainCam.transform.localPosition = new Vector3(0, 0, -10);
-        _inputManager = GetComponent<InputManager>();
-        _visualHandler = GetComponent<PlayerVisualHandler>();
+        _inputManager = playerParent.InputManager;
+        _visualHandler = playerParent.PlayerVisuals;
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0;
         currentOxygen = maxOxygen;
         playerHealth = maxHealth;
         ChangeState(PlayerState.Swimming);
+        SubscribeToEvents();
     }
-    private void OnEnable() {
+    private void SubscribeToEvents() {
         // Subscribe to the event to recalculate stats when a NEW upgrade is bought
-        UpgradeManager.OnUpgradePurchased += HandleUpgradePurchased;
+        UpgradeManagerPlayer.OnUpgradePurchased += HandleUpgradePurchased;
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
     }
     
@@ -99,7 +100,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
     private void OnDisable() {
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
-        UpgradeManager.OnUpgradePurchased -= HandleUpgradePurchased;
+        UpgradeManagerPlayer.OnUpgradePurchased -= HandleUpgradePurchased;
     }
 
 

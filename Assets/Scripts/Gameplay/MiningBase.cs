@@ -34,11 +34,11 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
     }
     private void OnEnable() {
         // Subscribe to the event to recalculate stats when a NEW upgrade is bought
-        UpgradeManager.OnUpgradePurchased += HandleUpgradePurchased;
+        UpgradeManagerPlayer.OnUpgradePurchased += HandleUpgradePurchased;
     }
 
     private void OnDisable() {
-        UpgradeManager.OnUpgradePurchased -= HandleUpgradePurchased;
+        UpgradeManagerPlayer.OnUpgradePurchased -= HandleUpgradePurchased;
     }
     protected virtual void Update() {
         if (_isMining) {

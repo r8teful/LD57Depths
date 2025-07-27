@@ -31,7 +31,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     public SyncVar<bool> IsUsingTool => _isUsingTool;
     public SyncVar<Vector2> Input => _input;
 
-    public int InitializationOrder => 9;
+    public int InitializationOrder => 91;
 
     // Problem lies here because we don't properly populate the remote _idToToolVisual dictionary
     public IToolVisual GetCurrentTool() {

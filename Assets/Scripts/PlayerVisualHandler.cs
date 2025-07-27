@@ -23,7 +23,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     public NetworkedPlayer _localPlayer;
     private float lightIntensityOn;
     private readonly SyncVar<bool> _isFlipped = new SyncVar<bool>(false);
-    public int InitializationOrder => 60;
+    public int InitializationOrder => 2;
     private bool hasInitializedNonOwner; // Sometimes the init function gets called twice so this is just for that
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {

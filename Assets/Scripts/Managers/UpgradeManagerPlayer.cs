@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Has to hold upgrade info!
-public class UpgradeManager : StaticInstance<UpgradeManager>, INetworkedPlayerModule {
+public class UpgradeManagerPlayer : Singleton<UpgradeManagerPlayer>, INetworkedPlayerModule {
 
     private Dictionary<int,UpgradeRecipeBase> unlockedUpgrades = new Dictionary<int, UpgradeRecipeBase>(); 
     public static event Action<UpgradeRecipeBase> OnUpgradePurchased;
     private CraftingComponent _crafting;
 
-    public int InitializationOrder => 6;
+    public int InitializationOrder => 10;
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _crafting = playerParent.CraftingComponent;
