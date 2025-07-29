@@ -80,8 +80,16 @@ public class BuildingManager : Singleton<BuildingManager> {
     // TODO here its not working
     private bool CanPlaceEntity() {
         if(_currentPlacingEntity == null) return false; // Safety
-        // if NOT touching, we can place!
-        return !_currentPlacingEntity.PlacementCollider.IsTouching(WorldManager.Instance.GetWorldTileCollider());
+        
+        Collider2D[] results = new Collider2D[10]; 
+        ContactFilter2D filter = new ContactFilter2D().NoFilter(); // We could set filters here later
+        int overlapCount = Physics2D.OverlapCollider(_currentPlacingEntity.PlacementCollider, filter, results);
+        if (overlapCount > 0) {
+            //Debug.Log("Collider overlaps with " + overlapCount + " objects.");
+            return false;
+        } else {
+            return true;
+        }
     }
     public void ExitBuild() {
         _currentPlacingEntity = null;
