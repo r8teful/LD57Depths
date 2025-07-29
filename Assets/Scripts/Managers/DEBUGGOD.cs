@@ -43,7 +43,7 @@ public class DEBUGGOD : MonoBehaviour, IToolBehaviour {
     private IEnumerator DamageTileRoutine(InputManager input) {
         _isDamaging = true;
         while (_isDamaging) {
-            Vector3 mouseWorldPosition = input.GetAimInput();
+            Vector3 mouseWorldPosition = input.GetAimWorldInput();
             Vector3Int targetCell = _worldManager.WorldToCell(mouseWorldPosition);
 
             short damageAmount = 5; // Replace with player tool value

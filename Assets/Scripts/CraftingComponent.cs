@@ -1,4 +1,5 @@
 ﻿using NUnit;
+using System.Collections;
 using UnityEngine;
 
 // Just on the player for now because fuck it
@@ -45,7 +46,43 @@ public class CraftingComponent : MonoBehaviour, INetworkedPlayerModule {
         }
         return true;
     }
+    public IEnumerator AttemptCraftRoutine(RecipeBaseSO recipe, RecipeExecutionContext context = null, UIPopup instantatiatedPopup = null) {
+        // Validate inputs
+        if (recipe == null || _clientInventory == null) {
+            Debug.LogWarning("recipe or Inventory null!");
+            yield break; // Exit the coroutine early
+        }
 
+        // Set up context if not provided or incomplete
+        if (context == null) {
+            context = new RecipeExecutionContext { PlayerInventory = _clientInventory };
+        } else if (context.PlayerInventory == null) {
+            context.PlayerInventory = _clientInventory;
+        }
+
+        // Set up popup if not provided
+        if (instantatiatedPopup == null) {
+            instantatiatedPopup = PopupManager.Instance.CurrentPopup;
+        }
+
+        // Client-side affordability check
+        if (!recipe.CanAfford(_clientInventory)) {
+            Debug.Log($"Cannot afford {recipe.displayName} (client check).");
+            HandleCraftFail(recipe, instantatiatedPopup, $"Cannot afford {recipe.displayName}");
+            yield break; // Exit the coroutine early
+        }
+
+        // Execute the recipe asynchronously and wait for it to complete
+        yield return recipe.ExecuteRecipeRoutine(context);
+
+        // Check the result of the execution (assumes context.Success is set by ExecuteRecipe)
+        if (context.Success) {
+            _clientInventory.ConsumeItems(recipe.requiredItems); // Consume items on success
+            HandleCraftSuccess(recipe); // Handle success scenario
+        } else {
+            HandleCraftFail(recipe, instantatiatedPopup, "Unable to craft!"); // Handle failure scenario
+        }
+    }
     private void HandleCraftSuccess(RecipeBaseSO recipe) {
         string name = recipe != null ? recipe.displayName : recipe.ID.ToString();
         Debug.Log($"UI: Successfully crafted {name}!");

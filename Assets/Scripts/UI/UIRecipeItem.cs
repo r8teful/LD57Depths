@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 // Recipe icon in the recipe tab in the crafting menu
 public class UIRecipeItem : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler {
+    private NetworkedPlayer _owningPlayer;
+
     public Image recipeIconImage;
     public Button craftButton;
 
@@ -21,8 +23,9 @@ public class UIRecipeItem : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPo
         return popupRecipeData; // Updatestatus gets called which edits this and ensures we have the right data
     }
 
-    public void Init(RecipeBaseSO recipe, InventoryManager clientInventory, UICraftingManager craftingUI) {
+    public void Init(RecipeBaseSO recipe, UICraftingManager craftingUI, NetworkedPlayer client) {
         _recipe = recipe;
+        _owningPlayer = client;
         _craftingUIController = craftingUI;
         if (recipeIconImage != null && recipe.icon != null) {
             recipeIconImage.sprite = recipe.icon;
@@ -33,7 +36,7 @@ public class UIRecipeItem : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPo
             craftButton.onClick.AddListener(OnCraftButtonClicked);
         }
 
-        UpdateStatus(clientInventory);
+        UpdateStatus(_owningPlayer.InventoryN.GetInventoryManager());
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
@@ -64,7 +67,10 @@ public class UIRecipeItem : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPo
     }
 
     void OnCraftButtonClicked() {
-        Debug.LogWarning("Not implemented!");
-        //_craftingUIController.AttemptCraft(_recipe,_popupManager.CurrentPopup, null);
+        if(_recipe is CraftingEntitySO entityRecipe) {        
+            StartCoroutine(_owningPlayer.CraftingComponent.AttemptCraftRoutine(entityRecipe));
+             return;
+        }
+        _owningPlayer.CraftingComponent.AttemptCraft(_recipe);
     }
 }

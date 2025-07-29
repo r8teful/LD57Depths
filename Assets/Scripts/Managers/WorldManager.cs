@@ -25,7 +25,8 @@ public class WorldManager : NetworkBehaviour {
     [SerializeField] private Tilemap mainTilemap; // Main visual grid component for the game
     [SerializeField] private Tilemap overlayTilemapOre; // Main visual grid component for the game
     [SerializeField] private Tilemap overlayTilemapDamage; // for damaged tiles 
-
+    [SerializeField] private TilemapCollider2D mainTilemapCollider; 
+    public TilemapCollider2D GetWorldTileCollider() => mainTilemapCollider;
     public float GetVisualTilemapGridSize() => mainTilemap.transform.parent.GetComponent<Grid>().cellSize.x; // Cell size SHOULD be square
     public bool useSave; 
     [SerializeField] Transform playerSpawn;
@@ -34,7 +35,7 @@ public class WorldManager : NetworkBehaviour {
     private void DEBUGNEWGEN() {
         ChunkManager.DEBUGNewGen();
         WorldGen.Init(worldRenderTexture, WorldGenSettings, this, ChunkManager,_worldGenCamera);
-        WorldGen.InitializeNoise(); 
+        WorldGen.InitializeNoise();
     }
     [SerializeField] private bool DEBUGConstantNewGen;
     private void Update() {
@@ -162,7 +163,9 @@ public class WorldManager : NetworkBehaviour {
         //Debug.Log($"Requesting processdamage of:{cell} with {dmg}");
         ChunkManager.ServerProcessDamageTile(cell, dmg);
     }
-
+    public bool IsColliderTouchingWorld(Collider2D collider) {
+        return mainTilemapCollider.IsTouching(collider);
+    }
     internal void ClearAllData() {
         ChunkManager.ClearWorldChunks();
         mainTilemap.ClearAllTiles(); // Clear the visual tilemap

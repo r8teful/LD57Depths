@@ -21,6 +21,7 @@ public class NetworkedPlayer : NetworkBehaviour {
     public PlayerMovement PlayerMovement { get; private set; }
     public ToolController ToolController { get; private set; }
     public static NetworkedPlayer LocalInstance { get; private set; } // Singleton for local player
+    public PopupManager PopupManager => UiManager.PopupManager;
     public NetworkObject PlayerNetworkedObject => base.NetworkObject; // Expose NetworkObject for other scripts to use
 
     // To avoid any wierd bugs, this should be the only OnStartClient on the player

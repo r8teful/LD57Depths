@@ -9,16 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f67ca37f03bb1d458515a8312aea9ed, type: 3}
-  m_Name: StoneRecipe
+  m_Script: {fileID: 11500000, guid: dcf49ae77247bb2469af5873584116f8, type: 3}
+  m_Name: CraftinTestItem
   m_EditorClassIdentifier: 
   RecipeID: 0
-  displayName: Chest
-  description: 
-  icon: {fileID: 569354257, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
+  displayName: Stone
+  description: 'Why can you craft a stone? '
+  icon: {fileID: 0}
   requiredItems:
   - item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
-    quantity: 5
+    quantity: 1
   CraftingResult:
     item: {fileID: 11400000, guid: 65de004af01a9b24ab9e2a1413417f65, type: 2}
-    quantity: 1
+    quantity: 5

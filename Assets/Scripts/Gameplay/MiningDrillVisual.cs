@@ -21,7 +21,7 @@ public class MiningDrillVisual : MonoBehaviour, IToolVisual {
     }
 
     public void HandleVisualUpdate(InputManager inputManager) {
-        DrillVisual(inputManager.GetAimInput());
+        DrillVisual(inputManager.GetAimWorldInput());
     }
 
     public void HandleVisualUpdateRemote(Vector2 nextInput) {

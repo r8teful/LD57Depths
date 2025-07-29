@@ -56,12 +56,12 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
     public bool IsDraggingItem => !_playerInventory.heldItemStack.IsEmpty();
     public int HotbarSize => hotbarSize; // Expose hotbar size
     public event Action<bool> OnInventoryToggle;
-    public void Init(UIManager uiManagerParent, InventoryManager localPlayerInvManager, GameObject owningPlayer) {
-        _localInventoryManager = localPlayerInvManager;
+    public void Init(GameObject owningPlayer, NetworkedPlayer client) {
+        _localInventoryManager = client.InventoryN.GetInventoryManager();
         ItemSelectionManager = GetComponent<ItemSelectionManager>();
         _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage
         _playerInventory = _playerGameObject.GetComponent<NetworkedPlayerInventory>();
-        GetComponent<UICraftingManager>().Init(_localInventoryManager, uiManagerParent.PopupManager);
+        GetComponent<UICraftingManager>().Init(client);
         //GetComponent<PopupManager>().Init(_localInventoryManager);
 
         if (_localInventoryManager == null || ItemSelectionManager == null || _playerGameObject == null) {

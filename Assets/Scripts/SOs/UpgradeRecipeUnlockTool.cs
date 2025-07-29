@@ -8,6 +8,7 @@ public class UpgradeRecipeUnlockTool : UpgradeRecipeUnlock {
     protected override string UnlockName => _unlockName;
 
     public override bool ExecuteRecipe(RecipeExecutionContext context) {
-        return context.ToolController.UnlockTool(_unlockName);
+        // Todo should be more generic obviously
+        return context.ToolController.UnlockMiningTool(_unlockName);
     }
 }

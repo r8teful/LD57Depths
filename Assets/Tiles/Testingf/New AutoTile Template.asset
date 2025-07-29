@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc2acaac6c5d45c9b52f770dfd9e6bfb, type: 3}
+  m_Name: New AutoTile Template
+  m_EditorClassIdentifier: 
+  width: 32
+  height: 32
+  maskType: 1
+  sprites:
+  - x: 0
+    y: 24
+    mask: 457
+  - x: 8
+    y: 24
+    mask: 448
+  - x: 16
+    y: 24
+    mask: 484
+  - x: 24
+    y: 24
+    mask: 4
+  - x: 0
+    y: 16
+    mask: 73
+  - x: 16
+    y: 16
+    mask: 292
+  - x: 24
+    y: 16
+    mask: 256
+  - x: 0
+    y: 8
+    mask: 79
+  - x: 8
+    y: 8
+    mask: 7
+  - x: 16
+    y: 8
+    mask: 295
+  - x: 24
+    y: 8
+    mask: 1
+  - x: 24
+    y: 0
+    mask: 64

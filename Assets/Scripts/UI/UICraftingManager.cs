@@ -7,15 +7,15 @@ public class UICraftingManager : Singleton<UICraftingManager> {
     private List<CraftingRecipeSO> _availableRecipes = new List<CraftingRecipeSO>();
     private InventoryManager _clientInventory; // Your existing client inventory manager
     private PopupManager _popupManager;
-    public void Init(InventoryManager clientInv,PopupManager popupManager) {
-        _clientInventory = clientInv;
-        _popupManager = popupManager;
+    public void Init(NetworkedPlayer client) {
+        _clientInventory = client.InventoryN.GetInventoryManager();
+        _popupManager = client.UiManager.PopupManager;
         _availableRecipes = App.ResourceSystem.GetAllCraftingRecipes();
         // PopupManager should be on same component
         // Subscribe to inventory updates to refresh UI
         _clientInventory.OnSlotChanged += RefreshRecipeDisplayStatus;
         // Subscribe to craft results;
-        PopulateRecipeList();
+        PopulateRecipeList(client);
     }
 
     void OnDestroy() {
@@ -24,7 +24,7 @@ public class UICraftingManager : Singleton<UICraftingManager> {
         }
     }
 
-    void PopulateRecipeList() {
+    void PopulateRecipeList(NetworkedPlayer client) {
         foreach (Transform child in recipeListContainer) {
             Destroy(child.gameObject);
         }
@@ -34,7 +34,7 @@ public class UICraftingManager : Singleton<UICraftingManager> {
             // Assuming your recipeUIPrefab has a script like 'RecipeDisplayItem.cs'
             UIRecipeItem displayItem = recipeGO.GetComponent<UIRecipeItem>();
             if (displayItem != null) {
-                displayItem.Init(recipe, _clientInventory, this);
+                displayItem.Init(recipe, this, client);
                 _popupManager.RegisterIPopupInfo(displayItem);
             }
         }

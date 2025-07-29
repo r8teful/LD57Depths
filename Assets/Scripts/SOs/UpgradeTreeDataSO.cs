@@ -18,7 +18,7 @@ public struct UpgradeTreeTiers {
 }
 
 // Defines how the upgrade tree should look
-[CreateAssetMenu(fileName = "UpgradeTreeDataSO", menuName = "ScriptableObjects/Upgades/UpgradeTreeDataSO")]
+[CreateAssetMenu(fileName = "UpgradeTreeDataSO", menuName = "ScriptableObjects/Upgrades/UpgradeTreeDataSO")]
 public class UpgradeTreeDataSO : ScriptableObject {
     public UpgradeTreeType type; // The main attribute this tree upgrades
     public int length; // Length of the tree, how many upgrades the tree has

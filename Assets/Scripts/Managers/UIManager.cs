@@ -7,16 +7,14 @@ public class UIManager : Singleton<UIManager> {
     [field:SerializeField] public UIUpgradeScreen UpgradeScreen { get; private set; }
     [field: SerializeField] public UIManagerInventory UIManagerInventory {  get; private set; }
     private GameObject _playerGameObject;
-    private NetworkedPlayerInventory _playerInventory;
 
     void Update() {
         UIManagerInventory.UpdateHeldItemVisual();
     }
-    public void Init(InventoryManager localPlayerInvManager, GameObject owningPlayer, UpgradeManagerPlayer upgradeManager) {
-        _localInventoryManager = localPlayerInvManager;
+    public void Init(NetworkedPlayer client, GameObject owningPlayer) {
+        _localInventoryManager = client.InventoryN.GetInventoryManager();
         PopupManager = GetComponent<PopupManager>();
         _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage
-        _playerInventory = _playerGameObject.GetComponent<NetworkedPlayerInventory>();
 
         if (_localInventoryManager == null || _playerGameObject == null) {
             Debug.LogError("InventoryUIManager received null references during Initialize! UI may not function.", gameObject);
@@ -26,8 +24,8 @@ public class UIManager : Singleton<UIManager> {
 
 
         // Init managers
-        UpgradeScreen.Init(this,upgradeManager);
-        UIManagerInventory.Init(this, localPlayerInvManager, owningPlayer);
-        PopupManager.Init(localPlayerInvManager);
+        UpgradeScreen.Init(this,client.UpgradeManager);
+        UIManagerInventory.Init(owningPlayer,client);
+        PopupManager.Init(_localInventoryManager);
     }
 }

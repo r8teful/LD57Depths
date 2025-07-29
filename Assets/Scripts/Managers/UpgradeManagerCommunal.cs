@@ -1,4 +1,3 @@
-// Has to hold upgrade info!
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System;
@@ -10,6 +9,9 @@ public class UpgradeManagerCommunal : NetworkBehaviour {
     private readonly SyncHashSet<ushort> unlockedCommunalUpgrades = new();
     public SyncHashSet<ushort> UnlockedCommunalUpgrades => unlockedCommunalUpgrades;
     public static UpgradeManagerCommunal Instance { get; private set; }
+    public HashSet<ushort> GetUnlockedUpgrades() {
+        return unlockedCommunalUpgrades.Collection;
+    }
     private void Awake() {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;

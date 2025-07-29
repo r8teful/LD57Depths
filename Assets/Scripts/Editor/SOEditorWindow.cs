@@ -27,6 +27,8 @@ public class SOEditorWindow : OdinMenuEditorWindow {
         // Add drag handles to items, so they can be easily dragged into the inventory if characters etc...
         tree.EnumerateTree().Where(x => x.Value as ItemData).ForEach(AddDragHandles);
         tree.EnumerateTree().Where(x => x.Value as RecipeBaseSO).ForEach(AddDragHandles);
+        tree.EnumerateTree().Where(x => x.Value as EntityBaseSO).ForEach(AddDragHandles);
+        tree.EnumerateTree().Where(x => x.Value as TileSO).ForEach(AddDragHandles);
 
         // Add icons to characters and items.
         tree.EnumerateTree().AddIcons<ItemData>(x => x.icon);

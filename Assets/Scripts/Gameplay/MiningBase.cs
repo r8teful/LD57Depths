@@ -74,7 +74,7 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
     }
     private IEnumerator MiningRoutine(ToolController controller) {
         while (true) {
-            var pos = _inputManager.GetAimInput();
+            var pos = _inputManager.GetAimWorldInput();
             //Debug.Log(pos);
             var isFlipped = false;
             var horizontalInput = _inputManager.GetMovementInput().x;

@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UIUpgradeScreen : MonoBehaviour {
-    private List<UIUpgradeTree> _upgradeTrees = new List<UIUpgradeTree>();
     [SerializeField] private Transform _upgradeContainerPlayer;
     [SerializeField] private Transform _upgradeContainerEnv;
     [SerializeField] private Button _buttonTreePlayer;
@@ -24,15 +23,21 @@ public class UIUpgradeScreen : MonoBehaviour {
         _UIManagerParent = UIManager;
         var treeData = App.ResourceSystem.UpgradeTreeData;
         var playerTrees = treeData.Where(d => (int)d.type < 4).ToList(); // Only the player upgrades
-        var envTrees = treeData.Where(d => (int)d.type >= 4).ToList(); // Only the player upgrades
+        var envTrees = treeData.Where(d => (int)d.type >= 4).ToList(); // Only the environment upgrades
+        var UItreePrefab = App.ResourceSystem.GetPrefab<UIUpgradeTree>("UpgradeTree");
+
+        // We have to get the existing data from the UpgradeManager, for both the local player, and the communal from the server
+        // I don't think we should do it here though, do it in the upgrade managers themselves, then they need to call the approriate things 
+        var pUpgrades = UpgradeManagerPlayer.Instance.GetUnlockedUpgrades();
+        var cUpgrades = UpgradeManagerCommunal.Instance.GetUnlockedUpgrades(); // Pulled from server
         foreach (var tree in playerTrees) {
-            var treeObj = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeTree>("UpgradeTree"), _upgradeContainerPlayer);
-            treeObj.Init(this,tree);
+            var treeObj = Instantiate(UItreePrefab, _upgradeContainerPlayer);
+            treeObj.Init(this, tree, pUpgrades);
             treeObj.name = $"UpgradeTreePlayer_{tree.type}";
         }
         foreach (var tree in envTrees) {
-            var treeObj = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeTree>("UpgradeTree"), _upgradeContainerEnv);
-            treeObj.Init(this, tree);
+            var treeObj = Instantiate(UItreePrefab, _upgradeContainerEnv);
+            treeObj.Init(this, tree, cUpgrades);
             treeObj.name = $"UpgradeTreeEnv_{tree.type}";
         }
         _buttonTreePlayer.onClick.AddListener(OnTreePlayerButtonClick);

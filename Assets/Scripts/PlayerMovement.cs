@@ -65,6 +65,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
     public int InitializationOrder => 999; 
     internal bool CanUseTool() => _currentState == PlayerState.Swimming;
+    internal bool CanBuild() => _currentState == PlayerState.Swimming;
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         MainCam = Camera.main;

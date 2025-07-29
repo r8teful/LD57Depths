@@ -8,6 +8,6 @@ public class PlayerUISpawner : MonoBehaviour, INetworkedPlayerModule {
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         UiManager = Instantiate(App.ResourceSystem.GetPrefab<UIManager>("UIManager"));
-        UiManager.Init(playerParent.InventoryN.GetInventoryManager(), gameObject, playerParent.UpgradeManager); // UI needs inv to suscribe to events and display it 
+        UiManager.Init(playerParent, gameObject); // UI needs inv to suscribe to events and display it 
     }
 }

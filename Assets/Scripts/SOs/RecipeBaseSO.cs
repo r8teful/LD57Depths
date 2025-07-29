@@ -1,4 +1,5 @@
 ﻿using Sirenix.OdinInspector;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,6 +32,7 @@ public class RecipeExecutionContext {
     public FixableEntity FixableEntity { get; set; }
     public ToolController ToolController { get; set; }
     public NetworkedPlayer NetworkedPlayer { get; set; }
+    public bool Success { get; set; } // Need to set for the craftingRoutine 
 }
 public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
 
@@ -52,12 +54,15 @@ public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
     public ushort ID => RecipeID;
 
     /// <summary>
-    /// Server-side execution of the recipe.
+    /// Client side execution of the recipe.
     /// </summary>
-    /// <param name="crafterConnection">The connection of the player crafting.</param>
-    /// <param name="clientInventory">The client-side inventory of the crafter.</param>
     /// <returns>True if execution was successful, false otherwise.</returns>
     public abstract bool ExecuteRecipe(RecipeExecutionContext context);
+    public virtual IEnumerator ExecuteRecipeRoutine(RecipeExecutionContext context) {
+        Debug.LogWarning("You should probably override this!");
+        context.Success = false;
+        yield break;
+    }
 
     public virtual void PrepareRecipe(float value, List<ItemQuantity> resourcePool) {
 

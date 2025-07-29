@@ -81,7 +81,7 @@ public class CleaningTool : MonoBehaviour, IToolBehaviour {
             return;
         }
         if (cleaning) {
-            CastRays(inputManager.GetAimInput());
+            CastRays(inputManager.GetAimWorldInput());
         }
     }
     private void Update() {
@@ -90,7 +90,7 @@ public class CleaningTool : MonoBehaviour, IToolBehaviour {
         }
         if (cleaning) {
             // Visuals!
-            CleaningVisual(inputManager.GetAimInput());
+            CleaningVisual(inputManager.GetAimWorldInput());
         }
     }
 

@@ -23,6 +23,9 @@
         },
         {
             "m_Id": "bd582b53b8594fff867e9d753c64f02d"
+        },
+        {
+            "m_Id": "800962ec01ca4a02903ce50da1632a7f"
         }
     ],
     "m_Keywords": [],
@@ -164,6 +167,9 @@
         },
         {
             "m_Id": "32b2c055e07241b8923d418720cf40a7"
+        },
+        {
+            "m_Id": "1f5816ecab7544acb11ab8dbe99e9c8a"
         }
     ],
     "m_GroupDatas": [
@@ -265,6 +271,20 @@
                     "m_Id": "2b821fb62ceb4c4d852cc184ccd6e02c"
                 },
                 "m_SlotId": 1
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "1f5816ecab7544acb11ab8dbe99e9c8a"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "d6326da573c34c718a37ea7eea792d34"
+                },
+                "m_SlotId": 0
             }
         },
         {
@@ -1051,6 +1071,7 @@
     },
     "isMainTexture": false,
     "useTilingAndOffset": false,
+    "useTexelSize": true,
     "m_Modifiable": true,
     "m_DefaultType": 0
 }
@@ -1600,6 +1621,42 @@
         "m_SerializableColors": []
     },
     "m_SerializedDescriptor": "SurfaceDescription.SpriteMask"
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "1f5816ecab7544acb11ab8dbe99e9c8a",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -1471.0001220703125,
+            "y": 1438.0001220703125,
+            "width": 159.0,
+            "height": 33.9998779296875
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "e97aef1ebdb6463594c66dd1da77013f"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "800962ec01ca4a02903ce50da1632a7f"
+    }
 }
 
 {
@@ -2748,8 +2805,8 @@
     "m_ObjectId": "5a1d2b53e3414879a33d5700e3a8b869",
     "m_Title": "Pseudo Random",
     "m_Position": {
-        "x": -2920.000244140625,
-        "y": 561.60009765625
+        "x": -2919.000244140625,
+        "y": 563.0
     }
 }
 
@@ -3515,6 +3572,34 @@
 }
 
 {
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "800962ec01ca4a02903ce50da1632a7f",
+    "m_Guid": {
+        "m_GuidSerialized": "4fbaa2d0-1058-4299-b59b-1dfa63807c11"
+    },
+    "m_Name": "DistortionStartX",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "DistortionStartX",
+    "m_DefaultReferenceName": "_DistortionStartX",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 0.30000001192092898,
+    "m_FloatType": 1,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+    }
+}
+
+{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector2MaterialSlot",
     "m_ObjectId": "801a02bcbcf44445b0798195e6a263ff",
@@ -3742,8 +3827,8 @@
     "m_ObjectId": "90923336b51347d0bc68224948f2f608",
     "m_Title": "UV setup",
     "m_Position": {
-        "x": -3256.000244140625,
-        "y": -203.2000274658203
+        "x": -3255.000244140625,
+        "y": -202.00006103515626
     }
 }
 
@@ -3830,6 +3915,9 @@
         },
         {
             "m_Id": "bd582b53b8594fff867e9d753c64f02d"
+        },
+        {
+            "m_Id": "800962ec01ca4a02903ce50da1632a7f"
         }
     ]
 }
@@ -4998,8 +5086,8 @@
     "m_ObjectId": "d9872d21bad540caa5918002ae9b4e3a",
     "m_Title": "Pixel Perfect",
     "m_Position": {
-        "x": -4116.0009765625,
-        "y": -30.399993896484376
+        "x": -4115.0,
+        "y": -29.000059127807618
     }
 }
 
@@ -5259,6 +5347,21 @@
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Cosine Time",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "e97aef1ebdb6463594c66dd1da77013f",
+    "m_Id": 0,
+    "m_DisplayName": "DistortionStartX",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
     "m_StageCapability": 3,
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,

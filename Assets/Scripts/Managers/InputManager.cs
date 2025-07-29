@@ -6,10 +6,10 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 public enum PlayerInteractionContext {
     None,                 // Default state, no specific interaction available
-    InteractingWithUI,    // Highest priority: Mouse is over any UI element
-    DraggingItem,         // High priority: Player is dragging an item from inventory
+    Building,             // Player is trying to build an entity
+    InteractingWithUI,    // Mouse is over any UI element
+    DraggingItem,         // Player is dragging an item from inventory
     WorldInteractable,    // Player is near an object they can interact with (e.g., "Press E to open")
-    HotebarItemSelected,      // Lowest priority: The default game world interaction (mining, placing)
     UsingToolOnWorld      // Lowest priority: The default game world interaction (mining, placing)
 }
 // UI input handling is in inventoryUIManager
@@ -42,6 +42,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private ShootMode _currentShootMode = ShootMode.Mining;
     private LayerMask _interactableLayerMask;
     private ToolController _toolController;
+    private PlayerMovement _playerMovement;
     private float _interactionRadius = 2f;
     private bool _dashPefromed;
     private Vector2 movementInput;   // For character movement
@@ -57,7 +58,8 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         _inventoryUIManager = playerParent.UiManager.UIManagerInventory;
         _clientObject = playerParent.PlayerNetworkedObject;
         _toolController = playerParent.ToolController;
-        _interactableLayerMask = 1 << LayerMask.NameToLayer("Interactables"); // Don't ask me why
+        _playerMovement = playerParent.PlayerMovement;
+        _interactableLayerMask = 1 << LayerMask.NameToLayer("Interactables"); // Don't ask me why its in the unity documentation
         SetupInputs();
         SubscribeToEvents();
     }
@@ -103,7 +105,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         _playerClickAction.canceled += OnPrimaryInteractionPerformed;
         _playerDashAction.performed += OnDashPerformed;
         _playerDashAction.canceled += OnDashPerformed;
-        _useItemAction.performed += OnUseHotbarInput;
+        //_useItemAction.performed += OnUseHotbarInput;
         _hotbarSelection.performed += OnHotbarSelection;
         _hotbarSelection.performed += OnHotbarSelection;
         _playerMoveAction.performed += OnMove;
@@ -129,9 +131,9 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             _playerClickAction.performed -= OnPrimaryInteractionPerformed;
             _playerClickAction.canceled -= OnPrimaryInteractionPerformed;
         }
-        if (_useItemAction != null) {
-            _useItemAction.performed -= OnUseHotbarInput;
-        }
+        //if (_useItemAction != null) {
+        //    _useItemAction.performed -= OnUseHotbarInput;
+        //}
         if (_hotbarSelection != null) {
             _hotbarSelection.performed -= OnHotbarSelection;
         }
@@ -149,7 +151,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         if (_inventoryUIManager == null) return;
         UpdateInteractionContext();
         UpdateCursor();
-        //UpdatePlayerFeedback(); // Optional but recommended: change cursor, etc.
+        //UpdatePlayerFeedback();
         // Handle interaction input
         if (_currentInteractable != null && _interactAction.WasPerformedThisFrame()) {
             _currentInteractable.Interact(_clientObject);
@@ -167,7 +169,14 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     }
 
     private void UpdateInteractionContext() {
-        // 1. HIGHEST PRIORITY: Check for UI interaction
+        // We want to prioritize user initiated states
+        if (BuildingManager.Instance != null) {
+            if (BuildingManager.Instance.IsBuilding) {
+                _currentContext = PlayerInteractionContext.Building;
+                return;
+            }
+        }
+        // Check for UI interaction
         if (EventSystem.current.IsPointerOverGameObject() || _inventoryUIManager.IsOpen) {
             _currentContext = PlayerInteractionContext.InteractingWithUI;
             // TODO this should sometimes clear the interactable, but sometimes not. As the UI could be the interactable!
@@ -176,25 +185,26 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             return;
         }
 
-        // 2. SECOND PRIORITY: Check if we are dragging an item
+        // Check if we are dragging an item
         if (_inventoryUIManager.IsDraggingItem) {
             _currentContext = PlayerInteractionContext.DraggingItem;
             ClearInteractable();
             return;
         }
 
-        // 3. THIRD PRIORITY: Check for nearby world interactables (your existing logic)
+        // Check for nearby world interactables (your existing logic)
         CheckForNearbyInteractables(); // This method now just *finds* the interactable, doesn't handle input
         if (_currentInteractable != null) {
             _currentContext = PlayerInteractionContext.WorldInteractable;
             return;
         }
-        if (_inventoryUIManager.ItemSelectionManager.CanUseSelectedSlotItem()) {
-            _currentContext = PlayerInteractionContext.HotebarItemSelected;
-            return;
-        }
+        // Not having hotbar selections anymore, for now 
+        //if (_inventoryUIManager.ItemSelectionManager.CanUseSelectedSlotItem()) {
+        //    _currentContext = PlayerInteractionContext.HotebarItemSelected;
+        //    return;
+        //}
 
-        // 4. LOWEST PRIORITY: Default to using a tool on the world
+        // Default to using a tool on the world
         _currentContext = PlayerInteractionContext.UsingToolOnWorld;
     }
     private void CheckForNearbyInteractables() {
@@ -275,7 +285,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     }
   
     // Get aim input, processed based on control scheme
-    public Vector2 GetAimInput() {
+    public Vector2 GetAimWorldInput() {
         if (_playerInput.currentControlScheme == "Keyboard&Mouse") {
             // Convert mouse screen position to world position
             return Camera.main.ScreenToWorldPoint(rawAimInput);
@@ -293,11 +303,11 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         // Just pass logic to the SelectionManager for now
         _inventoryUIManager.ItemSelectionManager.HandleHotbarSelection(context);
     }
-    private void OnUseHotbarInput(InputAction.CallbackContext context) {
-        if(_currentContext == PlayerInteractionContext.HotebarItemSelected) {
-            _inventoryUIManager.ItemSelectionManager.HandleUseInput(context);
-        }
-    }
+    //private void OnUseHotbarInput(InputAction.CallbackContext context) {
+    //    if(_currentContext == PlayerInteractionContext.HotebarItemSelected) {
+    //        _inventoryUIManager.ItemSelectionManager.HandleUseInput(context);
+    //    }
+    //}
     private void OnDashPerformed(InputAction.CallbackContext context) {
         if (context.performed) {
             _dashPefromed = true;
@@ -324,6 +334,11 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
                     } else {
                         _toolController.StopCleaning();
                     }
+                }
+                break;
+            case PlayerInteractionContext.Building:
+                if (context.performed) {
+                    BuildingManager.Instance.UserPlacedClicked();
                 }
                 break;
             case PlayerInteractionContext.WorldInteractable:
@@ -385,6 +400,14 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     void OnDrawGizmosSelected() {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(new(transform.position.x,transform.position.y+_interactionRadius,0), _interactionRadius);
+    }
+
+    internal bool TryEnterBuildMode() {
+        if (!_playerMovement.CanBuild()) {
+            return false;
+        }
+
+        return true;
     }
 }
 

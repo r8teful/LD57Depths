@@ -71,14 +71,13 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         SubscribeToEvents();
     }
     private void OnEnable() {
-        
-            UpgradeManagerPlayer.OnUpgradePurchased += HandleUpgradePurchased;
+        UpgradeManagerPlayer.OnUpgradePurchased += HandleUpgradePurchased;
     }
 
     private void SubscribeToEvents() {
         if (_isNetworked) {
             UpgradeManagerCommunal.Instance.UnlockedCommunalUpgrades.OnChange += HandleCommunalUpgradePurchased;
-        } else {
+            UpgradeManagerPlayer.OnUpgradePurchased -= HandleUpgradePurchased;
         }
     }
 

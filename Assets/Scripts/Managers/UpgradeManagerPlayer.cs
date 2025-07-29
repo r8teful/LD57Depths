@@ -5,9 +5,17 @@ using UnityEngine;
 // Has to hold upgrade info!
 public class UpgradeManagerPlayer : Singleton<UpgradeManagerPlayer>, INetworkedPlayerModule {
 
-    private Dictionary<int,UpgradeRecipeBase> unlockedUpgrades = new Dictionary<int, UpgradeRecipeBase>(); 
+    private Dictionary<ushort,UpgradeRecipeBase> unlockedUpgrades = new Dictionary<ushort, UpgradeRecipeBase>(); 
     public static event Action<UpgradeRecipeBase> OnUpgradePurchased;
     private CraftingComponent _crafting;
+
+    public HashSet<ushort> GetUnlockedUpgrades() {
+        HashSet<ushort> output = new HashSet<ushort>();
+        foreach (var key in unlockedUpgrades) {
+            output.Add(key.Key);
+        }
+        return output;
+    }
 
     public int InitializationOrder => 10;
 
@@ -60,6 +68,21 @@ public class UpgradeManagerPlayer : Singleton<UpgradeManagerPlayer>, INetworkedP
     internal bool IsUpgradePurchased(UpgradeRecipeBase upgradeData) {
         return unlockedUpgrades.ContainsKey(upgradeData.ID);
     }
+    /// <summary>
+    /// Applies the one-time effects (UpgradeActions) of all upgrades currently owned by the player.
+    /// This should be called once on game load.
+    /// </summary>
+    public void ApplyAllPurchasedUpgrades() {
+        var allPurchased = GetUnlockedUpgrades();
 
+        foreach (var recipe in allPurchased) {
+            if(unlockedUpgrades.TryGetValue(recipe, out var recipeData)){
+                recipeData.ExecuteRecipe(null); // BRUH how are we going to do this?
+                // We can have the order depening on the ID, then the multiplication and addition will be done in the right order
+
+            }
+            
+        }
+    }
 }
 

@@ -43,7 +43,7 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
 
     public void HandleVisualUpdate(InputManager inputManager) {
         // Update visuals each frame when mining
-        var pos = inputManager.GetAimInput();
+        var pos = inputManager.GetAimWorldInput();
         SetCorrectLaserPos(inputManager.GetMovementInput().x);
         LaserVisual(pos);
     }

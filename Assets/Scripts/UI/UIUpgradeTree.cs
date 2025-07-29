@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
@@ -7,7 +8,7 @@ public class UIUpgradeTree : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI _text;
     [SerializeField] private Transform _nodeContainer;
     [SerializeField] private Transform _resourceContainer; // For the first upgrade that is there
-    internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree) {
+    internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades) {
         // Makes "PlayerSpeed" become "Player Speed"  
         _text.text = Regex.Replace(tree.type.ToString(), "([a-z])([A-Z])", "$1 $2");
         var nodePrefab = App.ResourceSystem.GetPrefab<UIUpgradeNode>("UpgradeNode");
@@ -18,6 +19,7 @@ public class UIUpgradeTree : MonoBehaviour {
             var node = Instantiate(nodePrefab, _nodeContainer);
             var upgradeRecipe = tree.UpgradeTree[i];
             node.name = $"UpgradeNode_{tree.type}_LVL_{i}";
+
             node.Init(upgradeRecipe, this, i!=0 && (1+i)%4 == 0, isNetworked: IsNetworkedTreeType(tree));
             uIUpgradeScreen.GetUIManager().PopupManager.RegisterIPopupInfo(node); // Oh my god what a way to do this but I guess it makes sence
         }

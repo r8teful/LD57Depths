@@ -118,7 +118,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         if (_inputSendTimer >= 0.4f) {
             if (_isUsingToolLocal) {
                 _inputSendTimer = 0f;
-                ToolInputServerRpc(_playerParent.InputManager.GetAimInput());
+                ToolInputServerRpc(_playerParent.InputManager.GetAimWorldInput());
             }
         }
     }
@@ -255,7 +255,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         toolBehaviorReference = null;
     }
 
-    internal bool UnlockTool(string unlockName) {
+    internal bool UnlockMiningTool(string unlockName) {
         var toolPrefab = App.ResourceSystem.GetPrefab(unlockName);
         if (toolPrefab == null) {
             Debug.LogError($"Tool prefab '{unlockName}' not found in ResourceSystem.");
