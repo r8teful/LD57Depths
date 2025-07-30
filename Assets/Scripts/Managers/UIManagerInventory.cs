@@ -230,7 +230,7 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
         hotbarPanel.SetActive(false); // 
         OnInventoryToggle?.Invoke(true);
     }
-    private void CloseInventory(InputAction.CallbackContext c) {
+    private void CloseInventory() {
         playerUIPanel.SetActive(false);
         hotbarPanel.SetActive(true);
         EventSystem.current.SetSelectedGameObject(null); // Deselect UI when closing
@@ -532,7 +532,7 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
     }
     private void TryCloseInventory() {
         if (IsOpen) {
-            HandleToggleInventory(new InputAction.CallbackContext()); // Pass dummy context
+            HandleToggleInventory(); // Pass dummy context
         }
     }
     public void HandleContainerClose(bool sendServerCommand = true) {
@@ -553,12 +553,12 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
     }
     public bool IsCurrentlyDragging() => isDragging;
 
-    internal void HandleToggleInventory(InputAction.CallbackContext context) {
+    internal void HandleToggleInventory() {
         _isOpen = !_isOpen;
         if (_isOpen) {
             OpenInventory();
         } else {
-            CloseInventory(context);
+            CloseInventory();
         }
         // If closing while dragging, cancel the drag
         if (!playerUIPanel.activeSelf && isDragging) {
@@ -569,7 +569,7 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
     internal void HandleCloseAction(InputAction.CallbackContext context) {
         if (IsOpen) {
             // If inventory is open and nothing held, maybe toggle it closed
-            HandleToggleInventory(context);
+            HandleToggleInventory();
         }
         _playerInventory.CloseContainer();
     }

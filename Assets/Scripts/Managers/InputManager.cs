@@ -34,7 +34,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private InputAction _uiDropOneAction;     // e.g., Right Mouse (when holding) / Gamepad B
     private InputAction _uiNavigateAction;    // D-Pad / Arrow Keys
     private InputAction _uiPointAction;       // Mouse position for cursor icon
-    private InputAction _uiCancelAction;       // Escape / Gamepad Start (to cancel holding)
+    private InputAction _cancelAction;       // Escape / Gamepad Start (to cancel holding)
     private InputAction _uiTabLeft;
     private InputAction _uiTabRight;
     
@@ -72,13 +72,13 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             _playerAimAction = _playerInput.actions.FindAction("Aim",true);
             _playerSwitchAction = _playerInput.actions.FindAction("SwitchTool",true);
             _playerDashAction = _playerInput.actions.FindAction("Dash",true);
+            _cancelAction = _playerInput.actions.FindAction("Cancel",true);
             _UItoggleInventoryAction = _playerInput.actions.FindAction("UI_Toggle",true); // I
             _uiInteractAction = _playerInput.actions.FindAction("UI_Interact",true); // LMB
             _uiAltInteractAction = _playerInput.actions.FindAction("UI_AltInteract",true); // RMB
             _uiDropOneAction = _playerInput.actions.FindAction("UI_DropOne",true);
             _uiNavigateAction = _playerInput.actions.FindAction("UI_Navigate",true);
             _uiPointAction = _playerInput.actions.FindAction("UI_Point",true);
-            _uiCancelAction = _playerInput.actions.FindAction("UI_Cancel",true);
             _uiTabLeft = _playerInput.actions.FindAction("UI_TabLeft",true); // Opening containers
             _uiTabRight = _playerInput.actions.FindAction("UI_TabRight",true); // Opening containers
             _hotbarSelection = _playerInput.actions.FindAction("HotbarSelect",true);
@@ -95,8 +95,9 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             _uiInteractAction.performed += UIOnPrimaryInteractionPerformed;
         if (_uiAltInteractAction != null)
             _uiAltInteractAction.performed += UIOnSecondaryInteractionPerformed;
-        if (_uiCancelAction != null)
-            _uiCancelAction.performed += UIHandleCloseAction;
+        if (_cancelAction != null)
+            _cancelAction.performed += UIHandleCloseAction;
+            _cancelAction.performed += HandleCancelAction;
         if (_uiTabLeft != null)
             _uiTabLeft.performed += l => UIScrollTabs(-1); // Not unsubscribing but what is the worst that could happen?
         if (_uiTabRight != null)
@@ -116,7 +117,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         _playerSwitchAction.canceled += OnSwitchTool;
     }
 
-   
+ 
 
     private void UnsubscribeFromEvents() {
         if (_UItoggleInventoryAction != null)
@@ -125,8 +126,9 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             _uiInteractAction.performed -= UIOnPrimaryInteractionPerformed;
         if (_uiAltInteractAction != null)
             _uiAltInteractAction.performed -= UIOnSecondaryInteractionPerformed;
-        if (_uiCancelAction != null)
-            _uiCancelAction.performed -= UIHandleCloseAction;
+        if (_cancelAction != null)
+            _cancelAction.performed -= UIHandleCloseAction;
+            _cancelAction.performed -= HandleCancelAction;
         if (_playerClickAction != null) {
             _playerClickAction.performed -= OnPrimaryInteractionPerformed;
             _playerClickAction.canceled -= OnPrimaryInteractionPerformed;
@@ -173,6 +175,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         if (BuildingManager.Instance != null) {
             if (BuildingManager.Instance.IsBuilding) {
                 _currentContext = PlayerInteractionContext.Building;
+                Debug.Log("we are building!");
                 return;
             }
         }
@@ -371,14 +374,16 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private void UIOnToggleInventory(InputAction.CallbackContext context) {
         if (Console.IsConsoleOpen())
             return;
-        _inventoryUIManager.HandleToggleInventory(context);
+        _inventoryUIManager.HandleToggleInventory();
     }
 
     private void UIHandleCloseAction(InputAction.CallbackContext context) {
-        Debug.Log("Cancel!");
         // E.g., Escape key or Gamepad B/Start 
         _inventoryUIManager.HandleCloseAction(context); // For UI related
         ClearInteractable(); // Also clear interactable
+    }
+    private void HandleCancelAction(InputAction.CallbackContext context) {
+        BuildingManager.Instance.HandlePlaceFailOrCancel();
     }
     #endregion
     public static string FormatBindingDisplayString(string input) {

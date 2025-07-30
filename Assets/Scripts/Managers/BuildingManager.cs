@@ -37,11 +37,9 @@ public class BuildingManager : Singleton<BuildingManager> {
 
     private void UpdateEntityVisual() {
         if (CanPlaceEntity()) {
-            // Green
-            _currentPlacingEntity.SetColor(Color.green);
+            _currentPlacingEntity.SetColor(new(0,1,0,0.8f)); // Green
         } else {
-            // Red
-            _currentPlacingEntity.SetColor(Color.red);
+            _currentPlacingEntity.SetColor(new(1,0,0,0.8f)); // Red 
         }
     }
 
@@ -52,7 +50,11 @@ public class BuildingManager : Singleton<BuildingManager> {
             OnBuildAttemptComplete?.Invoke(false);
             return;
         }
-        // We are now in building mode
+        // We are now in building mode, close inventory
+        
+        // BUG Here, I have no clue why but we only register the event if the inventory is stil OPEN when we place the object
+        //NetworkedPlayer.LocalInstance.UiManager.UIManagerInventory.HandleToggleInventory(); // This seems very bad but eh?
+
         // Spawn a preview of the entity
         _currentPlacingEntity = Instantiate(entityGameObject);
         IsBuilding = true; // Set flag to true, now update function will handle the rest
@@ -85,6 +87,7 @@ public class BuildingManager : Singleton<BuildingManager> {
         }
     }
     public void ExitBuild() {
+        Destroy(_currentPlacingEntity.gameObject);
         _currentPlacingEntity = null;
         IsBuilding = false;
     }
@@ -92,18 +95,19 @@ public class BuildingManager : Singleton<BuildingManager> {
         if (CanPlaceEntity()) {
             HandlePlaceSuccess(client); // Need to pass client in order to spawn it properly
         } else {
-            HandlePlaceFailed();
+            // We don't actually exit building mode here, maybe an error sound? Or some kind of feedback
+            //HandlePlaceFailOrCancel();
         }
-    }
-
-    private void HandlePlaceFailed() {
-        Debug.Log("Can't place!");
-        OnBuildAttemptComplete?.Invoke(false);
     }
     private void HandlePlaceSuccess(NetworkObject client) {
         PlaceEntity(client);
         ExitBuild();
+        Debug.Log("Place Sucess calling event");
         OnBuildAttemptComplete?.Invoke(true);
+    }
+    public void HandlePlaceFailOrCancel() {
+        ExitBuild();
+        OnBuildAttemptComplete?.Invoke(false);
     }
 
     private void PlaceEntity(NetworkObject client) {
@@ -115,12 +119,12 @@ public class BuildingManager : Singleton<BuildingManager> {
         }
         // Get final position 
         var pos = _currentPlacingEntity.transform.position;
-        Vector3Int p = new Vector3Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z));
+        //Vector3Int p = new Vector3Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z));
+        //Debug.Log($"Pos: {pos} placing object at: {p}");
+        Vector3Int p = WorldManager.Instance.WorldToCell(pos);
         // Spawn on server
         EntityManager.Instance.AddAndSpawnEntityForClient(entity.entityID, p, Quaternion.identity, client.LocalConnection);
 
-        // Despawn preview
-        Destroy(_currentPlacingEntity.gameObject);
-        _currentPlacingEntity = null;
+        // Despawn preview is handled in ExitBuild()
     }
 }

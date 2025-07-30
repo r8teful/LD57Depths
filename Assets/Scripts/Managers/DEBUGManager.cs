@@ -34,6 +34,8 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
 
     public void RegisterOwningPlayer(NetworkedPlayer player) {
         _player = player;
+        _player.InventoryN.DEBUGGIVE(0, 100);
+        _player.InventoryN.DEBUGGIVE(1, 100);
     }
 
     protected override void Awake() {

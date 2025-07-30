@@ -222,15 +222,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "UI_Cancel",
-                    "type": "Button",
-                    "id": "84edd794-857c-462d-baf6-453ec34ef04c",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "UI_Point",
                     "type": "Value",
                     "id": "d6f5ca37-a151-4393-81e5-d1c5bee60728",
@@ -1125,28 +1116,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "UI_DropOne",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "7a742e4d-72d1-4878-8b0e-7431086a0340",
-                    "path": "<Keyboard>/escape",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "UI_Cancel",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1fce3c13-a8af-4a69-8e88-26de65400143",
-                    "path": "<Keyboard>/backspace",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "UI_Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

@@ -17,20 +17,20 @@ public class CraftingEntitySO : CraftingRecipeSO {
 
         // Subscribe to the completion event
         // The lambda expression captures the 'buildTaskFinished' and 'buildResult' variables
-        System.Action<bool> onComplete = (success) => {
+        void onComplete(bool success) {
             buildResult = success;
             buildTaskFinished = true;
-        };
+        }
         BuildingManager.Instance.OnBuildAttemptComplete += onComplete;
 
         BuildingManager.Instance.EnterBuilding(EntityBuildPreviewPrefab); 
 
         // Wait until the event is fired
         yield return new WaitUntil(() => buildTaskFinished);
-
         // Unsubscribe to prevent memory leaks
+        Debug.Log("BUILDING DONE: " + buildResult);
         BuildingManager.Instance.OnBuildAttemptComplete -= onComplete;
-
+        Debug.Log("BUILDING DONE, RESULT IS: " + buildResult);
         context.Success = buildResult;
 
         // Done, return to the CraftingComponent
