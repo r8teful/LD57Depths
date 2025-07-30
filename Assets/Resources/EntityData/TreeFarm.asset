@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d74c38affee199d438d0835b81b12002, type: 3}
-  m_Name: _TestPlaceEnt
+  m_Name: TreeFarm
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,9 +21,9 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  entityID: 999
+  entityID: 900
   entityName: TreeFarm
-  entityPrefab: {fileID: 401910264597585571, guid: 486389794b6334a4bb5bc725ba9e8593, type: 3}
+  entityPrefab: {fileID: 401910264597585571, guid: fc26b4fe1647e0840a219e4e20912842, type: 3}
   spawnConditions:
     requiredBiomes: 
     minY: -1000

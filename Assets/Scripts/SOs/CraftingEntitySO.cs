@@ -3,7 +3,7 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "CraftingEntitySO", menuName = "ScriptableObjects/Crafting/CraftingEntitySO", order = 9)]
 public class CraftingEntitySO : CraftingRecipeSO {
-    public EntityBaseSO EntityToCraft;
+    public PlaceableEntity EntityBuildPreviewPrefab;
     public override bool ExecuteRecipe(RecipeExecutionContext context) {
         Debug.LogError("Should not call execute Recipe on a Crafting Entity, use ExecuteRecipeRoutine");
         return false; 
@@ -23,7 +23,7 @@ public class CraftingEntitySO : CraftingRecipeSO {
         };
         BuildingManager.Instance.OnBuildAttemptComplete += onComplete;
 
-        BuildingManager.Instance.EnterBuilding(EntityToCraft.ID); 
+        BuildingManager.Instance.EnterBuilding(EntityBuildPreviewPrefab); 
 
         // Wait until the event is fired
         yield return new WaitUntil(() => buildTaskFinished);

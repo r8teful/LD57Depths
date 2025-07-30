@@ -338,7 +338,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
                 break;
             case PlayerInteractionContext.Building:
                 if (context.performed) {
-                    BuildingManager.Instance.UserPlacedClicked();
+                    BuildingManager.Instance.UserPlacedClicked(_clientObject);
                 }
                 break;
             case PlayerInteractionContext.WorldInteractable:

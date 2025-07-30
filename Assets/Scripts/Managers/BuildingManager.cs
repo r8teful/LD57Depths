@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FishNet.Object;
+using System;
 using System.Collections;
 using UnityEngine;
 // Handles building of entities, and later probably building of sub rooms using the same system
@@ -44,7 +45,7 @@ public class BuildingManager : Singleton<BuildingManager> {
         }
     }
 
-    public void EnterBuilding(ushort entityID) {
+    public void EnterBuilding(PlaceableEntity entityGameObject) {
         // Try and enter building mode first
         if (!TryEnterBuilding()) {
             Debug.LogWarning("Failed to enter build mode!");
@@ -52,17 +53,9 @@ public class BuildingManager : Singleton<BuildingManager> {
             return;
         }
         // We are now in building mode
-        // Spawn a preview of the entity, which is really just the entity already, because why not?
-        var entity = App.ResourceSystem.GetEntityByID(entityID);
-        if (entity.entityPrefab != null) { // Safety
-            var g = Instantiate(entity.entityPrefab);
-            if (g.TryGetComponent<PlaceableEntity>(out var placeableEntity)) {
-                _currentPlacingEntity = placeableEntity; // This is a dummy now 
-            } else {
-                Debug.LogError("Placeable entity needs PlaceAbleEntity Script!");
-            }
-        }
-        IsBuilding = true;
+        // Spawn a preview of the entity
+        _currentPlacingEntity = Instantiate(entityGameObject);
+        IsBuilding = true; // Set flag to true, now update function will handle the rest
     }
 
     public bool TryEnterBuilding() {
@@ -95,9 +88,9 @@ public class BuildingManager : Singleton<BuildingManager> {
         _currentPlacingEntity = null;
         IsBuilding = false;
     }
-    internal void UserPlacedClicked() {
+    internal void UserPlacedClicked(NetworkObject client) {
         if (CanPlaceEntity()) {
-            HandlePlaceSuccess();
+            HandlePlaceSuccess(client); // Need to pass client in order to spawn it properly
         } else {
             HandlePlaceFailed();
         }
@@ -107,13 +100,27 @@ public class BuildingManager : Singleton<BuildingManager> {
         Debug.Log("Can't place!");
         OnBuildAttemptComplete?.Invoke(false);
     }
-    private void HandlePlaceSuccess() {
-        PlaceEntity();
+    private void HandlePlaceSuccess(NetworkObject client) {
+        PlaceEntity(client);
         ExitBuild();
         OnBuildAttemptComplete?.Invoke(true);
     }
 
-    private void PlaceEntity() {
-        _currentPlacingEntity.SetColor(Color.white); // color to "normal"
+    private void PlaceEntity(NetworkObject client) {
+        // Spawn the actual "real" entity on the server
+        var entity = _currentPlacingEntity.EntityData;
+        if (entity == null) {
+            Debug.LogError("Entity prefab data not found!");
+            return;
+        }
+        // Get final position 
+        var pos = _currentPlacingEntity.transform.position;
+        Vector3Int p = new Vector3Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z));
+        // Spawn on server
+        EntityManager.Instance.AddAndSpawnEntityForClient(entity.entityID, p, Quaternion.identity, client.LocalConnection);
+
+        // Despawn preview
+        Destroy(_currentPlacingEntity.gameObject);
+        _currentPlacingEntity = null;
     }
 }

@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 public class UpgradeSOGenerator : Editor {
-    [MenuItem("Tools/r8teful/GenerateUpgradeSOs")]
+    //[MenuItem("Tools/r8teful/GenerateUpgradeSOs")]
     public static void GenerateUpgrades() {
         int treeLength = 12;
         int upgradeTreeTypeCount = Enum.GetValues(typeof(UpgradeTreeType)).Length;

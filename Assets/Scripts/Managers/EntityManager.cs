@@ -150,7 +150,35 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             return; // Spawned one entity this check, move to next check location
         }
     }
+    /// <summary>
+    /// Adds a new persistent entity, tracks it, and spawns it for the requesting client only.
+    /// </summary>
+    /// <param name="entityID">The entity type ID (ushort, as used in your system).</param>
+    /// <param name="cellPos">The cell position to spawn at (grid coordinates).</param>
+    /// <param name="rotation">The rotation to spawn with.</param>
+    /// <param name="requester">The client connection to spawn for.</param>
+    /// <returns>The persistent ID of the new entity, or 0 if failed.</returns>
+    [Server]
+    public ulong AddAndSpawnEntityForClient(ushort entityID, Vector3Int cellPos, Quaternion rotation, NetworkConnection requester) {
+        if (!IsServerInitialized || requester == null)
+            return 0;
 
+        // Add to persistent database
+        PersistentEntityData newEntityData = ServerAddNewPersistentEntity(entityID, cellPos, rotation);
+        if (newEntityData == null)
+            return 0;
+
+        // Track in chunk map
+        Vector2Int chunkCoord = chunkManager.CellToChunkCoord(cellPos);
+        if (!entityIdsByByChunkCoord.ContainsKey(chunkCoord))
+            entityIdsByByChunkCoord[chunkCoord] = new List<ulong>();
+        entityIdsByByChunkCoord[chunkCoord].Add(newEntityData.persistentId);
+
+        // Activate and spawn for the requesting client only
+        CmdRequestEntityActivation(newEntityData.persistentId, requester);
+
+        return newEntityData.persistentId;
+    }
 
     void SpawnEntity(RuntimeSpawnEntitySO data, Vector3 position) {
         if (!IsServerInitialized) return;
