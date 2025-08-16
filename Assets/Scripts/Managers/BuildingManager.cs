@@ -52,8 +52,7 @@ public class BuildingManager : Singleton<BuildingManager> {
         }
         // We are now in building mode, close inventory
         
-        // BUG Here, I have no clue why but we only register the event if the inventory is stil OPEN when we place the object
-        //NetworkedPlayer.LocalInstance.UiManager.UIManagerInventory.HandleToggleInventory(); // This seems very bad but eh?
+        NetworkedPlayer.LocalInstance.UiManager.UIManagerInventory.HandleToggleInventory(); // This seems very bad but eh?
 
         // Spawn a preview of the entity
         _currentPlacingEntity = Instantiate(entityGameObject);
@@ -103,6 +102,7 @@ public class BuildingManager : Singleton<BuildingManager> {
         PlaceEntity(client);
         ExitBuild();
         Debug.Log("Place Sucess calling event");
+        // When this event is called, it somehow ONLY passes when we didn't close the invenoty
         OnBuildAttemptComplete?.Invoke(true);
     }
     public void HandlePlaceFailOrCancel() {

@@ -10,6 +10,7 @@ public class CraftingEntitySO : CraftingRecipeSO {
     }
 
     public override IEnumerator ExecuteRecipeRoutine(RecipeExecutionContext context) {
+        Debug.Log("Enter execute recipe");
         context.Success = false;
 
         bool buildTaskFinished = false;
@@ -20,16 +21,20 @@ public class CraftingEntitySO : CraftingRecipeSO {
         void onComplete(bool success) {
             buildResult = success;
             buildTaskFinished = true;
+
+            // unsubscribe so it only fires once
+            BuildingManager.Instance.OnBuildAttemptComplete -= onComplete;
         }
         BuildingManager.Instance.OnBuildAttemptComplete += onComplete;
 
-        BuildingManager.Instance.EnterBuilding(EntityBuildPreviewPrefab); 
+        BuildingManager.Instance.EnterBuilding(EntityBuildPreviewPrefab);
 
         // Wait until the event is fired
-        yield return new WaitUntil(() => buildTaskFinished);
-        // Unsubscribe to prevent memory leaks
-        Debug.Log("BUILDING DONE: " + buildResult);
-        BuildingManager.Instance.OnBuildAttemptComplete -= onComplete;
+        //yield return new WaitUntil(() => buildTaskFinished); 
+        while (!buildTaskFinished) {
+            Debug.Log("Waiting for result...");
+            yield return null;
+        }
         Debug.Log("BUILDING DONE, RESULT IS: " + buildResult);
         context.Success = buildResult;
 

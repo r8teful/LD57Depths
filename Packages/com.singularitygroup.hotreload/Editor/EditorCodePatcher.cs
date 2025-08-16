@@ -780,7 +780,9 @@ namespace SingularityGroup.HotReload.Editor {
                     }
                 }
                 if (lastCompileErrorLog != null) {
-                    Log.Error(lastCompileErrorLog);
+                    if (!disableServerLogs) {
+                        Log.Error(lastCompileErrorLog);
+                    }
                     lastCompileErrorLog = null;
                 }
                 RequestHelper.RequestEditorEventWithRetry(new Stat(StatSource.Client, StatLevel.Debug, StatFeature.Reload, StatEventType.CompileError), new EditorExtraData {
@@ -846,7 +848,7 @@ namespace SingularityGroup.HotReload.Editor {
             }
 
             foreach (string responseFailure in response.failures) {
-                if (responseFailure.Contains("error CS")) {
+                if (responseFailure.Contains("error CS") && !disableServerLogs) {
                     Log.Error(responseFailure);
                 } else if (autoRecompiled) {
                     Log.Info(responseFailure);

@@ -175,7 +175,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         if (BuildingManager.Instance != null) {
             if (BuildingManager.Instance.IsBuilding) {
                 _currentContext = PlayerInteractionContext.Building;
-                Debug.Log("we are building!");
+                //Debug.Log("we are building!");
                 return;
             }
         }

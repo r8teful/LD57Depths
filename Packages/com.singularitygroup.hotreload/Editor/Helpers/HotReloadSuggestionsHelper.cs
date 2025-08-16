@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using SingularityGroup.HotReload.DTO;
+using SingularityGroup.HotReload.Newtonsoft.Json;
 using UnityEditor;
 using UnityEditor.Compilation;
 using UnityEditor.PackageManager;
@@ -516,17 +518,12 @@ namespace SingularityGroup.HotReload.Editor {
         private static async Task CheckEditorsWithoutHRAsync() {
             try {
                 checkingEditorsWihtoutHR = true;
-                var showSuggestion = await Task.Run(() => {
-                    try {
-                        var runningUnities = Process.GetProcessesByName("Unity Editor").Length;
-                        var runningPatchers = Process.GetProcessesByName("CodePatcherCLI").Length;
-                        return runningPatchers > 0 && runningUnities > runningPatchers;
-                    } catch (ArgumentException) {
-                        // On some devices GetProcessesByName throws ArgumentException for no good reason.
-                        // it happens rarely and the feature is not the most important so proper solution is not required
-                        return false;
-                    }
-                });
+                
+                var editorsWithoutHr = await RequestHelper.RequestEditorsWithoutHRRunning();
+                if (editorsWithoutHr == null) {
+                    return;
+                }
+                var showSuggestion = editorsWithoutHr.editorsWithoutHRRunning;
                 if (!showSuggestion) {
                     HotReloadSuggestionsHelper.SetSuggestionInactive(HotReloadSuggestionKind.EditorsWithoutHRRunning);
                     return;

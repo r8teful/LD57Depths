@@ -46,7 +46,11 @@ public class CraftingComponent : MonoBehaviour, INetworkedPlayerModule {
         }
         return true;
     }
-    public IEnumerator AttemptCraftRoutine(RecipeBaseSO recipe, RecipeExecutionContext context = null, UIPopup instantatiatedPopup = null) {
+    public void StartAttemptCraftRoutine(RecipeBaseSO recipe, RecipeExecutionContext context = null, UIPopup instantatiatedPopup = null) {
+        StartCoroutine(AttemptCraftRoutine(recipe, context, instantatiatedPopup));
+    }
+
+    private IEnumerator AttemptCraftRoutine(RecipeBaseSO recipe, RecipeExecutionContext context = null, UIPopup instantatiatedPopup = null) {
         // Validate inputs
         if (recipe == null || _clientInventory == null) {
             Debug.LogWarning("recipe or Inventory null!");

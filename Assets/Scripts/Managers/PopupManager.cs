@@ -27,7 +27,7 @@ public class PopupManager : StaticInstance<PopupManager> {
     }
 
     private void OnInventoryToggled(bool isOpen) {
-        Debug.Log("INVOKED!");
+        //Debug.Log("INVOKED!");
         if (!isOpen) {
             // Closing
             if(currentPopup != null) {

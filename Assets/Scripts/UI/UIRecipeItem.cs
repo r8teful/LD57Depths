@@ -67,9 +67,9 @@ public class UIRecipeItem : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPo
     }
 
     void OnCraftButtonClicked() {
-        if(_recipe is CraftingEntitySO entityRecipe) {        
-            StartCoroutine(_owningPlayer.CraftingComponent.AttemptCraftRoutine(entityRecipe));
-             return;
+        if(_recipe is CraftingEntitySO entityRecipe) {
+            _owningPlayer.CraftingComponent.StartAttemptCraftRoutine(entityRecipe); // We can't just call StartCouritine because this script gets disabled
+            return;
         }
         _owningPlayer.CraftingComponent.AttemptCraft(_recipe);
     }
