@@ -2,10 +2,13 @@ using FishNet.Object;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 // Should hold server side data about the state of the different upgrades
 public class SubInterior : NetworkBehaviour {
+    // TODO Isn't it bad that we are storing the PersistentData here aswell? Should we just have a list of persistantIDs only, and then ask the entityManager for the data? 
     private Dictionary<ulong, PersistentEntityData> persistentSubEntities = new Dictionary<ulong, PersistentEntityData>();
     private Dictionary<ulong, InteriorEntityData> persistentIDToData = new Dictionary<ulong, InteriorEntityData>();
     private EntityManager _entityManager;
@@ -27,7 +30,7 @@ public class SubInterior : NetworkBehaviour {
         interiorEntities = interior.Item2;
         interiorEntitieData = interior.Item1;
         foreach (var item in interiorEntitieData) {
-            var createdEntityData = _entityManager.ServerAddNewPersistentSubEntity(item.id, item.pos, item.rotation);
+            var createdEntityData = _entityManager.ServerAddNewPersistentEntity(item.id, item.pos, item.rotation, new BreakEntityData(true));
             persistentSubEntities.Add(createdEntityData.persistentId, createdEntityData);
             createdEntityData.specificData.ApplyTo(item.go);
 

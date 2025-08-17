@@ -1,10 +1,12 @@
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using FishNet.Object; // For NetworkBehaviour and ServerManager access
 using FishNet;
 using FishNet.Connection;
+using FishNet.Object; // For NetworkBehaviour and ServerManager access
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;       // For InstanceFinder
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to use ServerManager etc.
 {
@@ -33,10 +35,16 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
     private Dictionary<ulong, PersistentEntityData> persistentEntityDatabase = new Dictionary<ulong, PersistentEntityData>();
     private ulong nextPersistentEntityId = 1; // Counter for assigning unique IDs
 
-    // Local entity data
+    // Local entity data.
+    // This is used when de-activating a chunk. When we recieve data that is within a chunk, we cache it in these variables
+    // Entities that are created in other ways, are only added to persistentEntityDatabase for now, which means they are not despawned when a chunk unloads.
+    // This should be fixed later if it is a big performance inpact, but now they just stay loaded, which isn't the worst thing, I think...
     private HashSet<ulong> locallyActiveEntityIds = new HashSet<ulong>();
     private Dictionary<Vector2Int, List<ulong>> cachedEntityIdsByChunk = new Dictionary<Vector2Int, List<ulong>>();
     private Dictionary<ulong, Vector2Int> cachedEntityInChunk = new Dictionary<ulong, Vector2Int>(); // Specifies which chunk an cached enemy is
+
+    public static event Action<ulong, PersistentEntityData> EntitySpawnedNew;
+    public static event Action<ulong, PersistentEntityData> EntityDepawnedPermanent;
     private ulong GetNextPersistentEntityId() { return nextPersistentEntityId++; }
     public List<ulong> GetEntityIDsByChunkCoord(Vector2Int chunkCoord) {
         if (entityIdsByByChunkCoord.TryGetValue(chunkCoord, out var Idlist)) {
@@ -44,6 +52,9 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         } else {
             return null;
         }
+    }
+    public PersistentEntityData GetPersistantDataByID(ulong id) {
+        return persistentEntityDatabase.TryGetValue(id, out var Data) ? Data : null;
     }
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -159,12 +170,12 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
     /// <param name="requester">The client connection to spawn for.</param>
     /// <returns>The persistent ID of the new entity, or 0 if failed.</returns>
     [Server]
-    public ulong AddAndSpawnEntityForClient(ushort entityID, Vector3Int cellPos, Quaternion rotation, NetworkConnection requester) {
+    public ulong AddAndSpawnEntityForClient(ushort entityID, Vector3Int cellPos, Quaternion rotation, NetworkConnection requester, EntitySpecificData data = null) {
         if (!IsServerInitialized || requester == null)
             return 0;
 
         // Add to persistent database
-        PersistentEntityData newEntityData = ServerAddNewPersistentEntity(entityID, cellPos, rotation);
+        PersistentEntityData newEntityData = ServerAddNewPersistentEntity(entityID, cellPos, rotation, data);
         if (newEntityData == null)
             return 0;
 
@@ -176,7 +187,6 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
 
         // Activate and spawn for the requesting client only
         CmdRequestEntityActivation(newEntityData.persistentId, requester);
-
         return newEntityData.persistentId;
     }
 
@@ -374,23 +384,16 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         }
     }
 
-    // Not much different than adding a generig persistent entity, we just set the data to be broken at the start
-    public PersistentEntityData ServerAddNewPersistentSubEntity(ushort id, Vector3Int pos, Quaternion rot) {
-        ulong unqiueID = GetNextPersistentEntityId();
-        PersistentEntityData newEntityData = new PersistentEntityData(unqiueID, id, pos, rot,
-            new BreakEntityData(true) 
-        );
-        persistentEntityDatabase.Add(unqiueID, newEntityData);
-        Debug.Log($"Added new Sub persistent entity ID:{unqiueID} at {pos}");
-        return newEntityData; // Return the created data
+    public PersistentEntityData ServerAddNewPersistentEntity(ushort id, Vector3Int pos, Quaternion rot, EntitySpecificData entityData = null) {
+        ulong uniqueID = GetNextPersistentEntityId();
+        PersistentEntityData newEntityData = new(uniqueID, id, pos, rot, entityData);
+        persistentEntityDatabase.Add(uniqueID, newEntityData);
+        Debug.Log($"Added new persistent entity ID:{uniqueID} at {pos}");
+        RaiseEntitySpawnedNew(newEntityData.persistentId, newEntityData);
+        return newEntityData;
     }
-    public PersistentEntityData ServerAddNewPersistentEntity(ushort id, Vector3Int pos, Quaternion rot) {
-        ulong unqiueID = GetNextPersistentEntityId();
-        PersistentEntityData newEntityData = new PersistentEntityData(unqiueID, id, pos, rot);
-        persistentEntityDatabase.Add(unqiueID, newEntityData);
-        Debug.Log($"Added new persistent entity ID:{unqiueID} at {pos}");
-        return newEntityData; // Return the created data
-    }
+
+
     // --- Client RPCs for Activation/Deactivation ---
     [ServerRpc(RequireOwnership = false)] // Any client can request
     public void CmdRequestEntityActivation(ulong persistentId, NetworkConnection requester = null) {
@@ -530,6 +533,8 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             persistentEntityDatabase.Remove(persistentId);
             // Notify Entity Manager in case it needs to clean up ref count
             ForceDeactivation(persistentId);
+
+            RaiseEntityDespawnedPermanent(persistentId, data); // Raise the event
         }
     }
     // --- Force Deactivation (e.g., when entity is permanently removed) ---
@@ -786,6 +791,14 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
                 }
             }
         }
+    }
+    public void RaiseEntitySpawnedNew(ulong persistantID, PersistentEntityData data) {
+        if (!InstanceFinder.IsServerStarted) return;
+        EntitySpawnedNew?.Invoke(persistantID, data);
+    }
+    public void RaiseEntityDespawnedPermanent(ulong persistantID, PersistentEntityData data) {
+        if (!InstanceFinder.IsServerStarted) return;
+        EntityDepawnedPermanent?.Invoke(persistantID, data);
     }
     #endregion
 }

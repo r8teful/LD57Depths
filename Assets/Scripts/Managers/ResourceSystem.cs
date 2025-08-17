@@ -32,6 +32,16 @@ public class ResourceSystem {
     public const ushort AirID = 0; // Air is ALWAYS 0 
     public const ushort LadderID = 501; // Ladder is always 501, used in SubInterior.cs
     public const ushort ControlPanellRecipeID = 101; // FixRecipe.cs
+    public static bool IsOxygenMachineID(ushort id) {
+        if (id == 900) // Tree farm
+            return true;
+        return false;
+    }
+    public static bool IsLightID(ushort id) {
+        if (id == 999) // Todo
+            return true;
+        return false;
+    }
     public void AssembleResources() {
    
         Prefabs = Resources.LoadAll<GameObject>("Prefabs").ToList();
