@@ -1,12 +1,8 @@
 using FishNet.Managing;
-using FishNet.Managing.Scened;
 using FishNet.Transporting;
-using Steamworks;
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour {

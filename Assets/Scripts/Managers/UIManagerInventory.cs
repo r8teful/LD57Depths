@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI; // Required for UI elements like Panel
 using UnityEngine.InputSystem;
-using DG.Tweening;
 using TMPro;
 using UnityEngine.EventSystems;
 using System;

@@ -1,6 +1,5 @@
 using FishNet.Object.Synchronizing;
 using System;
-using System.Drawing;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;

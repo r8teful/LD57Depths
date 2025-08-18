@@ -1,7 +1,4 @@
-﻿using FishNet;
-using FishNet.Connection;
-using FishNet.Transporting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;

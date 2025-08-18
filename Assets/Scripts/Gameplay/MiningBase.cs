@@ -1,6 +1,4 @@
-﻿using FishNet.Object;
-using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 // Created and sent to the Visual part so that we know how to draw it properly
 public struct MiningToolData {

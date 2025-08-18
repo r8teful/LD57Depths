@@ -1,8 +1,6 @@
 ﻿using FishNet.Object;
 using System;
-using System.Collections;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 // Handles building of entities, and later probably building of sub rooms using the same system
 public class BuildingManager : Singleton<BuildingManager> {
     public Action<bool> OnBuildAttemptComplete;

@@ -1,7 +1,6 @@
 using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Observing;
-using System.Globalization;
 using UnityEngine;
 
 // IDK we don't really need this right now, when we want to opimize, we either use something like this or a MathCondition

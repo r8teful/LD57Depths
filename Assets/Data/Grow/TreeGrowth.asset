@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 557167533f1f182488cecc48d6ee4718, type: 3}
+  m_Name: TreeGrowth
+  m_EditorClassIdentifier: 
+  StageSeconds: 0100000002000000040000000100000002000000030000000400000005000000
+  StageSprites:
+  - {fileID: 992838349, guid: 0ff1e3b88518e264080bdc2e01e9ee71, type: 3}
+  - {fileID: -2107402169, guid: 0ff1e3b88518e264080bdc2e01e9ee71, type: 3}
+  - {fileID: 1372366110, guid: 0ff1e3b88518e264080bdc2e01e9ee71, type: 3}
+  - {fileID: 35311857, guid: 0ff1e3b88518e264080bdc2e01e9ee71, type: 3}
+  - {fileID: 994687034, guid: 0ff1e3b88518e264080bdc2e01e9ee71, type: 3}
+  - {fileID: 1349151573, guid: 0ff1e3b88518e264080bdc2e01e9ee71, type: 3}
+  - {fileID: 1495164073, guid: 0ff1e3b88518e264080bdc2e01e9ee71, type: 3}
+  - {fileID: -1220169621, guid: 0ff1e3b88518e264080bdc2e01e9ee71, type: 3}
+  - {fileID: 961871610, guid: 0ff1e3b88518e264080bdc2e01e9ee71, type: 3}

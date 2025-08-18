@@ -1,9 +1,7 @@
 ﻿using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 // All players have this script, this handles references and setup of relevant things all players should have

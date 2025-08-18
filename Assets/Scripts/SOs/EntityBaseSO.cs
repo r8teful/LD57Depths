@@ -64,8 +64,10 @@ public class PersistentEntityData {
     public EntitySpecificData specificData; // Polymorphic field for specific data
 
     // --- Runtime Link (Server Only, Not Saved) ---
-    [System.NonSerialized] public NetworkObject activeInstance = null; // Link to the live NetworkObject when active
-    public PersistentEntityData(ulong persistentId, ushort entityID,Vector3Int cellPos, Quaternion rotation) {
+    [System.NonSerialized] 
+    public NetworkObject activeInstance = null; // Link to the live NetworkObject when active
+
+    public PersistentEntityData(ulong persistentId, ushort entityID, Vector3Int cellPos, Quaternion rotation) {
         this.persistentId = persistentId;
         this.entityID = entityID;
         this.cellPos = cellPos;

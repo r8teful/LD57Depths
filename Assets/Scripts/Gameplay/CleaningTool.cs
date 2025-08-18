@@ -1,6 +1,4 @@
 ﻿using DG.Tweening;
-using FishNet.Object;
-using System.Collections;
 using UnityEngine;
 
 public class CleaningTool : MonoBehaviour, IToolBehaviour {

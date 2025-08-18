@@ -1,5 +1,6 @@
 // TerraformingManager.cs
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,68 +16,75 @@ public class TerraformingManager : NetworkBehaviour {
             Destroy(gameObject); // Handle duplicates
         } else {
             Instance = this;
+            GrowableEntity.OnServerGrowthStageAdvanced += OnEntityGrow;
             EntityManager.EntitySpawnedNew += OnEntitySpawned;
             EntityManager.EntityDepawnedPermanent+= OnEntityDespawned;
         }
     }
-
-    private void OnEntitySpawned(ulong arg1, PersistentEntityData arg2) {
-        if (arg2 != null) {
-            if (arg2.specificData is LightEntityData) {
-                Debug.Log("Light EntitySpawned!" + arg2.cellPos);
-            } else if (arg2.specificData is OxygenEntityData) { 
-                Debug.Log("Oxygen EntitySpawned!" + arg2.cellPos);
-            }
+    private void OnEntitySpawned(PersistentEntityData data) {
+        if(data==null) return;
+        if(data.activeInstance==null) return;
+        if(data.activeInstance.TryGetComponent<TerraformEntity>(out var terra)) {
+            _entities.Add(terra); // Now this includes every entity that has that component
         }
     }
-    private void OnEntityDespawned(ulong arg1, PersistentEntityData arg2) {
-        Debug.Log("EntityDespawned!" + arg2.cellPos);
+    private void OnEntityDespawned(PersistentEntityData data) {
+        if (data == null) return;
+        if (data.activeInstance == null) return;
+        if (data.activeInstance.TryGetComponent<TerraformEntity>(out var terra)) {
+            if(_entities.Contains(terra)) 
+                _entities.Remove(terra);
+        }
     }
 
-    public float CurrentOxygen { get; private set; }
-    public float CurrentPollutionCleaned { get; private set; }
-    public float CurrentLight { get; private set; }
+    private void OnEntityGrow(GrowableEntity entity) {
+        if (entity == null)
+            return;
+        // TODO
+    }
+    private readonly SyncVar<float> _currentLight = new SyncVar<float>();
+    private readonly SyncVar<float> _currentOxygen = new SyncVar<float>();
+    private readonly SyncVar<float> _currentPollutionCleaned = new SyncVar<float>();
+    public SyncVar<float> CurrentOxygen => _currentOxygen;
+    public SyncVar<float> CurrentPollutionCleaned => _currentPollutionCleaned;
+    public SyncVar<float> CurrentLight => _currentLight;
 
-    public static event Action OnTerraformingStatsChanged;
+    private List<TerraformEntity> _entities;
     private HashSet<ulong> persistentLightEntities = new HashSet<ulong>();
     private HashSet<ulong> persistentOxygenEntities = new HashSet<ulong>();
 
-    // --- Public Helper Functions (The API for other scripts) ---
-
-    /// <summary>
-    /// Adds a specified amount to the total pollution cleaned value.
-    /// Typically called when a PollutionEntity is destroyed.
-    /// </summary>
     public void AddPollutionCleaned(float amount) {
         if (amount <= 0) return;
-        CurrentPollutionCleaned += amount;
-        OnTerraformingStatsChanged?.Invoke();
+        CurrentPollutionCleaned.Value += amount;
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void RegisterLight(ulong persistantID) {
-        persistentLightEntities.Add(persistantID);
+        if (!persistentLightEntities.Contains(persistantID)) {
+            persistentLightEntities.Add(persistantID);
+        }
         RecalculateTotalLight();
     }
     [ServerRpc(RequireOwnership = false)]
     public void RegisterOxygen(ulong persistantID) {
-
+        if(!persistentOxygenEntities.Contains(persistantID)){
+            persistentOxygenEntities.Add(persistantID);
+        }
     }
-    [Server]
-    private void RegisterTerraformMachine(ulong persistantID) {
-        // TODO possibly call this from the start method of a machine, or handle it through the entity manager
-        
+    [ServerRpc(RequireOwnership = false)]
+    public void UnregisterLight(ulong persistantID) {
+        if (!persistentLightEntities.Contains(persistantID)) {
+            persistentLightEntities.Remove(persistantID);
+        }
+        RecalculateTotalLight();
     }
-    [Server]
-    private void UnregisterTerraformMachine(ulong persistantID) {
-      
+    [ServerRpc(RequireOwnership = false)]
+    public void UnregisterOxygen(ulong persistantID) {
+        if (!persistentOxygenEntities.Contains(persistantID)) {
+            persistentOxygenEntities.Remove(persistantID);
+        }
     }
 
-    // --- Private Logic ---
-
-    /// <summary>
-    /// Iterates through all registered light emitters and sums their light values.
-    /// </summary>
     private void RecalculateTotalLight() {
         float totalLight = 0f;
         foreach (var emitter in persistentLightEntities) {
@@ -91,7 +99,15 @@ public class TerraformingManager : NetworkBehaviour {
                 Debug.LogError("A registered persistant light entity does not have LightEntityData!");
             }
         }
-        CurrentLight = totalLight;
-        OnTerraformingStatsChanged?.Invoke();
+        _currentLight.Value = totalLight;
+    }
+    private void RecalculateTotalLight2() {
+        float totalLight = 0f;
+        foreach (var emittor in _entities) {
+            if (emittor.TryGetComponent<Light>(out var l)) {
+                totalLight += l.intensity;
+            }
+        }
+        _currentLight.Value = totalLight;
     }
 }

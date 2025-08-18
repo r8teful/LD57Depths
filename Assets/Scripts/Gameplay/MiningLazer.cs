@@ -1,6 +1,4 @@
-﻿using DG.Tweening;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MiningLazer : MiningBase {
     [Header("Raycast Gun Settings")]

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "UpgradeRecipeUnlockTool", menuName = "ScriptableObjects/Upgrades/UpgradeRecipeUnlockTool")]
 public class UpgradeRecipeUnlockTool : UpgradeRecipeUnlock {

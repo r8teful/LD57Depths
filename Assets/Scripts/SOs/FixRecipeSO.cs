@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "FixRecipeSO", menuName = "ScriptableObjects/Crafting/FixRecipeSO", order = 9)]
 public class FixRecipeSO : RecipeBaseSO {

@@ -43,8 +43,8 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
     private Dictionary<Vector2Int, List<ulong>> cachedEntityIdsByChunk = new Dictionary<Vector2Int, List<ulong>>();
     private Dictionary<ulong, Vector2Int> cachedEntityInChunk = new Dictionary<ulong, Vector2Int>(); // Specifies which chunk an cached enemy is
 
-    public static event Action<ulong, PersistentEntityData> EntitySpawnedNew;
-    public static event Action<ulong, PersistentEntityData> EntityDepawnedPermanent;
+    public static event Action<PersistentEntityData> EntitySpawnedNew;
+    public static event Action<PersistentEntityData> EntityDepawnedPermanent;
     private ulong GetNextPersistentEntityId() { return nextPersistentEntityId++; }
     public List<ulong> GetEntityIDsByChunkCoord(Vector2Int chunkCoord) {
         if (entityIdsByByChunkCoord.TryGetValue(chunkCoord, out var Idlist)) {
@@ -389,7 +389,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         PersistentEntityData newEntityData = new(uniqueID, id, pos, rot, entityData);
         persistentEntityDatabase.Add(uniqueID, newEntityData);
         Debug.Log($"Added new persistent entity ID:{uniqueID} at {pos}");
-        RaiseEntitySpawnedNew(newEntityData.persistentId, newEntityData);
+        RaiseEntitySpawnedNew(newEntityData);
         return newEntityData;
     }
 
@@ -534,7 +534,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             // Notify Entity Manager in case it needs to clean up ref count
             ForceDeactivation(persistentId);
 
-            RaiseEntityDespawnedPermanent(persistentId, data); // Raise the event
+            RaiseEntityDespawnedPermanent(data); // Raise the event
         }
     }
     // --- Force Deactivation (e.g., when entity is permanently removed) ---
@@ -792,13 +792,13 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             }
         }
     }
-    public void RaiseEntitySpawnedNew(ulong persistantID, PersistentEntityData data) {
+    public void RaiseEntitySpawnedNew(PersistentEntityData data) {
         if (!InstanceFinder.IsServerStarted) return;
-        EntitySpawnedNew?.Invoke(persistantID, data);
+        EntitySpawnedNew?.Invoke(data);
     }
-    public void RaiseEntityDespawnedPermanent(ulong persistantID, PersistentEntityData data) {
+    public void RaiseEntityDespawnedPermanent(PersistentEntityData data) {
         if (!InstanceFinder.IsServerStarted) return;
-        EntityDepawnedPermanent?.Invoke(persistantID, data);
+        EntityDepawnedPermanent?.Invoke(data);
     }
     #endregion
 }

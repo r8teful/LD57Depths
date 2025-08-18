@@ -1,10 +1,7 @@
 using FishNet.Object;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI.Table;
 
 // Should hold server side data about the state of the different upgrades
 public class SubInterior : NetworkBehaviour {

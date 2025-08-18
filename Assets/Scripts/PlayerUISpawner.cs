@@ -1,4 +1,3 @@
-using FishNet.Object;
 using UnityEngine;
 
 public class PlayerUISpawner : MonoBehaviour, INetworkedPlayerModule {

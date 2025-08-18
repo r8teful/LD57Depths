@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 // Local instance of a tool visual
 public interface IToolVisual {
     /// <summary>

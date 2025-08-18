@@ -1,8 +1,6 @@
 ﻿using FishNet.Component.Animating;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using System;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using static PlayerMovement;

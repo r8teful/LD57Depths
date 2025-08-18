@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4153211058746844508}
   - component: {fileID: 3908638926491705933}
   - component: {fileID: 3380696379103924662}
+  - component: {fileID: -7604646405483596115}
   m_Layer: 11
   m_Name: TreeFarm
   m_TagString: Untagged
@@ -47,9 +48,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a11f4c85337a51541b66f6a3dcaeb729, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 0
   _addedNetworkObject: {fileID: 3380696379103924662}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 3380696379103924662}
   IsDestroyedPermanently: 1
 --- !u!114 &3380696379103924662
 MonoBehaviour:
@@ -67,7 +68,8 @@ MonoBehaviour:
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
-  NetworkBehaviours: []
+  NetworkBehaviours:
+  - {fileID: 3908638926491705933}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -92,15 +94,32 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 65535
+  <PrefabId>k__BackingField: 19
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 12392059473295528294
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0, w: 0}
-    Scale: {x: 0, y: 0, z: 0}
-    IsValid: 0
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    Scale: {x: 1, y: 1, z: 1}
+    IsValid: 1
+--- !u!114 &-7604646405483596115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401910264597585571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0af104a48c4ee924eb65a90551ba47a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 3380696379103924662}
+  _networkObjectCache: {fileID: 0}
+  _growData: {fileID: 11400000, guid: 1a1d9ed2e689774469dae62e02aca4e4, type: 2}
+  _spriteRenderer: {fileID: 3328544000559549426}
 --- !u!1 &1679611407711579786
 GameObject:
   m_ObjectHideFlags: 0

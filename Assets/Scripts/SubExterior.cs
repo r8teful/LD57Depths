@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 public class SubExterior : MonoBehaviour {
     [SerializeField] private OxygenZoneTrigger oxygenZoneCollider; 
     private void Start() {

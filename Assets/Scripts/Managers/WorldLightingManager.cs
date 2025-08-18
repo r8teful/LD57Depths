@@ -2,7 +2,6 @@
 using UnityEngine.Rendering.Universal;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
-using FishNet.Object;
 using DG.Tweening;
 
 [System.Serializable]

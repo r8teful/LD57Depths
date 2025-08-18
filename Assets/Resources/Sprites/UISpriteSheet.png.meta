@@ -2045,6 +2045,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: OxygenBoarder_Blue
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 164
+        width: 9
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 2, y: 3, z: 3, w: 3}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7aa642859fa8a6046bda2f72e246570a
+      internalID: 1579109010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -2087,6 +2109,7 @@ TextureImporter:
       InventoryTabButtonActive: 726674937
       InventoryTabButtonInactive: -692597868
       OxygenBoarder: -268757789
+      OxygenBoarder_Blue: 1579109010
       PlaceMarker: 116054401
       PopupBox: 2098033918
       PopupTop: 1523963916

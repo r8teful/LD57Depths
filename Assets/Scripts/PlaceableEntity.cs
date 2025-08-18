@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 // A preview entity 
 public class PlaceableEntity : MonoBehaviour {

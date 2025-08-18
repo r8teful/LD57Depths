@@ -383,7 +383,8 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         ClearInteractable(); // Also clear interactable
     }
     private void HandleCancelAction(InputAction.CallbackContext context) {
-        BuildingManager.Instance.HandlePlaceFailOrCancel();
+        if(_currentContext == PlayerInteractionContext.Building)
+            BuildingManager.Instance.HandlePlaceFailOrCancel();
     }
     #endregion
     public static string FormatBindingDisplayString(string input) {

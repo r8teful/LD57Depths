@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class OxygenZoneTrigger : MonoBehaviour {
     public void SetEnabled(bool b) {

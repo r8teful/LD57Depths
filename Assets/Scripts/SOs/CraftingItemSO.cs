@@ -1,5 +1,4 @@
 ﻿using Sirenix.OdinInspector;
-using System.Collections;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "CraftingItemSO", menuName = "ScriptableObjects/Crafting/CraftingItemSO", order = 9)]

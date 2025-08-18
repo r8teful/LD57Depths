@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "UpgradeRecipeValue", menuName = "ScriptableObjects/Upgrades/UpgradeRecipeValue", order = 2)]
 public class UpgradeRecipeValue : UpgradeRecipeBase {

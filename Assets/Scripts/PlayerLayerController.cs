@@ -2,7 +2,6 @@ using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using FishNet.Connection;
-using System;
 
 
 public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
