@@ -2,15 +2,20 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EnvironmentProgressionSlider : MonoBehaviour {
+public class EnvironmentProgressionSlider : MonoBehaviour, IPopupInfo {
 
     [Header("Slider References")]
-    public Slider mainSlider;
-    public Slider delayedSlider;
+    public Slider currentSlider;
+    public Slider maxSlider;
+
+    public event Action PopupDataChanged;
+    public event Action<IPopupInfo, bool> OnPopupShow;
 
     void OnEnable() {
         TerraformingManager.Instance.OnTotalChanged += OnTerraformingChange;
-        //mainSlider.maxValue = maxHealth;
+        currentSlider.maxValue = 800; // Just arbitary
+        maxSlider.maxValue = 800; 
+
         //delayedSlider.maxValue = maxHealth;
 
         //mainSlider.value = currentHealth;
@@ -19,8 +24,10 @@ public class EnvironmentProgressionSlider : MonoBehaviour {
     }
 
     private void UpdateSlider() {
-        var f = TerraformingManager.Instance.GetTotal(TerraformType.Oxygen);
-        mainSlider.value = f;
+        var c = TerraformingManager.Instance.GetTotal(TerraformType.Oxygen);
+        var max = TerraformingManager.Instance.GetMaxPotential(TerraformType.Oxygen);
+        currentSlider.value = c;
+        maxSlider.value = max;
     }
 
     private void OnDisable() {
@@ -30,10 +37,14 @@ public class EnvironmentProgressionSlider : MonoBehaviour {
 
     private void OnTerraformingChange(TerraformType type, float value) {
         Debug.Log($"TerrfaormingChage! {type} with value {value}");
-        mainSlider.value = value;
+        currentSlider.value = value;
     }
 
     private void OnOxygenChange(float prev, float next, bool asServer) {
         throw new System.NotImplementedException();
+    }
+
+    public PopupData GetPopupData(InventoryManager inv) {
+        throw new NotImplementedException();
     }
 }

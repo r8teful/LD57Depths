@@ -1,9 +1,7 @@
-// TerraformingManager.cs
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 /// <summary>
 /// Singleton manager to track all terraforming stats for the planet.
@@ -49,8 +47,9 @@ public class TerraformingManager : NetworkBehaviour {
     public SyncVar<float> CurrentLight => _currentLight;
 
     // totals by type
-    private readonly Dictionary<TerraformType, float> _totals = new Dictionary<TerraformType, float>();
-    private readonly HashSet<ITerraformContributor> _contributors = new HashSet<ITerraformContributor>();
+    private Dictionary<TerraformType, float> _terraformingAmountsCurrent = new Dictionary<TerraformType, float>();
+    private Dictionary<TerraformType, float> _terraformingAmountsMax = new Dictionary<TerraformType, float>();
+    private HashSet<ITerraformContributor> _contributors = new HashSet<ITerraformContributor>();
     public event Action<TerraformType, float> OnTotalChanged;
 
     public void AddPollutionCleaned(float amount) {
@@ -59,23 +58,45 @@ public class TerraformingManager : NetworkBehaviour {
     }
 
     private void RecalculateAll() {
-        _totals.Clear();
-        foreach (var c in _contributors) AddFactors(c.GetTerraformFactors());
+        _terraformingAmountsCurrent.Clear();
+        _terraformingAmountsMax.Clear();
+        foreach (var c in _contributors) { 
+            AddFactors(c.GetTerraformFactors());
+            AddFactorsMax(c.GetTerraformFactorsMax());
+        }
         // notify changes for all types (optional)
-        foreach (var kv in _totals) OnTotalChanged?.Invoke(kv.Key, kv.Value);
+        foreach (var kv in _terraformingAmountsCurrent) OnTotalChanged?.Invoke(kv.Key, kv.Value);
     }
 
 
     private void AddFactors(List<TerraformFactor> factors) {
         if (factors == null) return;
         foreach (var f in factors) {
-            if (_totals.ContainsKey(f.Type)) _totals[f.Type] += f.Amount;
-            else _totals[f.Type] = f.Amount;
+            if (_terraformingAmountsCurrent.ContainsKey(f.Type)) _terraformingAmountsCurrent[f.Type] += f.Amount;
+            else _terraformingAmountsCurrent[f.Type] = f.Amount;
+        }
+    }
+    private void AddFactorsMax(List<TerraformFactor> factors) {
+        if (factors == null) return;
+        foreach (var f in factors) {
+            if (_terraformingAmountsMax.ContainsKey(f.Type)) _terraformingAmountsMax[f.Type] += f.Amount;
+            else _terraformingAmountsMax[f.Type] = f.Amount;
         }
     }
 
     public float GetTotal(TerraformType type) {
-        if (_totals.TryGetValue(type, out var v)) return v;
+        if (_terraformingAmountsCurrent.TryGetValue(type, out var v)) return v;
         return 0f;
+    }
+    public float GetMaxPotential(TerraformType type) {
+        if (_terraformingAmountsMax.TryGetValue(type, out var v)) return v;
+        return 0f;
+    }
+
+    internal void DEBUGSetValue(float v) {
+        if (_terraformingAmountsCurrent.ContainsKey(TerraformType.Oxygen)) {
+            _terraformingAmountsCurrent[TerraformType.Oxygen] = v;
+            OnTotalChanged?.Invoke(TerraformType.Oxygen, v);
+        }
     }
 }

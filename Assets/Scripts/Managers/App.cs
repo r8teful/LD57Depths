@@ -9,6 +9,7 @@ public static class App {
     public static ResourceSystem ResourceSystem;
     //public static EventManager EventManager;
     public static bool isEditor;
+    public static bool isDebugMode;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Boostrap() {

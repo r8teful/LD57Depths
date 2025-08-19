@@ -81,5 +81,9 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     private void debugShowUpgradeScreen() {
         _player.UiManager.UpgradeScreen.DEBUGShowScreen();
     }
+    [ConsoleCommand("setTerraform")]
+    private void debugShowUpgradeScreen(float v) {
+        TerraformingManager.Instance.DEBUGSetValue(v);
+    }
 }
 #endif

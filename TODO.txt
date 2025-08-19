@@ -3,8 +3,6 @@ TERRAFORMING:
 - Oxygen value goes up as you place more trees
 	- Should have a current value, and an ending value, which gets reached when the tree is at its max
 	- Slider visual that shows you this. When you hoover over the slider it tells you how long before it reaches the max
-Option 1. Setup a server side increment, that slowly goes towards the total value
-Option 2. Have the trees themselves increment how much oxygen they provide, as they grow, they give more oxygen. But this will require the tree to know its own uniqueID which is the whole thing we tried to avoid. No, it doesn't require the tree to know its own ID. It just notifies the entityManager, or wherever the PersistentEntityData is, that it has been "upgraded".
 - Lamp light value
 - Polution cleaned value
 - Global value that combines all of the three above

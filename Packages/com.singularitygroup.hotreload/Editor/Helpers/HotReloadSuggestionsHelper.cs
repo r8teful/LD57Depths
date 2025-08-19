@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using SingularityGroup.HotReload.DTO;
-using SingularityGroup.HotReload.Newtonsoft.Json;
 using UnityEditor;
 using UnityEditor.Compilation;
 using UnityEditor.PackageManager;
@@ -518,7 +516,6 @@ namespace SingularityGroup.HotReload.Editor {
         private static async Task CheckEditorsWithoutHRAsync() {
             try {
                 checkingEditorsWihtoutHR = true;
-                
                 var editorsWithoutHr = await RequestHelper.RequestEditorsWithoutHRRunning();
                 if (editorsWithoutHr == null) {
                     return;

@@ -6,7 +6,7 @@ using UnityEngine;
 public class TreeFarmEntity : NetworkBehaviour, ITerraformContributor {
     private GrowableEntity _growComponent;
     public event Action OnFactorsChanged;
-    private float _baseOxygen = 1; // This is the amount of oxygen the tree provides when fully grown
+    private float _baseOxygen = 100; // This is the amount of oxygen the tree provides when fully grown
     private void Awake() {
         _growComponent = GetComponent<GrowableEntity>();
         if (_growComponent == null) {
@@ -29,6 +29,12 @@ public class TreeFarmEntity : NetworkBehaviour, ITerraformContributor {
     public List<TerraformFactor> GetTerraformFactors() {
         float total = _baseOxygen * ((float)_growComponent.GrowthStage / _growComponent.TotalStages);
         Debug.Log("calculated: " + total);
+        return new List<TerraformFactor> {
+        new(TerraformType.Oxygen, total)
+        };
+    }
+    public List<TerraformFactor> GetTerraformFactorsMax() {
+        float total = _baseOxygen;
         return new List<TerraformFactor> {
         new(TerraformType.Oxygen, total)
         };
