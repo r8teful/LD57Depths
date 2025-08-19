@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;       // For InstanceFinder
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
 
 public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to use ServerManager etc.
@@ -386,13 +387,22 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
 
     public PersistentEntityData ServerAddNewPersistentEntity(ushort id, Vector3Int pos, Quaternion rot, EntitySpecificData entityData = null) {
         ulong uniqueID = GetNextPersistentEntityId();
+        // Instead of creating the data like this, you can let the entity themeselves handle the setup of the data
+        // Right now its not worth the effort because we just have 2 entities that actually store specific data, but could be good for later
+        //EntitySpecificData e = App.ResourceSystem.GetEntityByID(id).CreateDefaultSpecificData(); // Something like that
+
+        EntitySpecificData data = CreateEntitySpecificDataByID(id); // This obviously doesn't scale properly
         PersistentEntityData newEntityData = new(uniqueID, id, pos, rot, entityData);
         persistentEntityDatabase.Add(uniqueID, newEntityData);
         Debug.Log($"Added new persistent entity ID:{uniqueID} at {pos}");
-        RaiseEntitySpawnedNew(newEntityData);
         return newEntityData;
     }
-
+    private EntitySpecificData CreateEntitySpecificDataByID(ushort id) {
+        if (ResourceSystem.IsGrowEntity(id)) {
+            return new GrowthEntityData(0);
+        }
+        return null;
+    }
 
     // --- Client RPCs for Activation/Deactivation ---
     [ServerRpc(RequireOwnership = false)] // Any client can request
@@ -436,6 +446,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
                 var entity = instance.GetComponent<DestroyEntityCallback>();
                 entity.OnServerStopped += HandleEntityDespawned;
                 data.activeInstance = nob;
+                RaiseEntitySpawnedNew(data);
             } else {
                 Debug.LogError($"Entity prefab {prefab.name} is missing NetworkObject component!");
                 Destroy(instance);

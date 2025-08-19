@@ -30,12 +30,8 @@ public class CraftingEntitySO : CraftingRecipeSO {
         BuildingManager.Instance.EnterBuilding(EntityBuildPreviewPrefab);
 
         // Wait until the event is fired
-        //yield return new WaitUntil(() => buildTaskFinished); 
-        while (!buildTaskFinished) {
-            Debug.Log("Waiting for result...");
-            yield return null;
-        }
-        Debug.Log("BUILDING DONE, RESULT IS: " + buildResult);
+        yield return new WaitUntil(() => buildTaskFinished); 
+        //Debug.Log("BUILDING DONE, RESULT IS: " + buildResult);
         context.Success = buildResult;
 
         // Done, return to the CraftingComponent

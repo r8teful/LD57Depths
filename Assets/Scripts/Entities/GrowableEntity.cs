@@ -14,10 +14,6 @@ public class GrowableEntity : NetworkBehaviour {
     /// Passes the instance that grew.
     /// </summary>
     public static event Action<GrowableEntity> OnClientGrowthStageAdvanced;
-    /// <summary>
-    /// Called on the SERVER when this entity is spawned.
-    /// Passes the instance that spawned
-    /// </summary>
     #endregion
 
     [SerializeField]
@@ -31,7 +27,8 @@ public class GrowableEntity : NetworkBehaviour {
 
 
     #region Public Properties
-    public int CurrentStage => _currentGrowthStage.Value;
+    public int GrowthStage => _currentGrowthStage.Value;
+    public int TotalStages => _growData.TotalStages();
     public bool IsFullyGrown => _currentGrowthStage.Value >= _growData.StageSeconds.Length - 1;
     public GrowthSO GrowData => _growData;
     #endregion
@@ -109,5 +106,13 @@ public class GrowableEntity : NetworkBehaviour {
         }
 
         Debug.Log($"Client/Visuals: {gameObject.name} updated visuals to stage {stageIndex}.");
+    }
+
+    internal void SetGrowthStage(int growthStage) {
+        SetGrowthStateRPC(growthStage);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void SetGrowthStateRPC(int growthStage) {
+        _currentGrowthStage.Value = growthStage;
     }
 }

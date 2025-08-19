@@ -121,16 +121,7 @@ public class BuildingManager : Singleton<BuildingManager> {
         //Vector3Int p = new Vector3Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z));
         //Debug.Log($"Pos: {pos} placing object at: {p}");
         Vector3Int p = WorldManager.Instance.WorldToCell(pos);
-        EntitySpecificData data = CreateEntityByID(entity.ID);
-        EntityManager.Instance.AddAndSpawnEntityForClient(entity.entityID, p, Quaternion.identity, client.LocalConnection, data);
+        EntityManager.Instance.AddAndSpawnEntityForClient(entity.entityID, p, Quaternion.identity, client.LocalConnection);
         // Despawn preview is handled in ExitBuild()
-    }
-    private EntitySpecificData CreateEntityByID(ushort id) {
-        if (ResourceSystem.IsOxygenMachineID(id)) {
-            return new OxygenEntityData(4.25f);
-        } else if (ResourceSystem.IsLightID(id)) {
-            return  new LightEntityData(4.25f);
-        }
-        return null;
     }
 }

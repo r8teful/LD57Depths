@@ -16,7 +16,6 @@ public class TerraformingManager : NetworkBehaviour {
             Destroy(gameObject); // Handle duplicates
         } else {
             Instance = this;
-            GrowableEntity.OnServerGrowthStageAdvanced += OnEntityGrow;
             EntityManager.EntitySpawnedNew += OnEntitySpawned;
             EntityManager.EntityDepawnedPermanent+= OnEntityDespawned;
         }
@@ -24,24 +23,24 @@ public class TerraformingManager : NetworkBehaviour {
     private void OnEntitySpawned(PersistentEntityData data) {
         if(data==null) return;
         if(data.activeInstance==null) return;
-        if(data.activeInstance.TryGetComponent<TerraformEntity>(out var terra)) {
-            _entities.Add(terra); // Now this includes every entity that has that component
+        if(data.activeInstance.TryGetComponent<ITerraformContributor>(out var terra)) {
+            _contributors.Add(terra); // Now this includes every entity that has that component
+            terra.OnFactorsChanged += RecalculateAll;
+            RecalculateAll();
         }
     }
     private void OnEntityDespawned(PersistentEntityData data) {
         if (data == null) return;
         if (data.activeInstance == null) return;
-        if (data.activeInstance.TryGetComponent<TerraformEntity>(out var terra)) {
-            if(_entities.Contains(terra)) 
-                _entities.Remove(terra);
+        if (data.activeInstance.TryGetComponent<ITerraformContributor>(out var terra)) {
+            if (_contributors.Contains(terra)) {
+                _contributors.Remove(terra);
+                terra.OnFactorsChanged -= RecalculateAll;
+                RecalculateAll();
+            }
         }
     }
 
-    private void OnEntityGrow(GrowableEntity entity) {
-        if (entity == null)
-            return;
-        // TODO
-    }
     private readonly SyncVar<float> _currentLight = new SyncVar<float>();
     private readonly SyncVar<float> _currentOxygen = new SyncVar<float>();
     private readonly SyncVar<float> _currentPollutionCleaned = new SyncVar<float>();
@@ -49,65 +48,34 @@ public class TerraformingManager : NetworkBehaviour {
     public SyncVar<float> CurrentPollutionCleaned => _currentPollutionCleaned;
     public SyncVar<float> CurrentLight => _currentLight;
 
-    private List<TerraformEntity> _entities;
-    private HashSet<ulong> persistentLightEntities = new HashSet<ulong>();
-    private HashSet<ulong> persistentOxygenEntities = new HashSet<ulong>();
+    // totals by type
+    private readonly Dictionary<TerraformType, float> _totals = new Dictionary<TerraformType, float>();
+    private readonly HashSet<ITerraformContributor> _contributors = new HashSet<ITerraformContributor>();
+    public event Action<TerraformType, float> OnTotalChanged;
 
     public void AddPollutionCleaned(float amount) {
         if (amount <= 0) return;
         CurrentPollutionCleaned.Value += amount;
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void RegisterLight(ulong persistantID) {
-        if (!persistentLightEntities.Contains(persistantID)) {
-            persistentLightEntities.Add(persistantID);
-        }
-        RecalculateTotalLight();
+    private void RecalculateAll() {
+        _totals.Clear();
+        foreach (var c in _contributors) AddFactors(c.GetTerraformFactors());
+        // notify changes for all types (optional)
+        foreach (var kv in _totals) OnTotalChanged?.Invoke(kv.Key, kv.Value);
     }
-    [ServerRpc(RequireOwnership = false)]
-    public void RegisterOxygen(ulong persistantID) {
-        if(!persistentOxygenEntities.Contains(persistantID)){
-            persistentOxygenEntities.Add(persistantID);
-        }
-    }
-    [ServerRpc(RequireOwnership = false)]
-    public void UnregisterLight(ulong persistantID) {
-        if (!persistentLightEntities.Contains(persistantID)) {
-            persistentLightEntities.Remove(persistantID);
-        }
-        RecalculateTotalLight();
-    }
-    [ServerRpc(RequireOwnership = false)]
-    public void UnregisterOxygen(ulong persistantID) {
-        if (!persistentOxygenEntities.Contains(persistantID)) {
-            persistentOxygenEntities.Remove(persistantID);
+
+
+    private void AddFactors(List<TerraformFactor> factors) {
+        if (factors == null) return;
+        foreach (var f in factors) {
+            if (_totals.ContainsKey(f.Type)) _totals[f.Type] += f.Amount;
+            else _totals[f.Type] = f.Amount;
         }
     }
 
-    private void RecalculateTotalLight() {
-        float totalLight = 0f;
-        foreach (var emitter in persistentLightEntities) {
-            PersistentEntityData p =  EntityManager.Instance.GetPersistantDataByID(emitter);
-            if (p == null) {
-                Debug.LogError("returned persistant data is null!");
-                return;
-            }
-            if (p.specificData is LightEntityData light) {
-                totalLight += light.LightLevel;
-            } else {
-                Debug.LogError("A registered persistant light entity does not have LightEntityData!");
-            }
-        }
-        _currentLight.Value = totalLight;
-    }
-    private void RecalculateTotalLight2() {
-        float totalLight = 0f;
-        foreach (var emittor in _entities) {
-            if (emittor.TryGetComponent<Light>(out var l)) {
-                totalLight += l.intensity;
-            }
-        }
-        _currentLight.Value = totalLight;
+    public float GetTotal(TerraformType type) {
+        if (_totals.TryGetValue(type, out var v)) return v;
+        return 0f;
     }
 }

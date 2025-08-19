@@ -19,27 +19,12 @@ public class BreakEntityData : EntitySpecificData {
         go.GetComponent<FixableEntity>().SetFixedRpc(!isBroken);
     }
 }
-public class LightEntityData : EntitySpecificData {
-    public float LightLevel;
-
-    public LightEntityData(float lightLevel) {
-        this.LightLevel = lightLevel;
+public class GrowthEntityData : EntitySpecificData {
+    public int GrowthStage;
+    public GrowthEntityData(int stage) {
+        GrowthStage = stage;
     }
-
     public override void ApplyTo(GameObject go) {
-        throw new NotImplementedException();
-        //go.GetComponent<FixableEntity>().SetFixedRpc(!isBroken);
-    }
-}
-public class OxygenEntityData : EntitySpecificData {
-    public float OxygenLevel;
-
-    public OxygenEntityData(float oxygenLevel) {
-        this.OxygenLevel = oxygenLevel;
-    }
-
-    public override void ApplyTo(GameObject go) {
-        throw new NotImplementedException();
-        //go.GetComponent<FixableEntity>().SetFixedRpc(!isBroken);
+        go.GetComponent<GrowableEntity>().SetGrowthStage(GrowthStage);
     }
 }

@@ -323,7 +323,7 @@ GameObject:
   - component: {fileID: 225229930952713928}
   - component: {fileID: 7557624315422743189}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: DelayedSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1002,6 +1002,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3419492939458201436}
   - component: {fileID: 1696620416416976004}
+  - component: {fileID: 6054320010462514474}
   m_Layer: 5
   m_Name: ProgressionSlider
   m_TagString: Untagged
@@ -1080,10 +1081,24 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.298
+  m_Value: 0.276
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6054320010462514474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848422541894488828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a67375d8b7ea494aa2805817bb930b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainSlider: {fileID: 1696620416416976004}
+  delayedSlider: {fileID: 7557624315422743189}
 --- !u!1 &1906533318170030505
 GameObject:
   m_ObjectHideFlags: 0

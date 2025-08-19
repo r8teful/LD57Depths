@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class EnvironmentProgressionSlider : MonoBehaviour {
@@ -7,13 +8,29 @@ public class EnvironmentProgressionSlider : MonoBehaviour {
     public Slider mainSlider;
     public Slider delayedSlider;
 
-    void Start() {
-        TerraformingManager.Instance.CurrentOxygen.OnChange += OnOxygenChange;
+    void OnEnable() {
+        TerraformingManager.Instance.OnTotalChanged += OnTerraformingChange;
         //mainSlider.maxValue = maxHealth;
         //delayedSlider.maxValue = maxHealth;
 
         //mainSlider.value = currentHealth;
         //delayedSlider.value = currentHealth;
+        UpdateSlider();
+    }
+
+    private void UpdateSlider() {
+        var f = TerraformingManager.Instance.GetTotal(TerraformType.Oxygen);
+        mainSlider.value = f;
+    }
+
+    private void OnDisable() {
+        TerraformingManager.Instance.OnTotalChanged -= OnTerraformingChange;
+        
+    }
+
+    private void OnTerraformingChange(TerraformType type, float value) {
+        Debug.Log($"TerrfaormingChage! {type} with value {value}");
+        mainSlider.value = value;
     }
 
     private void OnOxygenChange(float prev, float next, bool asServer) {

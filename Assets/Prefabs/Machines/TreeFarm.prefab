@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3908638926491705933}
   - component: {fileID: 3380696379103924662}
   - component: {fileID: -7604646405483596115}
+  - component: {fileID: 6491327933125982578}
   m_Layer: 11
   m_Name: TreeFarm
   m_TagString: Untagged
@@ -120,6 +121,21 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 0}
   _growData: {fileID: 11400000, guid: 1a1d9ed2e689774469dae62e02aca4e4, type: 2}
   _spriteRenderer: {fileID: 3328544000559549426}
+--- !u!114 &6491327933125982578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401910264597585571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d511446b9e8f2d6459e4c4d8c9cf3d5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 3380696379103924662}
+  _networkObjectCache: {fileID: 0}
 --- !u!1 &1679611407711579786
 GameObject:
   m_ObjectHideFlags: 0
