@@ -170,69 +170,14 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
             TargetRpcItemTransferResult(sender, false, itemId, 0, "Item data not found.");
             return;
         }
-
-        int maxStack = itemData.maxStackSize;
-        int quantityActuallyPlaced = 0;
-
         // 1. Try preferred slot
         if (preferredSlot >= 0 && preferredSlot < ContainerSlots.Count) {
             InventorySlot slot = ContainerSlots[preferredSlot];
-            if (slot.IsEmpty() || (slot.itemID == itemId && slot.quantity < maxStack)) {
-                if (slot.IsEmpty())
-                    slot.itemID = itemId;
-                int canAdd = maxStack - slot.quantity;
-                int amountToAdd = Mathf.Min(quantity, canAdd);
-
-                slot.quantity += amountToAdd;
+            if (slot.itemID == itemId) {
+                
+                slot.quantity += quantity;
                 ContainerSlots[preferredSlot] = slot; // Important for SyncList<struct>
-                quantityActuallyPlaced += amountToAdd;
             }
-        }
-
-        // 2. If more to place, try stacking anywhere
-        int remainingToPlace = quantity - quantityActuallyPlaced;
-        if (remainingToPlace > 0) {
-            for (int i = 0; i < ContainerSlots.Count && remainingToPlace > 0; i++) {
-                if (i == preferredSlot && ContainerSlots[i].itemID == itemId)
-                    continue; // Skip if already handled
-                InventorySlot slot = ContainerSlots[i];
-                if (slot.itemID == itemId && slot.quantity < maxStack) {
-                    int canAdd = maxStack - slot.quantity;
-                    int amountToAdd = Mathf.Min(remainingToPlace, canAdd);
-                    slot.quantity += amountToAdd;
-                    ContainerSlots[i] = slot;
-                    quantityActuallyPlaced += amountToAdd;
-                    remainingToPlace -= amountToAdd;
-                }
-            }
-        }
-
-        // 3. If still more to place, try empty slots
-        if (remainingToPlace > 0) {
-            for (int i = 0; i < ContainerSlots.Count && remainingToPlace > 0; i++) {
-                if (i == preferredSlot && ContainerSlots[i].itemID == itemId)
-                    continue;
-                if (ContainerSlots[i].itemID != itemId && ContainerSlots[i].itemID != ResourceSystem.InvalidID)
-                    continue; // skip slot with different item
-
-                InventorySlot slot = ContainerSlots[i];
-                if (slot.IsEmpty()) {
-                    slot.itemID = itemId;
-                    int amountToAdd = Mathf.Min(remainingToPlace, maxStack);
-                    slot.quantity = amountToAdd; // Assign directly, not +=
-                    ContainerSlots[i] = slot;
-                    quantityActuallyPlaced += amountToAdd;
-                    remainingToPlace -= amountToAdd;
-                }
-            }
-        }
-
-        if (quantityActuallyPlaced > 0) {
-            // Tell client success, and how much was *actually* placed.
-            // Client is responsible for removing 'quantityActuallyPlaced' from their own inventory.
-            TargetRpcItemTransferResult(sender, true, itemId, quantityActuallyPlaced, $"{quantityActuallyPlaced} of item: {itemId} placed in container.");
-        } else {
-            TargetRpcItemTransferResult(sender, false, itemId, 0, "Could not place item(s) in container (full or no compatible stacks).");
         }
     }
 
@@ -306,7 +251,6 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
             Debug.Log($"Client: {message}");
             if (itemTakenByPlayer) // Item moved FROM container TO player
             {
-                playerInv.heldItemStack.SetItem(itemId, quantityTransferred);
                 //playerInv.AddItem(itemId, quantityTransferred); // If we do this it is like a shift click, but right now we just want to  put it into the hand
             } else // Item moved FROM player TO container
               {
@@ -371,44 +315,13 @@ public class SharedContainer : NetworkBehaviour, IVisibilityEntity, IInteractabl
 
 
         // --- Stacking ---
-        if (data.maxStackSize > 1) {
-            for (int i = 0; i < ContainerSlots.Count; i++) {
-                // Compare by ItemID
-                if (ContainerSlots[i].itemID == itemID) {
-                    int currentQuantity = ContainerSlots[i].quantity;
-                    int stackSpace = data.maxStackSize - currentQuantity;
-                    if (stackSpace > 0) {
-                        int amountToAdd = Mathf.Min(quantity, stackSpace);
-                        if (amountToAdd > 0) {
-                            InventorySlot updatedSlot = new InventorySlot(itemID, currentQuantity + amountToAdd);
-                            ContainerSlots[i] = updatedSlot;
-                            quantity -= amountToAdd;
-                            if (quantity <= 0) return true;
-                        }
-                    }
-                }
-            }
-        }
-
-
-        // --- Preferred Index ---
-        if (preferredIndex >= 0 && preferredIndex < ContainerSlots.Count && ContainerSlots[preferredIndex].IsEmpty()) {
-            int amountToAdd = Mathf.Min(quantity, data.maxStackSize);
-            InventorySlot newSlot = new InventorySlot(itemID, amountToAdd);
-            ContainerSlots[preferredIndex] = newSlot;
-            quantity -= amountToAdd;
-            if (quantity <= 0) return true;
-        }
-
-
-        // --- Empty Slots ---
         for (int i = 0; i < ContainerSlots.Count; i++) {
-            if (ContainerSlots[i].IsEmpty()) {
-                int amountToAdd = Mathf.Min(quantity, data.maxStackSize);
-                InventorySlot newSlot = new InventorySlot(itemID, amountToAdd);
-                ContainerSlots[i] = newSlot;
-                quantity -= amountToAdd;
-                if (quantity <= 0) return true;
+            // Compare by ItemID
+            if (ContainerSlots[i].itemID == itemID) {
+                int currentQuantity = ContainerSlots[i].quantity;
+                InventorySlot updatedSlot = new InventorySlot(itemID, currentQuantity + quantity);
+                ContainerSlots[i] = updatedSlot;
+                return true;
             }
         }
 

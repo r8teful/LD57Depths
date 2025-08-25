@@ -20,7 +20,6 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private InputAction _playerClickAction;
     private InputAction _playerMoveAction;
     private InputAction _playerAimAction;
-    private InputAction _playerSwitchAction;
     private InputAction _playerDashAction;
     private InputAction _useItemAction;
     private InputAction _hotbarSelection;
@@ -39,7 +38,6 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private InputAction _uiTabRight;
     
     
-    private ShootMode _currentShootMode = ShootMode.Mining;
     private LayerMask _interactableLayerMask;
     private ToolController _toolController;
     private PlayerMovement _playerMovement;
@@ -70,7 +68,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             _playerClickAction = _playerInput.actions.FindAction("Shoot",true);
             _playerMoveAction = _playerInput.actions.FindAction("Move",true);
             _playerAimAction = _playerInput.actions.FindAction("Aim",true);
-            _playerSwitchAction = _playerInput.actions.FindAction("SwitchTool",true);
+            //_playerSwitchAction = _playerInput.actions.FindAction("SwitchTool",true);
             _playerDashAction = _playerInput.actions.FindAction("Dash",true);
             _cancelAction = _playerInput.actions.FindAction("Cancel",true);
             _UItoggleInventoryAction = _playerInput.actions.FindAction("UI_Toggle",true); // I
@@ -91,30 +89,17 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private void SubscribeToEvents() {
         if (_UItoggleInventoryAction != null)
             _UItoggleInventoryAction.performed += UIOnToggleInventory;
-        if (_uiInteractAction != null)
-            _uiInteractAction.performed += UIOnPrimaryInteractionPerformed;
-        if (_uiAltInteractAction != null)
-            _uiAltInteractAction.performed += UIOnSecondaryInteractionPerformed;
         if (_cancelAction != null)
             _cancelAction.performed += UIHandleCloseAction;
             _cancelAction.performed += HandleCancelAction;
-        if (_uiTabLeft != null)
-            _uiTabLeft.performed += l => UIScrollTabs(-1); // Not unsubscribing but what is the worst that could happen?
-        if (_uiTabRight != null)
-            _uiTabRight.performed += l => UIScrollTabs(1);
         _playerClickAction.performed += OnPrimaryInteractionPerformed;
         _playerClickAction.canceled += OnPrimaryInteractionPerformed;
         _playerDashAction.performed += OnDashPerformed;
         _playerDashAction.canceled += OnDashPerformed;
-        //_useItemAction.performed += OnUseHotbarInput;
-        _hotbarSelection.performed += OnHotbarSelection;
-        _hotbarSelection.performed += OnHotbarSelection;
         _playerMoveAction.performed += OnMove;
         _playerMoveAction.canceled += OnMove;
         _playerAimAction.performed += OnAim;
         _playerAimAction.canceled += OnAim;
-        _playerSwitchAction.performed += OnSwitchTool;
-        _playerSwitchAction.canceled += OnSwitchTool;
     }
 
  
@@ -122,10 +107,6 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private void UnsubscribeFromEvents() {
         if (_UItoggleInventoryAction != null)
             _UItoggleInventoryAction.performed -= UIOnToggleInventory;
-        if (_uiInteractAction != null)
-            _uiInteractAction.performed -= UIOnPrimaryInteractionPerformed;
-        if (_uiAltInteractAction != null)
-            _uiAltInteractAction.performed -= UIOnSecondaryInteractionPerformed;
         if (_cancelAction != null)
             _cancelAction.performed -= UIHandleCloseAction;
             _cancelAction.performed -= HandleCancelAction;
@@ -133,20 +114,11 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             _playerClickAction.performed -= OnPrimaryInteractionPerformed;
             _playerClickAction.canceled -= OnPrimaryInteractionPerformed;
         }
-        //if (_useItemAction != null) {
-        //    _useItemAction.performed -= OnUseHotbarInput;
-        //}
-        if (_hotbarSelection != null) {
-            _hotbarSelection.performed -= OnHotbarSelection;
-        }
         if (_playerMoveAction != null) { 
             _playerMoveAction.performed -= OnMove;
         }
         if (_playerAimAction != null) {
             _playerAimAction.performed -= OnAim;
-        }
-        if (_playerSwitchAction != null) {
-            _playerSwitchAction.performed -= OnSwitchTool;
         }
     }
     private void Update() {
@@ -185,13 +157,6 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             // TODO this should sometimes clear the interactable, but sometimes not. As the UI could be the interactable!
             
             //ClearInteractable(); // Can't interact with world objects if UI is in the way
-            return;
-        }
-
-        // Check if we are dragging an item
-        if (_inventoryUIManager.IsDraggingItem) {
-            _currentContext = PlayerInteractionContext.DraggingItem;
-            ClearInteractable();
             return;
         }
 
@@ -265,19 +230,6 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     public void OnAim(InputAction.CallbackContext context) {
         rawAimInput = context.ReadValue<Vector2>();
     }
-
-    public void OnSwitchTool(InputAction.CallbackContext context) {
-        if (context.performed) {
-            // Just switch between for now
-            if (_toolController != null)
-                _toolController.ForceStopAllTools();
-            if(_currentShootMode == ShootMode.Mining) {
-                _currentShootMode = ShootMode.Cleaning;
-            } else {
-                _currentShootMode = ShootMode.Mining;
-            }
-        }
-    }
     public bool GetDashInput() => _dashPefromed;
 
     // Get movement input (e.g., WASD, joystick)
@@ -302,10 +254,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     public void OnInteract(InputAction.CallbackContext context) {
 
     }
-    private void OnHotbarSelection(InputAction.CallbackContext context) {
-        // Just pass logic to the SelectionManager for now
-        _inventoryUIManager.ItemSelectionManager.HandleHotbarSelection(context);
-    }
+   
     //private void OnUseHotbarInput(InputAction.CallbackContext context) {
     //    if(_currentContext == PlayerInteractionContext.HotebarItemSelected) {
     //        _inventoryUIManager.ItemSelectionManager.HandleUseInput(context);
@@ -326,17 +275,9 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         switch (_currentContext) {
             case PlayerInteractionContext.UsingToolOnWorld:
                 if (context.performed) {
-                    if (_currentShootMode == ShootMode.Mining) {
-                        _toolController.PerformMining(this);
-                    } else {
-                        _toolController.PerformCleaning(this);
-                    }
+                   _toolController.PerformMining(this);
                 } else if (context.canceled) {
-                    if (_currentShootMode == ShootMode.Mining) {
-                        _toolController.StopMining();
-                    } else {
-                        _toolController.StopCleaning();
-                    }
+                     _toolController.StopMining();
                 }
                 break;
             case PlayerInteractionContext.Building:
@@ -351,26 +292,8 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
                 break;
         }
     }
-    public void UIOnPrimaryInteractionPerformed(InputAction.CallbackContext context) {
-        if (_currentContext == PlayerInteractionContext.DraggingItem) {
-            if (context.performed)
-                _inventoryUIManager.ProcessInteraction(PointerEventData.InputButton.Left, _uiPointAction, _playerInput.currentControlScheme == "Gamepad");
-
-        } else if (_currentContext == PlayerInteractionContext.InteractingWithUI) {
-            if (context.performed)
-                _inventoryUIManager.ProcessInteraction(PointerEventData.InputButton.Left, _uiPointAction, _playerInput.currentControlScheme == "Gamepad");
-        }
-    }
-    public void UIOnSecondaryInteractionPerformed(InputAction.CallbackContext context) {
-        // This is Right Mouse Click / Gamepad X
-        _inventoryUIManager.ProcessInteraction(PointerEventData.InputButton.Right, _uiPointAction, _playerInput.currentControlScheme == "Gamepad");
-    }
     #region INVENTORY
 
-    // direction should be either -1 or 1 idealy
-    public void UIScrollTabs(int direction) {
-        _inventoryUIManager.HandleScrollTabs(direction);
-    }
     private void UIOnToggleInventory(InputAction.CallbackContext context) {
         if (Console.IsConsoleOpen())
             return;
@@ -415,10 +338,4 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
 
         return true;
     }
-}
-
-
-public enum ShootMode {
-    Mining,
-    Cleaning
 }

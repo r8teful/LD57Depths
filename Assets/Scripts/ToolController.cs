@@ -5,12 +5,10 @@ using UnityEngine;
 
 // Controls what happens when the player presses the left mouse button, which usually will activate a specific tool
 public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
-    [SerializeField] private Transform _toolSlotMining; // Instantiated slot for the current mining tool
-    [SerializeField] private Transform _toolSlotCleaning;
+    [SerializeField] private Transform _toolSlotMining;
 
     // local owner only!
-    private IToolBehaviour currentMiningToolBehavior; 
-    private IToolBehaviour currentCleaningToolBehavior;
+    private IToolBehaviour currentMiningToolBehavior;
     private WorldManager _worldManager;
     private bool _isUsingToolLocal;
     private NetworkedPlayer _playerParent;
@@ -41,7 +39,6 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         _worldManager = FindFirstObjectByType<WorldManager>();
         _playerParent.PlayerLayerController.CurrentLayer.OnChange += PlayerLayerChange;
         EquipDrill(); // Todo this would have to take from some kind of save file obviously
-        EquipCleanTool(); // Todo this would have to take from some kind of save file obviously
     }
 
     private void PlayerLayerChange(VisibilityLayerType prev, VisibilityLayerType next, bool asServer) {
@@ -70,15 +67,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         ToolStartServerRpc(currentMiningToolBehavior.toolID);
         _isUsingToolLocal = true;
     }
-    public void PerformCleaning(InputManager input) {
-        if (!base.IsOwner)
-            return;
-        if (!_playerParent.PlayerMovement.CanUseTool())
-            return;
-        currentCleaningToolBehavior?.ToolStart(input, this);
-        ToolStartServerRpc(currentCleaningToolBehavior.toolID);
-        _isUsingToolLocal = true;
-    }
+ 
     public void StopMining() {
         if (!base.IsOwner)
             return;
@@ -88,18 +77,6 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     }
     private void EndMining() {
         currentMiningToolBehavior?.ToolStop(this);
-        ToolStopServerRpc(); // Let others know we've stopped 
-        _isUsingToolLocal = false;
-    }
-    public void StopCleaning() {
-        if (!base.IsOwner)
-            return;
-        if (!_playerParent.PlayerMovement.CanUseTool())
-            return;
-        EndCleaning();
-    }
-    private void EndCleaning() {
-        currentCleaningToolBehavior?.ToolStop(this);
         ToolStopServerRpc(); // Let others know we've stopped 
         _isUsingToolLocal = false;
     }
@@ -157,9 +134,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     private void EquipDrill() {
         EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("MiningDrill"));
     }
-    private void EquipCleanTool() {
-        EquipCleaningToolFromPrefab(App.ResourceSystem.GetPrefab("CleaningTool"));
-    }
+    
     private void DEBUGSetMineTool(string tool) {
         if (tool == "god") {
             Debug.Log("Setting Mining tool as GOD");
@@ -173,24 +148,17 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
             EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("MiningLazer"));
         }
     }
-    private void DEBUGSetDefaultCleanTool() {
-        EquipCleaningToolFromPrefab(App.ResourceSystem.GetPrefab("CleaningTool"));
-        // var g = Instantiate(App.ResourceSystem.GetPrefab("CleaningTool"), transform);
-        // base.Spawn(g, Owner); // This will be how you'd do it in multiplayer
-    }
+   
 
     // Doesn't look at any logic, just stops
     internal void ForceStopAllTools() {
         EndMining();
-        StopCleaning();
     }
 
     public void EquipMiningToolFromPrefab(GameObject toolPrefab) {
         EquipTool(toolPrefab, _toolSlotMining, ref currentMiningToolBehavior);
     }
-    public void EquipCleaningToolFromPrefab(GameObject toolPrefab) {
-        EquipTool(toolPrefab, _toolSlotCleaning, ref currentCleaningToolBehavior);
-    }
+    
     private void EquipTool(GameObject toolPrefab, Transform slot, ref IToolBehaviour toolBehaviorReference) {
         // 1. Clear out any existing tool in the slot first.
         ClearSlot(slot, ref toolBehaviorReference);
@@ -233,10 +201,6 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     }
     public void ClearMiningSlot() {
         ClearSlot(_toolSlotMining, ref currentMiningToolBehavior);
-    }
-
-    public void ClearCleaningSlot() {
-        ClearSlot(_toolSlotCleaning, ref currentCleaningToolBehavior);
     }
 
 

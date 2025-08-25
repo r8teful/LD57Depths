@@ -1,14 +1,7 @@
-TERRAFORMING: 
-1. Basic numbers and slider visuals
-- Oxygen value goes up as you place more trees
-	- Should have a current value, and an ending value, which gets reached when the tree is at its max
-	- Slider visual that shows you this. When you hoover over the slider it tells you how long before it reaches the max
-- Lamp light value
-- Polution cleaned value
-- Global value that combines all of the three above
-2. Reacting Components
-- Background particles react to polution cleaned
-- Bubbles spawn when more oxygen
-- Global light reacts to global value
-- Plants dynamically start to spawn when certain thresholds are reached
-	- For areas that aren't discovered, we can increase the spawn ratio depending on the global value
+SIMPLIFY
+- Remove the environment stuff
+	- No cleaning rubish anymore, we didn't really have any at all anyway, so that's good
+- Remove item crafting
+	- Upgrades is really the only thing we want remaining here
+- Remove Inventory Grids
++ Simplified inventory

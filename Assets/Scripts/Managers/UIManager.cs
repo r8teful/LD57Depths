@@ -8,9 +8,6 @@ public class UIManager : Singleton<UIManager> {
     [field: SerializeField] public UIManagerInventory UIManagerInventory {  get; private set; }
     private GameObject _playerGameObject;
 
-    void Update() {
-        UIManagerInventory.UpdateHeldItemVisual();
-    }
     public void Init(NetworkedPlayer client, GameObject owningPlayer) {
         _localInventoryManager = client.InventoryN.GetInventoryManager();
         PopupManager = GetComponent<PopupManager>();

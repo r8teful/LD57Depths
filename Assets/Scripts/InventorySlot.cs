@@ -8,6 +8,9 @@ public class InventorySlot {
     // Store quantity.
     public int quantity;
 
+    // Has the player gotten this item before?
+    public bool discovered;
+
     // --- Property to get the actual ItemData (performs lookup) ---
     // Non-serialized: This is derived data, not sent over network.
     [System.NonSerialized]
@@ -27,29 +30,16 @@ public class InventorySlot {
     public InventorySlot() : this(ResourceSystem.InvalidID, 0) { }
 
     // Constructor - takes ID
-    public InventorySlot(ushort id = ResourceSystem.InvalidID, int amount = 0) {
+    public InventorySlot(ushort id = ResourceSystem.InvalidID, int amount = 0, bool discovered = false) {
         itemID = id;
         quantity = amount;
         // Clear cache initially, will be populated by ItemData property getter
         _cachedItemData = null;
+        this.discovered = discovered;
     }
 
     // Check against InvalidID
     public bool IsEmpty() => itemID == ResourceSystem.InvalidID || quantity <= 0;
-
-
-    // Needs to lookup ItemData to get max stack size
-    public bool CanAddToStack(int amount = 1) {
-        if (IsEmpty()) return false; // Cannot add to empty slot stack
-
-        ItemData data = this.ItemData; // Use property getter (performs lookup)
-        if (data == null) {
-            Debug.LogError($"Cannot check stack size for invalid ItemID: {itemID}");
-            return false;
-        }
-        return quantity + amount <= data.maxStackSize;
-    }
-
 
     public void Clear() {
         itemID = ResourceSystem.InvalidID;
@@ -67,17 +57,5 @@ public class InventorySlot {
 
     public void RemoveQuantity(int amount) {
         AddQuantity(-amount);
-    }
-
-    // Optional: Direct setter for server updates - ensure ID and quantity are valid
-    public void SetSlot(ushort id, int quant) {
-        itemID = id;
-        quantity = quant;
-        _cachedItemData = null; // Clear cache, let property re-lookup
-
-        if (itemID == ResourceSystem.InvalidID || quantity <= 0) {
-            // Ensure consistency if set to invalid state
-            Clear();
-        }
     }
 }

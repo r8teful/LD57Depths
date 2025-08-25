@@ -9,7 +9,7 @@ public class UIContainerManager : MonoBehaviour {
     public GameObject containerPanel;
     public Button closeButton; // Optional: A dedicated button to close the container UI
 
-    private List<InventorySlotUI> uiSlots = new List<InventorySlotUI>();
+    private List<UIInventoryItem> uiSlots = new List<UIInventoryItem>();
     private SharedContainer _currentContainer;
     private NetworkedPlayerInventory _localPlayerInventory;
 
@@ -86,32 +86,6 @@ public class UIContainerManager : MonoBehaviour {
             return;
 
         InventorySlot clickedSlotInContainer = _currentContainer.ContainerSlots[slotIndex]; // Get live data
-
-        if (_localPlayerInventory.heldItemStack.IsEmpty()) // Player NOT holding an item (wants to TAKE from container)
-        {
-            if (!clickedSlotInContainer.IsEmpty()) {
-                int quantityToTake = (mouseButton == 0) ? clickedSlotInContainer.quantity : Mathf.CeilToInt(clickedSlotInContainer.quantity / 2f);
-                if (quantityToTake > 0) {
-                    // Send request to server. Player's inventory will be updated via TargetRpc.
-                    _currentContainer.CmdTakeItemFromContainer(slotIndex, quantityToTake);
-                }
-            }
-        } else // Player IS holding an item (wants to PLACE into container)
-          {
-            ushort heldItemId = _localPlayerInventory.heldItemStack.itemID;
-            int heldQuantity = _localPlayerInventory.heldItemStack.quantity;
-
-            if (mouseButton == 0) // Left Click: Place all/stack
-            {
-                _currentContainer.CmdPlaceItemIntoContainer(heldItemId, heldQuantity, slotIndex);
-            } else if (mouseButton == 1) // Right Click: Place one
-              {
-                if (heldQuantity > 0) {
-                    _currentContainer.CmdPlaceItemIntoContainer(heldItemId, 1, slotIndex);
-                }
-            }
-            // Player's held item and inventory will be updated via TargetRpc.
-        }
     }
 
     private void HandleCloseButtonClick() {

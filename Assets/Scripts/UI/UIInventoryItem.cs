@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems; // Required for Drag Handlers
 using TMPro; // Required for TextMeshPro
 
-public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, ISelectHandler, IDeselectHandler {
+public class UIInventoryItem : MonoBehaviour, IPointerClickHandler {
     [Header("UI Elements")]
     [SerializeField] private Image itemIconImage; // Assign the child Image component for the icon
     [SerializeField] private TextMeshProUGUI quantityText; // Assign the child TextMeshProUGUI component
@@ -15,18 +15,10 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, ISelectHandl
 
     // --- Runtime ---
     private UIManagerInventory uiManager;
-    private int slotIndex = -1;
-    private Image backgroundImage; // Reference to self image if needed for color changes
 
     private bool isContainerSlot = false; // New flag
-    private bool isHotBarSlot;
-    private bool focusBorder;
-
-    public int SlotIndex => slotIndex; 
     public bool IsContainerSlot => isContainerSlot; // Expose context flag
-    public bool IsHotBarSlot => isHotBarSlot; // Expose context flag
     void Awake() {
-        backgroundImage = GetComponent<Image>(); // Get Image on this object if needed
         if (!itemIconImage || !quantityText) {
             Debug.LogError($"Slot UI on {gameObject.name} is missing references to Icon Image or Quantity Text!", gameObject);
         }
@@ -45,21 +37,19 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, ISelectHandl
     }
 
     // Called by InventoryUIManager during setup
-    public void Initialize(UIManagerInventory manager, int index, bool isHotbar) {
+    public void Initialize(UIManagerInventory manager) {
         uiManager = manager;
-        slotIndex = index;
         isContainerSlot = false;
-        isHotBarSlot = isHotbar;
     }
     public void SetContainerContext(UIManagerInventory manager, int index) {
         uiManager = manager; // Still need manager for drag events
-        slotIndex = index; // Index *within the container*
         isContainerSlot = true;
     }
 
     // Updates the visual elements based on the slot data
     public void UpdateSlot(InventorySlot slotData) {
-        if (slotData == null || slotData.IsEmpty()) {
+        // todo add some check here if item has been discovered
+        if (slotData == null) {
             // Slot is empty
             itemIconImage.enabled = false;
             quantityText.enabled = false;
@@ -110,18 +100,4 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, ISelectHandl
         // eventData.button tells us PointerEventData.InputButton.Left, .Right, .Middle
         //uiManager.HandleSlotClick(this, eventData.button);
     }
-
-    // --- Unity UI Navigation (ISelectHandler, IDeselectHandler) ---
-    public void OnSelect(BaseEventData eventData) {
-        // Called when this UI element becomes the selected one (e.g., by controller D-Pad)
-        if (uiManager) uiManager.OnSlotFocused(this);
-        SetFocus(true);
-    }
-
-    public void OnDeselect(BaseEventData eventData) {
-        // Called when this UI element loses selection
-        if (uiManager) uiManager.OnSlotDefocused(this);
-        SetFocus(false);
-    }
-
 }

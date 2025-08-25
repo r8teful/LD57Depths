@@ -17,8 +17,6 @@ public class ItemData : ScriptableObject, IIdentifiable {
     [PreviewField(75), HideLabel, LabelWidth(0)]
     public Sprite icon = null;
 
-    [BoxGroup("Gamepaly")]
-    public int maxStackSize = 1; // Default to 1 for non-stackable items
 
     [Header("World Representation")]
     public GameObject droppedPrefab = null; // Prefab instantiated when dropped
