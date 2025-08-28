@@ -4,6 +4,7 @@ using UnityEngine;
 
 // Holds data for one specific upgrade node
 public abstract class UpgradeRecipeBase : RecipeBaseSO {
+    public UpgradeType Type;
     [SerializeField] // Make it visible in inspector for debugging, but not editable.
     private UpgradeRecipeBase prerequisite;
 
@@ -85,4 +86,24 @@ public class QuantityCalculationOptions {
     public float MaxContributionPercentage { get; set; } = 1f;
 
     // Future optional parameters can go here...
+}
+public enum UpgradeType {
+    // MINING
+    MiningRange,
+    MiningDamage,
+    MiningPickupRange,
+    MinigLuck,
+    MiningGems,
+    // PLAYER SPEED
+    SpeedMax,
+    SpeedAcceleration,
+    SpeedDashUnlock,
+    SpeedDashSpeed,
+    SpeedDashLength,
+    SpeedDashCooldown,
+    // OXYGEN
+    OxygenMax,
+    // UTILITY  
+    UtilityLightRange,
+    UtilityLightIntensity,
 }

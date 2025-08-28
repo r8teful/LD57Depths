@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule, IValueUpgradeable {
+public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
     private Rigidbody2D rb;
     private Camera MainCam;
@@ -82,6 +82,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule, IValueUpgra
     }
     private void SubscribeToEvents() {
         // Subscribe to the event to recalculate stats when a NEW upgrade is bought
+        UpgradeManagerPlayer.OnUpgradePurchased += HandleUpgradePurchased;
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
     }
     
@@ -100,8 +101,24 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule, IValueUpgra
 
     private void OnDisable() {
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
+        UpgradeManagerPlayer.OnUpgradePurchased -= HandleUpgradePurchased;
     }
 
+    private void HandleUpgradePurchased(UpgradeRecipeBase upgrade) {
+        if (upgrade.ID == ResourceSystem.UpgradeSpeedMax) {
+            swimSpeed = UpgradeCalculator.CalculateUpgradeIncrease(swimSpeed, upgrade as UpgradeRecipeValue);
+            Debug.Log("Increase swimSpeed to " + swimSpeed);
+        } else if (upgrade.ID == ResourceSystem.UpgradeSpeedAcceleration) {
+            accelerationForce = UpgradeCalculator.CalculateUpgradeIncrease(accelerationForce, upgrade as UpgradeRecipeValue);
+            Debug.Log("Increase accelerationForce to " + accelerationForce);
+        } else if (upgrade.ID == ResourceSystem.UpgradeOxygenMax) {
+            maxOxygen = UpgradeCalculator.CalculateUpgradeIncrease(maxOxygen, upgrade as UpgradeRecipeValue);
+            Debug.Log("Increase maxOxygen to " + maxOxygen);
+        } else if (upgrade.ID == ResourceSystem.UpgradeDashUnlock) {
+            _dashUnlocked = true;
+        }
+    
+}
 
     void Update() {
         if (_inputManager == null)
@@ -485,20 +502,5 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule, IValueUpgra
 
     internal void SetOxygenZone(bool v) {
         _isInsideOxygenZone = v;
-    }
-
-    public void ApplyValueUpgrade(UpgradeRecipeValue upgrade) {
-        if (upgrade.ID == ResourceSystem.UpgradeSpeedMax) {
-            swimSpeed = UpgradeCalculator.CalculateUpgradeIncrease(swimSpeed, upgrade);
-            Debug.Log("Increase swimSpeed to " + swimSpeed);
-        } else if (upgrade.ID == ResourceSystem.UpgradeSpeedAcceleration) {
-            accelerationForce = UpgradeCalculator.CalculateUpgradeIncrease(accelerationForce, upgrade);
-            Debug.Log("Increase accelerationForce to " + accelerationForce);
-        } else if (upgrade.ID == ResourceSystem.UpgradeOxygenMax) {
-            maxOxygen = UpgradeCalculator.CalculateUpgradeIncrease(maxOxygen, upgrade);
-            Debug.Log("Increase maxOxygen to " + maxOxygen);
-        } else if (upgrade.ID == ResourceSystem.UpgradeDashUnlock) {
-            _dashUnlocked = true;
-        }
     }
 }

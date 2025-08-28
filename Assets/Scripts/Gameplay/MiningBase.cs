@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 // Created and sent to the Visual part so that we know how to draw it properly
 public struct MiningToolData {
@@ -6,7 +7,7 @@ public struct MiningToolData {
     public int toolTier;
     // Add more as needed
 }
-public abstract class MiningBase : MonoBehaviour, IToolBehaviour, IValueUpgradeable {
+public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
     protected InputManager _inputManager;
     protected Coroutine miningRoutine;
     protected bool _isMining;
@@ -16,7 +17,14 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour, IValueUpgradea
     public abstract IToolVisual toolVisual { get; }
     public abstract ToolType toolType { get; }
     public ushort toolID => (ushort)toolType;
+    private void OnEnable() {
+        // Subscribe to the event to recalculate stats when a NEW upgrade is bought
+        UpgradeManagerPlayer.OnUpgradePurchased += HandleUpgradePurchased;
+    }
 
+    private void OnDisable() {
+        UpgradeManagerPlayer.OnUpgradePurchased -= HandleUpgradePurchased;
+    }
     public MiningToolData GetToolData() {
         return new MiningToolData {
             ToolRange = Range,
@@ -35,12 +43,17 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour, IValueUpgradea
             toolVisual.HandleVisualUpdate(_inputManager);
         }
     }
-    public void ApplyValueUpgrade(UpgradeRecipeValue upgrade) {
-        if(upgrade.ID == ResourceSystem.UpgradeMiningRange) {
-            Range = UpgradeCalculator.CalculateUpgradeIncrease(Range,upgrade);
-        } else if (upgrade.ID == ResourceSystem.UpgradeMiningDamage) {
-            DamagePerHit = UpgradeCalculator.CalculateUpgradeIncrease(DamagePerHit, upgrade);
+    private void HandleUpgradePurchased(UpgradeRecipeBase upgrade) {
+        if (upgrade.Type == UpgradeType.MiningRange) {
+            Range = UpgradeCalculator.CalculateUpgradeIncrease(Range, upgrade as UpgradeRecipeValue);
+            Debug.Log("New upgrade range is: " + Range);
+        } else if (upgrade.Type == UpgradeType.MiningDamage) {
+            DamagePerHit = UpgradeCalculator.CalculateUpgradeIncrease(DamagePerHit, upgrade as UpgradeRecipeValue);
+            Debug.Log("New upgrade damage  is: " + DamagePerHit);
         }
+    }
+    public void ApplyValueUpgrade(UpgradeRecipeValue upgrade) {
+       
     }
     public virtual void ToolStart(InputManager input, ToolController controller) {
         if (miningRoutine != null) {

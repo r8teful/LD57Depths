@@ -6,13 +6,10 @@ public class UpgradeRecipeValue : UpgradeRecipeBase {
     public float value;
 
     public override bool ExecuteRecipe(RecipeExecutionContext context) {
-        if(context.Source.TryGetComponent<IValueUpgradeable>(out var upgradeableSystem)){
-            upgradeableSystem.ApplyValueUpgrade(this);
-        } else {
-            Debug.LogWarning($"The system '{context.Source}' cannot have a ValueUpgradeSO applied to it.");
-        }
         return true; // Handled by events in UpgradeManager.OnUpgradePurchased
         // This is because we'd need mining controller, movement, vision, and more, in the context. It could work, but 
         // gets quite messy to setup the context when calling execute recipe.
+        // Trust me, I've tried it, it will just get messy, and in the end we check the individual ID anyway, so if we're 
+        // Already doing that, why not just stick with it?
     }
 }
