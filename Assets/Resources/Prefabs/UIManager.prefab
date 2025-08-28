@@ -289,12 +289,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _upgradeContainerPlayer: {fileID: 3854928550384672937}
-  _upgradeContainerEnv: {fileID: 4921288094437017793}
   _buttonTreePlayer: {fileID: 7732251275935452266}
-  _buttonTreeEnv: {fileID: 7248161396008389499}
   _upgradePanel: {fileID: 1585380306700848584}
   _upgradePanelPlayer: {fileID: 5377459523597769856}
-  _upgradePanelEnv: {fileID: 7411589970758277116}
 --- !u!1 &2192511777979914718
 GameObject:
   m_ObjectHideFlags: 0
@@ -1299,17 +1296,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 9175979452539693797, guid: 6823f6b3867efe1459cb4a7c7723c0ec, type: 3}
   m_PrefabInstance: {fileID: 6010200885281947586}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7248161396008389499 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4034699423483196601, guid: 6823f6b3867efe1459cb4a7c7723c0ec, type: 3}
-  m_PrefabInstance: {fileID: 6010200885281947586}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &6678935205203540179
 PrefabInstance:
   m_ObjectHideFlags: 0

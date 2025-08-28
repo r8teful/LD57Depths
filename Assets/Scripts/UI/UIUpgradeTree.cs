@@ -1,30 +1,51 @@
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 
 public class UIUpgradeTree : MonoBehaviour {
-    [SerializeField] private TextMeshProUGUI _text;
-    [SerializeField] private Transform _nodeContainer;
     [SerializeField] private Transform _resourceContainer; // For the first upgrade that is there
-    internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades) {
-        // Makes "PlayerSpeed" become "Player Speed"  
-        _text.text = "TODO";
-        var nodePrefab = App.ResourceSystem.GetPrefab<UIUpgradeNode>("UpgradeNode");
-        // If its not linear we'll have to somehow make it dynamically here
-        for (int i = 0; i < tree.nodes.Count; i++) {
-            // Keys are the levels so we just start at level 0
-            //tree.UpgradeTree[i].PrepareRecipe(i,tree.costsValues);
-            var node = Instantiate(nodePrefab, _nodeContainer);
-            var upgradeRecipe = tree.nodes[i];
-            node.name = $"UpgradeNode_{tree.treeName}_LVL_{i}";
 
-            node.Init(upgradeRecipe.upgrade, this, i!=0 && (1+i)%4 == 0);
-            uIUpgradeScreen.GetUIManager().PopupManager.RegisterIPopupInfo(node); // Oh my god what a way to do this but I guess it makes sence
+    private Dictionary<UpgradeRecipeBase, UIUpgradeNode> _nodeMap = new Dictionary<UpgradeRecipeBase, UIUpgradeNode>();
+
+    internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades) {
+        _nodeMap.Clear();
+        // Instead of instantiating the nodes, we "link" the existing node prefab to the data, so that it displays the right
+        // upgrade. This is how we have to do it if we want more complex trees, instead of just instantiating the nodes
+        // in a horizontal layout group. A bit more work to setup now but easier to code
+        var uiLinkers = GetComponentsInChildren<UIUpgradeNode>();
+        var dataToNodeLookup = new Dictionary<UpgradeRecipeBase, UIUpgradeNode>();
+        foreach (var linker in uiLinkers) {
+            if (linker != null && !dataToNodeLookup.ContainsKey(linker.ConnectedRecipeData)) {
+                dataToNodeLookup.Add(linker.ConnectedRecipeData, linker);
+            }
+        }
+        // Iterate through the ACTUAL upgrade data and initialize the corresponding UI nodes.
+        // We use tree.nodes now, as it contains the original, unprepared assets.
+        foreach (var nodeData in tree.nodes) {
+            var originalUpgrade = nodeData.upgrade;
+            if (originalUpgrade == null) continue;
+
+            // Find the UI node in our prefab that has the matching GUID.
+            if (dataToNodeLookup.TryGetValue(originalUpgrade, out UIUpgradeNode uiNode)) {
+                // Get the PREPARED version of the upgrade, which has the calculated costs.
+                UpgradeRecipeBase preparedUpgrade = tree.GetPreparedUpgrade(originalUpgrade);
+                if (preparedUpgrade != null) {
+                    // Initialize it!
+                    uiNode.name = $"UI_Node_{preparedUpgrade.displayName}";
+                    uiNode.Init(preparedUpgrade, this, false);
+                    _nodeMap.Add(preparedUpgrade, uiNode);
+                    
+                    // Need to have this to make the popup work correctly
+                    uIUpgradeScreen.GetUIManager().PopupManager.RegisterIPopupInfo(uiNode);
+                }
+            } else {
+                Debug.LogWarning($"Found upgrade data '{originalUpgrade.name}' in SO but no matching UI node");
+            }
         }
     }
 
     internal void SetNodeAvailable(UpgradeRecipeBase upgradeData) {
+        if (_resourceContainer == null) return;
         foreach(Transform child in _resourceContainer) {
             Destroy(child.gameObject);
         }
@@ -35,18 +56,9 @@ public class UIUpgradeTree : MonoBehaviour {
         _resourceContainer.gameObject.SetActive(true);
     }
 
-
-    // We just stay with 530 total width for now, could expand it if needed later
-    void SetText(string txt) {
-        _text.text = txt;
-        _text.ForceMeshUpdate(); // Make sure layout info is up-to-date
-
-        float preferredWidth = _text.preferredWidth;
-
-        RectTransform rt = _text.rectTransform;
-        Vector2 size = rt.sizeDelta;
-        size.x = preferredWidth + 20f; // 20 for some extra padding
-        rt.sizeDelta = size;
+    // Helper function to easily find a UI node later.
+    public UIUpgradeNode GetNodeForUpgrade(UpgradeRecipeBase upgrade) {
+        _nodeMap.TryGetValue(upgrade, out var uiNode);
+        return uiNode;
     }
 }
-

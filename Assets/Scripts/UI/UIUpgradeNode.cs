@@ -7,13 +7,15 @@ using Color = UnityEngine.Color;
 public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] private Button _buttonBig;
     [SerializeField] private Button _buttonSmall;
+    [SerializeField] private UpgradeRecipeBase _recipe;
     private Image _iconImage;
     private Button _buttonCurrent;
     private Image _imageCurrent;
     private RectTransform _rectTransform;
     private UpgradeRecipeBase _upgradeData;
     private UIUpgradeTree _treeParent;
-    
+
+    public UpgradeRecipeBase ConnectedRecipeData => _recipe;
     public bool IsBig;
     public event Action PopupDataChanged;
     public event Action<IPopupInfo, bool> OnPopupShow;
@@ -47,6 +49,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         var icon = _upgradeData.icon;
         if(icon != null) {
             _iconImage.sprite = icon;
+            var c = _iconImage.color;
+            c.a = 1;
+            _iconImage.color = c; // Make sure alpha is 1
             _iconImage.SetNativeSize();
             Vector2 size = icon.rect.size *0.8f; // Just been doing 80% of the original size for the whole ui 
             _iconImage.rectTransform.sizeDelta = size;

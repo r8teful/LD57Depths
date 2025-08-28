@@ -16,14 +16,15 @@ public class UIUpgradeScreen : MonoBehaviour {
     internal void Init(UIManager UIManager, UpgradeManagerPlayer upgradeManager) {
         _UIManagerParent = UIManager;
         var treeData = App.ResourceSystem.UpgradeTreeData;
-        var playerTrees = treeData;
-        var UItreePrefab = App.ResourceSystem.GetPrefab<UIUpgradeTree>("UpgradeTree");
-
         // We have to get the existing data from the UpgradeManager, for both the local player, and the communal from the server
         // I don't think we should do it here though, do it in the upgrade managers themselves, then they need to call the approriate things 
         var pUpgrades = UpgradeManagerPlayer.Instance.GetUnlockedUpgrades();
-        foreach (var tree in playerTrees) {
-            var treeObj = Instantiate(UItreePrefab, _upgradeContainerPlayer);
+        foreach (var tree in treeData) {
+            if(tree.prefab == null) {
+                Debug.LogWarning($"{tree.treeName} does not have a corresponding UI tree, skipping...");
+                continue;
+            }
+            var treeObj = Instantiate(tree.prefab, _upgradeContainerPlayer);
             treeObj.Init(this, tree, pUpgrades);
             treeObj.name = $"UpgradeTreePlayer_{tree.treeName}";
         }

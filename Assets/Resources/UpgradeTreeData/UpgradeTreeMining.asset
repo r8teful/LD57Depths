@@ -30,8 +30,9 @@ MonoBehaviour:
     prerequisite: {fileID: 11400000, guid: 32eef142fe3589848b837e33f2cbb9b3, type: 2}
     costMultiplier: 1
   - upgrade: {fileID: 11400000, guid: 216cc22db821a9b489b0741ff8b6abef, type: 2}
-    prerequisite: {fileID: 11400000, guid: 247ec69656bec8542ae45ae3b7f57be0, type: 2}
+    prerequisite: {fileID: 11400000, guid: 32eef142fe3589848b837e33f2cbb9b3, type: 2}
     costMultiplier: 1
   - upgrade: {fileID: 11400000, guid: 72abfacd1d8ff744ca83c03c7be8a01e, type: 2}
     prerequisite: {fileID: 11400000, guid: 216cc22db821a9b489b0741ff8b6abef, type: 2}
-    costMultiplier: 1.26
+    costMultiplier: 1
+  prefab: {fileID: 4102176661086873485, guid: cf43b442b89c3ea43891a1239d4c924e, type: 3}

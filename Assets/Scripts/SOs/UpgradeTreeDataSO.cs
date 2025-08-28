@@ -35,6 +35,7 @@ public class UpgradeTreeDataSO : ScriptableObject {
     public List<UpgradeTreeTiers> tiers;
     public string treeName; 
     public List<UpgradeNode> nodes = new List<UpgradeNode>();
+    public UIUpgradeTree prefab; // The visual representation of this tree in a prefab with the approriate nodes already created
 
     // The prepared tree is now a dictionary mapping the original SO to its runtime instance.
     // This is a robust pattern to avoid modifying the original assets.
