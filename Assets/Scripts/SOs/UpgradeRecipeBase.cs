@@ -4,11 +4,11 @@ using UnityEngine;
 
 // Holds data for one specific upgrade node
 public abstract class UpgradeRecipeBase : RecipeBaseSO {
+    [SerializeField] // Make it visible in inspector for debugging, but not editable.
+    private UpgradeRecipeBase prerequisite;
 
-    public UpgradeType type;
-    public UpgradeRecipeBase prerequisite; // upgrades that need to be unlocked before this one will be available
-    public Dictionary<ushort, int> costData; // Array to hold costs for different resource
-
+    [SerializeField]
+    private List<UpgradeRecipeBase> children = new List<UpgradeRecipeBase>();
     public override void PrepareRecipe(float value, List<ItemQuantity> resourcePool) {
         base.PrepareRecipe(value, resourcePool);
         requiredItems = CalculateItemQuantities(Mathf.RoundToInt(value), resourcePool,
@@ -17,7 +17,14 @@ public abstract class UpgradeRecipeBase : RecipeBaseSO {
     public void SetPrerequisites(UpgradeRecipeBase parent) {
         prerequisite = parent;
     }
-
+    public UpgradeRecipeBase GetPrerequisite() {
+        return prerequisite;
+    }
+    public void AddChild(UpgradeRecipeBase child) {
+        if (!children.Contains(child)) {
+            children.Add(child);
+        }
+    }
     public static List<ItemQuantity> CalculateItemQuantities(
         int targetValue,
         List<ItemQuantity> resourcePool,

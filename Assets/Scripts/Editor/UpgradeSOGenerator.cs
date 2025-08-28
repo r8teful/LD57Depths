@@ -7,9 +7,12 @@ public class UpgradeSOGenerator : Editor {
     //[MenuItem("Tools/r8teful/GenerateUpgradeSOs")]
     public static void GenerateUpgrades() {
         int treeLength = 12;
-        int upgradeTreeTypeCount = Enum.GetValues(typeof(UpgradeTreeType)).Length;
+        //int upgradeTreeTypeCount = Enum.GetValues(typeof(UpgradeTreeType)).Length;
+        int upgradeTreeTypeCount = 6;
         for (int n = 0; n < upgradeTreeTypeCount; n++) { 
-            string upgradeTreeType = ((UpgradeTreeType)n).ToString(); // lol
+            //string upgradeTreeType = ((UpgradeTreeType)n).ToString(); // lol
+            string upgradeTreeType = "TODO";
+
             string folderPath = $"Assets/Resources/UpgradeData/{upgradeTreeType}";
             // Ensure folder exists
             if (!AssetDatabase.IsValidFolder(folderPath)) {

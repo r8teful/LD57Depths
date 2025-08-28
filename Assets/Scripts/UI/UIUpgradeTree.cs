@@ -9,25 +9,19 @@ public class UIUpgradeTree : MonoBehaviour {
     [SerializeField] private Transform _resourceContainer; // For the first upgrade that is there
     internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades) {
         // Makes "PlayerSpeed" become "Player Speed"  
-        _text.text = Regex.Replace(tree.type.ToString(), "([a-z])([A-Z])", "$1 $2");
+        _text.text = "TODO";
         var nodePrefab = App.ResourceSystem.GetPrefab<UIUpgradeNode>("UpgradeNode");
         // If its not linear we'll have to somehow make it dynamically here
-        for (int i = 0; i < tree.UpgradeTree.Keys.Count; i++) {
+        for (int i = 0; i < tree.nodes.Count; i++) {
             // Keys are the levels so we just start at level 0
             //tree.UpgradeTree[i].PrepareRecipe(i,tree.costsValues);
             var node = Instantiate(nodePrefab, _nodeContainer);
-            var upgradeRecipe = tree.UpgradeTree[i];
-            node.name = $"UpgradeNode_{tree.type}_LVL_{i}";
+            var upgradeRecipe = tree.nodes[i];
+            node.name = $"UpgradeNode_{tree.treeName}_LVL_{i}";
 
-            node.Init(upgradeRecipe, this, i!=0 && (1+i)%4 == 0, isNetworked: IsNetworkedTreeType(tree));
+            node.Init(upgradeRecipe.upgrade, this, i!=0 && (1+i)%4 == 0);
             uIUpgradeScreen.GetUIManager().PopupManager.RegisterIPopupInfo(node); // Oh my god what a way to do this but I guess it makes sence
         }
-    }
-
-    private bool IsNetworkedTreeType(UpgradeTreeDataSO tree) {
-        return tree.type == UpgradeTreeType.TreeFarm ||
-               tree.type == UpgradeTreeType.Pollution ||
-               tree.type == UpgradeTreeType.Lamp; 
     }
 
     internal void SetNodeAvailable(UpgradeRecipeBase upgradeData) {

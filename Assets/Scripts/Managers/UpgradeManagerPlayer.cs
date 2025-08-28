@@ -8,6 +8,7 @@ public class UpgradeManagerPlayer : Singleton<UpgradeManagerPlayer>, INetworkedP
     private Dictionary<ushort,UpgradeRecipeBase> unlockedUpgrades = new Dictionary<ushort, UpgradeRecipeBase>(); 
     public static event Action<UpgradeRecipeBase> OnUpgradePurchased;
     private CraftingComponent _crafting;
+    private NetworkedPlayer _localNetworkedPlayer;
 
     public HashSet<ushort> GetUnlockedUpgrades() {
         HashSet<ushort> output = new HashSet<ushort>();
@@ -21,12 +22,13 @@ public class UpgradeManagerPlayer : Singleton<UpgradeManagerPlayer>, INetworkedP
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _crafting = playerParent.CraftingComponent;
+        _localNetworkedPlayer = playerParent;
     }
     public bool ArePrerequisitesMet(UpgradeRecipeBase recipe) {
-        if (recipe.prerequisite == null) {
+        if (recipe.GetPrerequisite() == null) {
             return true; // No prerequisites needed.
         }
-        if (!unlockedUpgrades.ContainsKey(recipe.prerequisite.ID)) {
+        if (!unlockedUpgrades.ContainsKey(recipe.GetPrerequisite().ID)) {
             return false; // A prerequisite is missing.
         }
         return true;
@@ -42,10 +44,7 @@ public class UpgradeManagerPlayer : Singleton<UpgradeManagerPlayer>, INetworkedP
         if (!ArePrerequisitesMet(recipe)) {
             return;
         }
-        // Ugly but works for now
-        RecipeExecutionContext context = new RecipeExecutionContext {
-            ToolController = NetworkedPlayer.LocalInstance.ToolController,
-        };
+        var context = RecipeExecutionContext.FromPlayer(_localNetworkedPlayer);
         // 3. Try Execute recipe
         if (!_crafting.AttemptCraft(recipe,context)) {
             Debug.Log($"Failed to purchase {recipe.name}. Not enough currency.");
@@ -60,9 +59,7 @@ public class UpgradeManagerPlayer : Singleton<UpgradeManagerPlayer>, INetworkedP
         OnUpgradePurchased?.Invoke(recipe);
     }
 
-    internal float GetUpgradeValue(UpgradeType miningDamange) {
-        throw new NotImplementedException();
-    }
+  
 
 
     internal bool IsUpgradePurchased(UpgradeRecipeBase upgradeData) {

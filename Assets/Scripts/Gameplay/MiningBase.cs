@@ -6,7 +6,7 @@ public struct MiningToolData {
     public int toolTier;
     // Add more as needed
 }
-public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
+public abstract class MiningBase : MonoBehaviour, IToolBehaviour, IValueUpgradeable {
     protected InputManager _inputManager;
     protected Coroutine miningRoutine;
     protected bool _isMining;
@@ -30,26 +30,16 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
     public void InitVisualTool(IToolBehaviour toolBehaviourParent) {
         toolVisual.Init(toolBehaviourParent);
     }
-    private void OnEnable() {
-        // Subscribe to the event to recalculate stats when a NEW upgrade is bought
-        UpgradeManagerPlayer.OnUpgradePurchased += HandleUpgradePurchased;
-    }
-
-    private void OnDisable() {
-        UpgradeManagerPlayer.OnUpgradePurchased -= HandleUpgradePurchased;
-    }
     protected virtual void Update() {
         if (_isMining) {
             toolVisual.HandleVisualUpdate(_inputManager);
         }
     }
-    protected virtual void HandleUpgradePurchased(UpgradeRecipeBase data) {
-        if (data.type == UpgradeType.MiningRange) {
-            Range = UpgradeCalculator.CalculateUpgradeIncrease(Range, data as UpgradeRecipeValue);
-            Debug.Log("Increase range to " + Range);
-        } else if (data.type == UpgradeType.MiningDamage) {
-            DamagePerHit = UpgradeCalculator.CalculateUpgradeIncrease(DamagePerHit, data as UpgradeRecipeValue);
-            Debug.Log("Increase damage to " + DamagePerHit);
+    public void ApplyValueUpgrade(UpgradeRecipeValue upgrade) {
+        if(upgrade.ID == ResourceSystem.UpgradeMiningRange) {
+            Range = UpgradeCalculator.CalculateUpgradeIncrease(Range,upgrade);
+        } else if (upgrade.ID == ResourceSystem.UpgradeMiningDamage) {
+            DamagePerHit = UpgradeCalculator.CalculateUpgradeIncrease(DamagePerHit, upgrade);
         }
     }
     public virtual void ToolStart(InputManager input, ToolController controller) {
@@ -98,4 +88,5 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
         }
     }
 
+  
 }

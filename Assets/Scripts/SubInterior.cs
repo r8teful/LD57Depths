@@ -69,21 +69,7 @@ public class SubInterior : NetworkBehaviour {
         return (interiorData,interiorEntities);
     }
 
-    // Not sure how we're going to handle interaction state through the network but we just have to make sure this is run on all the clients
-
-    // CanInteract must be a network variable here,  how else will we know if the ladder is interactable?
-    [ServerRpc(RequireOwnership = false)]
-    internal void SetLadderActiveRpc() {
-        Debug.Log("persistentSubEntities: " + persistentSubEntities);
-        var firstMatch = persistentSubEntities.Values.FirstOrDefault(entity => entity.entityID == ResourceSystem.LadderID);
-        if (firstMatch != null) {
-            if (persistentIDToData.TryGetValue(firstMatch.persistentId, out var v)) {
-                v.go.GetComponent<IInteractable>().CanInteract = true;
-            }
-        } else {
-            Debug.LogError("Could not find ladder");
-        }
-    }
+   
 }
 
 internal struct InteriorEntityData {

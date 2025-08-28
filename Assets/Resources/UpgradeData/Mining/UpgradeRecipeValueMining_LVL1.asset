@@ -15,13 +15,13 @@ MonoBehaviour:
   RecipeID: 213
   displayName: Upgrade 1
   description: Level 1 upgrade
-  icon: {fileID: 0}
+  icon: {fileID: -329476615, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   requiredItems:
   - item: {fileID: 11400000, guid: fba8153d7534bba43bcbf978298368bd, type: 2}
     quantity: 7
   - item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
     quantity: 10
-  type: 1
   prerequisite: {fileID: 0}
+  children: []
   increaseType: 0
   value: 5

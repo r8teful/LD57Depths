@@ -8,9 +8,9 @@ using UnityEngine;
 public struct ItemQuantity {
     public ItemData item;
     public int quantity;
-    public ItemQuantity(ItemData item) {
+    public ItemQuantity(ItemData item, int q) {
         this.item = item;
-        quantity = 99;
+        quantity = q;
     }
 }
 // Helper struct for UI status
@@ -28,11 +28,20 @@ public struct IngredientStatus {
 }
 // Usefull class for the actual result of a recipe. Will add more here later like research, upgrade etc..
 public class RecipeExecutionContext {
-    public InventoryManager PlayerInventory { get; set; }
-    public FixableEntity FixableEntity { get; set; }
-    public ToolController ToolController { get; set; }
-    public NetworkedPlayer NetworkedPlayer { get; set; }
-    public bool Success { get; set; } // Need to set for the craftingRoutine 
+
+    public readonly NetworkedPlayer Player;
+    public readonly GameObject Source; // The originating object 
+
+    public RecipeExecutionContext(NetworkedPlayer player, GameObject source = null) {
+        Player = player;
+        Source = source;
+    }
+    public static RecipeExecutionContext FromPlayer(NetworkedPlayer player) {
+        return new RecipeExecutionContext(player);
+    }
+    public static RecipeExecutionContext FromObject(GameObject obj) {
+        return new RecipeExecutionContext(null, obj);
+    }
 }
 public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
 
@@ -58,12 +67,7 @@ public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
     /// </summary>
     /// <returns>True if execution was successful, false otherwise.</returns>
     public abstract bool ExecuteRecipe(RecipeExecutionContext context);
-    public virtual IEnumerator ExecuteRecipeRoutine(RecipeExecutionContext context) {
-        Debug.LogWarning("You should probably override this!");
-        context.Success = false;
-        yield break;
-    }
-
+   
     public virtual void PrepareRecipe(float value, List<ItemQuantity> resourcePool) {
 
     }

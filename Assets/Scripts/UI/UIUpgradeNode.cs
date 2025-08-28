@@ -1,4 +1,3 @@
-using FishNet.Object.Synchronizing;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,21 +13,16 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private RectTransform _rectTransform;
     private UpgradeRecipeBase _upgradeData;
     private UIUpgradeTree _treeParent;
-
-    // If we are networked we will subscribe to when an upgrade is purchased from the communal upgrade manager.
-    // Also, when we purchase an upgrade we will notify the communal upgrade manager. 
-    private bool _isNetworked; 
     
     public bool IsBig;
     public event Action PopupDataChanged;
     public event Action<IPopupInfo, bool> OnPopupShow;
 
-    internal void Init(UpgradeRecipeBase upgradeRecipeSO, UIUpgradeTree parent, bool isBig, bool isNetworked) {
+    internal void Init(UpgradeRecipeBase upgradeRecipeSO, UIUpgradeTree parent, bool isBig) {
         _treeParent = parent;
         _upgradeData = upgradeRecipeSO;
         _rectTransform = GetComponent<RectTransform>();
         IsBig = isBig;
-        _isNetworked = isNetworked;
         if (IsBig && _buttonBig != null) {
             _buttonBig.onClick.RemoveAllListeners();
             _buttonBig.onClick.AddListener(OnUpgradeButtonClicked);
@@ -50,7 +44,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         _iconImage = _buttonCurrent.transform.GetChild(1).GetComponent<Image>();// Even worse
 
         // Set icon
-        var icon = App.ResourceSystem.GetSprite($"Upgrade{_upgradeData.type}");
+        var icon = _upgradeData.icon;
         if(icon != null) {
             _iconImage.sprite = icon;
             _iconImage.SetNativeSize();
@@ -63,36 +57,17 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             rt.anchoredPosition = Vector2.zero;      // zero offset from anchor
             //_iconImage.rectTransform.sizeDelta = new Vector2(icon. texture.width, icon.texture.height);
         } else {
-            Debug.LogError($"Icon for upgrade type {_upgradeData.type} not found!");
+            Debug.LogError($"Icon for upgrade type {_upgradeData.name} not found!");
             return;
         }
         UpdateVisualState();
-        SubscribeToEvents();
     }
     private void OnEnable() {
         UpgradeManagerPlayer.OnUpgradePurchased += HandleUpgradePurchased;
     }
 
-    private void SubscribeToEvents() {
-        if (_isNetworked) {
-            UpgradeManagerCommunal.Instance.UnlockedCommunalUpgrades.OnChange += HandleCommunalUpgradePurchased;
-            UpgradeManagerPlayer.OnUpgradePurchased -= HandleUpgradePurchased;
-        }
-    }
-
-    private void HandleCommunalUpgradePurchased(SyncHashSetOperation op, ushort item, bool asServer) {
-        if (op == SyncHashSetOperation.Add) {
-            // When a communal upgrade is purchased, re-evaluate our state.
-            UpdateVisualState();
-        }
-    }
-
     private void OnDisable() {
-        if (_isNetworked) {
-            UpgradeManagerCommunal.Instance.UnlockedCommunalUpgrades.OnChange -= HandleCommunalUpgradePurchased;
-        } else {
-            UpgradeManagerPlayer.OnUpgradePurchased -= HandleUpgradePurchased;
-        }
+        UpgradeManagerPlayer.OnUpgradePurchased -= HandleUpgradePurchased;
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
@@ -118,7 +93,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         if (_upgradeData == null)
             return;
 
-        bool isPurchased = _isNetworked ? UpgradeManagerCommunal.Instance.IsUpgradePurchased(_upgradeData) : UpgradeManagerPlayer.Instance.IsUpgradePurchased(_upgradeData);
+        bool isPurchased = UpgradeManagerPlayer.Instance.IsUpgradePurchased(_upgradeData);
 
         if (isPurchased) {
             // State: Purchased

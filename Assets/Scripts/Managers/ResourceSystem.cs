@@ -32,6 +32,13 @@ public class ResourceSystem {
     public const ushort AirID = 0; // Air is ALWAYS 0 
     public const ushort LadderID = 501; // Ladder is always 501, used in SubInterior.cs
     public const ushort ControlPanellRecipeID = 101; // FixRecipe.cs
+
+    public const ushort UpgradeMiningRange = 101;
+    public const ushort UpgradeMiningDamage = 101;
+    public const ushort UpgradeSpeedMax = 101;
+    public const ushort UpgradeSpeedAcceleration = 101;
+    public const ushort UpgradeOxygenMax = 101;
+    public const ushort UpgradeDashUnlock = 101;
     public static bool IsGrowEntity(ushort id) {
         if (id == 900) // Tree farm
             return true;
@@ -136,9 +143,7 @@ public class ResourceSystem {
         }
         return recipe;
     }
-    public UpgradeRecipeBase[] GetAllRecipeByType(UpgradeTreeType type) {
-        return Resources.LoadAll<UpgradeRecipeBase>($"UpgradeData/{type}").OrderBy(r => r.ID).ToArray();
-    }
+
     public GameObject GetPrefab(string s) => _prefabDict[s];
     public T GetPrefab<T>(string key) where T : Component {
         if (!_prefabDict.TryGetValue(key, out GameObject prefab))

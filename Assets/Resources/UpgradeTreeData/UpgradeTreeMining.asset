@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 481adfdf6fa611a49a34d985372b1f15, type: 3}
   m_Name: UpgradeTreeMining
   m_EditorClassIdentifier: 
-  type: 1
-  length: 12
   costsValues:
     baseValue: 30
     linearIncrease: 55
@@ -23,3 +21,17 @@ MonoBehaviour:
     tier: {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
   - tierStartStop: {x: 4, y: 99}
     tier: {fileID: 11400000, guid: c62c0885783485c439bdc01783a4c337, type: 2}
+  treeName: 
+  nodes:
+  - upgrade: {fileID: 11400000, guid: 32eef142fe3589848b837e33f2cbb9b3, type: 2}
+    prerequisite: {fileID: 0}
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: 247ec69656bec8542ae45ae3b7f57be0, type: 2}
+    prerequisite: {fileID: 11400000, guid: 32eef142fe3589848b837e33f2cbb9b3, type: 2}
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: 216cc22db821a9b489b0741ff8b6abef, type: 2}
+    prerequisite: {fileID: 11400000, guid: 247ec69656bec8542ae45ae3b7f57be0, type: 2}
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: 72abfacd1d8ff744ca83c03c7be8a01e, type: 2}
+    prerequisite: {fileID: 11400000, guid: 216cc22db821a9b489b0741ff8b6abef, type: 2}
+    costMultiplier: 1.26

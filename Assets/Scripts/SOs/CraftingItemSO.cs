@@ -7,8 +7,9 @@ public class CraftingItemSO : CraftingRecipeSO {
     public ItemQuantity CraftingResult;
     public override bool ExecuteRecipe(RecipeExecutionContext context) {
         var added = false;
-        if (context.PlayerInventory != null) {
-            added = context.PlayerInventory.AddItem(CraftingResult.item.ID, CraftingResult.quantity);
+        
+        if (context.Player != null) {
+            added = context.Player.GetInventory().AddItem(CraftingResult.item.ID, CraftingResult.quantity);
         }
         return added;
     }
