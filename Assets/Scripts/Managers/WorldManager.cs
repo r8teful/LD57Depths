@@ -21,6 +21,7 @@ public class WorldManager : NetworkBehaviour {
     public int GetChunkSize() => ChunkManager.GetChunkSize();
     public Transform GetWorldRoot() => _worldRoot;
     public GameObject GetMainTileMap() => mainTilemap.gameObject;
+    public Transform GetSubTransform() => _sub;
     
     [SerializeField] private Tilemap mainTilemap; // Main visual grid component for the game
     [SerializeField] private Tilemap overlayTilemapOre; // Main visual grid component for the game
@@ -64,6 +65,12 @@ public class WorldManager : NetworkBehaviour {
         Debug.Log("Start client");
         mainTilemap.ClearAllTiles(); // Start with a clear visual map
     }
+
+    public float GetCheckpointYPos(int number) {
+        int totalCheckpoints = 5; // We'll have to check how many this will be later 
+        return -WorldGen.GetDepth() * ((float)Mathf.Abs(number-totalCheckpoints)/totalCheckpoints); 
+    }
+
     public void MoveCamToChunkCoord(Vector2Int chunkCoord) {
         var size = ChunkManager.GetChunkSize() / 2;
         var cell = ChunkManager.ChunkCoordToCellOrigin(chunkCoord);

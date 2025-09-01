@@ -34,9 +34,6 @@ public class UIUpgradeTree : MonoBehaviour {
                     uiNode.name = $"UI_Node_{preparedUpgrade.displayName}";
                     uiNode.Init(preparedUpgrade, this, false);
                     _nodeMap.Add(preparedUpgrade, uiNode);
-                    
-                    // Need to have this to make the popup work correctly
-                    uIUpgradeScreen.GetUIManager().PopupManager.RegisterIPopupInfo(uiNode);
                 }
             } else {
                 Debug.LogWarning($"Found upgrade data '{originalUpgrade.name}' in SO but no matching UI node");

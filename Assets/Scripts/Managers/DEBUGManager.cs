@@ -9,6 +9,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     public BiomeManager biomeManager;
     public ChunkManager chunkManager;
     public Tilemap tilemap;
+    public MachineControlPanel machineControlPanel;
 
     [System.Serializable]
     public struct BiomeTileMapping {
@@ -81,9 +82,17 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     private void debugShowUpgradeScreen() {
         _player.UiManager.UpgradeScreen.DEBUGShowScreen();
     }
+    [ConsoleCommand("showcontrol")]
+    private void debugShowSubControlScreen() {
+        machineControlPanel.DEBUGToggle();
+    }
     [ConsoleCommand("setTerraform")]
     private void debugShowUpgradeScreen(float v) {
         TerraformingManager.Instance.DEBUGSetValue(v);
+    }
+    [ConsoleCommand("setSubIndex")]
+    private void debugSetSubIndex(int v) {
+        SubMovementManager.Instance.MoveSub(v);
     }
 }
 #endif

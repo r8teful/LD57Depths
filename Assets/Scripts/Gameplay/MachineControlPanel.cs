@@ -34,7 +34,7 @@ public class MachineControlPanel : NetworkBehaviour, IInteractable {
         }
     }
     private void OpenUI() {
-        instantiatedUI = Instantiate(App.ResourceSystem.GetPrefab("ControlPanelUICanvas"));
+        instantiatedUI = Instantiate(App.ResourceSystem.GetPrefab("ControlPanelUICanvas"),NetworkedPlayer.LocalInstance.UiManager.transform);
     }
     private void CloseUI() {
         if(instantiatedUI != null) {
@@ -59,5 +59,13 @@ public class MachineControlPanel : NetworkBehaviour, IInteractable {
         } else {
             return false;
         }
+    }
+
+    internal void DEBUGToggle() {
+        if (instantiatedUI == null) {
+            OpenUI();
+        } else {
+            CloseUI();
+        }    
     }
 }

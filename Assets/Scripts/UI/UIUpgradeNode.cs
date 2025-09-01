@@ -18,7 +18,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public UpgradeRecipeBase ConnectedRecipeData => _recipe;
     public bool IsBig;
     public event Action PopupDataChanged;
-    public event Action<IPopupInfo, bool> OnPopupShow;
 
     internal void Init(UpgradeRecipeBase upgradeRecipeSO, UIUpgradeTree parent, bool isBig) {
         _treeParent = parent;
@@ -76,11 +75,11 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        OnPopupShow?.Invoke(this, true);
+        PopupManager.Instance.ShowPopup(this, true);
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        OnPopupShow?.Invoke(this, false);
+        PopupManager.Instance.ShowPopup(this, false);
     }
     private void OnUpgradeButtonClicked() {
         // UICraftingManager.Instance.AttemptCraft(upgradeData, null, null);

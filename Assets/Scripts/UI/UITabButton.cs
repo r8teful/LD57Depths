@@ -17,6 +17,8 @@ public class UITabButton : MonoBehaviour {
             _backgroundImage.sprite = App.ResourceSystem.GetSprite("InventoryTabButtonInactive");
             _rectTransform.DOAnchorPosX(0, 0.3f * moveProcent);
         }
-        
+    }
+    private void OnDestroy() {
+        _rectTransform.DOKill();
     }
 }

@@ -136,15 +136,9 @@ public class PopupManager : StaticInstance<PopupManager> {
         float clampedX = Mathf.Clamp(popupRT.position.x, leftBound, rightBound);
         popupRT.position = new Vector3(clampedX, popupRT.position.y, 0);
     }
-
-    internal void RegisterIPopupInfo(IPopupInfo popupInfo) {
-        popupInfo.OnPopupShow += OnPopupShow;
+    public void ShowPopup(IPopupInfo p, bool b) {
+        OnPopupShow(p, b);
     }
-    // We really should unsuscribe here 
-    public void UnregisterIPopupInfo(IPopupInfo popupInfo) {
-        popupInfo.OnPopupShow -= OnPopupShow;
-    }
-
     private void OnPopupShow(IPopupInfo popup, bool shouldShow) {
         if (shouldShow) {
             OnPointerEnterItem(popup);

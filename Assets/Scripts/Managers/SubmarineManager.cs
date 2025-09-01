@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 // Should hold server side data about the state of the different upgrades
-public class SubInterior : NetworkBehaviour {
+public class SubmarineManager : NetworkBehaviour {
     // TODO Isn't it bad that we are storing the PersistentData here aswell? Should we just have a list of persistantIDs only, and then ask the entityManager for the data? 
     private Dictionary<ulong, PersistentEntityData> persistentSubEntities = new Dictionary<ulong, PersistentEntityData>();
     private Dictionary<ulong, InteriorEntityData> persistentIDToData = new Dictionary<ulong, InteriorEntityData>();
@@ -13,8 +13,7 @@ public class SubInterior : NetworkBehaviour {
     private List<SubEntity> interiorEntities; // Runtime only data, not sure if we'll actually need this?
     public Grid SubGrid;
 
-    // TODO We'll have to change this when we're adding several subs but wont be in a while
-    public static SubInterior Instance { get; private set; }
+    public static SubmarineManager Instance { get; private set; }
     public override void OnStartServer() {
         base.OnStartServer();
         // TODO you'll first have to LOAD the existing server entity data, if it doesn't exist, then only create the new ones

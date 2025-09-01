@@ -10,7 +10,6 @@ public class FixableEntity : NetworkBehaviour, IInteractable, IPopupInfo {
     private CanvasInputWorld instantatiatedCanvas;
     private UIPopup instantatiatedPopup;
     public RecipeBaseSO fixRecipe;
-    public event Action<IPopupInfo, bool> OnPopupShow; // This IPopupInfo is different because we instantiate the popup directly
     public event Action PopupDataChanged;
     public SpriteRenderer SpriteRenderer;
     private bool _currentlyInteracting;

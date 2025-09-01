@@ -13,15 +13,7 @@ MonoBehaviour:
   m_Name: WorldGenSettingBiomes
   m_EditorClassIdentifier: 
   seed: 4728
-  trenchBaseWidth: 174.5
-  trenchWidenFactor: -0.05
-  trenchEdgeNoiseFrequency: 0.03
-  trenchEdgeNoiseAmplitude: 8
   associatedMaterial: {fileID: 2100000, guid: 08190815cd6b6204c9a2a932e30a0365, type: 2}
-  surfaceCenterY: 0
-  surfaceMaxDepth: 50
-  surfaceNoiseFrequency: 0.01
-  surfaceNoiseAmplitude: 20
   oreTypes:
   - name: Iron
     tile: {fileID: 11400000, guid: f4b09cb01edb0244da271b27ca802fa3, type: 2}
@@ -39,3 +31,15 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5306525d2d402954a8574ca58825fc96, type: 2}
   - {fileID: 11400000, guid: bf06109c54242e345b60ac88fc937303, type: 2}
   - {fileID: 11400000, guid: 24662d2fba81ac84792b73518d1fd5b4, type: 2}
+  caveNoiseScale: 0.173
+  caveAmp: 1.31
+  caveCutoff: 0.669
+  biomeEdgeNoiseScale: 0.7
+  biomeEdgeNoiseAmp: 41
+  biomeblockCutoff: 0.688
+  biomeblockNoiseScale: 0.389
+  biomeblockNoiseAmp: 1.72
+  biomeYStart: -3127
+  biomeYHeight: 94.7
+  biomeXOffset: -425.3
+  biomeHorSize: 360.66

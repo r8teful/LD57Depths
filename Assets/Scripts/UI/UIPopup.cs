@@ -3,11 +3,14 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 // Should be generic enough to display any kind of data that popups up on the screen, either in world space, or on the canvas, for example next to the cursor 
 public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] private GameObject popupBackground;
     [SerializeField] private RectTransform rectTransform;
+    [SerializeField] private GameObject _iconContainer;
+    [SerializeField] private Image _iconImage;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI descriptionText;
     public Transform ingredientsContent; // VerticalLayoutGroup
@@ -55,24 +58,31 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         } else {
             ingredientsContent.gameObject.SetActive(false);
         }
+
+        // Icon, used for control screen
+        if (data.Icon != null) {
+            _iconImage.sprite = data.Icon;
+        } else {
+            _iconContainer.SetActive(false);
+        }
     }
 
     // This has to be a stupid ienumerator because unity is stupid and annoying 
     private IEnumerator SetBackgroundSize() {
         while (true) {
 
-        var newHeight = transform.GetComponent<RectTransform>().sizeDelta.y;
-        var rect = transform.GetChild(0).GetComponent<RectTransform>();
-        // Anchored at the top, so offsetMax.y stays the same (usually 0)
-        // We set offsetMin.y to -height to make it the correct height
-        Vector2 offsetMin = rect.offsetMin;
-        offsetMin.y = -newHeight;
-        rect.offsetMin = offsetMin;
+            var newHeight = transform.GetComponent<RectTransform>().sizeDelta.y;
+            var rect = popupBackground.GetComponent<RectTransform>();
+            // Anchored at the top, so offsetMax.y stays the same (usually 0)
+            // We set offsetMin.y to -height to make it the correct height
+            Vector2 offsetMin = rect.offsetMin;
+            offsetMin.y = -newHeight;
+            rect.offsetMin = offsetMin;
 
-        Vector2 offsetMax = rect.offsetMax;
-        offsetMax.y = 0;
-        rect.offsetMax = offsetMax;
-        yield return new WaitForEndOfFrame();
+            Vector2 offsetMax = rect.offsetMax;
+            offsetMax.y = 0;
+            rect.offsetMax = offsetMax;
+            yield return new WaitForEndOfFrame();
         }
     }
     public void HandleFailVisual() {
