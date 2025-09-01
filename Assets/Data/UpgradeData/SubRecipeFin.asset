@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 020b853878c43ca448a2fd89a70703c3, type: 3}
-  m_Name: SubRecipeHull
+  m_Name: SubRecipeFin
   m_EditorClassIdentifier: 
   RecipeID: 32901
-  displayName: Hull
-  description: 'The hull is cracking. Reinforce your sub to continue to move. '
+  displayName: Propeller
+  description: The propeller is old and slow. Upgrade it to move to the next zone.
   icon: {fileID: 0}
   requiredItems: []
   UpgradeIconSteps:
-  - {fileID: 2113252416, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
-  - {fileID: 1096764976, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
-  - {fileID: 937825868, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
-  - {fileID: 685064899, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  - {fileID: -177491173, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  - {fileID: 546586542, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  - {fileID: 918829239, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  - {fileID: -345249840, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}

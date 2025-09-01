@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: SubRecipeCables
   m_EditorClassIdentifier: 
   RecipeID: 32901
-  displayName: Broken Cables
-  description: Fixing these will get the ship back to its moving state
+  displayName: Cables
+  description: "The submarine\u2019s cables are damaged. Repair them to restore the
+    sub\u2019s movement ability. "
   icon: {fileID: 0}
   requiredItems:
   - item: {fileID: 11400000, guid: fba8153d7534bba43bcbf978298368bd, type: 2}

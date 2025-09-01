@@ -1,4 +1,5 @@
-
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,6 +7,10 @@ public class UISubControlPanel : MonoBehaviour {
     public bool IsOpen { get; private set; }
 
     [SerializeField] private GameObject[] inventoryTabs;
+    [SerializeField] private Transform mapButtonsContainer;
+    [SerializeField] private Transform zoneResourcesContainer;
+    [SerializeField] private TextMeshProUGUI _zoneText;
+    private Button[] mapButtons;
     [SerializeField] private Button[] inventoryTabButtons;
     private int currentTabIndex;
     private void Awake() {
@@ -15,7 +20,14 @@ public class UISubControlPanel : MonoBehaviour {
                 inventoryTabs[i].SetActive(false);
             }
         }
-
+        mapButtons = mapButtonsContainer.GetComponentsInChildren<Button>()
+            .OrderBy(b => b.transform.GetSiblingIndex())
+            .ToArray();
+        for (int i = 0; i < mapButtons.Length; i++) {
+            var button = mapButtons[i];
+            int index = i;  // capture a fresh copy of i
+            button.onClick.AddListener(() => OnMapButtonClicked(index));
+        }
         // Subscribe each tab button with its own captured index:
         for (int i = 0; i < inventoryTabButtons.Length; i++) {
             var button = inventoryTabButtons[i];
@@ -23,10 +35,68 @@ public class UISubControlPanel : MonoBehaviour {
             button.onClick.AddListener(() => OnTabButtonClicked(index));
         }
     }
+    private void Start() {
+        SetMapButtonVisual(0); // TODO should be current area
+    }
     public void OnTabButtonClicked(int i) {
         EnableTab(i);
         SetTabButtonVisual(i);
     }
+    public void OnMapButtonClicked(int i) {
+        SetMapInfo(i);
+        SetMapButtonVisual(i);
+    }
+
+    private void SetMapButtonVisual(int i) {
+        if (mapButtons == null || mapButtons.Length == 0) {
+            Debug.LogWarning("inventoryTabs array is null or empty!");
+            return;
+        }
+        if (i < 0 || i >= mapButtons.Length) {
+            Debug.LogWarning($"Tab index {i} is out of range. Valid range: 0 to {mapButtons.Length - 1}");
+            return;
+        }
+        for (int j = 0; j < mapButtons.Length; j++) {
+            if (mapButtons[j] != null) {
+                SetMapButtonVisual(j, j == i);
+            } else {
+                Debug.LogWarning($"Tab at index {j} is null.");
+            }
+        }
+    }
+    private void SetMapButtonVisual(int i,bool setActive) {
+        var image = mapButtons[i].GetComponent<Image>();
+        if (setActive) { 
+            image.color = Color.white;
+            mapButtons[i].transform.SetAsLastSibling();
+        } else {
+            image.color = Color.red;
+            if (ColorUtility.TryParseHtmlString("#5BE5C0", out var color)){
+                image.color = color;
+            }
+        }
+    }
+
+    private void SetMapInfo(int i) {
+        var zone = mapButtons[i].GetComponent<TrenchZone>();
+        if (zone == null) {
+            Debug.LogError("Could not find trenchZone attached to button");
+        }
+        _zoneText.text = zone.ZoneData.ZoneName;
+
+        // Resources
+
+        // Clear all first
+        for (int j = 0; j < zoneResourcesContainer.childCount; j++) {
+            Destroy(zoneResourcesContainer.GetChild(j).gameObject);
+        }
+        // Now polulate
+        foreach (var item in zone.ZoneData.AvailableResources) {
+            var g = Instantiate(App.ResourceSystem.GetPrefab("UIZoneResourceElement"), zoneResourcesContainer); // Will automatically make a nice grid
+            g.GetComponent<Image>().sprite = item.icon;
+        }
+    }
+
     private void EnableTab(int i) {
         if (inventoryTabs == null || inventoryTabs.Length == 0) {
             Debug.LogWarning("inventoryTabs array is null or empty!");
@@ -57,13 +127,13 @@ public class UISubControlPanel : MonoBehaviour {
         }
         for (int j = 0; j < inventoryTabButtons.Length; j++) {
             if (inventoryTabButtons[j] != null) {
-                SetButtonVisual(j, j == i);
+                SetTabButtonVisual(j, j == i);
             } else {
                 Debug.LogWarning($"Tab at index {j} is null.");
             }
         }
     }
-    private void SetButtonVisual(int i, bool setActive) {
+    private void SetTabButtonVisual(int i, bool setActive) {
         var button = inventoryTabButtons[i];
         if (button != null) {
             button.GetComponent<UITabButton>().SetButtonVisual(setActive);
