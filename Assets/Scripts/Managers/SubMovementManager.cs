@@ -5,7 +5,7 @@ using UnityEngine;
 // Should handle all things related to moving the submarine
 public class SubMovementManager : NetworkBehaviour {
     public static SubMovementManager Instance { get; private set; }
-    private int SubPosIndex; // This is stored on server
+    private int SubPosIndex; // This is stored on server, probably better to be placed in SubmarineManager
     private Transform _sub;
     private void Awake() {
         if (Instance != null && Instance != this) Destroy(gameObject);

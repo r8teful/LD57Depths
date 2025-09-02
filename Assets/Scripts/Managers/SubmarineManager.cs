@@ -1,4 +1,6 @@
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,8 +14,19 @@ public class SubmarineManager : NetworkBehaviour {
     private List<InteriorEntityData> interiorEntitieData; // This data gets saved
     private List<SubEntity> interiorEntities; // Runtime only data, not sure if we'll actually need this?
     public Grid SubGrid;
-
+    // Current recipe we are working on, could derive this from _upgradeData but easier to store it like this
+    private readonly SyncVar<ushort> _currentRecipe = new();
+    public ushort CurrentRecipe => _currentRecipe.Value;
+    // RecipeID, to its corresponding progress
+    private readonly SyncDictionary<ushort, List<IDQuantity>> _upgradeData = new();
+    public Dictionary<ushort, List<IDQuantity>> UpgradeData => _upgradeData.Collection;
+    // A client-side event that the UI can subscribe to.
+    public event Action<ushort> OnUpgradeDataChanged; // Passes the RecipeID that changed
     public static SubmarineManager Instance { get; private set; }
+    private void Awake() {
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else Instance = this;
+    }
     public override void OnStartServer() {
         base.OnStartServer();
         // TODO you'll first have to LOAD the existing server entity data, if it doesn't exist, then only create the new ones
@@ -33,12 +46,38 @@ public class SubmarineManager : NetworkBehaviour {
             // Add to other dictionary
             persistentIDToData.Add(createdEntityData.persistentId, item);
         }
+        InitializeUpgradeData();
         //InitLadder();
     }
-    private void Awake() {
-        if (Instance != null && Instance != this) Destroy(gameObject);
-        else Instance = this;
+    public override void OnStartClient() {
+        base.OnStartClient();
+        _upgradeData.OnChange += OnUpgradeDataChangeClient;
+        if (!IsServerInitialized) { // Server already has the data, no need to re-process
+            foreach (var state in _upgradeData) {
+                OnUpgradeDataChanged?.Invoke(state.Key);
+            }
+        }
     }
+    [Server]
+    private void InitializeUpgradeData() {
+        // This would pull from the save file
+        foreach (var recipe in App.ResourceSystem.GetAllSubRecipes()) {
+            var list = new List<IDQuantity>();
+            foreach(var item in recipe.requiredItems) {
+                IDQuantity iQ = new(item.item.ID, 0); // HERE, instead of 0, use the stored data!
+                list.Add(iQ);
+            }
+            _upgradeData.Add(new(recipe.RecipeID, list));
+        }
+        _currentRecipe.Value = App.ResourceSystem.GetAllSubRecipes().Find(s => s.displayName == "Cables").ID; // OMG SO BAD
+    }
+    private void OnUpgradeDataChangeClient(SyncDictionaryOperation op, ushort key, List<IDQuantity> value, bool asServer) {
+        // This callback fires on clients AND the server whenever the list changes.
+        // We only care about the client-side reaction here for UI.
+        if (asServer) return;
+        OnUpgradeDataChanged?.Invoke(key);
+    }
+
 
     // Fuck this we just enable the ladder from the start
     private void InitLadder() {
@@ -68,7 +107,50 @@ public class SubmarineManager : NetworkBehaviour {
         return (interiorData,interiorEntities);
     }
 
-   
+    // This method is kind of similar to CraftinComponent AttemptCraft, but we can't use that because when we "attempthCraft" we dont want to execute
+    // the recipe, only when we have all the resources contributed, if we want to use it, we'd had to have a new recipeSO for each contribution, which 
+    // would just be hell, so now we have this one here
+    [ServerRpc(RequireOwnership = false)] 
+    public void RpcContributeToUpgrade(ushort recipeId, ushort itemId, int quantity, NetworkedPlayer client) {
+        Debug.Log($"Server received contribution request for recipe {recipeId}.");
+
+        var _clientInventory = client.GetInventory();
+        var recipe = App.ResourceSystem.GetRecipeByID(recipeId);
+        if(!_clientInventory.HasItemCount(itemId, quantity)) {
+            Debug.LogWarning("Client doesn't have requested amount in inventory!");
+            return;
+        }
+        _clientInventory.RemoveItem(itemId, quantity);
+        // Add to resource
+        int index = _upgradeData[recipeId].FindIndex(s => s.itemID == itemId);
+        if (index == -1) {
+            Debug.LogWarning("Coudn't find valid item idex!");
+            return;
+        }
+        var list = _upgradeData[recipeId][index];
+        list.quantity += quantity;
+        //_upgradeData[recipeId][index] = list; // Below line should be a more performant way of this line
+        _upgradeData.Dirty(recipeId);
+    }
+
+    internal int GetUpgradeIndex(ushort curRecipe) {
+        // If the upgradeData has the required amount of resources, then it passes
+        var recipeData = App.ResourceSystem.GetRecipeByID(curRecipe);
+        var reqItemList = recipeData.requiredItems;
+        int upgradeIndex = 0;
+        if (UpgradeData.TryGetValue(curRecipe, out var list)){
+            foreach (var item in list) {
+                var index = reqItemList.FindIndex(i => i.item.ID == item.itemID);
+                if (index != -1) {
+                    // now we now how many resource we have in the data, and how many resources we need in the recipe, of that same resource
+                    if (reqItemList[index].quantity <= item.quantity) {
+                        upgradeIndex++;
+                    }
+                }
+            }
+        }
+        return upgradeIndex;
+    }
 }
 
 internal struct InteriorEntityData {

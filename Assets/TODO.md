@@ -4,9 +4,12 @@ Change upgrade so that each stat is increased in one tree **DONE**
 Implement movement of ship to predetermined parts in each zone **DONE**
 Implement ship control UI
 	- Make general overview with buttons and tabs **DONE**
+	- Implement place holder zone data  **DONE**
 	- Implement upgrade progression bar 
+		- READ data
+		- NOW, we actually need a way get the data, we need to know what upgrade we are working on, and how far along that upgrade is currently at,  this is stored in Submarine manager
 	- Make SubmarineManager store information about the upgrade progress, and where it's at
-		- Store upgrade data in scriptable objects,  
+		- Hook up the lopic/data with the visuals 
 	- Show this information and sync it with clients
 
 ##Ship view details:

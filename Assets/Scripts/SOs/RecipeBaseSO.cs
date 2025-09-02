@@ -13,6 +13,15 @@ public struct ItemQuantity {
         quantity = q;
     }
 }
+[System.Serializable]
+public struct IDQuantity {
+    public ushort itemID;
+    public int quantity;
+    public IDQuantity(ushort id, int q) {
+        itemID = id;
+        quantity = q;
+    }
+}
 // Helper struct for UI status
 public struct IngredientStatus {
     public ItemData Item { get; }

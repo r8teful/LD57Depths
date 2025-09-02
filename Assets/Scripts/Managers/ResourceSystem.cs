@@ -169,10 +169,13 @@ public class ResourceSystem {
     public List<CraftingRecipeSO> GetAllCraftingRecipes() {
         return _recipeLookupByID.Values.OfType<CraftingRecipeSO>().ToList();
     }
-
+    internal List<SubRecipeSO> GetAllSubRecipes() {
+        return _recipeLookupByID.Values.OfType<SubRecipeSO>().ToList();
+    }
     internal List<ItemData> GetAllItems() {
         return _itemLookupByID.Values.OfType<ItemData>().ToList();
     }
+ 
     internal Dictionary<ushort,int> GetMaxItemPool() {
         var items = GetAllItems();
         var d = new Dictionary<ushort, int>();

@@ -10,6 +10,7 @@ public class CraftingComponent : MonoBehaviour, INetworkedPlayerModule {
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _clientInventory = playerParent.InventoryN.GetInventoryManager();
     }
+    // Not that SubmarineManager handles the subupgrading stuff
     public bool AttemptCraft(RecipeBaseSO recipe, RecipeExecutionContext context = null, UIPopup instantatiatedPopup = null) {
         // TODO possible use client inventoy from context here. But no, we don't really want to change that, or have other scripts store it, just have it be stored here and create a new context each time
         // We call ExecuteRecipe
