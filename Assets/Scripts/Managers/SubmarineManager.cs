@@ -75,6 +75,8 @@ public class SubmarineManager : NetworkBehaviour {
         // This callback fires on clients AND the server whenever the list changes.
         // We only care about the client-side reaction here for UI.
         if (asServer) return;
+        if (key == 0) return;
+        Debug.Log("onUpgradeDataChanged!");
         OnUpgradeDataChanged?.Invoke(key);
     }
 
@@ -107,7 +109,7 @@ public class SubmarineManager : NetworkBehaviour {
         return (interiorData,interiorEntities);
     }
 
-    // This method is kind of similar to CraftinComponent AttemptCraft, but we can't use that because when we "attempthCraft" we dont want to execute
+    // This method is kind of similar to CraftinComponent AttemptCraft, but we can't use that because when we "attemptCraft" we dont want to execute
     // the recipe, only when we have all the resources contributed, if we want to use it, we'd had to have a new recipeSO for each contribution, which 
     // would just be hell, so now we have this one here
     [ServerRpc(RequireOwnership = false)] 
@@ -129,8 +131,8 @@ public class SubmarineManager : NetworkBehaviour {
         }
         var list = _upgradeData[recipeId][index];
         list.quantity += quantity;
-        //_upgradeData[recipeId][index] = list; // Below line should be a more performant way of this line
-        _upgradeData.Dirty(recipeId);
+        _upgradeData[recipeId][index] = list; // Below line should be a more performant way of this line
+        _upgradeData.Dirty(recipeId); // This will call the OnChangeEvent
     }
 
     internal int GetUpgradeIndex(ushort curRecipe) {
@@ -150,6 +152,14 @@ public class SubmarineManager : NetworkBehaviour {
             }
         }
         return upgradeIndex;
+    }
+    public int GetContributedAmount(ushort recipeID, ushort itemID) {
+        if (_upgradeData.TryGetValue(recipeID, out var list)) {
+            int index = list.FindIndex(r => r.itemID == itemID);
+            if (index == -1) return -1;
+            return list[index].quantity;
+        }
+        return -1;
     }
 }
 
