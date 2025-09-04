@@ -5,9 +5,9 @@ Implement movement of ship to predetermined parts in each zone **DONE**
 Implement ship control UI
 	- Make general overview with buttons and tabs **DONE**
 	- Implement place holder zone data  **DONE**
-	- Make upgrade screen
-		- Detect when contributions has been reached
-		- Make button dissapear 
+	- Make upgrade screen **DONE**
+	- Finish & Fix overview screen
+	- implement move screen & multiplayer confirmation
 
 ##Ship view details:
 	1. Overview, shows where you are, what level the ship is, and what needs upgrading

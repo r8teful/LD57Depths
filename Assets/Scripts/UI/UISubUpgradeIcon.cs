@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -7,6 +8,7 @@ using UnityEngine.UI;
 public class UISubUpgradeIcon : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler {
     public event Action PopupDataChanged;
     [SerializeField] private SubRecipeSO _recipeData;
+    [SerializeField] private Button _button;
     private UISubPanelOverview _parent;
     private Image _image;
     public enum SubUpgradeState { Available,Unavailable,Upgraded}
@@ -16,14 +18,40 @@ public class UISubUpgradeIcon : MonoBehaviour, IPopupInfo, IPointerEnterHandler,
         _parent = parent;
         State = state;
         _image = GetComponent<Image>();
+        _button.onClick.AddListener(OnButtonClicked);
+        RefreshVisuals();
         SubmarineManager.Instance.OnUpgradeDataChanged += HandleUpgradeStateChanged;
+        SubmarineManager.Instance.OnCurRecipeChanged += HandleUpgradeStateChanged;
     }
 
+
+    private void OnDestroy() {
+        SubmarineManager.Instance.OnUpgradeDataChanged -= HandleUpgradeStateChanged;
+        SubmarineManager.Instance.OnCurRecipeChanged -= HandleUpgradeStateChanged;
+        
+    }
     private void HandleUpgradeStateChanged(ushort updatedRecipeId) {
         // Check if the event is for US.
-        SubUpgradeState state = GetUpgradeStateFromID(SubmarineManager.Instance.CurrentRecipe);
-        RefreshVisuals(state);
-        
+        State = GetUpgradeStateFromID(SubmarineManager.Instance.CurrentRecipe);
+        RefreshVisuals();
+
+    }
+    private void OnButtonClicked() {
+        switch (State) {
+            case SubUpgradeState.Available:
+            // Move to upgrade screen
+            OnPointerExit(null); // removes popup
+            _parent.OnEnabledUpgradeIconClicked();
+            break;
+            case SubUpgradeState.Unavailable:
+                // Nothing??
+            break;
+            case SubUpgradeState.Upgraded:
+            // Some kind of chiny sound for fun
+            break;
+            default:
+            break;
+        }
     }
 
     private SubUpgradeState GetUpgradeStateFromID(ushort currentRecipe) {
@@ -32,11 +60,11 @@ public class UISubUpgradeIcon : MonoBehaviour, IPopupInfo, IPointerEnterHandler,
         return SubUpgradeState.Unavailable;
     }
 
-    private void RefreshVisuals(SubUpgradeState state) {
+    private void RefreshVisuals() {
         if (_image == null) return;
         ColorUtility.TryParseHtmlString("#EB257B", out var availableColor);
 
-        switch (state) {
+        switch (State) {
             case SubUpgradeState.Available:
             _image.color = availableColor;
             break;
@@ -52,9 +80,6 @@ public class UISubUpgradeIcon : MonoBehaviour, IPopupInfo, IPointerEnterHandler,
     }
     public PopupData GetPopupData(InventoryManager inv) {
         // We can alternativaly enter the resource amount here if we'd like
-
-        // TODO also we should set the icon to the current "tier" of the upgrade we are in
-        
         // Set correct description text
         string description = string.Empty;
         switch (State) {
@@ -70,7 +95,8 @@ public class UISubUpgradeIcon : MonoBehaviour, IPopupInfo, IPointerEnterHandler,
             default:
             break;
         }
-        return new PopupData(_recipeData.displayName, description, null, _recipeData.UpgradeIconSteps[0]);
+        int upgradeTier = SubmarineManager.Instance.GetUpgradeIndex(_recipeData.ID);
+        return new PopupData(_recipeData.displayName, description, null, _recipeData.UpgradeIconSteps[upgradeTier]);
     }
 
     public void OnPointerEnter(PointerEventData eventData) {

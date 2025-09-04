@@ -7,6 +7,7 @@ public class UISubControlPanel : MonoBehaviour {
     public bool IsOpen { get; private set; }
     [SerializeField] private GameObject[] inventoryTabs;
     [SerializeField] private Button[] inventoryTabButtons;
+    [SerializeField] private UISubPanelOverview _overviewScript;
     private int currentTabIndex;
     private void Awake() {
         EnableTab(0);
@@ -22,6 +23,7 @@ public class UISubControlPanel : MonoBehaviour {
             int index = i;  // capture a fresh copy of i
             button.onClick.AddListener(() => OnTabButtonClicked(index));
         }
+        _overviewScript.InitParent(this);
     }
    
     public void OnTabButtonClicked(int i) {

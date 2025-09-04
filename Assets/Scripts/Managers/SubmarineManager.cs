@@ -158,6 +158,7 @@ public class SubmarineManager : NetworkBehaviour {
             Debug.LogWarning("No more recipe data found, maybe we reached final upgrade?");
             return;
         }
+        // Todo add a slight delay, visual stuff, sounds, etc
         _currentRecipe.Value++;
         OnCurRecipeChanged?.Invoke(_currentRecipe.Value);
     }
