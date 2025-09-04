@@ -22,6 +22,7 @@ public class SubmarineManager : NetworkBehaviour {
     public Dictionary<ushort, List<IDQuantity>> UpgradeData => _upgradeData.Collection;
     // A client-side event that the UI can subscribe to.
     public event Action<ushort> OnUpgradeDataChanged; // Passes the RecipeID that changed
+    public event Action<ushort> OnCurRecipeChanged; // Passes the new RecipeID 
     public static SubmarineManager Instance { get; private set; }
     private void Awake() {
         if (Instance != null && Instance != this) Destroy(gameObject);
@@ -76,7 +77,7 @@ public class SubmarineManager : NetworkBehaviour {
         // We only care about the client-side reaction here for UI.
         if (asServer) return;
         if (key == 0) return;
-        Debug.Log("onUpgradeDataChanged!");
+
         OnUpgradeDataChanged?.Invoke(key);
     }
 
@@ -114,7 +115,7 @@ public class SubmarineManager : NetworkBehaviour {
     // would just be hell, so now we have this one here
     [ServerRpc(RequireOwnership = false)] 
     public void RpcContributeToUpgrade(ushort recipeId, ushort itemId, int quantity, NetworkedPlayer client) {
-        Debug.Log($"Server received contribution request for recipe {recipeId}.");
+        //Debug.Log($"Server received contribution request for recipe {recipeId}.");
 
         var _clientInventory = client.GetInventory();
         var recipe = App.ResourceSystem.GetRecipeByID(recipeId);
@@ -124,15 +125,48 @@ public class SubmarineManager : NetworkBehaviour {
         }
         _clientInventory.RemoveItem(itemId, quantity);
         // Add to resource
-        int index = _upgradeData[recipeId].FindIndex(s => s.itemID == itemId);
-        if (index == -1) {
+        int upgradeDataIndex = _upgradeData[recipeId].FindIndex(s => s.itemID == itemId);
+        int recipeIndex = recipe.requiredItems.FindIndex(s => s.item.ID == itemId);
+        if (upgradeDataIndex == -1 || recipeIndex == -1) {
             Debug.LogWarning("Coudn't find valid item idex!");
             return;
         }
-        var list = _upgradeData[recipeId][index];
+        var list = _upgradeData[recipeId][upgradeDataIndex];
         list.quantity += quantity;
-        _upgradeData[recipeId][index] = list; // Below line should be a more performant way of this line
+
+        _upgradeData[recipeId][upgradeDataIndex] = list;  // Set the data
+        
+        // Now that the data is set, it should be locally alswell, we can do the check, because the list is changed
+        if(list.quantity >= recipe.requiredItems[recipeIndex].quantity) {
+            // Reached the full quantity! 
+            list.quantity = recipe.requiredItems[recipeIndex].quantity;
+            if (IsAllStagesDone(recipe.ID)) {
+                Debug.Log("All recipe stages done"!);
+                // play sound effect idk? 
+                StartNextUpgrade();
+                return;
+            }
+        }
+
         _upgradeData.Dirty(recipeId); // This will call the OnChangeEvent
+    }
+
+    private void StartNextUpgrade() {
+        // Check if next recipe data exists
+        var r = App.ResourceSystem.GetRecipeByID((ushort)(_currentRecipe.Value + 1));
+        if (r == null) {
+            Debug.LogWarning("No more recipe data found, maybe we reached final upgrade?");
+            return;
+        }
+        _currentRecipe.Value++;
+        OnCurRecipeChanged?.Invoke(_currentRecipe.Value);
+    }
+
+    private bool IsAllStagesDone(ushort recipeID) {
+        var recipeData = App.ResourceSystem.GetRecipeByID(recipeID);
+        var uIndex = GetUpgradeIndex(recipeID); // Just use this function lol
+        if (uIndex < recipeData.requiredItems.Count) return false;
+        return true;
     }
 
     internal int GetUpgradeIndex(ushort curRecipe) {

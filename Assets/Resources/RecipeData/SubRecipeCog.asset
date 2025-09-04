@@ -17,7 +17,11 @@ MonoBehaviour:
   description: "Replace the sub\u2019s rusty gears with strong new ones to move to
     the next zone."
   icon: {fileID: 0}
-  requiredItems: []
+  requiredItems:
+  - item: {fileID: 11400000, guid: fba8153d7534bba43bcbf978298368bd, type: 2}
+    quantity: 123
+  - item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
+    quantity: 20
   UpgradeIconSteps:
   - {fileID: -885203896, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   - {fileID: -162873128, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
