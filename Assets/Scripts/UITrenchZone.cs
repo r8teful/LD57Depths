@@ -22,10 +22,14 @@ public class UITrenchZone : MonoBehaviour {
 
     private void Awake() {
         _button = GetComponent<Button>();
-        _button.onClick.AddListener(OnMapButtonClicked);
+        if (_button != null) {
+            _button.onClick.AddListener(OnMapButtonClicked);
+        }
     }
     private void OnDestroy() {
-        _button.onClick.RemoveListener(OnMapButtonClicked);
+        if (_button != null) {
+            _button.onClick.RemoveListener(OnMapButtonClicked);
+        }
     }
     private void OnMapButtonClicked() {
         _parent.OnMapButtonClicked(ZoneData);

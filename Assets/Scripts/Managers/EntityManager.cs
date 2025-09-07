@@ -197,7 +197,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
 
         int groupSize = Random.Range(data.spawnGroupSizeMin, data.spawnGroupSizeMax + 1);
 
-        Debug.Log("Passed spawn checks, spawning enemy at:" + position);
+        //Debug.Log("Passed spawn checks, spawning enemy at:" + position);
         for (int i = 0; i < groupSize; ++i) {
             if (spawnedEntities.Count >= maxTotalEntities) break; // Check global cap
 

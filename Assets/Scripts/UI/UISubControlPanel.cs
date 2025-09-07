@@ -5,9 +5,13 @@ using UnityEngine.UI;
 public class UISubControlPanel : MonoBehaviour {
     public bool IsOpen { get; private set; }
     [SerializeField] private GameObject[] inventoryTabs;
+    [SerializeField] private GameObject _panelMain;
     [SerializeField] private Button[] inventoryTabButtons;
-    [SerializeField] private UISubPanelOverview _overviewScript;
+    [SerializeField] private UISubPanelOverview _panelOverviewScript;
+    [SerializeField] private UISubPanelMove _panelMoveScript;
+    
     private int currentTabIndex;
+    private UISubMovePopup _movePopup;
     private void Awake() {
         EnableTab(0);
         for (int i = 1; i < inventoryTabs.Length; i++) {
@@ -22,9 +26,18 @@ public class UISubControlPanel : MonoBehaviour {
             int index = i;  // capture a fresh copy of i
             button.onClick.AddListener(() => OnTabButtonClicked(index));
         }
-        _overviewScript.InitParent(this);
+        _panelOverviewScript.InitParent(this);
+        _panelMain.SetActive(false);
     }
-   
+    public void ControlPanelShow() {
+        _panelMain.SetActive(true);
+    }
+    public void ControlPanelHide() {
+        _panelMain.SetActive(false);
+    }
+    internal void ControlPanelToggle() {
+        _panelMain.SetActive(!_panelMain.activeSelf);
+    }
     public void OnTabButtonClicked(int i) {
         EnableTab(i);
         SetTabButtonVisual(i);
@@ -90,22 +103,32 @@ public class UISubControlPanel : MonoBehaviour {
             OnTabButtonClicked(newIndex); // Handle it as a click
         }
     }
+    internal void OnMovementRequestStart(bool isRequester, int zoneId, string message) {
+        // Spawn popup if popup has not already been spawned, and we're not the requester
 
-    internal void ShowMovePopup(int playerId, int zoneID) {
-        Instantiate(App.ResourceSystem.GetPrefab<UISubMovePopup>("UIMovePopup"),transform).Init(zoneID);
-        
+        Debug.Log($"MoveRequest started! isRequester: {isRequester}. ZoneID: {zoneId}");
+        if (_movePopup == null && !isRequester) {
+            _movePopup = Instantiate(App.ResourceSystem.GetPrefab<UISubMovePopup>("UIMovePopup"), _panelMain.transform);
+            _movePopup.Init(zoneId);
+        }
+        // Enter the "move waiting" state in the movePanel for everyone
+        _panelMoveScript.OnMoveEnter();
     }
-
     internal void OnMovementRequestUpdated(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds, string message) {
-        // If its our first time, spawn popup.
-        // If popup has already been spawned, or we're the requester, update the player statuses with the recieved Ids and stuff
+        // update the player statuses with the recieved Ids and stuff
+        _panelMoveScript.UpdatePlayerStatus(acceptedIds, pendingIds);
     }
+
     internal void OnMovementRequestFailed(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds, string message) {
-        throw new NotImplementedException();
+        // TODO!
+        Debug.LogWarning("Request failed!");
     }
 
     internal void OnMovementStarted(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds, string message) {
         // TODO some kind of screen shake + sound effect
+
+        // Tell move panel to stop displaying status
+        _panelMoveScript.OnMoveExit();
     }
 
     internal void OnNotifyActiveRequest(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds) {
@@ -113,6 +136,8 @@ public class UISubControlPanel : MonoBehaviour {
     }
 
     internal void OnRequestActionRejected(string message) {
-        throw new NotImplementedException();
+        _panelMoveScript.RequestRejected();
     }
+
+    
 }

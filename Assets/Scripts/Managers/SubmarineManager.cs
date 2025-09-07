@@ -28,6 +28,10 @@ public class SubmarineManager : NetworkBehaviour {
     public event Action OnSubMoved; // Used by map UI 
 
     public static SubmarineManager Instance { get; private set; }
+    internal void SetSubPosIndex(int index) {
+        _currentZoneIndex.Value = index;
+        OnSubMoved?.Invoke();
+    }
     private void Awake() {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
@@ -199,7 +203,8 @@ public class SubmarineManager : NetworkBehaviour {
         }
         return -1;
     }
-  
+
+
 }
 
 internal struct InteriorEntityData {

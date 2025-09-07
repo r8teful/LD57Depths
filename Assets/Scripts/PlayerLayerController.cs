@@ -60,7 +60,7 @@ public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
         SetPlayerClientPos(sender, worldSpawnPosition);
         if (TryGetComponent<Rigidbody2D>(out var rb)) rb.linearVelocity = Vector2.zero;
 
-        Debug.Log($"Server: Player {OwnerId} entering Interior '{interiorId}' at {worldSpawnPosition}");
+        //Debug.Log($"Server: Player {OwnerId} entering Interior '{interiorId}' at {worldSpawnPosition}");
 
         // Optional: Notify other server systems if needed
         // Observer broadcast of SyncVars handles client updates automatically.

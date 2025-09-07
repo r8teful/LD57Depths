@@ -30,8 +30,17 @@ public class UIManager : Singleton<UIManager> {
     }
 
     internal void ShowMessage(string v) {
-        throw new NotImplementedException();
     }
 
+    internal void ControlPanelUIOpen() {
+        UISubControlPanel.ControlPanelShow();
+    }
 
+    internal void ControlPanelUIClose() {
+        UISubControlPanel.ControlPanelHide();
+    }
+
+    internal void ControlPanelUIToggle() {
+        UISubControlPanel.ControlPanelToggle();
+    }
 }

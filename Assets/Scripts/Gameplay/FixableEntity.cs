@@ -37,7 +37,7 @@ public class FixableEntity : NetworkBehaviour, IInteractable, IPopupInfo {
     }
 
     private void OnFixChange(bool isFixedPrev, bool isFixedNext, bool asServer) {
-        Debug.Log($"OnFixed Change prev: {isFixedPrev}, next {isFixedNext}, CALLED ON CLIENT: {OwnerId}");
+        //Debug.Log($"OnFixed Change prev: {isFixedPrev}, next {isFixedNext}, CALLED ON CLIENT: {OwnerId}");
         if (asServer) return; // Mostly visual and interaction only so no need to do anything on server
         if(isFixedNext) {
             SetFixedLocal(true);

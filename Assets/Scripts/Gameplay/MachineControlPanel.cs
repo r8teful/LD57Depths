@@ -2,10 +2,10 @@
 using FishNet.Object.Synchronizing;
 using UnityEngine;
 
+// Links ingame to UI
 public class MachineControlPanel : NetworkBehaviour, IInteractable {
     [SerializeField] private Sprite interactIcon;
     private CanvasInputWorld instantiatedWorldCanvas;
-    private GameObject instantiatedUI;
     [SerializeField] private Transform _popupPos;
     public Sprite InteractIcon => interactIcon;
     private bool _canInteract = true;
@@ -26,20 +26,11 @@ public class MachineControlPanel : NetworkBehaviour, IInteractable {
         if (!CanInteract)
             return;
         if (instantiatedWorldCanvas != null) {
-            if(instantiatedUI == null) {
-                OpenUI();
-            } else {
-                CloseUI();
-            }
+            UIManager.Instance.ControlPanelUIToggle();
         }
-    }
-    private void OpenUI() {
-        instantiatedUI = Instantiate(App.ResourceSystem.GetPrefab("ControlPanelUICanvas"),NetworkedPlayer.LocalInstance.UiManager.transform);
     }
     private void CloseUI() {
-        if(instantiatedUI != null) {
-            Destroy(instantiatedUI);
-        }
+        UIManager.Instance.ControlPanelUIClose();
     }
     // This is now just a direct copy of FixableEntity
     public void SetInteractable(bool isInteractable, Sprite interactPrompt = null) {
@@ -62,10 +53,6 @@ public class MachineControlPanel : NetworkBehaviour, IInteractable {
     }
 
     internal void DEBUGToggle() {
-        if (instantiatedUI == null) {
-            OpenUI();
-        } else {
-            CloseUI();
-        }    
+        UIManager.Instance.ControlPanelUIToggle();
     }
 }

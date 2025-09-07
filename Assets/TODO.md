@@ -8,6 +8,8 @@ Implement ship control UI
 	- Make upgrade screen **DONE**
 	- Finish & Fix overview screen
 	- implement move screen & multiplayer confirmation
+		- Open and close ui properly
+		- bug fix and testing!
 
 ##Ship view details:
 	1. Overview, shows where you are, what level the ship is, and what needs upgrading

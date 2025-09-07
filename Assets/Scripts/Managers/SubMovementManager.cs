@@ -14,7 +14,6 @@ public class SubMovementManager : NetworkBehaviour {
 
     [Tooltip("If true, players who join during an active request become required participants. If false, they are not required.")]
     public bool includeNewJoinersAsRequired = false;
-    private int SubPosIndex; // This is stored on server, probably better to be placed in SubmarineManager
     private Transform _sub;
 
     // Snapshot of who must respond
@@ -38,13 +37,16 @@ public class SubMovementManager : NetworkBehaviour {
     // This will then be called by the UI when all players have confirmed the movement,
     // Then the port will just sync for everyone because the subexterior has a networktransform
     public void MoveSub(int index) {
+        Debug.Log("Moving submarine to index: " + index);
         _sub.position = new(0,WorldManager.Instance.GetCheckpointYPos(index));
+        SubmarineManager.Instance.SetSubPosIndex(index);
     }
 
     // ---- Server: Player starts a movement request ----
     [ServerRpc(RequireOwnership = false)]
     public void RequestMovement(NetworkConnection sender, int zoneID) {
         var senderID = sender.ClientId;
+        Debug.Log($"Player: {senderID} has requested to move to zone {zoneID}");
         if (_isRequestActive) {
             // tell only the requester it failed to start a request
             TargetRequestRejected(sender, "Another movement request is already active.");
@@ -60,8 +62,14 @@ public class SubMovementManager : NetworkBehaviour {
         _requestedZoneId = zoneID;
         // requester auto-accepts
         _acceptedClients.Add(senderID);
+
+        if (AllAccepted()) {
+            StartMovement(); // Start movement if we're solo. No need to do all the fancy networking stuff
+            return; 
+        }
+
         // Broadcast initial state
-        BroadcastRequestUpdate($"Player {GetPlayerDisplayName(senderID)} requested submarine movement.");
+        BroadcastRequestStart($"Player {GetPlayerDisplayName(senderID)} requested submarine movement.");
     }
     // ---- Server: Accept / Decline ----
     [ServerRpc(RequireOwnership = false)]
@@ -193,11 +201,14 @@ public class SubMovementManager : NetworkBehaviour {
     }
 
     // ---- RPCs to clients ----
+    private void BroadcastRequestStart(string message) {
+        var zoneID = _requestedZoneId;
+        RpcRequestStart(_requesterId, zoneID, message);
+    }
     private void BroadcastRequestUpdate(string message) {
         var accepted = _acceptedClients.ToArray();
         var pending = _requiredClients.Where(id => !_acceptedClients.Contains(id)).ToArray();
-        var zoneID = _requestedZoneId;
-        RpcRequestUpdated(_requesterId, GetPlayerDisplayName(_requesterId), accepted, pending, zoneID, message);
+        RpcRequestUpdated(_requesterId, GetPlayerDisplayName(_requesterId), accepted, pending, message);
     }
 
     private void BroadcastRequestFailed(string reason) {
@@ -213,7 +224,15 @@ public class SubMovementManager : NetworkBehaviour {
     }
 
     [ObserversRpc]
-    private void RpcRequestUpdated(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds, int zoneId, string message) {
+    private void RpcRequestStart(int requesterId, int zoneId, string message) {
+        var isRequester = LocalConnection.ClientId == _requesterId;
+        Debug.Log($"LocalID {LocalConnection.ClientId} requestID: {_requesterId}");
+        NetworkedPlayer.LocalInstance.UiManager.UISubControlPanel.OnMovementRequestStart(isRequester, zoneId, message);
+    }
+    [ObserversRpc]
+    private void RpcRequestUpdated(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds, string message) {
+
+        Debug.Log($"Request updated requesterId: {requesterId}");
         NetworkedPlayer.LocalInstance.UiManager.UISubControlPanel.OnMovementRequestUpdated(requesterId, requesterName, acceptedIds, pendingIds, message);
     }
 
@@ -236,6 +255,7 @@ public class SubMovementManager : NetworkBehaviour {
     // Local-only rejection message
     [TargetRpc]
     private void TargetRequestRejected(NetworkConnection target, string message) {
+        Debug.Log("Rejected with message: " + message);
         NetworkedPlayer.LocalInstance.UiManager.UISubControlPanel.OnRequestActionRejected(message);
     }
 

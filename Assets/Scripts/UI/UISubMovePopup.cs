@@ -18,21 +18,12 @@ public class UISubMovePopup : MonoBehaviour {
     }
 
     private void OnDenyClicked() {
+        SubMovementManager.Instance.RespondToRequest(false, NetworkedPlayer.LocalInstance.LocalConnection);
         Destroy(gameObject);
     }
 
     private void OnConfirmClicked() {
-        // TODO here we need to make sure we can see the status of the other players
-        
-        // Send server message that we've clicked
-
-        // Server then sends observer message to each MovementStatus or something
-        // Movement status checks if the playerID of the one that clicked confirm matches the cached one
-        // If it does it goes green,
-
-        // OR, when we confirm, we add that ID to the server sided "player conformied" list,
-        // MovementStatus is subscribed to the onchange, then updates accordingly
-
+        SubMovementManager.Instance.RespondToRequest(true, NetworkedPlayer.LocalInstance.LocalConnection);
         Destroy(gameObject);
     }
 
