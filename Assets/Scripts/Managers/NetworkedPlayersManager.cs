@@ -102,5 +102,10 @@ public class NetworkedPlayersManager : NetworkBehaviour {
         return Players.TryGetValue(clientId, out playerSetup);
     }
 
+    internal IEnumerable<int> GetAllPlayersIDs() {
+        var p = GetAllPlayers();
+        return GetAllPlayers().Select(player => player.OwnerId);
+    }
+
     #endregion
 }

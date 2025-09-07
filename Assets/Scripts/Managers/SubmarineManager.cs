@@ -16,13 +16,17 @@ public class SubmarineManager : NetworkBehaviour {
     public Grid SubGrid;
     // Current recipe we are working on, could derive this from _upgradeData but easier to store it like this
     private readonly SyncVar<ushort> _currentRecipe = new();
+    private readonly SyncVar<int> _currentZoneIndex = new();
     public ushort CurrentRecipe => _currentRecipe.Value;
+    public int CurrentZoneIndex => _currentZoneIndex.Value;
     // RecipeID, to its corresponding progress
     private readonly SyncDictionary<ushort, List<IDQuantity>> _upgradeData = new();
     public Dictionary<ushort, List<IDQuantity>> UpgradeData => _upgradeData.Collection;
     // A client-side event that the UI can subscribe to.
     public event Action<ushort> OnUpgradeDataChanged; // Passes the RecipeID that changed
     public event Action<ushort> OnCurRecipeChanged; // Passes the new RecipeID 
+    public event Action OnSubMoved; // Used by map UI 
+
     public static SubmarineManager Instance { get; private set; }
     private void Awake() {
         if (Instance != null && Instance != this) Destroy(gameObject);
@@ -35,7 +39,6 @@ public class SubmarineManager : NetworkBehaviour {
         // Or maybe later when you unlock a new area or interior. something like that
         _entityManager = EntityManager.Instance;
         interiorEntitieData = new List<InteriorEntityData>();
-
         var interior = GetAllInteriorEntities();
         interiorEntities = interior.Item2;
         interiorEntitieData = interior.Item1;
@@ -196,6 +199,7 @@ public class SubmarineManager : NetworkBehaviour {
         }
         return -1;
     }
+  
 }
 
 internal struct InteriorEntityData {

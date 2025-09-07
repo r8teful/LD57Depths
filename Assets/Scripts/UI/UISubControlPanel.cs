@@ -1,5 +1,4 @@
-using System.Linq;
-using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -90,5 +89,30 @@ public class UISubControlPanel : MonoBehaviour {
         if (newIndex != currentTabIndex) {
             OnTabButtonClicked(newIndex); // Handle it as a click
         }
+    }
+
+    internal void ShowMovePopup(int playerId, int zoneID) {
+        Instantiate(App.ResourceSystem.GetPrefab<UISubMovePopup>("UIMovePopup"),transform).Init(zoneID);
+        
+    }
+
+    internal void OnMovementRequestUpdated(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds, string message) {
+        // If its our first time, spawn popup.
+        // If popup has already been spawned, or we're the requester, update the player statuses with the recieved Ids and stuff
+    }
+    internal void OnMovementRequestFailed(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds, string message) {
+        throw new NotImplementedException();
+    }
+
+    internal void OnMovementStarted(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds, string message) {
+        // TODO some kind of screen shake + sound effect
+    }
+
+    internal void OnNotifyActiveRequest(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds) {
+        throw new NotImplementedException();
+    }
+
+    internal void OnRequestActionRejected(string message) {
+        throw new NotImplementedException();
     }
 }

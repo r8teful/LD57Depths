@@ -1,78 +1,91 @@
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UISubPanelMove : MonoBehaviour {
-    [SerializeField] private Transform mapButtonsContainer;
-    private Button[] mapButtons;
     [SerializeField] private TextMeshProUGUI _zoneText;
-    [SerializeField] private Transform zoneResourcesContainer;
+    [SerializeField] private Transform _zoneResourcesContainer;
+    [SerializeField] private Transform _playerStatusContainer;
+    [SerializeField] private GameObject _waitingContainer;
+    [SerializeField] private Button _buttonMove;
+    [SerializeField] private Button _buttonCancelMove;
+    [SerializeField] private UISubMap _mapScript;
+    private int _currentShownIndex;
     private void Awake() {
-        mapButtons = mapButtonsContainer.GetComponentsInChildren<Button>()
-        .OrderBy(b => b.transform.GetSiblingIndex())
-        .ToArray();
+        _buttonMove.onClick.AddListener(OnMoveClicked);
+        _buttonCancelMove.onClick.AddListener(OnCancelMoveClicked);
+        _waitingContainer.SetActive(false);
+        _mapScript.Init(this);
+    }
 
-        for (int i = 0; i < mapButtons.Length; i++) {
-            var button = mapButtons[i];
-            int index = i;  // capture a fresh copy of i
-            button.onClick.AddListener(() => OnMapButtonClicked(index));
-        }
-    }
     private void Start() {
-        SetMapButtonVisual(0); // TODO should be current area
+
     }
-    public void OnMapButtonClicked(int i) {
-        SetMapInfo(i);
-        SetMapButtonVisual(i);
+    public void OnMapButtonClicked(ZoneSO zoneinfo) {
+        _currentShownIndex = zoneinfo.ZoneIndex;
+        SetMapInfo(zoneinfo);
     }
-    private void SetMapInfo(int i) {
-        var zone = mapButtons[i].GetComponent<TrenchZone>();
-        if (zone == null) {
-            Debug.LogError("Could not find trenchZone attached to button");
-        }
-        _zoneText.text = zone.ZoneData.ZoneName;
+    private void SetMapInfo(ZoneSO zone) {
+        _zoneText.text = zone.ZoneName;
 
         // Resources
 
         // Clear all first
-        for (int j = 0; j < zoneResourcesContainer.childCount; j++) {
-            Destroy(zoneResourcesContainer.GetChild(j).gameObject);
+        for (int j = 0; j < _zoneResourcesContainer.childCount; j++) {
+            Destroy(_zoneResourcesContainer.GetChild(j).gameObject);
         }
         // Now polulate
-        foreach (var item in zone.ZoneData.AvailableResources) {
-            var g = Instantiate(App.ResourceSystem.GetPrefab("UIZoneResourceElement"), zoneResourcesContainer); // Will automatically make a nice grid
-            g.GetComponent<Image>().sprite = item.icon;
-        }
-    }
-    private void SetMapButtonVisual(int i) {
-        if (mapButtons == null || mapButtons.Length == 0) {
-            Debug.LogWarning("inventoryTabs array is null or empty!");
-            return;
-        }
-        if (i < 0 || i >= mapButtons.Length) {
-            Debug.LogWarning($"Tab index {i} is out of range. Valid range: 0 to {mapButtons.Length - 1}");
-            return;
-        }
-        for (int j = 0; j < mapButtons.Length; j++) {
-            if (mapButtons[j] != null) {
-                SetMapButtonVisual(j, j == i);
+        foreach (var item in zone.AvailableResources) {
+            var g = Instantiate(App.ResourceSystem.GetPrefab("UIZoneResourceElement"), _zoneResourcesContainer); // Will automatically make a nice grid
+            if (DiscoveryManager.Instance.IsDiscovered(item)) {
+                g.GetComponent<Image>().sprite = item.icon;
             } else {
-                Debug.LogWarning($"Tab at index {j} is null.");
+                g.GetComponent<Image>().sprite = App.ResourceSystem.GetSprite("ItemUnknown");
             }
         }
-    }
-    private void SetMapButtonVisual(int i, bool setActive) {
-        var image = mapButtons[i].GetComponent<Image>();
-        if (setActive) {
-            image.color = Color.white;
-            mapButtons[i].transform.SetAsLastSibling();
-        } else {
-            image.color = Color.red;
-            if (ColorUtility.TryParseHtmlString("#5BE5C0", out var color)) {
-                image.color = color;
-            }
+        // Should move button be visable?
+        if (zone.ZoneIndex == SubmarineManager.Instance.CurrentZoneIndex) {
+            // hide
+            _buttonMove.gameObject.SetActive(false);
+        } else if (!_buttonMove.gameObject.activeSelf) {
+            _buttonMove.gameObject.SetActive(true);
         }
     }
 
+ 
+
+    private void OnMoveClicked() {
+        // todo some kind of check before??
+        OnMoveEnter();
+        SubMovementManager.Instance.RequestMovement(NetworkedPlayer.LocalInstance.LocalConnection, _currentShownIndex);
+    }
+    private void OnCancelMoveClicked() {
+        Debug.Log("Initiated client has canceled move req!");
+        SubMovementManager.Instance.CancelRequest(NetworkedPlayer.LocalInstance.LocalConnection);
+
+        OnMoveExit();
+    }
+
+    private void OnMoveExit() {
+        _buttonMove.gameObject.SetActive(true);
+        _waitingContainer.SetActive(false);
+        _mapScript.EnableMapInteractions();
+    }
+
+    private void OnMoveEnter() {
+        _mapScript.DissableMapInteractions();
+        // Delete existing status things    
+        for (int i = 0; i < _playerStatusContainer.childCount; i++) {
+            Destroy(_playerStatusContainer.GetChild(i).gameObject);
+        }
+        _waitingContainer.SetActive(true);
+        _buttonMove.gameObject.SetActive(false);
+
+        // Hide button and show the "waiting for confirmation state" 
+        NetworkedPlayersManager.Instance.GetAllPlayers().ForEach(p => {
+            var status = Instantiate(App.ResourceSystem.GetPrefab<PlayerSubMovementStatus>("UIPlayerSubMovementStatus"), _playerStatusContainer);
+            status.Init(p.GetPlayerName(), p.OwnerId);
+        });
+    }
+   
 }

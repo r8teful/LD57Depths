@@ -113,6 +113,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         bool added = inventoryManager.AddItem(itemID, quantity); // Assume AddItem returns bool for success
         if (added) {
             Debug.Log($"Client: Picked up and added item {itemID} x{quantity} to inventory.");
+            DiscoveryManager.Instance.ServerDiscoverResource(itemID);
             AudioController.Instance.PlaySound2D("popPickup", 0.1f, pitch: new AudioParams.Pitch(AudioParams.Pitch.Variation.Small));
         } else {
             Debug.LogWarning($"Client: Could not add item {itemID} x{quantity} to inventory (full?).");

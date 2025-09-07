@@ -2947,6 +2947,50 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: TrenchWhole
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 530
+        width: 31
+        height: 61
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0f283afd3f71a34d831b0d5145ad3d9
+      internalID: 1359521255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonGenericWhite
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 554
+        width: 6
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 2, y: 2, z: 2, w: 2}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c78d653d4c22f794dbc0b9147e98f640
+      internalID: 2003862070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -2965,6 +3009,7 @@ TextureImporter:
       ButtonAdd1: 515766555
       ButtonConfirmGreen: 1348527043
       ButtonDenyRed: -1646856023
+      ButtonGenericWhite: 2003862070
       DiscoveryGrid: 1687985993
       IconArrow: 588746496
       IconBluesky: 2113114063
@@ -3034,6 +3079,7 @@ TextureImporter:
       TrenchProgression2: -2097427029
       TrenchProgression3: 1054361870
       TrenchProgression4: 1361359748
+      TrenchWhole: 1359521255
       UIButton: -1863908995
       UILine: 511341760
       UISimpleBoarder: 1878530721

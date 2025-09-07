@@ -143,6 +143,15 @@ public class ResourceSystem {
         }
         return recipe;
     }
+    public ZoneSO GetZoneByIndex(int zoneIndex) {
+        var list = Resources.LoadAll<ZoneSO>("TrenchZones").ToList();
+        var index = list.FindIndex(i =>  i.ZoneIndex == zoneIndex);
+        if(index == -1) {
+            Debug.LogWarning($"Zoneindex {zoneIndex} not found in database.");
+            return null;
+        }
+        return list[index];
+    }
 
     public GameObject GetPrefab(string s) => _prefabDict[s];
     public T GetPrefab<T>(string key) where T : Component {

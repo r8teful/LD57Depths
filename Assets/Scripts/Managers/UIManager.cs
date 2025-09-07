@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 // Root of all player UI
 public class UIManager : Singleton<UIManager> {
@@ -6,6 +7,8 @@ public class UIManager : Singleton<UIManager> {
     public PopupManager PopupManager { get; private set; }
     [field:SerializeField] public UIUpgradeScreen UpgradeScreen { get; private set; }
     [field: SerializeField] public UIManagerInventory UIManagerInventory {  get; private set; }
+    [field: SerializeField] public UISubControlPanel UISubControlPanel {  get; private set; }
+
     private GameObject _playerGameObject;
 
     public void Init(NetworkedPlayer client, GameObject owningPlayer) {
@@ -25,4 +28,10 @@ public class UIManager : Singleton<UIManager> {
         UIManagerInventory.Init(owningPlayer,client);
         PopupManager.Init(_localInventoryManager);
     }
+
+    internal void ShowMessage(string v) {
+        throw new NotImplementedException();
+    }
+
+
 }

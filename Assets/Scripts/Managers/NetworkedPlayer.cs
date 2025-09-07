@@ -119,4 +119,7 @@ public class NetworkedPlayer : NetworkBehaviour {
         // This is also a great place to trigger any "local player is ready" logic
 
     }
+    public string GetPlayerName() {
+        return $"Player: {OwnerId}"; // TODO, get steam name or user defined name etc..
+    }
 }
