@@ -30,12 +30,17 @@ public class SubmarineManager : NetworkBehaviour {
     public static SubmarineManager Instance { get; private set; }
     internal void SetSubPosIndex(int index) {
         _currentZoneIndex.Value = index;
-        OnSubMoved?.Invoke();
     }
     private void Awake() {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
+        _currentZoneIndex.OnChange += OnZoneChange;
     }
+
+    private void OnZoneChange(int prev, int next, bool asServer) {
+        OnSubMoved?.Invoke();
+    }
+
     public override void OnStartServer() {
         base.OnStartServer();
         // TODO you'll first have to LOAD the existing server entity data, if it doesn't exist, then only create the new ones
@@ -116,7 +121,9 @@ public class SubmarineManager : NetworkBehaviour {
         }
         return (interiorData,interiorEntities);
     }
+    public void AttemptContribute() {
 
+    }
     // This method is kind of similar to CraftinComponent AttemptCraft, but we can't use that because when we "attemptCraft" we dont want to execute
     // the recipe, only when we have all the resources contributed, if we want to use it, we'd had to have a new recipeSO for each contribution, which 
     // would just be hell, so now we have this one here

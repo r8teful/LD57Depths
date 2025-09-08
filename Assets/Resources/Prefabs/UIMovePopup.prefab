@@ -630,6 +630,7 @@ GameObject:
   - component: {fileID: 4766182228260961863}
   - component: {fileID: 6473160037804867611}
   - component: {fileID: 5432700709577485463}
+  - component: {fileID: 4474822824884586041}
   m_Layer: 5
   m_Name: YouAreHERE (3)
   m_TagString: Untagged
@@ -694,6 +695,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4474822824884586041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1585557282842750095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98902dd64b8545345beb7e979e73d856, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ZoneData: {fileID: 0}
+  _trenchBoxImage: {fileID: 0}
 --- !u!1 &1948174987357744957
 GameObject:
   m_ObjectHideFlags: 0
@@ -937,11 +952,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 638503759260528434}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -342.62, y: -134}
-  m_SizeDelta: {x: 979.55, y: 114.43}
-  m_Pivot: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 28.87, y: 187.9}
+  m_SizeDelta: {x: 883.13, y: 114.43}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &1905047698356663745
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1092,6 +1107,7 @@ GameObject:
   - component: {fileID: 7291586044014966146}
   - component: {fileID: 8311721614136624394}
   - component: {fileID: 1529948706694153478}
+  - component: {fileID: 2272057720722044705}
   m_Layer: 5
   m_Name: YouAreHERE (4)
   m_TagString: Untagged
@@ -1156,6 +1172,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2272057720722044705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3725594037352020100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98902dd64b8545345beb7e979e73d856, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ZoneData: {fileID: 0}
+  _trenchBoxImage: {fileID: 0}
 --- !u!1 &4400862586973617262
 GameObject:
   m_ObjectHideFlags: 0
@@ -1246,7 +1276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5a39f9bafcbd184b9b5d5bc8c7d2c58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trenchZonesContainer: {fileID: 0}
+  trenchZonesContainer: {fileID: 2717744297083882869}
   youAreHereContainer: {fileID: 5894526061176664247}
 --- !u!1 &4514744545815189177
 GameObject:
@@ -1575,6 +1605,7 @@ GameObject:
   - component: {fileID: 1870972721523375486}
   - component: {fileID: 4195011316430113951}
   - component: {fileID: 7842074125997392975}
+  - component: {fileID: 7972603387990209375}
   m_Layer: 5
   m_Name: YouAreHERE
   m_TagString: Untagged
@@ -1639,6 +1670,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7972603387990209375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5249402855310608433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98902dd64b8545345beb7e979e73d856, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ZoneData: {fileID: 0}
+  _trenchBoxImage: {fileID: 0}
 --- !u!1 &5629528124259304198
 GameObject:
   m_ObjectHideFlags: 0
@@ -2120,6 +2165,7 @@ GameObject:
   - component: {fileID: 7613499281175367228}
   - component: {fileID: 3363710023286500488}
   - component: {fileID: 6482354190465340254}
+  - component: {fileID: 4455710466467753337}
   m_Layer: 5
   m_Name: YouAreHERE (1)
   m_TagString: Untagged
@@ -2184,6 +2230,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4455710466467753337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7799374255965139140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98902dd64b8545345beb7e979e73d856, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ZoneData: {fileID: 0}
+  _trenchBoxImage: {fileID: 0}
 --- !u!1 &8057304346395882555
 GameObject:
   m_ObjectHideFlags: 0
@@ -2195,6 +2255,7 @@ GameObject:
   - component: {fileID: 6702824367120033178}
   - component: {fileID: 7700694994254347768}
   - component: {fileID: 5860042545473443928}
+  - component: {fileID: 1882899618781945514}
   m_Layer: 5
   m_Name: YouAreHERE (2)
   m_TagString: Untagged
@@ -2259,6 +2320,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1882899618781945514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8057304346395882555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98902dd64b8545345beb7e979e73d856, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ZoneData: {fileID: 0}
+  _trenchBoxImage: {fileID: 0}
 --- !u!1 &8526779287758851936
 GameObject:
   m_ObjectHideFlags: 0

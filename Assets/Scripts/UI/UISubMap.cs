@@ -11,15 +11,16 @@ public class UISubMap : MonoBehaviour {
 
     private void Awake() {
         SubmarineManager.Instance.OnSubMoved += SubMoved;
+        if (trenchZonesContainer != null) {
+            var zones = trenchZonesContainer.GetComponentsInChildren<UITrenchZone>();
+            foreach (var zone in zones) {
+                _trenchZones.Add(zone);
+                zone.Init(this);
+            }
+        }
     }
     internal void Init(UISubPanelMove uISubPanelMove) {
-        // Only add buttons etc if we get initialized by the move panel, this way we can reuse this component to only show the dot and stuff
-        _parent = uISubPanelMove;
-        var zones = trenchZonesContainer.GetComponentsInChildren<UITrenchZone>();
-        foreach (var zone in zones) {
-            _trenchZones.Add(zone);
-            zone.Init(this);
-        }
+       _parent = uISubPanelMove;
     }
     public void OnMapButtonClicked(ZoneSO zoneData) {
         // Notify parent so it can display the information properly
@@ -94,4 +95,5 @@ public class UISubMap : MonoBehaviour {
         var i = zone.ZoneIndex;
         SetMapButtonVisual(i);
     }
+
 }

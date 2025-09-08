@@ -49,6 +49,7 @@ public class SubMovementManager : NetworkBehaviour {
         Debug.Log($"Player: {senderID} has requested to move to zone {zoneID}");
         if (_isRequestActive) {
             // tell only the requester it failed to start a request
+       
             TargetRequestRejected(sender, "Another movement request is already active.");
             return;
         }
@@ -202,22 +203,26 @@ public class SubMovementManager : NetworkBehaviour {
 
     // ---- RPCs to clients ----
     private void BroadcastRequestStart(string message) {
+        Debug.Log("Request Start: " + message);
         var zoneID = _requestedZoneId;
         RpcRequestStart(_requesterId, zoneID, message);
     }
     private void BroadcastRequestUpdate(string message) {
+        Debug.Log("Request Update: " + message);
         var accepted = _acceptedClients.ToArray();
         var pending = _requiredClients.Where(id => !_acceptedClients.Contains(id)).ToArray();
         RpcRequestUpdated(_requesterId, GetPlayerDisplayName(_requesterId), accepted, pending, message);
     }
 
     private void BroadcastRequestFailed(string reason) {
+        Debug.Log("Request failed: " + reason);
         var accepted = _acceptedClients.ToArray();
         var pending = _requiredClients.Where(id => !_acceptedClients.Contains(id)).ToArray();
         RpcRequestFailed(_requesterId, GetPlayerDisplayName(_requesterId), accepted, pending, reason);
     }
 
     private void BroadcastMovementStarted(string message) {
+        Debug.Log("MOvement Started: " + message);
         var accepted = _acceptedClients.ToArray();
         var pending = _requiredClients.Where(id => !_acceptedClients.Contains(id)).ToArray();
         RpcMovementStarted(_requesterId, GetPlayerDisplayName(_requesterId), accepted, pending, message);
@@ -225,8 +230,8 @@ public class SubMovementManager : NetworkBehaviour {
 
     [ObserversRpc]
     private void RpcRequestStart(int requesterId, int zoneId, string message) {
-        var isRequester = LocalConnection.ClientId == _requesterId;
-        Debug.Log($"LocalID {LocalConnection.ClientId} requestID: {_requesterId}");
+        var isRequester = LocalConnection.ClientId == requesterId;
+        Debug.Log($"LocalID {LocalConnection.ClientId} requestID: {requesterId}");
         NetworkedPlayer.LocalInstance.UiManager.UISubControlPanel.OnMovementRequestStart(isRequester, zoneId, message);
     }
     [ObserversRpc]

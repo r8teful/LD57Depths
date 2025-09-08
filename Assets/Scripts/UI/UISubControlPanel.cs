@@ -121,6 +121,12 @@ public class UISubControlPanel : MonoBehaviour {
 
     internal void OnMovementRequestFailed(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds, string message) {
         // TODO!
+        // Remove popup it its there
+        if (_movePopup != null) {
+            Destroy(_movePopup.gameObject); // Todo we'd probably want to say who denied
+        }
+        // Hide player status
+        _panelMoveScript.OnMoveExit();
         Debug.LogWarning("Request failed!");
     }
 

@@ -17,13 +17,18 @@ public class UISubPanelMove : MonoBehaviour {
     private void Awake() {
         _buttonMove.onClick.AddListener(OnMoveClicked);
         _buttonCancelMove.onClick.AddListener(OnCancelMoveClicked);
-        _waitingContainer.SetActive(false);
         _mapScript.Init(this);
+        _waitingContainer.SetActive(false);
+        SubmarineManager.Instance.OnSubMoved += SubMoved;
     }
 
     private void Start() {
-
+        _currentShownIndex = SubmarineManager.Instance.CurrentZoneIndex;
+        UpdateMoveButton();
     }
+    private void OnDestroy() {
+        SubmarineManager.Instance.OnSubMoved -= SubMoved;
+    }    
     public void OnMapButtonClicked(ZoneSO zoneinfo) {
         _currentShownIndex = zoneinfo.ZoneIndex;
         SetMapInfo(zoneinfo);
@@ -46,15 +51,19 @@ public class UISubPanelMove : MonoBehaviour {
                 g.GetComponent<Image>().sprite = App.ResourceSystem.GetSprite("ItemUnknown");
             }
         }
+        UpdateMoveButton(); 
+    }
+    private void UpdateMoveButton() {
         // Should move button be visable?
-        if (zone.ZoneIndex == SubmarineManager.Instance.CurrentZoneIndex) {
+        if (_currentShownIndex == SubmarineManager.Instance.CurrentZoneIndex) {
             // hide
             _buttonMove.gameObject.SetActive(false);
+            Debug.Log("setting move button to false:");
         } else if (!_buttonMove.gameObject.activeSelf) {
             _buttonMove.gameObject.SetActive(true);
+            Debug.Log("setting move button to TRUE");
         }
     }
-
  
 
     private void OnMoveClicked() {
@@ -67,9 +76,13 @@ public class UISubPanelMove : MonoBehaviour {
 
         OnMoveExit();
     }
+    private void SubMoved() {
+        // Update to new zone
+        UpdateMoveButton();
+    }
 
     public void OnMoveExit() {
-        _buttonMove.gameObject.SetActive(true);
+        //_buttonMove.gameObject.SetActive(true);
         _waitingContainer.SetActive(false);
         _mapScript.EnableMapInteractions();
     }

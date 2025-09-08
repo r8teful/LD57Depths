@@ -10,11 +10,11 @@ public class UISubMovePopup : MonoBehaviour {
     [SerializeField] private UISubMap _mapScript;
     private void Awake() {
         _buttonConfirm.onClick.AddListener(OnConfirmClicked);
-        _buttonConfirm.onClick.AddListener(OnDenyClicked);
+        _buttonDeny.onClick.AddListener(OnDenyClicked);
     }
     private void OnDestroy() {
         _buttonConfirm.onClick.RemoveListener(OnConfirmClicked);
-        _buttonConfirm.onClick.RemoveListener(OnDenyClicked);
+        _buttonDeny.onClick.RemoveListener(OnDenyClicked);
     }
 
     private void OnDenyClicked() {
