@@ -3,6 +3,7 @@ using FishNet.Object.Synchronizing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 // Should hold server side data about the state of the different upgrades
@@ -35,6 +36,11 @@ public class SubmarineManager : NetworkBehaviour {
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
         _currentZoneIndex.OnChange += OnZoneChange;
+        _currentRecipe.OnChange += OnRecipeChange;
+    }
+
+    private void OnRecipeChange(ushort prev, ushort next, bool asServer) {
+        OnCurRecipeChanged?.Invoke(next);
     }
 
     private void OnZoneChange(int prev, int next, bool asServer) {
@@ -121,23 +127,23 @@ public class SubmarineManager : NetworkBehaviour {
         }
         return (interiorData,interiorEntities);
     }
-    public void AttemptContribute() {
-
+    public void AttemptContribute(ushort recipeId, ushort itemId, int quantity) {
+        // Handle the removing locally because server can't acces a remote player inventory
+        var _clientInventory = NetworkedPlayer.LocalInstance.GetInventory();
+        if (!_clientInventory.HasItemCount(itemId, quantity)) {
+            Debug.LogWarning("Client doesn't have requested amount in inventory!");
+            return;
+        }
+        _clientInventory.RemoveItem(itemId, quantity);
+        RpcContributeToUpgrade(recipeId, itemId, quantity);
     }
     // This method is kind of similar to CraftinComponent AttemptCraft, but we can't use that because when we "attemptCraft" we dont want to execute
     // the recipe, only when we have all the resources contributed, if we want to use it, we'd had to have a new recipeSO for each contribution, which 
     // would just be hell, so now we have this one here
     [ServerRpc(RequireOwnership = false)] 
-    public void RpcContributeToUpgrade(ushort recipeId, ushort itemId, int quantity, NetworkedPlayer client) {
+    public void RpcContributeToUpgrade(ushort recipeId, ushort itemId, int quantity) {
         //Debug.Log($"Server received contribution request for recipe {recipeId}.");
-
-        var _clientInventory = client.GetInventory();
         var recipe = App.ResourceSystem.GetRecipeByID(recipeId);
-        if(!_clientInventory.HasItemCount(itemId, quantity)) {
-            Debug.LogWarning("Client doesn't have requested amount in inventory!");
-            return;
-        }
-        _clientInventory.RemoveItem(itemId, quantity);
         // Add to resource
         int upgradeDataIndex = _upgradeData[recipeId].FindIndex(s => s.itemID == itemId);
         int recipeIndex = recipe.requiredItems.FindIndex(s => s.item.ID == itemId);
@@ -174,7 +180,7 @@ public class SubmarineManager : NetworkBehaviour {
         }
         // Todo add a slight delay, visual stuff, sounds, etc
         _currentRecipe.Value++;
-        OnCurRecipeChanged?.Invoke(_currentRecipe.Value);
+        //OnCurRecipeChanged?.Invoke(_currentRecipe.Value); // Moved to OnChange because then it runs on all clients
     }
 
     private bool IsAllStagesDone(ushort recipeID) {

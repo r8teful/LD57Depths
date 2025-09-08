@@ -40,7 +40,7 @@ public class UISubUpgradeBar : MonoBehaviour {
         // Recipe and its related parts stays the same, when they change the object just gets removed, handled by UISUbPanelUpgrades
     }
     private void ContributeClicked() {
-        SubmarineManager.Instance.RpcContributeToUpgrade(_recipe.ID, _cachedStatus.Item.ID, _cachedStatus.RequiredAmount,NetworkedPlayer.LocalInstance);
+        SubmarineManager.Instance.AttemptContribute(_recipe.ID, _cachedStatus.Item.ID, _cachedStatus.RequiredAmount);
     }
     
     private void UpdateVisuals() {

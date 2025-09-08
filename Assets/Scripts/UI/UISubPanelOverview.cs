@@ -23,8 +23,8 @@ public class UISubPanelOverview : MonoBehaviour {
         for (int i = 0; i < upgradeIcons.Length; i++) {
             // Do this if no save data exists, otherwise, load the save data and set it like that
             upgradeIcons[i].Init(this, i == 0 ? UISubUpgradeIcon.SubUpgradeState.Available : UISubUpgradeIcon.SubUpgradeState.Unavailable);
-            
         }
+        // TODO remote clients should take from server sided data
     }
     public void OnEnabledUpgradeIconClicked() {
         _parent.OnTabButtonClicked(1); // uggly but tab 1 is upgrades 
