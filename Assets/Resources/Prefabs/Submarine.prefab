@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1339671422192233474
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8173724103343569615}
+  m_Layer: 0
+  m_Name: PopupPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8173724103343569615
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1339671422192233474}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.11, y: 1.3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8832810910974622691}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2866666960169686446
 GameObject:
   m_ObjectHideFlags: 0
@@ -105,7 +136,8 @@ GameObject:
   - component: {fileID: 8832810910974622691}
   - component: {fileID: 6111083064051263022}
   - component: {fileID: 5208362778471301421}
-  m_Layer: 0
+  - component: {fileID: 6595330765435446787}
+  m_Layer: 7
   m_Name: Portal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +156,8 @@ Transform:
   m_LocalPosition: {x: -0, y: 1.87, z: -0.021161849}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8173724103343569615}
   m_Father: {fileID: 4911502174890961625}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &6111083064051263022
@@ -187,6 +220,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsEntrance: 1
   AssociatedInteriorId: 1
+--- !u!114 &6595330765435446787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3026838366538361484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff8e032975c8adc488671f87add3cac8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactIcon: {fileID: -639517231, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  popupPosition: {fileID: 8173724103343569615}
 --- !u!1 &3269108620828144783
 GameObject:
   m_ObjectHideFlags: 0

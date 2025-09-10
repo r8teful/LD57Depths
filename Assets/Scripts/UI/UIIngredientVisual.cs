@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class UIIngredientVisual : MonoBehaviour {
     public Image resourceIcon;
     public TextMeshProUGUI resourceAmountText;
-    public TextMeshProUGUI resourceNameText;
+    //public TextMeshProUGUI resourceNameText;
     public TextMeshProUGUI resourceHaveText;
 
     internal void Init(IngredientStatus ingredient) {
@@ -16,7 +16,7 @@ public class UIIngredientVisual : MonoBehaviour {
             resourceIcon.sprite = sprite;
         }
         resourceAmountText.text = ingredient.RequiredAmount.ToString();
-        resourceNameText.text = $"<color=\"{color}\">{ingredient.Item.itemName}";
+        //resourceNameText.text = $"<color=\"{color}\">{ingredient.Item.itemName}";
         resourceHaveText.text = $"<color=\"{color}\">{ingredient.CurrentAmount}";
     }
 }

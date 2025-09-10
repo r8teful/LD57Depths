@@ -2978,7 +2978,7 @@ TextureImporter:
         width: 6
         height: 5
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 2, y: 2, z: 2, w: 2}
       customData: 
       outline: []
@@ -2987,6 +2987,28 @@ TextureImporter:
       bones: []
       spriteID: c78d653d4c22f794dbc0b9147e98f640
       internalID: 2003862070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IconExit
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 609
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b1f52bcd59b1fe348b6152233e18e350
+      internalID: -639517231
       vertices: []
       indices: 
       edges: []
@@ -3016,6 +3038,7 @@ TextureImporter:
       IconBob: 911542164
       IconCraft: -275753912
       IconDiscord: 1300576516
+      IconExit: -639517231
       IconFish: 614448980
       IconHome: 2058519534
       IconInstagram: 425630960

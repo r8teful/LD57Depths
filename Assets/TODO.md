@@ -1,5 +1,6 @@
 CONTENT
-- Update ship layout
+- Update ship layout **DONE**
+- Add interactive elements to upgrade & ship exit
 Add Upgrades
 - Lazer upgrades
 - Player upgrades

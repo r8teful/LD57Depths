@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,7 +31,11 @@ public class UIUpgradeScreen : MonoBehaviour {
         }
     }
   
-    public void DEBUGShowScreen() {
+    public void PanelToggle() {
         _upgradePanel.SetActive(!_upgradePanel.activeSelf);
+    }
+
+    internal void PanelHide() {
+        _upgradePanel.SetActive(false);
     }
 }

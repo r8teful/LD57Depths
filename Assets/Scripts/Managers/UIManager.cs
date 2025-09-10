@@ -43,4 +43,13 @@ public class UIManager : Singleton<UIManager> {
     internal void ControlPanelUIToggle() {
         UISubControlPanel.ControlPanelToggle();
     }
+
+    internal void UpgradePanelUIToggle() {
+        UpgradeScreen.PanelToggle();
+    }
+
+    internal void UpgradePanelUIClose() {
+
+        UpgradeScreen.PanelHide();
+    }
 }

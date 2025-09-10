@@ -80,7 +80,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
 
     [ConsoleCommand("showupgrade")]
     private void debugShowUpgradeScreen() {
-        _player.UiManager.UpgradeScreen.DEBUGShowScreen();
+        _player.UiManager.UpgradeScreen.PanelToggle();
     }
     [ConsoleCommand("showcontrol")]
     private void debugShowSubControlScreen() {

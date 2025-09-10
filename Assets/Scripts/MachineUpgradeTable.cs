@@ -1,9 +1,8 @@
-﻿using FishNet.Object;
-using UnityEngine;
+﻿using UnityEngine;
+using FishNet.Object;
 
-// Links ingame to UI
 [RequireComponent(typeof(Interactable))]
-public class MachineControlPanel : MonoBehaviour {
+public class MachineUpgradeTable : MonoBehaviour {
     [SerializeField] private FixableEntity fixableEntity;
     private Interactable _interactable;
 
@@ -17,14 +16,14 @@ public class MachineControlPanel : MonoBehaviour {
     private void OnEnable() {
         if (_interactable != null) {
             _interactable.OnInteract += HandleInteraction;
-            _interactable.OnCeaseInteractable += CloseControlPanelUI;
+            _interactable.OnCeaseInteractable += CloseUpgradePanelUI;
         }
     }
 
     private void OnDisable() {
         if (_interactable != null) {
             _interactable.OnInteract -= HandleInteraction;
-            _interactable.OnCeaseInteractable -= CloseControlPanelUI;
+            _interactable.OnCeaseInteractable -= CloseUpgradePanelUI;
         }
     }
 
@@ -34,13 +33,13 @@ public class MachineControlPanel : MonoBehaviour {
             return;
         }
 
-        UIManager.Instance.ControlPanelUIToggle();
+        UIManager.Instance.UpgradePanelUIToggle();
     }
 
-    public void CloseControlPanelUI() {
-        UIManager.Instance.ControlPanelUIClose();
+    public void CloseUpgradePanelUI() {
+        UIManager.Instance.UpgradePanelUIClose();
     }
     internal void DEBUGToggle() {
-        UIManager.Instance.ControlPanelUIToggle();
-    }  
+        UIManager.Instance.UpgradePanelUIToggle();
+    }
 }
