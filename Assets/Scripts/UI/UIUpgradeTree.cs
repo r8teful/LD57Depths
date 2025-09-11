@@ -5,7 +5,7 @@ using UnityEngine;
 public class UIUpgradeTree : MonoBehaviour {
     [SerializeField] private Transform _resourceContainer; // For the first upgrade that is there
 
-    private Dictionary<UpgradeRecipeBase, UIUpgradeNode> _nodeMap = new Dictionary<UpgradeRecipeBase, UIUpgradeNode>();
+    private Dictionary<UpgradeRecipeSO, UIUpgradeNode> _nodeMap = new Dictionary<UpgradeRecipeSO, UIUpgradeNode>();
 
     internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades) {
         _nodeMap.Clear();
@@ -13,8 +13,11 @@ public class UIUpgradeTree : MonoBehaviour {
         // upgrade. This is how we have to do it if we want more complex trees, instead of just instantiating the nodes
         // in a horizontal layout group. A bit more work to setup now but easier to code
         var uiLinkers = GetComponentsInChildren<UIUpgradeNode>();
-        var dataToNodeLookup = new Dictionary<UpgradeRecipeBase, UIUpgradeNode>();
+        var dataToNodeLookup = new Dictionary<UpgradeRecipeSO, UIUpgradeNode>();
         foreach (var linker in uiLinkers) {
+            if(linker.ConnectedRecipeData == null) {
+                Debug.LogError("Tree nodes in prefab not setup properly!");
+            }
             if (linker != null && !dataToNodeLookup.ContainsKey(linker.ConnectedRecipeData)) {
                 dataToNodeLookup.Add(linker.ConnectedRecipeData, linker);
             }
@@ -28,11 +31,11 @@ public class UIUpgradeTree : MonoBehaviour {
             // Find the UI node in our prefab that has the matching GUID.
             if (dataToNodeLookup.TryGetValue(originalUpgrade, out UIUpgradeNode uiNode)) {
                 // Get the PREPARED version of the upgrade, which has the calculated costs.
-                UpgradeRecipeBase preparedUpgrade = tree.GetPreparedUpgrade(originalUpgrade);
+                UpgradeRecipeSO preparedUpgrade = tree.GetPreparedUpgrade(originalUpgrade);
                 if (preparedUpgrade != null) {
                     // Initialize it!
                     uiNode.name = $"UI_Node_{preparedUpgrade.displayName}";
-                    uiNode.Init(preparedUpgrade, this, false);
+                    uiNode.Init(preparedUpgrade, this);
                     _nodeMap.Add(preparedUpgrade, uiNode);
                 }
             } else {
@@ -41,7 +44,7 @@ public class UIUpgradeTree : MonoBehaviour {
         }
     }
 
-    internal void SetNodeAvailable(UpgradeRecipeBase upgradeData) {
+    internal void SetNodeAvailable(UpgradeRecipeSO upgradeData) {
         if (_resourceContainer == null) return;
         foreach(Transform child in _resourceContainer) {
             Destroy(child.gameObject);
@@ -54,7 +57,7 @@ public class UIUpgradeTree : MonoBehaviour {
     }
 
     // Helper function to easily find a UI node later.
-    public UIUpgradeNode GetNodeForUpgrade(UpgradeRecipeBase upgrade) {
+    public UIUpgradeNode GetNodeForUpgrade(UpgradeRecipeSO upgrade) {
         _nodeMap.TryGetValue(upgrade, out var uiNode);
         return uiNode;
     }

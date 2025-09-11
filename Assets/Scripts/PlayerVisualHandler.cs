@@ -42,18 +42,16 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
             return;
         InitCommon();
         _remotePlayer = remoteClient;
-        // Set remote client specific visuals
-        // Cache remotclient networkedPlayer script. We could say GetComponentInParent but this seems like a more official way
-        
-        //if (NetworkedPlayersManager.Instance.TryGetPlayer(base.OwnerId, out NetworkedPlayer remoteClient)) {
-        //    _remotePlayer = remoteClient;
-        //} else {
-        //    Debug.LogError("Could not find networkedPlayer on remote client!");
-        //    return;
-        //}
-        
+        // Subscribe to handle remote stat changes
+        remoteClient.PlayerStats.OnStatChanged += OnRemoteStatsChanged;
         HandleRemoteToolSetup();
         hasInitializedNonOwner = true;
+    }
+
+    private void OnRemoteStatsChanged(StatType arg1, float arg2) {
+        // In reality, we would only care about the stats that VISUALLY change the remote client, so that those can be shown 
+
+        // Possibly raise an event here but have to make sure we don't mistake it for a LOCAL stat change
     }
 
     // Called every frame, handles approriate visuals depending on each state

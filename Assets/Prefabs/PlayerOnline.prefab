@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 3312860346397150876}
   - component: {fileID: 6902581419565130942}
   - component: {fileID: 7835090482241713945}
+  - component: {fileID: 681475204193010044}
   m_Layer: 2
   m_Name: PlayerOnline
   m_TagString: Player
@@ -374,10 +375,6 @@ MonoBehaviour:
     m_ActionName: 'Player/UI_DropOne[/Mouse/rightButton]'
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 84edd794-857c-462d-baf6-453ec34ef04c
-    m_ActionName: 'Player/UI_Cancel[/Keyboard/escape,/Keyboard/backspace]'
-  - m_PersistentCalls:
-      m_Calls: []
     m_ActionId: d6f5ca37-a151-4393-81e5-d1c5bee60728
     m_ActionName: 'Player/UI_Point[/Mouse/position]'
   - m_PersistentCalls:
@@ -585,13 +582,6 @@ MonoBehaviour:
   containerLayerMask:
     serializedVersion: 2
     m_Bits: 128
-  inventorySize: 20
-  heldItemStack:
-    itemID: 65535
-    quantity: 0
-    originalSourceSlotIndex: -1
-    isFromContainer: 0
-    originalContainerSlotIndex: -1
 --- !u!114 &2511403419373690701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -608,7 +598,6 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 6962948237969374493}
   _networkObjectCache: {fileID: 6962948237969374493}
   _toolSlotMining: {fileID: 8651582872665796198}
-  _toolSlotCleaning: {fileID: 4480196020193820798}
 --- !u!114 &3312860346397150876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -664,6 +653,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac2502eda4dc07a46ac41907a95f2a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &681475204193010044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228294681075539138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4700398cfc0012e439f4cd9f3606709e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 6962948237969374493}
+  _networkObjectCache: {fileID: 0}
+  _baseStats:
+  - Stat: 0
+    BaseValue: 1
+  - Stat: 1
+    BaseValue: 2
+  - Stat: 2
+    BaseValue: 3
 --- !u!1 &3576249979241912492
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MiningDrill : MiningBase, IToolBehaviour {
+public class MiningDrill : MiningBase {
     
     public bool CanMine { get; private set; }
     public override GameObject GO => gameObject;

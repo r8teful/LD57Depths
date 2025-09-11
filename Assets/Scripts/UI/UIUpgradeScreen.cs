@@ -5,14 +5,17 @@ using UnityEngine.UI;
 
 public class UIUpgradeScreen : MonoBehaviour {
     [SerializeField] private Transform _upgradeContainerPlayer;
+    [SerializeField] private Button _buttonTreeTool;
     [SerializeField] private Button _buttonTreePlayer;
     [SerializeField] private GameObject _upgradePanel;
+    [SerializeField] private GameObject _upgradePanelTool;
     [SerializeField] private GameObject _upgradePanelPlayer;
     private UIManager _UIManagerParent;
     public UIManager GetUIManager() => _UIManagerParent;
     private void Start() {
-        _upgradePanel.SetActive(false);
-        _upgradePanelPlayer.SetActive(true);
+        _upgradePanel.SetActive(false); // Start with the panel being hidden
+        _upgradePanelTool.SetActive(true);
+        _upgradePanelPlayer.SetActive(false);
     }
     internal void Init(UIManager UIManager, UpgradeManagerPlayer upgradeManager) {
         _UIManagerParent = UIManager;
@@ -32,10 +35,10 @@ public class UIUpgradeScreen : MonoBehaviour {
     }
   
     public void PanelToggle() {
-        _upgradePanel.SetActive(!_upgradePanel.activeSelf);
+        _upgradePanelTool.SetActive(!_upgradePanelTool.activeSelf);
     }
 
     internal void PanelHide() {
-        _upgradePanel.SetActive(false);
+        _upgradePanelTool.SetActive(false);
     }
 }

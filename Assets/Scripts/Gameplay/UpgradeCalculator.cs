@@ -21,7 +21,4 @@ public static class UpgradeCalculator {
         //fallback
         return current;
     }
-    public static float CalculateUpgradeIncrease(float current, UpgradeRecipeValue data) {
-        return CalculateUpgradeIncrease(current,data.increaseType,data.value);
-    }
 }

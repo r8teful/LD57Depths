@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,23 +8,32 @@ using Color = UnityEngine.Color;
 public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] private Button _buttonBig;
     [SerializeField] private Button _buttonSmall;
-    [SerializeField] private UpgradeRecipeBase _recipe;
+    [SerializeField] private UpgradeRecipeSO _recipe;
     private Image _iconImage;
     private Button _buttonCurrent;
     private Image _imageCurrent;
     private RectTransform _rectTransform;
-    private UpgradeRecipeBase _upgradeData;
+    private UpgradeRecipeSO _upgradeData;
     private UIUpgradeTree _treeParent;
 
-    public UpgradeRecipeBase ConnectedRecipeData => _recipe;
+    public UpgradeRecipeSO ConnectedRecipeData => _recipe;
+    [OnValueChanged("InspectorBigChange")]
     public bool IsBig;
     public event Action PopupDataChanged;
 
-    internal void Init(UpgradeRecipeBase upgradeRecipeSO, UIUpgradeTree parent, bool isBig) {
+    public void InspectorBigChange() {
+        if (IsBig) {
+            _buttonBig.gameObject.SetActive(true);
+            _buttonSmall.gameObject.SetActive(false);
+        } else {
+            _buttonBig.gameObject.SetActive(false);
+            _buttonSmall.gameObject.SetActive(true);
+        }
+    }
+    internal void Init(UpgradeRecipeSO upgradeRecipeSO, UIUpgradeTree parent) {
         _treeParent = parent;
         _upgradeData = upgradeRecipeSO;
         _rectTransform = GetComponent<RectTransform>();
-        IsBig = isBig;
         if (IsBig && _buttonBig != null) {
             _buttonBig.onClick.RemoveAllListeners();
             _buttonBig.onClick.AddListener(OnUpgradeButtonClicked);
@@ -86,7 +96,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         UpgradeManagerPlayer.Instance.PurchaseUpgrade(_upgradeData);
     }
     // This method is called by the event from the UpgradeManager
-    private void HandleUpgradePurchased(UpgradeRecipeBase purchasedRecipe) {
+    private void HandleUpgradePurchased(UpgradeRecipeSO purchasedRecipe) {
         // When any upgrade is purchased, re-evaluate our state.
         // This is important for unlocking nodes when a prerequisite is met.
         UpdateVisualState();

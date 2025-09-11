@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 481adfdf6fa611a49a34d985372b1f15, type: 3}
+  m_Name: UpgradeTreeLazer
+  m_EditorClassIdentifier: 
+  costsValues:
+    baseValue: 30
+    linearIncrease: 55
+    expIncrease: 1.7
+  tiers:
+  - tierStartStop: {x: 0, y: 4}
+    tier: {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
+  - tierStartStop: {x: 4, y: 99}
+    tier: {fileID: 11400000, guid: c62c0885783485c439bdc01783a4c337, type: 2}
+  treeName: Mining Lazer
+  nodes:
+  - upgrade: {fileID: 11400000, guid: 93c1c2c1a62af3d489bb54e1587b70e5, type: 2}
+    prerequisiteAny: []
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: d9687c281ce58d9499a681d2dcc0a2a5, type: 2}
+    prerequisiteAny:
+    - {fileID: 11400000, guid: 93c1c2c1a62af3d489bb54e1587b70e5, type: 2}
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: 3f577335913f60049a8429166b5cc4d6, type: 2}
+    prerequisiteAny:
+    - {fileID: 11400000, guid: d9687c281ce58d9499a681d2dcc0a2a5, type: 2}
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: 0feeca99e35d47044abb58251c54e1e3, type: 2}
+    prerequisiteAny: []
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: b01b83f0a0d6f3d488dd62d657f2c89b, type: 2}
+    prerequisiteAny:
+    - {fileID: 11400000, guid: 0feeca99e35d47044abb58251c54e1e3, type: 2}
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: 8aa825c3392b1564bb7ac9d05a101cad, type: 2}
+    prerequisiteAny:
+    - {fileID: 11400000, guid: b01b83f0a0d6f3d488dd62d657f2c89b, type: 2}
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: 57030fc0bcd85884daf498d9a1bcd483, type: 2}
+    prerequisiteAny: []
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: eef621274c3621c4a9f1d9f7ee18a864, type: 2}
+    prerequisiteAny:
+    - {fileID: 11400000, guid: 57030fc0bcd85884daf498d9a1bcd483, type: 2}
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: b4f3274caac053940a001173a8060e80, type: 2}
+    prerequisiteAny:
+    - {fileID: 11400000, guid: eef621274c3621c4a9f1d9f7ee18a864, type: 2}
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: ee9c7d02e889c8849bee9abe4d7bc0b1, type: 2}
+    prerequisiteAny:
+    - {fileID: 11400000, guid: 8aa825c3392b1564bb7ac9d05a101cad, type: 2}
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: 0fdd7446845543546a346586e315e1c9, type: 2}
+    prerequisiteAny:
+    - {fileID: 11400000, guid: b4f3274caac053940a001173a8060e80, type: 2}
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: 2351f8a3c484c1f46a81247349473916, type: 2}
+    prerequisiteAny:
+    - {fileID: 11400000, guid: 3f577335913f60049a8429166b5cc4d6, type: 2}
+    costMultiplier: 1
+  - upgrade: {fileID: 11400000, guid: d81356d641983d3469d2973deee6b02f, type: 2}
+    prerequisiteAny:
+    - {fileID: 11400000, guid: b4f3274caac053940a001173a8060e80, type: 2}
+    - {fileID: 11400000, guid: 8aa825c3392b1564bb7ac9d05a101cad, type: 2}
+    - {fileID: 11400000, guid: 3f577335913f60049a8429166b5cc4d6, type: 2}
+    costMultiplier: 1
+  prefab: {fileID: 4102176661086873485, guid: cf43b442b89c3ea43891a1239d4c924e, type: 3}

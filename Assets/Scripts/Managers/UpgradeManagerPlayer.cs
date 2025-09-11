@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 // Has to hold upgrade info!
 public class UpgradeManagerPlayer : Singleton<UpgradeManagerPlayer>, INetworkedPlayerModule {
 
-    private Dictionary<ushort,UpgradeRecipeBase> unlockedUpgrades = new Dictionary<ushort, UpgradeRecipeBase>(); 
-    public static event Action<UpgradeRecipeBase> OnUpgradePurchased;
+    private Dictionary<ushort,UpgradeRecipeSO> unlockedUpgrades = new Dictionary<ushort, UpgradeRecipeSO>(); 
+    public static event Action<UpgradeRecipeSO> OnUpgradePurchased;
     private CraftingComponent _crafting;
     private NetworkedPlayer _localNetworkedPlayer;
 
@@ -24,16 +25,19 @@ public class UpgradeManagerPlayer : Singleton<UpgradeManagerPlayer>, INetworkedP
         _crafting = playerParent.CraftingComponent;
         _localNetworkedPlayer = playerParent;
     }
-    public bool ArePrerequisitesMet(UpgradeRecipeBase recipe) {
-        if (recipe.GetPrerequisite() == null) {
+    public bool ArePrerequisitesMet(UpgradeRecipeSO recipe) {
+        var p = recipe.GetPrerequisites();
+        if (p == null || p.Count == 0) {
             return true; // No prerequisites needed.
         }
-        if (!unlockedUpgrades.ContainsKey(recipe.GetPrerequisite().ID)) {
-            return false; // A prerequisite is missing.
+
+        // true if AT LEAST ONE prerequisite is unlocked.
+        if (p.Any(u => unlockedUpgrades.ContainsKey(u.ID))) {
+            return true;
         }
-        return true;
+        return false;
     }
-    public void PurchaseUpgrade(UpgradeRecipeBase recipe) {
+    public void PurchaseUpgrade(UpgradeRecipeSO recipe) {
         // 1. Check if already purchased
         if (unlockedUpgrades.ContainsKey(recipe.ID)) {
             Debug.LogWarning($"Attempted to purchase an already owned upgrade: {recipe.name}");
@@ -62,7 +66,7 @@ public class UpgradeManagerPlayer : Singleton<UpgradeManagerPlayer>, INetworkedP
   
 
 
-    internal bool IsUpgradePurchased(UpgradeRecipeBase upgradeData) {
+    internal bool IsUpgradePurchased(UpgradeRecipeSO upgradeData) {
         return unlockedUpgrades.ContainsKey(upgradeData.ID);
     }
     /// <summary>

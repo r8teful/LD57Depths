@@ -7,10 +7,10 @@ using UnityEngine;
 [Serializable]
 public class UpgradeNode {
     [Tooltip("The Scriptable Object defining the upgrade itself.")]
-    public UpgradeRecipeBase upgrade;
+    public UpgradeRecipeSO upgrade;
 
     [Tooltip("The prerequisite upgrade that must be unlocked before this one. Leave empty for root nodes.")]
-    public UpgradeRecipeBase prerequisite;
+    public List<UpgradeRecipeSO> prerequisiteAny;
 
     [Range(0.1f, 5f)]
     public float costMultiplier = 1.0f;
@@ -39,12 +39,12 @@ public class UpgradeTreeDataSO : ScriptableObject {
 
     // The prepared tree is now a dictionary mapping the original SO to its runtime instance.
     // This is a robust pattern to avoid modifying the original assets.
-    private Dictionary<UpgradeRecipeBase, UpgradeRecipeBase> preparedUpgradeTree;
+    private Dictionary<UpgradeRecipeSO, UpgradeRecipeSO> preparedUpgradeTree;
 
     // A helper dictionary to quickly look up node levels.
-    private Dictionary<UpgradeRecipeBase, int> upgradeLevels;
+    private Dictionary<UpgradeRecipeSO, int> upgradeLevels;
   
-    public Dictionary<UpgradeRecipeBase, UpgradeRecipeBase> PreparedUpgradeTree {
+    public Dictionary<UpgradeRecipeSO, UpgradeRecipeSO> PreparedUpgradeTree {
         get {
             if (preparedUpgradeTree == null) {
                 GenerateUpgradeTree();
@@ -71,59 +71,91 @@ public class UpgradeTreeDataSO : ScriptableObject {
     //    }
     //    return dictionaryOutput;
     //}
+
     private void GenerateUpgradeTree() {
-        preparedUpgradeTree = new Dictionary<UpgradeRecipeBase, UpgradeRecipeBase>();
-        upgradeLevels = new Dictionary<UpgradeRecipeBase, int>();
+        if (nodes == null || nodes.Count == 0) return;
 
-        // Find all root nodes (those without prerequisites) to start the generation process.
-        var rootNodes = nodes.Where(n => n.prerequisite == null);
+        // --- PASS 1: Calculate the level (shortest path depth) for every node ---
+        CalculateAllNodeLevels();
 
-        foreach (var rootNode in rootNodes) {
-            // Process each root and its descendants recursively.
-            ProcessNode(rootNode, 0);
+        // --- PASS 2: Prepare each recipe instance with the calculated cost ---
+        preparedUpgradeTree = new Dictionary<UpgradeRecipeSO, UpgradeRecipeSO>();
+        foreach (var node in nodes) {
+            if (node.upgrade == null) continue;
+
+            int level = upgradeLevels[node.upgrade];
+            float baseCost = UpgradeCalculator.CalculateCostForLevel(level, costsValues.baseValue, costsValues.linearIncrease, costsValues.expIncrease);
+            float finalCost = baseCost * node.costMultiplier;
+            List<ItemQuantity> itemPool = GetItemPoolForLevel(level);
+
+            UpgradeRecipeSO recipeInstance = Instantiate(node.upgrade);
+            recipeInstance.name = node.upgrade.name + "_Instance";
+            recipeInstance.PrepareRecipe(finalCost, itemPool);
+
+            preparedUpgradeTree.Add(node.upgrade, recipeInstance);
         }
-    } 
-    /// <summary>
-    /// Recursively processes a node, calculates its level, prepares its recipe, and then processes its children.
-    /// </summary>
-    private void ProcessNode(UpgradeNode node, int level) {
-        // Avoid processing the same node multiple times if it's referenced incorrectly.
-        if (node.upgrade == null || preparedUpgradeTree.ContainsKey(node.upgrade)) {
-            return;
-        }
-        var recipe = node.upgrade;
-        // --- Calculate Cost & Item Pool for this specific node ---
-        float costBase = UpgradeCalculator.CalculateCostForLevel(level, costsValues.baseValue, costsValues.linearIncrease, costsValues.expIncrease);
-        float cost = costBase * node.costMultiplier;
-        List<ItemQuantity> itemPool = GetItemPoolForLevel(level);
 
-        // --- Instantiate and Prepare the Recipe ---
-        // We instantiate it so we don't modify the base ScriptableObject asset.
-        UpgradeRecipeBase recipeInstance = Instantiate(recipe);
-        recipeInstance.name = recipe.name + "_Instance"; // For easier debugging
-        recipeInstance.PrepareRecipe(cost, itemPool);
+        // --- PASS 3: Link the prepared instances together ---
+        // This is done last to ensure all instances exist before linking.
+        foreach (var node in nodes) {
+            if (node.upgrade == null || node.prerequisiteAny.Count == 0) continue;
 
-        // --- Store the prepared instance and its level ---
-        preparedUpgradeTree.Add(recipe, recipeInstance);
-        upgradeLevels.Add(recipe, level);
-
-        // --- Find and process all children of this node ---
-        var children = nodes.Where(n => n.prerequisite == recipe);
-        foreach (var childNode in children) {
-            // Pass the original prerequisite link to the instance
-            recipeInstance.AddChild(childNode.upgrade); // Assumes you add an AddChild method
-            childNode.upgrade.SetPrerequisites(recipeInstance); // Set prerequisite on the original for consistency? No, on instance
-
-            // To ensure correct prerequisites are linked on the INSTANCES:
-            UpgradeRecipeBase childInstance = GetPreparedUpgrade(childNode.upgrade);
-            if (childInstance != null) { // If it's already processed, just link it
-                childInstance.SetPrerequisites(recipeInstance);
+            var preparedNode = GetPreparedUpgrade(node.upgrade);
+            foreach (var prereq in node.prerequisiteAny) {
+                var preparedPrereq = GetPreparedUpgrade(prereq);
+                if (preparedPrereq != null) {
+                    preparedNode.AddPrerequisite(preparedPrereq); // Assumes a new method in UpgradeRecipeBase
+                }
             }
-
-            // Process the next level
-            ProcessNode(childNode, level + 1);
         }
     }
+    private void CalculateAllNodeLevels() {
+        upgradeLevels = new Dictionary<UpgradeRecipeSO, int>();
+        var nodeLookup = nodes.ToDictionary(n => n.upgrade);
+        var childrenLookup = new Dictionary<UpgradeRecipeSO, List<UpgradeRecipeSO>>();
+
+        // Initialize levels and build child lookup for fast traversal
+        foreach (var node in nodes) {
+            if (node.upgrade == null) continue;
+            upgradeLevels[node.upgrade] = int.MaxValue;
+            if (!childrenLookup.ContainsKey(node.upgrade)) {
+                childrenLookup[node.upgrade] = new List<UpgradeRecipeSO>();
+            }
+
+            foreach (var prereq in node.prerequisiteAny) {
+                if (!childrenLookup.ContainsKey(prereq)) {
+                    childrenLookup[prereq] = new List<UpgradeRecipeSO>();
+                }
+                childrenLookup[prereq].Add(node.upgrade);
+            }
+        }
+
+        // Use a queue for breadth-first traversal (guarantees shortest path)
+        var queue = new Queue<UpgradeRecipeSO>();
+
+        // Find all root nodes (no prerequisites) and set their level to 0
+        foreach (var node in nodes.Where(n => n.prerequisiteAny == null || n.prerequisiteAny.Count == 0)) {
+            if (node.upgrade == null) continue;
+            upgradeLevels[node.upgrade] = 0;
+            queue.Enqueue(node.upgrade);
+        }
+
+        while (queue.Count > 0) {
+            var current = queue.Dequeue();
+            int nextLevel = upgradeLevels[current] + 1;
+
+            if (!childrenLookup.ContainsKey(current)) continue;
+
+            foreach (var child in childrenLookup[current]) {
+                // If we found a shorter path to this child, update its level and re-evaluate its children
+                if (nextLevel < upgradeLevels[child]) {
+                    upgradeLevels[child] = nextLevel;
+                    queue.Enqueue(child);
+                }
+            }
+        }
+    }
+   
     private List<ItemQuantity> GetItemPoolForLevel(int level) {
         var itemPool = new List<ItemQuantity>();
         foreach (var tier in tiers) {
@@ -141,7 +173,7 @@ public class UpgradeTreeDataSO : ScriptableObject {
     /// <summary>
     /// Gets the prepared runtime instance of an upgrade from the original ScriptableObject asset.
     /// </summary>
-    public UpgradeRecipeBase GetPreparedUpgrade(UpgradeRecipeBase originalRecipe) {
+    public UpgradeRecipeSO GetPreparedUpgrade(UpgradeRecipeSO originalRecipe) {
         PreparedUpgradeTree.TryGetValue(originalRecipe, out var preparedInstance);
         return preparedInstance;
     }
@@ -149,8 +181,8 @@ public class UpgradeTreeDataSO : ScriptableObject {
     /// <summary>
     /// Returns all root upgrades in this tree (those with no prerequisites).
     /// </summary>
-    public IEnumerable<UpgradeRecipeBase> GetRootUpgrades() {
-        return nodes.Where(n => n.prerequisite == null)
+    public IEnumerable<UpgradeRecipeSO> GetRootUpgrades() {
+        return nodes.Where(n => n.prerequisiteAny == null)
                     .Select(n => GetPreparedUpgrade(n.upgrade));
     }
 
@@ -159,13 +191,23 @@ public class UpgradeTreeDataSO : ScriptableObject {
     /// </summary>
     /// <param name="unlockedUpgrades">A collection of original UpgradeRecipeBase SOs that the player has unlocked.</param>
     /// <returns>A list of prepared upgrades that are now available to be unlocked.</returns>
-    public List<UpgradeRecipeBase> GetAvailableUpgrades(ICollection<UpgradeRecipeBase> unlockedUpgrades) {
-        var available = new List<UpgradeRecipeBase>();
+    public List<UpgradeRecipeSO> GetAvailableUpgrades(ICollection<UpgradeRecipeSO> unlockedUpgrades) {
+        var available = new List<UpgradeRecipeSO>();
+        if (nodes == null) return available;
+
         foreach (var node in nodes) {
-            // An upgrade is available if:
-            // 1. It hasn't been unlocked yet.
-            // 2. Its prerequisite is null (it's a root) OR its prerequisite has been unlocked.
-            if (!unlockedUpgrades.Contains(node.upgrade) && (node.prerequisite == null || unlockedUpgrades.Contains(node.prerequisite))) {
+            if (node.upgrade == null || unlockedUpgrades.Contains(node.upgrade)) {
+                continue; // Skip if no upgrade is assigned or if it's already unlocked
+            }
+
+            // Handle root nodes (no prerequisites)
+            if (node.prerequisiteAny.Count == 0) {
+                available.Add(GetPreparedUpgrade(node.upgrade));
+                continue;
+            }
+
+            bool isAvailable =  node.prerequisiteAny.Any(p => unlockedUpgrades.Contains(p));
+            if (isAvailable) {
                 available.Add(GetPreparedUpgrade(node.upgrade));
             }
         }
@@ -173,8 +215,4 @@ public class UpgradeTreeDataSO : ScriptableObject {
     }
 
     #endregion
-}
-public enum IncreaseType {
-    Add,
-    Multiply
 }

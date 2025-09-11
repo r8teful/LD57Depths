@@ -3,6 +3,7 @@ using FishNet.Object.Synchronizing;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static PlayerMovement;
 
 // All players have this script, this handles references and setup of relevant things all players should have
 public class NetworkedPlayer : NetworkBehaviour {
@@ -19,6 +20,7 @@ public class NetworkedPlayer : NetworkBehaviour {
     public PlayerMovement PlayerMovement { get; private set; }
     public ToolController ToolController { get; private set; }
     public static NetworkedPlayer LocalInstance { get; private set; } // Singleton for local player
+    public PlayerStatsManager PlayerStats { get; private set; } 
     public PopupManager PopupManager => UiManager.PopupManager;
     public NetworkObject PlayerNetworkedObject => base.NetworkObject; // Expose NetworkObject for other scripts to use
     public InventoryManager GetInventory() => InventoryN.GetInventoryManager();
@@ -56,6 +58,7 @@ public class NetworkedPlayer : NetworkBehaviour {
         PlayerLayerController = GetComponent<PlayerLayerController>();
         PlayerVisuals = GetComponent<PlayerVisualHandler>();
         ToolController = GetComponent<ToolController>();
+        PlayerStats = GetComponent<PlayerStatsManager>();
     }
 
     private void InitializePlayer() {

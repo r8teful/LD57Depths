@@ -82,10 +82,23 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     }
     private void SubscribeToEvents() {
         // Subscribe to the event to recalculate stats when a NEW upgrade is bought
-        UpgradeManagerPlayer.OnUpgradePurchased += HandleUpgradePurchased;
+        NetworkedPlayer.LocalInstance.PlayerStats.OnStatChanged += OnStatChanged;
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
     }
-    
+
+    private void OnStatChanged(StatType type, float value) {
+        if(type == StatType.PlayerSpeedMax) {
+            swimSpeed = value;
+        } 
+        if(type == StatType.PlayerAcceleration) {
+            accelerationForce = value;
+        }
+        if(type == StatType.PlayerOxygenMax) {
+            maxOxygen = value;
+        }
+        // TODO unlock dash
+    }
+
     private void PlayerVisibilityLayerChanged(VisibilityLayerType type) {
         switch (type) {
             case VisibilityLayerType.Exterior:
@@ -101,24 +114,8 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
     private void OnDisable() {
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
-        UpgradeManagerPlayer.OnUpgradePurchased -= HandleUpgradePurchased;
+        NetworkedPlayer.LocalInstance.PlayerStats.OnStatChanged -= OnStatChanged;
     }
-
-    private void HandleUpgradePurchased(UpgradeRecipeBase upgrade) {
-        if (upgrade.ID == ResourceSystem.UpgradeSpeedMax) {
-            swimSpeed = UpgradeCalculator.CalculateUpgradeIncrease(swimSpeed, upgrade as UpgradeRecipeValue);
-            Debug.Log("Increase swimSpeed to " + swimSpeed);
-        } else if (upgrade.ID == ResourceSystem.UpgradeSpeedAcceleration) {
-            accelerationForce = UpgradeCalculator.CalculateUpgradeIncrease(accelerationForce, upgrade as UpgradeRecipeValue);
-            Debug.Log("Increase accelerationForce to " + accelerationForce);
-        } else if (upgrade.ID == ResourceSystem.UpgradeOxygenMax) {
-            maxOxygen = UpgradeCalculator.CalculateUpgradeIncrease(maxOxygen, upgrade as UpgradeRecipeValue);
-            Debug.Log("Increase maxOxygen to " + maxOxygen);
-        } else if (upgrade.ID == ResourceSystem.UpgradeDashUnlock) {
-            _dashUnlocked = true;
-        }
-    
-}
 
     void Update() {
         if (_inputManager == null)

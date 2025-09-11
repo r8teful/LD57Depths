@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08d8bdbe60c43c64e8eafe5c7dc8491e, type: 3}
+  m_Name: LazerSpecialBrimstone
+  m_EditorClassIdentifier: 
+  RecipeID: 104
+  displayName: Lazer Damage 1
+  description: 
+  icon: {fileID: 1966779994, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  requiredItems: []
+  effects:
+  - {fileID: 11400000, guid: 679210187c96eaf4a8e7f9075dded280, type: 2}

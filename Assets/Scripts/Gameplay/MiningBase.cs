@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FishNet.Object;
+using System;
 using System.Collections;
 using UnityEngine;
 // Created and sent to the Visual part so that we know how to draw it properly
@@ -7,7 +8,7 @@ public struct MiningToolData {
     public int toolTier;
     // Add more as needed
 }
-public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
+public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
     protected InputManager _inputManager;
     protected Coroutine miningRoutine;
     protected bool _isMining;
@@ -17,23 +18,53 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
     public abstract IToolVisual toolVisual { get; }
     public abstract ToolType toolType { get; }
     public ushort toolID => (ushort)toolType;
-    private void OnEnable() {
-        // Subscribe to the event to recalculate stats when a NEW upgrade is bought
-        UpgradeManagerPlayer.OnUpgradePurchased += HandleUpgradePurchased;
+    private PlayerStatsManager _localPlayerStats; // The script is attached to a player, this is that players stats, could be our stats, or a remove clients stats
+
+    private void InitializeWithCurrentStats() {
+        var pStats = NetworkedPlayer.LocalInstance.PlayerStats;
+        Range = pStats.GetStat(StatType.MiningRange);
+        DamagePerHit = pStats.GetStat(StatType.MiningDamage);
+    }
+    private void OnStatChanged(StatType type, float newV) {
+        if(type == StatType.MiningDamage) {
+            DamagePerHit = newV;
+        }
+        if (type == StatType.MiningRange) {
+            Range = newV;
+        }
+        if (type == StatType.MiningHandling) {
+            // TODO
+        }
+        Debug.Log($"New upgrade {type} is: " + newV);
+    }
+    public override void OnStartClient() {
+        base.OnStartClient();
+        Debug.Log("StartBase called on: " + toolType);
+        InitializeWithCurrentStats();
+        InitVisualTool(this);
+        if (NetworkedPlayersManager.Instance.TryGetPlayer(OwnerId, out var player)) {
+            _localPlayerStats = player.PlayerStats;
+            _localPlayerStats.OnStatChanged += OnPlayerStatsChange;
+        }
     }
 
-    private void OnDisable() {
-        UpgradeManagerPlayer.OnUpgradePurchased -= HandleUpgradePurchased;
+    private void OnPlayerStatsChange(StatType stat, float newV) {
+        if(stat == StatType.MiningRange) {
+            Range = newV;
+        }
+    }
+
+    public override void OnStopClient() {
+        base.OnStartClient();
+        if(_localPlayerStats != null) {
+            _localPlayerStats.OnStatChanged -= OnPlayerStatsChange;
+        }
     }
     public MiningToolData GetToolData() {
         return new MiningToolData {
             ToolRange = Range,
             toolTier = 0 //TODO
         };
-    }
-    protected virtual void Start() {
-        Debug.Log("StartBase called on: " + toolType);
-        InitVisualTool(this);
     }
     public void InitVisualTool(IToolBehaviour toolBehaviourParent) {
         toolVisual.Init(toolBehaviourParent);
@@ -43,18 +74,7 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
             toolVisual.HandleVisualUpdate(_inputManager);
         }
     }
-    private void HandleUpgradePurchased(UpgradeRecipeBase upgrade) {
-        if (upgrade.Type == UpgradeType.MiningRange) {
-            Range = UpgradeCalculator.CalculateUpgradeIncrease(Range, upgrade as UpgradeRecipeValue);
-            Debug.Log("New upgrade range is: " + Range);
-        } else if (upgrade.Type == UpgradeType.MiningDamage) {
-            DamagePerHit = UpgradeCalculator.CalculateUpgradeIncrease(DamagePerHit, upgrade as UpgradeRecipeValue);
-            Debug.Log("New upgrade damage  is: " + DamagePerHit);
-        }
-    }
-    public void ApplyValueUpgrade(UpgradeRecipeValue upgrade) {
-       
-    }
+
     public virtual void ToolStart(InputManager input, ToolController controller) {
         if (miningRoutine != null) {
             Debug.LogWarning("Mining routine is still running even though it should have stopped!");

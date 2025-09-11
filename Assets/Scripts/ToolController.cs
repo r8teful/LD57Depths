@@ -1,4 +1,5 @@
-﻿using FishNet.Object;
+﻿using FishNet;
+using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Collections.Generic;
 using UnityEngine;
@@ -174,7 +175,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         }
         // 4. Instantiate the tool and parent it to the designated slot.
         GameObject toolInstance = Instantiate(toolPrefab, slot); // Should use fishnet spawning here aswell!
-
+        Spawn(toolInstance, base.LocalConnection);
         // 5. Get the behavior component and assign it.
         toolBehaviorReference = toolInstance.GetComponent<IToolBehaviour>();
 
