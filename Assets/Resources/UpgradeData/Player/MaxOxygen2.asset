@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 08d8bdbe60c43c64e8eafe5c7dc8491e, type: 3}
-  m_Name: LazerSpecialBrimstone
+  m_Name: MaxOxygen2
   m_EditorClassIdentifier: 
-  RecipeID: 33
-  displayName: Lazer Damage 1
+  RecipeID: 122
+  displayName: Player Oxygen
   description: 
-  icon: {fileID: -172477240, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  icon: {fileID: 494696768, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   requiredItems: []
-  effects: []
+  effects:
+  - {fileID: 11400000, guid: 774711bfae26123409c1cb635d4c5d81, type: 2}

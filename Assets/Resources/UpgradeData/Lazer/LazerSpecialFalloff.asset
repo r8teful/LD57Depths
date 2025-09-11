@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08d8bdbe60c43c64e8eafe5c7dc8491e, type: 3}
   m_Name: LazerSpecialFalloff
   m_EditorClassIdentifier: 
-  RecipeID: 101
-  displayName: Lazer Damage 1
+  RecipeID: 31
+  displayName: Lazer No Falloff
   description: 
-  icon: {fileID: 1573820211, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  icon: {fileID: 1012510582, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   requiredItems: []
-  effects:
-  - {fileID: 11400000, guid: 679210187c96eaf4a8e7f9075dded280, type: 2}
+  effects: []

@@ -2599,7 +2599,7 @@ TextureImporter:
       name: UISpriteSheet_0
       rect:
         serializedVersion: 2
-        x: 144
+        x: 86
         y: 433
         width: 76
         height: 33
@@ -2621,7 +2621,7 @@ TextureImporter:
       name: SubFixUICable
       rect:
         serializedVersion: 2
-        x: 161
+        x: 103
         y: 420
         width: 6
         height: 11
@@ -2643,7 +2643,7 @@ TextureImporter:
       name: SubFixUICogg
       rect:
         serializedVersion: 2
-        x: 179
+        x: 121
         y: 424
         width: 14
         height: 7
@@ -2665,7 +2665,7 @@ TextureImporter:
       name: SubFixUIFin
       rect:
         serializedVersion: 2
-        x: 199
+        x: 141
         y: 407
         width: 7
         height: 25
@@ -2687,7 +2687,7 @@ TextureImporter:
       name: SubFixUIShip
       rect:
         serializedVersion: 2
-        x: 181
+        x: 123
         y: 409
         width: 11
         height: 12
@@ -2709,7 +2709,7 @@ TextureImporter:
       name: SubFixUIHull
       rect:
         serializedVersion: 2
-        x: 160
+        x: 102
         y: 408
         width: 14
         height: 7
@@ -2996,11 +2996,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 136
-        y: 609
+        y: 607
         width: 10
         height: 10
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -3009,6 +3009,226 @@ TextureImporter:
       bones: []
       spriteID: b1f52bcd59b1fe348b6152233e18e350
       internalID: -639517231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeMiningDamage2
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 438
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 395ad0858748d6546a967203b1937ca4
+      internalID: 1944107450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeMiningFistKnockbackStrong
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 424
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e71e5eb63c397aa488e37968bb186946
+      internalID: 1593785198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeMiningStrong
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 410
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1dfe24dd37c652458a8160f76f22e46
+      internalID: -765993463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeOxygenMax2
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 402
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f02f43e86772ca4ba5367daf1b2b836
+      internalID: 494696768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeSpecialOxygenBlockBreak
+      rect:
+        serializedVersion: 2
+        x: 259
+        y: 376
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6cfd1a27d374404fa4e9376a21e3139
+      internalID: 1902029996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeSpecialDiver2
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 358
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0a6fd1b42c637bf41a7e7d09fe0493b0
+      internalID: 1185593456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeSpecialBlockOreParticles
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 355
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 59fed206e2529484f993ed5a8497690d
+      internalID: 265872500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeSpecialDive
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 360
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a3e7fe8d0fbc11848877d7dd5f682814
+      internalID: 1615180959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeLazerSpecialBrimstone
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 390
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 328a1ad2b411e544b9da4b1631635289
+      internalID: -172477240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradePlayerLightRange
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 403
+        width: 9
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb384bab43667964ab1bd24580976a7d
+      internalID: -2060477575
       vertices: []
       indices: 
       edges: []
@@ -3132,6 +3352,7 @@ TextureImporter:
       UpgradeFilterResourceOutput: 1502528288
       UpgradeFilterT2: -1181486474
       UpgradeFilterT3: 1646928911
+      UpgradeLazerSpecialBrimstone: -172477240
       UpgradeLightBrighter: 969133963
       UpgradeLightMoreFish: -819378468
       UpgradeLightMoreTree: 1595355120
@@ -3141,6 +3362,8 @@ TextureImporter:
       UpgradeLightTreeSynergy: 390682684
       UpgradeMinigLuck: -717515431
       UpgradeMiningDamage: -329476615
+      UpgradeMiningDamage2: 1944107450
+      UpgradeMiningFistKnockbackStrong: 1593785198
       UpgradeMiningGems: 161349368
       UpgradeMiningLazerT1: 1394251761
       UpgradeMiningLazerT2: 1841913069
@@ -3148,6 +3371,7 @@ TextureImporter:
       UpgradeMiningLazerUnlock: 1012510582
       UpgradeMiningPickupRange: 1573820211
       UpgradeMiningRange: -1923053130
+      UpgradeMiningStrong: -765993463
       UpgradeNodeBigActive: -925140935
       UpgradeNodeBigInactive: 654996915
       UpgradeNodeBigPurchased: 1267944118
@@ -3156,10 +3380,16 @@ TextureImporter:
       UpgradeNodeSmallPurchased: -176935646
       UpgradeOxygenGillsUnlock: -1876437063
       UpgradeOxygenMax: -947507640
+      UpgradeOxygenMax2: 494696768
       UpgradeOxygenPortableRange: 1461061692
       UpgradeOxygenPortableUnlock: -1454426927
       UpgradeOxygenZoneUnlock: -1703950749
       UpgradeOxygenZoneWider: 1698430165
+      UpgradePlayerLightRange: -2060477575
+      UpgradeSpecialBlockOreParticles: 265872500
+      UpgradeSpecialDive: 1615180959
+      UpgradeSpecialDiver2: 1185593456
+      UpgradeSpecialOxygenBlockBreak: 1902029996
       UpgradeSpeedAcceleration: 1966779994
       UpgradeSpeedDashCooldown: 304393176
       UpgradeSpeedDashLength: 1049000477

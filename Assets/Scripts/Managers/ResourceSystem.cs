@@ -152,6 +152,9 @@ public class ResourceSystem {
         }
         return list[index];
     }
+    public UpgradeTreeDataSO GetTreeByName(string name) {
+        return UpgradeTreeData.FirstOrDefault(s => s.treeName == name);
+    }
 
     public GameObject GetPrefab(string s) => _prefabDict[s];
     public T GetPrefab<T>(string key) where T : Component {
