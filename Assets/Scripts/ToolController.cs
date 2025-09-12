@@ -39,7 +39,8 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         Console.RegisterCommand(this, "DEBUGSetMineTool", "setMineTool", "god");
         _worldManager = FindFirstObjectByType<WorldManager>();
         _playerParent.PlayerLayerController.CurrentLayer.OnChange += PlayerLayerChange;
-        EquipDrill(); // Todo this would have to take from some kind of save file obviously
+        //EquipDrill(); // Todo this would have to take from some kind of save file obviously
+        EquipLaser();
     }
 
     private void PlayerLayerChange(VisibilityLayerType prev, VisibilityLayerType next, bool asServer) {
@@ -135,7 +136,10 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     private void EquipDrill() {
         EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("MiningDrill"));
     }
-    
+    private void EquipLaser() {
+        EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("MiningLazer"));
+    }
+
     private void DEBUGSetMineTool(string tool) {
         if (tool == "god") {
             Debug.Log("Setting Mining tool as GOD");

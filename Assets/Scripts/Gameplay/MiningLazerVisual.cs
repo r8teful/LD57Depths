@@ -41,9 +41,11 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         HandleLaserVisualStop();
     }
 
-    public void HandleVisualUpdate(InputManager inputManager) {
+    public void HandleVisualUpdate(Vector2 inputDir, InputManager inputManager) {
         // Update visuals each frame when mining
-        var pos = inputManager.GetAimWorldInput();
+        //var pos = inputManager.GetAimWorldInput();
+        var pos = inputDir;
+        Debug.Log(pos);
         SetCorrectLaserPos(inputManager.GetMovementInput().x);
         LaserVisual(pos);
     }
@@ -89,7 +91,8 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         if (!_lineLazerParticleSystem.isPlaying)
             _lineLazerParticleSystem.Play();
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
-        Vector2 directionToMouse = (pos - objectPos2D).normalized;
+        //Vector2 directionToMouse = (pos - objectPos2D).normalized;
+        Vector2 directionToMouse = pos;
         RaycastHit2D hit = Physics2D.Raycast(objectPos2D, directionToMouse, _range, LayerMask.GetMask("MiningHit"));
         //Debug.Log("objectPos2D" + objectPos2D);
         if (hit.collider != null) {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
@@ -83,7 +84,12 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     private void SubscribeToEvents() {
         // Subscribe to the event to recalculate stats when a NEW upgrade is bought
         NetworkedPlayer.LocalInstance.PlayerStats.OnStatChanged += OnStatChanged;
+        MiningLazer.OnPlayerKnockbackRequested += OnMiningKnockback;
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
+    }
+
+    private void OnMiningKnockback(Vector2 force) {
+        rb.AddForce(force);
     }
 
     private void OnStatChanged(StatType type, float value) {

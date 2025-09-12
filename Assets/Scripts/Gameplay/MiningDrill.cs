@@ -21,15 +21,28 @@ public class MiningDrill : MiningBase {
             Debug.LogError("Could not find minglazerVisual on gameobject!");
         }
     }
-    //public override void ToolStart(InputManager input, ToolController controller) {
-    //    base.ToolStart(input, controller);
-    //    handVisual.SetActive(true);
-    //    NetworkedPlayer.LocalInstance.PlayerVisuals.SetBobHand(false);
-    //}
-    //public override void ToolStop() {
-    //    base.ToolStop();
-    //    handVisual.SetActive(false);
-    //    // PlayerVisual set sprite to hand
-    //    NetworkedPlayer.LocalInstance.PlayerVisuals.SetBobHand(true);
-    //}
+
+    public override void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {
+        Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
+        Vector2 directionToMouse = (pos - objectPos2D).normalized;
+        Vector2 rayDirection = directionToMouse;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, Range, LayerMask.GetMask("MiningHit"));
+        if (hit.collider != null) {
+            // Just assuming here that we've hit a tile, but should be fine because of the mask
+            Vector2 nudgedPoint = hit.point - rayDirection * -0.1f;
+            controller.CmdRequestDamageTile(new Vector3(nudgedPoint.x, nudgedPoint.y, 0), (short)DamagePerHit);
+        }
+    }
+
+        //public override void ToolStart(InputManager input, ToolController controller) {
+        //    base.ToolStart(input, controller);
+        //    handVisual.SetActive(true);
+        //    NetworkedPlayer.LocalInstance.PlayerVisuals.SetBobHand(false);
+        //}
+        //public override void ToolStop() {
+        //    base.ToolStop();
+        //    handVisual.SetActive(false);
+        //    // PlayerVisual set sprite to hand
+        //    NetworkedPlayer.LocalInstance.PlayerVisuals.SetBobHand(true);
+        //}
 }

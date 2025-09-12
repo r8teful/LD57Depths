@@ -25,18 +25,6 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
         Range = pStats.GetStat(StatType.MiningRange);
         DamagePerHit = pStats.GetStat(StatType.MiningDamage);
     }
-    private void OnStatChanged(StatType type, float newV) {
-        if(type == StatType.MiningDamage) {
-            DamagePerHit = newV;
-        }
-        if (type == StatType.MiningRange) {
-            Range = newV;
-        }
-        if (type == StatType.MiningHandling) {
-            // TODO
-        }
-        Debug.Log($"New upgrade {type} is: " + newV);
-    }
     public override void OnStartClient() {
         base.OnStartClient();
         Debug.Log("StartBase called on: " + toolType);
@@ -49,9 +37,16 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
     }
 
     private void OnPlayerStatsChange(StatType stat, float newV) {
-        if(stat == StatType.MiningRange) {
+        if (stat == StatType.MiningDamage) {
+            DamagePerHit = newV;
+        }
+        if (stat == StatType.MiningRange) {
             Range = newV;
         }
+        if (stat == StatType.MiningHandling) {
+            // TODO
+        }
+        Debug.Log($"New upgrade {stat} is: " + newV);
     }
 
     public override void OnStopClient() {
@@ -71,7 +66,7 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
     }
     protected virtual void Update() {
         if (_isMining) {
-            toolVisual.HandleVisualUpdate(_inputManager);
+            toolVisual.HandleVisualUpdate(_inputManager.GetAimWorldInput(), _inputManager);
         }
     }
 
@@ -95,31 +90,19 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
     }
     private IEnumerator MiningRoutine(ToolController controller) {
         while (true) {
+            yield return new WaitForSeconds(0.3f); 
+            if (!_isMining) yield break;
+                
             var pos = _inputManager.GetAimWorldInput();
             //Debug.Log(pos);
             var isFlipped = false;
             var horizontalInput = _inputManager.GetMovementInput().x;
 
             CastRays(pos, controller, isFlipped); // Todo determine freq here
-            //LaserVisual(pos);
-            yield return new WaitForSeconds(0.3f);
         }
     }
-    void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {
-        Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
-        Vector2 directionToMouse = (pos - objectPos2D).normalized;
-        //Vector2 rayDirection = GetConeRayDirection(directionToMouse);
-        Vector2 rayDirection = directionToMouse;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, rayDirection, Range, LayerMask.GetMask("MiningHit"));
-        if (hit.collider != null) {
-            // Just assuming here that we've hit a tile, but should be fine because of the mask
-            Vector2 nudgedPoint = hit.point - rayDirection * -0.1f;
-            //float distance = hit.distance;
-            //float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloffStrength);
-            //float finalDamage = damagePerRay * falloffFactor;
-            controller.CmdRequestDamageTile(new Vector3(nudgedPoint.x, nudgedPoint.y, 0), (short)DamagePerHit);
-        }
-    }
+    public abstract void CastRays(Vector2 pos, ToolController controller, bool isFlipped);
+    
 
   
 }
