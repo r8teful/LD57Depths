@@ -37,7 +37,7 @@ public class UpgradeManagerPlayer : Singleton<UpgradeManagerPlayer>, INetworkedP
         }
         return false;
     }
-    public void PurchaseUpgrade(UpgradeRecipeSO recipe) {
+    public void TryPurchaseUpgrade(UpgradeRecipeSO recipe) {
         // 1. Check if already purchased
         if (unlockedUpgrades.ContainsKey(recipe.ID)) {
             Debug.LogWarning($"Attempted to purchase an already owned upgrade: {recipe.name}");

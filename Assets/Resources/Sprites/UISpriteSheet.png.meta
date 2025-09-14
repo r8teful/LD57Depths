@@ -726,13 +726,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UpgradeNodeBigActive
+      name: ButtonUpgradeGreenActive
       rect:
         serializedVersion: 2
         x: 208
-        y: 567
-        width: 17
-        height: 17
+        y: 560
+        width: 9
+        height: 9
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 3, y: 3, z: 3, w: 3}
@@ -748,16 +748,16 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UpgradeNodeBigInactive
+      name: ButtonUpgradeGreenPressed
       rect:
         serializedVersion: 2
-        x: 230
-        y: 567
-        width: 17
-        height: 17
+        x: 219
+        y: 560
+        width: 9
+        height: 9
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 3, y: 3, z: 3, w: 3}
+      border: {x: 3, y: 3, z: 4, w: 3}
       customData: 
       outline: []
       physicsShape: []
@@ -770,16 +770,16 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UpgradeNodeSmallActive
+      name: ButtonUpgradeBluePressed
       rect:
         serializedVersion: 2
-        x: 208
+        x: 219
         y: 549
-        width: 11
-        height: 11
+        width: 9
+        height: 9
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 3, y: 3, z: 3, w: 3}
+      border: {x: 3, y: 3, z: 4, w: 3}
       customData: 
       outline: []
       physicsShape: []
@@ -792,13 +792,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UpgradeNodeSmallInactive
+      name: ButtonUpgradeBlueActive
       rect:
         serializedVersion: 2
-        x: 222
+        x: 208
         y: 549
-        width: 11
-        height: 11
+        width: 9
+        height: 9
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 3, y: 3, z: 3, w: 3}
@@ -814,35 +814,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UpgradeNodeBigPurchased
+      name: ButtonUpgradeBlueInactive
       rect:
         serializedVersion: 2
-        x: 252
-        y: 567
-        width: 17
-        height: 17
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 3, y: 3, z: 3, w: 3}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8ef1e21d4ad948d43915a9f351341d47
-      internalID: 1267944118
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UpgradeNodeSmallPurchased
-      rect:
-        serializedVersion: 2
-        x: 236
+        x: 230
         y: 549
-        width: 11
-        height: 11
+        width: 9
+        height: 9
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 3, y: 3, z: 3, w: 3}
@@ -2863,8 +2841,8 @@ TextureImporter:
       name: ButtonAdd0
       rect:
         serializedVersion: 2
-        x: 250
-        y: 554
+        x: 266
+        y: 547
         width: 9
         height: 5
       alignment: 0
@@ -3233,6 +3211,94 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: ButtonUpgradeOrangeActive
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 571
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 3, y: 3, z: 3, w: 3}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f182870929a535746b1c046418722286
+      internalID: 434696062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonUpgradeGreenInactive
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 560
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 3, y: 3, z: 3, w: 3}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e9a1ca23ba1b4943a6610a3bd4165c0
+      internalID: 292617311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonUpgradeOrangePressed
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 571
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 3, y: 3, z: 4, w: 3}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab984f06d678ca74b95a3a4c30245179
+      internalID: -1622521877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonUpgradeOrangeInactive
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 571
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 3, y: 3, z: 3, w: 3}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 025009657c2a6d94e91751ca3a73530b
+      internalID: 1131497666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -3252,6 +3318,15 @@ TextureImporter:
       ButtonConfirmGreen: 1348527043
       ButtonDenyRed: -1646856023
       ButtonGenericWhite: 2003862070
+      ButtonUpgradeBlueActive: 624703488
+      ButtonUpgradeBlueInactive: -176935646
+      ButtonUpgradeBluePressed: -2138730293
+      ButtonUpgradeGreenActive: -925140935
+      ButtonUpgradeGreenInactive: 292617311
+      ButtonUpgradeGreenPressed: 654996915
+      ButtonUpgradeOrangeActive: 434696062
+      ButtonUpgradeOrangeInactive: 1131497666
+      ButtonUpgradeOrangePressed: -1622521877
       DiscoveryGrid: 1687985993
       IconArrow: 588746496
       IconBluesky: 2113114063
@@ -3306,11 +3381,11 @@ TextureImporter:
       SubFixFin_0: -177491173
       SubFixFin_1: 546586542
       SubFixFin_2: 918829239
-      SubFixFin_3: 685416399
-      SubFixHull_0: 1236360314
+      SubFixFin_3: -535102082
+      SubFixHull_0: -518060854
       SubFixHull_1: 1096764976
-      SubFixHull_2: -1712109260
-      SubFixHull_3: 372096928
+      SubFixHull_2: -979866722
+      SubFixHull_3: 260270178
       SubFixUICable: -988727820
       SubFixUICogg: 1983392162
       SubFixUIFin: 202132493
@@ -3328,22 +3403,22 @@ TextureImporter:
       UISimpleBoarder: 1878530721
       UISliderBall: 401562208
       UISpriteSheet_0: -1359263483
-      UISpriteSheet_22: -1976112237
-      UISpriteSheet_29: 72337233
-      UISpriteSheet_30: -615181880
-      UISpriteSheet_31: 1556713951
-      UISpriteSheet_32: -1185086660
-      UISpriteSheet_33: -1182825117
-      UISpriteSheet_34: 1956797096
-      UISpriteSheet_39: 1668030579
-      UISpriteSheet_41: 555933632
-      UISpriteSheet_42: -654388898
-      UISpriteSheet_44: -539370181
-      UISpriteSheet_45: 1775486177
-      UISpriteSheet_46: 785453271
-      UISpriteSheet_47: -223348687
-      UISpriteSheet_54: 1745582174
-      UISpriteSheet_64: -714323057
+      UISpriteSheet_22: -1062496699
+      UISpriteSheet_29: -1523729976
+      UISpriteSheet_30: -1766157220
+      UISpriteSheet_31: 1032254462
+      UISpriteSheet_32: 302823976
+      UISpriteSheet_33: 2038382086
+      UISpriteSheet_34: -951872532
+      UISpriteSheet_39: 1088762100
+      UISpriteSheet_41: 394970122
+      UISpriteSheet_42: -2067614705
+      UISpriteSheet_44: -1375839985
+      UISpriteSheet_45: -25905123
+      UISpriteSheet_46: 209294501
+      UISpriteSheet_47: 1042009565
+      UISpriteSheet_54: 1913473331
+      UISpriteSheet_64: -1587015040
       UpgradeFilterExtracted: 1228492800
       UpgradeFilterExtractorForce: -1012180492
       UpgradeFilterExtractorRange: 1350617202
@@ -3372,12 +3447,7 @@ TextureImporter:
       UpgradeMiningPickupRange: 1573820211
       UpgradeMiningRange: -1923053130
       UpgradeMiningStrong: -765993463
-      UpgradeNodeBigActive: -925140935
-      UpgradeNodeBigInactive: 654996915
       UpgradeNodeBigPurchased: 1267944118
-      UpgradeNodeSmallActive: -2138730293
-      UpgradeNodeSmallInactive: 624703488
-      UpgradeNodeSmallPurchased: -176935646
       UpgradeOxygenGillsUnlock: -1876437063
       UpgradeOxygenMax: -947507640
       UpgradeOxygenMax2: 494696768

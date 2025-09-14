@@ -33,6 +33,7 @@ public struct UpgradeTreeTiers {
 public class UpgradeTreeDataSO : ScriptableObject {
     public UpgradeTreeCosts costsValues; // How the costs of the upgrades increases
     public List<UpgradeTreeTiers> tiers;
+    public List<StatType> statsToDisplay; // Used in the upgrade screen UI, shows what the values of the suplied stats are
     public string treeName; 
     public List<UpgradeNode> nodes = new List<UpgradeNode>();
     public UIUpgradeTree prefab; // The visual representation of this tree in a prefab with the approriate nodes already created

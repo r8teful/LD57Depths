@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PopupManager : StaticInstance<PopupManager> {
     public UIPopup popupPrefab;
@@ -8,6 +9,7 @@ public class PopupManager : StaticInstance<PopupManager> {
     private IPopupInfo currentSelectedInfoProvider;
     private bool isMouseOverPopup;
     private InventoryManager inventoryManager;
+    private static event Action<IPopupInfo> infoProvider;
     public UIPopup CurrentPopup => currentPopup;
     //private void Awake() {
     //    if (Instance == null)

@@ -21,6 +21,31 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public bool IsBig;
     public event Action PopupDataChanged;
 
+
+    private static readonly string ICON_PURCHASED_HEX = "#FFFFFF";     // icon on purchased (orange) background
+    private static readonly string ICON_AVAILABLE_HEX = "#FFFFFF";     // icon when available (active)
+    private static readonly string ICON_NOT_AVAILABLE_HEX = "#9FB3B7";  // icon when unavailable (inactive / dim)
+    private static readonly string ICON_PRESSED_HEX = "#ECECEC";       // icon when pressed (slightly different)
+
+    // 0 = Blue | Green | Orange
+    // 1 = Active | Inactive | Pressed
+    private const string SPRITE_PATTERN = "ButtonUpgrade{0}{1}";
+
+    // cached Colors parsed from hex
+    private Color _iconPurchasedColor;
+    private Color _iconAvailableColor;
+    private Color _iconNotAvailableColor;
+    private Color _iconPressedColor;
+    private bool _cachedIsPurchased;
+    private bool _cachedPrerequisitesMet;
+
+    private void Awake() {
+        // parse hex colors (falls back to white if parse fails)
+        ColorUtility.TryParseHtmlString(ICON_PURCHASED_HEX, out _iconPurchasedColor);
+        ColorUtility.TryParseHtmlString(ICON_AVAILABLE_HEX, out _iconAvailableColor);
+        ColorUtility.TryParseHtmlString(ICON_NOT_AVAILABLE_HEX, out _iconNotAvailableColor);
+        ColorUtility.TryParseHtmlString(ICON_PRESSED_HEX, out _iconPressedColor);
+    }
     public void InspectorBigChange() {
         if (IsBig) {
             _buttonBig.gameObject.SetActive(true);
@@ -78,6 +103,11 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
     private void OnEnable() {
         UpgradeManagerPlayer.OnUpgradePurchased += HandleUpgradePurchased;
+        UIUpgradeScreen.OnSelectedUpgradeChanged += SelectedChange;
+    }
+
+    private void SelectedChange(UpgradeRecipeSO selected) {
+        UpdateVisual(selected);
     }
 
     private void OnDisable() {
@@ -85,15 +115,15 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        PopupManager.Instance.ShowPopup(this, true);
+        //PopupManager.Instance.ShowPopup(this, true);
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        PopupManager.Instance.ShowPopup(this, false);
+        //PopupManager.Instance.ShowPopup(this, false);
     }
     private void OnUpgradeButtonClicked() {
         // UICraftingManager.Instance.AttemptCraft(upgradeData, null, null);
-        UpgradeManagerPlayer.Instance.PurchaseUpgrade(_upgradeData);
+        _treeParent.OnUpgradeButtonClicked(_upgradeData);
     }
     // This method is called by the event from the UpgradeManager
     private void HandleUpgradePurchased(UpgradeRecipeSO purchasedRecipe) {
@@ -106,44 +136,75 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private void UpdateVisualState() {
         if (_upgradeData == null)
             return;
-
-        bool isPurchased = UpgradeManagerPlayer.Instance.IsUpgradePurchased(_upgradeData);
-
-        if (isPurchased) {
-            // State: Purchased
-            var c = _buttonCurrent.colors;
-            c.disabledColor = Color.white;
-            _buttonCurrent.colors = c;
-            _buttonCurrent.interactable = false;
-            Color color;
-            if (ColorUtility.TryParseHtmlString("#D58141", out color)) {
-                _iconImage.color = color;
-            }
-            _imageCurrent.sprite = App.ResourceSystem.GetSprite($"UpgradeNode{(IsBig ? "Big" : "Small")}Purchased");
-            //GetComponent<Image>().color = Color.green;
-        } else {
-            bool prerequisitesMet = UpgradeManagerPlayer.Instance.ArePrerequisitesMet(_upgradeData);
-            if (prerequisitesMet) {
-                // Available
-                _buttonCurrent.interactable = true;
-                _treeParent.SetNodeAvailable(_upgradeData);
-                if (ColorUtility.TryParseHtmlString("#237C8A", out var color)) {
-                    _iconImage.color = color;
-                }
-            } else {
-                _buttonCurrent.interactable = false;
-                if (ColorUtility.TryParseHtmlString("#124553", out var color)) {
-                    _iconImage.color = color;
-                }
-                // GetComponent<Image>().color = Color.gray;
-            }
-        }
+        UpdateVisual(null);
+        Debug.Log("Called");
+        PopupDataChanged?.Invoke(); // Data could have changed
         // BIG INACTIVE 077263
         // BIG ACTIVE 0CD8BA
 
         // SMALL INACTIVE 124553
         // SMALL ACTIVE 237C8A
         // SMALL Purchad D58141
+    }
+
+    public void UpdateVisual(UpgradeRecipeSO selected) {
+        var isPurchased = UpgradeManagerPlayer.Instance.IsUpgradePurchased(_upgradeData);
+        _cachedIsPurchased = isPurchased;
+        // determine variant (one of Blue/Green/Orange)
+        string variant = isPurchased ? "Orange" : (IsBig ? "Green" : "Blue");
+        bool prerequisitesMet = UpgradeManagerPlayer.Instance.ArePrerequisitesMet(_upgradeData);
+        // Cache for later restore (when selection changes away)
+        _cachedIsPurchased = isPurchased;
+        _cachedPrerequisitesMet = prerequisitesMet;
+        // If this button is the currently selected one, show the manual Pressed sprite:
+        
+        bool iAmSelected = selected == _upgradeData;
+        if (iAmSelected) {
+            // Manual pressed state (we don't use Button's Sprite Swap)
+            ApplySprite(variant, "Pressed");
+            _iconImage.color = _iconPressedColor;
+            // Interactable remains what the base state dictates (optional)
+            _buttonCurrent.interactable = !isPurchased && prerequisitesMet;
+            return;
+        }
+
+        // Not the selected button -> show base (Purchased / Active / Inactive)
+        if (isPurchased) {
+            ApplySprite("Orange", "Inactive");
+            _iconImage.color = _iconPurchasedColor;
+            _buttonCurrent.interactable = false;
+        } else if (prerequisitesMet) {
+            ApplySprite(variant, "Active");
+            _iconImage.color = _iconAvailableColor;
+            _buttonCurrent.interactable = true;
+
+            _treeParent.SetNodeAvailable(_upgradeData);
+        } else {
+            ApplySprite(variant, "Inactive");
+            _iconImage.color = _iconNotAvailableColor;
+            _buttonCurrent.interactable = false;
+        }
+    }
+    private void ApplySprite(string variant, string state) {
+        if (_imageCurrent == null) return;
+
+        string spriteName = string.Format(SPRITE_PATTERN, variant, state);
+        var sprite = App.ResourceSystem.GetSprite(spriteName);
+        if (sprite == null) {
+            Debug.LogError("Could not find valid sprite!");
+            return;
+        }
+        _imageCurrent.sprite = sprite;
+    }
+    private void ConfigureColorBlockForState(Color pressedColor, Color disabledColor) {
+        if (_buttonCurrent == null) return;
+
+        var cb = _buttonCurrent.colors;
+        // keep the normal/highlight colors default but ensure pressed/disabled are set
+        cb.pressedColor = pressedColor;
+        cb.disabledColor = disabledColor;
+        cb.fadeDuration = 0;
+        _buttonCurrent.colors = cb;
     }
     public PopupData GetPopupData(InventoryManager clientInv) {
         return new PopupData(_upgradeData.displayName, _upgradeData.description, _upgradeData.GetIngredientStatuses(clientInv));

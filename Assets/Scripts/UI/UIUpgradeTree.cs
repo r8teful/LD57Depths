@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -6,9 +7,10 @@ public class UIUpgradeTree : MonoBehaviour {
     [SerializeField] private Transform _resourceContainer; // For the first upgrade that is there
 
     private Dictionary<UpgradeRecipeSO, UIUpgradeNode> _nodeMap = new Dictionary<UpgradeRecipeSO, UIUpgradeNode>();
-
+    private UIUpgradeScreen _uiParent;
     internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades) {
         _nodeMap.Clear();
+        _uiParent = uIUpgradeScreen;
         // Instead of instantiating the nodes, we "link" the existing node prefab to the data, so that it displays the right
         // upgrade. This is how we have to do it if we want more complex trees, instead of just instantiating the nodes
         // in a horizontal layout group. A bit more work to setup now but easier to code
@@ -60,5 +62,9 @@ public class UIUpgradeTree : MonoBehaviour {
     public UIUpgradeNode GetNodeForUpgrade(UpgradeRecipeSO upgrade) {
         _nodeMap.TryGetValue(upgrade, out var uiNode);
         return uiNode;
+    }
+
+    internal void OnUpgradeButtonClicked(UpgradeRecipeSO upgradeData) {
+        _uiParent.OnUpgradeNodeClicked(upgradeData);
     }
 }
