@@ -22,6 +22,7 @@ public class UIUpgradeStat : MonoBehaviour {
     internal void Init(StatType stat, float valueNow, float valueLater = -1) {
         _statName.text = GetStatString(stat);
         _statNow.text = valueNow.ToString();
+        _statLater.color = IsLowerBad(stat) && valueLater > valueNow ? Color.green : Color.red;
         if(valueLater < 0) {
             // Dissable
             _statLater.gameObject.SetActive(false);
@@ -38,8 +39,8 @@ public class UIUpgradeStat : MonoBehaviour {
                 return "Range";
             case StatType.MiningDamage:
                 return "Damage";
-            case StatType.MiningHandling:
-                return "Handling";
+            case StatType.MiningRotationSpeed:
+                return "Movement Speed";
             case StatType.PlayerSpeedMax:
                 return "Max Speed";
             case StatType.PlayerAcceleration:
@@ -50,6 +51,11 @@ public class UIUpgradeStat : MonoBehaviour {
                 return "Light Range";
             case StatType.PlayerLightIntensity:
                 return "Light Intensity";
+            case StatType.MiningKnockback:
+                return "Knockback Force";
+                
+            case StatType.MiningFalloff:
+                return "Damage Falloff";
             default:
                 return "NULL";
         }
@@ -60,7 +66,7 @@ public class UIUpgradeStat : MonoBehaviour {
                 return true;
             case StatType.MiningDamage:
                 return true;
-            case StatType.MiningHandling:
+            case StatType.MiningRotationSpeed:
                 return true;
             case StatType.PlayerSpeedMax:
                 return true;
@@ -72,6 +78,10 @@ public class UIUpgradeStat : MonoBehaviour {
                 return true;
             case StatType.PlayerLightIntensity:
                 return true;
+            case StatType.MiningKnockback:
+                return false;
+            case StatType.MiningFalloff:
+                return false;
             default:
                 return true;
         }

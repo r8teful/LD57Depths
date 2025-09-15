@@ -12,13 +12,15 @@ public static class UpgradeCalculator {
         }
         return points;
     }
-    public static float CalculateUpgradeIncrease(float current, IncreaseType type, float increaseAmount) {
-        if(type== IncreaseType.Add) {
-            return current + increaseAmount;
-        } else if (type == IncreaseType.Multiply) {
-            return current * increaseAmount;
-        }
-        //fallback
-        return current;
+    public static float CalculateUpgradeChange(float current, IncreaseType type, float increaseAmount) {
+        switch (type) {
+            case IncreaseType.Add:
+                return current + increaseAmount;
+            case IncreaseType.Multiply:
+                return current * increaseAmount;
+            default:
+                Debug.LogWarning("Fallback, coudn't find approriate increase type calculation!");
+                return current;
+            }
     }
 }

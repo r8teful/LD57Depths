@@ -94,5 +94,9 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     private void debugSetSubIndex(int v) {
         SubMovementManager.Instance.MoveSub(v);
     }
+    [ConsoleCommand("setMineDamage")]
+    private void debugSetDamage(float v) {
+        NetworkedPlayer.LocalInstance.PlayerStats.DEBUGSetStat(StatType.MiningDamage,v);
+    }
 }
 #endif

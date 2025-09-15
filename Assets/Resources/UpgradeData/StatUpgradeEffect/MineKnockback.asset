@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d283f47e58bd0e2429af7b3c6ea7dc9c, type: 3}
-  m_Name: MineHandlingPlus2
+  m_Name: MineKnockback
   m_EditorClassIdentifier: Assembly-CSharp::StatUpgradeEffect
-  upgradeType: 2
+  upgradeType: 3
   increaseType: 0
-  modificationValue: 2
+  modificationValue: 1

@@ -29,13 +29,14 @@ public class UIUpgradeViewer : MonoBehaviour {
 
     private void OnUpgradeChanged(UpgradeRecipeSO upgradeData) {
         _shownRecipe = upgradeData;
+        _statHeaderText.text = upgradeData.displayName;
         // Show the upgrade in the view
         DestroyAllChildren();
         foreach (var effect in upgradeData.effects) {
             if(effect is StatUpgradeEffectSO e) {
                 var stat = e.upgradeType;
                 var currentValue = NetworkedPlayer.LocalInstance.PlayerStats.GetStat(stat);
-                var nextValue = UpgradeCalculator.CalculateUpgradeIncrease(currentValue, e.increaseType, e.modificationValue);
+                var nextValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, e.increaseType, e.modificationValue);
                 Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStat"), _statContainer).Init(stat, currentValue,nextValue);
             }
         }
@@ -55,6 +56,8 @@ public class UIUpgradeViewer : MonoBehaviour {
         }
         foreach (var stat in data.statsToDisplay) {
             // Get the value of the stat from the StatManager
+            var currentValue = NetworkedPlayer.LocalInstance.PlayerStats.GetStat(stat);
+            Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStat"), _statContainer).Init(stat, currentValue);
         }
     }
     private void DestroyAllChildren() {

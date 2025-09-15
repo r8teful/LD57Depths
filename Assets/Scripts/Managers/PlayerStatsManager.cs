@@ -1,7 +1,8 @@
-﻿using FishNet.Object.Synchronizing;
-using FishNet.Object;
-using System.Collections.Generic;
+﻿using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using System;
+using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 [System.Serializable]
 public class StatDefault {
@@ -12,7 +13,9 @@ public enum StatType {
     // MINING
     MiningRange,
     MiningDamage,
-    MiningHandling,
+    MiningRotationSpeed,
+    MiningKnockback,
+    MiningFalloff,
 
     // PLAYER
     PlayerSpeedMax,
@@ -23,9 +26,7 @@ public enum StatType {
 }
 [RequireComponent(typeof(NetworkedPlayer))]
 public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
-    [Header("Configuration")]
-    [Tooltip("Define the base values for all stats here. These are the starting values before any upgrades.")]
-    [SerializeField] private List<StatDefault> _baseStats;
+    [SerializeField] private PlayerBaseStatsSO _baseStats;
 
     private readonly SyncDictionary<StatType, float> _finalStats = new(); // Server stored for each client
 
@@ -64,7 +65,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     }
 
     private void InitializeStats() {
-        foreach (var statDefault in _baseStats) {
+        foreach (var statDefault in _baseStats.BaseStats) {
             if (!_finalStats.ContainsKey(statDefault.Stat)) {
                 _finalStats.Add(statDefault.Stat, statDefault.BaseValue);
             } else {
@@ -107,12 +108,12 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         // Here you would implement your calculation logic.
         // This is a placeholder for your UpgradeCalculator.
         float currentValue = _finalStats[stat];
-        float newValue = UpgradeCalculator.CalculateUpgradeIncrease(currentValue, increaseType, value);
+        float newValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, increaseType, value);
 
         // Updating the SyncDictionary will automatically send the change over the network.
         _finalStats[stat] = newValue;
     }
-
+  
     #endregion
 
     #region Event Handling
@@ -133,4 +134,9 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         }
     }
     #endregion
+#if UNITY_EDITOR
+    public void DEBUGSetStat(StatType stat, float value) {
+        _finalStats[stat] = value;
+    }
+#endif
 }

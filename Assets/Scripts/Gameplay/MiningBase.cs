@@ -14,6 +14,9 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
     protected bool _isMining;
     public abstract float Range { get; set; }
     public abstract float DamagePerHit { get; set; }
+    public abstract float RotationSpeed { get; set; }
+    public abstract float KnockbackStrength { get; set; }
+    public abstract float FalloffStrength { get; set; }
     public abstract GameObject GO { get; }
     public abstract IToolVisual toolVisual { get; }
     public abstract ToolType toolType { get; }
@@ -24,6 +27,9 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
         var pStats = NetworkedPlayer.LocalInstance.PlayerStats;
         Range = pStats.GetStat(StatType.MiningRange);
         DamagePerHit = pStats.GetStat(StatType.MiningDamage);
+        RotationSpeed = pStats.GetStat(StatType.MiningRotationSpeed);
+        KnockbackStrength = pStats.GetStat(StatType.MiningKnockback);
+        FalloffStrength = pStats.GetStat(StatType.MiningFalloff);
     }
     public override void OnStartClient() {
         base.OnStartClient();
@@ -43,9 +49,13 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
         if (stat == StatType.MiningRange) {
             Range = newV;
         }
-        if (stat == StatType.MiningHandling) {
-            // TODO
+        if (stat == StatType.MiningRotationSpeed) {
+            RotationSpeed = newV;
         }
+        if (stat == StatType.MiningKnockback) {
+            KnockbackStrength = newV;
+        }
+
         Debug.Log($"New upgrade {stat} is: " + newV);
     }
 

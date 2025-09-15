@@ -655,10 +655,8 @@ public class ChunkManager : NetworkBehaviour {
             var r = tile.GetDurabilityRatio(currentDurability);
             //Debug.Log($"Durability ratio is: {r} current dur is: {currentDurability} max is {tile.maxDurability}");
             if (r > 0.75) {
-                return null; // No cracks for high durability.
-            } else if (r > 0.50) {
                 return tile.breakVersions[0];
-            } else if (r > 0.25) {
+            } else if (r > 0.45) {
                 return tile.breakVersions[1];
             } else if (r > 0) {
                 return tile.breakVersions[2];

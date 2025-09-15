@@ -668,13 +668,7 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 6962948237969374493}
   _networkObjectCache: {fileID: 0}
-  _baseStats:
-  - Stat: 0
-    BaseValue: 4
-  - Stat: 1
-    BaseValue: 2
-  - Stat: 2
-    BaseValue: 3
+  _baseStats: {fileID: 11400000, guid: d8685c4b27708d64da3f05ac7c44d328, type: 2}
 --- !u!1 &3576249979241912492
 GameObject:
   m_ObjectHideFlags: 0
