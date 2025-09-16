@@ -1,7 +1,9 @@
 GOOD FUCKING TRAILER
-- Cool ass death lazer destroying everything
 - Show RESOURCES and CONTENT
-- Explosion tool? Show that there are different tools
+- Show that there are different tools
+	- Drill destroying big chunks in one spot
+	- Explosion tool?
+	- Cool ass death lazer destroying everything
 
 CONTENT
 - Update ship layout **DONE**
