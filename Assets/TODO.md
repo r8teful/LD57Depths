@@ -1,9 +1,12 @@
 GOOD FUCKING TRAILER
 - Show RESOURCES and CONTENT
 - Show that there are different tools
-	- Drill destroying big chunks in one spot
+	- Drill destroying big chunks in one spot **DONE**
 	- Explosion tool?
 	- Cool ass death lazer destroying everything
+- Show Biomes
+	- 
+
 
 CONTENT
 - Update ship layout **DONE**

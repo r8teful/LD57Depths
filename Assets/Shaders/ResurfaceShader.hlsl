@@ -1,3 +1,22 @@
+// ---- Config ----
+#define NUM_BIOMES 10      // compile-time max. Use small numbers for perf & compatibility.
+#define BIOME_PLACEMENT_SCALE 0.01   // controls how wide/zoomed the biome partition map is
+#define BIOME_PLACEMENT_SPAN 200.0   // horizontal spread used when generating per-biome XOffset
+// ------------------------------------
+struct BiomeParams
+{
+    float edgeNoiseScale;
+    float edgeNoiseAmp;
+    float blockNoiseScale;
+    float blockNoiseAmp;
+    float blockCutoff;
+    float YStart;
+    float YHeight;
+    float horSize;
+    float XOffset; // center X for this biome
+    float4 tileColor; // tile color (rgba 0..1)
+    float4 airColor; // air color (rgba 0..1)
+};
 
 inline float2 randomVector (float2 UV, float offset)
 {

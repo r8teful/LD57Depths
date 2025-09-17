@@ -13,11 +13,11 @@ public class CleaningTool : MonoBehaviour, IToolBehaviour {
     public float coneAngle = 45f;
     public float pullForce = 10f;
     public GameObject GO => gameObject;
-    public IToolVisual toolVisual => throw new System.NotImplementedException();
+    public IToolVisual ToolVisual => throw new System.NotImplementedException();
 
-    public ToolType toolType => ToolType.CleaningTool;
+    public ToolType ToolType => ToolType.CleaningTool;
 
-    public ushort toolID => (ushort)toolType;
+    public ushort ToolID => (ushort)ToolType;
 
     public MiningToolData GetToolData() {
         throw new System.NotImplementedException();
@@ -97,4 +97,11 @@ public class CleaningTool : MonoBehaviour, IToolBehaviour {
         gameObject.transform.DOScale(0, 0.5f).OnComplete(() => Destroy(gameObject)) ;
     }
 
+    public void ToolAbilityStart(ToolController toolController) {
+        throw new System.NotImplementedException();
+    }
+
+    public void ToolAbilityStop(ToolController toolController) {
+        throw new System.NotImplementedException();
+    }
 }

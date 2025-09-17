@@ -105,14 +105,14 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         ServerManager.Despawn(itemNetworkObject); // Despawn the DroppedEntity
         // Award item to client and despawn world object
         TargetRpcAwardItemToClient(Owner, itemID, quantity); // Owner is the NetworkConnection of the client who sent the RPC
-        Debug.Log($"Server: Awarded item {itemID} x{quantity} to client {Owner.ClientId}");
+        //Debug.Log($"Server: Awarded item {itemID} x{quantity} to client {Owner.ClientId}");
     }
     [TargetRpc]
     private void TargetRpcAwardItemToClient(NetworkConnection conn, ushort itemID, int quantity) {
         // This code runs on the client that picked up the item
         bool added = inventoryManager.AddItem(itemID, quantity); // Assume AddItem returns bool for success
         if (added) {
-            Debug.Log($"Client: Picked up and added item {itemID} x{quantity} to inventory.");
+            //Debug.Log($"Client: Picked up and added item {itemID} x{quantity} to inventory.");
             DiscoveryManager.Instance.ServerDiscoverResource(itemID);
             AudioController.Instance.PlaySound2D("popPickup", 0.1f, pitch: new AudioParams.Pitch(AudioParams.Pitch.Variation.Small));
         } else {

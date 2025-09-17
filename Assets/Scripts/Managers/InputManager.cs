@@ -19,6 +19,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private InputAction _interactAction;
     private InputAction _playerClickAction;
     private InputAction _playerMoveAction;
+    private InputAction _playerAbilityAction;
     private InputAction _playerAimAction;
     private InputAction _playerDashAction;
     private InputAction _useItemAction;
@@ -67,6 +68,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             _interactAction = _playerInput.actions.FindAction("Interact",true); // E
             _playerClickAction = _playerInput.actions.FindAction("Shoot",true);
             _playerMoveAction = _playerInput.actions.FindAction("Move",true);
+            _playerAbilityAction = _playerInput.actions.FindAction("Ability",true);
             _playerAimAction = _playerInput.actions.FindAction("Aim",true);
             //_playerSwitchAction = _playerInput.actions.FindAction("SwitchTool",true);
             _playerDashAction = _playerInput.actions.FindAction("Dash",true);
@@ -87,11 +89,9 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     }
     void OnDisable() { if(_playerInput !=null) UnsubscribeFromEvents(); }
     private void SubscribeToEvents() {
-        if (_UItoggleInventoryAction != null)
-            _UItoggleInventoryAction.performed += UIOnToggleInventory;
-        if (_cancelAction != null)
-            _cancelAction.performed += UIHandleCloseAction;
-            _cancelAction.performed += HandleCancelAction;
+        _UItoggleInventoryAction.performed += UIOnToggleInventory;
+        _cancelAction.performed += UIHandleCloseAction;
+        _cancelAction.performed += HandleCancelAction;
         _playerClickAction.performed += OnPrimaryInteractionPerformed;
         _playerClickAction.canceled += OnPrimaryInteractionPerformed;
         _playerDashAction.performed += OnDashPerformed;
@@ -100,9 +100,9 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         _playerMoveAction.canceled += OnMove;
         _playerAimAction.performed += OnAim;
         _playerAimAction.canceled += OnAim;
+        _playerAbilityAction.performed+= OnAbilityPerformed;
     }
 
- 
 
     private void UnsubscribeFromEvents() {
         if (_UItoggleInventoryAction != null)
@@ -267,6 +267,13 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             _dashPefromed = false;
         }
     }
+
+    private void OnAbilityPerformed(InputAction.CallbackContext context) {
+        if (context.performed) {
+            _toolController.AbilityPerformed();
+        }
+    }
+
     public void OnPrimaryInteractionPerformed(InputAction.CallbackContext context) {
         lastUsedDevice = context.control.device;
         // Todo some kind of checks to see if this is allowed..

@@ -1,6 +1,7 @@
 ﻿using DG.Tweening;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class MiningLazerVisual : MonoBehaviour, IToolVisual {
 
@@ -14,6 +15,7 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
     private AudioSource laser;
 
     private float _range;
+    private float _lineWidth;
     private IToolBehaviour _toolBehaviour;
     private Coroutine _currentRoutine;
 
@@ -32,7 +34,9 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
     }
     public void HandleVisualStart(PlayerVisualHandler playerVisualHandler) {
         // Update the stats, this is ugly but it works I think, we could add an event when we change it and only then update it, but this also works
-        _range = _toolBehaviour.GetToolData().ToolRange;
+        var toolData = _toolBehaviour.GetToolData();
+        _range = toolData.ToolRange;
+        _lineWidth = toolData.ToolWidth;
         laser.volume = 0.2f;
         FadeInLine(lineRenderer);
     }
@@ -41,13 +45,13 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         HandleLaserVisualStop();
     }
 
-    public void HandleVisualUpdate(Vector2 inputDir, InputManager inputManager) {
+    public void HandleVisualUpdate(Vector2 inputDir, InputManager inputManager, bool isAbility) {
         // Update visuals each frame when mining
         //var pos = inputManager.GetAimWorldInput();
         var pos = inputDir;
         //Debug.Log(pos);
         SetCorrectLaserPos(inputManager.GetMovementInput().x);
-        LaserVisual(pos);
+        LaserVisual(pos, isAbility);
     }
     private void HandleLaserVisualStop() {
         _hitParticleSystem.Stop();
@@ -87,32 +91,38 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         }
     }
 
-    private void LaserVisual(Vector2 pos) {
-        if (!_lineLazerParticleSystem.isPlaying)
+    private void LaserVisual(Vector2 pos, bool isAbility) {
+        if (!_lineLazerParticleSystem.isPlaying) {
             _lineLazerParticleSystem.Play();
+        }
+
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
-        //Vector2 directionToMouse = (pos - objectPos2D).normalized;
-        Vector2 directionToMouse = pos;
-        RaycastHit2D hit = Physics2D.Raycast(objectPos2D, directionToMouse, _range, LayerMask.GetMask("MiningHit"));
-        //Debug.Log("objectPos2D" + objectPos2D);
-        if (hit.collider != null) {
-            CreateLaserEffect(transform.InverseTransformPoint(objectPos2D), transform.InverseTransformPoint(hit.point));
-            _hitParticleSystem.transform.position = hit.point;
-            if (!_hitParticleSystem.isPlaying)
-                _hitParticleSystem.Play();
+        var localPos = transform.InverseTransformPoint(objectPos2D);
+        if (!isAbility) {
+            RaycastHit2D hit = Physics2D.Raycast(objectPos2D, pos, _range, LayerMask.GetMask("MiningHit"));
+            //Debug.Log("objectPos2D" + objectPos2D);
+            if (hit.collider != null) {
+                CreateLaserEffect(localPos, transform.InverseTransformPoint(hit.point), isAbility);
+                _hitParticleSystem.transform.position = hit.point;
+                if (!_hitParticleSystem.isPlaying)
+                    _hitParticleSystem.Play();
+            } else {
+                // not in reange
+                if (_hitParticleSystem.isPlaying)
+                    _hitParticleSystem.Stop();
+                CreateLaserEffect(localPos, transform.InverseTransformPoint(objectPos2D + pos * _range), isAbility);
+            }
         } else {
-            // not in reange
-            if (_hitParticleSystem.isPlaying)
-                _hitParticleSystem.Stop();
-            CreateLaserEffect(transform.InverseTransformPoint(objectPos2D), transform.InverseTransformPoint(objectPos2D + directionToMouse * _range));
+                CreateLaserEffect(localPos, transform.InverseTransformPoint(objectPos2D + pos * _range), isAbility);
         }
     }
 
 
-    void CreateLaserEffect(Vector3 start, Vector3 end) {
+    void CreateLaserEffect(Vector3 start, Vector3 end, bool isAbility) {
         lineRenderer.SetPosition(0, start);
         lineRenderer.SetPosition(1, end);
-
+        lineRenderer.startWidth = _lineWidth;
+        lineRenderer.endWidth = _lineWidth * 0.7f;
         Vector3 midpoint = (start + end) / 2;
         Vector3 direction = (end - start).normalized;
         float distance = (end - start).magnitude;
@@ -126,6 +136,21 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         var shape = _lineLazerParticleSystem.shape;
         shape.shapeType = ParticleSystemShapeType.SingleSidedEdge;
         shape.radius = distance / 2;
+
+        // Set depending on ability
+        if (isAbility) {
+            var main = _lineLazerParticleSystem.main;
+            main.startSpeed = new(-10, 10);
+            main.startSize = 0.1f;
+            var vel = _lineLazerParticleSystem.limitVelocityOverLifetime;
+            vel.drag = 4;
+        } else {
+            var main = _lineLazerParticleSystem.main;
+            main.startSpeed = new(-5, 5);
+            main.startSize = 0.05f;
+            var vel = _lineLazerParticleSystem.limitVelocityOverLifetime;
+            vel.drag = 16;
+        }
     }
 
     public void HandleVisualUpdateRemote(Vector2 nextInput) {
@@ -145,10 +170,10 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
             elapsed += Time.deltaTime;
             Vector2 lerped = Vector2.Lerp(from, to, elapsed / duration);
             _inputPrev = lerped; // This makes sense right?
-            LaserVisual(lerped);
+            LaserVisual(lerped,false); // TODO this will not work we'll have to sync if the're using an ability..
             yield return null;
         }
-        LaserVisual(to);
+        LaserVisual(to,false);
         _currentRoutine = null;// Cleanup
     }
 }

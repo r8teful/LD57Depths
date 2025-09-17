@@ -20,7 +20,7 @@ public class MiningDrillVisual : MonoBehaviour, IToolVisual {
         _spriteHand.enabled = false;
     }
 
-    public void HandleVisualUpdate(Vector2 dir, InputManager inputManager) {
+    public void HandleVisualUpdate(Vector2 dir, InputManager inputManager,bool isAbility) {
         DrillVisual(inputManager.GetAimWorldInput());
     }
 

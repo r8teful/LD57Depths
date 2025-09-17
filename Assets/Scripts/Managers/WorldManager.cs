@@ -168,7 +168,11 @@ public class WorldManager : NetworkBehaviour {
         //Debug.Log($"Requesting processdamage of:{cell} with {dmg}");
         ChunkManager.ServerProcessDamageTile(cell, dmg);
     }
-  
+    public void RequestDamageTile(Vector3Int cellPos, short dmg) {
+        //Debug.Log($"Requesting processdamage of:{cell} with {dmg}");
+        ChunkManager.ServerProcessDamageTile(cellPos, dmg);
+    }
+
     internal void ClearAllData() {
         ChunkManager.ClearWorldChunks();
         mainTilemap.ClearAllTiles(); // Clear the visual tilemap

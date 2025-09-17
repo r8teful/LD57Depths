@@ -12,11 +12,13 @@ public interface IToolBehaviour {
     /// </summary>
     /// <param name="controller"></param>
     void ToolStop(ToolController toolController);
+    void ToolAbilityStart(ToolController toolController);
+    void ToolAbilityStop(ToolController toolController);
     MiningToolData GetToolData();
     void InitVisualTool(IToolBehaviour toolBehaviourParent);
-    public IToolVisual toolVisual { get; }
-    public ToolType toolType { get; }
-    public ushort toolID { get; }
+    public IToolVisual ToolVisual { get; }
+    public ToolType ToolType { get; }
+    public ushort ToolID { get; }
     public GameObject GO { get;}
 }
 
@@ -25,5 +27,6 @@ public enum ToolType {
     Drill = 0,
     CleaningTool = 1,
     Lazer = 2,
+    RPG = 3,
     GOD = 99
 }

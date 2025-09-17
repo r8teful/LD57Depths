@@ -1,35 +1,18 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class MiningDrill : MiningBase {
 
     public float innerSpotAngle = 5f;
     public float outerSpotAngle = 30f;
     public bool CanMine { get; private set; }
-    public override GameObject GO => gameObject;
-    public override float Range { get; set; } = 2f;
-    public override float DamagePerHit { get; set; } = 5f;
-
-    private IToolVisual _toolVisual;
-    public override IToolVisual toolVisual => _toolVisual;
-
-    public override ToolType toolType => ToolType.Drill;
-
-    public override float RotationSpeed { get; set; }
-    public override float KnockbackStrength { get; set; }
-    public override float FalloffStrength { get; set; }
+    public override ToolType ToolType => ToolType.Drill;
+    public int RayCount { get; set; } // How many blocks can simultaneously be mined 
 
     [SerializeField] private GameObject handVisual;
-    private void Awake() {
-        Debug.Log("Awake called on miningDrill");
-        if (gameObject.TryGetComponent<IToolVisual>(out var c)) {
-            _toolVisual = c;
-        } else {
-            Debug.LogError("Could not find minglazerVisual on gameobject!");
-        }
-    }
 
     public override void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < RayCount; i++) {
             Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
             Vector2 directionToMouse = (pos - objectPos2D).normalized;
 
@@ -54,6 +37,11 @@ public class MiningDrill : MiningBase {
         Quaternion rotation = Quaternion.AngleAxis(randomAngle, Vector3.forward);
         return rotation * baseDirection;
     }
+
+    public override IEnumerator MiningRoutineAbility(ToolController controller) {
+        throw new System.NotImplementedException();
+    }
+
 
     //public override void ToolStart(InputManager input, ToolController controller) {
     //    base.ToolStart(input, controller);

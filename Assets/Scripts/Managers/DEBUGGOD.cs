@@ -10,15 +10,14 @@ public class DEBUGGOD : MonoBehaviour, IToolBehaviour {
     public WorldManager _worldManager;
     public ChunkManager _chunkManager;
     public TileBase _airTile;
-    private bool _toggle;
     private bool _isDamaging = false;
     public GameObject GO => null;
 
-    public IToolVisual toolVisual => throw new System.NotImplementedException();
+    public IToolVisual ToolVisual => throw new System.NotImplementedException();
 
-    public ToolType toolType => ToolType.GOD;
+    public ToolType ToolType => ToolType.GOD;
 
-    public ushort toolID => (ushort)toolType;
+    public ushort ToolID => (ushort)ToolType;
 
     public MiningToolData GetToolData() {
         throw new System.NotImplementedException();
@@ -74,4 +73,11 @@ public class DEBUGGOD : MonoBehaviour, IToolBehaviour {
         _isDamaging = false;
     }
 
+    public void ToolAbilityStart(ToolController toolController) {
+        throw new System.NotImplementedException();
+    }
+
+    public void ToolAbilityStop(ToolController toolController) {
+        throw new System.NotImplementedException();
+    }
 }

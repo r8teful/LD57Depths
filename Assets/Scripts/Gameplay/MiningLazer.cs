@@ -1,24 +1,14 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class MiningLazer : MiningBase {
 
     [Tooltip("If you start firing again within this time, the lazer continues from its last angle.")]
     [SerializeField] private float directionMemoryTime = 1.5f;
-
-    public override float Range { get; set; } = 10f;
-    public override float DamagePerHit { get; set; } = 10f;
-    public override float RotationSpeed { get; set; }
-    public override float KnockbackStrength { get; set; }
-    public override float FalloffStrength { get; set; }
-    public override GameObject GO => gameObject;
     public bool CanMine { get; set; } = true;
-     private IToolVisual _toolVisual;
-    public override IToolVisual toolVisual => _toolVisual;
-
-    public override ToolType toolType => ToolType.Lazer;
-
+    public override ToolType ToolType => ToolType.Lazer;
 
     public static event Action<Vector2> OnPlayerKnockbackRequested;
 
@@ -28,14 +18,7 @@ public class MiningLazer : MiningBase {
     private float _timeToolStopped;
     private bool _isFirstShot; // Flag to handle initial direction logic
 
-    private void Awake() {
-        Debug.Log("Start called on: " + toolType);
-        if (gameObject.TryGetComponent<IToolVisual>(out var c)){
-            _toolVisual = c;
-        } else {
-            Debug.LogError("Could not find minglazerVisual on gameobject!");
-        }
-    }
+
     protected override void Update() {
         if (!_isMining) {
             return;
@@ -59,7 +42,7 @@ public class MiningLazer : MiningBase {
             _currentDirection = Vector3.RotateTowards(_currentDirection, targetDirection, maxAngleDelta * Mathf.Deg2Rad, 0.0f).normalized;
         }
 
-        toolVisual.HandleVisualUpdate(_currentDirection, base._inputManager); // using new "lagging" direction now
+        ToolVisual.HandleVisualUpdate(_currentDirection, base._inputManager,_isUsingAbility); // using new "lagging" direction now
 
         // Knockback
         if (KnockbackStrength > 0) {
@@ -112,5 +95,59 @@ public class MiningLazer : MiningBase {
             float finalDamage = DamagePerHit * falloffFactor;
             controller.CmdRequestDamageTile(new Vector3(nudgedPoint.x, nudgedPoint.y, 0), (short)finalDamage);
         }
+    }
+
+    public override IEnumerator MiningRoutineAbility(ToolController controller) {
+        while (true) {
+            yield return new WaitForSeconds(0.2f);
+            if (!_isMining) yield break;
+
+            var pos = _inputManager.GetAimWorldInput();
+            Debug.Log("MiningAbilityRoutine!");
+            var isFlipped = false;
+            var horizontalInput = _inputManager.GetMovementInput().x;
+
+            CastRaysAbility(pos, controller, isFlipped); // Todo determine freq here
+        }
+    }
+    public void CastRaysAbility(Vector2 targetPos, ToolController controller, bool isFlipped) {
+        HashSet<Vector3Int> processedCells = new HashSet<Vector3Int>(); // To avoid duplicate tiles
+
+        Vector2 origin = transform.position;
+
+        Vector2 dir = _currentDirection.normalized;
+        float range = Range;
+
+        // RaycastAll will return hits sorted by distance (closest first)
+        RaycastHit2D[] hits = Physics2D.RaycastAll(origin, dir, range, LayerMask.GetMask("MiningHit"));
+
+        if (hits == null || hits.Length == 0) return;
+        // We've hit the tilemap, now check where there are tiles along the line
+        float distance = 0f;
+
+        while (distance <= range) {
+            // Calculate the current point along the ray
+            Vector2 point = origin + dir * distance;
+          
+            // Convert the point to a cell position in the Tilemap
+            Vector3Int cellPosition = WorldManager.Instance.WorldToCell(point);
+
+            // Avoid processing the same cell multiple times
+            if (!processedCells.Contains(cellPosition)) {
+                processedCells.Add(cellPosition);
+
+                // Just request lol, not performant but I don't really care
+                controller.CmdRequestDamageTile(cellPosition,(short)DamagePerHit); 
+            }
+
+            // Increment the distance
+            distance += 0.2f;
+        }
+
+
+    }
+    private void OnDrawGizmos() {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawRay(transform.position,_currentDirection);
     }
 }

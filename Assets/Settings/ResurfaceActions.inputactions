@@ -42,6 +42,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Ability",
+                    "type": "Button",
+                    "id": "7783e15b-6e5f-40c3-abb1-a6dfe783661c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "SwitchTool",
                     "type": "Button",
                     "id": "f1ba0d36-48eb-4cd5-b651-1c94a6531f70",
@@ -1149,6 +1158,17 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "UI_TabLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5f16e2d7-55f9-4496-a1af-655f347cf01e",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Ability",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

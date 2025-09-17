@@ -5,6 +5,7 @@ using UnityEngine;
 // Created and sent to the Visual part so that we know how to draw it properly
 public struct MiningToolData {
     public float ToolRange;
+    public float ToolWidth;
     public int toolTier;
     // Add more as needed
 }
@@ -12,15 +13,17 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
     protected InputManager _inputManager;
     protected Coroutine miningRoutine;
     protected bool _isMining;
-    public abstract float Range { get; set; }
-    public abstract float DamagePerHit { get; set; }
-    public abstract float RotationSpeed { get; set; }
-    public abstract float KnockbackStrength { get; set; }
-    public abstract float FalloffStrength { get; set; }
-    public abstract GameObject GO { get; }
-    public abstract IToolVisual toolVisual { get; }
-    public abstract ToolType toolType { get; }
-    public ushort toolID => (ushort)toolType;
+    protected bool _isUsingAbility;
+    public float Range { get; set; }
+    private float _rangeBeforeAbility;
+    public float DamagePerHit { get; set; }
+    public float RotationSpeed { get; set; }
+    public float KnockbackStrength { get; set; }
+    public float FalloffStrength { get; set; }
+    public GameObject GO => gameObject;
+    public IToolVisual ToolVisual { get; private set; }
+    public abstract ToolType ToolType { get; }
+    public ushort ToolID => (ushort)ToolType;
     private PlayerStatsManager _localPlayerStats; // The script is attached to a player, this is that players stats, could be our stats, or a remove clients stats
 
     private void InitializeWithCurrentStats() {
@@ -31,9 +34,16 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
         KnockbackStrength = pStats.GetStat(StatType.MiningKnockback);
         FalloffStrength = pStats.GetStat(StatType.MiningFalloff);
     }
+    private void Awake() {
+        if (gameObject.TryGetComponent<IToolVisual>(out var c)) {
+            ToolVisual = c;
+        } else {
+            Debug.LogError($"Could not find ToolVisual on {ToolType}, make sure the prefab has a toolVisual script!");
+        }
+    }
     public override void OnStartClient() {
         base.OnStartClient();
-        Debug.Log("StartBase called on: " + toolType);
+        Debug.Log("StartBase called on: " + ToolType);
         InitializeWithCurrentStats();
         InitVisualTool(this);
         if (NetworkedPlayersManager.Instance.TryGetPlayer(OwnerId, out var player)) {
@@ -68,15 +78,16 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
     public MiningToolData GetToolData() {
         return new MiningToolData {
             ToolRange = Range,
+            ToolWidth = _isUsingAbility ? DamagePerHit * 0.3f : 0.05f * DamagePerHit,
             toolTier = 0 //TODO
         };
     }
     public void InitVisualTool(IToolBehaviour toolBehaviourParent) {
-        toolVisual.Init(toolBehaviourParent);
+        ToolVisual.Init(toolBehaviourParent);
     }
     protected virtual void Update() {
         if (_isMining) {
-            toolVisual.HandleVisualUpdate(_inputManager.GetAimWorldInput(), _inputManager);
+            ToolVisual.HandleVisualUpdate(_inputManager.GetAimWorldInput(), _inputManager,_isUsingAbility);
         }
     }
 
@@ -87,8 +98,14 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
         }
         _inputManager = input;
         _isMining = true;
-        miningRoutine = StartCoroutine(MiningRoutine(controller));
-        toolVisual.HandleVisualStart(controller.GetPlayerParent().PlayerVisuals);
+        if (_isUsingAbility) {
+            Debug.Log("ToolStart Ability");
+            miningRoutine = StartCoroutine(MiningRoutineAbility(controller));
+        } else {
+            Debug.Log("ToolStart NORMAL");
+            miningRoutine = StartCoroutine(MiningRoutine(controller));
+        }
+        ToolVisual.HandleVisualStart(controller.GetPlayerParent().PlayerVisuals);
     }
     public virtual void ToolStop(ToolController controller) {
         if (miningRoutine != null) {
@@ -96,9 +113,9 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
             miningRoutine = null;
             _isMining = false;
         }
-        toolVisual.HandleVisualStop(controller.GetPlayerParent().PlayerVisuals);
+        ToolVisual.HandleVisualStop(controller.GetPlayerParent().PlayerVisuals);
     }
-    private IEnumerator MiningRoutine(ToolController controller) {
+    public virtual IEnumerator MiningRoutine(ToolController controller) {
         while (true) {
             yield return new WaitForSeconds(0.3f); 
             if (!_isMining) yield break;
@@ -111,8 +128,35 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
             CastRays(pos, controller, isFlipped); // Todo determine freq here
         }
     }
+    public abstract IEnumerator MiningRoutineAbility(ToolController controller);
     public abstract void CastRays(Vector2 pos, ToolController controller, bool isFlipped);
-    
 
-  
+    /* How abilities should work...
+     * You press the ability button, then for X seconds, the tool uses other, modified stats and behaviours for a limited amount of time...
+     * This means, everything else should stay the same, only the MiningRoutine should be different, right?
+     */
+    public void ToolAbilityStart(ToolController toolController) {
+        if (_isUsingAbility) {
+            Debug.LogWarning("Already using ability!");
+            return;
+        }
+        // Set new improved stats
+        // TODO Here we would need some kind of scriptable object data that tells us how the stats change, for example, 2x speed, or 1.4x range etc.
+        _rangeBeforeAbility = Range;
+        Range = _rangeBeforeAbility * 2;
+        StartCoroutine(AbilityCountDown(30));
+    }
+
+    public void ToolAbilityStop(ToolController toolController) {
+        if (!_isUsingAbility)
+            return;
+        _isUsingAbility = false;
+    }
+    private IEnumerator AbilityCountDown(float seconds) {
+        _isUsingAbility = true;
+        yield return new WaitForSeconds(seconds); // Possible have it cancel when certain things happen? Don't think we have to though..
+        Debug.Log("Ability wore off!");
+        Range = _rangeBeforeAbility;
+        _isUsingAbility = false;
+    }
 }

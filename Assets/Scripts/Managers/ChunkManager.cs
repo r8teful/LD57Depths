@@ -593,7 +593,7 @@ public class ChunkManager : NetworkBehaviour {
                     if (worldItem != null) {
                         var id = App.ResourceSystem.GetIDByItem(dropInfo.ItemData);
                         worldItem.ServerInitialize(id, 1,true); // we either drop 1, or just specify amountToDrop and don't loop
-                        Debug.Log($"[Server] Player {base.Owner.ClientId} dropped {1} of {worldItem.name}.");
+                        //Debug.Log($"[Server] Player {base.Owner.ClientId} dropped {1} of {worldItem.name}.");
                         // No need to send TargetRpc for success IF Server_RemoveItem sends update
                     } else {
                         Debug.LogError($"[Server] Dropped prefab {dropInfo.ItemData.droppedPrefab.name} is missing a WorldItem component!");

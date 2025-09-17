@@ -71,7 +71,7 @@ public class DroppedEntity : NetworkBehaviour {
         _quantity.Value = quantity;
         timeSinceSpawned = 0f;
 
-        Debug.Log($"[Server] Initialized WorldItem {gameObject.name} with ID {_itemID} ({_cachedItemData.name}) x{_quantity}");
+        //Debug.Log($"[Server] Initialized WorldItem {gameObject.name} with ID {_itemID} ({_cachedItemData.name}) x{_quantity}");
     }
 
     // SyncVar hook for Quantity (only called on clients when server changes value)

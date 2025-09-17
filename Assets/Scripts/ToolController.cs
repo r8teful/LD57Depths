@@ -66,7 +66,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         if (!_playerParent.PlayerMovement.CanUseTool())
             return;
         currentMiningToolBehavior?.ToolStart(input, this); // Delegate to tool behavior
-        ToolStartServerRpc(currentMiningToolBehavior.toolID);
+        ToolStartServerRpc(currentMiningToolBehavior.ToolID);
         _isUsingToolLocal = true;
     }
  
@@ -133,6 +133,12 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
             _worldManager = FindFirstObjectByType<WorldManager>();
         _worldManager.RequestDamageTile(worldPos, damageAmount);
     }
+    [ServerRpc(RequireOwnership = true)]
+    public void CmdRequestDamageTile(Vector3Int cellPos, short damageAmount) {
+        if (_worldManager == null)
+            _worldManager = FindFirstObjectByType<WorldManager>();
+        _worldManager.RequestDamageTile(cellPos, damageAmount);
+    }
     private void EquipDrill() {
         EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("MiningDrill"));
     }
@@ -183,7 +189,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         // 5. Get the behavior component and assign it.
         toolBehaviorReference = toolInstance.GetComponent<IToolBehaviour>();
 
-        ToolChangeServerRpc(toolBehaviorReference.toolID); // Send what tool we have to the server so others can know
+        ToolChangeServerRpc(toolBehaviorReference.ToolID); // Send what tool we have to the server so others can know
     }
   
     // Will be called by a remote client so they can see the tool
@@ -197,7 +203,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
             Debug.LogError("Could not find Interface on instantiated tool gameobject!");
         }
         // Store the instance so we can reference to it later
-        _idToToolVisual.TryAdd(toolBehaviour.toolID, toolBehaviour.toolVisual); // ID 2 is null!
+        _idToToolVisual.TryAdd(toolBehaviour.ToolID, toolBehaviour.ToolVisual); // ID 2 is null!
     }
     public void EquipAllToolsVisualOnly() {
         EquipToolVisual(App.ResourceSystem.GetPrefab("MiningDrill"));
@@ -234,5 +240,10 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         // Else set the tool 
         EquipMiningToolFromPrefab(toolPrefab);
         return true;
+    }
+
+    internal void AbilityPerformed() {
+        // TODO, check cooldowns, etc...
+        currentMiningToolBehavior?.ToolAbilityStart(this);
     }
 }
