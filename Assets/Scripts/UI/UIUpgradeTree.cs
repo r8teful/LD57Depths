@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI.Extensions;
 
 public class UIUpgradeTree : MonoBehaviour {
     [SerializeField] private Transform _resourceContainer; // For the first upgrade that is there
@@ -35,18 +35,59 @@ public class UIUpgradeTree : MonoBehaviour {
                 // Get the PREPARED version of the upgrade, which has the calculated costs.
                 UpgradeRecipeSO preparedUpgrade = tree.GetPreparedUpgrade(originalUpgrade);
                 if (preparedUpgrade != null) {
+                    // Make line connections for the node
+                    List<UILineRenderer> nodeLines = new();
+                    foreach (var p in nodeData.prerequisiteAny) {
+                        nodeLines.Add(AddLine(p,uiNode.transform, dataToNodeLookup[p].transform));
+                    }
+                    
                     // Initialize it!
                     uiNode.name = $"UI_Node_{preparedUpgrade.displayName}";
-                    uiNode.Init(preparedUpgrade, this);
+                    uiNode.Init(preparedUpgrade, this, nodeLines);
                     _nodeMap.Add(preparedUpgrade, uiNode);
+
+
                 }
             } else {
                 Debug.LogWarning($"Found upgrade data '{originalUpgrade.name}' in SO but no matching UI node");
             }
         }
     }
+    private UILineRenderer AddLine(UpgradeRecipeSO source, Transform from, Transform to) {
+        
+        var lineRenderer = Instantiate(App.ResourceSystem.GetPrefab<UILineRenderer>("UILine"),transform);
+        lineRenderer.transform.SetAsFirstSibling();
+        float offsetFromNodes = 1f;
+        int linePointsCount = 2;
+
+        RectTransform fromRT = from as RectTransform;
+        RectTransform toRT = to as RectTransform;
+        Vector2 fromPoint = fromRT.anchoredPosition +
+                                (toRT.anchoredPosition - fromRT.anchoredPosition).normalized * offsetFromNodes;
+
+        Vector2 toPoint = toRT.anchoredPosition +
+                          (fromRT.anchoredPosition - toRT.anchoredPosition).normalized * offsetFromNodes;
+        // drawing lines in local space:
+        lineRenderer.transform.position = from.transform.position +
+                                          (Vector3)(toRT.anchoredPosition - fromRT.anchoredPosition).normalized *
+                                          offsetFromNodes;
+
+        // line renderer with 2 points only does not handle transparency properly:
+        List<Vector2> list = new List<Vector2>();
+        for (int i = 0; i < linePointsCount; i++) {
+            list.Add(Vector3.Lerp(Vector3.zero, toPoint - fromPoint +
+                                                2 * (fromRT.anchoredPosition - toRT.anchoredPosition).normalized *
+                                                offsetFromNodes, (float)i / (linePointsCount - 1)));
+        }
+
+        Debug.Log("From: " + fromPoint + " to: " + toPoint + " last point: " + list[list.Count - 1]);
+
+        lineRenderer.Points = list.ToArray();
+        return lineRenderer;
+    }
 
     internal void SetNodeAvailable(UpgradeRecipeSO upgradeData) {
+        // Set line to right color
         if (_resourceContainer == null) return;
         foreach(Transform child in _resourceContainer) {
             Destroy(child.gameObject);

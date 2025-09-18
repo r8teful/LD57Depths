@@ -2,12 +2,10 @@ GOOD FUCKING TRAILER
 - Show RESOURCES and CONTENT
 - Show that there are different tools
 	- Drill destroying big chunks in one spot **DONE**
-	- Explosion tool?
-	- Cool ass death lazer destroying everything
+	- Explosion tool! **DONE**
+	- Cool ass death lazer destroying everything **DONE**
 - Show Biomes
 	- 
-
-
 CONTENT
 - Update ship layout **DONE**
 - Add interactive elements to upgrade & ship exit **DONE**

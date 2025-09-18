@@ -1,8 +1,10 @@
 using Sirenix.OdinInspector;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions;
 using Color = UnityEngine.Color;
 
 public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler {
@@ -15,6 +17,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private RectTransform _rectTransform;
     private UpgradeRecipeSO _upgradeData;
     private UIUpgradeTree _treeParent;
+    private List<UILineRenderer> _nodeLines = new();
 
     public UpgradeRecipeSO ConnectedRecipeData => _recipe;
     [OnValueChanged("InspectorBigChange")]
@@ -26,6 +29,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private static readonly string ICON_AVAILABLE_HEX = "#FFFFFF";     // icon when available (active)
     private static readonly string ICON_NOT_AVAILABLE_HEX = "#9FB3B7";  // icon when unavailable (inactive / dim)
     private static readonly string ICON_PRESSED_HEX = "#ECECEC";       // icon when pressed (slightly different)
+    private static readonly string LINE_PURCHASED_HEX = "#D58141";      
+    private static readonly string LINE_AVAILABLE_HEX = "#3DB2AD";       
+    private static readonly string LINE_NOT_AVAILABLE_HEX = "#10325B";       
 
     // 0 = Blue | Green | Orange
     // 1 = Active | Inactive | Pressed
@@ -36,6 +42,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Color _iconAvailableColor;
     private Color _iconNotAvailableColor;
     private Color _iconPressedColor;
+    private Color _linePurchasedColor;
+    private Color _lineAvailableColor;
+    private Color _lineNotAvailableColor;
     private bool _cachedIsPurchased;
     private bool _cachedPrerequisitesMet;
 
@@ -45,6 +54,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         ColorUtility.TryParseHtmlString(ICON_AVAILABLE_HEX, out _iconAvailableColor);
         ColorUtility.TryParseHtmlString(ICON_NOT_AVAILABLE_HEX, out _iconNotAvailableColor);
         ColorUtility.TryParseHtmlString(ICON_PRESSED_HEX, out _iconPressedColor);
+        ColorUtility.TryParseHtmlString(LINE_PURCHASED_HEX,out _linePurchasedColor);
+        ColorUtility.TryParseHtmlString(LINE_AVAILABLE_HEX, out _lineAvailableColor);
+        ColorUtility.TryParseHtmlString(LINE_NOT_AVAILABLE_HEX, out _lineNotAvailableColor);
     }
     public void InspectorBigChange() {
         if (IsBig) {
@@ -55,8 +67,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonSmall.gameObject.SetActive(true);
         }
     }
-    internal void Init(UpgradeRecipeSO upgradeRecipeSO, UIUpgradeTree parent) {
+    internal void Init(UpgradeRecipeSO upgradeRecipeSO, UIUpgradeTree parent, List<UILineRenderer> nodeLines) {
         _treeParent = parent;
+        _nodeLines = nodeLines;
         _upgradeData = upgradeRecipeSO;
         _rectTransform = GetComponent<RectTransform>();
         if (IsBig && _buttonBig != null) {
@@ -171,16 +184,19 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // Not the selected button -> show base (Purchased / Active / Inactive)
         if (isPurchased) {
             ApplySprite("Orange", "Inactive");
+            SetLinesColour(_linePurchasedColor);
             _iconImage.color = _iconPurchasedColor;
             _buttonCurrent.interactable = false;
         } else if (prerequisitesMet) {
             ApplySprite(variant, "Active");
+            SetLinesColour(_lineAvailableColor);
             _iconImage.color = _iconAvailableColor;
             _buttonCurrent.interactable = true;
 
             _treeParent.SetNodeAvailable(_upgradeData);
         } else {
             ApplySprite(variant, "Inactive");
+            SetLinesColour(_lineNotAvailableColor);
             _iconImage.color = _iconNotAvailableColor;
             _buttonCurrent.interactable = false;
         }
@@ -195,6 +211,12 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             return;
         }
         _imageCurrent.sprite = sprite;
+    }
+    private void SetLinesColour(Color color) {
+        // TODO We have to know from where the connetion is bought, so that we can only set that color, if there are multiple connections!
+        foreach (var line in _nodeLines) {
+            line.color = color;
+        }
     }
     private void ConfigureColorBlockForState(Color pressedColor, Color disabledColor) {
         if (_buttonCurrent == null) return;
