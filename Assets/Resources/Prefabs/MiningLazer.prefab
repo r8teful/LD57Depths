@@ -52,9 +52,8 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 5161797178000461070}
   _networkObjectCache: {fileID: 0}
-  innerSpotAngle: 5
-  outerSpotAngle: 30
-  falloffStrength: 1.5
+  directionMemoryTime: 1.5
+  Ability: {fileID: 11400000, guid: 66bfaa2631f4ab34e84b7a0f651f3aed, type: 2}
 --- !u!114 &8924407976115634318
 MonoBehaviour:
   m_ObjectHideFlags: 0

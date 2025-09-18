@@ -5,7 +5,9 @@ public class MiningRPG : MiningBase {
 
     public override ToolType ToolType => ToolType.RPG;
     public float ExplosionStrength;
+    public override ToolAbilityBaseSO AbilityData => Ability;
 
+    public ToolAbilityBaseSO Ability;
     public override void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {
         Vector2 toolPosition = transform.position;
         Vector2 targetDirection = (pos - toolPosition).normalized;

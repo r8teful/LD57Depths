@@ -1,6 +1,7 @@
 ﻿using FishNet.Object;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 // Created and sent to the Visual part so that we know how to draw it properly
 public struct MiningToolData {
@@ -22,6 +23,7 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
     public float FalloffStrength { get; set; }
     public GameObject GO => gameObject;
     public IToolVisual ToolVisual { get; private set; }
+    public abstract ToolAbilityBaseSO AbilityData { get; }
     public abstract ToolType ToolType { get; }
     public ushort ToolID => (ushort)ToolType;
     private PlayerStatsManager _localPlayerStats; // The script is attached to a player, this is that players stats, could be our stats, or a remove clients stats
@@ -77,8 +79,8 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
     }
     public MiningToolData GetToolData() {
         return new MiningToolData {
-            ToolRange = Range,
-            ToolWidth = _isUsingAbility ? DamagePerHit * 0.3f : 0.05f * DamagePerHit,
+            ToolRange = Range, 
+            ToolWidth = _isUsingAbility ? Mathf.Min(DamagePerHit * 0.3f,0.6f) : 0.05f * DamagePerHit,
             toolTier = 0 //TODO
         };
     }
@@ -140,23 +142,35 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
             Debug.LogWarning("Already using ability!");
             return;
         }
-        // Set new improved stats
-        // TODO Here we would need some kind of scriptable object data that tells us how the stats change, for example, 2x speed, or 1.4x range etc.
-        _rangeBeforeAbility = Range;
-        Range = _rangeBeforeAbility * 2;
-        StartCoroutine(AbilityCountDown(30));
+        StartAbility(toolController, AbilityData);
+       
     }
+    public void StartAbility(ToolController toolController,ToolAbilityBaseSO ability) {
+        _isUsingAbility = true;
+        // Create the StatModifier instances from our ScriptableObject data
+        var modifiersToAdd = new List<StatModifier>();
+        foreach (var modData in ability.Modifiers) {
+            // IMPORTANT: We use the ScriptableObject asset itself as the 'Source'.
+            // This guarantees a unique and reliable ID to remove the modifiers later.
+            modifiersToAdd.Add(new StatModifier(modData.Value, modData.Stat, modData.Type, ability));
+        }
+        // Add all modifiers to the player stats manager
+        _localPlayerStats.AddModifiers(modifiersToAdd);
 
+        // Start a coroutine to remove them after the duration
+        StartCoroutine(AbilityCountDown(ability));
+    }
     public void ToolAbilityStop(ToolController toolController) {
         if (!_isUsingAbility)
             return;
         _isUsingAbility = false;
     }
-    private IEnumerator AbilityCountDown(float seconds) {
+    private IEnumerator AbilityCountDown(ToolAbilityBaseSO ability) {
         _isUsingAbility = true;
-        yield return new WaitForSeconds(seconds); // Possible have it cancel when certain things happen? Don't think we have to though..
+        yield return new WaitForSeconds(ability.Duration); // Possible have it cancel when certain things happen? Don't think we have to though..
         Debug.Log("Ability wore off!");
-        Range = _rangeBeforeAbility;
+
+        _localPlayerStats.RemoveModifiersFromSource(ability);
         _isUsingAbility = false;
     }
 }

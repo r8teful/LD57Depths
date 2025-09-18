@@ -1,7 +1,6 @@
 ﻿using DG.Tweening;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class MiningLazerVisual : MonoBehaviour, IToolVisual {
 
@@ -38,6 +37,9 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         _range = toolData.ToolRange;
         _lineWidth = toolData.ToolWidth;
         laser.volume = 0.2f;
+        // _lineWidth is 0.1 to 2, so we lerp that to get values from 1 to 0.7
+        laser.pitch = Mathf.Lerp(1f, 0.7f, (Mathf.Clamp(_lineWidth,0.1f,2) - 0.1f) / (2f - 0.1f));
+        // Could also have thicker line mean more bloom -> Nice glow
         FadeInLine(lineRenderer);
     }
 
@@ -144,11 +146,13 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
             main.startSize = 0.1f;
             var vel = _lineLazerParticleSystem.limitVelocityOverLifetime;
             vel.drag = 4;
+            lineRenderer.material.SetColor("_Color", new(6, 0, 0)); // Gives it more glow
         } else {
             var main = _lineLazerParticleSystem.main;
             main.startSpeed = new(-5, 5);
             main.startSize = 0.05f;
             var vel = _lineLazerParticleSystem.limitVelocityOverLifetime;
+            lineRenderer.material.SetColor("_Color", new(3, 0, 0));
             vel.drag = 16;
         }
     }

@@ -8,7 +8,10 @@ public class MiningLazer : MiningBase {
     [Tooltip("If you start firing again within this time, the lazer continues from its last angle.")]
     [SerializeField] private float directionMemoryTime = 1.5f;
     public bool CanMine { get; set; } = true;
-    public override ToolType ToolType => ToolType.Lazer;
+    public override ToolType ToolType => ToolType.Lazer; 
+    public override ToolAbilityBaseSO AbilityData => Ability;
+
+    public ToolAbilityBaseSO Ability;
 
     public static event Action<Vector2> OnPlayerKnockbackRequested;
 
@@ -103,7 +106,7 @@ public class MiningLazer : MiningBase {
             if (!_isMining) yield break;
 
             var pos = _inputManager.GetAimWorldInput();
-            Debug.Log("MiningAbilityRoutine!");
+            //Debug.Log("MiningAbilityRoutine!");
             var isFlipped = false;
             var horizontalInput = _inputManager.GetMovementInput().x;
 

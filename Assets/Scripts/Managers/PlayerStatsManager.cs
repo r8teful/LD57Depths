@@ -53,7 +53,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         // Subscribe to the OnChange event of the SyncDictionary.
         // This allows us to fire our local C# event whenever a stat changes,
         // which is essential for updating logic on ALL clients (owner and observers).
-        _permanentStats.OnChange += OnFinalStatChanged;
+        _finalStats.OnChange += OnFinalStatChanged;
 
         if (!base.IsOwner) {
             // For non-owners, we need to populate initial values and fire events
@@ -137,12 +137,9 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             return;
         }
 
-        // Here you would implement your calculation logic.
-        // This is a placeholder for your UpgradeCalculator.
         float currentValue = _permanentStats[stat];
         float newValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, increaseType, value);
 
-        // Updating the SyncDictionary will automatically send the change over the network.
         _permanentStats[stat] = newValue;
         RecalculateStat(stat);
     }
@@ -194,8 +191,11 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
     private void OnFinalStatChanged(SyncDictionaryOperation op, StatType key, float value, bool asServer) {
         // This method is called on ALL clients whenever the dictionary changes.
+        Debug.Log("STAT CHANGE!");
         switch (op) {
             case SyncDictionaryOperation.Add:
+                OnStatChanged?.Invoke(key, value);
+                break;
             case SyncDictionaryOperation.Set:
                 OnStatChanged?.Invoke(key, value);
                 break;

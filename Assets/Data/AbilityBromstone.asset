@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0183601e43946ba498966f9df2fef387, type: 3}
+  m_Name: AbilityBromstone
+  m_EditorClassIdentifier: 
+  Modifiers:
+  - Value: 1.5
+    Stat: 0
+    Type: 1
+  - Value: 1.2
+    Stat: 1
+    Type: 1
+  - Value: 0.2
+    Stat: 2
+    Type: 1
+  - Value: 130
+    Stat: 3
+    Type: 0
+  Duration: 5
