@@ -40,7 +40,8 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         _worldManager = FindFirstObjectByType<WorldManager>();
         _playerParent.PlayerLayerController.CurrentLayer.OnChange += PlayerLayerChange;
         //EquipDrill(); // Todo this would have to take from some kind of save file obviously
-        EquipLaser();
+        //EquipLaser();
+        EquipRPG();
     }
 
     private void PlayerLayerChange(VisibilityLayerType prev, VisibilityLayerType next, bool asServer) {
@@ -145,6 +146,9 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     private void EquipLaser() {
         EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("MiningLazer"));
     }
+    private void EquipRPG() {
+        EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("MiningRPG"));
+    }
 
     private void DEBUGSetMineTool(string tool) {
         if (tool == "god") {
@@ -157,6 +161,9 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         } else if (tool == "laser") { 
             Debug.Log("Setting Mining tool as laser");
             EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("MiningLazer"));
+        } else if (tool == "RPG" || tool == "rpg") {
+            Debug.Log("Setting Mining tool as rpg");
+            EquipMiningToolFromPrefab(App.ResourceSystem.GetPrefab("MiningRPG"));
         }
     }
    

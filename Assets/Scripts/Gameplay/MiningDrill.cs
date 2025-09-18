@@ -12,7 +12,6 @@ public class MiningDrill : MiningBase {
     public override ToolAbilityBaseSO AbilityData => Ability;
 
     public ToolAbilityBaseSO Ability;
-    [SerializeField] private GameObject handVisual;
 
     public override void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {
         for (int i = 0; i < RayCount; i++) {
@@ -44,17 +43,4 @@ public class MiningDrill : MiningBase {
     public override IEnumerator MiningRoutineAbility(ToolController controller) {
         throw new System.NotImplementedException();
     }
-
-
-    //public override void ToolStart(InputManager input, ToolController controller) {
-    //    base.ToolStart(input, controller);
-    //    handVisual.SetActive(true);
-    //    NetworkedPlayer.LocalInstance.PlayerVisuals.SetBobHand(false);
-    //}
-    //public override void ToolStop() {
-    //    base.ToolStop();
-    //    handVisual.SetActive(false);
-    //    // PlayerVisual set sprite to hand
-    //    NetworkedPlayer.LocalInstance.PlayerVisuals.SetBobHand(true);
-    //}
 }

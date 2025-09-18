@@ -4,6 +4,7 @@ using UnityEngine;
 public class RPGProjectile : MonoBehaviour {
     [SerializeField] private Rigidbody2D _rb;
     [SerializeField] private float explosionRadius = 2f; // Radius of the explosion
+    [SerializeField] private float hitBoxRadius = 2f; // Hitbox
     [SerializeField] private short damageAmount = 10; // Damage per tile
     [SerializeField] private float checkInterval = 0.1f; // How often to check for collisions
 
@@ -30,7 +31,7 @@ public class RPGProjectile : MonoBehaviour {
 
     private void CheckForCollision() {
         // Check for colliders in the explosion radius on the MiningHit layer
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, explosionRadius, LayerMask.GetMask("MiningHit"));
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, hitBoxRadius, LayerMask.GetMask("MiningHit"));
         if (hits.Length > 0) {
             Explode();
         }
@@ -66,5 +67,7 @@ public class RPGProjectile : MonoBehaviour {
     private void OnDrawGizmosSelected() {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, explosionRadius);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, hitBoxRadius);
     }
 }
