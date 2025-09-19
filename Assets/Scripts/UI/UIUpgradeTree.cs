@@ -7,6 +7,7 @@ public class UIUpgradeTree : MonoBehaviour {
     [SerializeField] private Transform _resourceContainer; // For the first upgrade that is there
 
     private Dictionary<UpgradeRecipeSO, UIUpgradeNode> _nodeMap = new Dictionary<UpgradeRecipeSO, UIUpgradeNode>();
+    private Dictionary<UpgradeRecipeSO, List<UILineRenderer>> _lineMap = new Dictionary<UpgradeRecipeSO, List<UILineRenderer>>();
     private UIUpgradeScreen _uiParent;
     internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades) {
         _nodeMap.Clear();
@@ -38,9 +39,12 @@ public class UIUpgradeTree : MonoBehaviour {
                     // Make line connections for the node
                     List<UILineRenderer> nodeLines = new();
                     foreach (var p in nodeData.prerequisiteAny) {
-                        nodeLines.Add(AddLine(p,uiNode.transform, dataToNodeLookup[p].transform));
+                        // Here the last upgrade will have 3 connections, meaning if we set its color to "availabe"
+                        var line = AddLine(preparedUpgrade, uiNode.transform, dataToNodeLookup[p].transform);
+                        nodeLines.Add(line);
+                        //line.gameObject.AddComponent<UIUpgradeLine>().Init(uiNode, dataToNodeLookup[p], line);
+                        line.gameObject.AddComponent<UIUpgradeLine>().Init(dataToNodeLookup[p],uiNode, line);
                     }
-                    
                     // Initialize it!
                     uiNode.name = $"UI_Node_{preparedUpgrade.displayName}";
                     uiNode.Init(preparedUpgrade, this, nodeLines);
@@ -57,6 +61,7 @@ public class UIUpgradeTree : MonoBehaviour {
         
         var lineRenderer = Instantiate(App.ResourceSystem.GetPrefab<UILineRenderer>("UILine"),transform);
         lineRenderer.transform.SetAsFirstSibling();
+        lineRenderer.name = $"Line {source}";
         float offsetFromNodes = 1f;
         int linePointsCount = 2;
 
@@ -83,7 +88,14 @@ public class UIUpgradeTree : MonoBehaviour {
         Debug.Log("From: " + fromPoint + " to: " + toPoint + " last point: " + list[list.Count - 1]);
 
         lineRenderer.Points = list.ToArray();
-        return lineRenderer;
+
+        if (_lineMap.ContainsKey(source)) {
+            _lineMap[source].Add(lineRenderer);
+        } else {
+            // new key
+            _lineMap.Add(source, new List<UILineRenderer>{ lineRenderer });
+        }
+            return lineRenderer;
     }
 
     internal void SetNodeAvailable(UpgradeRecipeSO upgradeData) {
@@ -97,6 +109,24 @@ public class UIUpgradeTree : MonoBehaviour {
                 .Init(item.item.icon, item.quantity);
         }
         _resourceContainer.gameObject.SetActive(true);
+    }
+    public void SetLineColor(UpgradeRecipeSO upgrade, Color c) {
+        // upgrade = LazerDamage1. It says prerequesate of LazerDamage0 is met. What we want it to do is set the 
+        if(upgrade.GetPrerequisites().Count == 1) {
+          
+        }
+        foreach(var met in UpgradeManagerPlayer.Instance.GetAllPrerequisitesMet(upgrade)) {
+            if (_lineMap.TryGetValue(met, out var lines)) {
+                foreach (var line in lines) {
+                    line.color = c;
+                }
+            }
+            if (_lineMap.TryGetValue(upgrade, out var lines2)) {
+                foreach (var line in lines2) {
+                    line.color = c;
+                }
+            }
+        }    
     }
 
     // Helper function to easily find a UI node later.

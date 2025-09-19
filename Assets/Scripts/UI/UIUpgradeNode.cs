@@ -23,15 +23,13 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     [OnValueChanged("InspectorBigChange")]
     public bool IsBig;
     public event Action PopupDataChanged;
-
+    public event Action<UpgradeNodeState> OnStateChange; // it should be an enum but eh
+    public enum UpgradeNodeState {Purchased,Active,Inactive }
 
     private static readonly string ICON_PURCHASED_HEX = "#FFFFFF";     // icon on purchased (orange) background
     private static readonly string ICON_AVAILABLE_HEX = "#FFFFFF";     // icon when available (active)
     private static readonly string ICON_NOT_AVAILABLE_HEX = "#9FB3B7";  // icon when unavailable (inactive / dim)
-    private static readonly string ICON_PRESSED_HEX = "#ECECEC";       // icon when pressed (slightly different)
-    private static readonly string LINE_PURCHASED_HEX = "#D58141";      
-    private static readonly string LINE_AVAILABLE_HEX = "#3DB2AD";       
-    private static readonly string LINE_NOT_AVAILABLE_HEX = "#10325B";       
+    private static readonly string ICON_PRESSED_HEX = "#ECECEC";       // icon when pressed (slightly different)  
 
     // 0 = Blue | Green | Orange
     // 1 = Active | Inactive | Pressed
@@ -42,9 +40,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Color _iconAvailableColor;
     private Color _iconNotAvailableColor;
     private Color _iconPressedColor;
-    private Color _linePurchasedColor;
-    private Color _lineAvailableColor;
-    private Color _lineNotAvailableColor;
     private bool _cachedIsPurchased;
     private bool _cachedPrerequisitesMet;
 
@@ -54,9 +49,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         ColorUtility.TryParseHtmlString(ICON_AVAILABLE_HEX, out _iconAvailableColor);
         ColorUtility.TryParseHtmlString(ICON_NOT_AVAILABLE_HEX, out _iconNotAvailableColor);
         ColorUtility.TryParseHtmlString(ICON_PRESSED_HEX, out _iconPressedColor);
-        ColorUtility.TryParseHtmlString(LINE_PURCHASED_HEX,out _linePurchasedColor);
-        ColorUtility.TryParseHtmlString(LINE_AVAILABLE_HEX, out _lineAvailableColor);
-        ColorUtility.TryParseHtmlString(LINE_NOT_AVAILABLE_HEX, out _lineNotAvailableColor);
     }
     public void InspectorBigChange() {
         if (IsBig) {
@@ -184,21 +176,24 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // Not the selected button -> show base (Purchased / Active / Inactive)
         if (isPurchased) {
             ApplySprite("Orange", "Inactive");
-            SetLinesColour(_linePurchasedColor);
+            //SetLinesColour(_linePurchasedColor);
             _iconImage.color = _iconPurchasedColor;
             _buttonCurrent.interactable = false;
+            OnStateChange?.Invoke(UpgradeNodeState.Purchased);
         } else if (prerequisitesMet) {
             ApplySprite(variant, "Active");
-            SetLinesColour(_lineAvailableColor);
+            OnStateChange?.Invoke(UpgradeNodeState.Active);
+           // SetLinesColour(_lineAvailableColor);
             _iconImage.color = _iconAvailableColor;
             _buttonCurrent.interactable = true;
 
-            _treeParent.SetNodeAvailable(_upgradeData);
+            //_treeParent.SetNodeAvailable(_upgradeData);
         } else {
             ApplySprite(variant, "Inactive");
-            SetLinesColour(_lineNotAvailableColor);
+            //SetLinesColour(_lineNotAvailableColor);
             _iconImage.color = _iconNotAvailableColor;
             _buttonCurrent.interactable = false;
+            OnStateChange?.Invoke(UpgradeNodeState.Inactive);
         }
     }
     private void ApplySprite(string variant, string state) {

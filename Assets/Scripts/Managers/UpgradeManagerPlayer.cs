@@ -37,6 +37,18 @@ public class UpgradeManagerPlayer : Singleton<UpgradeManagerPlayer>, INetworkedP
         }
         return false;
     }
+    public List<UpgradeRecipeSO> GetAllPrerequisitesMet(UpgradeRecipeSO recipe) {
+        var p = recipe.GetPrerequisites();
+        if (p == null || p.Count == 0) {
+            return new(); // No prerequisites
+        }
+
+        // true if AT LEAST ONE prerequisite is unlocked.
+        if (p.Any(u => unlockedUpgrades.ContainsKey(u.ID))) {
+            return p.FindAll(u => unlockedUpgrades.ContainsKey(u.ID)).ToList();
+        }
+        return new();  // No prerequisites met
+    }
     public void TryPurchaseUpgrade(UpgradeRecipeSO recipe) {
         // 1. Check if already purchased
         if (unlockedUpgrades.ContainsKey(recipe.ID)) {
