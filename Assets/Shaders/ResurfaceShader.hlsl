@@ -1,6 +1,6 @@
 // ---- Config ----
 #define NUM_BIOMES 10      // compile-time max. Use small numbers for perf & compatibility.
-#define BIOME_PLACEMENT_SCALE 0.01   // controls how wide/zoomed the biome partition map is
+#define BIOME_PLACEMENT_SCALE 1   // controls how wide/zoomed the biome partition map is
 #define BIOME_PLACEMENT_SPAN 200.0   // horizontal spread used when generating per-biome XOffset
 // ------------------------------------
 struct BiomeParams
@@ -78,6 +78,7 @@ float unity_hash(float p) {
     v *= 0x27d4eb2du;
     return v * (1.0 / float(0xffffffff));
 }
+
 float Unity_SimpleNoise_float(float2 UV, float Scale)
 {
     float t = 0.0;
@@ -95,6 +96,77 @@ float Unity_SimpleNoise_float(float2 UV, float Scale)
     t += unity_valueNoise(float2(UV.x * Scale / freq, UV.y * Scale / freq)) * amp;
 
     return t;
+}
+// utility: deterministic float in [0,1) from a seed/idx
+float Rand01FromSeed(float seed, int idx)
+{
+    // small trick to alter the input seed per idx
+    return frac(unity_hash(seed + (float) idx * 37.13));
+}
+// deterministic pick from a palette (returns 0..paletteSize-1)
+int PickFromSeed(float seed, int idx, int paletteSize)
+{
+    return (int) floor(Rand01FromSeed(seed, idx) * paletteSize);
+}
+// Derive a biome's parameters from the global seed and the biome index.
+// If you prefer, replace this whole function by reading arrays/uniforms from CPU.
+BiomeParams MakeBiomeFromSeed(float seed, int idx)
+{
+    BiomeParams b;
+
+    // small variety in noise scales / amps
+    float r0 = Rand01FromSeed(seed, idx * 11 + 1);
+    float r1 = Rand01FromSeed(seed, idx * 11 + 2);
+    float r2 = Rand01FromSeed(seed, idx * 11 + 3);
+    float r3 = Rand01FromSeed(seed, idx * 11 + 4);
+    float r4 = Rand01FromSeed(seed, idx * 11 + 5);
+
+    // Edge noise scale typically lower-freq than block noise
+    b.edgeNoiseScale = lerp(0.2, 4.0, r0); // tweak ranges to taste
+    b.edgeNoiseAmp = lerp(0.05, 0.8, r1);
+
+    b.blockNoiseScale = lerp(0.5, 8.0, r2);
+    b.blockNoiseAmp = lerp(0.3, 1.6, r3);
+    b.blockCutoff = lerp(0.2, 0.8, r4);
+
+    // Vertical band (Y)
+    float r5 = Rand01FromSeed(seed, idx * 11 + 6);
+    float r6 = Rand01FromSeed(seed, idx * 11 + 7);
+    b.YStart = lerp(-40.0, 40.0, r5); // world Y baseline for biome (choose range as your world)
+    b.YHeight = lerp(8.0, 32.0, r6);
+
+    // Horizontal size & offset
+    float r7 = Rand01FromSeed(seed, idx * 11 + 8);
+    float r8 = Rand01FromSeed(seed, idx * 11 + 9);
+    b.horSize = lerp(8.0, 60.0, r7);
+    b.XOffset = (r8 * 2.0 - 1.0) * BIOME_PLACEMENT_SPAN; // spread around origin +/- span
+
+    // Tile / air colors — simple seeded palette pick
+    // You can replace this palette with whatever you want; values must be 0..1
+    static const float4 paletteTiles[6] =
+    {
+        float4(90, 253, 255, 255) / 255.0, // cyan-ish
+        float4(180, 200, 120, 255) / 255.0, // green-ish
+        float4(200, 120, 220, 255) / 255.0, // purple-ish
+        float4(225, 190, 150, 255) / 255.0, // sand-ish
+        float4(120, 140, 200, 255) / 255.0, // blue-ish
+        float4(200, 100, 80, 255) / 255.0 // red-orange
+    };
+    static const float4 paletteAirs[6] =
+    {
+        float4(255, 253, 255, 255) / 255.0,
+        float4(220, 240, 255, 255) / 255.0,
+        float4(255, 230, 255, 255) / 255.0,
+        float4(255, 255, 240, 255) / 255.0,
+        float4(245, 250, 255, 255) / 255.0,
+        float4(255, 240, 230, 255) / 255.0
+    };
+
+    int pick = PickFromSeed(seed, idx * 13 + 2, 6);
+    b.tileColor = paletteTiles[pick];
+    b.airColor = paletteAirs[pick];
+
+    return b;
 }
 // =================================================================================
 // SECTION 1: YOUR CUSTOMIZABLE MASK LOGIC
@@ -320,6 +392,105 @@ out float Mask)
     // BECAUSE I CAN'T BE FUCKED AND LUCY SAID IM NOT ALLOWED TO DO ANY SHADER CODING TODAY!!
     Mask = WorldGenMaskOnly(uv, caveNoiseScale, caveAmp, caveCutoff, edgeNoiseScale, edgeNoiseAmp, blockNoiseScale, blockNoiseAmp,
                                   blockCutoff, YStart, YHeight, XOffset,horSize, trenchBaseWiden, trenchBaseWidth, edgeNoiseScale, edgeNoiseAmp, parallax, seed);
+}
+float4 WorldGenFullBiomes (
+    float2 uv,
+    // CAVES
+    float caveNoiseScale,
+    float caveAmp,
+    float caveCutoff,
+    // TRENCH
+    float trenchBaseWiden,
+    float trenchBaseWidth,
+    float trenchNoiseScale,
+    float trenchEdgeAmp,
+    // OTHER
+    float seed
+)
+{
+    float uniqueSeed = unity_hash(seed);
+    // Start the world as solid base color
+    float4 Color = float4(1, 0, 0, 0) / 255.0; // default fallback
+
+    // 1) CAVES (cut holes everywhere)
+    float caveNoise = step(Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed * 4000.0), caveNoiseScale) * caveAmp, caveCutoff);
+    bool isCave = (caveNoise < 0.5);
+    if (isCave)
+    {
+        // Cave color / empty space
+        return float4(0, 1, 1, 1); // return early for caves (transparent/air)
+    }
+
+    // 2) Decide which biome applies at this X (use a low-frequency noise to partition X)
+    float selNoise = Unity_SimpleNoise_float(float2(uv.x * BIOME_PLACEMENT_SCALE, uniqueSeed * 1000.0), 1.0);
+    selNoise = saturate(selNoise); // 0..1
+    int biomeIndex = min(NUM_BIOMES - 1, (int) floor(selNoise * (float) NUM_BIOMES));
+    // Create biome params from seed + index:
+    BiomeParams biome = MakeBiomeFromSeed(uniqueSeed, biomeIndex);
+
+    // 3) Biome horizontal/vertical membership with edge noise (per-biome params)
+    float edgeNoiseX = (Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed * 5000.0 + (float) biomeIndex * 11.0), biome.edgeNoiseScale) - 0.5) * 2.0;
+    float edgeNoiseY = (Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed * 2000.0 + (float) biomeIndex * 7.0), biome.edgeNoiseScale) - 0.5) * 2.0;
+    float width = max(0.0, biome.horSize + edgeNoiseX * biome.edgeNoiseAmp);
+    float heightTop = biome.YStart + biome.YHeight + edgeNoiseY * biome.edgeNoiseAmp;
+    float heightBottom = biome.YStart + edgeNoiseY * biome.edgeNoiseAmp;
+
+    bool isInBiomeRegion = (width > abs(uv.x - biome.XOffset)) && (uv.y >= heightBottom && uv.y < heightTop);
+
+    if (isInBiomeRegion)
+    {
+        // block vs air within the biome
+        float blockNoise = step(Unity_SimpleNoise_float(float2(uv.x, uv.y + uniqueSeed * (5000.0 + (float) biomeIndex * 3.0)), biome.blockNoiseScale) * biome.blockNoiseAmp, biome.blockCutoff);
+        if (blockNoise < 0.5)
+        {
+            // biome tile
+            Color = biome.tileColor;
+        }
+        else
+        {
+            // biome air
+            Color = biome.airColor;
+        }
+    }
+    else
+    {
+        // Not in any biome region -> keep original default or assign global surface color
+        // example fallback:
+        Color = float4(0.8, 0.8, 0.75, 1.0); // plain ground
+    }
+
+    // 4) Trench: only apply under the surface of the current biome (prevent surface recolor)
+    float trenchMask = GenerateTrenchAndSurface(uv, trenchBaseWiden, trenchBaseWidth, trenchNoiseScale, trenchEdgeAmp, 0.0, false, uniqueSeed);
+    // trenchMask == 0.0 means inside trench (per your original function)
+    if (trenchMask < 0.5)
+    {
+        // Only let trench overwrite the biome if this position is below the biome's surface
+        if (uv.y < biome.YStart)
+        {
+            // You can pick a trench color per-biome if desired; for now we use a neutral trench color
+            Color = float4(255, 254.0, 255, 255) / 255.0;
+        }
+    }
+
+    return Color;
+}
+void WorldGenFullBiomes_float(
+    float2 uv,
+    // CAVES
+    float caveNoiseScale,
+    float caveAmp,
+    float caveCutoff,
+    // TRENCH
+    float trenchBaseWiden,
+    float trenchBaseWidth,
+    float trenchNoiseScale,
+    float trenchEdgeAmp,
+    // OTHER
+    float seed,
+    out float4 Color
+) 
+{
+    Color = WorldGenFullBiomes(uv, caveNoiseScale, caveAmp, caveCutoff, trenchBaseWiden, trenchBaseWidth, trenchNoiseScale, trenchEdgeAmp, seed);
 }
 
 void CustomVoronoi_Edge_Procedural_float(

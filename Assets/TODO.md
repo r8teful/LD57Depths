@@ -5,7 +5,10 @@ GOOD FUCKING TRAILER
 	- Explosion tool! **DONE**
 	- Cool ass death lazer destroying everything **DONE**
 - Show Biomes
-	- 
+	- TODO
+- Make nice background shader
+	- Make edges have separate pattern 
+	- Biomes should have different patterns, just texture fade in and out
 CONTENT
 - Update ship layout **DONE**
 - Add interactive elements to upgrade & ship exit **DONE**
