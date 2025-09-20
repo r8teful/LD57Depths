@@ -298,7 +298,7 @@ Shader "Custom/WorldGenSprite"
                 float4 vertex : SV_POSITION;
                 float2 uv : TEXCOORD0;
                 float4 color : COLOR;
-                 float3 worldPos : TEXCOORD1;
+                float3 worldPos : TEXCOORD1;
             };
 
             v2f vert (appdata_t v)

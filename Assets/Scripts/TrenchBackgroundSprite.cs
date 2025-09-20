@@ -50,7 +50,7 @@ public class TranchBackgroundSprite : MonoBehaviour {
         //_spriteRenderer.material.SetFloat("_DecorationSpawnsMax", 0.3f - (0.05f*backgroundNumber));
         _spriteRenderer.sortingOrder -= backgroundNumber; 
     }
-
+    
     private void Update() {
         _spriteRenderer.material.SetVector("_CamPos", Camera.main.transform.position);
     }
