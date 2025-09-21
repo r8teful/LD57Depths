@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 public class BackgroundWorldTexturesHandler : MonoBehaviour {
@@ -81,6 +82,7 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
         mat.SetFloatArray("_YHeight", yHeight);
         mat.SetFloatArray("_horSize", horSize);
         mat.SetFloatArray("_XOffset", xOffset);
+        
 
         // global seed
         mat.SetFloat("_GlobalSeed", worldGenSetting.seed * 1+ matIndex * 2352.124f);

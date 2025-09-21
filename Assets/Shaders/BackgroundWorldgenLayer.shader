@@ -4,8 +4,7 @@ Shader "Custom/BackgroundWorldGenLayer"
     {
         _MainTex ("Dummy (not used)", 2D) = "white" {}
         _EdgeTex ("Edge Texture (set from C# per-biome)", 2D) = "white" {}
-        _FillTex ("Fill Texture (set from C# per-biome)", 2D) = "white" {}
-
+        _FillTexArray ("Fill Texture Array", 2DArray) = "" {}
         // world mapping & parallax
         _WorldUVScale ("World UV Scale", Float) = 1.0
         _CameraPos ("Camera World Pos", Vector) = (0,0,0,0)
@@ -74,7 +73,8 @@ Shader "Custom/BackgroundWorldGenLayer"
             float _YHeight[NUM_BIOMES];
             float _horSize[NUM_BIOMES];
             float _XOffset[NUM_BIOMES];
-
+            // Background array
+            UNITY_DECLARE_TEX2DARRAY(_FillTexArray);
             float _GlobalSeed; // set from C#
 
             // --- Minimal value-noise & hash (same idea as WorldGen) ---
@@ -134,7 +134,7 @@ Shader "Custom/BackgroundWorldGenLayer"
             // pick nearest biome in normalized 2D space (smaller score = closer)
             int PickBiome2D(float2 uv)
             {
-                int chosen = 0;
+                int chosen = 2; // 
                 float bestScore = 1e20;
                 for (int bi = 0; bi < NUM_BIOMES; ++bi)
                 {
@@ -183,7 +183,7 @@ Shader "Custom/BackgroundWorldGenLayer"
             // ---------- mask generator: returns 0..1 alpha for a given world-space coord ----------
             // Modified/simplified from WorldGen: only evaluates the currently selected biome (by index).
             // It returns 1 for solid (tile) and 0 for empty (air).
-            float GetWorldMask(float2 uv)
+            float GetWorldMask(float2 uv,int  biomeIndex)
             {
                 // caves (global) - explicit compare
                  float caveNoise = Unity_SimpleNoise_float(float2(uv.x * _CaveNoiseScale + _GlobalSeed * 2.79, uv.y * _CaveNoiseScale + _GlobalSeed * 8.69),1) * _CaveAmp;
@@ -196,7 +196,6 @@ Shader "Custom/BackgroundWorldGenLayer"
                 if (trenchMask < 0.5) {
                     return 0.0;
                 }
-                int biomeIndex = PickBiome2D(uv);
 
                 // get basic authored params for the selected biome
                 float b_edgeScale  = _edgeNoiseScale[biomeIndex];
@@ -282,14 +281,17 @@ Shader "Custom/BackgroundWorldGenLayer"
                 float2 pixUV = PixelizeUV(parUV, _PixelSize, _ScreenRatio);
 
                 // We'll sample the mask at pixUV. For edge detection we do a simple erosion (min of neighbors).
-
+                
+                int biomeIndex = PickBiome2D(pixUV);
                 // a) compute mask at center pixel
-                float centerMask = GetWorldMask(pixUV);
+                float centerMask = GetWorldMask(pixUV, biomeIndex);
 
                 // b) compute eroded mask by sampling the 4-neighbors inside the pixel grid
                 // use neighbor offsets of one pixel in world-space (inverse of pixel size)
-                float2 pxStep = float2(1.0 / _PixelSize, (1.0 / _PixelSize) / _ScreenRatio);
+                
+                //float2 pxStep = float2(1.0 / _PixelSize, (1.0 / _PixelSize) / _ScreenRatio);
 
+                /*
                 float m1 = GetWorldMask(pixUV + float2(pxStep.x, 0.0));
                 float m2 = GetWorldMask(pixUV + float2(-pxStep.x, 0.0));
                 float m3 = GetWorldMask(pixUV + float2(0.0, pxStep.y));
@@ -300,20 +302,24 @@ Shader "Custom/BackgroundWorldGenLayer"
                 // edgeMask: pixels that are solid (centerMask==1) but lost after erosion -> edge band
                 float edgeMask = saturate(centerMask - eroded); // 1 on thin edges, 0 elsewhere
                 float fillMask = centerMask * (1.0 - edgeMask);
+                */
+                float fillMask = centerMask; // We will get edgeMask another way, by using a cutoff delta 
 
                 // sample textures: prefer edge if edgeMask>0 else fill
-                float4 edgeCol = tex2D(_EdgeTex, worldUV); // sample using original sprite uv so textures map to screen
-                float4 fillCol = tex2D(_FillTex, worldUV);
+                float4 edgeCol = tex2D(_EdgeTex, worldUV); 
+                //float4 fillCol = tex2D(_FillTex, worldUV); // using texture2Darray now...
 
+                float3 uvw = float3(parUV, biomeIndex); // ParallaxUV + biome index
+                fixed4 outCol = UNITY_SAMPLE_TEX2DARRAY(_FillTexArray, uvw);
                 // combine with masks to compute final color/alpha
-                float4 outCol = lerp(fillCol, edgeCol, edgeMask); // pick edge color where edgeMask==1
+                //float4 outCol = lerp(fillCol, edgeCol, edgeMask); // pick edge color where edgeMask==1
                 float outAlpha = saturate(centerMask); // 1 if inside, 0 otherwise
 
                 // Debugging modes
                 if (_DebugMode > 0.5)
                 {
                     if (_DebugMode < 1.5) return float4(centerMask, centerMask, centerMask, 1.0); // mask visualization
-                    if (_DebugMode < 2.5) return float4(edgeMask, edgeMask, edgeMask, 1.0); // edge visual
+                    //if (_DebugMode < 2.5) return float4(edgeMask, edgeMask, edgeMask, 1.0); // edge visual
                 }
 
                 outCol.a = outAlpha;

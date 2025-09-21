@@ -24,11 +24,15 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _EdgeTex:
-        m_Texture: {fileID: 2800000, guid: 9218c0e2fd45ef242be3ac6fcf0ed287, type: 3}
+        m_Texture: {fileID: 2800000, guid: 24138097c3a82bb4880324726ca69696, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FillTex:
-        m_Texture: {fileID: 2800000, guid: 9218c0e2fd45ef242be3ac6fcf0ed287, type: 3}
+        m_Texture: {fileID: 2800000, guid: 24138097c3a82bb4880324726ca69696, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FillTexArray:
+        m_Texture: {fileID: 18700000, guid: 24138097c3a82bb4880324726ca69696, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -51,6 +55,6 @@ Material:
     - _TrenchNoiseScale: 0.164
     - _WorldUVScale: 1
     m_Colors:
-    - _CameraPos: {r: -294.6, g: -3060, b: 0, a: 0}
+    - _CameraPos: {r: -3878, g: -7518, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
