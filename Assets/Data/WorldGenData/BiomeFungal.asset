@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b679a26f4a0fe9a409516798c8439ad3, type: 3}
+  m_Name: BiomeFungal
+  m_EditorClassIdentifier: 
+  EdgeNoiseScale: 8.4
+  EdgeNoiseAmp: 0.7
+  BlockNoiseScale: 0.01
+  BlockNoiseAmp: 0.01
+  BlockCutoff: 0.5
+  HorSize: 663
+  YHeight: 624
+  TileColor: {r: 0.37254903, g: 0.52156866, b: 0, a: 1}
+  AirColor: {r: 1, g: 0.52156866, b: 1, a: 1}
+  YStart: -4769
+  XOffset: 0
+  FillTexture: {fileID: 0}
+  EdgeTexture: {fileID: 0}

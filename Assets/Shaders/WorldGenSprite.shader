@@ -198,8 +198,8 @@ Shader "Custom/WorldGenSprite"
                 float4 Color = float4(1, 0, 0, 255) / 255.0;
                 // CAVES - use global seed so caves change with seed
                 
-                float caveNoise = step(Unity_SimpleNoise_float(float2(uv.x, uv.y + _GlobalSeed * 4000.0), _CaveNoiseScale) * _CaveAmp, _CaveCutoff);
-                if (caveNoise < 0.5) {
+                float caveNoise = Unity_SimpleNoise_float(float2(uv.x * _CaveNoiseScale + _GlobalSeed * 2.79, uv.y * _CaveNoiseScale + _GlobalSeed * 8.69),1) * _CaveAmp;
+                if (caveNoise <_CaveCutoff) {
                     // Cave
                     Color = float4(0, 1, 1, 1);
                 }

@@ -6,17 +6,17 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
     public Material layerMaterial; // material instance for one layer
     public List<Texture2D> edgeTextures; // length == numBiomes
     public List<Texture2D> fillTextures; // length == numBiomes
-    public List<BiomeDescriptor> biomeDescriptors; // same struct as in BiomMaterialUploader
+    public WorldGenSettingSO worldGenSetting;
     public List<Material> layerMaterials; // 4 materials for 4 layers
     public List<float> layerParallax; // each layer's parallax
     public List<float> layerPixelSize; // pixel sizes for each layer
 
     public int numBiomes = 6;
-    public int currentBiomeIndex = 0;
-    public float globalSeed = 1234f;
     private void Start() {
+        var index = 0;
         foreach (var mat in layerMaterials) {
-            PushBiomeToLayerMaterial(mat, currentBiomeIndex); // todo set current index where we start!
+            PushBiomeToLayerMaterial(mat, index); // todo set current index where we start!
+            index++;
         }
     }
     void Update() {
@@ -31,14 +31,8 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
             m.SetFloat("_PixelSize", layerPixelSize[i]);
         }
     }
-    public void PushBiomeToLayerMaterial(Material mat, int biomeIdx) {
+    public void PushBiomeToLayerMaterial(Material mat,int matIndex) {
         if (mat == null) return;
-        int bi = Mathf.Clamp(biomeIdx, 0, numBiomes - 1);
-
-        // set textures for this layer's material (fast)
-        mat.SetTexture("_EdgeTex", edgeTextures[bi]);
-        mat.SetTexture("_FillTex", fillTextures[bi]);
-
 
         // push per-biome arrays (if not already pushed globally)
         float[] edgeNoiseScale = new float[numBiomes];
@@ -52,16 +46,16 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
         float[] xOffset = new float[numBiomes];
 
         for (int i = 0; i < numBiomes; ++i) {
-            if (i < biomeDescriptors.Count) {
-                var b = biomeDescriptors[i];
-                edgeNoiseScale[i] = b.edgeNoiseScale;
-                edgeNoiseAmp[i] = b.edgeNoiseAmp;
-                blockNoiseScale[i] = b.blockNoiseScale;
-                blockNoiseAmp[i] = b.blockNoiseAmp;
-                blockCutoff[i] = b.blockCutoff;
+            if (i < worldGenSetting.biomes.Count) {
+                var b = worldGenSetting.biomes[i];
+                edgeNoiseScale[i] = b.EdgeNoiseScale;
+                edgeNoiseAmp[i] = b.EdgeNoiseAmp;
+                blockNoiseScale[i] = b.BlockNoiseScale;
+                blockNoiseAmp[i] = b.BlockNoiseAmp;
+                blockCutoff[i] = b.BlockCutoff;
                 yStart[i] = b.YStart;
                 yHeight[i] = b.YHeight;
-                horSize[i] = b.horSize;
+                horSize[i] = b.HorSize;
                 xOffset[i] = b.XOffset;
             } else {
                 // sane defaults
@@ -89,6 +83,16 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
         mat.SetFloatArray("_XOffset", xOffset);
 
         // global seed
-        mat.SetFloat("_GlobalSeed", globalSeed);
+        mat.SetFloat("_GlobalSeed", worldGenSetting.seed * 1+ matIndex * 2352.124f);
+
+        // Cave and trench
+        mat.SetFloat("_CaveNoiseScale", worldGenSetting.caveNoiseScale);
+        mat.SetFloat("_CaveAmp", worldGenSetting.caveAmp);
+        mat.SetFloat("_CaveCutoff", worldGenSetting.caveCutoff);
+
+        mat.SetFloat("_TrenchBaseWiden", worldGenSetting.GetTrenchWiden());
+        mat.SetFloat("_TrenchBaseWidth", worldGenSetting.GetTrenchWidth());
+        mat.SetFloat("_TrenchNoiseScale", worldGenSetting.GetTrenchEdgeFreq());
+        mat.SetFloat("_TrenchEdgeAmp", worldGenSetting.GetTrenchEdgeNoiseAmp());
     }
 }

@@ -34,16 +34,17 @@ public class TranchBackgroundSprite : MonoBehaviour {
         _spriteRenderer.material.SetFloat("_caveAmp", settings.caveAmp);
         _spriteRenderer.material.SetFloat("_caveCutoff", settings.caveCutoff);
         // BIOME
-        _spriteRenderer.material.SetFloat("_edgeNoiseScale", settings.biomeEdgeNoiseScale);
-        _spriteRenderer.material.SetFloat("_edgeNoiseAmp", settings.biomeEdgeNoiseAmp);
-        _spriteRenderer.material.SetFloat("_blockNoiseScale", settings.biomeblockNoiseScale);
-        _spriteRenderer.material.SetFloat("_blockNoiseAmp", settings.biomeblockNoiseAmp);
+        // We're changing the whole shader so this is not what we want to do anymore because we'll have 10 biomes 
+        //_spriteRenderer.material.SetFloat("_edgeNoiseScale", settings.biomeEdgeNoiseScale);
+        //_spriteRenderer.material.SetFloat("_edgeNoiseAmp", settings.biomeEdgeNoiseAmp);
+        //_spriteRenderer.material.SetFloat("_blockNoiseScale", settings.biomeblockNoiseScale);
+        //_spriteRenderer.material.SetFloat("_blockNoiseAmp", settings.biomeblockNoiseAmp);
                                                                                             // -0.1 if background number is 1, else 0
         //_spriteRenderer.material.SetFloat("_blockCutoff", settings.biomeblockCutoff - 0.1f * backgroundNumber <= 1 ? backgroundNumber : 0);
-        _spriteRenderer.material.SetFloat("_blockCutoff", settings.biomeblockCutoff - 0.1f * backgroundNumber);
-        _spriteRenderer.material.SetFloat("_YStart", settings.biomeYStart);
-        _spriteRenderer.material.SetFloat("_YHeight", settings.biomeYHeight);
-        _spriteRenderer.material.SetFloat("_horSize", settings.biomeHorSize);
+        //_spriteRenderer.material.SetFloat("_blockCutoff", settings.biomeblockCutoff - 0.1f * backgroundNumber);
+        //_spriteRenderer.material.SetFloat("_YStart", settings.biomeYStart);
+        //_spriteRenderer.material.SetFloat("_YHeight", settings.biomeYHeight);
+        //_spriteRenderer.material.SetFloat("_horSize", settings.biomeHorSize);
         
 
 

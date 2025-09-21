@@ -15,18 +15,13 @@ Shader "Custom/BackgroundWorldGenLayer"
         _PixelSize ("Pixels per Unit (pixelization)", Float) = 8.0
         _ScreenRatio ("Screen Ratio (H/W)", Float) = 1.0
         
-        // Cave parameters (editable in inspector)
-        _CaveNoiseScale ("Cave Noise Scale", Float) = 1.0
-        _CaveAmp ("Cave Amp", Float) = 1.0
-        _CaveCutoff ("Cave Cutoff", Float) = 0.5
-        // Trench parameters (editable) Remove later (Should be same as worldgenSprite) 
-        _TrenchBaseWiden ("Trench Base Widen", Float) = 0.02
-        _TrenchBaseWidth ("Trench Base Width", Float) = 12.0
-        _TrenchNoiseScale ("Trench Noise Scale", Float) = 1.0
-        _TrenchEdgeAmp ("Trench Edge Amp", Float) = 1.0
         _WorldUVScale ("World UV Scale", Float) = 0.1
         // debug
         _DebugMode ("Debug Mode (0=off,1=mask,2=edge)", Float) = 0.0
+        _TrenchBaseWiden ("Widen)", Float) = 0.0
+        _TrenchBaseWidth ("Width)", Float) = 0.0
+        _TrenchNoiseScale ("Scale)", Float) = 0.0
+        _TrenchEdgeAmp ("EdgeAmp)", Float) = 0.0
     }
 
     SubShader
@@ -53,11 +48,14 @@ Shader "Custom/BackgroundWorldGenLayer"
             float _ParallaxFactor;
             float _PixelSize;
             float _ScreenRatio;
-            float _DebugMode;            
+            float _DebugMode;   
+            
+            // Caves
             float _CaveNoiseScale;
             float _CaveAmp;
             float _CaveCutoff;
 
+            // Trench
             float _TrenchBaseWiden;
             float _TrenchBaseWidth;
             float _TrenchNoiseScale;
@@ -188,9 +186,9 @@ Shader "Custom/BackgroundWorldGenLayer"
             float GetWorldMask(float2 uv)
             {
                 // caves (global) - explicit compare
-                float caveNoise = step(Unity_SimpleNoise_float(float2(uv.x, uv.y + _GlobalSeed * 4000.0), _CaveNoiseScale) * _CaveAmp, _CaveCutoff);
-                // Use a fixed threshold for caves; you can tune or expose per-biome if you want.
-                if (caveNoise < 0.45) {// cave threshold; tweak or expose
+                 float caveNoise = Unity_SimpleNoise_float(float2(uv.x * _CaveNoiseScale + _GlobalSeed * 2.79, uv.y * _CaveNoiseScale + _GlobalSeed * 8.69),1) * _CaveAmp;
+                 // Use a fixed threshold for caves; you can tune or expose per-biome if you want.
+                if (caveNoise < _CaveCutoff) {
                     return 0.0;
                 }
                 // Trench
@@ -229,7 +227,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                         return 0.0;
                 }
 
-                return 0.0;
+                return 1.0;
             }
 
             // very small helper to integer-cast biome index safely

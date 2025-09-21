@@ -37,17 +37,20 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _CaveAmp: 1.76
+    - _CaveCutoff: 0.36
+    - _CaveNoiseScale: 0.05
     - _CurrentBiomeIndex: 2
     - _DebugMode: 0
     - _ParallaxFactor: 0.2
-    - _PixelSize: 120
+    - _PixelSize: 1.2
     - _ScreenRatio: 3.1666667
-    - _TrenchBaseWiden: 0.02
-    - _TrenchBaseWidth: 12
-    - _TrenchEdgeAmp: 1
-    - _TrenchNoiseScale: 1
+    - _TrenchBaseWiden: -0.05
+    - _TrenchBaseWidth: 174.5
+    - _TrenchEdgeAmp: 11.98
+    - _TrenchNoiseScale: 0.164
     - _WorldUVScale: 1
     m_Colors:
-    - _CameraPos: {r: 6.106495, g: -3124.9243, b: 0, a: 0}
+    - _CameraPos: {r: -294.6, g: -3060, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

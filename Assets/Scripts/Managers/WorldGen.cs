@@ -69,12 +69,9 @@ public class WorldGen : MonoBehaviour {
         _renderTexture = renderTexture;
         _settings = settings;
         Material worldGenMat = _settings.associatedMaterial;
-        _settings.initWorldSettings(worldGenMat.GetFloat("_BaseWidth"), worldGenMat.GetFloat("_BaseWiden"), 
-            worldGenMat.GetFloat("_NoiseScale"), worldGenMat.GetFloat("_EdgeAmp"),worldGenMat.GetFloat("_CaveScale"), 
-            worldGenMat.GetFloat("_CaveAmp"), worldGenMat.GetFloat("_CaveCutoff"), worldGenMat.GetFloat("_LuminenceEdgeNoiseScale"), 
-            worldGenMat.GetFloat("_LuminenceEdgeNoiseAmp"), worldGenMat.GetFloat("_LuminesenceNoiseScale"), worldGenMat.GetFloat("_LuminenceBlockNoiseAmp"), 
-            worldGenMat.GetFloat("_BiomeCutoff"), worldGenMat.GetFloat("_LuminesenceStart"), worldGenMat.GetFloat("_LuminesenceHeight"), 
-            worldGenMat.GetFloat("_xOffset"), worldGenMat.GetFloat("_LuminenceHorSize"),worldGenMat.GetFloat("_Seed"));
+        _settings.InitWorldSettings(worldGenMat.GetFloat("_TrenchBaseWidth"), worldGenMat.GetFloat("_TrenchBaseWiden"), 
+            worldGenMat.GetFloat("_TrenchNoiseScale"), worldGenMat.GetFloat("_TrenchEdgeAmp"),worldGenMat.GetFloat("_CaveNoiseScale"), 
+            worldGenMat.GetFloat("_CaveAmp"), worldGenMat.GetFloat("_CaveCutoff"),worldGenMat.GetFloat("_GlobalSeed"));
         this.worldmanager = worldmanager;
         this.chunkManager = chunkManager;
         _renderCamera = renderCamera;

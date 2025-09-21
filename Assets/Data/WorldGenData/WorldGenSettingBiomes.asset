@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WorldGenSettingBiomes
   m_EditorClassIdentifier: 
   seed: 4728
-  associatedMaterial: {fileID: 2100000, guid: 08190815cd6b6204c9a2a932e30a0365, type: 2}
+  associatedMaterial: {fileID: 2100000, guid: b0b8f8dc91677724785e2a37bc63e929, type: 2}
   oreTypes:
   - name: Iron
     tile: {fileID: 11400000, guid: f4b09cb01edb0244da271b27ca802fa3, type: 2}
@@ -34,12 +34,7 @@ MonoBehaviour:
   caveNoiseScale: 0.173
   caveAmp: 1.31
   caveCutoff: 0.669
-  biomeEdgeNoiseScale: 0.7
-  biomeEdgeNoiseAmp: 41
-  biomeblockCutoff: 0.688
-  biomeblockNoiseScale: 0.389
-  biomeblockNoiseAmp: 1.72
-  biomeYStart: -3127
-  biomeYHeight: 94.7
-  biomeXOffset: -425.3
-  biomeHorSize: 360.66
+  biomes:
+  - {fileID: 11400000, guid: 5183ec9dd8eded44aa227b8ca5268657, type: 2}
+  - {fileID: 11400000, guid: 42ff9b5deefacb34d9c6f3fbe089caee, type: 2}
+  - {fileID: 11400000, guid: b5686ffd4a4c4074081a25eafcf8170a, type: 2}

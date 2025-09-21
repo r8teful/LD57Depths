@@ -1,26 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
-[System.Serializable]
-public class BiomeDescriptor {
-    public float edgeNoiseScale = 1.0f;
-    public float edgeNoiseAmp = 0.2f;
-    public float blockNoiseScale = 2.0f;
-    public float blockNoiseAmp = 0.8f;
-    public float blockCutoff = 0.5f;
-    public float YStart = 0.0f;
-    public float YHeight = 16.0f;
-    public float horSize = 40.0f;
-    public float XOffset = 0.0f;
-    public Color tileColor = Color.white;
-    public Color airColor = Color.white;
-}
 
 [ExecuteAlways]
 public class BiomeMaterialUploader : MonoBehaviour {
     public Material targetMaterial;
     [OnCollectionChanged("PushBiomesToMaterial", "PushBiomesToMaterial")]
-    public List<BiomeDescriptor> biomes = new List<BiomeDescriptor>();
+    public WorldGenSettingSO worldGenSetting;
     public int NUM_BIOMES = 6; // MUST match shader's NUM_BIOMES
     public float globalSeed = 1234.0f;
     public float uvScale = 100.0f; // tune to match the transform in shader (if using the example uv transform)
@@ -51,19 +37,19 @@ public class BiomeMaterialUploader : MonoBehaviour {
         var airColors = new Vector4[NUM_BIOMES];
 
         for (int i = 0; i < NUM_BIOMES; ++i) {
-            if (i < biomes.Count) {
-                var b = biomes[i];
-                edgeNoiseScale[i] = b.edgeNoiseScale;
-                edgeNoiseAmp[i] = b.edgeNoiseAmp;
-                blockNoiseScale[i] = b.blockNoiseScale;
-                blockNoiseAmp[i] = b.blockNoiseAmp;
-                blockCutoff[i] = b.blockCutoff;
+            if (i < worldGenSetting.biomes.Count) {
+                var b = worldGenSetting.biomes[i];
+                edgeNoiseScale[i] = b.EdgeNoiseScale;
+                edgeNoiseAmp[i] = b.EdgeNoiseAmp;
+                blockNoiseScale[i] = b.BlockNoiseScale;
+                blockNoiseAmp[i] = b.BlockNoiseAmp;
+                blockCutoff[i] = b.BlockCutoff;
                 yStart[i] = b.YStart;
                 yHeight[i] = b.YHeight;
-                horSize[i] = b.horSize;
+                horSize[i] = b.HorSize;
                 xOffset[i] = b.XOffset;
-                tileColors[i] = new Vector4(b.tileColor.r, b.tileColor.g, b.tileColor.b, b.tileColor.a);
-                airColors[i] = new Vector4(b.airColor.r, b.airColor.g, b.airColor.b, b.airColor.a);
+                tileColors[i] = new Vector4(b.TileColor.r, b.TileColor.g, b.TileColor.b, b.TileColor.a);
+                airColors[i] = new Vector4(b.AirColor.r, b.AirColor.g, b.AirColor.b, b.AirColor.a);
             } else {
                 // sensible default
                 edgeNoiseScale[i] = 1.0f;
