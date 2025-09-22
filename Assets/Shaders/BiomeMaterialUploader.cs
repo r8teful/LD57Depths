@@ -12,7 +12,7 @@ public class BiomeMaterialUploader : MonoBehaviour {
     public float uvScale = 100.0f; // tune to match the transform in shader (if using the example uv transform)
     [OnValueChanged("PushBiomesToMaterial")]
     public float DebugupdateMaterial = 10f;
-    void Start() {
+    void Awake() {
         PushBiomesToMaterial();
     }
 

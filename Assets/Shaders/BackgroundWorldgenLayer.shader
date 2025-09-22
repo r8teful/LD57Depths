@@ -125,7 +125,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                 return t;
             }
 
-            float PerBiomeNoiseSimple(float2 uv, int biomeIndex, float scale, float seedOffset)
+            float PerBiomeNoise(float2 uv, int biomeIndex, float scale, float seedOffset)
             {
                 float perBiomeSeed = _GlobalSeed + (float)biomeIndex * 137.731;
                 float2 samplePos = float2(uv.x * scale + perBiomeSeed * 13.19, uv.y * scale + perBiomeSeed * 7.31 + seedOffset);
@@ -134,7 +134,7 @@ Shader "Custom/BackgroundWorldGenLayer"
             // pick nearest biome in normalized 2D space (smaller score = closer)
             int PickBiome2D(float2 uv)
             {
-                int chosen = 2; // 
+                int chosen = NUM_BIOMES+1; // 
                 float bestScore = 1e20;
                 for (int bi = 0; bi < NUM_BIOMES; ++bi)
                 {
@@ -157,6 +157,40 @@ Shader "Custom/BackgroundWorldGenLayer"
                     }
                 }
                 return chosen;
+            } 
+            int PickBiome2DBetter(float2 uv) {
+                for (int i = 0; i < NUM_BIOMES; i++) { 
+                    // Fetch per-biome parameters
+                    float b_edgeScale = _edgeNoiseScale[i];
+                    float b_edgeAmp = _edgeNoiseAmp[i];
+                    float b_YStart = _YStart[i];
+                    float b_YHeight = _YHeight[i];
+                    float b_horSize = _horSize[i];
+                    float b_XOffset = _XOffset[i];
+
+                    // Compute biome bounds with noise TODO, could make the noise scale less to have a more natural wave
+                    float edgeNoiseX = (PerBiomeNoise(uv, i, b_edgeScale, 5000.0) - 0.5) * 2.0;
+                    float edgeNoiseY = (PerBiomeNoise(uv, i, b_edgeScale, 2000.0) - 0.5) * 2.0;
+
+                    float width = max(0.0, b_horSize + edgeNoiseX * b_edgeAmp);
+                    float heightTop = b_YStart + b_YHeight + edgeNoiseY * b_edgeAmp;
+                    float heightBottom = b_YStart + edgeNoiseY * b_edgeAmp;
+                    
+                    /*
+                    // Trying simple now without edge noise
+                    float width = max(0.0, b_horSize);
+                    float heightTop = b_YStart + b_YHeight;
+                    float heightBottom = b_YStart;
+                    */
+
+                    // Check if UV is inside this biome's region
+                    bool isInBiomeRegion = (width > abs(uv.x - b_XOffset)) && (uv.y >= heightBottom && uv.y < heightTop);
+
+                    if (isInBiomeRegion) {
+                        return i + 1; // Shifting here, and will shift back in world mask
+                    }
+                }
+                return 0;
             }
             
             float GenerateTrenchAndSurface(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float parallax ,bool useEdge, float seed)
@@ -183,34 +217,50 @@ Shader "Custom/BackgroundWorldGenLayer"
             // ---------- mask generator: returns 0..1 alpha for a given world-space coord ----------
             // Modified/simplified from WorldGen: only evaluates the currently selected biome (by index).
             // It returns 1 for solid (tile) and 0 for empty (air).
-            float GetWorldMask(float2 uv,int  biomeIndex)
-            {
-                // caves (global) - explicit compare
-                 float caveNoise = Unity_SimpleNoise_float(float2(uv.x * _CaveNoiseScale + _GlobalSeed * 2.79, uv.y * _CaveNoiseScale + _GlobalSeed * 8.69),1) * _CaveAmp;
-                 // Use a fixed threshold for caves; you can tune or expose per-biome if you want.
-                if (caveNoise < _CaveCutoff) {
-                    return 0.0;
+            float GetWorldMask(float2 uv,int  biomeIndex) {
+                if(biomeIndex < 1) {
+                    // Not in any biome reagon, do world stuff
+                     
+                    // caves (global) - explicit compare
+                    float caveNoise = Unity_SimpleNoise_float(float2(uv.x * _CaveNoiseScale + _GlobalSeed * 2.79, uv.y * _CaveNoiseScale + _GlobalSeed * 8.69),1) * _CaveAmp;
+                    // Use a fixed threshold for caves; you can tune or expose per-biome if you want.
+                    if (caveNoise < _CaveCutoff) {
+                        return 0.0;
+                    }
+                    // Trench
+                    float trenchMask = GenerateTrenchAndSurface(uv, _TrenchBaseWiden, _TrenchBaseWidth, _TrenchNoiseScale, _TrenchEdgeAmp, 0.0, false, _GlobalSeed);
+                    if (trenchMask < 0.5) {
+                        return 0.0;
+                    }
+                    return 1.0;
+                } else {
+                    int shiftedIndex = biomeIndex - 1; // We shifted it forward because 0 is default, but now shift it back to get the right index for the array values
+                    float b_blockCut   = _blockCutoff[shiftedIndex];
+                    float b_blockScale = _blockNoiseScale[shiftedIndex];
+                    float b_blockAmp   = _blockNoiseAmp[shiftedIndex];
+                     float blockVal = PerBiomeNoise(uv, shiftedIndex, b_blockScale, 7000.0) * b_blockAmp;
+                    if (blockVal < b_blockCut)
+                        return 1.0;
+                    else
+                        return 0.0;
                 }
-                // Trench
-                float trenchMask = GenerateTrenchAndSurface(uv, _TrenchBaseWiden, _TrenchBaseWidth, _TrenchNoiseScale, _TrenchEdgeAmp, 0.0, false, _GlobalSeed);
-                if (trenchMask < 0.5) {
-                    return 0.0;
-                }
+               
+                
 
-                // get basic authored params for the selected biome
+               
+
+                /*
                 float b_edgeScale  = _edgeNoiseScale[biomeIndex];
                 float b_edgeAmp    = _edgeNoiseAmp[biomeIndex];
-                float b_blockScale = _blockNoiseScale[biomeIndex];
-                float b_blockAmp   = _blockNoiseAmp[biomeIndex];
-                float b_blockCut   = _blockCutoff[biomeIndex];
                 float b_YStart     = _YStart[biomeIndex];
                 float b_YHeight    = _YHeight[biomeIndex];
                 float b_horSize    = _horSize[biomeIndex];
                 float b_XOffset    = _XOffset[biomeIndex];
 
-                // edge noise for shape
-                float edgeNoiseX = (PerBiomeNoiseSimple(uv, biomeIndex, b_edgeScale, 5000.0) - 0.5) * 2.0;
-                float edgeNoiseY = (PerBiomeNoiseSimple(uv, biomeIndex, b_edgeScale, 2000.0) - 0.5) * 2.0;
+                // My tought here is that we don't need to do this edge shit again and check if we are in the biome
+                // because the biome index already SAYS that we are in the biome, so why check it twice
+                float edgeNoiseX = (PerBiomeNoise(uv, biomeIndex, b_edgeScale, 5000.0) - 0.5) * 2.0;
+                float edgeNoiseY = (PerBiomeNoise(uv, biomeIndex, b_edgeScale, 2000.0) - 0.5) * 2.0;
                 float width = max(0.0, b_horSize + edgeNoiseX * b_edgeAmp);
                 float heightTop = b_YStart + b_YHeight + edgeNoiseY * b_edgeAmp;
                 float heightBottom = b_YStart + edgeNoiseY * b_edgeAmp;
@@ -219,14 +269,14 @@ Shader "Custom/BackgroundWorldGenLayer"
                 if ((width > abs(uv.x - b_XOffset)) && (uv.y >= heightBottom && uv.y < heightTop))
                 {
                     // block/air via block-noise
-                    float blockVal = PerBiomeNoiseSimple(uv, biomeIndex, b_blockScale, 7000.0) * b_blockAmp;
+                    float blockVal = PerBiomeNoise(uv, biomeIndex, b_blockScale, 7000.0) * b_blockAmp;
                     if (blockVal < b_blockCut)
                         return 1.0;
                     else
                         return 0.0;
                 }
+                */
 
-                return 1.0;
             }
 
             // very small helper to integer-cast biome index safely
@@ -282,7 +332,7 @@ Shader "Custom/BackgroundWorldGenLayer"
 
                 // We'll sample the mask at pixUV. For edge detection we do a simple erosion (min of neighbors).
                 
-                int biomeIndex = PickBiome2D(pixUV);
+                int biomeIndex = PickBiome2DBetter(pixUV);
                 // a) compute mask at center pixel
                 float centerMask = GetWorldMask(pixUV, biomeIndex);
 
@@ -309,7 +359,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                 float4 edgeCol = tex2D(_EdgeTex, worldUV); 
                 //float4 fillCol = tex2D(_FillTex, worldUV); // using texture2Darray now...
 
-                float3 uvw = float3(parUV, biomeIndex); // ParallaxUV + biome index
+                float3 uvw = float3(parUV, biomeIndex); // ParallaxUV + biome index is shifted to +1 because texture array is setup to have 0 as default, and rest as biomes
                 fixed4 outCol = UNITY_SAMPLE_TEX2DARRAY(_FillTexArray, uvw);
                 // combine with masks to compute final color/alpha
                 //float4 outCol = lerp(fillCol, edgeCol, edgeMask); // pick edge color where edgeMask==1

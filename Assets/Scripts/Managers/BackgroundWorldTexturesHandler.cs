@@ -13,7 +13,7 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
     public List<float> layerPixelSize; // pixel sizes for each layer
 
     public int numBiomes = 6;
-    private void Start() {
+    private void Awake() {
         var index = 0;
         foreach (var mat in layerMaterials) {
             PushBiomeToLayerMaterial(mat, index); // todo set current index where we start!

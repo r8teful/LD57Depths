@@ -168,6 +168,40 @@ Shader "Custom/WorldGenSprite"
                 return Unity_SimpleNoise_float(samplePos, 1.0);
             }
 
+            int PickBiome2D(float2 uv) {
+                for (int i = 0; i < NUM_BIOMES; i++) { 
+                    // Fetch per-biome parameters
+                    float b_edgeScale = _edgeNoiseScale[i];
+                    float b_edgeAmp = _edgeNoiseAmp[i];
+                    float b_YStart = _YStart[i];
+                    float b_YHeight = _YHeight[i];
+                    float b_horSize = _horSize[i];
+                    float b_XOffset = _XOffset[i];
+
+                    // Compute biome bounds with noise
+                    float edgeNoiseX = (PerBiomeNoise(uv, i, b_edgeScale, 5000.0) - 0.5) * 2.0;
+                    float edgeNoiseY = (PerBiomeNoise(uv, i, b_edgeScale, 2000.0) - 0.5) * 2.0;
+
+                    float width = max(0.0, b_horSize + edgeNoiseX * b_edgeAmp);
+                    float heightTop = b_YStart + b_YHeight + edgeNoiseY * b_edgeAmp;
+                    float heightBottom = b_YStart + edgeNoiseY * b_edgeAmp;
+                    
+                    /*
+                    // Trying simple now without edge noise
+                    float width = max(0.0, b_horSize);
+                    float heightTop = b_YStart + b_YHeight;
+                    float heightBottom = b_YStart;
+                    */
+
+                    // Check if UV is inside this biome's region
+                    bool isInBiomeRegion = (width > abs(uv.x - b_XOffset)) && (uv.y >= heightBottom && uv.y < heightTop);
+
+                    if (isInBiomeRegion) {
+                        return i;
+                    }
+                }
+                return -1;  // Default or fallback biome index if none found (e.g., void or background)
+}
             // Trench logic (kept similar to original)
             float GenerateTrenchAndSurface(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float parallax ,bool useEdge, float seed)
             {
@@ -205,45 +239,15 @@ Shader "Custom/WorldGenSprite"
                 }
                 
                 // ---------- 2D normalized-distance biome pick (cheap) ----------
-                int biomeIndex = 0;
-                float bestScore = 1e20;
+                int biomeIndex = PickBiome2D(uv);
                 
-                // iterate biomes and pick the one with smallest normalized squared distance
-                // This is so we know what calculations to use!
-                for (int bi = 0; bi < NUM_BIOMES; ++bi)
-                {
-                    // center of biome in Y = middle of the vertical band
-                    float centerX = _XOffset[bi];
-                    float centerY = _YStart[bi] + 0.5 * _YHeight[bi];
-                
-                    // dx, dy from pixel to biome center
-                    float dx = uv.x - centerX;
-                    float dy = uv.y - centerY;
-                
-                    // normalization factors: horizontal "radius" and vertical "radius"
-                    // interpret _horSize as half-width (same semantic as other existing width check).
-                    // If your _horSize is full-width, divide by 2 here instead.
-                    float radiusX = max(0.0001, _horSize[bi]);              // avoid div0
-                    float radiusY = max(0.0001, 0.5 * _YHeight[bi]);       // half-height as vertical radius
-                
-                    // normalized squared distance (no sqrt)
-                    float nx = dx / radiusX;
-                    float ny = dy / radiusY;
-                    float score = nx*nx + ny*ny;
-                
-                    if (score < bestScore)
-                    {
-                        bestScore = score;
-                        biomeIndex = bi;
-                    }
-                }
                 // fetch biome parameters from arrays
                 float b_edgeScale  = _edgeNoiseScale[biomeIndex];
                 float b_edgeAmp    = _edgeNoiseAmp[biomeIndex];
                 float b_blockScale = _blockNoiseScale[biomeIndex];
                 float b_blockAmp   = _blockNoiseAmp[biomeIndex];
-                float b_blockCut   = _blockCutoff[biomeIndex];
                 float b_YStart     = _YStart[biomeIndex];
+                float b_blockCut   = _blockCutoff[biomeIndex];
                 float b_YHeight    = _YHeight[biomeIndex];
                 float b_horSize    = _horSize[biomeIndex];
                 float b_XOffset    = _XOffset[biomeIndex];
