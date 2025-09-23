@@ -1,5 +1,8 @@
+using Sirenix.OdinInspector;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using UnityEditor;
 using UnityEngine;
 
 public class BackgroundWorldTexturesHandler : MonoBehaviour {
@@ -11,14 +14,14 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
     public List<Material> layerMaterials; // 4 materials for 4 layers
     public List<float> layerParallax; // each layer's parallax
     public List<float> layerPixelSize; // pixel sizes for each layer
-
+    [OnValueChanged("PushBiomesToMaterials")]
+    public float DebugupdateMaterial = 10f;
     public int numBiomes = 6;
+    private void OnEnable() {
+        worldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterials; });
+    }
     private void Awake() {
-        var index = 0;
-        foreach (var mat in layerMaterials) {
-            PushBiomeToLayerMaterial(mat, index); // todo set current index where we start!
-            index++;
-        }
+        PushBiomesToMaterials();
     }
     void Update() {
         Vector3 camPos = Camera.main.transform.position;
@@ -30,6 +33,14 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
             var m = layerMaterials[i];
             m.SetFloat("_ParallaxFactor", layerParallax[i]);
             m.SetFloat("_PixelSize", layerPixelSize[i]);
+        }
+    }
+    public void PushBiomesToMaterials() {
+        Debug.Log("pushing");
+        var index = 0;
+        foreach (var mat in layerMaterials) {
+            PushBiomeToLayerMaterial(mat, index); // todo set current index where we start!
+            index++;
         }
     }
     public void PushBiomeToLayerMaterial(Material mat,int matIndex) {

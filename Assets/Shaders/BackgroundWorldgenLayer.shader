@@ -14,7 +14,12 @@ Shader "Custom/BackgroundWorldGenLayer"
         _PixelSize ("Pixels per Unit (pixelization)", Float) = 8.0
         _ScreenRatio ("Screen Ratio (H/W)", Float) = 1.0
         
-        _WorldUVScale ("World UV Scale", Float) = 0.1
+        _EdgeThickness ("EdgeThickness", Float) = 0.1
+        _TrenchEdgeSens ("TrenchEdgeSensitivity", Float) = 0.1
+
+        _TextureTiling ("Backgroun Texture Tiling", Float) = 1.0
+        _TintColor ("EdgeColor", Color) = (1, 1, 1, 1)
+        _NonEdgeDarkness("NonEdgeBackgroundColor", Color) = (0, 0, 0, 0)
         // debug
         _DebugMode ("Debug Mode (0=off,1=mask,2=edge)", Float) = 0.0
         _TrenchBaseWiden ("Widen)", Float) = 0.0
@@ -45,10 +50,16 @@ Shader "Custom/BackgroundWorldGenLayer"
             float _WorldUVScale;
             float4 _CameraPos;
             float _ParallaxFactor;
+            float _TextureTiling;
             float _PixelSize;
             float _ScreenRatio;
             float _DebugMode;   
-            
+            float _TrenchEdgeSens;   
+            float _EdgeThickness;     
+            float _EdgeInnerRim;            // 0 = off, 1 = on (if you want a rim inside hole)
+            float _EdgeOuterRim;            // 0 = off, 1 = on (rim on the filled side)
+            float4 _NonEdgeDarkness;
+            float4 _TintColor;
             // Caves
             float _CaveNoiseScale;
             float _CaveAmp;
@@ -134,7 +145,7 @@ Shader "Custom/BackgroundWorldGenLayer"
             // pick nearest biome in normalized 2D space (smaller score = closer)
             int PickBiome2D(float2 uv)
             {
-                int chosen = NUM_BIOMES+1; // 
+                int chosen = NUM_BIOMES; 
                 float bestScore = 1e20;
                 for (int bi = 0; bi < NUM_BIOMES; ++bi)
                 {
@@ -214,22 +225,152 @@ Shader "Custom/BackgroundWorldGenLayer"
                 bool mask = distanceToEdge < 0.1;
                 return mask ? 1.0 : 0.0;
             }
+            // --- Utility: turn a signed scalar into fill + edge masks ---
+            // s: signed value where s>0 = filled, s<=0 = hole
+            // thickness: width of edge band (in the same units as s). If <=0 -> no edge.
+            // Returns: fillMask (0..1), edgeMask (0..1 where 1 == at inner rim)
+            void MakeMasksFromSigned(float s, float edgeThicknessPixels, out float fillMask, out float edgeMask)
+            {
+                // anti-alias around zero using the derivative of s.
+                // This value scales `s` so that 1 unit of `s` corresponds to 1 pixel.
+                float screenSpaceScale = fwidth(s); 
+                float aa = screenSpaceScale * 0.5; // Half a pixel for anti-aliasing
+
+                // fillMask: smooth step from hole (s<=0) to filled (s>0)
+                fillMask = smoothstep(-aa, aa, s);
+
+                if (edgeThicknessPixels <= 0.0)
+                {
+                    edgeMask = 0.0;
+                    return;
+                }
+
+                // Convert desired pixel thickness to 's' units using the screenSpaceScale.
+                // So, 'edgeThicknessSDFUnits' is the raw 's' value corresponding to the desired pixel thickness.
+                float edgeThicknessSDFUnits = edgeThicknessPixels * screenSpaceScale;
+
+                // The 'band' defines the region of the edge.
+                // It goes from 0 at s=0 (inner rim) to 1 at s=edgeThicknessSDFUnits (outer edge of band).
+                float band = saturate(s / edgeThicknessSDFUnits);
+                
+                // edgeMask is strong when band is near 0, fades to 0 when band -> 1.
+                // Use smoothstep for soft falloff and multiply by fillMask so holes get zero edge.
+                // The smoothstep operates over the full width of the edge band.
+                // Using fwidth(band) for anti-aliasing ensures smooth transition within the edge.
+                float edgeSmoothness = fwidth(band); // Derivative of band, to smooth the fade
+                edgeMask = (1.0 - smoothstep(0.0, 1.0, band)) * fillMask; // Original implementation: fade from 1 to 0 across the band
+            }
+            void MakeMasksFromSigned2(float s, float thickness, out float fillMask, out float edgeMask)
+            {
+                // anti-alias around zero using the derivative of s
+                float aa = max(1e-5, fwidth(s) * 0.5);
+            
+                // fillMask: smooth step from hole (s<=0) to filled (s>0)
+                fillMask = smoothstep(-aa, aa, s);
+            
+                if (thickness <= 0.0)
+                {
+                    edgeMask = 0.0;
+                    return;
+                }
+            
+                // band: normalized [0..1] across [s=0 .. s=thickness]
+                float band = saturate(s / thickness); // 0 at s=0 (rim), 1 at s>=thickness
+                // edgeMask is strong when band is near 0, fades to 0 when band -> 1.
+                // Use smoothstep for soft falloff and multiply by fillMask so holes get zero edge.
+                
+                //edgeMask = (1.0 - smoothstep(0.0, 1.0, band)) * fillMask;
+                edgeMask = pow(1.0 - smoothstep(0.0, 1.0, band), 1.8) * fillMask; //sharper peak at the inner rim
+                //edgeMask = 1.0 - smoothstep(_EdgeThickness, _EdgeThickness+ fwidth(s), abs(s));
+            }
+
+            // caves: s = caveNoise - cutoff  (caveNoise < cutoff -> hole because s < 0)
+            float SampleCaveSigned(float2 uv)
+            {
+                float caveNoise = Unity_SimpleNoise_float(
+                    float2(uv.x * _CaveNoiseScale + _GlobalSeed * 2.79,
+                            uv.y * _CaveNoiseScale + _GlobalSeed * 8.69), 1.0) * _CaveAmp;
+                return caveNoise - _CaveCutoff;
+            }
+
+            // trench: signed distance-ish: s = abs(uv.x) - noisyHalfWidth
+            // Also respects surfaceNoise and maxDepth like your original function.
+            // Positive s -> outside trench (filled). Negative s -> inside trench (hole).
+            float SampleTrenchSigned(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float parallax, float seed)
+            {
+                // --- 1. Calculate the noisy, widening trench walls ---
+                float halfTrenchWidth = (baseWidth + abs(uv.y) * baseWiden) / 2.0;
+                float edgeNoise = (Unity_SimpleNoise_float(float2(uv.x, uv.y + seed), noiseFreq) - 0.5) * 2.0;
+                float noisyHalfWidth = max(0.0, halfTrenchWidth + edgeNoise * edgeAmp);
+
+                // SDF for the vertical trench walls.
+                // This is the horizontal distance from the current UV to the noisy edge.
+                // It's negative inside and positive outside.
+                float trenchWallsSDF = abs(uv.x) - noisyHalfWidth;
+
+                // --- 2. Calculate the noisy top surface ---
+                float surfaceNoise = ((Unity_SimpleNoise_float(float2(uv.x, uv.y + 2000.0), 1.32) - 0.5) * 2.0) * 3.0;
+                
+                // SDF for the top surface. We want the area *above* this surface to be part of the trench.
+                // 'surfaceNoise - uv.y' is negative above the surface line and positive below.
+                float topSurfaceSDF = surfaceNoise - uv.y;
+
+                // --- 3. Combine the trench and surface (Union) ---
+                // The final "empty" area is the union of the space between the walls AND the space above the surface.
+                // The union operation for SDFs is min().
+                float combinedTrenchSDF = min(trenchWallsSDF, topSurfaceSDF);
+
+                // --- 4. Apply the maximum depth floor (Intersection) ---
+                // This acts as a hard floor. The world is solid below this depth.
+                // Note: Assuming uv.y is negative for depth.
+                float maxDepth = abs(-1 * baseWidth / baseWiden) * 0.9 * (1 + parallax);
+
+                // SDF for the floor. We want the area *above* y = -maxDepth.
+                // This is negative above the floor and positive below it.
+                float floorSDF = -uv.y - maxDepth;
+                
+                // We want the intersection of our trench shape and the area "above the floor".
+                // The intersection operation for SDFs is max().
+                float finalSDF = max(combinedTrenchSDF, floorSDF);
+                
+                // Divide the final distance field by the characteristic size of the trench.
+                // This changes the output from absolute world units to a scale-independent ratio.
+                // We add a small epsilon to baseWidth to prevent division by zero.
+                return finalSDF / max(baseWidth*_TrenchEdgeSens, 0.0001);
+            }
+
+            // ---------- Biome block sampler: option to normalize by amplitude ----------
+            float SampleBiomeBlockSigned(float2 uv, int shiftedIndex, float b_blockScale, float b_blockAmp, float b_blockCut, bool normalizeByAmp)
+            {
+                float blockVal = PerBiomeNoise(uv, shiftedIndex, b_blockScale, 7000.0) * b_blockAmp;
+                //float s = b_blockCut - blockVal; // >0 filled as before
+                float s = blockVal- b_blockCut ; // >0 filled as before
+
+                if (normalizeByAmp)
+                {
+                    // Normalize per-biome so edge-thickness has similar numeric meaning across biomes.
+                    // Be careful if b_blockAmp is near zero.
+                    float denom = max(1e-4, b_blockAmp);
+                    s = s / denom;
+                }
+
+                return s;
+            }
             // ---------- mask generator: returns 0..1 alpha for a given world-space coord ----------
             // Modified/simplified from WorldGen: only evaluates the currently selected biome (by index).
             // It returns 1 for solid (tile) and 0 for empty (air).
-            float GetWorldMask(float2 uv,int  biomeIndex) {
+            float GetWorldMask(float2 uv,int  biomeIndex,float extraCutoff) {
                 if(biomeIndex < 1) {
                     // Not in any biome reagon, do world stuff
-                     
                     // caves (global) - explicit compare
                     float caveNoise = Unity_SimpleNoise_float(float2(uv.x * _CaveNoiseScale + _GlobalSeed * 2.79, uv.y * _CaveNoiseScale + _GlobalSeed * 8.69),1) * _CaveAmp;
                     // Use a fixed threshold for caves; you can tune or expose per-biome if you want.
-                    if (caveNoise < _CaveCutoff) {
+                    if (caveNoise < _CaveCutoff+extraCutoff) {
                         return 0.0;
                     }
                     // Trench
                     float trenchMask = GenerateTrenchAndSurface(uv, _TrenchBaseWiden, _TrenchBaseWidth, _TrenchNoiseScale, _TrenchEdgeAmp, 0.0, false, _GlobalSeed);
-                    if (trenchMask < 0.5) {
+                    if (trenchMask < 0.5+extraCutoff) {
                         return 0.0;
                     }
                     return 1.0;
@@ -239,14 +380,86 @@ Shader "Custom/BackgroundWorldGenLayer"
                     float b_blockScale = _blockNoiseScale[shiftedIndex];
                     float b_blockAmp   = _blockNoiseAmp[shiftedIndex];
                      float blockVal = PerBiomeNoise(uv, shiftedIndex, b_blockScale, 7000.0) * b_blockAmp;
-                    if (blockVal < b_blockCut)
+                    if (blockVal < b_blockCut+extraCutoff)
                         return 1.0;
                     else
                         return 0.0;
                 }
+            }
                
-                
+            void GetWorldFillAndEdge(float2 uv, int biomeIndex, float edgeThickness, out float fillMask, out float edgeMask) {
+                // default s = large positive (filled)
+                float s = 1e2;
 
+                if (biomeIndex < 1)
+                {
+                    // world logic: cave and trench both can create holes; if either indicates a hole, treat as hole.
+                    float sCave = SampleCaveSigned(uv);
+                    float sTrench = SampleTrenchSigned(uv, _TrenchBaseWiden, _TrenchBaseWidth, _TrenchNoiseScale, _TrenchEdgeAmp, 0.0, _GlobalSeed);
+
+                    // combine so that any hole-producing feature wins (min). If you have more features, min() them too.
+                    s = min(sCave, sTrench);
+                }
+                else
+                {
+                    int shiftedIndex = biomeIndex - 1;
+                    float b_blockCut   = _blockCutoff[shiftedIndex];
+                    float b_blockScale = _blockNoiseScale[shiftedIndex];
+                    float b_blockAmp   = _blockNoiseAmp[shiftedIndex];
+                    s = SampleBiomeBlockSigned(uv, shiftedIndex, b_blockScale, b_blockAmp, b_blockCut,false);
+                }
+
+                // produce smooth masks from signed scalar
+                MakeMasksFromSigned(s, edgeThickness, fillMask, edgeMask);
+            }
+            void GetWorldFill(float2 uv, int biomeIndex, out float fillMask)
+            {
+                float s = 1e2; // Default to solid
+            
+                if (biomeIndex < 1)
+                {
+                    float sCave = SampleCaveSigned(uv);
+                    float sTrench = SampleTrenchSigned(uv, _TrenchBaseWiden, _TrenchBaseWidth, _TrenchNoiseScale, _TrenchEdgeAmp, 0.0, _GlobalSeed);
+                    s = min(sCave, sTrench);
+                }
+                else
+                {
+                    int shiftedIndex = biomeIndex - 1;
+                    float b_blockCut   = _blockCutoff[shiftedIndex];
+                    float b_blockScale = _blockNoiseScale[shiftedIndex];
+                    float b_blockAmp   = _blockNoiseAmp[shiftedIndex];
+                    s = SampleBiomeBlockSigned(uv, shiftedIndex, b_blockScale, b_blockAmp, b_blockCut, false);
+                }
+                
+                // We only need the fill mask. Use a simpler version of MakeMasksFromSigned.
+                // Use fwidth for anti-aliasing to prevent jagged edges even on the blocks.
+                //float aa = fwidth(s) * 0.5;
+                //fillMask = smoothstep(-aa, aa, s);
+                fillMask = step(0.0, s);
+            }
+            // Don't know why we need 3 of these but I'm just trying to make it work!!
+            // Replaces GetWorldFill, GetWorldFillAndEdge, and GetWorldFill_HardAlpha
+            float GetWorldSDF(float2 uv, int biomeIndex)
+            {
+                float s = 1e2; // Default to solid
+            
+                if (biomeIndex < 1)
+                {
+                    float sCave = SampleCaveSigned(uv);
+                    float sTrench = SampleTrenchSigned(uv, _TrenchBaseWiden, _TrenchBaseWidth, _TrenchNoiseScale, _TrenchEdgeAmp, 0.0, _GlobalSeed);
+                    s = min(sCave, sTrench);
+                }
+                else
+                {
+                    int shiftedIndex = biomeIndex - 1;
+                    float b_blockCut   = _blockCutoff[shiftedIndex];
+                    float b_blockScale = _blockNoiseScale[shiftedIndex];
+                    float b_blockAmp   = _blockNoiseAmp[shiftedIndex];
+                    s = SampleBiomeBlockSigned(uv, shiftedIndex, b_blockScale, b_blockAmp, b_blockCut, true);
+                }
+            
+                return s;
+            }
                
 
                 /*
@@ -277,7 +490,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                 }
                 */
 
-            }
+            
 
             // very small helper to integer-cast biome index safely
             int IntBiomeIndex(float f) { return max(0, min(NUM_BIOMES - 1, (int)f)); }
@@ -311,7 +524,8 @@ Shader "Custom/BackgroundWorldGenLayer"
                 // To keep square blocks on non-square viewport we scale Y by screenRatio before floor.
                 float2 scaled = uv * pixelSize;
                 scaled.y *= screenRatio;
-                scaled = floor(scaled);
+                //scaled = round(scaled);
+                scaled = floor(scaled + 0.5);
                 scaled.y /= screenRatio;
                 return scaled / pixelSize;
             }
@@ -324,59 +538,59 @@ Shader "Custom/BackgroundWorldGenLayer"
                 // 2) Parallax: shift the world coord based on camera position and parallax factor
                 // Camera pos passed in _CameraPos.xy
                 float2 cam = _CameraPos.xy;
-                float par = _ParallaxFactor;
-                float2 parUV = ((worldUV - cam) * par) + worldUV; // your proposed formula ((UV - CameraPos) * Par) + UV
+                float2 parUV = ((worldUV - cam) * _ParallaxFactor) + worldUV; // your proposed formula ((UV - CameraPos) * Par) + UV
 
                 // 3) Pixelize (blocky look) - do on parUV so parallax keeps blocks-stable
                 float2 pixUV = PixelizeUV(parUV, _PixelSize, _ScreenRatio);
-
-                // We'll sample the mask at pixUV. For edge detection we do a simple erosion (min of neighbors).
                 
-                int biomeIndex = PickBiome2DBetter(pixUV);
+                int biomeIndex = PickBiome2DBetter(parUV);
+                float s_HighRes = GetWorldSDF(parUV, biomeIndex);
+                float s_LowRes  = GetWorldSDF(pixUV, biomeIndex);
+                float s_ForColoring = max(s_HighRes, s_LowRes);
                 // a) compute mask at center pixel
-                float centerMask = GetWorldMask(pixUV, biomeIndex);
-
-                // b) compute eroded mask by sampling the 4-neighbors inside the pixel grid
-                // use neighbor offsets of one pixel in world-space (inverse of pixel size)
+                float fillMask_HighRes, edgeMask_HighRes;
+                //GetWorldFillAndEdge(parUV, biomeIndex, _EdgeThickness, fillMask_HighRes, edgeMask_HighRes);
+                MakeMasksFromSigned2(s_ForColoring, _EdgeThickness, fillMask_HighRes, edgeMask_HighRes);
                 
-                //float2 pxStep = float2(1.0 / _PixelSize, (1.0 / _PixelSize) / _ScreenRatio);
+                // b) Low-Res HARD mask for pixelated alpha, using the original low-res SDF
+                float fillMask_Pixelated = step(0.0, s_LowRes);
+                // --- LOW-RESOLUTION PASS for ALPHA ---
+                // Calculate a blocky fill mask for the final alpha channel.
+                //float fillMask_Pixelated;
+                //GetWorldFill(pixUV, biomeIndex, fillMask_Pixelated);
 
-                /*
-                float m1 = GetWorldMask(pixUV + float2(pxStep.x, 0.0));
-                float m2 = GetWorldMask(pixUV + float2(-pxStep.x, 0.0));
-                float m3 = GetWorldMask(pixUV + float2(0.0, pxStep.y));
-                float m4 = GetWorldMask(pixUV + float2(0.0, -pxStep.y));
-
-                float eroded = min(centerMask, min(min(m1,m2), min(m3,m4)));
-
-                // edgeMask: pixels that are solid (centerMask==1) but lost after erosion -> edge band
-                float edgeMask = saturate(centerMask - eroded); // 1 on thin edges, 0 elsewhere
-                float fillMask = centerMask * (1.0 - edgeMask);
-                */
-                float fillMask = centerMask; // We will get edgeMask another way, by using a cutoff delta 
-
-                // sample textures: prefer edge if edgeMask>0 else fill
-                float4 edgeCol = tex2D(_EdgeTex, worldUV); 
-                //float4 fillCol = tex2D(_FillTex, worldUV); // using texture2Darray now...
-
-                float3 uvw = float3(parUV, biomeIndex); // ParallaxUV + biome index is shifted to +1 because texture array is setup to have 0 as default, and rest as biomes
-                fixed4 outCol = UNITY_SAMPLE_TEX2DARRAY(_FillTexArray, uvw);
+                float3 uvw = float3(parUV * _TextureTiling, biomeIndex); // ParallaxUV + biome index is shifted to +1 because texture array is setup to have 0 as default, and rest as biomes
+                fixed4 baseCol = UNITY_SAMPLE_TEX2DARRAY(_FillTexArray, uvw);
                 // combine with masks to compute final color/alpha
                 //float4 outCol = lerp(fillCol, edgeCol, edgeMask); // pick edge color where edgeMask==1
-                float outAlpha = saturate(centerMask); // 1 if inside, 0 otherwise
-
+                //float outAlpha = saturate(fillMask); // 1 if inside, 0 otherwise
+                
+                // a) Darken the filled area, but NOT the edge area.
+                float nonEdgeFilled = fillMask_HighRes * (1.0 - edgeMask_HighRes);
+                float3 darkenedColor = baseCol.rgb * _NonEdgeDarkness.rgb * nonEdgeFilled; 
+                
+                float3 darkenedBase = lerp(baseCol.rgb, _TintColor.rgb,_TintColor.a);
+                //float nonEdgeFilled = fillMask * (1.0 - edgeMask);
+                //float darkened = baseCol * (1.0 - _NonEdgeDarkness * nonEdgeFilled); 
+                
+                // Edge color blending
+                //float4 edgeColor = _EdgeColor; // set in material
+                float3 finalColor = lerp(darkenedColor, darkenedBase, edgeMask_HighRes);
+                float4 result = float4(finalColor,fillMask_Pixelated);
+                
                 // Debugging modes
                 if (_DebugMode > 0.5)
                 {
-                    if (_DebugMode < 1.5) return float4(centerMask, centerMask, centerMask, 1.0); // mask visualization
-                    //if (_DebugMode < 2.5) return float4(edgeMask, edgeMask, edgeMask, 1.0); // edge visual
+                    if (_DebugMode < 1.5) return float4(fillMask_Pixelated, fillMask_Pixelated, fillMask_Pixelated, 1.0); // mask visualization
+                    if (_DebugMode < 2.5) return float4(edgeMask_HighRes, edgeMask_HighRes, edgeMask_HighRes, 1.0); // edge visual
                 }
 
-                outCol.a = outAlpha;
+                return result;
+                
                 // multiply by vertex color if desired:
-                outCol.rgb *= i.color.rgb;
-                outCol.a *= i.color.a;
-                return outCol;
+                //outCol.rgb *= i.color.rgb;
+                //outCol.a *= i.color.a;
+                //return outCol;
             }
             ENDHLSL
         }

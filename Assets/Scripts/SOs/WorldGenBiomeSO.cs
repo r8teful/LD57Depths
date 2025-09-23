@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 [CreateAssetMenu(fileName = "WorldGenBiomeSO", menuName = "ScriptableObjects/WorldGen/WorldGenBiomeSO", order = 2)]
 
 public class WorldGenBiomeSO : ScriptableObject {
@@ -26,4 +28,10 @@ public class WorldGenBiomeSO : ScriptableObject {
     [Header("Background")]
     public Texture2D FillTexture;
     public Texture2D EdgeTexture;
+
+    // Event to invoke on changes
+    public event Action onDataChanged;
+    private void OnValidate() {
+        onDataChanged?.Invoke();
+    }
 }
