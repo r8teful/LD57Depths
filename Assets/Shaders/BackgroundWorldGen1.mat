@@ -55,7 +55,7 @@ Material:
     - _ParallaxFactor: 0.2
     - _PixelSize: 1.2
     - _ScreenRatio: 1.777778
-    - _TextureTiling: 1
+    - _TextureTiling: 0.4
     - _TrenchBaseWiden: -0.05
     - _TrenchBaseWidth: 174.5
     - _TrenchEdgeAmp: 11.98
@@ -63,9 +63,9 @@ Material:
     - _TrenchNoiseScale: 0.164
     - _WorldUVScale: 1
     m_Colors:
-    - _CameraPos: {r: -0.49201608, g: -3090.9553, b: 0, a: 0}
+    - _CameraPos: {r: -1.4119025, g: -3127.9558, b: 0, a: 0}
     - _EdgeColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}
-    - _NonEdgeDarkness: {r: 0.12100001, g: 0.12100001, b: 0.12100001, a: 1}
-    - _TintColor: {r: 0, g: 0, b: 0, a: 0.87058824}
+    - _NonEdgeDarkness: {r: 0.018539999, g: 0.018539999, b: 0.09, a: 1}
+    - _TintColor: {r: 0, g: 0, b: 0, a: 0.77254903}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

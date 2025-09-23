@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EdgeNoiseScale: 8.4
   EdgeNoiseAmp: 0.7
-  BlockNoiseScale: 0.01
-  BlockNoiseAmp: 0.01
-  BlockCutoff: 0.5
+  BlockNoiseScale: 0.16
+  BlockNoiseAmp: 0.02
+  BlockCutoff: 0.01
   HorSize: 663
   YHeight: 624
   TileColor: {r: 0.37254903, g: 0.52156866, b: 0, a: 1}
