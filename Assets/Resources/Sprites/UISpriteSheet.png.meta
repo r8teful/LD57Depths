@@ -3040,9 +3040,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 177
-        y: 410
+        y: 408
         width: 13
-        height: 9
+        height: 12
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -3299,6 +3299,138 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UpgradeMiningRange0
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 367
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75ff8eebf35eaf047965bde9f016ecf3
+      internalID: -1526817864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeMiningRange1
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 367
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 078d1b484d6597a47b2c6ea0f9c9711d
+      internalID: 595226712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeMiningRange2
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 367
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 78de72a7f3645f548bce79d1f22ee2e3
+      internalID: -1646224493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeFire
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 348
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e8c7de0dc2b775842b0f039d1709e23b
+      internalID: -1101943279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeStrenght
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 332
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e92b0f0b5bb244141a693cf2fb8a2fa2
+      internalID: -1567719935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpgradeAccuracy
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 381
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 210fe8e2fe478184bb7aff2e58b9047b
+      internalID: 1441869239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -3419,6 +3551,7 @@ TextureImporter:
       UISpriteSheet_47: 1042009565
       UISpriteSheet_54: 1913473331
       UISpriteSheet_64: -1587015040
+      UpgradeAccuracy: 1441869239
       UpgradeFilterExtracted: 1228492800
       UpgradeFilterExtractorForce: -1012180492
       UpgradeFilterExtractorRange: 1350617202
@@ -3427,6 +3560,7 @@ TextureImporter:
       UpgradeFilterResourceOutput: 1502528288
       UpgradeFilterT2: -1181486474
       UpgradeFilterT3: 1646928911
+      UpgradeFire: -1101943279
       UpgradeLazerSpecialBrimstone: -172477240
       UpgradeLightBrighter: 969133963
       UpgradeLightMoreFish: -819378468
@@ -3446,6 +3580,9 @@ TextureImporter:
       UpgradeMiningLazerUnlock: 1012510582
       UpgradeMiningPickupRange: 1573820211
       UpgradeMiningRange: -1923053130
+      UpgradeMiningRange0: -1526817864
+      UpgradeMiningRange1: 595226712
+      UpgradeMiningRange2: -1646224493
       UpgradeMiningStrong: -765993463
       UpgradeNodeBigPurchased: 1267944118
       UpgradeOxygenGillsUnlock: -1876437063
@@ -3469,6 +3606,7 @@ TextureImporter:
       UpgradeSpeedJetpackUnlock: -2053248459
       UpgradeSpeedLowerDrag: -786564752
       UpgradeSpeedMax: 868697242
+      UpgradeStrenght: -1567719935
       UpgradeTreeGrowth: 776407073
       UpgradeTreeOutput: 1414853538
       UpgradeTreeSpecial: 345832696
