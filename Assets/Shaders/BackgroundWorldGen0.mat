@@ -45,26 +45,29 @@ Material:
     - _CaveCutoff: 0.36
     - _CaveNoiseScale: 0.05
     - _CurrentBiomeIndex: 1.22
+    - _DarkenCurve: 1
+    - _DarkenMax: 0.67
     - _DebugMode: 0.3
     - _EdgeColor: 0.1
     - _EdgeInnerRim: 0.6
     - _EdgeOuterRim: 1.11
-    - _EdgeThickness: 0.02
+    - _EdgeThickness: 0.006
     - _EdgeThicknessPixels: 197.58
     - _NonEdgeDarkness: 0.92
     - _ParallaxFactor: 0
     - _PixelSize: 1
     - _ScreenRatio: 1.7777778
-    - _TextureTiling: 0.5
+    - _TextureTiling: 0.4
     - _TrenchBaseWiden: -0.05
     - _TrenchBaseWidth: 174.5
     - _TrenchEdgeAmp: 11.98
-    - _TrenchEdgeSens: 0.1
+    - _TrenchEdgeSens: 0.6
     - _TrenchNoiseScale: 0.164
     - _WorldUVScale: 1
     m_Colors:
-    - _CameraPos: {r: -1.4119025, g: -3127.9558, b: 0, a: 0}
+    - _CameraPos: {r: 0.56440336, g: -3103.2466, b: 0, a: 0}
     - _EdgeColor: {r: 0.052918315, g: 1, b: 0, a: 1}
+    - _EdgeTintColor: {r: 0, g: 0, b: 0, a: 0.65882355}
     - _NonEdgeDarkness: {r: 0, g: 0, b: 0.07, a: 1}
     - _TintColor: {r: 0, g: 0, b: 0, a: 0.8509804}
   m_BuildTextureStacks: []

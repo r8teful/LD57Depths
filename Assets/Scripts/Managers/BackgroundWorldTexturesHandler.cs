@@ -56,6 +56,7 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
         float[] yHeight = new float[numBiomes];
         float[] horSize = new float[numBiomes];
         float[] xOffset = new float[numBiomes];
+        Color[] backgroundColors = new Color[numBiomes];
 
         for (int i = 0; i < numBiomes; ++i) {
             if (i < worldGenSetting.biomes.Count) {
@@ -69,6 +70,7 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
                 yHeight[i] = b.YHeight;
                 horSize[i] = b.HorSize;
                 xOffset[i] = b.XOffset;
+                backgroundColors[i] = b.DarkenedColor.linear;
             } else {
                 // sane defaults
                 edgeNoiseScale[i] = 1f;
@@ -80,6 +82,7 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
                 yHeight[i] = 16f;
                 horSize[i] = 40f;
                 xOffset[i] = (i - numBiomes / 2) * 30f;
+                backgroundColors[i] = new(0,0,0,1);
             }
         }
 
@@ -93,7 +96,7 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
         mat.SetFloatArray("_YHeight", yHeight);
         mat.SetFloatArray("_horSize", horSize);
         mat.SetFloatArray("_XOffset", xOffset);
-        
+        mat.SetColorArray("_ColorArray", backgroundColors);
 
         // global seed
         mat.SetFloat("_GlobalSeed", worldGenSetting.seed * 1+ matIndex * 2352.124f);

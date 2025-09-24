@@ -25,9 +25,8 @@ public class WorldGenBiomeSO : ScriptableObject {
     public float XOffset = 0.0f;
 
 
-    [Header("Background")]
-    public Texture2D FillTexture;
-    public Texture2D EdgeTexture;
+    [Header("Visual Shader")]
+    public Color DarkenedColor;
 
     // Event to invoke on changes
     public event Action onDataChanged;

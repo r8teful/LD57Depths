@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: WorldTileMapMat
-  m_Shader: {fileID: -6465566751694194690, guid: fe0ed5e24699d594daf3426183950b19, type: 3}
+  m_Shader: {fileID: 4800000, guid: 5866d484e92e06e459d3cb4332dfcff4, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -48,6 +48,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: a3bc34920f46ec64fa6f4b0961c61685, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _TextureArray:
+        m_Texture: {fileID: 18700000, guid: 24138097c3a82bb4880324726ca69696, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -61,7 +65,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
-    m_Colors: []
+    m_Floats:
+    - _Glossiness: 0.5
+    - _MaxIndex: 255
+    - _Metallic: 0
+    - _TilingScale: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
