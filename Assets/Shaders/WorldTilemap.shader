@@ -2,10 +2,10 @@ Shader "Custom/WorldTilemap"
 {
     Properties
     {
-        [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {} // Required for Tilemap compatibility
+        [HideInInspector] _MainTex ("Sprite Texture", 2D) = "white" {} // Required for Tilemap compatibility
         _TextureArray ("Seamless Texture Array", 2DArray) = "" {}
         _TilingScale ("Tiling Scale", Float) = 1.0 // Controls how much the texture repeats per world unit
-        _MaxIndex ("Max Texture Index", Float) = 255.0 // Match to your max (e.g., 255 for alpha encoding)
+        _DebugMode ("DebugMode", Float) = 0.0 
     }
 
     SubShader
@@ -25,8 +25,8 @@ Shader "Custom/WorldTilemap"
             struct appdata_t
             {
                 float4 vertex : POSITION;
-                float2 texcoord : TEXCOORD0;
                 float4 color : COLOR;
+                float2 texcoord : TEXCOORD0;
             };
 
             struct v2f
@@ -40,7 +40,7 @@ Shader "Custom/WorldTilemap"
             sampler2D _MainTex;
             UNITY_DECLARE_TEX2DARRAY(_TextureArray);
             float _TilingScale;
-            float _MaxIndex;
+            float _DebugMode;
 
             v2f vert (appdata_t v)
             {
@@ -58,15 +58,33 @@ Shader "Custom/WorldTilemap"
                 float2 worldUV = i.worldPos.xy * _TilingScale;
 
                 // Get texture index from vertex color alpha
-                float index = round(i.color.a * _MaxIndex);
+                //float linearRed = pow(i.color.r, 2.2);
+                float index = round(i.color.r * 16.0); // 16.0 is the index scale
+                //float index = round(linearRed * 255); 
 
                 // Sample the seamless texture from the array
                 fixed4 seamlessColor = UNITY_SAMPLE_TEX2DARRAY(_TextureArray, float3(worldUV.x, worldUV.y, index));
 
                 // Optional: Combine with original sprite texture (e.g., multiply or replace)
-                fixed4 spriteColor = tex2D(_MainTex, i.uv) * i.color; // Uses tile sprite if needed
-                fixed4 finalColor = seamlessColor * spriteColor; // Or just return seamlessColor if no sprite needed
+                fixed4 spriteColor = tex2D(_MainTex, i.uv);
 
+                fixed4 finalColor = lerp(seamlessColor,spriteColor, spriteColor.a);
+                //fixed4 finalColor = fixed4(seamlessColor.rgb, spriteColor.a);
+                if(_DebugMode > 0.5){
+                    if(_DebugMode < 1){
+                        float debugValue = index / 25.5; 
+                        return fixed4(debugValue,debugValue,debugValue,1);
+                    }
+                    if(_DebugMode < 2){
+                        return fixed4(spriteColor.rgb,spriteColor.a);
+                    }
+                     if(_DebugMode < 3){                    
+                        return fixed4(spriteColor.a, spriteColor.a, spriteColor.a, 1.0);
+                    }
+                    if(_DebugMode < 4){                    
+                        return fixed4(i.uv.x, i.uv.y, 0.0, 1.0);
+                    }
+                }
                 return finalColor;
             }
             ENDCG

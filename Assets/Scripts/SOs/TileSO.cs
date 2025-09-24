@@ -6,11 +6,11 @@ using System.Collections.Generic;
 public class TileSO : RuleTile, IIdentifiable {
     [Header("Game Properties")]
     public short maxDurability = 10; // How many "hits" it takes to break. -1 means non solid.
-    public short biomeIndex = 0; // Used in the shader to know what the texture should be
+    public int biomeIndex = 0; // Used in the shader to know what the texture should be
     ushort IIdentifiable.ID => ID;
     public ushort ID; 
     public bool IsSolid => maxDurability != -1;
-
+    private const float INDEX_SCALE = 16.0f;
 
     public DropTableSO dropTable;   // Assign the ScriptableObject defining drops
     public GameObject breakEffectPrefab; // Optional: particle effect on break
@@ -28,6 +28,7 @@ public class TileSO : RuleTile, IIdentifiable {
     }
     public override void GetTileData(Vector3Int position, ITilemap tilemap, ref TileData tileData) {
         base.GetTileData(position, tilemap, ref tileData);
-        tileData.color = new Color(1f, 1f, 1f, biomeIndex / 255f);
+        float encodedIndex = (float)biomeIndex / INDEX_SCALE;
+        tileData.color = new Color(encodedIndex, 0f, 0f, 1f).gamma;
     }
 }
