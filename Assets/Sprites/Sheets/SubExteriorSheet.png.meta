@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c0c892148653d6f41a1fb585a1e88300
+guid: 7139bccbb3833d34d85c1523314e9100
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SubInterior_3
+      name: SubExteriorHull0
       rect:
         serializedVersion: 2
-        x: 1
-        y: 7
-        width: 217
-        height: 75
+        x: 2
+        y: 108
+        width: 67
+        height: 27
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -132,13 +132,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SubInteriorGlass
+      name: SubExteriorHull1
       rect:
         serializedVersion: 2
-        x: 240
-        y: 55
-        width: 72
-        height: 44
+        x: 2
+        y: 73
+        width: 67
+        height: 27
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -147,20 +147,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bbadb8ea39b283e42895e6285f76e900
-      internalID: -95932397
+      spriteID: aef09f4347c9cbf4e8a72556df5a9c4c
+      internalID: 1858866733
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SubInterior_0
+      name: SubExteriorHull2
       rect:
         serializedVersion: 2
-        x: 1
-        y: 262
-        width: 217
-        height: 75
+        x: 2
+        y: 38
+        width: 67
+        height: 27
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -169,20 +169,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a2cbc61570ed8174f9d45bfa1af0da8a
-      internalID: 467660103
+      spriteID: 0e4334b7e7036484ea595ec5c1840b12
+      internalID: 1206442516
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SubInterior_1
+      name: SubExteriorHull3
       rect:
         serializedVersion: 2
-        x: 1
-        y: 180
-        width: 217
-        height: 75
+        x: 2
+        y: 2
+        width: 67
+        height: 27
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -191,382 +191,206 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 927e108e9393b434ab42094c91c72db6
-      internalID: -1333254569
+      spriteID: 1fd7b52773868b045a443108b26e26ee
+      internalID: 2037343440
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SubInterior_2
+      name: SubExteriorPropeller0
       rect:
         serializedVersion: 2
-        x: 1
-        y: 89
-        width: 217
-        height: 75
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 44b802f4e8ce53242a8ac28e750d2352
-      internalID: -275502201
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SubPropeller_0
-      rect:
-        serializedVersion: 2
-        x: 237
-        y: 182
-        width: 12
-        height: 65
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 5b78c28068e22cf479d1b04fd3742d30
-      internalID: -1024324847
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SubPropeller_1
-      rect:
-        serializedVersion: 2
-        x: 257
-        y: 182
-        width: 12
-        height: 64
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 5d08492429a9bba4084b7033513db2bd
-      internalID: 1381153582
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SubPropeller_2
-      rect:
-        serializedVersion: 2
-        x: 275
-        y: 182
-        width: 12
-        height: 65
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 935059563b8202d419dd0aabb25863a3
-      internalID: -1712910680
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SubPropeller_3
-      rect:
-        serializedVersion: 2
-        x: 296
-        y: 182
-        width: 12
-        height: 64
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b7d07aba9bee479498d3d9bcb77d8871
-      internalID: -1421587232
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SubGears_0
-      rect:
-        serializedVersion: 2
-        x: 255
-        y: 261
-        width: 16
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f61d189d549316f4d85762fdaab1cef1
-      internalID: 386981997
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SubGears_1
-      rect:
-        serializedVersion: 2
-        x: 275
-        y: 261
-        width: 16
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ccc6a778b8c7f8c499d5d44292ded087
-      internalID: 2074218083
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SubGears_2
-      rect:
-        serializedVersion: 2
-        x: 293
-        y: 261
-        width: 16
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d0ccab1532897de458be30445789be0d
-      internalID: -62157138
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SubGears_3
-      rect:
-        serializedVersion: 2
-        x: 312
-        y: 261
-        width: 16
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 97d49fa1470075d4eb762c56872c193e
-      internalID: 490417599
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SubCables_0
-      rect:
-        serializedVersion: 2
-        x: 253
-        y: 301
-        width: 16
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 923fe24320c321a45832f158dd3c4ce9
-      internalID: -1340525813
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SubCables_1
-      rect:
-        serializedVersion: 2
-        x: 272
-        y: 301
-        width: 16
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 57ca643fefddd434cb22da6be1de9233
-      internalID: 808791789
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SubCables_2
-      rect:
-        serializedVersion: 2
-        x: 292
-        y: 301
-        width: 16
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 47f9046f2cdb1a34b99c6d90f78c9050
-      internalID: -2046071538
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SubCables_3
-      rect:
-        serializedVersion: 2
-        x: 311
-        y: 301
-        width: 16
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 399c782e9103ad347bf0391c646dfa5e
-      internalID: 238854635
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SubInteriorControl0
-      rect:
-        serializedVersion: 2
-        x: 229
-        y: 149
-        width: 20
+        x: 84
+        y: 109
+        width: 7
         height: 23
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fbb30a69867ffe4439e8cfc1a5c6c1c9
-      internalID: -604160954
+      spriteID: 555b1d10a23c12542809e96cfcbfca2c
+      internalID: 1948180182
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SubInteriorControl1
+      name: SubExteriorPropeller1
       rect:
         serializedVersion: 2
-        x: 255
-        y: 149
-        width: 30
+        x: 94
+        y: 109
+        width: 7
         height: 23
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 47de44b78884f544bb4e12d2dfa2f83c
-      internalID: -224887450
+      spriteID: 538df9e5f30f6b04b9470c2bd5437b75
+      internalID: -1032181612
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SubInteriorControl2
+      name: SubExteriorPropeller2
       rect:
         serializedVersion: 2
-        x: 291
-        y: 149
-        width: 30
+        x: 104
+        y: 109
+        width: 7
         height: 23
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e2a76d085d0abd54f8111ea24e43b098
-      internalID: 203351404
+      spriteID: 2e024a2253b80d343b0922bee9f8830a
+      internalID: 42239726
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SubInteriorControl3
+      name: SubExteriorPropeller3
       rect:
         serializedVersion: 2
-        x: 271
-        y: 123
-        width: 32
-        height: 22
+        x: 113
+        y: 109
+        width: 7
+        height: 23
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 625e37cd8c81f78498c870301c17b4ae
-      internalID: 795449722
+      spriteID: db34da2d732f4a94aa79c7eaf83a415b
+      internalID: -1796121789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SubExteriorGlass
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 70
+        width: 22
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6da79137f806e5d488d65938a9ebefa8
+      internalID: 1115570443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SubExteriorValve0
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 92
+        width: 11
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ecbcd9729d518644585c9fad497f0950
+      internalID: -33102790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SubExteriorValve1
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 92
+        width: 11
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 658c43f9d13ed964f894e450509e6c67
+      internalID: -302560179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SubExteriorValve2
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 92
+        width: 11
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e8f7d188e0e5e7140a2c9b9086e59ce5
+      internalID: -1083758224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SubExteriorValve3
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 92
+        width: 11
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22e8dbcd3945d7a409d24b37e0e928f9
+      internalID: 1270428111
       vertices: []
       indices: 
       edges: []
@@ -575,7 +399,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 24f415fa0848bf948bbe02ada3c61986
+    spriteID: c1d9d8bd7cd95834382d85c6a5935b2d
     internalID: 0
     vertices: []
     indices: 
@@ -585,27 +409,19 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      SubCables_0: -1340525813
-      SubCables_1: 808791789
-      SubCables_2: -2046071538
-      SubCables_3: 238854635
-      SubGears_0: 386981997
-      SubGears_1: 2074218083
-      SubGears_2: -62157138
-      SubGears_3: 490417599
-      SubInteriorControl0: -604160954
-      SubInteriorControl1: -224887450
-      SubInteriorControl2: 203351404
-      SubInteriorControl3: 795449722
-      SubInteriorGlass: -95932397
-      SubInterior_0: 467660103
-      SubInterior_1: -1333254569
-      SubInterior_2: -275502201
-      SubInterior_3: -7943720702334105097
-      SubPropeller_0: -1024324847
-      SubPropeller_1: 1381153582
-      SubPropeller_2: -1712910680
-      SubPropeller_3: -1421587232
+      SubExteriorGlass: 1115570443
+      SubExteriorHull0: -7943720702334105097
+      SubExteriorHull1: 1858866733
+      SubExteriorHull2: 1206442516
+      SubExteriorHull3: 2037343440
+      SubExteriorPropeller0: 1948180182
+      SubExteriorPropeller1: -1032181612
+      SubExteriorPropeller2: 42239726
+      SubExteriorPropeller3: -1796121789
+      SubExteriorValve0: -33102790
+      SubExteriorValve1: -302560179
+      SubExteriorValve2: -1083758224
+      SubExteriorValve3: 1270428111
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

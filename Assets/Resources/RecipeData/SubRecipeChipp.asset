@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 020b853878c43ca448a2fd89a70703c3, type: 3}
-  m_Name: SubRecipeComputer
+  m_Name: SubRecipeChipp
   m_EditorClassIdentifier: 
   RecipeID: 202
   displayName: Computer
@@ -22,8 +22,15 @@ MonoBehaviour:
     quantity: 25
   - item: {fileID: 11400000, guid: fba8153d7534bba43bcbf978298368bd, type: 2}
     quantity: 30
+  UpgradeType: 2
   UpgradeIconSteps:
   - {fileID: -2017507200, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   - {fileID: 1830010704, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   - {fileID: 2056656572, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   - {fileID: -499454754, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  UpgradeExteriorSteps: []
+  UpgradeInteriorSteps:
+  - {fileID: -604160954, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
+  - {fileID: -224887450, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
+  - {fileID: 203351404, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
+  - {fileID: 795449722, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}

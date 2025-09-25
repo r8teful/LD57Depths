@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 020b853878c43ca448a2fd89a70703c3, type: 3}
-  m_Name: SubRecipeCog
+  m_Name: SubRecipeGears
   m_EditorClassIdentifier: 
   RecipeID: 201
   displayName: Gears
@@ -22,8 +22,15 @@ MonoBehaviour:
     quantity: 123
   - item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
     quantity: 20
+  UpgradeType: 0
   UpgradeIconSteps:
   - {fileID: -885203896, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   - {fileID: -162873128, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   - {fileID: -330055502, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   - {fileID: 347722722, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  UpgradeExteriorSteps: []
+  UpgradeInteriorSteps:
+  - {fileID: 386981997, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
+  - {fileID: 2074218083, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
+  - {fileID: -62157138, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
+  - {fileID: 490417599, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}

@@ -10,15 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 020b853878c43ca448a2fd89a70703c3, type: 3}
-  m_Name: SubRecipeFin
+  m_Name: SubRecipePropeller
   m_EditorClassIdentifier: 
   RecipeID: 203
   displayName: Propeller
   description: The propeller is old and slow. Upgrade it to move to the next zone.
   icon: {fileID: 0}
   requiredItems: []
+  UpgradeType: 3
   UpgradeIconSteps:
   - {fileID: -177491173, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   - {fileID: 546586542, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   - {fileID: 918829239, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   - {fileID: -345249840, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  UpgradeExteriorSteps:
+  - {fileID: 1948180182, guid: 7139bccbb3833d34d85c1523314e9100, type: 3}
+  - {fileID: -1032181612, guid: 7139bccbb3833d34d85c1523314e9100, type: 3}
+  - {fileID: 42239726, guid: 7139bccbb3833d34d85c1523314e9100, type: 3}
+  - {fileID: -1796121789, guid: 7139bccbb3833d34d85c1523314e9100, type: 3}
+  UpgradeInteriorSteps:
+  - {fileID: -1024324847, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
+  - {fileID: 1381153582, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
+  - {fileID: -1712910680, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
+  - {fileID: -1421587232, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}

@@ -17,8 +17,19 @@ MonoBehaviour:
   description: 'The hull is cracking. Reinforce your sub to continue to move. '
   icon: {fileID: 0}
   requiredItems: []
+  UpgradeType: 4
   UpgradeIconSteps:
   - {fileID: 2113252416, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   - {fileID: 1096764976, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   - {fileID: 937825868, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   - {fileID: 685064899, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  UpgradeExteriorSteps:
+  - {fileID: -7943720702334105097, guid: 7139bccbb3833d34d85c1523314e9100, type: 3}
+  - {fileID: 1858866733, guid: 7139bccbb3833d34d85c1523314e9100, type: 3}
+  - {fileID: 1206442516, guid: 7139bccbb3833d34d85c1523314e9100, type: 3}
+  - {fileID: 2037343440, guid: 7139bccbb3833d34d85c1523314e9100, type: 3}
+  UpgradeInteriorSteps:
+  - {fileID: 467660103, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
+  - {fileID: -1333254569, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
+  - {fileID: -275502201, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
+  - {fileID: -7943720702334105097, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}

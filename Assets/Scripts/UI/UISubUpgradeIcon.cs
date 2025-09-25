@@ -26,8 +26,7 @@ public class UISubUpgradeIcon : MonoBehaviour, IPopupInfo, IPointerEnterHandler,
 
     private void OnDestroy() {
         SubmarineManager.Instance.OnUpgradeDataChanged -= HandleUpgradeStateChanged;
-        SubmarineManager.Instance.OnCurRecipeChanged -= HandleUpgradeStateChanged;
-        
+        SubmarineManager.Instance.OnCurRecipeChanged -= HandleUpgradeStateChanged; 
     }
     private void HandleUpgradeStateChanged(ushort updatedRecipeId) {
         // Check if the event is for US.
