@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 157d6033f8e5dc543af7a1b905b54b05, type: 3}
+  m_Name: OreIronSO
+  m_EditorClassIdentifier: 
+  oreTile: {fileID: 11400000, guid: f4b09cb01edb0244da271b27ca802fa3, type: 2}
+  replaceableTileID: 1
+  LayerStartSpawn: 0
+  LayerStopCommon: 1
+  LayerMostCommon: 0
+  minChance: 0.01
+  maxChance: 0.2
+  noiseScale: 0.1
+  noiseThreshold: 0.6
+  noiseOffset: {x: 0, y: 0}

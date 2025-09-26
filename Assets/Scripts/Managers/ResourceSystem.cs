@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -54,6 +55,7 @@ public class ResourceSystem {
         
         Materials = Resources.LoadAll<Material>("Materials").ToList(); 
         _materialDict = Materials.ToDictionary(r => r.name, r => r);
+
 
         BackgroundObjects = Resources.LoadAll<BackgroundObjectSO>("BackgroundObjectData").ToList();
 
@@ -186,6 +188,10 @@ public class ResourceSystem {
     }
     internal List<ItemData> GetAllItems() {
         return _itemLookupByID.Values.OfType<ItemData>().ToList();
+    }
+    public List<WorldGenOreSO> GetAllOreData() {
+        return Resources.LoadAll<WorldGenOreSO>("Ores").ToList();
+
     }
  
     internal Dictionary<ushort,int> GetMaxItemPool() {

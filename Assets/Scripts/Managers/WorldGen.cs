@@ -1,5 +1,6 @@
 using FishNet.Connection;
 using Sirenix.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,23 @@ public struct DeterministicStructure {
     // Optional: Add pattern information if it's not just a single line
 }
 
+[System.Serializable]
+public struct OreDefinition {
+    public ushort tileID;
+    public ushort replaceableTileID;
+
+    // Depth
+    public float startDepth;
+    public float stopDepth;
+    public float mostDepth;
+    public float minChance;
+    public float maxChance;
+
+    // Noise
+    public float noiseScale;
+    public float noiseThreshold;
+    public float2 noiseOffset;
+}
 public class WorldGen : MonoBehaviour {
     private Unity.Mathematics.Random noiseRandomGen;
     private float seedOffsetX;
@@ -33,7 +51,6 @@ public class WorldGen : MonoBehaviour {
     private ChunkManager chunkManager;
     private EntityManager _entityManager;
     private List<WorldSpawnEntitySO> worldSpawnEntities;
-
     private Camera _renderCamera; // Orthographic camera for rendering chunks
     private RenderTexture _renderTexture; // Target 96x96 RenderTexture
 
@@ -80,7 +97,7 @@ public class WorldGen : MonoBehaviour {
         InitializeNoise();
         worldSpawnEntities = _settings.worldSpawnEntities;
         var maxD = -_settings.GetTrenchWidth() / _settings.GetTrenchWiden();
-        maxDepth = Mathf.Abs(maxD) * 0.90f; // 90% of the max theoretical depth
+        maxDepth = Mathf.Abs(maxD) * 0.90f; // 90% of the max theoretical depth, shader also uses 90%
         biomeLookup.Clear();
        
     }
@@ -294,14 +311,15 @@ public class WorldGen : MonoBehaviour {
                     k++;
                 }
             }
-
+            var nativeOreDefinitions = GetOreDefinitions();
             // --- Ore Generation Job ---
             var oreJob = new GenerateOresJob {
                 baseTileIDs = processingData.BaseTileIDs_NA, // GPU output
                 processedOreIDs = processingData.OreTileIDs_NA, // This will be modified
                 chunkCoord = kvp.Key,
                 chunkSize = CHUNK_TILE_DIMENSION,
-                seed = worldSeed + (uint)kvp.Key.x // Vary seed per chunk slightly or use chunkCoord for determinism
+                seed = worldSeed + (uint)kvp.Key.x, // Vary seed per chunk slightly or use chunkCoord for determinism
+                oreDefinitions = nativeOreDefinitions
             };
             processingData.OreJobHandle = oreJob.Schedule();
             jobHandles.Add(processingData.OreJobHandle);
@@ -411,6 +429,30 @@ public class WorldGen : MonoBehaviour {
      
         Debug.Log($"All chunk processing jobs complete. {clientPayload.Count} payloads ready.");
         onProcessingComplete?.Invoke(clientPayload, chunksToSend,entitySpawnInfos);
+    }
+
+    private NativeArray<OreDefinition> GetOreDefinitions() {
+        var oreTypes = App.ResourceSystem.GetAllOreData();
+        var nativeOreDefinitions = new NativeArray<OreDefinition>(oreTypes.Count, Allocator.TempJob);
+        for (int i = 0; i < oreTypes.Count; i++) {
+            WorldGenOreSO data = oreTypes[i];
+            float yStart = worldmanager.GetWorldLayerYPos(data.LayerStartSpawn);
+            float yStop = worldmanager.GetWorldLayerYPos(data.LayerStopCommon);
+            float yMost = worldmanager.GetWorldLayerYPos(data.LayerMostCommon);
+            nativeOreDefinitions[i] = new OreDefinition {
+                tileID = data.oreTile.ID,
+                replaceableTileID = data.replaceableTileID,
+                startDepth = yStart,
+                mostDepth = yMost,
+                stopDepth = yStop,
+                minChance = data.minChance,
+                maxChance = data.maxChance,
+                noiseScale = data.noiseScale,
+                noiseThreshold = data.noiseThreshold,
+                noiseOffset = new float2(data.noiseOffset.x, data.noiseOffset.y)
+            };
+        }
+        return nativeOreDefinitions;
     }
 
     private ChunkPayload ProcessingDataToPayload(ChunkProcessingJobData data) {

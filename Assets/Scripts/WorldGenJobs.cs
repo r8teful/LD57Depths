@@ -1,54 +1,72 @@
-﻿using Unity.Collections;
+﻿using Unity.Burst; // Optional, for Burst compilation
+using Unity.Collections;
 using Unity.Jobs;
-using Unity.Burst; // Optional, for Burst compilation
+using Unity.Mathematics;
 using UnityEngine;
 
 // --- Job for Ore Generation ---
-[BurstCompile] // Optional: Apply Burst for significant speedups
+[BurstCompile]
 public struct GenerateOresJob : IJob {
     [ReadOnly] public NativeArray<ushort> baseTileIDs; // Input from GPU generation
+    [ReadOnly] public NativeArray<OreDefinition> oreDefinitions;
     public NativeArray<ushort> processedOreIDs;       // Output: tile IDs with ores
     public Vector2Int chunkCoord;                      // For world-position-dependent logic
     public int chunkSize;
     public uint seed; // Seed for procedural generation
 
-    private const ushort STONE_ID = 1; // Example ID for stone
-    private const ushort IRON_ORE_ID = 3;
-    private const ushort GOLD_ORE_ID = 11;
-    private const ushort INVALID_ID = ushort.MaxValue;
-
     public void Execute() {
-        // Simple Perlin noise based ore placement example
-        // Note: Unity.Mathematics.Random can also be used within jobs for deterministic randomness
-        Unity.Mathematics.Random random = new Unity.Mathematics.Random(seed + (uint)(chunkCoord.x * 1000 + chunkCoord.y));
-
+        var random = new Unity.Mathematics.Random(seed + (uint)(chunkCoord.x * 1000 + chunkCoord.y));
 
         for (int y = 0; y < chunkSize; y++) {
             for (int x = 0; x < chunkSize; x++) {
                 int index = y * chunkSize + x;
                 ushort currentTile = baseTileIDs[index];
 
-                if (currentTile == STONE_ID) // Only place ore in stone
-                {
-                    // Calculate world position for noise sampling (or use local chunk + seed)
-                    float worldX = chunkCoord.x * chunkSize + x;
-                    float worldY = chunkCoord.y * chunkSize + y;
+                // Calculate world position once per tile
+                float worldX = chunkCoord.x * chunkSize + x;
+                float worldY = chunkCoord.y * chunkSize + y;
 
-                    // Example: Iron ore placement
-                    // Using Unity.Mathematics.noise
-                    float ironNoiseValue = Unity.Mathematics.noise.snoise(new Unity.Mathematics.float2(worldX * 0.1f, worldY * 0.1f));
-                    if (ironNoiseValue > 0.6f && random.NextFloat() < 0.3f) // Adjust thresholds
-                    {
-                        processedOreIDs[index] = IRON_ORE_ID;
-                        continue; // Don't place other ores if iron is placed
+                // Loop through all possible ores for this tile
+                for (int i = 0; i < oreDefinitions.Length; i++) {
+                    OreDefinition ore = oreDefinitions[i];
+
+                    // 1. Check if we can even place this ore here
+                    if (currentTile != ore.replaceableTileID) {
+                        continue; // This ore can't replace the current tile, try the next ore
+                    }
+                    // 1. Quick check: Are we even within this ore's vertical band?
+                    // (Remember, deeper means smaller Y values)
+                    if (worldY < ore.startDepth || worldY > ore.stopDepth) {
+                        //Debug.Log("ORE: " + ore.tileID  + " worldY: " + worldY + " startDepth: " + ore.startDepth + " stopDepth: " + ore.stopDepth);
+                        continue;
+                    }
+                    float currentChance;
+                    // 2. Determine if we are in the 'ramp-up' or 'ramp-down' section of the band.
+                    if (worldY < ore.mostDepth) {
+                        // We're in the upper part of the band (between spawn and max rarity)
+                        float depthT = math.remap(worldY, ore.startDepth, ore.mostDepth, 0, 1);
+                        currentChance = math.lerp(ore.minChance, ore.maxChance, depthT);
+                    } else {
+                        // We're in the lower part of the band (between max rarity and stop)
+                        float depthT = math.remap(worldY, ore.mostDepth, ore.stopDepth, 0, 1);
+                        currentChance = math.lerp(ore.maxChance, ore.minChance, depthT); // HERE you could change minChange to be a different number if you want the ore to show more freq higher up, or something
                     }
 
-                    // Example: Gold ore placement (rarer)
-                    float goldNoiseValue = Unity.Mathematics.noise.snoise(new Unity.Mathematics.float2(worldX * 0.2f + 100.0f, worldY * 0.2f + 100.0f)); // Different offset
-                    if (goldNoiseValue > 0.75f && random.NextFloat() < 0.1f) {
-                        processedOreIDs[index] = IRON_ORE_ID;
+                    // 3. Quick check: if random chance fails, don't bother with expensive noise calculation
+                    if (random.NextFloat() >= currentChance) {
+                        continue; // Failed random roll, try next ore
                     }
-                } 
+
+                    // 4. Check against Perlin noise for vein clustering
+                    float noiseValue = noise.snoise(new float2(worldX * ore.noiseScale, worldY * ore.noiseScale) + ore.noiseOffset);
+                    if (noiseValue > ore.noiseThreshold) {
+                        // Success! Place the ore.
+                        processedOreIDs[index] = ore.tileID;
+
+                        // IMPORTANT: Break the inner loop to stop checking for other ores on this tile.
+                        break;
+                    }
+                }
             }
         }
     }

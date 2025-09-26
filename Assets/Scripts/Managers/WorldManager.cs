@@ -66,9 +66,9 @@ public class WorldManager : NetworkBehaviour {
         mainTilemap.ClearAllTiles(); // Start with a clear visual map
     }
 
-    public float GetCheckpointYPos(int number) {
-        int totalCheckpoints = 5; // We'll have to check how many this will be later 
-        return -WorldGen.GetDepth() * ((float)Mathf.Abs(number-totalCheckpoints)/totalCheckpoints); 
+    public float GetWorldLayerYPos(int number) {
+        int totalLayers = 5; // We'll have to check how many this will be later 
+        return -WorldGen.GetDepth() * ((float)Mathf.Abs(number-totalLayers)/totalLayers); 
     }
 
     public void MoveCamToChunkCoord(Vector2Int chunkCoord) {
