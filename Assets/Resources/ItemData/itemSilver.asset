@@ -13,12 +13,11 @@ MonoBehaviour:
   m_Name: itemSilver
   m_EditorClassIdentifier: 
   itemName: Silver
-  ID: 1
+  ID: 2
   description: its silver and looks cool
   icon: {fileID: 1049858802, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
-  maxStackSize: 99
   droppedPrefab: {fileID: 6402200259883455465, guid: 7fddc8f97ebd071409b1d139f93d9384, type: 3}
   isUsable: 0
   isConsumable: 0
   usageCooldown: 0
-  itemValue: 3
+  itemValue: 5

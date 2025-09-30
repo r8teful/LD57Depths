@@ -22,4 +22,13 @@ public class WorldGenOreSO : ScriptableObject {
 
     // A unique offset for this ore's noise to prevent all ores from spawning in the same spots.
     public Vector2 noiseOffset;
+
+    // Richness
+    public bool useRichness;
+    public float richnessNoiseScale;
+    public float minRichnessMultiplier, maxRichnessMultiplier;
+
+    // Domain Warp
+    public bool useDomainWarp;
+    public float warpNoiseScale, warpStrength;
 }

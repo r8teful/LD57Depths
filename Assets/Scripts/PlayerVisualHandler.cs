@@ -92,9 +92,13 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     private void HandleSwimVisual(Vector2 currentInput) {
 
         if (currentInput.magnitude != 0) {
-            ChangeAnimation("Swim");
+            //ChangeAnimation("Swim");
+            // if flippers
+            ChangeAnimation("SwimFlippers");
         } else {
-            ChangeAnimation("SwimIdle");
+            //ChangeAnimation("SwimIdle");
+            // if flippers
+            ChangeAnimation("SwimIdleFlippers");
         }
         CheckFlipSprite(currentInput.x);
     }

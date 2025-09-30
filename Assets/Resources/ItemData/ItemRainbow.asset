@@ -10,15 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0875b8093cac994284fe8213a256f45, type: 3}
-  m_Name: testitem2
+  m_Name: ItemRainbow
   m_EditorClassIdentifier: 
-  itemName: testitems
-  ID: 3
-  description: Item Description
-  icon: {fileID: -1652141133, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
-  maxStackSize: 6
-  droppedPrefab: {fileID: 0}
+  itemName: 
+  ID: 9
+  description: 
+  icon: {fileID: 1907617169, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
+  droppedPrefab: {fileID: 6402200259883455465, guid: 7fddc8f97ebd071409b1d139f93d9384, type: 3}
   isUsable: 0
-  isConsumable: 1
+  isConsumable: 0
   usageCooldown: 0
-  itemValue: 99
+  itemValue: 25

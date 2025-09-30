@@ -17,10 +17,14 @@ MonoBehaviour:
     linearIncrease: 55
     expIncrease: 1.7
   tiers:
-  - tierStartStop: {x: 0, y: 4}
+  - tierStartStop: {x: 0, y: 1}
     tier: {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
-  - tierStartStop: {x: 4, y: 99}
+  - tierStartStop: {x: 1, y: 2}
     tier: {fileID: 11400000, guid: c62c0885783485c439bdc01783a4c337, type: 2}
+  - tierStartStop: {x: 2, y: 3}
+    tier: {fileID: 11400000, guid: 252630a728eb6594c979e7727659293c, type: 2}
+  - tierStartStop: {x: 3, y: 99}
+    tier: {fileID: 11400000, guid: 29f367e82be84e84aa1af9c8dd6f8436, type: 2}
   statsToDisplay: 0000000001000000020000000300000004000000
   treeName: Mining Lazer
   nodes:

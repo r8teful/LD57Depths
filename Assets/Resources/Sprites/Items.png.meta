@@ -113,8 +113,8 @@ TextureImporter:
       name: Null
       rect:
         serializedVersion: 2
-        x: 29
-        y: 93
+        x: 72
+        y: 108
         width: 12
         height: 12
       alignment: 0
@@ -135,8 +135,8 @@ TextureImporter:
       name: Emerald
       rect:
         serializedVersion: 2
-        x: 29
-        y: 93
+        x: 60
+        y: 108
         width: 12
         height: 12
       alignment: 0
@@ -154,11 +154,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Gold
+      name: ItemGold
       rect:
         serializedVersion: 2
-        x: 29
-        y: 107
+        x: 24
+        y: 108
         width: 12
         height: 12
       alignment: 0
@@ -176,11 +176,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ruby
+      name: ItemRuby
       rect:
         serializedVersion: 2
-        x: 29
-        y: 93
+        x: 36
+        y: 108
         width: 12
         height: 12
       alignment: 0
@@ -198,11 +198,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Silver
+      name: ItemSilver
       rect:
         serializedVersion: 2
-        x: 15
-        y: 107
+        x: 12
+        y: 108
         width: 12
         height: 12
       alignment: 0
@@ -223,8 +223,8 @@ TextureImporter:
       name: Stone
       rect:
         serializedVersion: 2
-        x: 1
-        y: 93
+        x: 72
+        y: 84
         width: 12
         height: 12
       alignment: 0
@@ -245,8 +245,8 @@ TextureImporter:
       name: StoneBrick
       rect:
         serializedVersion: 2
-        x: 29
-        y: 93
+        x: 72
+        y: 108
         width: 12
         height: 12
       alignment: 0
@@ -289,8 +289,8 @@ TextureImporter:
       name: ItemUnknown
       rect:
         serializedVersion: 2
-        x: 29
-        y: 79
+        x: 72
+        y: 96
         width: 12
         height: 12
       alignment: 0
@@ -303,6 +303,138 @@ TextureImporter:
       bones: []
       spriteID: fbfd2a6159c3c40458b8cc6a00bbda66
       internalID: -1212175249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ItemDiamond
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 108
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e80bf4a4f7fb98049bd0fba695bc4a15
+      internalID: -846032571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ItemCopper
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 108
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 375da007ec28da24baad646742a7fb49
+      internalID: -487167182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ItemJasper
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 96
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8ac9e922aea039c40a52f23e839135ef
+      internalID: 101129898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ItemAmethyst
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 96
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ffcccf7b44cf0ad4386900ce722755f3
+      internalID: 2113536527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ItemZoisite
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 96
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5abaa321936b92942ac90420946824b8
+      internalID: 1226300379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ItemRainbow
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 96
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42d4258162e0e664592b664324123c5f
+      internalID: 1907617169
       vertices: []
       indices: 
       edges: []
@@ -322,12 +454,18 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Emerald: 322230836
-      Gold: 1965301794
+      ItemAmethyst: 2113536527
+      ItemCopper: -487167182
+      ItemDiamond: -846032571
+      ItemGold: 1965301794
+      ItemJasper: 101129898
+      ItemRainbow: 1907617169
+      ItemRuby: 772618495
+      ItemSilver: 1049858802
       ItemUnknown: -1212175249
+      ItemZoisite: 1226300379
       Items_1: -2068980109
       Null: -1652141133
-      Ruby: 772618495
-      Silver: 1049858802
       Stone: 569354257
       StoneBrick: 1256492919
       StoneDrop: -1511702172

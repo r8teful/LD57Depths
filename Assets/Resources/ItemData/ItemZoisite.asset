@@ -10,15 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0875b8093cac994284fe8213a256f45, type: 3}
-  m_Name: itemSeedTree
+  m_Name: ItemZoisite
   m_EditorClassIdentifier: 
-  itemName: Tree Seed
-  ID: 5
-  description: Used in a planter to grow a tree
-  icon: {fileID: -1671793989, guid: 261eb66d818e3254f9a7acc170acf751, type: 3}
-  maxStackSize: 19
-  droppedPrefab: {fileID: 0}
-  isUsable: 1
+  itemName: 
+  ID: 8
+  description: 
+  icon: {fileID: 1226300379, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
+  droppedPrefab: {fileID: 6402200259883455465, guid: 7fddc8f97ebd071409b1d139f93d9384, type: 3}
+  isUsable: 0
   isConsumable: 0
   usageCooldown: 0
-  itemValue: 5
+  itemValue: 20
