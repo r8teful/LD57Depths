@@ -54,6 +54,7 @@ public class UISubPanelMove : MonoBehaviour {
         UpdateMoveButton(); 
     }
     private void UpdateMoveButton() {
+        // TODO  change text if level not high enough
         // Should move button be visable?
         if (_currentShownIndex == SubmarineManager.Instance.CurrentZoneIndex) {
             // hide

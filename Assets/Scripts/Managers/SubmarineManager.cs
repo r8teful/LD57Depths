@@ -83,7 +83,7 @@ public class SubmarineManager : NetworkBehaviour {
         foreach (var recipe in App.ResourceSystem.GetAllSubRecipes()) {
             var list = new List<IDQuantity>();
             foreach(var item in recipe.requiredItems) {
-                IDQuantity iQ = new(item.item.ID, 0); // HERE, instead of 0, use the stored data!
+                IDQuantity iQ = new(item.item.ID, 0); // TODO HERE, instead of 0, use the stored data!
                 list.Add(iQ);
             }
             _upgradeData.Add(new(recipe.RecipeID, list));

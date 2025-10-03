@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ZoneIndex: 2
   ZoneName: Midnight zone
-  AvailableResources: []
+  AvailableResources:
+  - {fileID: 11400000, guid: d041b02ee80d40e49adb4a3ef98bc00d, type: 2}
+  - {fileID: 11400000, guid: 9db5c2e6265a0fc4989fa8d9c8bf4204, type: 2}

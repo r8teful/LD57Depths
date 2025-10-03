@@ -66,9 +66,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
     public override void OnStopClient() {
         base.OnStopClient();
-        if (_finalStats != null) {
-            _finalStats.OnChange -= OnFinalStatChanged;
-        }
+        _finalStats.OnChange -= OnFinalStatChanged;
     }
 
     private void InitializeStats() {

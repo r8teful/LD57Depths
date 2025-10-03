@@ -18,10 +18,12 @@ MonoBehaviour:
     sub\u2019s movement ability. "
   icon: {fileID: 0}
   requiredItems:
-  - item: {fileID: 11400000, guid: fba8153d7534bba43bcbf978298368bd, type: 2}
-    quantity: 125
   - item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
     quantity: 300
+  - item: {fileID: 11400000, guid: 9f8c588612fb93047bf560201edf2e6f, type: 2}
+    quantity: 200
+  - item: {fileID: 11400000, guid: fba8153d7534bba43bcbf978298368bd, type: 2}
+    quantity: 130
   UpgradeType: 1
   UpgradeIconSteps:
   - {fileID: 518516892, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
