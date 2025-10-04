@@ -40,6 +40,7 @@ public class ResourceSystem {
     public const ushort UpgradeSpeedAcceleration = 101;
     public const ushort UpgradeOxygenMax = 101;
     public const ushort UpgradeDashUnlock = 101;
+    public const ushort FIRST_SHIP_RECIPE_ID = 200;
     public static bool IsGrowEntity(ushort id) {
         if (id == 900) // Tree farm
             return true;

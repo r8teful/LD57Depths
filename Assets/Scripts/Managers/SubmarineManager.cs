@@ -189,7 +189,10 @@ public class SubmarineManager : NetworkBehaviour {
         if (uIndex < recipeData.requiredItems.Count) return false;
         return true;
     }
-
+    private int GetUpgradeStage() {
+        // ID is sequential so we just take the current minus the first and we get the stage we have! lol
+        return CurrentRecipe - ResourceSystem.FIRST_SHIP_RECIPE_ID;
+    }
     internal int GetUpgradeIndex(ushort curRecipe) {
         // If the upgradeData has the required amount of resources, then it passes
         var recipeData = App.ResourceSystem.GetRecipeByID(curRecipe);
@@ -217,7 +220,9 @@ public class SubmarineManager : NetworkBehaviour {
         return -1;
     }
 
-
+    internal bool CanMoveTo(int currentShownIndex) {
+        return GetUpgradeStage() >= currentShownIndex;
+    }
 }
 
 internal struct InteriorEntityData {

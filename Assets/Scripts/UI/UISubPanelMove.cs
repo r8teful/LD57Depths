@@ -11,6 +11,8 @@ public class UISubPanelMove : MonoBehaviour {
     [SerializeField] private Transform _playerStatusContainer;
     [SerializeField] private GameObject _waitingContainer;
     [SerializeField] private Button _buttonMove;
+    [SerializeField] private TextMeshProUGUI _buttonMoveText;
+
     [SerializeField] private Button _buttonCancelMove;
     [SerializeField] private UISubMap _mapScript;
     private int _currentShownIndex;
@@ -54,15 +56,21 @@ public class UISubPanelMove : MonoBehaviour {
         UpdateMoveButton(); 
     }
     private void UpdateMoveButton() {
-        // TODO  change text if level not high enough
         // Should move button be visable?
+        _buttonMove.interactable = true;
         if (_currentShownIndex == SubmarineManager.Instance.CurrentZoneIndex) {
             // hide
             _buttonMove.gameObject.SetActive(false);
-            Debug.Log("setting move button to false:");
         } else if (!_buttonMove.gameObject.activeSelf) {
             _buttonMove.gameObject.SetActive(true);
-            Debug.Log("setting move button to TRUE");
+        }
+
+        // Text
+        if (SubmarineManager.Instance.CanMoveTo(_currentShownIndex)) {
+            _buttonMoveText.text = "MOVE";
+        } else {
+            _buttonMoveText.text = "UPGRADE SHIP";
+            _buttonMove.interactable = false;
         }
     }
  
