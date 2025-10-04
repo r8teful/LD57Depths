@@ -9,6 +9,8 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
 
     private SpriteRenderer sprite; 
     [SerializeField] private SpriteRenderer _bobHand; 
+    [SerializeField] private BobBackVisual _bobBackHandler; 
+    [SerializeField] private Transform _bobBackVisual; 
     private Animator animator;
     private NetworkAnimator animatorNetwork;
     private string currentAnimation = "";
@@ -108,10 +110,12 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
             case PlayerState.Swimming:
                 SetLights(true);
                 SetBobHand(true);
+                _bobBackHandler.SetSpriteSwim();
                 break;
             case PlayerState.Grounded:
                 SetLights(false);
                 SetBobHand(false);
+                _bobBackHandler.SetSpriteWalk();
                 break;
             case PlayerState.Cutscene:
                 SetLights(false);
@@ -132,7 +136,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     // Logic handle the rest
     public void HandleRemoteToolSetup() {
         // We have to subscribe to the onchange on the toolController so we can know when to enable/disable the tools
-        _remotePlayer.ToolController.IsUsingTool.OnChange += RemoteClientToolChange;
+        _remotePlayer.ToolController.IsUsingTool.OnChange += RemoteClientToolIsUningChange;
         _remotePlayer.ToolController.Input.OnChange += RemoteClientInputChange;
         _remotePlayer.ToolController.EquipAllToolsVisualOnly();
 
@@ -148,15 +152,17 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         _remotePlayer.ToolController.GetCurrentTool().HandleVisualUpdateRemote(next);
     }
 
-    private void RemoteClientToolChange(bool prev, bool next, bool asServer) {
+    private void RemoteClientToolIsUningChange(bool prev, bool next, bool asServer) {
         if (!HasVisibility())
             return;
         if (next) {
             // tool enabled
             _remotePlayer.ToolController.GetCurrentTool().HandleVisualStart(this);
+            _bobBackHandler.OnToolUseStart();
         } else {
             // Tool disabled
             _remotePlayer.ToolController.GetCurrentTool().HandleVisualStop(this);
+            _bobBackHandler.OnToolUseStop();
         }
         // TODO then somehow we would need to set what input they have and communicate it over the network, Thats about it
     }
@@ -196,16 +202,21 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     private void OnFlipChanged(bool prev, bool next, bool asServer) {
         if (sprite == null)
             return;
-        FlipSprite(next);
+        FlipPlayer(next);
     }
-    private void FlipSprite(bool shouldFlip) {
+    private void FlipPlayer(bool shouldFlip) {
         if (shouldFlip) {
             sprite.flipX = true;
             _bobHand.gameObject.transform.parent.localScale = new Vector3(-1, 1, 1);
+            _bobBackVisual.localScale = new Vector3(-1, 1, 1);
         } else {             
             sprite.flipX = false;
             _bobHand.gameObject.transform.parent.localScale = new Vector3(1, 1, 1);
+            _bobBackVisual.localScale = new Vector3(1, 1, 1);
         }
+    }
+    private void ChangeBackSprite() {
+
     }
     private void ChangeAnimation(string animationName) {
         if (animator == null)

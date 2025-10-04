@@ -188,7 +188,7 @@ public class ResourceSystem {
         return _recipeLookupByID.Values.OfType<SubRecipeSO>().ToList();
     }
     internal List<ItemData> GetAllItems() {
-        return _itemLookupByID.Values.OfType<ItemData>().ToList();
+        return _itemLookupByID.Values.OfType<ItemData>().OrderBy(item=> item.ID).ToList();
     }
     public List<WorldGenOreSO> GetAllOreData() {
         return Resources.LoadAll<WorldGenOreSO>("Ores").ToList();
