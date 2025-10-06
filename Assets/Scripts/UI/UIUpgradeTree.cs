@@ -115,7 +115,7 @@ public class UIUpgradeTree : MonoBehaviour {
         if(upgrade.GetPrerequisites().Count == 1) {
           
         }
-        foreach(var met in UpgradeManagerPlayer.Instance.GetAllPrerequisitesMet(upgrade)) {
+        foreach(var met in UpgradeManagerPlayer.LocalInstance.GetAllPrerequisitesMet(upgrade)) {
             if (_lineMap.TryGetValue(met, out var lines)) {
                 foreach (var line in lines) {
                     line.color = c;

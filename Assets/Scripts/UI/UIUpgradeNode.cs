@@ -107,7 +107,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         UpdateVisualState();
     }
     private void OnEnable() {
-        UpgradeManagerPlayer.OnUpgradePurchased += HandleUpgradePurchased;
+        UpgradeManagerPlayer.LocalInstance.OnUpgradePurchased += HandleUpgradePurchased;
         UIUpgradeScreen.OnSelectedUpgradeChanged += SelectedChange;
     }
 
@@ -116,7 +116,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
 
     private void OnDisable() {
-        UpgradeManagerPlayer.OnUpgradePurchased -= HandleUpgradePurchased;
+        UpgradeManagerPlayer.LocalInstance.OnUpgradePurchased -= HandleUpgradePurchased;
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
@@ -153,11 +153,11 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
 
     public void UpdateVisual(UpgradeRecipeSO selected) {
-        var isPurchased = UpgradeManagerPlayer.Instance.IsUpgradePurchased(_upgradeData);
+        var isPurchased = UpgradeManagerPlayer.LocalInstance.IsUpgradePurchased(_upgradeData);
         _cachedIsPurchased = isPurchased;
         // determine variant (one of Blue/Green/Orange)
         string variant = isPurchased ? "Orange" : (IsBig ? "Green" : "Blue");
-        bool prerequisitesMet = UpgradeManagerPlayer.Instance.ArePrerequisitesMet(_upgradeData);
+        bool prerequisitesMet = UpgradeManagerPlayer.LocalInstance.ArePrerequisitesMet(_upgradeData);
         // Cache for later restore (when selection changes away)
         _cachedIsPurchased = isPurchased;
         _cachedPrerequisitesMet = prerequisitesMet;

@@ -55,10 +55,11 @@ public class NetworkedPlayer : NetworkBehaviour {
     }
     // All clients have access to this
     private void CacheSharedComponents() {
-        PlayerLayerController = GetComponent<PlayerLayerController>();
-        PlayerVisuals = GetComponent<PlayerVisualHandler>();
-        ToolController = GetComponent<ToolController>();
-        PlayerStats = GetComponent<PlayerStatsManager>();
+        PlayerLayerController = GetComponent<PlayerLayerController>(); // To hide and unhide players when they enter submarine
+        PlayerVisuals = GetComponent<PlayerVisualHandler>(); // Because of visuals lol
+        ToolController = GetComponent<ToolController>(); // Because of visuals related to the tool we are using
+        PlayerStats = GetComponent<PlayerStatsManager>(); // Because of visuals related to stats
+        UpgradeManager = GetComponent<UpgradeManagerPlayer>(); // Because of visuals related to specific upgrade purchases
     }
 
     private void InitializePlayer() {
@@ -68,7 +69,6 @@ public class NetworkedPlayer : NetworkBehaviour {
         // Add local behaviours that are required for the player.
 
         CraftingComponent = gameObject.AddComponent<CraftingComponent>();
-        UpgradeManager = gameObject.AddComponent<UpgradeManagerPlayer>();
         PlayerCamera = gameObject.AddComponent<PlayerCameraController>();
         InputManager = gameObject.AddComponent<InputManager>();
         // Discover all modules on this GameObject and sort based on initialization order.

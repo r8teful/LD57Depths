@@ -28,6 +28,9 @@ public class ResourceSystem {
 
     private Dictionary<ushort, RecipeBaseSO> _recipeLookupByID;
     private Dictionary<RecipeBaseSO, ushort> _idLookupByRecipe;
+
+    private Dictionary<ushort, UpgradeRecipeSO> _recipeUpgradeLookupByID;
+    private Dictionary<UpgradeRecipeSO, ushort> _idLookupByRecipeUpgrade;
     
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
     public const ushort AirID = 0; // Air is ALWAYS 0 
@@ -66,6 +69,7 @@ public class ResourceSystem {
         InitializeLookup("TileData", out _tileLookupByID, out _idLookupByTile);
         InitializeLookup("EntityData", out _entityLookupByID, out _idLookupByEntity);
         InitializeLookup("RecipeData", out _recipeLookupByID, out _idLookupByRecipe);
+        InitializeLookup<UpgradeRecipeSO>("", out _recipeUpgradeLookupByID, out _idLookupByRecipeUpgrade);
 
         InitializeWorldEntityOffsets();
     }
@@ -141,6 +145,13 @@ public class ResourceSystem {
     }
     public RecipeBaseSO GetRecipeByID(ushort id) {
         if (id == InvalidID || !_recipeLookupByID.TryGetValue(id, out RecipeBaseSO recipe)) {
+            Debug.LogWarning($"Recipe ID {id} not found in database.");
+            return null;
+        }
+        return recipe;
+    }
+    public UpgradeRecipeSO GetRecipeUpgradeByID(ushort id) {
+        if (id == InvalidID || !_recipeUpgradeLookupByID.TryGetValue(id, out UpgradeRecipeSO recipe)) {
             Debug.LogWarning($"Recipe ID {id} not found in database.");
             return null;
         }

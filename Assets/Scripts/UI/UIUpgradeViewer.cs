@@ -24,7 +24,7 @@ public class UIUpgradeViewer : MonoBehaviour {
     }
 
     private void OnBuyClick() {
-        UpgradeManagerPlayer.Instance.TryPurchaseUpgrade(_shownRecipe);
+        UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(_shownRecipe);
     }
 
     private void OnUpgradeChanged(UpgradeRecipeSO upgradeData) {

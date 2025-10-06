@@ -29,7 +29,17 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         InitCommon();
         _localPlayer = playerParent;
+        playerParent.UpgradeManager.OnUpgradePurchased += OnPlayerUpgradePurchased;
     }
+
+    private void OnPlayerUpgradePurchased(UpgradeRecipeSO upgrade) {
+        // This works now, this will peace of code will now run on the client who purchased a specific upgrade
+        // Here you would change sprites etc..
+        if(upgrade.ID == 2) {
+            sprite.color = Color.black;
+        }
+    }
+
     private void OnEnable() {
         _isFlipped.OnChange += OnFlipChanged;
     }
@@ -38,6 +48,10 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         animatorNetwork = GetComponent<NetworkAnimator>();
         sprite = GetComponent<SpriteRenderer>();
         lightIntensityOn = lightSpot.intensity;
+        // Surelly we have to subscribe to the upgrade purchase event here? For example, I purchase an upgrade. 
+        // now two things need to happen:
+        // 1. Player visual on MY system needs to recognise it so that it can add the flippers
+        // 2. Player visual on all REMOTE systems need to recognise it and add flippers to my character
     }
     public void InitializeOnNotOwner(NetworkedPlayer remoteClient) {
         if (hasInitializedNonOwner)
@@ -46,6 +60,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         _remotePlayer = remoteClient;
         // Subscribe to handle remote stat changes
         remoteClient.PlayerStats.OnStatChanged += OnRemoteStatsChanged;
+        remoteClient.UpgradeManager.OnUpgradePurchased += OnPlayerUpgradePurchased;
         HandleRemoteToolSetup();
         hasInitializedNonOwner = true;
     }

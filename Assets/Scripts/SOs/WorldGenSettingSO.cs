@@ -21,6 +21,18 @@ public class WorldGenSettingSO : ScriptableObject {
     public float caveCutoff;
     [InlineEditor]
     public List<WorldGenBiomeSO> biomes = new List<WorldGenBiomeSO>();
+    // For now:
+    // 0 bioluminesence
+    // 1 fungal 
+    // 2 Forest
+    // 3 Volcanic
+    // 4 Gems
+    // 5 Ice
+    // 6 Caves
+    // 7 Reef
+    // 8 Shipgraves
+    // 9 Marble
+
     private float worldSeed;
     public float GetTrenchWidth() => trenchBaseWidth;
     public float GetTrenchWiden() => trenchWidenFactor;
