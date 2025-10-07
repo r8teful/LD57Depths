@@ -1,6 +1,7 @@
 ﻿using FishNet.Component.Animating;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using System.Resources;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using static PlayerMovement;
@@ -13,6 +14,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     [SerializeField] private Transform _bobBackVisual; 
     private Animator animator;
     private NetworkAnimator animatorNetwork;
+    private bool _hasFlippers;
     private string currentAnimation = "";
     public Collider2D playerSwimCollider;
     public Collider2D playerWalkCollider;
@@ -35,9 +37,11 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     private void OnPlayerUpgradePurchased(UpgradeRecipeSO upgrade) {
         // This works now, this will peace of code will now run on the client who purchased a specific upgrade
         // Here you would change sprites etc..
-        if(upgrade.ID == 2) {
-            sprite.color = Color.black;
+        if (upgrade.ID == ResourceSystem.UpgradeFlippersID) {
+            // equip flippers
+            _hasFlippers = true;
         }
+        _bobBackHandler.HandleUpgradeBought(upgrade);   
     }
 
     private void OnEnable() {
@@ -48,6 +52,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         animatorNetwork = GetComponent<NetworkAnimator>();
         sprite = GetComponent<SpriteRenderer>();
         lightIntensityOn = lightSpot.intensity;
+        _bobBackHandler.SetVisualNone();
         // Surelly we have to subscribe to the upgrade purchase event here? For example, I purchase an upgrade. 
         // now two things need to happen:
         // 1. Player visual on MY system needs to recognise it so that it can add the flippers
@@ -109,13 +114,10 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     private void HandleSwimVisual(Vector2 currentInput) {
 
         if (currentInput.magnitude != 0) {
-            //ChangeAnimation("Swim");
-            // if flippers
-            ChangeAnimation("SwimFlippers");
+            // So ugly, will break if we need more than just flippers on the actual animation but this works
+            ChangeAnimation(_hasFlippers ? "SwimFlippers" : "Swim");
         } else {
-            //ChangeAnimation("SwimIdle");
-            // if flippers
-            ChangeAnimation("SwimIdleFlippers");
+            ChangeAnimation(_hasFlippers ? "SwimIdleFlippers" : "SwimIdle");
         }
         CheckFlipSprite(currentInput.x);
     }

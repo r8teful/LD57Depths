@@ -5,6 +5,16 @@ using UnityEngine;
 public class BobBackVisual : MonoBehaviour {
     [SerializeField] SpriteRenderer _backSpriteSwimming;
     [SerializeField] SpriteRenderer _backSpriteWalking;
+    // Ugly with direct references but eh
+    [SerializeField] Sprite _jetpackLaying;
+    [SerializeField] Sprite _jetpackStanding;
+    [SerializeField] Sprite _oxygenLaying;
+    [SerializeField] Sprite _oxygenStanding;
+    public void SetVisualNone() {
+        _backSpriteSwimming.enabled = false;
+        _backSpriteWalking.enabled = false;
+        SetBackSprite(null, null);
+    }
     public void SetSpriteSwim() {
         _backSpriteSwimming.enabled = true;
         _backSpriteWalking.enabled = false;
@@ -30,4 +40,14 @@ public class BobBackVisual : MonoBehaviour {
     internal void OnToolUseStop() {
         // Put the tool back on the back 
     }
+
+    internal void HandleUpgradeBought(UpgradeRecipeSO upgrade) {
+        var upgradeID = upgrade.ID;
+        if (upgradeID == ResourceSystem.UpgradeJetpackID) {
+            SetBackSprite(_jetpackLaying, _jetpackStanding);
+        } else if (upgradeID == ResourceSystem.UpgradeOxygenID) {
+            SetBackSprite(_oxygenLaying, _oxygenStanding);
+        }
+    }
+
 }

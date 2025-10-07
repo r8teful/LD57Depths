@@ -37,12 +37,9 @@ public class ResourceSystem {
     public const ushort LadderID = 501; // Ladder is always 501, used in SubInterior.cs
     public const ushort ControlPanellRecipeID = 101; // FixRecipe.cs
 
-    public const ushort UpgradeMiningRange = 101;
-    public const ushort UpgradeMiningDamage = 101;
-    public const ushort UpgradeSpeedMax = 101;
-    public const ushort UpgradeSpeedAcceleration = 101;
-    public const ushort UpgradeOxygenMax = 101;
-    public const ushort UpgradeDashUnlock = 101;
+    public const ushort UpgradeFlippersID = 102; // Max speed 3 
+    public const ushort UpgradeOxygenID = 122;  // Oxygen tier 3
+    public const ushort UpgradeJetpackID = 132; // Special handling 
     public const ushort FIRST_SHIP_RECIPE_ID = 200;
     public static bool IsGrowEntity(ushort id) {
         if (id == 900) // Tree farm

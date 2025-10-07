@@ -9,7 +9,7 @@ public class UISubControlPanel : MonoBehaviour {
     [SerializeField] private Button[] inventoryTabButtons;
     [SerializeField] private UISubPanelOverview _panelOverviewScript;
     [SerializeField] private UISubPanelMove _panelMoveScript;
-    
+    public Transform PanelMain => _panelMain.transform;
     private int currentTabIndex;
     private UISubMovePopup _movePopup;
     private void Awake() {

@@ -689,6 +689,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82b10536a68ba1847b05ea182a1639a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 6962948237969374493}
+  _networkObjectCache: {fileID: 0}
 --- !u!1 &2741042111641852411
 GameObject:
   m_ObjectHideFlags: 0
@@ -855,6 +858,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _backSpriteSwimming: {fileID: 2920569502723525546}
   _backSpriteWalking: {fileID: 2989015128062584485}
+  _jetpackLaying: {fileID: 185444768, guid: d9ed8be83b2c911439328fecfc80a183, type: 3}
+  _jetpackStanding: {fileID: -1825482104, guid: d9ed8be83b2c911439328fecfc80a183, type: 3}
+  _oxygenLaying: {fileID: -1054624051, guid: d9ed8be83b2c911439328fecfc80a183, type: 3}
+  _oxygenStanding: {fileID: -7943720702334105097, guid: d9ed8be83b2c911439328fecfc80a183, type: 3}
 --- !u!1 &4890388569327464971
 GameObject:
   m_ObjectHideFlags: 0

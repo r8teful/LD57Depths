@@ -10,12 +10,10 @@ public class UIManager : Singleton<UIManager> {
     [field: SerializeField] public UISubControlPanel UISubControlPanel {  get; private set; }
 
     private GameObject _playerGameObject;
-
     public void Init(NetworkedPlayer client, GameObject owningPlayer) {
         _localInventoryManager = client.InventoryN.GetInventoryManager();
         PopupManager = GetComponent<PopupManager>();
         _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage
-
         if (_localInventoryManager == null || _playerGameObject == null) {
             Debug.LogError("InventoryUIManager received null references during Initialize! UI may not function.", gameObject);
             enabled = false;
