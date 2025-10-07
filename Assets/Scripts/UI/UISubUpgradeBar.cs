@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UISubUpgradeBar : MonoBehaviour {
+    private UISubPanelUpgrades _parent;
     private SubRecipeSO _recipe;
     private IngredientStatus _cachedStatus;
     private int _contributed;
@@ -16,11 +17,13 @@ public class UISubUpgradeBar : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI _inventoryAmountText;
     [SerializeField] private GameObject _invAmountContianer;
     [SerializeField] private Button  _contributingButton;
+    [SerializeField] private Material  _progressDoneMaterial;
     private void Awake() {
         _contributingButton.onClick.AddListener(ContributeClicked);
     }
 
-    internal void Init(SubRecipeSO data, IngredientStatus ingredient, int contributed,int total) {
+    internal void Init(UISubPanelUpgrades uISubPanelUpgrades, SubRecipeSO data, IngredientStatus ingredient, int contributed,int total) {
+        _parent = uISubPanelUpgrades;
         _recipe = data;
         _cachedStatus = ingredient;
         _contributed = contributed;
@@ -54,9 +57,12 @@ public class UISubUpgradeBar : MonoBehaviour {
             _contributedText.text = _contributed.ToString();
         } 
         if(_contributed >= _total) {
+            if(_contributingButton.gameObject.activeSelf)
+                _parent.BarCompleteAnimation(); // Ugly but works, make sure we only call it once 
             _contributingButton.onClick.RemoveListener(ContributeClicked);
             _contributingButton.gameObject.SetActive(false);
             _invAmountContianer.SetActive(false);
+            _barProgressImage.material = _progressDoneMaterial;
         }
 
         // Progression bar visual
@@ -64,7 +70,7 @@ public class UISubUpgradeBar : MonoBehaviour {
             _totalText.text = $"/{_total}";
             float raw = (float)_contributed / _total;
             _barProgressImage.fillAmount = Mathf.Floor(raw * 10f) / 10f;
-        } else {
+        } else { 
             _barProgressImage.fillAmount = 0;
         }
     }
