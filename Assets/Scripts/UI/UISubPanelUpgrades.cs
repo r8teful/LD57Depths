@@ -64,8 +64,8 @@ public class UISubPanelUpgrades : MonoBehaviour {
         var duration = 2f;
         _upgradeStatusImageCompletionWhite.DOFade(1, duration);
         //_upgradeStatusImage.rectTransform.DOShakePosition(duration,0.4f);
-        Vector3 strenght = new(5, 0, 5);
-        _upgradeStatusImage.rectTransform.DOShakeRotation(duration,strenght);
+        Vector3 strenght = new(1, 0, 1);
+        _upgradeStatusImage.rectTransform.DOShakeRotation(duration,strenght,fadeOut: false);
         yield return new WaitForSeconds(duration); // Wait for anim to finish
         UpdatePanelVisuals(); // Now actually show the new sprite
         _upgradeStatusImage.rectTransform.DORotate(new(0, 0, 0), duration * 0.4f); // rotate back because shake doesn't do that 

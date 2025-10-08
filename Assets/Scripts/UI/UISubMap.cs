@@ -57,7 +57,7 @@ public class UISubMap : MonoBehaviour {
         for (int i = 0; i < _trenchZones.Count; i++) {
             if (_trenchZones[i] != null) {
                 if (i > stage) {
-                    _trenchZones[i].SetAlpha(0.4f);
+                    _trenchZones[i].SetAlpha(0.2f);
                 } else {
                     _trenchZones[i].SetAlpha(1);
                 }

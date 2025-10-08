@@ -12,10 +12,10 @@ public class ButtonEffectJuice : MonoBehaviour {
         _button.onClick.RemoveAllListeners();
     }
     private void OnButtonClick() {
-        var vibrato = 10;
+        var vibrato = 5;
         var elasticity = 1;
         var scale = -0.1f;
         _button.transform.DOPunchScale(new(scale, scale, scale), 0.2f,vibrato,elasticity);
-        _button.transform.DOPunchRotation(new(0, 0, Random.Range(-10f,10f)), 0.2f,vibrato,elasticity);
+        _button.transform.DOPunchRotation(new(0, 0, Random.Range(-2f,2f)), 0.2f,vibrato,elasticity);
     }
 }
