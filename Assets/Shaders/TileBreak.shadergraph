@@ -681,11 +681,12 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"a5e99a4ead4e7ab4abc0e8b0dee8df28\",\"type\":3}}",
+        "m_SerializedTexture": "",
         "m_Guid": ""
     },
     "isMainTexture": false,
     "useTilingAndOffset": false,
+    "useTexelSize": true,
     "m_Modifiable": true,
     "m_DefaultType": 0
 }
@@ -2626,8 +2627,8 @@
     "m_ObjectId": "db5faa5ce4ce48fd808d1879224e15d7",
     "m_Title": "Pixel Perfect",
     "m_Position": {
-        "x": -2344.7998046875,
-        "y": 480.0
+        "x": -2344.800048828125,
+        "y": 479.9999694824219
     }
 }
 

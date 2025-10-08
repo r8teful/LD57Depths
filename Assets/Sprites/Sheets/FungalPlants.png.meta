@@ -164,7 +164,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: orange morrel
+      name: fungal_orange morrel
       rect:
         serializedVersion: 2
         x: 20
@@ -186,7 +186,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: big oyster
+      name: fungal_big oyster
       rect:
         serializedVersion: 2
         x: 31
@@ -208,7 +208,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: wall oysters
+      name: fungal_wall oysters
       rect:
         serializedVersion: 2
         x: 67
@@ -230,7 +230,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: red mini
+      name: fungal_red mini
       rect:
         serializedVersion: 2
         x: 1
@@ -252,7 +252,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: green mini
+      name: fungal_green mini
       rect:
         serializedVersion: 2
         x: 13
@@ -274,7 +274,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blue mini
+      name: fungal_blue mini
       rect:
         serializedVersion: 2
         x: 23
@@ -296,7 +296,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: purple mini
+      name: fungal_purple mini
       rect:
         serializedVersion: 2
         x: 33
@@ -318,7 +318,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: beige stick
+      name: fungal_beige stick
       rect:
         serializedVersion: 2
         x: 43
@@ -340,7 +340,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: beige side stick
+      name: fungal_beige side stick
       rect:
         serializedVersion: 2
         x: 57
@@ -362,7 +362,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blue side stick
+      name: fungal_blue side stick
       rect:
         serializedVersion: 2
         x: 68
@@ -384,7 +384,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: orange sticks
+      name: fungal_orange sticks
       rect:
         serializedVersion: 2
         x: 77
@@ -406,7 +406,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blue bunch blob
+      name: fungal_blue bunch blob
       rect:
         serializedVersion: 2
         x: 91
@@ -428,7 +428,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Big red
+      name: fungal_Big red
       rect:
         serializedVersion: 2
         x: 5
@@ -450,7 +450,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Big green
+      name: fungal_Big green
       rect:
         serializedVersion: 2
         x: 28
@@ -472,7 +472,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Big purple
+      name: fungal_Big purple
       rect:
         serializedVersion: 2
         x: 51
@@ -494,7 +494,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: big pinkpurple
+      name: fungal_big pinkpurple
       rect:
         serializedVersion: 2
         x: 74
@@ -516,7 +516,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blue wall big bunch
+      name: fungal_blue wall big bunch
       rect:
         serializedVersion: 2
         x: 6
@@ -551,9 +551,6 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Big green: -4627733216303611162
-      Big purple: 7614521090328822961
-      Big red: -106866320109443984
       Fungal biome plants for unity_0: 3032576050203707294
       Fungal biome plants for unity_4: 4816425078767846652
       FungalPlants_0: 1483959674
@@ -565,20 +562,23 @@ TextureImporter:
       FungalPlants_6: -612441636
       FungalPlants_7: -40654026
       FungalPlants_8: 966149289
-      beige side stick: 4130429249773531041
-      beige stick: 1156442504190865579
-      big oyster: -455871963678365861
-      big pinkpurple: 2279371883038533320
-      blue bunch blob: 9138580309445863916
-      blue mini: -715328913296788755
-      blue side stick: 7766423633932538667
-      blue wall big bunch: 1959079047
-      green mini: -7087677859662243482
-      orange morrel: -4705284207192275781
-      orange sticks: 4937142156409256114
-      purple mini: -8759724871342608637
-      red mini: 4494726883159870927
-      wall oysters: 8909390599511108401
+      fungal_Big green: -4627733216303611162
+      fungal_Big purple: 7614521090328822961
+      fungal_Big red: -106866320109443984
+      fungal_beige side stick: 4130429249773531041
+      fungal_beige stick: 1156442504190865579
+      fungal_big oyster: -455871963678365861
+      fungal_big pinkpurple: 2279371883038533320
+      fungal_blue bunch blob: 9138580309445863916
+      fungal_blue mini: -715328913296788755
+      fungal_blue side stick: 7766423633932538667
+      fungal_blue wall big bunch: -189095536
+      fungal_green mini: -7087677859662243482
+      fungal_orange morrel: -4705284207192275781
+      fungal_orange sticks: 4937142156409256114
+      fungal_purple mini: -8759724871342608637
+      fungal_red mini: 4494726883159870927
+      fungal_wall oysters: 8909390599511108401
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

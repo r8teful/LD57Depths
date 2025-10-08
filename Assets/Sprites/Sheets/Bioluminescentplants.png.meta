@@ -93,11 +93,24 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TwiddlyRed
+      name: Bio_TwiddlyRed
       rect:
         serializedVersion: 2
         x: 4
@@ -105,7 +118,7 @@ TextureImporter:
         width: 9
         height: 6
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -119,7 +132,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TwiddlyPurple
+      name: Bio_TwiddlyPurple
       rect:
         serializedVersion: 2
         x: 20
@@ -127,7 +140,7 @@ TextureImporter:
         width: 9
         height: 6
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -141,7 +154,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TwiddlyBlue
+      name: Bio_TwiddlyBlue
       rect:
         serializedVersion: 2
         x: 36
@@ -149,7 +162,7 @@ TextureImporter:
         width: 9
         height: 6
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -163,7 +176,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescentplants_3
+      name: Bio_redmush
       rect:
         serializedVersion: 2
         x: 52
@@ -171,7 +184,7 @@ TextureImporter:
         width: 8
         height: 8
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -185,7 +198,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescentplants_5
+      name: Bio_bluemush
       rect:
         serializedVersion: 2
         x: 65
@@ -193,7 +206,7 @@ TextureImporter:
         width: 14
         height: 13
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -207,7 +220,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescentplants_6
+      name: Bio_green bush
       rect:
         serializedVersion: 2
         x: 2
@@ -215,7 +228,7 @@ TextureImporter:
         width: 17
         height: 18
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -229,7 +242,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescentplants_7
+      name: Bio_pink coral
       rect:
         serializedVersion: 2
         x: 21
@@ -237,7 +250,7 @@ TextureImporter:
         width: 12
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -251,7 +264,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescentplants_8
+      name: Bio_pink big leaves
       rect:
         serializedVersion: 2
         x: 34
@@ -259,7 +272,7 @@ TextureImporter:
         width: 28
         height: 34
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -273,7 +286,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescentplants_9
+      name: Bio_greenbigleaves
       rect:
         serializedVersion: 2
         x: 66
@@ -281,7 +294,7 @@ TextureImporter:
         width: 28
         height: 34
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -308,16 +321,16 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Bioluminescentplants_3: 971948341
+      Bio_TwiddlyBlue: 1743436953
+      Bio_TwiddlyPurple: 1884466507
+      Bio_TwiddlyRed: -1755141526
+      Bio_bluemush: 1904944685
+      Bio_green bush: -793410364
+      Bio_greenbigleaves: 596007144
+      Bio_pink big leaves: 508037818
+      Bio_pink coral: 1630967386
+      Bio_redmush: 971948341
       Bioluminescentplants_4: 1542294361
-      Bioluminescentplants_5: 1904944685
-      Bioluminescentplants_6: -793410364
-      Bioluminescentplants_7: 1630967386
-      Bioluminescentplants_8: 508037818
-      Bioluminescentplants_9: 596007144
-      TwiddlyBlue: 1743436953
-      TwiddlyPurple: 1884466507
-      TwiddlyRed: -1755141526
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
