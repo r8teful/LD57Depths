@@ -76,27 +76,27 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
         return new();  // No prerequisites met
     }
     // this is bad to do because the UpgradePurchased event will only be called on the local clients
-    public void TryPurchaseUpgrade(UpgradeRecipeSO recipe) {
+    public bool TryPurchaseUpgrade(UpgradeRecipeSO recipe) {
         // 1. Check if already purchased
         if (unlockedUpgrades.Contains(recipe.ID)) {
             Debug.LogWarning($"Attempted to purchase an already owned upgrade: {recipe.name}");
-            return;
+            return false;
         }
 
         // 2. Check prerequisites
         if (!ArePrerequisitesMet(recipe)) {
-            return;
+            return false;
         }
         var context = RecipeExecutionContext.FromPlayer(_localNetworkedPlayer);
         // 3. Try Execute recipe
         if (!_crafting.AttemptCraft(recipe,context)) {
             Debug.Log($"Failed to purchase {recipe.name}. Not enough currency.");
-            return;
+            return false;
         }
 
         // 4. Add upgrade to player's data
         unlockedUpgrades.Add(recipe.ID);
-
+        return true;
     }
 
   

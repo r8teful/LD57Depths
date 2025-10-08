@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
@@ -132,6 +133,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
     // This method is called by the event from the UpgradeManager
     private void HandleUpgradePurchased(UpgradeRecipeSO purchasedRecipe) {
+        if(purchasedRecipe == _recipe) {
+            OnPurchased();
+        }
         // When any upgrade is purchased, re-evaluate our state.
         // This is important for unlocking nodes when a prerequisite is met.
         UpdateVisualState();
@@ -154,7 +158,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
     public void UpdateVisual(UpgradeRecipeSO selected) {
         var isPurchased = UpgradeManagerPlayer.LocalInstance.IsUpgradePurchased(_upgradeData);
-        _cachedIsPurchased = isPurchased;
         // determine variant (one of Blue/Green/Orange)
         string variant = isPurchased ? "Orange" : (IsBig ? "Green" : "Blue");
         bool prerequisitesMet = UpgradeManagerPlayer.LocalInstance.ArePrerequisitesMet(_upgradeData);
@@ -206,6 +209,15 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             return;
         }
         _imageCurrent.sprite = sprite;
+    }
+    private void OnPurchased() {
+        var p = App.ResourceSystem.GetPrefab("UIParticleUpgradePurchase");
+        Instantiate(p, transform.position, Quaternion.identity, transform);
+        var vibrato = 5;
+        var elasticity = 1;
+        var scale = -0.1f;
+        transform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity);
+        transform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-2f, 2f)), 0.2f, vibrato, elasticity);
     }
     private void SetLinesColour(Color color) {
         // TODO We have to know from where the connetion is bought, so that we can only set that color, if there are multiple connections!

@@ -43,7 +43,7 @@ Material:
     m_Floats:
     - _ColorMask: 15
     - _Cycle: 1.2
-    - _PixelSize: 44.13
+    - _PixelSize: 123.71
     - _Scale: 8.71
     - _Speed: 0.9
     - _Stencil: 0
@@ -51,10 +51,12 @@ Material:
     - _StencilOp: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
-    - _Tilt: 0.28
+    - _Tilt: 0.2
     - _UIMaskSoftnessX: 1
     - _UIMaskSoftnessY: 1
-    - _cutoff: 0
+    - _cutoff: 0.352
+    - _intensity: 1
+    - _useCutoff: 0
     m_Colors:
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
