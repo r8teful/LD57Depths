@@ -11,12 +11,11 @@ public class UISubPanelUpgrades : MonoBehaviour {
     [SerializeField] private Image _upgradeStatusImageCompletionWhite;
     [SerializeField] private TextMeshProUGUI _upgradeName;
     [SerializeField] private Transform _upgradeBarContainer;
-    private Sprite _currentUpgradeStageSprite;
     private Dictionary<ushort,UISubUpgradeBar> _upgradeBars = new Dictionary<ushort, UISubUpgradeBar>(); // Runtime instantiated bars
     private SubRecipeSO _curRecipeData;
     private void Awake() {
-        SubmarineManager.Instance.OnUpgradeDataChanged += UpgradeDataChanged;
-        SubmarineManager.Instance.OnCurRecipeChanged += CurRecipeChanged;
+        SubmarineManager.Instance.OnUpgradeDataChanged += UpgradeDataChanged; // When someone succesefully contributes
+        SubmarineManager.Instance.OnCurRecipeChanged += CurRecipeChanged; // When next stage is reached
         // Fetch the current upgrade & its state
         ushort curRecipe = SubmarineManager.Instance.CurrentRecipe;
         var recipeData = App.ResourceSystem.GetRecipeByID(curRecipe);
@@ -49,8 +48,8 @@ public class UISubPanelUpgrades : MonoBehaviour {
     }
 
     private void UpgradeDataChanged(ushort recipeChangedID) {
-        UpdateBarVisuals();
-        UpdatePanelVisuals();
+        UpdateBarVisuals(); // This leads to barcomplete being called
+        //UpdatePanelVisuals(); // This then shows the 
     }
     private void CurRecipeChanged(ushort id) {
         SubRecipeSO changedRecipe = App.ResourceSystem.GetRecipeByID(id) as SubRecipeSO;
@@ -60,31 +59,32 @@ public class UISubPanelUpgrades : MonoBehaviour {
         }
     }
     private IEnumerator NewRecipeRoutine(SubRecipeSO recipe) {
-        UpdatePanelVisuals();
         UpdateBarVisuals();
         // start shaking and transition too white
         var duration = 2f;
         _upgradeStatusImageCompletionWhite.DOFade(1, duration);
-        _upgradeStatusImage.rectTransform.DOShakePosition(duration,0.4f);
+        //_upgradeStatusImage.rectTransform.DOShakePosition(duration,0.4f);
         Vector3 strenght = new(5, 0, 5);
-        _upgradeStatusImage.rectTransform.DOShakeRotation(duration,strenght,randomnessMode: ShakeRandomnessMode.Harmonic);
+        _upgradeStatusImage.rectTransform.DOShakeRotation(duration,strenght);
         yield return new WaitForSeconds(duration); // Wait for anim to finish
         UpdatePanelVisuals(); // Now actually show the new sprite
-        _upgradeStatusImage.sprite = _currentUpgradeStageSprite;
         _upgradeStatusImage.rectTransform.DORotate(new(0, 0, 0), duration * 0.4f); // rotate back because shake doesn't do that 
+        Instantiate(App.ResourceSystem.GetPrefab("UIParticleImageChange"), _upgradeStatusImage.transform.position, Quaternion.identity, _upgradeStatusImage.transform.parent)
+            .transform.SetAsFirstSibling();
+
         yield return new WaitForSeconds(duration); // wait after the animation to show the pretty new image
 
-        _curRecipeData = recipe;
+        _curRecipeData = recipe; // Start new recipe
         // Now actually delete old subupgradeBars, and instatiate new ones
         InitializeUpgradeBars();
         UpdatePanelVisuals(); // This will now uppdate  _currentUpgradeStageSprite
         // Here we actually set the sprite because we don't want to do it everytime in UpdatePanelVisual,  
-        _upgradeStatusImage.sprite = _currentUpgradeStageSprite;
+         
     }
 
     private void UpdatePanelVisuals() {
         int upgradeIndex = SubmarineManager.Instance.GetUpgradeIndex(_curRecipeData.ID);
-        _currentUpgradeStageSprite = _curRecipeData.UpgradeIconSteps[upgradeIndex];
+        _upgradeStatusImage.sprite = _curRecipeData.UpgradeIconSteps[upgradeIndex];
         _upgradeStatusImageCompletionWhite.color = new(1,1,1,0);
         _upgradeName.text = _curRecipeData.displayName;
     }
@@ -103,13 +103,17 @@ public class UISubPanelUpgrades : MonoBehaviour {
     // omg this is so messy now we set the image only after this lil animation, but the rest of the info is updated
     // in UpdatePanelVisuals through the event. EHHH Idk about that but ehhhh
     internal void BarCompleteAnimation() {
+        if (SubmarineManager.Instance.GetUpgradeIndex(_curRecipeData.ID) >= 3)
+            return; // Don't do the anim if its the last index
         StartCoroutine(BarCompleteAnim());
     }
     private IEnumerator BarCompleteAnim() {
-        var dur = 0.2f;
+        var dur = 0.3f;
         _upgradeStatusImageCompletionWhite.DOFade(1, dur).SetEase(Ease.InQuart);
         yield return new WaitForSeconds(dur);
-        _upgradeStatusImage.sprite = _currentUpgradeStageSprite;
+        UpdatePanelVisuals(); // Update early 
+        Instantiate(App.ResourceSystem.GetPrefab("UIParticleImageChange"), _upgradeStatusImage.transform.position, Quaternion.identity, _upgradeStatusImage.transform.parent)
+           .transform.SetAsFirstSibling();
         _upgradeStatusImageCompletionWhite.DOFade(0, dur).SetEase(Ease.OutQuart);
     
     }

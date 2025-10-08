@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Bson;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,6 +19,9 @@ public class UISubMap : MonoBehaviour {
                 zone.Init(this);
             }
         }
+    }
+    private void OnEnable() {
+        RefreshUI();
     }
     internal void Init(UISubPanelMove uISubPanelMove) {
        _parent = uISubPanelMove;
@@ -45,6 +49,20 @@ public class UISubMap : MonoBehaviour {
     private void RefreshUI() {
         var zoneI = SubmarineManager.Instance.CurrentZoneIndex;
         SetYouAreHereVisual(zoneI);
+        UpdateButtonVisualColors(SubmarineManager.Instance.GetUpgradeStage());
+    }
+
+    private void UpdateButtonVisualColors(int stage) {
+        // Simply darken the color by lowering the alpha if its index is higher than the current stage
+        for (int i = 0; i < _trenchZones.Count; i++) {
+            if (_trenchZones[i] != null) {
+                if (i > stage) {
+                    _trenchZones[i].SetAlpha(0.4f);
+                } else {
+                    _trenchZones[i].SetAlpha(1);
+                }
+            }
+        }
     }
 
     private void SetYouAreHereVisual(int index) {

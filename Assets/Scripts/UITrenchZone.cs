@@ -12,8 +12,21 @@ public class UITrenchZone : MonoBehaviour {
         _parent = uISubMap;
     }
 
-    internal void SetColor(Color color) {
+    internal void SetColor(Color color,bool preserveAlpha = true) {
+        Color newColor;
+        if (preserveAlpha) {
+            var a = _trenchBoxImage.color.a;
+            newColor = new(color.r, color.g, color.b, a);
+        } else{
+            newColor = color;
+        }
+        _trenchBoxImage.color = newColor;
+    }
+    internal void SetAlpha(float a) {
+        var color = _trenchBoxImage.color;
+        color.a = a;
         _trenchBoxImage.color = color;
+
     }
 
     internal void SetInteractable(bool b) {
