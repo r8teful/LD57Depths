@@ -89,6 +89,8 @@ public class UIUpgradeScreen : MonoBehaviour {
     }
 
     internal void OnUpgradeNodeClicked(UpgradeRecipeSO upgradeData) {
+
+        App.AudioController.PlaySound2D("ButtonClick");
         OnSelectedUpgradeChanged?.Invoke(upgradeData);
     }
 }

@@ -110,6 +110,7 @@ public class UISubPanelUpgrades : MonoBehaviour {
     private IEnumerator BarCompleteAnim() {
         var dur = 0.3f;
         _upgradeStatusImageCompletionWhite.DOFade(1, dur).SetEase(Ease.InQuart);
+        App.AudioController.PlaySound2D("Reveal");
         yield return new WaitForSeconds(dur);
         UpdatePanelVisuals(); // Update early 
         Instantiate(App.ResourceSystem.GetPrefab("UIParticleImageChange"), _upgradeStatusImage.transform.position, Quaternion.identity, _upgradeStatusImage.transform.parent)

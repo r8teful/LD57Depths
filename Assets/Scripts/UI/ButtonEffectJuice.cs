@@ -12,6 +12,7 @@ public class ButtonEffectJuice : MonoBehaviour {
         _button.onClick.RemoveAllListeners();
     }
     private void OnButtonClick() {
+        App.AudioController.PlaySound2D("ButtonClick");
         var vibrato = 5;
         var elasticity = 1;
         var scale = -0.1f;

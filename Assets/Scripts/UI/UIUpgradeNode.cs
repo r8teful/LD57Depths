@@ -27,7 +27,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public event Action<UpgradeNodeState> OnStateChange; // it should be an enum but eh
     public enum UpgradeNodeState {Purchased,Active,Inactive }
 
-    private static readonly string ICON_PURCHASED_HEX = "#FFFFFF";     // icon on purchased (orange) background
+    private static readonly string ICON_PURCHASED_HEX = "#FFAA67";     // icon on purchased (orange) background
     private static readonly string ICON_AVAILABLE_HEX = "#FFFFFF";     // icon when available (active)
     private static readonly string ICON_NOT_AVAILABLE_HEX = "#9FB3B7";  // icon when unavailable (inactive / dim)
     private static readonly string ICON_PRESSED_HEX = "#ECECEC";       // icon when pressed (slightly different)  
@@ -211,6 +211,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         _imageCurrent.sprite = sprite;
     }
     private void OnPurchased() {
+        App.AudioController.PlaySound2D("UpgradeBought");
         var p = App.ResourceSystem.GetPrefab("UIParticleUpgradePurchase");
         Instantiate(p, transform.position, Quaternion.identity, transform);
         var vibrato = 5;

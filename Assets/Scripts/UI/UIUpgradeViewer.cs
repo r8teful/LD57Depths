@@ -8,6 +8,7 @@ public class UIUpgradeViewer : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI _statHeaderText;
     [SerializeField] private Transform _statContainer;
     [SerializeField] private Transform _costContainer;
+    [SerializeField] private Transform _backgroundObject;
     [SerializeField] private Button _buttonBuyUpgrade;
     private UpgradeRecipeSO _shownRecipe;
     private void Start() {
@@ -50,6 +51,7 @@ public class UIUpgradeViewer : MonoBehaviour {
     }
 
     private void ChangeStatView(UpgradeTreeDataSO data) {
+        App.AudioController.PlaySound2D("ScreenChange");
         _statHeaderText.text = data.treeName;
         for (int i = 0; i < _statContainer.childCount; i++) {
             Destroy(_statContainer.GetChild(i).gameObject);
@@ -65,6 +67,8 @@ public class UIUpgradeViewer : MonoBehaviour {
             Destroy(_statContainer.GetChild(i).gameObject);
         }
         for (int i = 0; i < _costContainer.childCount; i++) {
+            if (_costContainer.GetChild(i).GetInstanceID() == _backgroundObject.GetInstanceID())
+                continue; // Don't destroy the backgroundObject
             Destroy(_costContainer.GetChild(i).gameObject);
         }
     }

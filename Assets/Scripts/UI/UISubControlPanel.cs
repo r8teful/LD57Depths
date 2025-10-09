@@ -39,6 +39,7 @@ public class UISubControlPanel : MonoBehaviour {
         _panelMain.SetActive(!_panelMain.activeSelf);
     }
     public void OnTabButtonClicked(int i) {
+        App.AudioController.PlaySound2D("ScreenChange");
         EnableTab(i);
         SetTabButtonVisual(i);
     }
