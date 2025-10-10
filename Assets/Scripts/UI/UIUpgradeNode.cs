@@ -146,7 +146,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         if (_upgradeData == null)
             return;
         UpdateVisual(null);
-        Debug.Log("Called");
+        //Debug.Log("Called");
         PopupDataChanged?.Invoke(); // Data could have changed
         // BIG INACTIVE 077263
         // BIG ACTIVE 0CD8BA

@@ -47,7 +47,7 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
         base.OnStartClient();
         Debug.Log("StartBase called on: " + ToolType);
         InitializeWithCurrentStats();
-        InitVisualTool(this);
+        // InitVisualTool(this); // Now this is called from toolController so we have the reference correctly
         if (NetworkedPlayersManager.Instance.TryGetPlayer(OwnerId, out var player)) {
             _localPlayerStats = player.PlayerStats;
             _localPlayerStats.OnStatChanged += OnPlayerStatsChange;
@@ -84,8 +84,8 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
             toolTier = 0 //TODO
         };
     }
-    public void InitVisualTool(IToolBehaviour toolBehaviourParent) {
-        ToolVisual.Init(toolBehaviourParent);
+    public void InitVisualTool(IToolBehaviour toolBehaviourParent, NetworkedPlayer owningPlayer) {
+        ToolVisual.Init(toolBehaviourParent, owningPlayer.PlayerVisuals);
     }
     protected virtual void Update() {
         if (_isMining) {

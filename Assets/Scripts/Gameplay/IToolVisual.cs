@@ -20,5 +20,6 @@ public interface IToolVisual {
     public void HandleVisualStop(PlayerVisualHandler playerVisualHandler);
 
     // Should stash the IToolBehaviour so we can call GetToolData for visuals, because they change and depend on the tool
-    public void Init(IToolBehaviour parent);
+    public void Init(IToolBehaviour parent, PlayerVisualHandler visuaHandler);
+    public (Sprite,Sprite) BackSprites { get; } // If we get more of these info based things we should store them in SO
 }

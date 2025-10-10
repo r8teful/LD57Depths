@@ -104,4 +104,8 @@ public class CleaningTool : MonoBehaviour, IToolBehaviour {
     public void ToolAbilityStop(ToolController toolController) {
         throw new System.NotImplementedException();
     }
+
+    public void InitVisualTool(IToolBehaviour toolBehaviourParent, NetworkedPlayer owningPlayer) {
+        throw new System.NotImplementedException();
+    }
 }

@@ -15,7 +15,7 @@ public interface IToolBehaviour {
     void ToolAbilityStart(ToolController toolController);
     void ToolAbilityStop(ToolController toolController);
     MiningToolData GetToolData();
-    void InitVisualTool(IToolBehaviour toolBehaviourParent);
+    void InitVisualTool(IToolBehaviour toolBehaviourParent, NetworkedPlayer owningPlayer);
     public IToolVisual ToolVisual { get; }
     public ToolType ToolType { get; }
     public ushort ToolID { get; }

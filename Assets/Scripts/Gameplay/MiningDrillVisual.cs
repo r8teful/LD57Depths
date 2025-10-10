@@ -7,6 +7,9 @@ public class MiningDrillVisual : MonoBehaviour, IToolVisual {
     private Vector2 _inputPrev;
     private Vector2 _inputCurrent;
     private Coroutine _currentRoutine;
+
+    public (Sprite, Sprite) BackSprites => (null,null);
+
     public void HandleVisualStart(PlayerVisualHandler playerVisualHandler) {
         // Show the drill
         playerVisualHandler.OnStartDrilling();
@@ -47,8 +50,9 @@ public class MiningDrillVisual : MonoBehaviour, IToolVisual {
         DrillVisual(to);
         _currentRoutine = null;// Cleanup
     }
-    public void Init(IToolBehaviour parent) {
+    public void Init(IToolBehaviour parent, PlayerVisualHandler visuaHandler) {
         // Don't need any special visuals atm
+        visuaHandler.OnToolInitBack(this); // Removes whatever backvisual we've got
     }
 
     private void DrillVisual(Vector2 pos) {

@@ -29,11 +29,24 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     public int InitializationOrder => 91;
 
     // Problem lies here because we don't properly populate the remote _idToToolVisual dictionary
-    public IToolVisual GetCurrentTool() {
-        var id = CurrentToolID.Value;
-        return _idToToolVisual.GetValueOrDefault(id);
-
+    public IToolVisual GetCurrentTool(bool isRemote) {
+        if (isRemote) {
+            // Remote doesn't have a behaviour so we do it like this
+            var id = CurrentToolID.Value;
+            return _idToToolVisual.GetValueOrDefault(id);
+        } else {
+            return currentMiningToolBehavior.ToolVisual; 
+        }
     }
+    public override void OnStartClient() {
+        base.OnStartClient();
+        _currentToolID.OnChange += OnToolChange;
+    }
+
+    private void OnToolChange(ushort prev, ushort next, bool asServer) {
+        Debug.Log("On Tool change");
+    }
+
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _playerParent = playerParent;
         Console.RegisterCommand(this, "DEBUGSetMineTool", "setMineTool", "god");
@@ -195,7 +208,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         Spawn(toolInstance, base.LocalConnection);
         // 5. Get the behavior component and assign it.
         toolBehaviorReference = toolInstance.GetComponent<IToolBehaviour>();
-
+        toolBehaviorReference.InitVisualTool(toolBehaviorReference, _playerParent);
         ToolChangeServerRpc(toolBehaviorReference.ToolID); // Send what tool we have to the server so others can know
     }
   

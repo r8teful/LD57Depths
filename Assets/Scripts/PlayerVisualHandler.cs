@@ -166,22 +166,41 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
 
     private void RemoteClientInputChange(Vector2 prev, Vector2 next, bool asServer) {
         Debug.Log("RemoteClient input is now: " + next);
-        _remotePlayer.ToolController.GetCurrentTool().HandleVisualUpdateRemote(next);
+        _remotePlayer.ToolController.GetCurrentTool(true).HandleVisualUpdateRemote(next);
     }
 
     private void RemoteClientToolIsUningChange(bool prev, bool next, bool asServer) {
         if (!HasVisibility())
             return;
+        var tool = _remotePlayer.ToolController.GetCurrentTool(true);
         if (next) {
             // tool enabled
-            _remotePlayer.ToolController.GetCurrentTool().HandleVisualStart(this);
-            _bobBackHandler.OnToolUseStart();
+            tool.HandleVisualStart(this);
         } else {
             // Tool disabled
-            _remotePlayer.ToolController.GetCurrentTool().HandleVisualStop(this);
-            _bobBackHandler.OnToolUseStop();
+            tool.HandleVisualStop(this);
         }
+        CheckBackVisualTool(next,true); // update back visual for remote player
         // TODO then somehow we would need to set what input they have and communicate it over the network, Thats about it
+    }
+    private void CheckBackVisualTool(bool isStartUsingTool, bool isRemote) {
+        var tool = isRemote ? _remotePlayer.ToolController.GetCurrentTool(isRemote) : 
+                              _localPlayer.ToolController.GetCurrentTool(isRemote);
+        if (isStartUsingTool) {
+            // tool enabled
+            if (tool.BackSprites.Item1 != null) {
+                _bobBackHandler.OnToolUseStart();
+            }
+        } else {
+            // Tool disabled
+            if (tool.BackSprites.Item1 != null) {
+                _bobBackHandler.OnToolUseStop();
+            }
+        }
+    }
+    // Such a wierd function but basically when a tool that goes on the back is initialized, this function is called, so we can set the back visual approprietly 
+    public void OnToolInitBack(IToolVisual toolVisual) {
+        _bobBackHandler.HandleStartup(toolVisual);
     }
 
     public void SetHitbox(PlayerState state) {
@@ -277,6 +296,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
                 return; // we are a remote player and don't have vibility, don't do any visual updates 
             }
         }
+        CheckBackVisualTool(true,false); // Update back visual for local player 
         SetBobHand(false);
     }
 
@@ -308,6 +328,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         if(_localPlayer.PlayerLayerController.CurrentLayer.Value == VisibilityLayerType.Interior) {
             return; // Don't enable the hand if we are in the interior
         }
+        CheckBackVisualTool(false,false); // Update back visual for local player 
         SetBobHand(true);
     }
     public void HandleBobLayerChange(bool shouldBeVisible, VisibilityLayerType layer) {

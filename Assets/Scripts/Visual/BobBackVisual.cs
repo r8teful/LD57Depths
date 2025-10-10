@@ -33,12 +33,12 @@ public class BobBackVisual : MonoBehaviour {
     }
     internal void OnToolUseStart() {
         // Hide the tool from your back if it is laying there
-        // TODO 
-        // if(UsingToolThatIsOnTheBack) SetSrpiteSwim(false)
+        SetSpriteSwim(false);
     }
 
     internal void OnToolUseStop() {
         // Put the tool back on the back 
+        SetSpriteSwim(true);
     }
 
     internal void HandleUpgradeBought(UpgradeRecipeSO upgrade) {
@@ -48,6 +48,10 @@ public class BobBackVisual : MonoBehaviour {
         } else if (upgradeID == ResourceSystem.UpgradeOxygenID) {
             SetBackSprite(_oxygenLaying, _oxygenStanding);
         }
+    }
+    public void HandleStartup(IToolVisual toolVisual) {
+        SetBackSprite(toolVisual.BackSprites.Item1, toolVisual.BackSprites.Item2);
+        
     }
 
 }

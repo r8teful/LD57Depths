@@ -5,9 +5,14 @@ using UnityEngine;
 public class MiningRPGVisual : MonoBehaviour, IToolVisual {
     [SerializeField] private SpriteRenderer _spriteRPG;
     [SerializeField] private SpriteRenderer _spriteHand;
+    [SerializeField] private Sprite _spriteSwiming;
+    [SerializeField] private Sprite _spriteStanding;
     private Vector2 _inputPrev;
     private Vector2 _inputCurrent;
     private Coroutine _currentRoutine;
+
+    public (Sprite, Sprite) BackSprites => (_spriteSwiming,_spriteStanding);
+
     public void HandleVisualStart(PlayerVisualHandler playerVisualHandler) {
         // Show the drill
         playerVisualHandler.OnStartDrilling();
@@ -48,8 +53,8 @@ public class MiningRPGVisual : MonoBehaviour, IToolVisual {
         RPGVisual(to);
         _currentRoutine = null;// Cleanup
     }
-    public void Init(IToolBehaviour parent) {
-        // Don't need any special visuals atm
+    public void Init(IToolBehaviour parent, PlayerVisualHandler visuaHandler) {
+        visuaHandler.OnToolInitBack(this as IToolVisual); // Tell the backvisual that we're the rpg is now equiped
     }
 
     private void RPGVisual(Vector2 pos) {

@@ -18,8 +18,10 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
     private IToolBehaviour _toolBehaviour;
     private Coroutine _currentRoutine;
 
-    public void Init(IToolBehaviour parent) {
+    public (Sprite, Sprite) BackSprites => (null,null);
+    public void Init(IToolBehaviour parent, PlayerVisualHandler visuaHandler) {
         _toolBehaviour = parent;
+        visuaHandler.OnToolInitBack(this); // This should be automatic but eh
     }
     private void Start() {
         _hitParticleSystem = Instantiate(ParticlesPrefabHit);

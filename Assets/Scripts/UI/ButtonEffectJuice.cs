@@ -9,7 +9,8 @@ public class ButtonEffectJuice : MonoBehaviour {
         _button.onClick.AddListener(OnButtonClick);
     }
     private void OnDestroy() {
-        _button.onClick.RemoveAllListeners();
+        if(_button != null)
+            _button.onClick.RemoveAllListeners();
     }
     private void OnButtonClick() {
         App.AudioController.PlaySound2D("ButtonClick");
