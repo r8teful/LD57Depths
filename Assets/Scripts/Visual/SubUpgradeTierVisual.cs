@@ -10,6 +10,8 @@ public class SubUpgradeTierVisual : MonoBehaviour {
         SubmarineManager.Instance.OnUpgradeDataChanged += HandleUpgradeChange;
         // Fetch the current upgrade & its state
         ushort curRecipe = SubmarineManager.Instance.CurrentRecipe;
+        if (UpgradeType == SubRecipeSO.SubUpgradeType.Chipp)
+            return; // Because the chipp has another damaged sprite 
         HandleUpgradeChange(curRecipe); // set initial sprite
     }
 
@@ -18,6 +20,10 @@ public class SubUpgradeTierVisual : MonoBehaviour {
         if (r is SubRecipeSO subrecipe) {
             if (subrecipe.UpgradeType != UpgradeType) return;
             if (!HasValidVisuals(subrecipe)) return;
+            if(UpgradeType == SubRecipeSO.SubUpgradeType.Chipp) {
+                if (_spriteRenderer.material.GetFloat("_Damaged") == 1.0f) 
+                    return; // Wait untill we are fixed
+            }
             int stage = SubmarineManager.Instance.GetUpgradeIndex(recipe);
             SetSprite(subrecipe, stage);
         }

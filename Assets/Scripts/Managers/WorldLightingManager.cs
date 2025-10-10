@@ -51,7 +51,7 @@ public class WorldLightingManager : MonoBehaviour {
         Backgroundmanager.Init(_worldManager.WorldGenSettings,_worldManager.BiomeManager);
     }
     
-    public void OnDisable() {
+    public void OnDestroy() {
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
         _worldManager.BiomeManager.OnNewClientBiome -= SetNewBiomeLight;
     }
@@ -76,6 +76,7 @@ public class WorldLightingManager : MonoBehaviour {
     }
 
     private void PlayerVisibilityLayerChanged(VisibilityLayerType layer) {
+        Debug.Log("Layer changed!!");
         if(layer == VisibilityLayerType.Interior) {
             SetLightingInterior();
             Backgroundmanager.SetInteriorBackground(true);

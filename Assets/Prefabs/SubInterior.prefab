@@ -1394,7 +1394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff8e032975c8adc488671f87add3cac8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactIcon: {fileID: 54682694, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  interactIcon: {fileID: 0}
   popupPosition: {fileID: 2616920178592729114}
 --- !u!1 &4782832984471028093
 GameObject:
@@ -2167,7 +2167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff8e032975c8adc488671f87add3cac8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactIcon: {fileID: 54682694, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  interactIcon: {fileID: 0}
   popupPosition: {fileID: 3141793934502187820}
 --- !u!114 &3019531992173901267
 MonoBehaviour:

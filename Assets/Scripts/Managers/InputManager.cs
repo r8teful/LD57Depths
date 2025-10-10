@@ -181,7 +181,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
 
         if (closestInteractable != _currentInteractable) {
             _previousInteractable?.SetInteractable(false); // Hide prompt on old one
-            Debug.Log("Found new interactable!: " + closestInteractable);
+            //Debug.Log("Found new interactable!: " + closestInteractable);
             _currentInteractable = closestInteractable;
             _previousInteractable = _currentInteractable;
 

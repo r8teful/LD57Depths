@@ -18,6 +18,7 @@ public class Interactable : MonoBehaviour, IInteractable {
 
     [Tooltip("Action to execute when this object is no longer the closest interactable (e.g., to close an associated UI).")]
     public event Action OnCeaseInteractable;
+    public event Action OnSetInteractable;
 
     // --- Interface Implementation ---
     public Sprite InteractIcon => interactIcon;
@@ -48,6 +49,7 @@ public class Interactable : MonoBehaviour, IInteractable {
             if (instantiatedPopup == null) {
                 instantiatedPopup = Instantiate(App.ResourceSystem.GetPrefab<CanvasInputWorld>("CanvasInputWorld"), popupPosition.position, Quaternion.identity, transform);
                 instantiatedPopup.Init(this, interactPrompt);
+                OnSetInteractable?.Invoke();
             }
         } else {
             if (instantiatedPopup != null) {
