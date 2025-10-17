@@ -386,7 +386,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                 float3 baseBackgroundColor;
                 if(biomeIndex < 1) {
                     // Trench color
-                    //baseBackgroundColor = float3(0.03,0.094,0.176); // Dark blue gamma?
+                    //baseBackgroundColor = float3(0.03,0.094,0.176); // Dark blue gamma?   
                     baseBackgroundColor = float3(0.001, 0.007, 0.022); // Dark blue linear
                     //baseBackgroundColor = float3(0,0,0); // Dark blue
                 } else{
