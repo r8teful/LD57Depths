@@ -18,10 +18,8 @@ Shader "Custom/BackgroundWorldGenLayer"
         _TrenchEdgeSens ("TrenchEdgeSensitivity", Float) = 0.1
 
         _TextureTiling ("Backgroun Texture Tiling", Float) = 1.0
-        _DarkenMax ("_DarkenMax", Float) = 1.0
-        _DarkenCurve("_DarkenCurve", Float) = 1.0
+        _DarknessAmount("NonEdgeBackgroundTint", Float) = 1.0
         _EdgeTintColor ("EdgeColor", Color) = (1, 1, 1, 1)
-        _NonEdgeDarkness("NonEdgeBackgroundColor", Color) = (0, 0, 0, 0)
         // debug
         _DebugMode ("Debug Mode (0=off,1=mask,2=edge)", Float) = 0.0
         _TrenchBaseWiden ("Widen)", Float) = 0.0
@@ -60,10 +58,8 @@ Shader "Custom/BackgroundWorldGenLayer"
             float _EdgeThickness;     
             float _EdgeInnerRim;            // 0 = off, 1 = on (if you want a rim inside hole)
             float _EdgeOuterRim;            // 0 = off, 1 = on (rim on the filled side)
-            float4 _NonEdgeDarkness;
+            float _DarknessAmount;
             float4 _EdgeTintColor;
-            float _DarkenMax;
-            float _DarkenCurve;
             // Caves
             float _CaveNoiseScale;
             float _CaveAmp;
@@ -387,11 +383,20 @@ Shader "Custom/BackgroundWorldGenLayer"
 
                 //float3 nonEdgeDarkness = _ColorArray[biomeIndex].rgb * (1.0 - _ParallaxFactor*2);
                 //float3 nonEdgeDarkness = _ColorArray[biomeIndex].rgb;
-                // Scale parallax into [0,1]
-                float t = saturate(_ParallaxFactor / 0.4); // Should be dividing by the MAX parralex effect that will results in fully black  if 
-                t = pow(t, _DarkenCurve);
-                t *= _DarkenMax;
-                float3 nonEdgeDarkness = lerp(_ColorArray[biomeIndex].rgb, float3(0,0,0), t);
+                float3 baseBackgroundColor;
+                if(biomeIndex < 1) {
+                    // Trench color
+                    //baseBackgroundColor = float3(0.03,0.094,0.176); // Dark blue gamma?
+                    baseBackgroundColor = float3(0.001, 0.007, 0.022); // Dark blue linear
+                    //baseBackgroundColor = float3(0,0,0); // Dark blue
+                } else{
+                    baseBackgroundColor = _ColorArray[biomeIndex - 1].rgb; // Shift back because biomeIndex starts at 1 
+
+                }
+                float darknessAmount = saturate(_DarknessAmount);
+                float3 nonEdgeDarkness = lerp(baseBackgroundColor, baseBackgroundColor * float3(0,0,0), darknessAmount);
+                
+                //float3 nonEdgeDarkness = lerp(_ColorArray[biomeIndex].rgb, float3(0,0,0), t);
                 //float3 nonEdgeDarkness = _NonEdgeDarkness.rgb; // This is pulled from the color array now
                 float3 darkenedColor =  nonEdgeDarkness * nonEdgeFilled; 
                 

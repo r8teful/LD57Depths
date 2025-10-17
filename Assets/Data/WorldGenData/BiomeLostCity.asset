@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b679a26f4a0fe9a409516798c8439ad3, type: 3}
-  m_Name: BiomeFungal
+  m_Name: BiomeLostCity
   m_EditorClassIdentifier: 
   EdgeNoiseScale: 8.4
   EdgeNoiseAmp: 0.7
   BlockNoiseScale: 0.16
   BlockNoiseAmp: 0.02
   BlockCutoff: 0.01
-  HorSize: 663
-  YHeight: 624
-  TileColor: {r: 0.37254903, g: 0.52156866, b: 0, a: 1}
-  AirColor: {r: 1, g: 0.52156866, b: 1, a: 1}
-  YStart: -4769
-  XOffset: 0
-  DarkenedColor: {r: 0, g: 0.015310371, b: 0.222, a: 1}
+  HorSize: 886.34
+  YHeight: 200
+  TileColor: {r: 0.13933969, g: 1, b: 0, a: 1}
+  AirColor: {r: 0.9290621, g: 1, b: 0.48627448, a: 1}
+  YStart: -3950
+  XOffset: 1665
+  DarkenedColor: {r: 0, g: 0, b: 0, a: 0}
