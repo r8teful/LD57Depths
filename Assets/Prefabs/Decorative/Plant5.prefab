@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 1742827632074191799}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.15000044, y: 1.257, z: 0}
+  m_LocalPosition: {x: -0.15000044, y: 0.89, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -55,7 +55,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 919af697f3b9bf84bbe5df7759e483b3, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -7391759607893831176, guid: 2f6b337b0d1c9c94ca943e4658a36daa, type: 3}
+  m_Sprite: {fileID: 3442116038242085032, guid: 2f6b337b0d1c9c94ca943e4658a36daa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 5952777843502185462}
   - component: {fileID: 4716712821178719296}
   m_Layer: 6
-  m_Name: Plant3
+  m_Name: Plant5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -199,7 +199,7 @@ MonoBehaviour:
   _teleportThreshold: 1
   <PrefabId>k__BackingField: 23
   <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 16344859647174060622
+  <AssetPathHash>k__BackingField: 12867184752893760254
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}

@@ -278,9 +278,11 @@ public class WorldGen : MonoBehaviour {
     private IEnumerator ProcessChunksWithJobs(
         Dictionary<Vector2Int,ChunkData> initialChunks, // Chunk inputs that might get modified
         NetworkConnection requester,  // T
-        System.Action<List<ChunkPayload>, // Callback action with the data that the worldgen generated
-        Dictionary<Vector2Int,ChunkData>,  // Chunkcoord to chunkdata, containing the generated chunks 
-        Dictionary<Vector2Int, List<EntitySpawnInfo>>> onProcessingComplete) { // Chunkcoord with entity data incase we need to spawn any entitys in that chunk
+        System.Action<
+            List<ChunkPayload>, // Callback action with the data that the worldgen generated
+            Dictionary<Vector2Int,ChunkData>,  // Chunkcoord to chunkdata, containing the generated chunks 
+            Dictionary<Vector2Int, List<EntitySpawnInfo>>
+            > onProcessingComplete) { // Chunkcoord with entity data incase we need to spawn any entitys in that chunk
         
         if (initialChunks == null || initialChunks.Count == 0) {
             onProcessingComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>(), new Dictionary<Vector2Int, List<EntitySpawnInfo>>());
@@ -413,6 +415,12 @@ public class WorldGen : MonoBehaviour {
                 data.OreTileIDs_NA.Dispose();
         }
         // Jobs done, now main thread...
+
+        // Structures, which would include Artifacts TODO
+        // But how will this structure be generated? Will they use the tile ID, will they get put on the ore layer?
+        // It seems a bit fucked
+
+        // Entities
         Dictionary<Vector2Int,List<ulong>> entityIdsDict = new Dictionary<Vector2Int,List<ulong>>();
         List<ChunkPayload> clientPayload = new List<ChunkPayload>();
         foreach (var chunks in chunksToSend) {
@@ -472,51 +480,7 @@ public class WorldGen : MonoBehaviour {
         }
         return new ChunkPayload(data.ChunkCoord, finalTileIdsList, finalOreIdsList, durabilities, null);
     }
-    
-
-  
-
-    // --- Pass 3 Helper 
-    private void SpawnOresInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
-        for (int y = 0; y < chunkSize; y++) {
-            for (int x = 0; x < chunkSize; x++) {
-                ushort currentTileID = chunkData.tiles[x, y];
-                if (IsSolid(currentTileID)) // Check if it's a valid tile for ore placement
-                {
-                    int worldX = chunkOriginCell.x + x;
-                    int worldY = chunkOriginCell.y + y;
-                    string biomeName = null;//GetBiomeNameAt(worldX, worldY);
-
-                    TileBase oreTile = DetermineOre(worldX, worldY, biomeName);
-                    if (oreTile != null) {
-                        //Debug.Log($"Generating ore at: X: {worldX} Y: {worldY}");
-                        chunkData.oreID[x, y] = App.ResourceSystem.GetIDByTile(oreTile as TileSO); // Todo will probably not work
-                    }
-                }
-            }
-        }
-    }
-    private TileBase DetermineOre(int worldX, int worldY, string biomeName) {
-        TileBase foundOre = null;
-        // Check Ores (consider priority/order)
-        foreach (var ore in _settings.oreTypes) {
-            //if (biomeName == null || !ore.allowedBiomeNames.Contains(biomeName)) continue;
-            
-            float clusterNoise = 1.0f; // Assume cluster passes if not required
-            if (ore.requireCluster) {
-                clusterNoise = GetNoise(worldX, worldY, ore.clusterFrequency);
-            }
-
-            if (clusterNoise > ore.clusterThreshold) {
-                float oreNoise = GetNoise(worldX, worldY, ore.frequency);
-                if (oreNoise > ore.threshold) {
-                    foundOre = ore.tile; // Last ore checked wins - adjust list order for priority
-                }
-            }
-        }
-        return foundOre;
-    }
-
+   
     /*
     // --- Pass 4: Structure Placement ---
     private  void PlaceStructuresInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {

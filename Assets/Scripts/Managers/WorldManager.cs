@@ -1,9 +1,11 @@
 using FishNet.Object;
-using UnityEngine.Tilemaps;
-using UnityEngine;
 using Sirenix.OdinInspector;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEditor.Experimental;
+using UnityEngine;
+using UnityEngine.Tilemaps;
+using static UnityEditor.ShaderGraph.Internal.Texture2DShaderProperty;
 
 public class WorldManager : NetworkBehaviour {
     public static WorldManager Instance { get; private set; }
@@ -189,5 +191,28 @@ public class WorldManager : NetworkBehaviour {
     internal void SetOres(BoundsInt chunkBounds, TileBase[] oresToSet) {
         //Debug.Log("Setting ores for chunk " + chunkBounds);
         overlayTilemapOre.SetTilesBlock(chunkBounds, oresToSet); // Set tile on overlay layer
+    }
+
+    // Somehow got to get the worldGen to pick one spot in the biome for the artifact to be, then this has to be called 
+    // Most likely from the chunk manager, and generated. 
+    public void Place3x3Artifact(Vector3Int centerCell, GameObject prefab) {
+        // set tiles in tilemap
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                Vector3Int pos = centerCell + new Vector3Int(dx, dy, 0);
+                //tilemap.SetTile(pos, tileToPlace);
+                var i = IndexFromOffset(dx, dy);
+                TileSO tileToPlace = new();//TODO
+            }
+        }
+        // instantiate background prefab at the cell center in world coords
+        Vector3 worldPos = mainTilemap.CellToWorld(centerCell) + mainTilemap.cellSize * 0.5f;
+        GameObject go = Instantiate(prefab, worldPos, Quaternion.identity, transform);
+        go.name = prefab.name + $"_{centerCell.x}_{centerCell.y}";
+    }
+    // Index helper: (dx, dy) in [-1..1]
+    private int IndexFromOffset(int dx, int dy) {
+        // top-to-bottom, left-to-right mapping
+        return (1 - dy) * 3 + (dx + 1);
     }
 }

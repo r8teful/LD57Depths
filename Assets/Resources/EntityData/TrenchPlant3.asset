@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6cba2696d15a0aa4f8ca9bf747113acc, type: 3}
-  m_Name: BioPlant0
+  m_Name: TrenchPlant3
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -30,7 +30,7 @@ MonoBehaviour:
       Data: UnityEngine.Vector2Int, UnityEngine.CoreModule
     - Name: 
       Entry: 3
-      Data: -1
+      Data: 0
     - Name: 
       Entry: 3
       Data: 0
@@ -42,10 +42,10 @@ MonoBehaviour:
       Data: UnityEngine.Vector2Int, UnityEngine.CoreModule
     - Name: 
       Entry: 3
-      Data: 1
+      Data: 0
     - Name: 
       Entry: 3
-      Data: 2
+      Data: 1
     - Name: 
       Entry: 8
       Data: 
@@ -165,7 +165,10 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
     - Name: 
       Entry: 5
       Data: false
@@ -189,10 +192,7 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
+      Data: true
     - Name: 
       Entry: 5
       Data: true
@@ -310,17 +310,17 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  entityID: 200
-  entityName: BioPlant0
-  entityPrefab: {fileID: 401910264597585571, guid: db28046254200e44c8d7bb32ee6aec63, type: 3}
+  entityID: 4
+  entityName: Plant3
+  entityPrefab: {fileID: 6118138442811214505, guid: f548920ec9d4bd7478c645d427a1ddeb, type: 3}
   spawnConditions:
-    requiredBiomes: 07
+    requiredBiomes: 01
     minY: -10000
     maxY: 2000
     specificSpawnTiles: []
-  placementFrequency: 0.25
-  placementThreshold: 0.9
-  allowedAttachmentTypes: 01000000020000000300000004000000
+  placementFrequency: 0.24
+  placementThreshold: 0.891
+  allowedAttachmentTypes: 010000000300000004000000
   requireSolidGround: 1
   requireWaterAdjacent: 1
   randomYRotation: 0
