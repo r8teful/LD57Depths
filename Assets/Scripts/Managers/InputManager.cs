@@ -25,6 +25,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private InputAction _useItemAction;
     private InputAction _hotbarSelection;
     private UIManagerInventory _inventoryUIManager;
+    private UIManager _UIManager;
     private NetworkObject _clientObject;
     private InputDevice lastUsedDevice;
     // UI
@@ -33,10 +34,12 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private InputAction _uiAltInteractAction; // e.g., Right Mouse / Gamepad X
     private InputAction _uiDropOneAction;     // e.g., Right Mouse (when holding) / Gamepad B
     private InputAction _uiNavigateAction;    // D-Pad / Arrow Keys
-    private InputAction _uiPointAction;       // Mouse position for cursor icon
+    private InputAction _uiPointAction;       // Mouse position
     private InputAction _cancelAction;       // Escape / Gamepad Start (to cancel holding)
     private InputAction _uiTabLeft;
     private InputAction _uiTabRight;
+    private InputAction _uiPan;
+    private InputAction _uiZoom;
     
     
     private LayerMask _interactableLayerMask;
@@ -50,15 +53,17 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private IInteractable _previousInteractable;
     [ShowInInspector]
     private PlayerInteractionContext _currentContext;
+    private Vector2 _mousePos;
 
     public int InitializationOrder => 101;
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
-        _inventoryUIManager = playerParent.UiManager.UIManagerInventory;
+        _UIManager = playerParent.UiManager;
+        _inventoryUIManager = _UIManager.UIManagerInventory;
         _clientObject = playerParent.PlayerNetworkedObject;
         _toolController = playerParent.ToolController;
         _playerMovement = playerParent.PlayerMovement;
-        _interactableLayerMask = 1 << LayerMask.NameToLayer("Interactables"); // Don't ask me why its in the unity documentation
+        _interactableLayerMask = 1 << LayerMask.NameToLayer("Interactables"); // Don't ask me why, its in the unity documentation
         SetupInputs();
         SubscribeToEvents();
     }
@@ -81,6 +86,9 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             _uiPointAction = _playerInput.actions.FindAction("UI_Point",true);
             _uiTabLeft = _playerInput.actions.FindAction("UI_TabLeft",true); // Opening containers
             _uiTabRight = _playerInput.actions.FindAction("UI_TabRight",true); // Opening containers
+
+            _uiPan = _playerInput.actions.FindAction("UI_PanAction",true); // Start Moving upgrade view
+            _uiZoom = _playerInput.actions.FindAction("UI_Scroll",true); // Zooming upgrade view
             _hotbarSelection = _playerInput.actions.FindAction("HotbarSelect",true);
             _useItemAction = _playerInput.actions.FindAction("Shoot",true);
         } else {
@@ -92,17 +100,38 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         _UItoggleInventoryAction.performed += UIOnToggleInventory;
         _cancelAction.performed += UIHandleCloseAction;
         _cancelAction.performed += HandleCancelAction;
-        _playerClickAction.performed += OnPrimaryInteractionPerformed;
-        _playerClickAction.canceled += OnPrimaryInteractionPerformed;
+        _playerClickAction.performed += OnPrimaryInteraction;
+        _playerClickAction.canceled += OnPrimaryInteraction;
         _playerDashAction.performed += OnDashPerformed;
         _playerDashAction.canceled += OnDashPerformed;
         _playerMoveAction.performed += OnMove;
         _playerMoveAction.canceled += OnMove;
         _playerAimAction.performed += OnAim;
         _playerAimAction.canceled += OnAim;
+        _uiPan.performed += OnPanStart;
+        _uiPan.canceled += OnPanStop;
+        _uiPointAction.performed += OnMousePosChange;
+        _uiZoom.performed += OnZoom;
+        _uiZoom.canceled += OnZoom;
+
         _playerAbilityAction.performed+= OnAbilityPerformed;
     }
 
+    private void OnPanStop(InputAction.CallbackContext context) {
+        _UIManager.UpgradeScreen.PanAndZoom.OnPanStop();
+    }
+
+    private void OnPanStart(InputAction.CallbackContext obj) {
+        _UIManager.UpgradeScreen.PanAndZoom.OnPanStart();
+     }
+
+    private void OnZoom(InputAction.CallbackContext context) {
+        _UIManager.UpgradeScreen.PanAndZoom.OnZoom(context.ReadValue<Vector2>().y);
+    }
+
+    private void OnMousePosChange(InputAction.CallbackContext context) {
+        _mousePos = context.ReadValue<Vector2>();
+    }
 
     private void UnsubscribeFromEvents() {
         if (_UItoggleInventoryAction != null)
@@ -111,8 +140,8 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             _cancelAction.performed -= UIHandleCloseAction;
             _cancelAction.performed -= HandleCancelAction;
         if (_playerClickAction != null) {
-            _playerClickAction.performed -= OnPrimaryInteractionPerformed;
-            _playerClickAction.canceled -= OnPrimaryInteractionPerformed;
+            _playerClickAction.performed -= OnPrimaryInteraction;
+            _playerClickAction.canceled -= OnPrimaryInteraction;
         }
         if (_playerMoveAction != null) { 
             _playerMoveAction.performed -= OnMove;
@@ -250,6 +279,15 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             return rawAimInput.normalized;
         }
     }
+    public Vector2 GetAimScreenInput() {
+        if (_playerInput.currentControlScheme == "Keyboard&Mouse") {
+            // Convert mouse screen position to world position
+            return rawAimInput;
+        } else // Controller
+          {
+            return Vector2.zero; // Not supported atm
+        }
+    }
 
     public void OnInteract(InputAction.CallbackContext context) {
 
@@ -274,7 +312,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         }
     }
 
-    public void OnPrimaryInteractionPerformed(InputAction.CallbackContext context) {
+    public void OnPrimaryInteraction(InputAction.CallbackContext context) {
         lastUsedDevice = context.control.device;
         // Todo some kind of checks to see if this is allowed..
         // This is Left Mouse Click / Gamepad A
@@ -282,15 +320,19 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         switch (_currentContext) {
             case PlayerInteractionContext.UsingToolOnWorld:
                 if (context.performed) {
-                   _toolController.PerformMining(this);
+                    _toolController.PerformMining(this);
                 } else if (context.canceled) {
-                     _toolController.StopMining();
+                    _toolController.StopMining();
                 }
                 break;
             case PlayerInteractionContext.Building:
                 if (context.performed) {
                     BuildingManager.Instance.UserPlacedClicked(_clientObject);
                 }
+                break;
+            case PlayerInteractionContext.InteractingWithUI:
+                break;
+            case PlayerInteractionContext.DraggingItem:
                 break;
             case PlayerInteractionContext.WorldInteractable:
             case PlayerInteractionContext.None:

@@ -138,4 +138,7 @@ public class UIUpgradeTree : MonoBehaviour {
     internal void OnUpgradeButtonClicked(UpgradeRecipeSO upgradeData) {
         _uiParent.OnUpgradeNodeClicked(upgradeData);
     }
+    public RectTransform GetRect() {
+        return null;
+    }
 }

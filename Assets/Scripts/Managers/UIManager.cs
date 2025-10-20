@@ -22,7 +22,7 @@ public class UIManager : Singleton<UIManager> {
 
 
         // Init managers
-        UpgradeScreen.Init(this,client.UpgradeManager);
+        UpgradeScreen.Init(this,client);
         UIManagerInventory.Init(owningPlayer,client);
         PopupManager.Init(_localInventoryManager);
     }
