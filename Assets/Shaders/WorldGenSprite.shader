@@ -38,7 +38,7 @@ Shader "Custom/WorldGenSprite"
             #include "UnityCG.cginc"
 
             // ---- CONFIG ----
-            #define NUM_BIOMES 3
+            #define NUM_BIOMES 4
             // ------------------
 
             sampler2D _MainTex;

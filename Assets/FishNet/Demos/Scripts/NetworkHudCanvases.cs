@@ -85,6 +85,7 @@ namespace FishNet.Example
 
         void OnGUI()
         {
+            return;
 #if ENABLE_INPUT_SYSTEM
             string GetNextStateText(LocalConnectionState state)
             {

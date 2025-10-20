@@ -25,13 +25,14 @@ public class WorldGenSettingSO : ScriptableObject {
     // 0 bioluminesence
     // 1 fungal 
     // 2 Forest
-    // 3 Volcanic
+    // 3 Deadzone
     // 4 Gems
     // 5 Ice
     // 6 Caves
     // 7 Reef
     // 8 Shipgraves
     // 9 Marble
+    // 10 Volcanic
 
     private float worldSeed;
     public float GetTrenchWidth() => trenchBaseWidth;
