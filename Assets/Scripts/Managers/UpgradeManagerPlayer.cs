@@ -51,32 +51,10 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
         base.OnStopClient();
         LocalInstance = null;
     }
-    public bool ArePrerequisitesMet(UpgradeRecipeSO recipe) {
-        var p = recipe.GetPrerequisites();
-        if (p == null || p.Count == 0) {
-            return true; // No prerequisites needed.
-        }
-
-        // true if AT LEAST ONE prerequisite is unlocked.
-        if (p.Any(u => unlockedUpgrades.Contains(u.ID))) {
-            return true;
-        }
-        return false;
-    }
-    public List<UpgradeRecipeSO> GetAllPrerequisitesMet(UpgradeRecipeSO recipe) {
-        var p = recipe.GetPrerequisites();
-        if (p == null || p.Count == 0) {
-            return new(); // No prerequisites
-        }
-
-        // true if AT LEAST ONE prerequisite is unlocked.
-        if (p.Any(u => unlockedUpgrades.Contains(u.ID))) {
-            return p.FindAll(u => unlockedUpgrades.Contains(u.ID)).ToList();
-        }
-        return new();  // No prerequisites met
-    }
+  
     // this is bad to do because the UpgradePurchased event will only be called on the local clients
-    public bool TryPurchaseUpgrade(UpgradeRecipeSO recipe) {
+    public bool TryPurchaseUpgrade(UpgradeNode node) {
+        UpgradeRecipeSO recipe = null; // TODO
         // 1. Check if already purchased
         if (unlockedUpgrades.Contains(recipe.ID)) {
             Debug.LogWarning($"Attempted to purchase an already owned upgrade: {recipe.name}");
@@ -84,7 +62,7 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
         }
 
         // 2. Check prerequisites
-        if (!ArePrerequisitesMet(recipe)) {
+        if (!node.ArePrerequisitesMet(unlockedUpgrades.Collection)) {
             return false;
         }
         var context = RecipeExecutionContext.FromPlayer(_localNetworkedPlayer);
@@ -123,4 +101,3 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
         }
     }
 }
-

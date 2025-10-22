@@ -2,8 +2,6 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 public class UpgradePanAndZoom : MonoBehaviour {
     private RectTransform treeContainer;
@@ -98,58 +96,6 @@ public class UpgradePanAndZoom : MonoBehaviour {
            // treeLocalBounds.Encapsulate(new Bounds(child.localPosition, child.rect.size));
         }
         Debug.Log($"Bounds Calculated. Center: {treeLocalBounds.center}, Size: {treeLocalBounds.size}");
-    }
-
-    private void EnforceBounds() {
-        Vector3 newPosition = transform.localPosition;
-        Vector2 min = treeLocalBounds.min * transform.localScale.x;
-        Vector2 max = treeLocalBounds.max * transform.localScale.x;
-    
-        Vector2 viewMin = -new Vector2(Screen.width, Screen.height) / 2;
-        Vector2 viewMax = new Vector2(Screen.width, Screen.height) / 2;
-    
-        newPosition.x = Mathf.Clamp(newPosition.x, viewMin.x - max.x, viewMax.x - min.x);
-        newPosition.y = Mathf.Clamp(newPosition.y, viewMin.y - max.y, viewMax.y - min.y);
-    
-        transform.localPosition = newPosition;
-    }
-    private void EnforceBounds2() {
-        var targetPosition = treeContainer.anchoredPosition;
-        // --- 2. Calculate the Clamping Limits ---
-        Vector2 minPosition = Vector2.zero;
-        Vector2 maxPosition = Vector2.zero;
-
-        // If the content is smaller than the viewport, it should be centered.
-        // In this case, its min and max allowed positions are the same.
-        Vector2 contentSize = treeLocalBounds.size;
-        Vector2 viewportSize = viewportRect.rect.size;
-
-        // For the X-axis:
-        if (contentSize.x < viewportSize.x) {
-            minPosition.x = maxPosition.x = -treeLocalBounds.center.x;
-        } else {
-            // The max position is when the content's LEFT edge aligns with the viewport's LEFT edge.
-            maxPosition.x = -treeLocalBounds.min.x - (viewportRect.pivot.x * viewportSize.x);
-            // The min position is when the content's RIGHT edge aligns with the viewport's RIGHT edge.
-            minPosition.x = viewportSize.x - treeLocalBounds.max.x - (viewportRect.pivot.x * viewportSize.x);
-        }
-
-        // For the Y-axis:
-        if (contentSize.y < viewportSize.y) {
-            minPosition.y = maxPosition.y = -treeLocalBounds.center.y;
-        } else {
-            // The max position is when the content's BOTTOM edge aligns with the viewport's BOTTOM edge.
-            maxPosition.y = -treeLocalBounds.min.y - (viewportRect.pivot.y * viewportSize.y);
-            // The min position is when the content's TOP edge aligns with the viewport's TOP edge.
-            minPosition.y = viewportSize.y - treeLocalBounds.max.y - (viewportRect.pivot.y * viewportSize.y);
-        }
-
-        // --- 3. Apply the Clamping ---
-        targetPosition.x = Mathf.Clamp(targetPosition.x, minPosition.x, maxPosition.x);
-        targetPosition.y = Mathf.Clamp(targetPosition.y, minPosition.y, maxPosition.y);
-
-        // --- 4. Set the Final Position ---
-        treeContainer.anchoredPosition = targetPosition;
     }
 
     private void HandleZoom() {

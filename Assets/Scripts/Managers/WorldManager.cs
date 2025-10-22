@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using UnityEditor.Experimental;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using static UnityEditor.ShaderGraph.Internal.Texture2DShaderProperty;
 
 public class WorldManager : NetworkBehaviour {
     public static WorldManager Instance { get; private set; }

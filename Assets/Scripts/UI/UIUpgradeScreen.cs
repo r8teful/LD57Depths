@@ -13,7 +13,7 @@ public class UIUpgradeScreen : MonoBehaviour {
     private UpgradeTreeDataSO _treeDataTool;
     public UIManager GetUIManager() => _UIManagerParent;
     public static event Action<UpgradeTreeDataSO> OnTabChanged; // Used to show correct stats 
-    public static event Action<UpgradeRecipeSO> OnSelectedUpgradeChanged; // Used to show correct stats 
+    public static event Action<UpgradeNode> OnSelectedNodeChanged; // Used to show correct stats 
     private void Start() {
         _upgradePanel.SetActive(false); // Start with the panel being hidden
         _upgradePanelTree.SetActive(true);
@@ -65,9 +65,9 @@ public class UIUpgradeScreen : MonoBehaviour {
         _upgradePanel.SetActive(false);
     }
 
-    internal void OnUpgradeNodeClicked(UpgradeRecipeSO upgradeData) {
+    internal void OnUpgradeNodeClicked(UpgradeNode node) {
 
         App.AudioController.PlaySound2D("ButtonClick");
-        OnSelectedUpgradeChanged?.Invoke(upgradeData);
+        OnSelectedNodeChanged?.Invoke(node);
     }
 }

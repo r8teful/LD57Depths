@@ -11,24 +11,27 @@ public class UIUpgradeViewer : MonoBehaviour {
     [SerializeField] private Transform _backgroundObject;
     [SerializeField] private Button _buttonBuyUpgrade;
     private UpgradeRecipeSO _shownRecipe;
+    private UpgradeNode _selectedUpgradeNode;
     private void Start() {
         UIUpgradeScreen.OnTabChanged += OnTabViewChanged;
-        UIUpgradeScreen.OnSelectedUpgradeChanged += OnUpgradeChanged;
+        UIUpgradeScreen.OnSelectedNodeChanged += OnUpgradeChanged;
         _buttonBuyUpgrade.onClick.AddListener(OnBuyClick);
         DestroyAllChildren();
     }
     private void OnDestroy() {
         UIUpgradeScreen.OnTabChanged -= OnTabViewChanged;
-        UIUpgradeScreen.OnSelectedUpgradeChanged -= OnUpgradeChanged;
+        UIUpgradeScreen.OnSelectedNodeChanged -= OnUpgradeChanged;
         _buttonBuyUpgrade.onClick.RemoveListener(OnBuyClick);
 
     }
 
     private void OnBuyClick() {
-        UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(_shownRecipe);
+        UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(_selectedUpgradeNode);
     }
 
-    private void OnUpgradeChanged(UpgradeRecipeSO upgradeData) {
+    private void OnUpgradeChanged(UpgradeNode node) {
+        UpgradeRecipeSO upgradeData = null; // TODO
+        _selectedUpgradeNode = node;
         _shownRecipe = upgradeData;
         _statHeaderText.text = upgradeData.displayName;
         // Show the upgrade in the view

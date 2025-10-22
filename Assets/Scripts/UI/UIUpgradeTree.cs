@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using TreeEditor;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
+using static UIUpgradeNode;
 
 public class UIUpgradeTree : MonoBehaviour {
-    [SerializeField] private Transform _resourceContainer; // For the first upgrade that is there
 
-    private Dictionary<UpgradeRecipeSO, UIUpgradeNode> _nodeMap = new Dictionary<UpgradeRecipeSO, UIUpgradeNode>();
-    private Dictionary<UpgradeRecipeSO, List<UILineRenderer>> _lineMap = new Dictionary<UpgradeRecipeSO, List<UILineRenderer>>();
+    // String is the GUID
+    private Dictionary<string, UIUpgradeNode> _nodeMap = new Dictionary<string, UIUpgradeNode>();
+    private Dictionary<string, List<UILineRenderer>> _lineMap = new Dictionary<string, List<UILineRenderer>>();
     private UIUpgradeScreen _uiParent;
     internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades) {
         _nodeMap.Clear();
@@ -15,53 +19,109 @@ public class UIUpgradeTree : MonoBehaviour {
         // Instead of instantiating the nodes, we "link" the existing node prefab to the data, so that it displays the right
         // upgrade. This is how we have to do it if we want more complex trees, instead of just instantiating the nodes
         // in a horizontal layout group. A bit more work to setup now but easier to code
-        var uiLinkers = GetComponentsInChildren<UIUpgradeNode>();
-        var dataToNodeLookup = new Dictionary<UpgradeRecipeSO, UIUpgradeNode>();
-        foreach (var linker in uiLinkers) {
-            if(linker.ConnectedRecipeData == null) {
-                Debug.LogError("Tree nodes in prefab not setup properly!");
+        var existingNodes = GetComponentsInChildren<UIUpgradeNode>(true);
+        var dataToNodeLookup = new Dictionary<string, UIUpgradeNode>();
+
+        foreach (var node in existingNodes) {
+
+            if (string.IsNullOrEmpty(node.GUIDBoundNode)) {
+                Debug.LogError($"A UIUpgradeNode in the prefab '{gameObject.name}' is missing its 'ConnectedNodeName'.", node);
+                continue;
             }
-            if (linker != null && !dataToNodeLookup.ContainsKey(linker.ConnectedRecipeData)) {
-                dataToNodeLookup.Add(linker.ConnectedRecipeData, linker);
+            if (!dataToNodeLookup.ContainsKey(node.GUIDBoundNode)) {
+                dataToNodeLookup.Add(node.GUIDBoundNode, node);
             }
         }
         // Iterate through the ACTUAL upgrade data and initialize the corresponding UI nodes.
         // We use tree.nodes now, as it contains the original, unprepared assets.
         foreach (var nodeData in tree.nodes) {
-            var originalUpgrade = nodeData.upgrade;
-            if (originalUpgrade == null) continue;
-
+            // We just want to tell the existing node what prepared node it is connected to
             // Find the UI node in our prefab that has the matching GUID.
-            if (dataToNodeLookup.TryGetValue(originalUpgrade, out UIUpgradeNode uiNode)) {
-                // Get the PREPARED version of the upgrade, which has the calculated costs.
-                UpgradeRecipeSO preparedUpgrade = tree.GetPreparedUpgrade(originalUpgrade);
-                if (preparedUpgrade != null) {
-                    // Make line connections for the node
-                    List<UILineRenderer> nodeLines = new();
-                    foreach (var p in nodeData.prerequisiteAny) {
-                        // Here the last upgrade will have 3 connections, meaning if we set its color to "availabe"
-                        var line = AddLine(preparedUpgrade, uiNode.transform, dataToNodeLookup[p].transform);
-                        nodeLines.Add(line);
-                        //line.gameObject.AddComponent<UIUpgradeLine>().Init(uiNode, dataToNodeLookup[p], line);
-                        line.gameObject.AddComponent<UIUpgradeLine>().Init(dataToNodeLookup[p],uiNode, line);
-                    }
-                    // Initialize it!
-                    uiNode.name = $"UI_Node_{preparedUpgrade.displayName}";
-                    uiNode.Init(preparedUpgrade, this, nodeLines);
-                    _nodeMap.Add(preparedUpgrade, uiNode);
+            if (!dataToNodeLookup.TryGetValue(nodeData.GUID, out UIUpgradeNode uiNode)) {
+                continue;
+            }
+            // Now have the node that is an EXISTING child
+            // 3. Calculate the node's current state from the player's progress.
+            int currentLevel = nodeData.GetCurrentLevel(existingUpgrades);
+            bool isMaxed = currentLevel >= nodeData.MaxLevel;
+            bool prereqsMet = nodeData.ArePrerequisitesMet(existingUpgrades);
+
+            // 4. Determine the node's visual status.
+            UpgradeNodeState status;
+            if (!prereqsMet && currentLevel == 0) {
+                status = UpgradeNodeState.Inactive; 
+            } else if (isMaxed) {
+                status = UpgradeNodeState.Purchased;
+            } else if (currentLevel > 0) {
+                //status = UpgradeNodeState.InProgress;
+                status = UpgradeNodeState.Active;
+            } else { // prereqsMet and currentLevel is 0
+                status = UpgradeNodeState.Active;
+            }
+            // 5. Get the correct recipe data for display.
+            UpgradeRecipeSO baseRecipeForInfo = null;
+            UpgradeRecipeSO preparedNextStage = null;
+
+            // Determine which stage's info to show (the next one, or the last one if maxed). We don't need to loop through all stages here obviously
+            int infoStageIndex = isMaxed ? nodeData.MaxLevel - 1 : currentLevel;
+            if (infoStageIndex >= 0 && infoStageIndex < nodeData.stages.Count) {
+                // Get the RAW recipe asset for displaying icon/description on ALL nodes.
+                baseRecipeForInfo = nodeData.stages[infoStageIndex].upgrade;
+            }
+            if (!isMaxed && prereqsMet) {
+                UpgradeStage nextStageToUnlock = nodeData.stages[currentLevel];
+                preparedNextStage = tree.GetPreparedRecipeForStage(nextStageToUnlock);
+
+                // In this case, the info recipe should also be from the next stage.
+                baseRecipeForInfo = nextStageToUnlock.upgrade;
+            }
+
+            // 6. Update the UI element with all the calculated information.
+            uiNode.Init(this, nodeData, currentLevel, baseRecipeForInfo, preparedNextStage, status);
+            _nodeMap.Add(nodeData.GUID, uiNode);
+        }
+        UpdateConnectionLines(tree, existingUpgrades);
 
 
-                }
-            } else {
-                Debug.LogWarning($"Found upgrade data '{originalUpgrade.name}' in SO but no matching UI node");
+        UpgradeManagerPlayer.LocalInstance.OnUpgradePurchased += HandleUpgradePurchased;
+        UIUpgradeScreen.OnSelectedNodeChanged += SelectedChange;
+    }
+
+    private void HandleUpgradePurchased(UpgradeRecipeSO sO) {
+        
+    }
+
+    private void SelectedChange(UpgradeNode node) {
+        if(!_nodeMap.TryGetValue(node.GUID, out var nodeUI)){
+            Debug.LogError("Could not find nodeUI of " + node.GUID);
+            return;
+        }
+        nodeUI.SetSelected();
+        // Tell previous selected node that it is no longer sellected
+        //TODO
+        
+    }
+
+    private void UpdateConnectionLines(UpgradeTreeDataSO treeData, IReadOnlyCollection<ushort> unlockedUpgrades) {
+        foreach (var dataNode in treeData.nodes) {
+            if (!_nodeMap.TryGetValue(dataNode.GUID, out UIUpgradeNode childUiNode)) continue;
+
+            foreach (var prereqNode in dataNode.prerequisiteNodesAny) {
+                if (!_nodeMap.TryGetValue(prereqNode.GUID, out UIUpgradeNode parentUiNode)) continue;
+                var line = AddLine(prereqNode.GUID,childUiNode.transform, parentUiNode.transform);
+                // Now, set the line's color based on state.
+                //bool parentIsMaxed = treeData.IsNodeMaxedOut(prereqNode, unlockedUpgrades);
+                
+                //line.gameObject.AddComponent<UIUpgradeLine>().Init(dataToNodeLookup[p], uiNode, line);
+                // line.color = parentIsMaxed ? Color.yellow : Color.gray;
             }
         }
     }
-    private UILineRenderer AddLine(UpgradeRecipeSO source, Transform from, Transform to) {
+    private UILineRenderer AddLine(string sourceGUID, Transform from, Transform to) {
         
         var lineRenderer = Instantiate(App.ResourceSystem.GetPrefab<UILineRenderer>("UILine"),transform);
         lineRenderer.transform.SetAsFirstSibling();
-        lineRenderer.name = $"Line {source}";
+        lineRenderer.name = $"Line {sourceGUID}";
         float offsetFromNodes = 1f;
         int linePointsCount = 2;
 
@@ -89,56 +149,22 @@ public class UIUpgradeTree : MonoBehaviour {
 
         lineRenderer.Points = list.ToArray();
 
-        if (_lineMap.ContainsKey(source)) {
-            _lineMap[source].Add(lineRenderer);
+        if (_lineMap.ContainsKey(sourceGUID)) {
+            _lineMap[sourceGUID].Add(lineRenderer);
         } else {
             // new key
-            _lineMap.Add(source, new List<UILineRenderer>{ lineRenderer });
+            _lineMap.Add(sourceGUID, new List<UILineRenderer>{ lineRenderer });
         }
             return lineRenderer;
     }
-
-    internal void SetNodeAvailable(UpgradeRecipeSO upgradeData) {
-        // Set line to right color
-        if (_resourceContainer == null) return;
-        foreach(Transform child in _resourceContainer) {
-            Destroy(child.gameObject);
-        }
-        foreach (var item in upgradeData.requiredItems) {
-            Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeResourceDisplay>("UpgradeResourceDisplay"), _resourceContainer)
-                .Init(item.item.icon, item.quantity);
-        }
-        _resourceContainer.gameObject.SetActive(true);
-    }
-    public void SetLineColor(UpgradeRecipeSO upgrade, Color c) {
-        // upgrade = LazerDamage1. It says prerequesate of LazerDamage0 is met. What we want it to do is set the 
-        if(upgrade.GetPrerequisites().Count == 1) {
-          
-        }
-        foreach(var met in UpgradeManagerPlayer.LocalInstance.GetAllPrerequisitesMet(upgrade)) {
-            if (_lineMap.TryGetValue(met, out var lines)) {
-                foreach (var line in lines) {
-                    line.color = c;
-                }
-            }
-            if (_lineMap.TryGetValue(upgrade, out var lines2)) {
-                foreach (var line in lines2) {
-                    line.color = c;
-                }
-            }
-        }    
-    }
-
+   
     // Helper function to easily find a UI node later.
-    public UIUpgradeNode GetNodeForUpgrade(UpgradeRecipeSO upgrade) {
-        _nodeMap.TryGetValue(upgrade, out var uiNode);
-        return uiNode;
-    }
+    //public UIUpgradeNode GetNodeForUpgrade(UpgradeRecipeSO upgrade) {
+    //    _nodeMap.TryGetValue(upgrade, out var uiNode);
+    //    return uiNode;
+    //}
 
-    internal void OnUpgradeButtonClicked(UpgradeRecipeSO upgradeData) {
+    internal void OnUpgradeButtonClicked(UpgradeNode upgradeData) {
         _uiParent.OnUpgradeNodeClicked(upgradeData);
-    }
-    public RectTransform GetRect() {
-        return null;
     }
 }

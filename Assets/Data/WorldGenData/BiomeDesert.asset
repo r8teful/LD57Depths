@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b679a26f4a0fe9a409516798c8439ad3, type: 3}
-  m_Name: BiomeBioluminesence
+  m_Name: BiomeDesert
   m_EditorClassIdentifier: 
-  EdgeNoiseScale: 0.15
-  EdgeNoiseAmp: 24
-  BlockNoiseScale: 0.08
-  BlockNoiseAmp: 0.02
-  BlockCutoff: 0.01
-  HorSize: 980
-  YHeight: 624
-  TileColor: {r: 0.3529412, g: 0.99215686, b: 1, a: 1}
-  AirColor: {r: 1, g: 0.99215686, b: 1, a: 1}
-  YStart: -3425.9
-  XOffset: -1092.19
-  DarkenedColor: {r: 0, g: 0, b: 0.071, a: 1}
+  EdgeNoiseScale: 8.4
+  EdgeNoiseAmp: 0.7
+  BlockNoiseScale: 0.01
+  BlockNoiseAmp: 0.01
+  BlockCutoff: 0.5
+  HorSize: 886.34
+  YHeight: 265
+  TileColor: {r: 0, g: 0.9065509, b: 1, a: 1}
+  AirColor: {r: 1, g: 0.48584908, b: 0.48584908, a: 1}
+  YStart: -3815
+  XOffset: 1665
+  DarkenedColor: {r: 0, g: 0, b: 0, a: 0}

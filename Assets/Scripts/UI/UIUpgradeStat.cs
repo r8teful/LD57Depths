@@ -10,10 +10,10 @@ public class UIUpgradeStat : MonoBehaviour {
     [SerializeField] private GameObject _arrowImage;
 
     private void OnEnable() {
-        UIUpgradeScreen.OnSelectedUpgradeChanged += OnUpgradeChanged;
+       // UIUpgradeScreen.OnSelectedNodeChanged += OnUpgradeChanged;
     }
     private void OnDisable() {
-        UIUpgradeScreen.OnSelectedUpgradeChanged -= OnUpgradeChanged;
+       // UIUpgradeScreen.OnSelectedNodeChanged -= OnUpgradeChanged;
     }
     private void OnUpgradeChanged(UpgradeRecipeSO sO) {
         // Change to "unselected" visual if matching

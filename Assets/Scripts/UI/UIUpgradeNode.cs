@@ -11,20 +11,20 @@ using Color = UnityEngine.Color;
 public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] private Button _buttonBig;
     [SerializeField] private Button _buttonSmall;
-    [SerializeField] private UpgradeRecipeSO _recipe;
+    public string GUIDBoundNode; // Should match the NODE that its connected to 
     private Image _iconImage;
     private Button _buttonCurrent;
     private Image _imageCurrent;
     private RectTransform _rectTransform;
-    private UpgradeRecipeSO _upgradeData;
+    private UpgradeNode _boundNode;
     private UIUpgradeTree _treeParent;
-    private List<UILineRenderer> _nodeLines = new();
+    private UpgradeRecipeSO _baseRecipeForInfo; // The raw SO for displaying icon/description
+    private UpgradeRecipeSO _preparedRecipeForPurchase; // The temporary instance with calculated cost
 
-    public UpgradeRecipeSO ConnectedRecipeData => _recipe;
     [OnValueChanged("InspectorBigChange")]
     public bool IsBig;
     public event Action PopupDataChanged;
-    public event Action<UpgradeNodeState> OnStateChange; // it should be an enum but eh
+    public event Action<UpgradeNodeState> OnStateChange;
     public enum UpgradeNodeState {Purchased,Active,Inactive }
 
     private static readonly string ICON_PURCHASED_HEX = "#FFAA67";     // icon on purchased (orange) background
@@ -43,6 +43,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Color _iconPressedColor;
     private bool _cachedIsPurchased;
     private bool _cachedPrerequisitesMet;
+    private bool _isSelected;
 
     private void Awake() {
         // parse hex colors (falls back to white if parse fails)
@@ -60,40 +61,28 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonSmall.gameObject.SetActive(true);
         }
     }
-    internal void Init(UpgradeRecipeSO upgradeRecipeSO, UIUpgradeTree parent, List<UILineRenderer> nodeLines) {
+    internal void Init(UIUpgradeTree parent, UpgradeNode boundNode, int currentLevel, UpgradeRecipeSO baseRecipeForInfo, UpgradeRecipeSO preparedNextStage, UpgradeNodeState status) {
         _treeParent = parent;
-        _nodeLines = nodeLines;
-        _upgradeData = upgradeRecipeSO;
+        _boundNode = boundNode;
+        _baseRecipeForInfo = baseRecipeForInfo;
+        _preparedRecipeForPurchase = preparedNextStage;
         _rectTransform = GetComponent<RectTransform>();
-        if (IsBig && _buttonBig != null) {
-            _buttonBig.onClick.RemoveAllListeners();
-            _buttonBig.onClick.AddListener(OnUpgradeButtonClicked);
-            _buttonSmall.gameObject.SetActive(false);
-            _buttonCurrent = _buttonBig;
-            var r = _rectTransform.sizeDelta;
-            r.x = 120f;
-            _rectTransform.sizeDelta = r;
-        } else if(!IsBig && _buttonSmall != null) {
-            _buttonSmall.onClick.RemoveAllListeners();
-            _buttonSmall.onClick.AddListener(OnUpgradeButtonClicked);
-            _buttonCurrent = _buttonSmall;
-            _buttonBig.gameObject.SetActive(false);
-            var r = _rectTransform.sizeDelta;
-            r.x = 65f;
-            _rectTransform.sizeDelta = r;
-        }
         _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
         _iconImage = _buttonCurrent.transform.GetChild(1).GetComponent<Image>();// Even worse
+        HandleButtonSize();
+        SetIcon();
+        UpdateVisualState();
+    }
 
-        // Set icon
-        var icon = _upgradeData.icon;
-        if(icon != null) {
+    private void SetIcon() {
+        var icon = _baseRecipeForInfo.icon;
+        if (icon != null) {
             _iconImage.sprite = icon;
             var c = _iconImage.color;
             c.a = 1;
             _iconImage.color = c; // Make sure alpha is 1
             _iconImage.SetNativeSize();
-            Vector2 size = icon.rect.size *0.8f; // Just been doing 80% of the original size for the whole ui 
+            Vector2 size = icon.rect.size * 0.8f; // Just been doing 80% of the original size for the whole ui 
             _iconImage.rectTransform.sizeDelta = size;
             RectTransform rt = _iconImage.rectTransform;
             rt.anchorMin = new Vector2(0.5f, 0.5f);   // anchor at center
@@ -102,23 +91,30 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             rt.anchoredPosition = Vector2.zero;      // zero offset from anchor
             //_iconImage.rectTransform.sizeDelta = new Vector2(icon. texture.width, icon.texture.height);
         } else {
-            Debug.LogError($"Icon for upgrade type {_upgradeData.name} not found!");
-            return;
+            Debug.LogError($"Icon for upgrade type {_baseRecipeForInfo.name} not found!");
         }
-        UpdateVisualState();
-    }
-    private void OnEnable() {
-        UpgradeManagerPlayer.LocalInstance.OnUpgradePurchased += HandleUpgradePurchased;
-        UIUpgradeScreen.OnSelectedUpgradeChanged += SelectedChange;
     }
 
-    private void SelectedChange(UpgradeRecipeSO selected) {
-        UpdateVisual(selected);
+    private void HandleButtonSize() {
+        if (IsBig && _buttonBig != null) {
+            _buttonBig.onClick.RemoveAllListeners();
+            _buttonBig.onClick.AddListener(OnUpgradeButtonClicked);
+            _buttonSmall.gameObject.SetActive(false);
+            _buttonCurrent = _buttonBig;
+            var r = _rectTransform.sizeDelta;
+            r.x = 120f;
+            _rectTransform.sizeDelta = r;
+        } else if (!IsBig && _buttonSmall != null) {
+            _buttonSmall.onClick.RemoveAllListeners();
+            _buttonSmall.onClick.AddListener(OnUpgradeButtonClicked);
+            _buttonCurrent = _buttonSmall;
+            _buttonBig.gameObject.SetActive(false);
+            var r = _rectTransform.sizeDelta;
+            r.x = 65f;
+            _rectTransform.sizeDelta = r;
+        }
     }
 
-    private void OnDisable() {
-        UpgradeManagerPlayer.LocalInstance.OnUpgradePurchased -= HandleUpgradePurchased;
-    }
 
     public void OnPointerEnter(PointerEventData eventData) {
         //PopupManager.Instance.ShowPopup(this, true);
@@ -129,24 +125,12 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
     private void OnUpgradeButtonClicked() {
         // UICraftingManager.Instance.AttemptCraft(upgradeData, null, null);
-        _treeParent.OnUpgradeButtonClicked(_upgradeData);
+        _treeParent.OnUpgradeButtonClicked(_boundNode);
     }
-    // This method is called by the event from the UpgradeManager
-    private void HandleUpgradePurchased(UpgradeRecipeSO purchasedRecipe) {
-        if(purchasedRecipe == _recipe) {
-            OnPurchased();
-        }
-        // When any upgrade is purchased, re-evaluate our state.
-        // This is important for unlocking nodes when a prerequisite is met.
-        UpdateVisualState();
-    }
-
+    
     // The core logic for how this node should look based on game state
     private void UpdateVisualState() {
-        if (_upgradeData == null)
-            return;
-        UpdateVisual(null);
-        //Debug.Log("Called");
+        //UpdateVisual();
         PopupDataChanged?.Invoke(); // Data could have changed
         // BIG INACTIVE 077263
         // BIG ACTIVE 0CD8BA
@@ -156,18 +140,17 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // SMALL Purchad D58141
     }
 
-    public void UpdateVisual(UpgradeRecipeSO selected) {
-        var isPurchased = UpgradeManagerPlayer.LocalInstance.IsUpgradePurchased(_upgradeData);
+    public void UpdateVisual(bool isPurchased,bool prerequisitesMet) {
+        //var isPurchased = UpgradeManagerPlayer.LocalInstance.IsUpgradePurchased(_upgradeData);
         // determine variant (one of Blue/Green/Orange)
         string variant = isPurchased ? "Orange" : (IsBig ? "Green" : "Blue");
-        bool prerequisitesMet = UpgradeManagerPlayer.LocalInstance.ArePrerequisitesMet(_upgradeData);
+        //bool prerequisitesMet = UpgradeManagerPlayer.LocalInstance.ArePrerequisitesMet(_upgradeData);
         // Cache for later restore (when selection changes away)
         _cachedIsPurchased = isPurchased;
         _cachedPrerequisitesMet = prerequisitesMet;
         // If this button is the currently selected one, show the manual Pressed sprite:
-        
-        bool iAmSelected = selected == _upgradeData;
-        if (iAmSelected) {
+
+        if (_isSelected) {
             // Manual pressed state (we don't use Button's Sprite Swap)
             ApplySprite(variant, "Pressed");
             _iconImage.color = _iconPressedColor;
@@ -220,12 +203,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         transform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity);
         transform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-2f, 2f)), 0.2f, vibrato, elasticity);
     }
-    private void SetLinesColour(Color color) {
-        // TODO We have to know from where the connetion is bought, so that we can only set that color, if there are multiple connections!
-        foreach (var line in _nodeLines) {
-            line.color = color;
-        }
-    }
     private void ConfigureColorBlockForState(Color pressedColor, Color disabledColor) {
         if (_buttonCurrent == null) return;
 
@@ -237,7 +214,11 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         _buttonCurrent.colors = cb;
     }
     public PopupData GetPopupData(InventoryManager clientInv) {
-        return new PopupData(_upgradeData.displayName, _upgradeData.description, _upgradeData.GetIngredientStatuses(clientInv));
-        //return null;
+        //return new PopupData(_upgradeData.displayName, _upgradeData.description, _upgradeData.GetIngredientStatuses(clientInv));
+        return null; // tODO
+    }
+
+    internal void SetSelected() {
+        _isSelected = true;
     }
 }

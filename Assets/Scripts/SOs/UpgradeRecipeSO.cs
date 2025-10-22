@@ -12,11 +12,6 @@ public class UpgradeRecipeSO: RecipeBaseSO {
     [SerializeReference]
     public List<UpgradeEffect> effects = new List<UpgradeEffect>(); // The results the upgrade has when purchased 
 
-    [ReadOnly]
-    private List<UpgradeRecipeSO> prerequisites = new List<UpgradeRecipeSO>();
-
-    [ReadOnly]
-    private List<UpgradeRecipeSO> children = new List<UpgradeRecipeSO>();
     public override bool ExecuteRecipe(RecipeExecutionContext context) {
         foreach (var effect in effects) {
             effect.Apply(context.Player.gameObject); // TODO have to see how this will actualyl work now...
@@ -32,13 +27,7 @@ public class UpgradeRecipeSO: RecipeBaseSO {
         requiredItems = CalculateItemQuantities(Mathf.RoundToInt(value), resourcePool,
             new QuantityCalculationOptions{ RespectAvailability = false, MaxContributionPercentage = 0.75f });
     }
-    public List<UpgradeRecipeSO> GetPrerequisites() => prerequisites;
     
-    public void AddChild(UpgradeRecipeSO child) {
-        if (!children.Contains(child)) {
-            children.Add(child);
-        }
-    }
     public static List<ItemQuantity> CalculateItemQuantities(
         int targetValue,
         List<ItemQuantity> resourcePool,
@@ -83,12 +72,6 @@ public class UpgradeRecipeSO: RecipeBaseSO {
 
         // TODO: handle leftover if remaining > 0, if desired
         return result;
-    }
-
-    public void AddPrerequisite(UpgradeRecipeSO parent) {
-        if (!prerequisites.Contains(parent)) {
-            prerequisites.Add(parent);
-        }
     }
 }
 public class QuantityCalculationOptions {
