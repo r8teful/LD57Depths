@@ -11,7 +11,7 @@ public class UIUpgradeViewer : MonoBehaviour {
     [SerializeField] private Transform _backgroundObject;
     [SerializeField] private Button _buttonBuyUpgrade;
     private UpgradeRecipeSO _shownRecipe;
-    private UpgradeNode _selectedUpgradeNode;
+    private UpgradeNodeSO _selectedUpgradeNode;
     private void Start() {
         UIUpgradeScreen.OnTabChanged += OnTabViewChanged;
         UIUpgradeScreen.OnSelectedNodeChanged += OnUpgradeChanged;
@@ -29,7 +29,7 @@ public class UIUpgradeViewer : MonoBehaviour {
         UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(_selectedUpgradeNode);
     }
 
-    private void OnUpgradeChanged(UpgradeNode node) {
+    private void OnUpgradeChanged(UpgradeNodeSO node) {
         UpgradeRecipeSO upgradeData = null; // TODO
         _selectedUpgradeNode = node;
         _shownRecipe = upgradeData;

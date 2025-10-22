@@ -53,7 +53,7 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
     }
   
     // this is bad to do because the UpgradePurchased event will only be called on the local clients
-    public bool TryPurchaseUpgrade(UpgradeNode node) {
+    public bool TryPurchaseUpgrade(UpgradeNodeSO node) {
         UpgradeRecipeSO recipe = null; // TODO
         // 1. Check if already purchased
         if (unlockedUpgrades.Contains(recipe.ID)) {

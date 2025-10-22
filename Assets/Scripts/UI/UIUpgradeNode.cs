@@ -11,15 +11,15 @@ using Color = UnityEngine.Color;
 public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] private Button _buttonBig;
     [SerializeField] private Button _buttonSmall;
-    public string GUIDBoundNode; // Should match the NODE that its connected to 
+    public ushort IDBoundNode = ResourceSystem.InvalidID; // Should match the NODE that its connected to 
     private Image _iconImage;
     private Button _buttonCurrent;
     private Image _imageCurrent;
     private RectTransform _rectTransform;
-    private UpgradeNode _boundNode;
+    private UpgradeNodeSO _boundNode;
     private UIUpgradeTree _treeParent;
-    private UpgradeRecipeSO _baseRecipeForInfo; // The raw SO for displaying icon/description
-    private UpgradeRecipeSO _preparedRecipeForPurchase; // The temporary instance with calculated cost
+    //private UpgradeRecipeSO _baseRecipeForInfo; // The raw SO for displaying icon/description
+    //private UpgradeRecipeSO _preparedRecipeForPurchase; // The temporary instance with calculated cost
 
     [OnValueChanged("InspectorBigChange")]
     public bool IsBig;
@@ -61,21 +61,21 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonSmall.gameObject.SetActive(true);
         }
     }
-    internal void Init(UIUpgradeTree parent, UpgradeNode boundNode, int currentLevel, UpgradeRecipeSO baseRecipeForInfo, UpgradeRecipeSO preparedNextStage, UpgradeNodeState status) {
+    internal void Init(UIUpgradeTree parent, UpgradeNodeSO boundNode, int currentLevel, UpgradeRecipeSO baseRecipeForInfo, UpgradeRecipeSO preparedNextStage, UpgradeNodeState status) {
         _treeParent = parent;
         _boundNode = boundNode;
-        _baseRecipeForInfo = baseRecipeForInfo;
-        _preparedRecipeForPurchase = preparedNextStage;
+        //_baseRecipeForInfo = baseRecipeForInfo;
+        //_preparedRecipeForPurchase = preparedNextStage;
         _rectTransform = GetComponent<RectTransform>();
+        HandleButtonSize(); // Sets _buttonCurrent
         _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
         _iconImage = _buttonCurrent.transform.GetChild(1).GetComponent<Image>();// Even worse
-        HandleButtonSize();
         SetIcon();
         UpdateVisualState();
     }
 
     private void SetIcon() {
-        var icon = _baseRecipeForInfo.icon;
+        var icon = _boundNode.icon;
         if (icon != null) {
             _iconImage.sprite = icon;
             var c = _iconImage.color;
@@ -91,7 +91,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             rt.anchoredPosition = Vector2.zero;      // zero offset from anchor
             //_iconImage.rectTransform.sizeDelta = new Vector2(icon. texture.width, icon.texture.height);
         } else {
-            Debug.LogError($"Icon for upgrade type {_baseRecipeForInfo.name} not found!");
+            Debug.LogError($"Icon for upgrade type {_boundNode.name} not found!");
         }
     }
 

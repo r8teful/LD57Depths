@@ -251,7 +251,6 @@ public class UpgradePanAndZoom : MonoBehaviour {
 
         // If they overlap already (even partially), do nothing.
         if (childRect.Overlaps(parentRect)) {
-            Debug.Log("Overlapping.. returning..");
             return;
         }
 

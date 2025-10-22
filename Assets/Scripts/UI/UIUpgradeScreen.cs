@@ -13,14 +13,15 @@ public class UIUpgradeScreen : MonoBehaviour {
     private UpgradeTreeDataSO _treeDataTool;
     public UIManager GetUIManager() => _UIManagerParent;
     public static event Action<UpgradeTreeDataSO> OnTabChanged; // Used to show correct stats 
-    public static event Action<UpgradeNode> OnSelectedNodeChanged; // Used to show correct stats 
+    public static event Action<UpgradeNodeSO> OnSelectedNodeChanged; // Used to show correct stats 
     private void Start() {
         _upgradePanel.SetActive(false); // Start with the panel being hidden
         _upgradePanelTree.SetActive(true);
     }
     internal void Init(UIManager UIManager, NetworkedPlayer client) {
         _UIManagerParent = UIManager;
-        _treeDataTool = App.ResourceSystem.GetTreeByName("Mining Lazer"); // This will obviously have to come from some sort of "game selection" manager
+        _treeDataTool = App.ResourceSystem.GetTreeByName("DefaultTree"); // This will obviously have to come from some sort of "game selection" manager
+        //_treeDataTool = App.ResourceSystem.GetTreeByName("Mining Lazer"); // This will obviously have to come from some sort of "game selection" manager
         //_treeDataPlayer = App.ResourceSystem.GetTreeByName("Player"); // This will obviously have to come from some sort of "game selection" manager
        
         // We have to get the existing data from the UpgradeManager, for both the local player, and the communal from the server
@@ -65,7 +66,7 @@ public class UIUpgradeScreen : MonoBehaviour {
         _upgradePanel.SetActive(false);
     }
 
-    internal void OnUpgradeNodeClicked(UpgradeNode node) {
+    internal void OnUpgradeNodeClicked(UpgradeNodeSO node) {
 
         App.AudioController.PlaySound2D("ButtonClick");
         OnSelectedNodeChanged?.Invoke(node);

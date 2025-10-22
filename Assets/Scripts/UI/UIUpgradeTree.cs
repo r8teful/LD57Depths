@@ -10,8 +10,8 @@ using static UIUpgradeNode;
 public class UIUpgradeTree : MonoBehaviour {
 
     // String is the GUID
-    private Dictionary<string, UIUpgradeNode> _nodeMap = new Dictionary<string, UIUpgradeNode>();
-    private Dictionary<string, List<UILineRenderer>> _lineMap = new Dictionary<string, List<UILineRenderer>>();
+    private Dictionary<ushort, UIUpgradeNode> _nodeMap = new Dictionary<ushort, UIUpgradeNode>();
+    private Dictionary<ushort, List<UILineRenderer>> _lineMap = new Dictionary<ushort, List<UILineRenderer>>();
     private UIUpgradeScreen _uiParent;
     internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades) {
         _nodeMap.Clear();
@@ -20,16 +20,16 @@ public class UIUpgradeTree : MonoBehaviour {
         // upgrade. This is how we have to do it if we want more complex trees, instead of just instantiating the nodes
         // in a horizontal layout group. A bit more work to setup now but easier to code
         var existingNodes = GetComponentsInChildren<UIUpgradeNode>(true);
-        var dataToNodeLookup = new Dictionary<string, UIUpgradeNode>();
+        var dataToNodeLookup = new Dictionary<ushort, UIUpgradeNode>();
 
         foreach (var node in existingNodes) {
 
-            if (string.IsNullOrEmpty(node.GUIDBoundNode)) {
+            if (node.IDBoundNode == ResourceSystem.InvalidID) {
                 Debug.LogError($"A UIUpgradeNode in the prefab '{gameObject.name}' is missing its 'ConnectedNodeName'.", node);
                 continue;
             }
-            if (!dataToNodeLookup.ContainsKey(node.GUIDBoundNode)) {
-                dataToNodeLookup.Add(node.GUIDBoundNode, node);
+            if (!dataToNodeLookup.ContainsKey(node.IDBoundNode)) {
+                dataToNodeLookup.Add(node.IDBoundNode, node);
             }
         }
         // Iterate through the ACTUAL upgrade data and initialize the corresponding UI nodes.
@@ -37,7 +37,7 @@ public class UIUpgradeTree : MonoBehaviour {
         foreach (var nodeData in tree.nodes) {
             // We just want to tell the existing node what prepared node it is connected to
             // Find the UI node in our prefab that has the matching GUID.
-            if (!dataToNodeLookup.TryGetValue(nodeData.GUID, out UIUpgradeNode uiNode)) {
+            if (!dataToNodeLookup.TryGetValue(nodeData.ID, out UIUpgradeNode uiNode)) {
                 continue;
             }
             // Now have the node that is an EXISTING child
@@ -78,7 +78,7 @@ public class UIUpgradeTree : MonoBehaviour {
 
             // 6. Update the UI element with all the calculated information.
             uiNode.Init(this, nodeData, currentLevel, baseRecipeForInfo, preparedNextStage, status);
-            _nodeMap.Add(nodeData.GUID, uiNode);
+            _nodeMap.Add(nodeData.ID, uiNode);
         }
         UpdateConnectionLines(tree, existingUpgrades);
 
@@ -91,9 +91,9 @@ public class UIUpgradeTree : MonoBehaviour {
         
     }
 
-    private void SelectedChange(UpgradeNode node) {
-        if(!_nodeMap.TryGetValue(node.GUID, out var nodeUI)){
-            Debug.LogError("Could not find nodeUI of " + node.GUID);
+    private void SelectedChange(UpgradeNodeSO node) {
+        if(!_nodeMap.TryGetValue(node.ID, out var nodeUI)){
+            Debug.LogError("Could not find nodeUI of " + node.ID);
             return;
         }
         nodeUI.SetSelected();
@@ -104,11 +104,11 @@ public class UIUpgradeTree : MonoBehaviour {
 
     private void UpdateConnectionLines(UpgradeTreeDataSO treeData, IReadOnlyCollection<ushort> unlockedUpgrades) {
         foreach (var dataNode in treeData.nodes) {
-            if (!_nodeMap.TryGetValue(dataNode.GUID, out UIUpgradeNode childUiNode)) continue;
+            if (!_nodeMap.TryGetValue(dataNode.ID, out UIUpgradeNode childUiNode)) continue;
 
             foreach (var prereqNode in dataNode.prerequisiteNodesAny) {
-                if (!_nodeMap.TryGetValue(prereqNode.GUID, out UIUpgradeNode parentUiNode)) continue;
-                var line = AddLine(prereqNode.GUID,childUiNode.transform, parentUiNode.transform);
+                if (!_nodeMap.TryGetValue(prereqNode.ID, out UIUpgradeNode parentUiNode)) continue;
+                var line = AddLine(prereqNode.ID, childUiNode.transform, parentUiNode.transform);
                 // Now, set the line's color based on state.
                 //bool parentIsMaxed = treeData.IsNodeMaxedOut(prereqNode, unlockedUpgrades);
                 
@@ -117,11 +117,11 @@ public class UIUpgradeTree : MonoBehaviour {
             }
         }
     }
-    private UILineRenderer AddLine(string sourceGUID, Transform from, Transform to) {
+    private UILineRenderer AddLine(ushort sourceID, Transform from, Transform to) {
         
         var lineRenderer = Instantiate(App.ResourceSystem.GetPrefab<UILineRenderer>("UILine"),transform);
         lineRenderer.transform.SetAsFirstSibling();
-        lineRenderer.name = $"Line {sourceGUID}";
+        lineRenderer.name = $"Line {sourceID}";
         float offsetFromNodes = 1f;
         int linePointsCount = 2;
 
@@ -149,11 +149,11 @@ public class UIUpgradeTree : MonoBehaviour {
 
         lineRenderer.Points = list.ToArray();
 
-        if (_lineMap.ContainsKey(sourceGUID)) {
-            _lineMap[sourceGUID].Add(lineRenderer);
+        if (_lineMap.ContainsKey(sourceID)) {
+            _lineMap[sourceID].Add(lineRenderer);
         } else {
             // new key
-            _lineMap.Add(sourceGUID, new List<UILineRenderer>{ lineRenderer });
+            _lineMap.Add(sourceID, new List<UILineRenderer>{ lineRenderer });
         }
             return lineRenderer;
     }
@@ -164,7 +164,7 @@ public class UIUpgradeTree : MonoBehaviour {
     //    return uiNode;
     //}
 
-    internal void OnUpgradeButtonClicked(UpgradeNode upgradeData) {
+    internal void OnUpgradeButtonClicked(UpgradeNodeSO upgradeData) {
         _uiParent.OnUpgradeNodeClicked(upgradeData);
     }
 }

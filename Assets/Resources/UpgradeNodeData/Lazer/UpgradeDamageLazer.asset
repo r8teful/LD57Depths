@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
+  m_Name: UpgradeDamageLazer
+  m_EditorClassIdentifier: 
+  nodeName: Damage
+  uniqueID: 110
+  icon: {fileID: -329476615, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  prerequisiteNodesAny: []
+  stages:
+  - upgrade: {fileID: 11400000, guid: 93c1c2c1a62af3d489bb54e1587b70e5, type: 2}
+    costMultiplier: 1
+    tier: 1
+    descriptionOverride: 
+  - upgrade: {fileID: 11400000, guid: d9687c281ce58d9499a681d2dcc0a2a5, type: 2}
+    costMultiplier: 1
+    tier: 0
+    descriptionOverride: 
+  - upgrade: {fileID: 11400000, guid: 3f577335913f60049a8429166b5cc4d6, type: 2}
+    costMultiplier: 1
+    tier: 0
+    descriptionOverride: 

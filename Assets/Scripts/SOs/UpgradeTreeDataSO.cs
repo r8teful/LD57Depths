@@ -4,81 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[Serializable]
-public class UpgradeStage {
-    [Tooltip("The Scriptable Object defining the upgrade for this level.")]
-    public UpgradeRecipeSO upgrade;
 
-    [Range(0.1f, 5f)]
-    public float costMultiplier = 1.0f;
-    
-    [Tooltip("Tier determines which items are required for purchase")] 
-    public int tier;
 
-    public string descriptionOverride;
-}
-
-[Serializable]
-public class UpgradeNode {
-    [Tooltip("Human friendly name, for editor & UI")]
-    public string nodeName;
-    private string guid;
-    [ShowInInspector]
-    public string GUID => guid;
-    [Button("Generate New GUID")]
-    private void GenerateGuid() {
-        guid = System.Guid.NewGuid().ToString();
-    }
-    [Tooltip("ANY of these prerequisite nodes must be fully unlocked before this one can be started.")]
-    public List<UpgradeNode> prerequisiteNodesAny; 
- 
-    [Tooltip("The sequence of upgrades for this node, from Level 1 to Max Level.")]
-    public List<UpgradeRecipeSO> upgradeLevels;
-  
-    [Tooltip("Stages are in sequential order, can also just be one like normal")]
-    public List<UpgradeStage> stages = new List<UpgradeStage>();
-    public int MaxLevel => upgradeLevels.Count;
-    public bool IsNodeMaxedOut(IReadOnlyCollection<ushort> unlockedUpgrades) {
-        return GetCurrentLevel(unlockedUpgrades) >= MaxLevel;
-    }
-    /// <summary>
-    /// Calculates the current level of a node based on the set of unlocked upgrades.
-    /// </summary>
-    /// <param name="node">The design-time node to check.</param>
-    /// <param name="unlockedUpgrades">The player's set of unlocked upgrade IDs.</param>
-    public int GetCurrentLevel(IReadOnlyCollection<ushort> unlockedUpgrades) {
-        if (stages == null || stages.Count == 0 || unlockedUpgrades == null) return 0;
-
-        int level = 0;
-        foreach (var stage in stages) {
-            if (stage.upgrade != null && unlockedUpgrades.Contains(stage.upgrade.ID)) {
-                level++;
-            } else {
-                // Since levels are sequential, we stop at the first un-purchased one.
-                break;
-            }
-        }
-        return level;
-    }
-    /// <summary>
-    /// Gets the next available stage for a specific node, if any.
-    /// </summary>
-    /// <returns>The UpgradeStage to be purchased next, or null if the node is maxed out.</returns>
-    public UpgradeStage GetNextStageForNode(IReadOnlyCollection<ushort> unlockedUpgrades) {
-        int currentLevel = GetCurrentLevel(unlockedUpgrades);
-        if (currentLevel < MaxLevel) {
-            return stages[currentLevel];
-        }
-        return null;
-    }
-
-    public bool ArePrerequisitesMet(IReadOnlyCollection<ushort> unlockedUpgrades) {
-        if (prerequisiteNodesAny == null || prerequisiteNodesAny.Count == 0) {
-            return true; // root nodes available by default
-        }
-        return prerequisiteNodesAny.Any(p => p != null && p.IsNodeMaxedOut(unlockedUpgrades));
-    }
-}
 [Serializable]
 public struct UpgradeTreeCosts {
     public float baseValue;
@@ -99,7 +26,7 @@ public class UpgradeTreeDataSO : ScriptableObject {
     public List<UpgradeTreeTiers> tiers;
     public List<StatType> statsToDisplay; // Used in the upgrade screen UI, shows what the values of the suplied stats are
     public string treeName; 
-    public List<UpgradeNode> nodes = new List<UpgradeNode>();
+    public List<UpgradeNodeSO> nodes = new List<UpgradeNodeSO>();
     public UIUpgradeTree prefab; // The visual representation of this tree in a prefab with the approriate nodes already created
 
     // The prepared tree is a dictionary mapping the original SO to its runtime instance.

@@ -11,7 +11,7 @@ using UnityEngine;
 public class UpgradeRecipeSO: RecipeBaseSO {
     [SerializeReference]
     public List<UpgradeEffect> effects = new List<UpgradeEffect>(); // The results the upgrade has when purchased 
-
+    
     public override bool ExecuteRecipe(RecipeExecutionContext context) {
         foreach (var effect in effects) {
             effect.Apply(context.Player.gameObject); // TODO have to see how this will actualyl work now...
