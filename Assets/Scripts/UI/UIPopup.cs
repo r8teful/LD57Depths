@@ -50,11 +50,12 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
             foreach (var ingredient in data.craftingInfo) {
                 Instantiate(ingredientPrefab, ingredientsContent).Init(ingredient);
             }
-            rectTransform.ForceUpdateRectTransforms();
+            // Don't need any of the stuff below now because I proprely setup the layout groups and content size fitter
+            //rectTransform.ForceUpdateRectTransforms();
             //var rect = Instantiate(popupBackground, transform.parent).GetComponent<RectTransform>().sizeDelta;
             //rect.y = rectTransform.sizeDelta.y;
             //rectTransform.SetAsLastSibling();
-            StartCoroutine(SetBackgroundSize());
+            //StartCoroutine(SetBackgroundSize());
         } else {
             ingredientsContent.gameObject.SetActive(false);
         }

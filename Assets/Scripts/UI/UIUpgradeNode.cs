@@ -15,8 +15,10 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Image _iconImage;
     private Button _buttonCurrent;
     private Image _imageCurrent;
+    private UpgradeRecipeSO _preparedRecipeForPurchase;
     private RectTransform _rectTransform;
     private UpgradeNodeSO _boundNode;
+    private UpgradeRecipeSO _baseRecipeForInfo;
     private UIUpgradeTree _treeParent;
     //private UpgradeRecipeSO _baseRecipeForInfo; // The raw SO for displaying icon/description
     //private UpgradeRecipeSO _preparedRecipeForPurchase; // The temporary instance with calculated cost
@@ -41,8 +43,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Color _iconAvailableColor;
     private Color _iconNotAvailableColor;
     private Color _iconPressedColor;
-    private bool _cachedIsPurchased;
-    private bool _cachedPrerequisitesMet;
+    private UpgradeNodeState _cachedState;
     private bool _isSelected;
 
     private void Awake() {
@@ -61,17 +62,19 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonSmall.gameObject.SetActive(true);
         }
     }
-    internal void Init(UIUpgradeTree parent, UpgradeNodeSO boundNode, int currentLevel, UpgradeRecipeSO baseRecipeForInfo, UpgradeRecipeSO preparedNextStage, UpgradeNodeState status) {
+    internal void Init(UIUpgradeTree parent, UpgradeNodeSO boundNode, int currentLevel, 
+        UpgradeRecipeSO baseRecipeForInfo, UpgradeRecipeSO preparedNextStage, UpgradeNodeState status) {
         _treeParent = parent;
         _boundNode = boundNode;
-        //_baseRecipeForInfo = baseRecipeForInfo;
-        //_preparedRecipeForPurchase = preparedNextStage;
+        _baseRecipeForInfo = baseRecipeForInfo;
+        _preparedRecipeForPurchase = preparedNextStage;
         _rectTransform = GetComponent<RectTransform>();
         HandleButtonSize(); // Sets _buttonCurrent
         _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
         _iconImage = _buttonCurrent.transform.GetChild(1).GetComponent<Image>();// Even worse
         SetIcon();
-        UpdateVisualState();
+        UpdateVisual(status);
+        //UpdateVisualState();
     }
 
     private void SetIcon() {
@@ -117,11 +120,15 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
 
     public void OnPointerEnter(PointerEventData eventData) {
-        //PopupManager.Instance.ShowPopup(this, true);
+        if (_preparedRecipeForPurchase == null) return;
+        if (_cachedState == UpgradeNodeState.Purchased) return;
+        PopupManager.Instance.ShowPopup(this, true);
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        //PopupManager.Instance.ShowPopup(this, false);
+        if (_preparedRecipeForPurchase == null) return;
+        if (_cachedState == UpgradeNodeState.Purchased) return;
+        PopupManager.Instance.ShowPopup(this, false);
     }
     private void OnUpgradeButtonClicked() {
         // UICraftingManager.Instance.AttemptCraft(upgradeData, null, null);
@@ -145,9 +152,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // determine variant (one of Blue/Green/Orange)
         string variant = isPurchased ? "Orange" : (IsBig ? "Green" : "Blue");
         //bool prerequisitesMet = UpgradeManagerPlayer.LocalInstance.ArePrerequisitesMet(_upgradeData);
-        // Cache for later restore (when selection changes away)
-        _cachedIsPurchased = isPurchased;
-        _cachedPrerequisitesMet = prerequisitesMet;
         // If this button is the currently selected one, show the manual Pressed sprite:
 
         if (_isSelected) {
@@ -182,6 +186,62 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             OnStateChange?.Invoke(UpgradeNodeState.Inactive);
         }
     }
+    public void UpdateVisual(UpgradeNodeState state) {
+        // Derive the old boolean flags so we can still cache them if other code expects them.
+        bool isPurchased = state == UpgradeNodeState.Purchased;
+        bool prerequisitesMet = state == UpgradeNodeState.Active;
+
+        // Determine variant string (Orange for purchased, otherwise Green (IsBig) or Blue).
+        string variant = isPurchased ? "Orange" : (IsBig ? "Green" : "Blue");
+
+        _cachedState = state; 
+
+        // If this button is currently selected, show the manual Pressed sprite and early return.
+        if (_isSelected) {
+            // Manual pressed state (we don't use Button's Sprite Swap)
+            ApplySprite(variant, "Pressed");
+
+            // Use pressed icon color (keeps previous logic)
+            _iconImage.color = _iconPressedColor;
+
+            // Interactable remains what the base state dictates (optional).
+            // For purchased -> not interactable; for active -> interactable; for inactive -> not.
+            _buttonCurrent.interactable = !isPurchased && prerequisitesMet;
+
+            // Still report the state change for listeners (selected pressed still represents underlying state).
+            OnStateChange?.Invoke(state);
+            return;
+        }
+
+        // Not selected -> show base (Purchased / Active / Inactive)
+        switch (state) {
+            case UpgradeNodeState.Purchased:
+                ApplySprite("Orange", "Inactive"); // purchased shows Orange Inactive
+                                                   //SetLinesColour(_linePurchasedColor);
+                _iconImage.color = _iconPurchasedColor;
+                _buttonCurrent.interactable = false;
+                OnStateChange?.Invoke(UpgradeNodeState.Purchased);
+                break;
+
+            case UpgradeNodeState.Active:
+                ApplySprite(variant, "Active");
+                //SetLinesColour(_lineAvailableColor);
+                _iconImage.color = _iconAvailableColor;
+                _buttonCurrent.interactable = true;
+                OnStateChange?.Invoke(UpgradeNodeState.Active);
+                //_treeParent.SetNodeAvailable(_upgradeData);
+                break;
+
+            case UpgradeNodeState.Inactive:
+            default:
+                ApplySprite(variant, "Inactive");
+                //SetLinesColour(_lineNotAvailableColor);
+                _iconImage.color = _iconNotAvailableColor;
+                _buttonCurrent.interactable = false;
+                OnStateChange?.Invoke(UpgradeNodeState.Inactive);
+                break;
+        }
+    }
     private void ApplySprite(string variant, string state) {
         if (_imageCurrent == null) return;
 
@@ -214,8 +274,10 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         _buttonCurrent.colors = cb;
     }
     public PopupData GetPopupData(InventoryManager clientInv) {
-        //return new PopupData(_upgradeData.displayName, _upgradeData.description, _upgradeData.GetIngredientStatuses(clientInv));
-        return null; // tODO
+        // First get the upgrade we are displaying
+        UpgradeRecipeSO upgradeData = _preparedRecipeForPurchase;
+        return new PopupData(upgradeData.displayName, upgradeData.description, upgradeData.GetIngredientStatuses(clientInv));
+        //return null; // tODO
     }
 
     internal void SetSelected() {

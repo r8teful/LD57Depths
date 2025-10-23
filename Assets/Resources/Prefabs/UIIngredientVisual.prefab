@@ -354,6 +354,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1159896372615671199}
   - component: {fileID: 8041682108293643099}
+  - component: {fileID: 1010425190650108968}
   m_Layer: 5
   m_Name: UIIngredientVisual
   m_TagString: Untagged
@@ -397,8 +398,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resourceIcon: {fileID: 5139051404738099194}
   resourceAmountText: {fileID: 3865487427757121277}
-  resourceNameText: {fileID: 0}
   resourceHaveText: {fileID: 1647746789784949063}
+--- !u!114 &1010425190650108968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9060337124597387107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: 50
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &9118343742402920788
 GameObject:
   m_ObjectHideFlags: 0
