@@ -134,13 +134,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Plants_0
+      name: Trench_CoralYellow
       rect:
         serializedVersion: 2
-        x: 0
+        x: 13
         y: 183
-        width: 45
-        height: 30
+        width: 17
+        height: 27
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,7 +156,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Plants_1
+      name: Trench_CoralOrange
       rect:
         serializedVersion: 2
         x: 12
@@ -178,7 +178,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Plants_2
+      name: Trench_ThickGrassPurple
       rect:
         serializedVersion: 2
         x: 14
@@ -200,7 +200,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Plants_3
+      name: Trench_BushBlue
       rect:
         serializedVersion: 2
         x: 14
@@ -222,7 +222,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Plants_4
+      name: Trench_CoralPink
       rect:
         serializedVersion: 2
         x: 16
@@ -244,7 +244,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Plants_5
+      name: Trench_TubePurple
       rect:
         serializedVersion: 2
         x: 17
@@ -266,7 +266,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Plants_6
+      name: Trench_KelpTop
       rect:
         serializedVersion: 2
         x: 17
@@ -288,7 +288,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Plants_7
+      name: Trench_KelpBody
       rect:
         serializedVersion: 2
         x: 17
@@ -323,15 +323,15 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Plants_0: 1352955200029874055
-      Plants_1: -4881008103234269068
-      Plants_2: -1268064389544249124
-      Plants_3: -7391759607893831176
-      Plants_4: -5840972274582744104
-      Plants_5: 3442116038242085032
-      Plants_6: 8635903978712429406
-      Plants_7: 6612842843856697754
       Plants_8: -1533401293
+      Trench_BushBlue: -7391759607893831176
+      Trench_CoralOrange: -4881008103234269068
+      Trench_CoralPink: -5840972274582744104
+      Trench_CoralYellow: 1352955200029874055
+      Trench_KelpBody: 6612842843856697754
+      Trench_KelpTop: 8635903978712429406
+      Trench_ThickGrassPurple: -1268064389544249124
+      Trench_TubePurple: 3442116038242085032
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

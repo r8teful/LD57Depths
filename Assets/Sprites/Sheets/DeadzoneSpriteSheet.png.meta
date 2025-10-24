@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2f21fe990c460594691ea2f262e7a31e
+guid: 5fdb2e8de2bb8b3498d49ce530ebcaac
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,199 +110,265 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Bioluminescent_TwiddlyRed
+      name: Deadzone_LargeCactusNoFlower
       rect:
         serializedVersion: 2
-        x: 4
-        y: 38
-        width: 9
-        height: 6
+        x: 11
+        y: 15
+        width: 43
+        height: 61
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: f941cc302354f9646a8159f556f1a3d3
-      internalID: -1755141526
+      spriteID: 7f9857edb1c32c190800000000000000
+      internalID: -7943720702334105097
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescent_TwiddlyPurple
+      name: Deadzone_LargeCactusFlower
       rect:
         serializedVersion: 2
-        x: 20
-        y: 38
-        width: 9
-        height: 6
+        x: 69
+        y: 15
+        width: 43
+        height: 63
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f231fa679fac1884faa45f3f212114d3
-      internalID: 1884466507
+      spriteID: aa5436b860450314a87cf97e1ff2444a
+      internalID: -1824829769
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescent_TwiddlyBlue
+      name: Deadzone_LargeRoundedCactusNoFlower
       rect:
         serializedVersion: 2
-        x: 36
-        y: 38
-        width: 9
-        height: 6
+        x: 121
+        y: 15
+        width: 22
+        height: 53
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c014c92ba4b5ca54ebe6eafe97dc6ca1
-      internalID: 1743436953
+      spriteID: d12eb00ab8ef6c441b826c35e4534c6c
+      internalID: -1046311951
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescent_SmallPinkMushrooms
+      name: Deadzone_LargeRoundedCactusFlower
       rect:
         serializedVersion: 2
-        x: 52
-        y: 38
-        width: 8
+        x: 154
+        y: 15
+        width: 23
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7635c57f66b61c341ad34e0a71edc0cd
+      internalID: 1014239535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Deadzone_BarrelCactusFlower
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 15
+        width: 26
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 108b27f92063fa342b15b119e076ed6e
+      internalID: 1839868723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Deadzone_MiniCactus
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 15
+        width: 25
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 479790be8665afc40966bdb10d920414
+      internalID: -883947572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Deadzone_Succulent
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 15
+        width: 9
         height: 8
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f33225ccc3f492341bf423edffa53bb4
-      internalID: 971948341
+      spriteID: c61927b8c2914a34a90063fa240bac05
+      internalID: -2118748352
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescent_BlueMushrooms
+      name: Deadzone_DryBush
       rect:
         serializedVersion: 2
-        x: 65
-        y: 38
-        width: 14
-        height: 13
+        x: 273
+        y: 15
+        width: 18
+        height: 11
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b8315cb7770ccf74e9efedb03679a67c
-      internalID: 1904944685
+      spriteID: c9d541563c33c3f42831672998607d1e
+      internalID: 1881545444
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescent_Bush
+      name: Deadzone_MiniDryBush
       rect:
         serializedVersion: 2
-        x: 2
-        y: 0
-        width: 17
-        height: 18
+        x: 296
+        y: 15
+        width: 8
+        height: 6
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5c511b7bf34f02e4e882d64acce12d00
-      internalID: -793410364
+      spriteID: 6444061b42e04a146925f77d1003bf43
+      internalID: -908729435
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescent_Coral
+      name: Deadzone_FishSkeleton
       rect:
         serializedVersion: 2
-        x: 21
-        y: 0
-        width: 12
-        height: 16
+        x: 308
+        y: 15
+        width: 21
+        height: 4
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aa38dc8abc75e254faafec0d86040421
-      internalID: 1630967386
+      spriteID: 3f690711f3ba21745b4cb5a530538500
+      internalID: 1717764314
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescent_PinkLeaves
+      name: Deadzone_Bone
       rect:
         serializedVersion: 2
-        x: 34
-        y: 0
-        width: 28
-        height: 34
+        x: 341
+        y: 15
+        width: 7
+        height: 6
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a9983621f3e616e409556032f750e823
-      internalID: 508037818
+      spriteID: 869498b15559766478b14e8e5117ed3f
+      internalID: -1909171597
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bioluminescent_GreenLeaves
+      name: Deadzone_Ribs
       rect:
         serializedVersion: 2
-        x: 66
-        y: 0
-        width: 28
-        height: 34
+        x: 356
+        y: 15
+        width: 19
+        height: 6
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d95c7fcc4c879114081e8e97da5d3ffe
-      internalID: 596007144
+      spriteID: ec2141bd3df8c1e4baebda7425833e40
+      internalID: 2045153680
       vertices: []
       indices: 
       edges: []
@@ -311,7 +377,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: f5f563011d3089b40b4c4067c4108624
+    spriteID: 89377b8cf38e79b4489fe7019e0ab6a0
     internalID: 0
     vertices: []
     indices: 
@@ -321,16 +387,18 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Bioluminescent_BlueMushrooms: 1904944685
-      Bioluminescent_Bush: -793410364
-      Bioluminescent_Coral: 1630967386
-      Bioluminescent_GreenLeaves: 596007144
-      Bioluminescent_PinkLeaves: 508037818
-      Bioluminescent_SmallPinkMushrooms: 971948341
-      Bioluminescent_TwiddlyBlue: 1743436953
-      Bioluminescent_TwiddlyPurple: 1884466507
-      Bioluminescent_TwiddlyRed: -1755141526
-      Bioluminescentplants_4: 1542294361
+      Deadzone_BarrelCactusFlower: 1839868723
+      Deadzone_Bone: -1909171597
+      Deadzone_DryBush: 1881545444
+      Deadzone_FishSkeleton: 1717764314
+      Deadzone_LargeCactusFlower: -1824829769
+      Deadzone_LargeCactusNoFlower: -7943720702334105097
+      Deadzone_LargeRoundedCactusFlower: 1014239535
+      Deadzone_LargeRoundedCactusNoFlower: -1046311951
+      Deadzone_MiniCactus: -883947572
+      Deadzone_MiniDryBush: -908729435
+      Deadzone_Ribs: 2045153680
+      Deadzone_Succulent: -2118748352
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
