@@ -82,14 +82,10 @@ public class UIUpgradeTree : MonoBehaviour {
         }
         UpdateConnectionLines(tree, existingUpgrades);
 
-
-        UpgradeManagerPlayer.LocalInstance.OnUpgradePurchased += HandleUpgradePurchased;
         UIUpgradeScreen.OnSelectedNodeChanged += SelectedChange;
     }
 
-    private void HandleUpgradePurchased(UpgradeRecipeSO sO) {
-        
-    }
+ 
 
     private void SelectedChange(UpgradeNodeSO node) {
         if(!_nodeMap.TryGetValue(node.ID, out var nodeUI)){

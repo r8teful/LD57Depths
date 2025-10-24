@@ -35,6 +35,11 @@ public struct IngredientStatus {
         CurrentAmount = currentAmount;
     }
 }
+public struct StatChangeStatus {
+    public StatType StatType { get; }
+    public float ValueNow {get; }
+    public float ValueNext { get; }
+}
 // Usefull class for the actual result of a recipe. Will add more here later like research, upgrade etc..
 public class RecipeExecutionContext {
 

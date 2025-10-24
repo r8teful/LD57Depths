@@ -65,7 +65,7 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
     /// Gets the next available stage for a specific node, if any.
     /// </summary>
     /// <returns>The UpgradeStage to be purchased next, or null if the node is maxed out.</returns>
-    public UpgradeStage GetNextStageForNode(IReadOnlyCollection<ushort> unlockedUpgrades) {
+    public UpgradeStage GetCurrentStageForNode(IReadOnlyCollection<ushort> unlockedUpgrades) {
         int currentLevel = GetCurrentLevel(unlockedUpgrades);
         if (currentLevel < MaxLevel) {
             return stages[currentLevel];

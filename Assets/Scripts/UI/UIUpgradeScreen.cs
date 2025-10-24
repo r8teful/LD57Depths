@@ -11,6 +11,7 @@ public class UIUpgradeScreen : MonoBehaviour {
     public UpgradePanAndZoom PanAndZoom;
     private UIManager _UIManagerParent;
     private UpgradeTreeDataSO _treeDataTool;
+    private UIUpgradeTree _upgradeTreeInstance;
     public UIManager GetUIManager() => _UIManagerParent;
     public static event Action<UpgradeTreeDataSO> OnTabChanged; // Used to show correct stats 
     public static event Action<UpgradeNodeSO> OnSelectedNodeChanged; // Used to show correct stats 
@@ -40,11 +41,11 @@ public class UIUpgradeScreen : MonoBehaviour {
         //    treeObj.name = $"UpgradeTreePlayer_{tree.treeName}";
         //}
 
-        InstantiateTree(_treeDataTool, _upgradePanelTree.transform, pUpgrades);
+        _upgradeTreeInstance = InstantiateTree(_treeDataTool, _upgradePanelTree.transform, pUpgrades);
         PanAndZoom.Init(client.InputManager);
         //InstantiateTree(_treeDataPlayer, _upgradePanelPlayer.transform, pUpgrades);
     }
-    private GameObject InstantiateTree(UpgradeTreeDataSO treeData, Transform transformParent, HashSet<ushort> pUpgrades) {
+    private UIUpgradeTree InstantiateTree(UpgradeTreeDataSO treeData, Transform transformParent, HashSet<ushort> pUpgrades) {
         if (treeData == null) {
             Debug.LogError("Could not find tree!");
             return null;
@@ -56,7 +57,7 @@ public class UIUpgradeScreen : MonoBehaviour {
         var treeObj = Instantiate(treeData.prefab, transformParent);
         treeObj.Init(this, treeData, pUpgrades);
         treeObj.name = $"UpgradeTree_{treeData.treeName}";
-        return treeObj.gameObject;
+        return treeObj;
     }
     public void PanelToggle() {
         _upgradePanel.SetActive(!_upgradePanel.activeSelf);
@@ -67,8 +68,13 @@ public class UIUpgradeScreen : MonoBehaviour {
     }
 
     internal void OnUpgradeNodeClicked(UpgradeNodeSO node) {
-
         App.AudioController.PlaySound2D("ButtonClick");
-        OnSelectedNodeChanged?.Invoke(node);
+        if (UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(node)) {
+            // This should only be local code, just want to use it for button visuals
+            // Tell tree that a node has been purchased, the tree can map node -> ui and ui node can then do the animation
+            //_upgradeTreeInstance.
+        }
+        
+        //OnSelectedNodeChanged?.Invoke(node);
     }
 }

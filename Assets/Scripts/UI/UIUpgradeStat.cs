@@ -32,7 +32,13 @@ public class UIUpgradeStat : MonoBehaviour {
             _arrowImage.SetActive(true);
         }
     }
-    
+    internal void Init(StatChangeStatus status) {
+        var stat = status.StatType;
+        var valueNow = status.ValueNow;
+        var valueLater = status.ValueNext;
+        Init(stat, valueNow, valueLater);
+    }
+
     private string GetStatString(StatType stat) {
         switch (stat) {
             case StatType.MiningRange:

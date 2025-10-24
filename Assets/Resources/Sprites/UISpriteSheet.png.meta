@@ -685,8 +685,8 @@ TextureImporter:
       name: InvTiny
       rect:
         serializedVersion: 2
-        x: 208
-        y: 627
+        x: 207
+        y: 639
         width: 64
         height: 36
       alignment: 0
@@ -3431,6 +3431,50 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UpgradeBar0
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 458
+        width: 7
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 1, y: 1, z: 1, w: 1}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 74ad2b963aeed2a4594a2acfacc42e5c
+      internalID: 1275372579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PopupWhole
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 678
+        width: 25
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 7, y: 5, z: 5, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bfa868395a8d05242a40b20462401978
+      internalID: -523195754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -3496,6 +3540,7 @@ TextureImporter:
       PlaceMarker: 116054401
       PopupBox: 2098033918
       PopupTop: 1523963916
+      PopupWhole: -523195754
       RikUISpriteSheet_16: -1480687458
       Speed: -2053248459
       SubFixCable_0: 518516892
@@ -3552,6 +3597,7 @@ TextureImporter:
       UISpriteSheet_54: 1913473331
       UISpriteSheet_64: -1587015040
       UpgradeAccuracy: 1441869239
+      UpgradeBar0: 1275372579
       UpgradeFilterExtracted: 1228492800
       UpgradeFilterExtractorForce: -1012180492
       UpgradeFilterExtractorRange: 1350617202

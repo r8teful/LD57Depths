@@ -3,6 +3,7 @@ using FishNet.Object.Synchronizing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using UnityEngine;
 
 // Has to hold upgrade info! Specific to THIS player 
@@ -54,7 +55,7 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
   
     // this is bad to do because the UpgradePurchased event will only be called on the local clients
     public bool TryPurchaseUpgrade(UpgradeNodeSO node) {
-        UpgradeRecipeSO recipe = null; // TODO
+        UpgradeRecipeSO recipe = node.GetCurrentStageForNode(unlockedUpgrades.Collection).upgrade;
         // 1. Check if already purchased
         if (unlockedUpgrades.Contains(recipe.ID)) {
             Debug.LogWarning($"Attempted to purchase an already owned upgrade: {recipe.name}");
