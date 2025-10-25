@@ -15,12 +15,15 @@ public class PopupData {
     public Sprite Icon;
     public List<IngredientStatus> craftingInfo; // int is quantity
     public List<StatChangeStatus> statInfo;
+    public NodeProgressionStatus progressionInfo;
 
-    public PopupData(string title, string description, List<IngredientStatus> craftingInfo, Sprite icon = null, List<StatChangeStatus> statInfo = null) {
+    public PopupData(string title, string description, List<IngredientStatus> craftingInfo, Sprite icon = null, List<StatChangeStatus> statInfo = null,
+        NodeProgressionStatus progressionInfo = default) {
         this.title = title;
         this.description = description;
         this.craftingInfo = craftingInfo;
         this.statInfo = statInfo;
+        this.progressionInfo = progressionInfo;
         Icon = icon;
     }
 }

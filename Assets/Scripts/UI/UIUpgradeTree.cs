@@ -137,18 +137,20 @@ public class UIUpgradeTree : MonoBehaviour {
 
     internal void OnUpgradeButtonClicked(UpgradeNodeSO upgradeNode) {
         //_uiParent.OnUpgradeNodeClicked(upgradeData); // We where doing in it the upgradeScreen script but why not just do it here?
-        App.AudioController.PlaySound2D("ButtonClick");
+        //App.AudioController.PlaySound2D("ButtonClick");
         if (UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(upgradeNode)) {
             // Local code only
-            _nodeMap[upgradeNode.ID].UpdateVisual(UpgradeNodeState.Purchased);
-            RefreshNodes(); // We could make it more performant by checking which nodes could have actually changed, but its not that performant heavy anyway.
+            var unlockedUpgrades = UpgradeManagerPlayer.LocalInstance.GetUnlockedUpgrades(); // Ugly but sometimes that is okay
+            if (!upgradeNode.IsNodeMaxedOut(unlockedUpgrades)) {
+                _nodeMap[upgradeNode.ID].DoPurchaseAnim(); // Purchase anim when not maxed, if we are maxed, setting to purchase state will play the animation
+            }
+            RefreshNodes(unlockedUpgrades); // We could make it more performant by checking which nodes could have actually changed, but its not that performant heavy anyway.
         }
     }   
-    public void RefreshNodes() {
+    public void RefreshNodes(IReadOnlyCollection<ushort> unlockedUpgrades) {
         foreach (var node in _treeData.nodes) {
-            var unlockedUpgrades = UpgradeManagerPlayer.LocalInstance.GetUnlockedUpgrades(); // Ugly but sometimes that is okay
             UpgradeNodeState status = node.GetState(unlockedUpgrades);
-            _nodeMap[node.ID].UpdateVisual(status);
+            _nodeMap[node.ID].UpdateVisual(status,node.GetCurrentLevel(unlockedUpgrades));
         }
 
     }

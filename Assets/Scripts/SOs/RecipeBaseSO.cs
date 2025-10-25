@@ -45,6 +45,15 @@ public struct StatChangeStatus {
         ValueNext = valueNext;
     }
 }
+public struct NodeProgressionStatus {
+    public int LevelMax { get; }
+    public int LevelCurr { get; }
+    public readonly bool ShouldShow => LevelMax > 1;
+    public NodeProgressionStatus(int levelMax, int levelCurr) {
+        LevelMax = levelMax;
+        LevelCurr = levelCurr;
+    }
+}
 // Usefull class for the actual result of a recipe. Will add more here later like research, upgrade etc..
 public class RecipeExecutionContext {
 

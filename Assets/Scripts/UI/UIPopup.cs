@@ -12,6 +12,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
     [SerializeField] private Image _iconImage;
     [SerializeField] private Transform _statsChangeContainer;
     [SerializeField] private Transform _ingredientContainer;
+    [SerializeField] private UIPopupUpgradeBar _upgradeBar;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI descriptionText;
     public UIIngredientVisual ingredientPrefab;
@@ -40,8 +41,11 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         //PopupManager.Instance.OnPointerExitPopup();
     }
     public void SetData(PopupData data) {
+        // Name and description
         nameText.text = data.title;
         descriptionText.text = data.description;
+        
+        // Crafting info and Status
         if (data.craftingInfo != null && data.craftingInfo.Count > 0) {
             foreach (Transform child in _ingredientContainer) {
                 Destroy(child.gameObject);
@@ -59,10 +63,19 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
             }
         } 
 
+        // Upgrade Status
+        if(data.progressionInfo.ShouldShow) {
+            // Set the status for the bar
+            _upgradeBar.gameObject.SetActive(true);
+            _upgradeBar.UpdateVisuals(data.progressionInfo);
+        } else {
+            _upgradeBar.gameObject.SetActive(false);
+        }
+
         // Icon, used for control screen
         if (data.Icon != null) {
             _iconImage.sprite = data.Icon;
-        } else if(_iconContainer!=null){
+        } else if (_iconContainer != null) {
             _iconContainer.SetActive(false);
         }
     }

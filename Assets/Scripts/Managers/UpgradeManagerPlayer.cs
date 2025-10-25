@@ -55,7 +55,8 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
   
     // this is bad to do because the UpgradePurchased event will only be called on the local clients
     public bool TryPurchaseUpgrade(UpgradeNodeSO node) {
-        UpgradeRecipeSO recipe = node.GetCurrentStageForNode(unlockedUpgrades.Collection).upgrade;
+        var tree = App.ResourceSystem.GetTreeByName(GameManager.LocalInstance.GetUpgradeTreeName());
+        UpgradeRecipeSO recipe = node.GetNextUpgradeForNode(unlockedUpgrades.Collection, tree);
         // 1. Check if already purchased
         if (unlockedUpgrades.Contains(recipe.ID)) {
             Debug.LogWarning($"Attempted to purchase an already owned upgrade: {recipe.name}");

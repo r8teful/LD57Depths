@@ -1,6 +1,7 @@
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,6 +11,7 @@ using Color = UnityEngine.Color;
 public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] private Button _buttonBig;
     [SerializeField] private Button _buttonSmall;
+    [SerializeField] private TextMeshProUGUI _stageText;
     public ushort IDBoundNode = ResourceSystem.InvalidID; // Should match the NODE that its connected to 
     private Image _iconImage;
     private Button _buttonCurrent;
@@ -40,6 +42,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Color _iconNotAvailableColor;
     private Color _iconPressedColor;
     private UpgradeNodeState _cachedState;
+    private int _cachedLevel;
     private bool _isSelected;
 
     private void Awake() {
@@ -67,7 +70,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
         _iconImage = _buttonCurrent.transform.GetChild(1).GetComponent<Image>();// Even worse
         SetIcon();
-        UpdateVisual(status);
+        UpdateVisual(status,currentLevel);
         //UpdateVisualState();
     }
 
@@ -125,34 +128,27 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         PopupManager.Instance.ShowPopup(this, false);
     }
     private void OnUpgradeButtonClicked() {
+        Debug.Log("CLICKKKKKKKK!!");
         // UICraftingManager.Instance.AttemptCraft(upgradeData, null, null);
         _treeParent.OnUpgradeButtonClicked(_boundNode);
     }
     
-    // The core logic for how this node should look based on game state
-    private void UpdateVisualState() {
-        //UpdateVisual();
-        PopupDataChanged?.Invoke(); // Data could have changed
-        // BIG INACTIVE 077263
-        // BIG ACTIVE 0CD8BA
-
-        // SMALL INACTIVE 124553
-        // SMALL ACTIVE 237C8A
-        // SMALL Purchad D58141
-    }
-    public void UpdateVisual(UpgradeNodeState state) {
+    public void UpdateVisual(UpgradeNodeState state, int currentLevel = -1) {
         // Derive the old boolean flags so we can still cache them if other code expects them.
         bool isPurchased = state == UpgradeNodeState.Purchased;
         bool prerequisitesMet = state == UpgradeNodeState.Active;
 
         // Determine variant string (Orange for purchased, otherwise Green (IsBig) or Blue).
         string variant = isPurchased ? "Orange" : (IsBig ? "Green" : "Blue");
+        _cachedLevel = currentLevel;
         if(_cachedState != state) {
-            if (state == UpgradeNodeState.Purchased)
+            if (state == UpgradeNodeState.Purchased) {
                 OnPurchased(); // Call it only once 
+                OnPointerExit(null); // Closes popup, because we've purchased it we don't have anything to show!
+            }
         }
-        _cachedState = state; 
-
+        _cachedState = state;
+        SetLevelText(currentLevel);
         // If this button is currently selected, show the manual Pressed sprite and early return.
         if (_isSelected) {
             // Manual pressed state (we don't use Button's Sprite Swap)
@@ -198,6 +194,13 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
                 OnStateChange?.Invoke(UpgradeNodeState.Inactive);
                 break;
         }
+
+        PopupDataChanged?.Invoke(); //popup data could have changed
+    }
+    private void SetLevelText(int currentLevel) {
+        if(_preparedRecipeForPurchase == null || _boundNode.MaxLevel <= 1)
+            _stageText.gameObject.SetActive(false);
+        _stageText.text = $"{currentLevel}/{_boundNode.MaxLevel}";
     }
     private void ApplySprite(string variant, string state) {
         if (_imageCurrent == null) return;
@@ -212,7 +215,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
     private void OnPurchased() {
         // Hide popup
-        OnPointerExit(new(null));
         App.AudioController.PlaySound2D("UpgradeBought");
         var p = App.ResourceSystem.GetPrefab("UIParticleUpgradePurchase");
         Instantiate(p, transform.position, Quaternion.identity, transform);
@@ -239,10 +241,15 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // Stat data
         return new PopupData(upgradeData.displayName, upgradeData.description, 
             upgradeData.GetIngredientStatuses(clientInv),
-            statInfo: upgradeData.GetStatStatuses());
+            statInfo: upgradeData.GetStatStatuses(),
+            progressionInfo: new(_boundNode.MaxLevel, _cachedLevel));
     }
 
     internal void SetSelected() {
         _isSelected = true;
+    }
+
+    internal void DoPurchaseAnim() {
+        OnPurchased();
     }
 }

@@ -111,8 +111,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 7.9816895, y: 0}
-  m_SizeDelta: {x: 97.9941, y: 6.6056}
+  m_AnchoredPosition: {x: 7.67, y: 0}
+  m_SizeDelta: {x: 48.0331, y: 3.9}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &4637856945212825364
 CanvasRenderer:
@@ -494,6 +494,7 @@ MonoBehaviour:
   _iconImage: {fileID: 6528674682269172542}
   _statsChangeContainer: {fileID: 4562141741633536463}
   _ingredientContainer: {fileID: 1554216860692471339}
+  _upgradeBar: {fileID: 7324663771127982390}
   nameText: {fileID: 5927494455097883892}
   descriptionText: {fileID: 437284033839085895}
   ingredientPrefab: {fileID: 8041682108293643099, guid: 76a13afe29b2a0842b804ebbc4f1bb2e, type: 3}
@@ -771,6 +772,7 @@ GameObject:
   - component: {fileID: 6299271328677519172}
   - component: {fileID: 371685350636930415}
   - component: {fileID: 3783368747654767374}
+  - component: {fileID: 7324663771127982390}
   m_Layer: 5
   m_Name: UISubUpgradeBar
   m_TagString: Untagged
@@ -827,6 +829,19 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &7324663771127982390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6972956403591852326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddfb4a7058ded3b459f502f5f93a0509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _barProgressImage: {fileID: 1826361893800310809}
 --- !u!1 &6983506088046839019
 GameObject:
   m_ObjectHideFlags: 0
@@ -1175,10 +1190,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3137686114895992391}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: -1.0009589, y: 0}
-  m_SizeDelta: {x: 98.995, y: 6.6056}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &6871914185845846027
 CanvasRenderer:
@@ -1201,7 +1216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.16862746, g: 0.78823537, b: 0.30588236, a: 1}
+  m_Color: {r: 0.60188675, g: 1, b: 0.6245978, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
