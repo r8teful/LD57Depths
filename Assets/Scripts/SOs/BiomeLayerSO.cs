@@ -79,5 +79,8 @@ public enum BiomeType : byte {
     Coral = 5,
     Ocean = 6,
     Bioluminescent = 7,
-    Fungal = 8
+    Fungal = 8,
+    Forest = 9,
+    Deadzone = 10,
+    LostCity = 11
 }
