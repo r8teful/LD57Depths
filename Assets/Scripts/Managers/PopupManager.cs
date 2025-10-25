@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PopupManager : StaticInstance<PopupManager> {
     public UIPopup popupPrefab;
@@ -93,8 +94,8 @@ public class PopupManager : StaticInstance<PopupManager> {
         infoProvider.PopupDataChanged += PopupDataChange;
         currentPopup = Instantiate(popupPrefab, transform);
         currentPopup.SetData(data);
-        // Set up popup UI with data.title, data.description, data.additionalInfo
-        PositionPopup(infoProvider);
+        //LayoutRebuilder.ForceRebuildLayoutImmediate(currentPopup.GetComponent<RectTransform>());
+        PositionPopup2(infoProvider);
     }
 
     private void PopupDataChange() {
@@ -124,6 +125,9 @@ public class PopupManager : StaticInstance<PopupManager> {
         Vector2 position = itemBottomCenter;
         popupRT.position = new Vector3(position.x, position.y, 0);
 
+
+        UpgradePanAndZoom.ClampToParentBounds(popupRT, popupRT.GetComponentInParent<RectTransform>());
+        return;
         // Check if bottom is off-screen
         float popupBottom = position.y + popupRT.rect.yMin;
         if (popupBottom < 0) {
@@ -137,6 +141,96 @@ public class PopupManager : StaticInstance<PopupManager> {
         float rightBound = Screen.width - popupRT.rect.xMax;
         float clampedX = Mathf.Clamp(popupRT.position.x, leftBound, rightBound);
         popupRT.position = new Vector3(clampedX, popupRT.position.y, 0);
+    }
+    private void PositionPopup2(IPopupInfo infoProvider) {
+        var mb = infoProvider as MonoBehaviour;
+        if (mb == null) return;
+
+        RectTransform itemRT = mb.GetComponent<RectTransform>();
+        RectTransform popupRT = currentPopup.gameObject.GetComponent<RectTransform>();
+        if (itemRT == null || popupRT == null) return;
+
+        // Canvas (ScreenSpaceOverlay -> canvas.worldCamera is null)
+        Canvas canvas = popupRT.GetComponentInParent<Canvas>();
+        RectTransform popupParentRect = popupRT.parent as RectTransform;
+        Camera canvasCam = null; // overlay uses null camera in RectTransformUtility
+
+        // Ensure layout is updated so popupRT.rect is valid
+        LayoutRebuilder.ForceRebuildLayoutImmediate(popupRT);
+
+        // Get item bottom-center and top-center in screen space
+        Vector3[] itemCorners = new Vector3[4];
+        itemRT.GetWorldCorners(itemCorners);
+        Vector2 itemBottomScreen = RectTransformUtility.WorldToScreenPoint(canvasCam, (itemCorners[0] + itemCorners[3]) * 0.5f);
+        Vector2 itemTopScreen = RectTransformUtility.WorldToScreenPoint(canvasCam, (itemCorners[1] + itemCorners[2]) * 0.5f);
+
+        // Popup size in screen pixels (for ScreenSpaceOverlay this is reliable)
+        float scaleFactor = (canvas != null) ? canvas.scaleFactor : 1f;
+        float popupScreenH = popupRT.rect.height * scaleFactor;
+        float popupScreenW = popupRT.rect.width * scaleFactor;
+
+        float paddingPx = 6f;
+
+        // Compute fits using the *assumed* pivot for each placement:
+        // - placing below => popup pivot.y will be 1 (top of popup attaches to item bottom)
+        //   bottom of popup in screen = itemBottomScreen.y - popupScreenH
+        // - placing above => popup pivot.y will be 0 (bottom of popup attaches to item top)
+        //   top of popup in screen = itemTopScreen.y + popupScreenH
+
+        bool fitsBelow = (itemBottomScreen.y - popupScreenH - paddingPx) >= 0f;
+        bool fitsAbove = (itemTopScreen.y + popupScreenH + paddingPx) <= Screen.height;
+
+        bool placeBelow;
+        if (fitsBelow) placeBelow = true;
+        else if (fitsAbove) placeBelow = false;
+        else {
+            // choose the side with more available space
+            float spaceBelow = itemBottomScreen.y;
+            float spaceAbove = Screen.height - itemTopScreen.y;
+            placeBelow = spaceBelow >= spaceAbove;
+        }
+
+        // Set pivot.y to match the chosen placement (leave pivot.x alone to respect your horizontal anchoring)
+        Vector2 origPivot = popupRT.pivot;
+        popupRT.pivot = new Vector2(origPivot.x, placeBelow ? 1f : 0f);
+
+        // Build the anchor screen point where popup pivot should be located
+        Vector2 anchorScreenPoint = placeBelow
+            ? new Vector2(itemBottomScreen.x, itemBottomScreen.y - paddingPx)
+            : new Vector2(itemTopScreen.x, itemTopScreen.y + paddingPx);
+
+        // Convert that screen point into a world point on the popup parent's plane and set popup position
+        Vector3 worldPos;
+        if (popupParentRect != null && RectTransformUtility.ScreenPointToWorldPointInRectangle(popupParentRect, anchorScreenPoint, canvasCam, out worldPos)) {
+            popupRT.position = worldPos;
+        } else {
+            // fallback: use canvas rect plane
+            RectTransform canvasRect = (canvas != null) ? (canvas.transform as RectTransform) : popupRT;
+            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(canvasRect, anchorScreenPoint, canvasCam, out worldPos))
+                popupRT.position = worldPos;
+        }
+
+        // Horizontal clamp: nudge anchorScreenPoint.x if popup overflows left/right
+        // Check popup world corners -> screen x positions
+        Vector3[] popupWorldCorners = new Vector3[4];
+        popupRT.GetWorldCorners(popupWorldCorners);
+        float leftScreen = RectTransformUtility.WorldToScreenPoint(canvasCam, popupWorldCorners[0]).x;
+        float rightScreen = RectTransformUtility.WorldToScreenPoint(canvasCam, popupWorldCorners[2]).x;
+
+        float shiftPx = 0f;
+        if (leftScreen < 0f) shiftPx = -leftScreen;
+        else if (rightScreen > Screen.width) shiftPx = Screen.width - rightScreen;
+
+        if (!Mathf.Approximately(shiftPx, 0f)) {
+            anchorScreenPoint.x += shiftPx;
+            if (popupParentRect != null && RectTransformUtility.ScreenPointToWorldPointInRectangle(popupParentRect, anchorScreenPoint, canvasCam, out worldPos)) {
+                popupRT.position = worldPos;
+            } else {
+                RectTransform canvasRect = (canvas != null) ? (canvas.transform as RectTransform) : popupRT;
+                if (RectTransformUtility.ScreenPointToWorldPointInRectangle(canvasRect, anchorScreenPoint, canvasCam, out worldPos))
+                    popupRT.position = worldPos;
+            }
+        }
     }
     public void ShowPopup(IPopupInfo p, bool b) {
         OnPopupShow(p, b);

@@ -52,10 +52,10 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
             foreach (Transform child in _statsChangeContainer) {
                 Destroy(child.gameObject);
             }
-            foreach (var ingredient in data.craftingInfo) {
+            foreach (var stat in data.statInfo) {
                 //Todo obviously
-                //var statChange = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStatPopup"), _ingredientContainer);
-                //statChange.Init() // TODO
+                var statChange = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStatPopup"), _statsChangeContainer);
+                statChange.Init(stat); // TODO
             }
         } 
 

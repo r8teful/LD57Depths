@@ -100,7 +100,7 @@ public class UpgradePanAndZoom : MonoBehaviour {
 
     private void HandleZoom() {
         if (Mathf.Abs(zoomAmount) < 0.1f) return;
-        Debug.Log(zoomAmount);
+        //Debug.Log(zoomAmount);
         float scroll = zoomAmount * zoomSpeed;
 
         float currentScale = treeContainer.localScale.x;
@@ -322,7 +322,6 @@ public class UpgradePanAndZoom : MonoBehaviour {
     /// </summary>
     /// <param name="child">The RectTransform being moved/scaled</param>
     /// <param name="parent">The RectTransform that bounds the child</param>
-    /// <param name="clampScale">If true, will optionally clamp child's scale so it never becomes larger than the parent</param>
     public static void ClampToParentBounds(RectTransform child, RectTransform parent) {
         if (child == null || parent == null) return;
 

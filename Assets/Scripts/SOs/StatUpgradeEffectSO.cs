@@ -16,4 +16,10 @@ public class StatUpgradeEffectSO : UpgradeEffect {
             Debug.LogWarning($"Could not find PlayerStats component on {target.name} to apply {upgradeType} upgrade.");
         }
     }
+    public StatChangeStatus GetStatChange() {
+        var stat = upgradeType;
+        var currentValue = NetworkedPlayer.LocalInstance.PlayerStats.GetStat(stat); // This seems sketchy but should work fine
+        var nextValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, increaseType, modificationValue);
+        return new(stat, currentValue, nextValue);
+    }
 }

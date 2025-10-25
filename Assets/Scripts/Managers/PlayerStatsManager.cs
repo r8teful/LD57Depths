@@ -12,18 +12,18 @@ public class StatDefault {
 }
 public enum StatType {
     // MINING
-    MiningRange,
-    MiningDamage,
-    MiningRotationSpeed,
-    MiningKnockback,
-    MiningFalloff,
+    MiningRange = 0,
+    MiningDamage = 1,
+    MiningRotationSpeed = 2,
+    MiningKnockback = 3,
+    MiningFalloff = 4,
 
     // PLAYER
-    PlayerSpeedMax,
-    PlayerAcceleration,
-    PlayerOxygenMax,
-    PlayerLightRange,
-    PlayerLightIntensity
+    PlayerSpeedMax = 20,
+    PlayerAcceleration = 21,
+    PlayerOxygenMax = 22,
+    PlayerLightRange = 23,
+    PlayerLightIntensity = 24
 }
 [RequireComponent(typeof(NetworkedPlayer))]
 public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {

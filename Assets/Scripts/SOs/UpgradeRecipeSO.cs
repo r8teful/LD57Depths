@@ -73,6 +73,16 @@ public class UpgradeRecipeSO: RecipeBaseSO {
         // TODO: handle leftover if remaining > 0, if desired
         return result;
     }
+
+    public List<StatChangeStatus> GetStatStatuses() {
+        var statuses = new List<StatChangeStatus>();
+        foreach (var effect in effects) {
+            if(effect is StatUpgradeEffectSO statEffect) {
+                statuses.Add(statEffect.GetStatChange());
+            }
+        }
+        return statuses;
+    }
 }
 public class QuantityCalculationOptions {
     /// <summary>

@@ -38,10 +38,7 @@ public class UIUpgradeViewer : MonoBehaviour {
         DestroyAllChildren();
         foreach (var effect in upgradeData.effects) {
             if(effect is StatUpgradeEffectSO e) {
-                var stat = e.upgradeType;
-                var currentValue = NetworkedPlayer.LocalInstance.PlayerStats.GetStat(stat);
-                var nextValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, e.increaseType, e.modificationValue);
-                Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStat"), _statContainer).Init(stat, currentValue,nextValue);
+                Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStat"), _statContainer).Init(e.GetStatChange());
             }
         }
         foreach (var ingredient in upgradeData.GetIngredientStatuses(NetworkedPlayer.LocalInstance.GetInventory())) {

@@ -1,7 +1,6 @@
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -18,10 +17,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private UpgradeRecipeSO _preparedRecipeForPurchase;
     private RectTransform _rectTransform;
     private UpgradeNodeSO _boundNode;
-    private UpgradeRecipeSO _baseRecipeForInfo;
     private UIUpgradeTree _treeParent;
-    //private UpgradeRecipeSO _baseRecipeForInfo; // The raw SO for displaying icon/description
-    //private UpgradeRecipeSO _preparedRecipeForPurchase; // The temporary instance with calculated cost
 
     [OnValueChanged("InspectorBigChange")]
     public bool IsBig;
@@ -62,12 +58,10 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonSmall.gameObject.SetActive(true);
         }
     }
-    internal void Init(UIUpgradeTree parent, UpgradeNodeSO boundNode, int currentLevel, 
-        UpgradeRecipeSO baseRecipeForInfo, UpgradeRecipeSO preparedNextStage, UpgradeNodeState status) {
+    internal void Init(UIUpgradeTree parent, UpgradeNodeSO boundNode, int currentLevel, UpgradeRecipeSO preparedUpgrade, UpgradeNodeState status) {
         _treeParent = parent;
         _boundNode = boundNode;
-        _baseRecipeForInfo = baseRecipeForInfo;
-        _preparedRecipeForPurchase = preparedNextStage;
+        _preparedRecipeForPurchase = preparedUpgrade;
         _rectTransform = GetComponent<RectTransform>();
         HandleButtonSize(); // Sets _buttonCurrent
         _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
@@ -105,7 +99,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonSmall.gameObject.SetActive(false);
             _buttonCurrent = _buttonBig;
             var r = _rectTransform.sizeDelta;
-            r.x = 120f;
+            //r.x = 120f;
             _rectTransform.sizeDelta = r;
         } else if (!IsBig && _buttonSmall != null) {
             _buttonSmall.onClick.RemoveAllListeners();
@@ -113,7 +107,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonCurrent = _buttonSmall;
             _buttonBig.gameObject.SetActive(false);
             var r = _rectTransform.sizeDelta;
-            r.x = 65f;
+            //r.x = 65f;
             _rectTransform.sizeDelta = r;
         }
     }
@@ -146,46 +140,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // SMALL ACTIVE 237C8A
         // SMALL Purchad D58141
     }
-
-    public void UpdateVisual(bool isPurchased,bool prerequisitesMet) {
-        //var isPurchased = UpgradeManagerPlayer.LocalInstance.IsUpgradePurchased(_upgradeData);
-        // determine variant (one of Blue/Green/Orange)
-        string variant = isPurchased ? "Orange" : (IsBig ? "Green" : "Blue");
-        //bool prerequisitesMet = UpgradeManagerPlayer.LocalInstance.ArePrerequisitesMet(_upgradeData);
-        // If this button is the currently selected one, show the manual Pressed sprite:
-
-        if (_isSelected) {
-            // Manual pressed state (we don't use Button's Sprite Swap)
-            ApplySprite(variant, "Pressed");
-            _iconImage.color = _iconPressedColor;
-            // Interactable remains what the base state dictates (optional)
-            _buttonCurrent.interactable = !isPurchased && prerequisitesMet;
-            return;
-        }
-
-        // Not the selected button -> show base (Purchased / Active / Inactive)
-        if (isPurchased) {
-            ApplySprite("Orange", "Inactive");
-            //SetLinesColour(_linePurchasedColor);
-            _iconImage.color = _iconPurchasedColor;
-            _buttonCurrent.interactable = false;
-            OnStateChange?.Invoke(UpgradeNodeState.Purchased);
-        } else if (prerequisitesMet) {
-            ApplySprite(variant, "Active");
-            OnStateChange?.Invoke(UpgradeNodeState.Active);
-           // SetLinesColour(_lineAvailableColor);
-            _iconImage.color = _iconAvailableColor;
-            _buttonCurrent.interactable = true;
-
-            //_treeParent.SetNodeAvailable(_upgradeData);
-        } else {
-            ApplySprite(variant, "Inactive");
-            //SetLinesColour(_lineNotAvailableColor);
-            _iconImage.color = _iconNotAvailableColor;
-            _buttonCurrent.interactable = false;
-            OnStateChange?.Invoke(UpgradeNodeState.Inactive);
-        }
-    }
     public void UpdateVisual(UpgradeNodeState state) {
         // Derive the old boolean flags so we can still cache them if other code expects them.
         bool isPurchased = state == UpgradeNodeState.Purchased;
@@ -193,7 +147,10 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
         // Determine variant string (Orange for purchased, otherwise Green (IsBig) or Blue).
         string variant = isPurchased ? "Orange" : (IsBig ? "Green" : "Blue");
-
+        if(_cachedState != state) {
+            if (state == UpgradeNodeState.Purchased)
+                OnPurchased(); // Call it only once 
+        }
         _cachedState = state; 
 
         // If this button is currently selected, show the manual Pressed sprite and early return.
@@ -254,6 +211,8 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         _imageCurrent.sprite = sprite;
     }
     private void OnPurchased() {
+        // Hide popup
+        OnPointerExit(new(null));
         App.AudioController.PlaySound2D("UpgradeBought");
         var p = App.ResourceSystem.GetPrefab("UIParticleUpgradePurchase");
         Instantiate(p, transform.position, Quaternion.identity, transform);
@@ -276,8 +235,11 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public PopupData GetPopupData(InventoryManager clientInv) {
         // First get the upgrade we are displaying
         UpgradeRecipeSO upgradeData = _preparedRecipeForPurchase;
-        return new PopupData(upgradeData.displayName, upgradeData.description, upgradeData.GetIngredientStatuses(clientInv));
-        //return null; // tODO
+
+        // Stat data
+        return new PopupData(upgradeData.displayName, upgradeData.description, 
+            upgradeData.GetIngredientStatuses(clientInv),
+            statInfo: upgradeData.GetStatStatuses());
     }
 
     internal void SetSelected() {

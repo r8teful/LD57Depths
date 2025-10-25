@@ -13,9 +13,11 @@ public class UIUpgradeTree : MonoBehaviour {
     private Dictionary<ushort, UIUpgradeNode> _nodeMap = new Dictionary<ushort, UIUpgradeNode>();
     private Dictionary<ushort, List<UILineRenderer>> _lineMap = new Dictionary<ushort, List<UILineRenderer>>();
     private UIUpgradeScreen _uiParent;
+    private UpgradeTreeDataSO _treeData;
     internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades) {
         _nodeMap.Clear();
         _uiParent = uIUpgradeScreen;
+        _treeData = tree;
         // Instead of instantiating the nodes, we "link" the existing node prefab to the data, so that it displays the right
         // upgrade. This is how we have to do it if we want more complex trees, instead of just instantiating the nodes
         // in a horizontal layout group. A bit more work to setup now but easier to code
@@ -43,41 +45,14 @@ public class UIUpgradeTree : MonoBehaviour {
             // Now have the node that is an EXISTING child
             // 3. Calculate the node's current state from the player's progress.
             int currentLevel = nodeData.GetCurrentLevel(existingUpgrades);
-            bool isMaxed = currentLevel >= nodeData.MaxLevel;
-            bool prereqsMet = nodeData.ArePrerequisitesMet(existingUpgrades);
 
             // 4. Determine the node's visual status.
-            UpgradeNodeState status;
-            if (!prereqsMet && currentLevel == 0) {
-                status = UpgradeNodeState.Inactive; 
-            } else if (isMaxed) {
-                status = UpgradeNodeState.Purchased;
-            } else if (currentLevel > 0) {
-                //status = UpgradeNodeState.InProgress;
-                status = UpgradeNodeState.Active;
-            } else { // prereqsMet and currentLevel is 0
-                status = UpgradeNodeState.Active;
-            }
+            UpgradeNodeState status = nodeData.GetState(existingUpgrades);
             // 5. Get the correct recipe data for display.
-            UpgradeRecipeSO baseRecipeForInfo = null;
-            UpgradeRecipeSO preparedNextStage = null;
-
-            // Determine which stage's info to show (the next one, or the last one if maxed). We don't need to loop through all stages here obviously
-            int infoStageIndex = isMaxed ? nodeData.MaxLevel - 1 : currentLevel;
-            if (infoStageIndex >= 0 && infoStageIndex < nodeData.stages.Count) {
-                // Get the RAW recipe asset for displaying icon/description on ALL nodes.
-                baseRecipeForInfo = nodeData.stages[infoStageIndex].upgrade;
-            }
-            if (!isMaxed && prereqsMet) {
-                UpgradeStage nextStageToUnlock = nodeData.stages[currentLevel];
-                preparedNextStage = tree.GetPreparedRecipeForStage(nextStageToUnlock);
-
-                // In this case, the info recipe should also be from the next stage.
-                baseRecipeForInfo = nextStageToUnlock.upgrade;
-            }
+            UpgradeRecipeSO preparedRecipe = nodeData.GetNextUpgradeForNode(existingUpgrades, tree);
 
             // 6. Update the UI element with all the calculated information.
-            uiNode.Init(this, nodeData, currentLevel, baseRecipeForInfo, preparedNextStage, status);
+            uiNode.Init(this, nodeData, currentLevel, preparedRecipe, status);
             _nodeMap.Add(nodeData.ID, uiNode);
         }
         UpdateConnectionLines(tree, existingUpgrades);
@@ -160,7 +135,21 @@ public class UIUpgradeTree : MonoBehaviour {
     //    return uiNode;
     //}
 
-    internal void OnUpgradeButtonClicked(UpgradeNodeSO upgradeData) {
-        _uiParent.OnUpgradeNodeClicked(upgradeData);
+    internal void OnUpgradeButtonClicked(UpgradeNodeSO upgradeNode) {
+        //_uiParent.OnUpgradeNodeClicked(upgradeData); // We where doing in it the upgradeScreen script but why not just do it here?
+        App.AudioController.PlaySound2D("ButtonClick");
+        if (UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(upgradeNode)) {
+            // Local code only
+            _nodeMap[upgradeNode.ID].UpdateVisual(UpgradeNodeState.Purchased);
+            RefreshNodes(); // We could make it more performant by checking which nodes could have actually changed, but its not that performant heavy anyway.
+        }
+    }   
+    public void RefreshNodes() {
+        foreach (var node in _treeData.nodes) {
+            var unlockedUpgrades = UpgradeManagerPlayer.LocalInstance.GetUnlockedUpgrades(); // Ugly but sometimes that is okay
+            UpgradeNodeState status = node.GetState(unlockedUpgrades);
+            _nodeMap[node.ID].UpdateVisual(status);
+        }
+
     }
 }

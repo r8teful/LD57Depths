@@ -66,15 +66,4 @@ public class UIUpgradeScreen : MonoBehaviour {
     internal void PanelHide() {
         _upgradePanel.SetActive(false);
     }
-
-    internal void OnUpgradeNodeClicked(UpgradeNodeSO node) {
-        App.AudioController.PlaySound2D("ButtonClick");
-        if (UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(node)) {
-            // This should only be local code, just want to use it for button visuals
-            // Tell tree that a node has been purchased, the tree can map node -> ui and ui node can then do the animation
-            //_upgradeTreeInstance.
-        }
-        
-        //OnSelectedNodeChanged?.Invoke(node);
-    }
 }

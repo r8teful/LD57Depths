@@ -39,6 +39,11 @@ public struct StatChangeStatus {
     public StatType StatType { get; }
     public float ValueNow {get; }
     public float ValueNext { get; }
+    public StatChangeStatus(StatType stat, float valueNow, float valueNext) {
+        StatType = stat;
+        ValueNow = valueNow;
+        ValueNext = valueNext;
+    }
 }
 // Usefull class for the actual result of a recipe. Will add more here later like research, upgrade etc..
 public class RecipeExecutionContext {
