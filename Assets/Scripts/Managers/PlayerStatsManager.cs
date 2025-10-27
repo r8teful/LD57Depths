@@ -17,13 +17,29 @@ public enum StatType {
     MiningRotationSpeed = 2,
     MiningKnockback = 3,
     MiningFalloff = 4,
+    MiningCombo = 5,
 
-    // PLAYER
+    // Lazer blast
+    BlastDamage = 10,
+    BlastRecharge = 11,
+    BlastDuration = 12,
+    BlastRange = 13,
+
+    // PLAYER 
     PlayerSpeedMax = 20,
     PlayerAcceleration = 21,
-    PlayerOxygenMax = 22,
-    PlayerLightRange = 23,
-    PlayerLightIntensity = 24
+    PlayerDrag = 22,
+    PlayerMagnetism = 23,
+    PlayerOxygenMax = 24,
+    
+    // Player dash
+    DashSpeed = 30,
+    DashRecharge = 31,
+    DashDistance = 32,
+    
+    // Block oxygen
+    BlockOxygenReleased = 40,
+    BlockOxygenChance = 41
 }
 [RequireComponent(typeof(NetworkedPlayer))]
 public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
