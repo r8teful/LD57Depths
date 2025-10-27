@@ -23,6 +23,7 @@ public class SOEditorWindow : OdinMenuEditorWindow {
         // Load and sort assets for each category
         AddSortedAssets<ItemData>(tree, "Items", "Assets/Resources/ItemData");
         AddSortedAssets<RecipeBaseSO>(tree, "Recipies", "Assets/Resources/RecipeData");
+        AddSortedAssets<UpgradeEffect>(tree, "UpgradeEffects", "Assets/Resources/UpgradeData");
         AddSortedAssets<RecipeBaseSO>(tree, "RecipiesUpgrade", "Assets/Resources/UpgradeData");
         AddSortedAssets<UpgradeNodeSO>(tree, "UpgradeNodes", "Assets/Resources/UpgradeNodeData");
         AddSortedAssets<EntityBaseSO>(tree, "Entities", "Assets/Resources/EntityData");
@@ -33,6 +34,7 @@ public class SOEditorWindow : OdinMenuEditorWindow {
         tree.EnumerateTree().Where(x => x.Value as EntityBaseSO).ForEach(AddDragHandles);
         tree.EnumerateTree().Where(x => x.Value as TileSO).ForEach(AddDragHandles);
         tree.EnumerateTree().Where(x => x.Value as UpgradeNodeSO).ForEach(AddDragHandles);
+        tree.EnumerateTree().Where(x => x.Value as UpgradeEffect).ForEach(AddDragHandles);
         // Double click for everything
         tree.EnumerateTree().Where(x => x.Value is Object).ForEach(AddDoubleClickSelect);    
         // Add icons to characters and items.

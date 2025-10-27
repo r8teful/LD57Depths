@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: LazerBlastDamage2
   m_EditorClassIdentifier: 
   RecipeID: 41
-  displayName: Lazer Damage2
+  displayName: Blast Damage2
   description: 
   icon: {fileID: -172477240, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   requiredItems: []
-  effects: []
+  effects:
+  - {fileID: 11400000, guid: 2d56124547bb2ab4bb5da295aec217f6, type: 2}
