@@ -12,21 +12,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
   m_Name: UpgradeLazerRange
   m_EditorClassIdentifier: 
-  nodeName: Damage
-  uniqueID: 130
+  nodeName: Range
+  uniqueID: 4
   icon: {fileID: -1526817864, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 1d1fbfe8ab7b9b84282ec8fd261801f5, type: 2}
   stages:
-  - upgrade: {fileID: 11400000, guid: 93c1c2c1a62af3d489bb54e1587b70e5, type: 2}
+  - upgrade: {fileID: 11400000, guid: 57030fc0bcd85884daf498d9a1bcd483, type: 2}
     costMultiplier: 1
     tier: 1
-    descriptionOverride: 
-  - upgrade: {fileID: 11400000, guid: d9687c281ce58d9499a681d2dcc0a2a5, type: 2}
+  - upgrade: {fileID: 11400000, guid: eef621274c3621c4a9f1d9f7ee18a864, type: 2}
     costMultiplier: 1
     tier: 0
-    descriptionOverride: 
-  - upgrade: {fileID: 11400000, guid: 3f577335913f60049a8429166b5cc4d6, type: 2}
+  - upgrade: {fileID: 11400000, guid: b4f3274caac053940a001173a8060e80, type: 2}
     costMultiplier: 1
     tier: 0
-    descriptionOverride: 
+  - upgrade: {fileID: 11400000, guid: 75dcdc222c780ea448cc8c84c0942730, type: 2}
+    costMultiplier: 1
+    tier: 0
+  - upgrade: {fileID: 11400000, guid: 34d57937ad2f6af4a8a36cafcc318ff2, type: 2}
+    costMultiplier: 1
+    tier: 0
+  - upgrade: {fileID: 11400000, guid: 731b939f26a3b894cbc9e03b6967e8f6, type: 2}
+    costMultiplier: 1
+    tier: 0
+  - upgrade: {fileID: 11400000, guid: 9ab3d9d73d974d942bcc5880f6673f3a, type: 2}
+    costMultiplier: 1
+    tier: 0
+  - upgrade: {fileID: 11400000, guid: ce63b200af3bff849a3a83514a0ed1b2, type: 2}
+    costMultiplier: 1
+    tier: 0
+  - upgrade: {fileID: 11400000, guid: c97ba4695f62b12489cbc0c94dbd4114, type: 2}
+    costMultiplier: 1
+    tier: 0
+  - upgrade: {fileID: 11400000, guid: 0061125d5e8816d4d82e55949d4a8d1a, type: 2}
+    costMultiplier: 1
+    tier: 0

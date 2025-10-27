@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
+  m_Name: UpgradeLazerBlastRange
+  m_EditorClassIdentifier: 
+  nodeName: BlastRange
+  uniqueID: 9
+  icon: {fileID: 1573820211, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  prerequisiteNodesAny:
+  - {fileID: 11400000, guid: 87bdf022cae5b9e40aaf9a007cdd5f3c, type: 2}
+  stages:
+  - upgrade: {fileID: 11400000, guid: c7eea03527a96244ead476c5d5c45cc6, type: 2}
+    costMultiplier: 1
+    tier: 0
+  - upgrade: {fileID: 11400000, guid: 39388db057a8a42429e1d64e92d331a3, type: 2}
+    costMultiplier: 1
+    tier: 0
+  - upgrade: {fileID: 11400000, guid: 19cbebfec623dfa47babc6b46d7faa32, type: 2}
+    costMultiplier: 1
+    tier: 0

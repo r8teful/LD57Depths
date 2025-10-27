@@ -20,8 +20,6 @@ public class UpgradeStage {
     public float costMultiplier = 1.0f;
 
     public int tier;
-
-    public string descriptionOverride;
 }
 
 [CreateAssetMenu(fileName = "UpgradeNodeSO", menuName = "ScriptableObjects/Upgrades/UpgradeNodeSO")]

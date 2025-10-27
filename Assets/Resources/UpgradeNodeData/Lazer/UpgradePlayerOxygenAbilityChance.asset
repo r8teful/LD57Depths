@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
+  m_Name: UpgradePlayerOxygenAbilityChance
+  m_EditorClassIdentifier: 
+  nodeName: Oxygen Chance
+  uniqueID: 104
+  icon: {fileID: -1012180492, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  prerequisiteNodesAny:
+  - {fileID: 11400000, guid: 0a7a465d100abaa4d84949edae6ccb5b, type: 2}
+  stages:
+  - upgrade: {fileID: 11400000, guid: af8c0ac5ff2baef459f7743ae9c83345, type: 2}
+    costMultiplier: 1
+    tier: 0
+  - upgrade: {fileID: 11400000, guid: e4ce81fdff81e9c4da72593b318597a6, type: 2}
+    costMultiplier: 1
+    tier: 0
+  - upgrade: {fileID: 11400000, guid: ad1eb93989bd07d4980c024833b0cbbe, type: 2}
+    costMultiplier: 1
+    tier: 0

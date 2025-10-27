@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
+  m_Name: UpgradeLazerBlastDamage
+  m_EditorClassIdentifier: 
+  nodeName: UpgradeLazerAbilityDuration
+  uniqueID: 11
+  icon: {fileID: -329476615, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  prerequisiteNodesAny:
+  - {fileID: 11400000, guid: 87bdf022cae5b9e40aaf9a007cdd5f3c, type: 2}
+  stages:
+  - upgrade: {fileID: 11400000, guid: 93dc24f72af9fdb47b2fc4d335894350, type: 2}
+    costMultiplier: 1
+    tier: 0
+  - upgrade: {fileID: 11400000, guid: 5a4bacd8bd5b8104da5470f05bcdbf55, type: 2}
+    costMultiplier: 1
+    tier: 0
+  - upgrade: {fileID: 11400000, guid: 5600d15efde91e54bb22423c20fc04f2, type: 2}
+    costMultiplier: 1
+    tier: 0

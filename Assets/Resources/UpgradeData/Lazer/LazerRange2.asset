@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: LazerRange2
   m_EditorClassIdentifier: 
   RecipeID: 12
-  displayName: Lazer Range 3
+  displayName: Lazer Range 2
   description: 
   icon: {fileID: -1646224493, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   requiredItems: []
   effects:
   - {fileID: 11400000, guid: 19c9bee2a4af860448926de80431f090, type: 2}
+  - {fileID: 11400000, guid: f655a22408384d34f8a3430d43b8e995, type: 2}
