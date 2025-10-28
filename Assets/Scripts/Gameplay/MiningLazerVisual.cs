@@ -41,11 +41,12 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
     public void UpdateVisual(object inputData, InputManager inputMan) {
         if (_isOwner) {
             if (inputMan == null) Debug.LogError("Need to set InputManager!");
-            HandleVisualUpdate(inputMan);
+            HandleVisualUpdate(inputData,inputMan);
         } else {
             if(inputData is Vector2 vector) {
                 // Update the target position. update will handle the smooth movement.
                 _nextInput = vector;
+                Debug.Log($"Setting next input to: {_nextInput}");
             } else {
                 Debug.LogWarning($"Inputdata is not a vector2!");
             }
@@ -96,13 +97,17 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         }
     }
 
-    public void HandleVisualUpdate(InputManager inputManager) {
+    public void HandleVisualUpdate(object inputData, InputManager inputManager) {
+        Vector2 dir;
+        if (inputData is Vector2 inputDir) {
+            dir = inputDir;
+        } else {
+            dir = inputManager.GetDirFromPos(transform.position);
+        }
         // Update visuals each frame when mining
-        var pos = inputManager.GetAimWorldInput();
-
         bool isAbility = inputManager.IsUsingAbility;
         SetCorrectLaserPos(inputManager.GetMovementInput().x);
-        LaserVisual(pos, isAbility);
+        LaserVisual(dir, isAbility);
     }
     private void FadeOutLine(LineRenderer lineRenderer) {
         Color2 startColor = new(lineRenderer.startColor, lineRenderer.endColor);
@@ -135,13 +140,12 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         }
     }
 
-    private void LaserVisual(Vector2 inputWorldPos, bool isAbility) {
+    private void LaserVisual(Vector2 targetDirection, bool isAbility) {
         if (!_lineLazerParticleSystem.isPlaying) {
             _lineLazerParticleSystem.Play();
         }
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
-        Vector2 targetDirection = (inputWorldPos - objectPos2D).normalized;
-
+        //Debug.Log($"Target dir: {inputWorldPos} ");
         var localPos = transform.InverseTransformPoint(objectPos2D);
         if (!isAbility) {
             RaycastHit2D hit = Physics2D.Raycast(objectPos2D, targetDirection, _range, LayerMask.GetMask("MiningHit"));
@@ -201,7 +205,7 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
     private IEnumerator SmoothInterpolate(Vector2 from, Vector2 to) {
         float duration = 0.4f; // This should match the syncvar update frequency
         float elapsed = 0f;
-
+        Debug.Log($"Starting smoothInterpolate from direction {from} to {to} ");
         while (elapsed < duration) {
             elapsed += Time.deltaTime;
             Vector2 lerped = Vector2.Lerp(from, to, elapsed / duration);

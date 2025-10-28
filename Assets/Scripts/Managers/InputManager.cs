@@ -48,7 +48,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private float _interactionRadius = 2f;
     private bool _dashPefromed;
     private Vector2 movementInput;   // For character movement
-    private Vector2 rawAimInput;     // Raw input for aiming (mouse position or joystick)
+    private Vector2 rawAimInput;     // Raw input for aiming (mouse position or joystick). Mouse pos is in screen pixels. 0,0 bottom left, screenrez top right
     private IInteractable _currentInteractable;
     private IInteractable _previousInteractable;
     [ShowInInspector]
@@ -271,15 +271,38 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     }
   
     // Get aim input, processed based on control scheme
-    public Vector2 GetAimWorldInput() {
+    public Vector2 GetAimWorldInput(Transform reference = null) {
+        var cam = Camera.main;
+        //Debug.Log($"rawAimInput: {rawAimInput}, cam: {(cam == null ? "null" : cam.name)}, camPos: {(cam == null ? "n/a" : cam.transform.position.ToString())}");
+        if (cam != null) {
+            if (reference != null) { 
+                float z = cam.WorldToScreenPoint(reference.position).z; // replace referenceTransform with player/tool transform
+                //Debug.Log($"screenZForReference: {z}");
+                Vector3 screen = new Vector3(rawAimInput.x, rawAimInput.y, z);
+                Vector3 world = cam.ScreenToWorldPoint(screen);
+                //Debug.Log($"screen: {screen} -> world: {world}");
+                return world;
+            }
+        }
         if (_playerInput.currentControlScheme == "Keyboard&Mouse") {
             // Convert mouse screen position to world position
-            return Camera.main.ScreenToWorldPoint(rawAimInput);
+            float zDistanceToPlane = -Camera.main.transform.position.z;
+            //Debug.Log($"Cam {Camera.main.name} has z pos: {Camera.main.transform.position.z}");
+            Vector3 screenPos = new Vector3(rawAimInput.x, rawAimInput.y, zDistanceToPlane);
+            //return Camera.main.ScreenToWorldPoint(rawAimInput);
+            return Camera.main.ScreenToWorldPoint(screenPos);
         } else // Controller
           {
             // Use joystick direction, normalized
             return rawAimInput.normalized;
         }
+    }
+    public Vector2 GetDirFromPos(Vector2 worldPos) {
+        Vector2 screenPos = rawAimInput;
+        // Convert to world coordinates using main camera
+        Vector3 worldMouse = Camera.main.ScreenToWorldPoint(screenPos);
+        Vector2 dir = (Vector2)(worldMouse - (Vector3)worldPos);
+        return dir.normalized;
     }
     public Vector2 GetAimScreenInput() {
         if (_playerInput.currentControlScheme == "Keyboard&Mouse") {

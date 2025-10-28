@@ -29,9 +29,9 @@ public class MiningLazer : MiningBase {
         }
         // --- Smooth Rotation Logic (runs every frame) ---
         Vector2 toolPosition = transform.position;
-        Vector2 targetPos = _inputManager.GetAimWorldInput();
+        Vector2 targetPos = _inputManager.GetAimWorldInput(transform);
         Vector2 targetDirection = (targetPos - toolPosition).normalized;
-
+        //Debug.Log($"ToolPos: {toolPosition} targetPos: {targetPos} dir: {targetDirection}");
         // Handle the "first shot" logic to either snap or use memory
         if (_isFirstShot) {
             if (Time.time - _timeToolStopped < directionMemoryTime && _lastKnownDirection.sqrMagnitude > 0) {
@@ -45,7 +45,7 @@ public class MiningLazer : MiningBase {
             float maxAngleDelta = RotationSpeed * Time.deltaTime; // Use Time.deltaTime for per-frame smoothness
             _currentDirection = Vector3.RotateTowards(_currentDirection, targetDirection, maxAngleDelta * Mathf.Deg2Rad, 0.0f).normalized;
         }
-
+        //Debug.Log($"Current dir: {_currentDirection}");
         //ToolVisual.HandleVisualUpdate(_currentDirection, base._inputManager,_isUsingAbility); // using new "lagging" direction now
 
         // Knockback
@@ -89,7 +89,7 @@ public class MiningLazer : MiningBase {
 
         // Use the (potentially smoothed) _currentDirection for the raycast
         RaycastHit2D hit = Physics2D.Raycast(toolPosition, _currentDirection, Range, LayerMask.GetMask("MiningHit"));
-        Debug.Log($"Range: {Range} Dir: {_currentDirection}");
+        //Debug.Log($"Range: {Range} Dir: {_currentDirection}");
         if (hit.collider != null) {
             Vector2 nudgedPoint = hit.point + _currentDirection * 0.1f; // Nudged point logic seems reversed, correcting it.
 

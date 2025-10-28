@@ -91,7 +91,8 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         if (!base.IsOwner || !_isUsingToolLocal || !_playerParent.IsInitialized) {
             return;
         }
-        var curAimTarget = _playerParent.InputManager.GetAimWorldInput();
+        //var curAimTarget = _playerParent.InputManager.GetAimWorldInput();
+        var curAimTarget = _playerParent.InputManager.GetDirFromPos(transform.position); // This should work, because the toolController is on the player
         // We update local visuals every frame for smooth movement
         CurrentToolBehaviour?.OwnerUpdate();
         var visualData = CurrentToolBehaviour?.VisualData;
