@@ -1,5 +1,4 @@
-﻿using FishNet;
-using FishNet.Object;
+﻿using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,7 +25,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     public SyncVar<bool> IsUsingTool => _isUsingTool;
     public SyncVar<Vector2> Input => _input;
 
-    public int InitializationOrder => 91;
+    public int InitializationOrder => 92;
 
     // Problem lies here because we don't properly populate the remote _idToToolVisual dictionary
     public IToolVisual GetCurrentTool(bool isRemote) {
@@ -53,8 +52,8 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         _worldManager = FindFirstObjectByType<WorldManager>();
         _playerParent.PlayerLayerController.CurrentLayer.OnChange += PlayerLayerChange;
         //EquipDrill(); // Todo this would have to take from some kind of save file obviously
-        //EquipLaser();
-        EquipRPG();
+        EquipLaser();
+        //EquipRPG();
     }
 
     private void PlayerLayerChange(VisibilityLayerType prev, VisibilityLayerType next, bool asServer) {
@@ -205,7 +204,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         }
         // 4. Instantiate the tool and parent it to the designated slot.
         GameObject toolInstance = Instantiate(toolPrefab, slot); // Should use fishnet spawning here aswell!
-        Spawn(toolInstance, base.LocalConnection);
+        //Spawn(toolInstance, base.LocalConnection);
         // 5. Get the behavior component and assign it.
         toolBehaviorReference = toolInstance.GetComponent<IToolBehaviour>();
         toolBehaviorReference.InitVisualTool(toolBehaviorReference, _playerParent);
@@ -213,7 +212,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     }
   
     // Will be called by a remote client so they can see the tool
-    private void EquipToolVisual(GameObject toolPrefab) {
+    private void EquipToolVisualRemote(GameObject toolPrefab, NetworkedPlayer remotePlayer) {
         // remote doesn't use slots
         GameObject toolInstance = Instantiate(toolPrefab, transform);
         IToolBehaviour toolBehaviour = null;
@@ -222,12 +221,13 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         } else {
             Debug.LogError("Could not find Interface on instantiated tool gameobject!");
         }
+        toolBehaviour.InitVisualTool(toolBehaviour, remotePlayer);
         // Store the instance so we can reference to it later
         _idToToolVisual.TryAdd(toolBehaviour.ToolID, toolBehaviour.ToolVisual); // ID 2 is null!
     }
-    public void EquipAllToolsVisualOnly() {
-        EquipToolVisual(App.ResourceSystem.GetPrefab("MiningDrill"));
-        EquipToolVisual(App.ResourceSystem.GetPrefab("MiningLazer"));
+    public void EquipAllToolsVisualOnly(NetworkedPlayer remotePlayer) {
+        EquipToolVisualRemote(App.ResourceSystem.GetPrefab("MiningDrill"),remotePlayer);
+        EquipToolVisualRemote(App.ResourceSystem.GetPrefab("MiningLazer"), remotePlayer);
         //EquipToolVisual(App.ResourceSystem.GetPrefab("CleaningTool"));
     }
     public void ClearMiningSlot() {

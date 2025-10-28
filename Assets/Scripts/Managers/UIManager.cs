@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 // Root of all player UI
 public class UIManager : Singleton<UIManager> {

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "SubRecipeSO", menuName = "ScriptableObjects/Upgrades/SubRecipeSO", order = 9)]
 public class SubRecipeSO : RecipeBaseSO {

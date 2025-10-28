@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
@@ -120,7 +119,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
     private void OnDisable() {
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
-        NetworkedPlayer.LocalInstance.PlayerStats.OnStatChanged -= OnStatChanged;
+        //NetworkedPlayer.LocalInstance.PlayerStats.OnStatChanged -= OnStatChanged; // This will give null exception when a remote client disables the script
     }
 
     void Update() {

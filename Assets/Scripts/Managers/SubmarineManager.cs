@@ -3,7 +3,6 @@ using FishNet.Object.Synchronizing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 // Should hold server side data about the state of the different upgrades

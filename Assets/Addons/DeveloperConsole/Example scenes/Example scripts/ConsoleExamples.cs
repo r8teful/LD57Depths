@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Collections;
-using System.Threading;
+﻿using System.Collections;
 using UnityEngine;
 
 namespace Anarkila.DeveloperConsole {
@@ -172,18 +170,6 @@ namespace Anarkila.DeveloperConsole {
             yield return new WaitForSeconds(0.02f);
             Debug.Log(string.Format("Called command 'test_coroutine_multi_int' successfully with value: {0} and {1} from Console!", i, j));
         }*/
-
-#if UNITY_EDITOR
-#if !UNITY_WEBGL
-        [ConsoleCommand("test_threadedlog")]
-        private void PrintLogFromAnotherThread() {
-            Task.Run(() =>{
-                // Note. Console.Log cannot be called from another thread.
-                Debug.Log("Logged message from thread " + Thread.CurrentThread.ManagedThreadId);
-            });
-        }
-# endif
-#endif
 
         [ConsoleCommand("test_richtext")]
         private void PrintColors() {

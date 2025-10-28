@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-[System.Serializable]
+﻿[System.Serializable]
 public class InventorySlot {
     // Store the Item ID, which IS serializable by FishNet easily.
     public ushort itemID; // Default is 0, we'll use InvalidID constant for empty checks.

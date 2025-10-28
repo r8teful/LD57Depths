@@ -114,6 +114,7 @@ GameObject:
   - component: {fileID: 182131052797561024}
   - component: {fileID: 1470881406812735895}
   - component: {fileID: 8214121231761180567}
+  - component: {fileID: 4543711334939864261}
   m_Layer: 0
   m_Name: MiningRPG
   m_TagString: Untagged
@@ -166,7 +167,7 @@ MonoBehaviour:
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
-  - {fileID: 0}
+  - {fileID: 4543711334939864261}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -191,12 +192,12 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 7
+  <PrefabId>k__BackingField: 47
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 9821010341856499329
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
-    Position: {x: -0.25, y: 0.56, z: 0}
+    Position: {x: -0.07, y: 0.57, z: 0}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
     Scale: {x: 1, y: 1, z: 1}
     IsValid: 1
@@ -212,9 +213,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d48a4de45f8f37e478d3dabd465c4ecc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 182131052797561024}
-  _networkObjectCache: {fileID: 0}
   ExplosionVelocity: 6
   Ability: {fileID: 0}
 --- !u!114 &8214121231761180567
@@ -233,6 +231,21 @@ MonoBehaviour:
   _spriteHand: {fileID: 8173574628037978435}
   _spriteSwiming: {fileID: -1169985684, guid: d9ed8be83b2c911439328fecfc80a183, type: 3}
   _spriteStanding: {fileID: 2131335427, guid: d9ed8be83b2c911439328fecfc80a183, type: 3}
+--- !u!114 &4543711334939864261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2655812518975194425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a6a39c46bf52104ba8efe3100bce3f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 182131052797561024}
+  _networkObjectCache: {fileID: 182131052797561024}
 --- !u!1 &5306854890900665251
 GameObject:
   m_ObjectHideFlags: 0

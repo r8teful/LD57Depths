@@ -2,8 +2,6 @@
 using FishNet.Object.Synchronizing;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mime;
 using UnityEngine;
 
 // Has to hold upgrade info! Specific to THIS player 

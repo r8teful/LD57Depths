@@ -1,6 +1,5 @@
 using FishNet;
 using FishNet.Connection;
-using FishNet.Demo.AdditiveScenes;
 using FishNet.Object;
 using System.Collections.Generic;
 using System.Linq;

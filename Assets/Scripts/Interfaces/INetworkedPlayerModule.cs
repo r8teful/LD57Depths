@@ -16,7 +16,7 @@ public interface INetworkedPlayerModule {
     UIManager: Relies on Upgrade, Inventory, 
     InputManager: Relies on UI & ToolController
     PlayerMovement: Sets state when initialize which calls PlayerVisualHandler
-
+    Tool controller needs PlayerStatsManager as tools init depending on playerStats
     */
     /// <summary>
     /// Called by the NetworkedPlayerSetup orchestrator to initialize the module.

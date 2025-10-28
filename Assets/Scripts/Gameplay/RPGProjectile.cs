@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RPGProjectile : MonoBehaviour {
     [SerializeField] private Rigidbody2D _rb;

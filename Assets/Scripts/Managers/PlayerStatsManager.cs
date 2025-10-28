@@ -1,9 +1,9 @@
-﻿using FishNet.Object;
+﻿using FishNet.Connection;
+using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 [System.Serializable]
 public class StatDefault {
@@ -36,8 +36,12 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     // This list ONLY exists on the owning client. It does not need to be synced
     // because only the owner calculates their stats and syncs the result via _finalStats.
     private readonly List<StatModifier> _activeModifiers = new();
-    
-    public int InitializationOrder => 99;
+
+    private bool _isInitialized = false;
+    public bool IsInitialized => _isInitialized;
+
+    public event Action OnInitialized;
+    public int InitializationOrder => 91;
 
     // The crucial event system. Other components (like PlayerMovement, ToolController)
     // will listen to this to know when a stat they care about has changed.
@@ -45,8 +49,13 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
     #region Initialization
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
-        InitializeStats();
+        StatType[] statTypes = _baseStats.BaseStats.Select(s => s.Stat).ToArray();
+        float[] baseValues = _baseStats.BaseStats.Select(s => s.BaseValue).ToArray();
+
+        ServerInitializeStats(statTypes, baseValues);
+        //InitializeStats();
     }
+
     public override void OnStartClient() {
         base.OnStartClient();
 
@@ -68,8 +77,21 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         base.OnStopClient();
         _finalStats.OnChange -= OnFinalStatChanged;
     }
+    [ServerRpc(RequireOwnership = true)]
+    private void ServerInitializeStats(StatType[] statTypes, float[] baseValues) {
+        if (_permanentStats.Count > 0) {
+            Debug.LogWarning("ServerInitializeStats called, but stats are already initialized.");
+            return; // Already initialized, do nothing.
+        }
+        for (int i = 0; i < statTypes.Length; i++) {
+            StatType stat = statTypes[i];
+            float value = baseValues[i];
 
-    private void InitializeStats() {
+            if (!_permanentStats.ContainsKey(stat)) {
+                _permanentStats.Add(stat, value);
+                _finalStats.Add(stat, value); // Initially, final stats are the same as permanent.
+            }
+        }
         foreach (var statDefault in _baseStats.BaseStats) {
             if (!_permanentStats.ContainsKey(statDefault.Stat)) {
                 _permanentStats.Add(statDefault.Stat, statDefault.BaseValue);
@@ -79,8 +101,23 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
                 Debug.LogWarning($"Stat {statDefault.Stat} is already initialized. Check for duplicates in Base Stats list.");
             }
         }
-    }
+        Debug.Log("Server init done for " + Owner.ClientId);
+        RpcInitDone(Owner);
 
+    }
+    [TargetRpc]
+    private void RpcInitDone(NetworkConnection conn) {
+        _isInitialized = true;
+        Debug.Log("RPC recieved init donw!");
+        // Fire the event to notify all other scripts that they can now safely access stats.
+        OnInitialized?.Invoke();
+
+        // Fire the OnStatChanged event for every stat so that UI and other systems
+        // can grab their initial values.
+        foreach (var kvp in _finalStats) {
+            OnStatChanged?.Invoke(kvp.Key, kvp.Value);
+        }
+    }
     #endregion
 
     private void RecalculateStat(StatType stat) {
@@ -102,9 +139,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
                 finalValue *= mod.Value;
             }
         }
-
-        // Update the synced dictionary. This triggers the OnChange event on all clients.
-        _finalStats[stat] = finalValue;
+        ServerUpdateFinalStat(stat, finalValue);
     }
     #region Public API
 
@@ -112,6 +147,12 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     /// The primary way for other scripts to get a stat value.
     /// </summary>
     public float GetStat(StatType stat) {
+        if (!_isInitialized) {
+            Debug.LogWarning($"Attempted to GetStat({stat}) before PlayerStatsManager was initialized!");
+            // Return a sensible default from the local SO if possible.
+            var statDefault = _baseStats.BaseStats.FirstOrDefault(s => s.Stat == stat);
+            return statDefault?.BaseValue ?? 0f;
+        }
         if (_finalStats.TryGetValue(stat, out float value)) {
             return value;
         } else {
@@ -137,9 +178,19 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
         float currentValue = _permanentStats[stat];
         float newValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, increaseType, value);
-
+        ServerUpdatePermanentStat(stat, newValue);
+        //_permanentStats[stat] = newValue;
+        //RecalculateStat(stat);
+    }
+    [ServerRpc(RequireOwnership = true)]
+    private void ServerUpdatePermanentStat(StatType stat, float newValue) {
         _permanentStats[stat] = newValue;
-        RecalculateStat(stat);
+    }
+
+    [ServerRpc(RequireOwnership = true)]
+    private void ServerUpdateFinalStat(StatType stat, float newValue) {
+        // Update the synced dictionary. This triggers the OnChange event on all clients.
+        _finalStats[stat] = newValue;
     }
     /// <summary>
     /// Adds a temporary stat modifier (e.g., from an ability or location boost).

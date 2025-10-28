@@ -6,7 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;       // For InstanceFinder
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
 
 public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to use ServerManager etc.

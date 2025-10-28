@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ZoneSO", menuName = "ScriptableObjects/Other/ZoneSO", order = 2)]

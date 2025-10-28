@@ -3,7 +3,6 @@ using FishNet.Object.Synchronizing;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static PlayerMovement;
 
 // All players have this script, this handles references and setup of relevant things all players should have
 public class NetworkedPlayer : NetworkBehaviour {

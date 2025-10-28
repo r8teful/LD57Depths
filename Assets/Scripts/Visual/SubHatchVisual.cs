@@ -1,5 +1,3 @@
-using FishNet.Object;
-using System;
 using UnityEngine;
 
 public class SubHatchVisual : MonoBehaviour {

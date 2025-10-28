@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 // Just on the player for now because fuck it
 public class CraftingComponent : MonoBehaviour, INetworkedPlayerModule {

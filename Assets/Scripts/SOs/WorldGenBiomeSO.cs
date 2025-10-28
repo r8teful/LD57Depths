@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Events;
 [CreateAssetMenu(fileName = "WorldGenBiomeSO", menuName = "ScriptableObjects/WorldGen/WorldGenBiomeSO", order = 2)]
 
 public class WorldGenBiomeSO : ScriptableObject {

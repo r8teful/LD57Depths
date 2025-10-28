@@ -1,6 +1,3 @@
-using FishNet.Demo.AdditiveScenes;
-using Sirenix.Utilities;
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

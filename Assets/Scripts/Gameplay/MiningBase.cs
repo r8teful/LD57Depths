@@ -10,7 +10,7 @@ public struct MiningToolData {
     public int toolTier;
     // Add more as needed
 }
-public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
+public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
     protected InputManager _inputManager;
     protected Coroutine miningRoutine;
     protected bool _isMining;
@@ -28,8 +28,8 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
     public ushort ToolID => (ushort)ToolType;
     private PlayerStatsManager _localPlayerStats; // The script is attached to a player, this is that players stats, could be our stats, or a remove clients stats
 
-    private void InitializeWithCurrentStats() {
-        var pStats = NetworkedPlayer.LocalInstance.PlayerStats;
+    private void InitializeWithCurrentStats(PlayerStatsManager pStats) {
+      
         Range = pStats.GetStat(StatType.MiningRange);
         DamagePerHit = pStats.GetStat(StatType.MiningDamage);
         RotationSpeed = pStats.GetStat(StatType.MiningRotationSpeed);
@@ -43,15 +43,32 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
             Debug.LogError($"Could not find ToolVisual on {ToolType}, make sure the prefab has a toolVisual script!");
         }
     }
-    public override void OnStartClient() {
-        base.OnStartClient();
+    // IDK it knows its 180 so why the fuck can't I move the fucking laser?
+    //private void FixedUpdate() {
+    //    if (_localPlayerStats != null) {
+    //        Debug.Log(_localPlayerStats.GetStat(StatType.MiningRotationSpeed));
+    //    }
+    //}
+    public void Start() {
         Debug.Log("StartBase called on: " + ToolType);
-        InitializeWithCurrentStats();
-        // InitVisualTool(this); // Now this is called from toolController so we have the reference correctly
-        if (NetworkedPlayersManager.Instance.TryGetPlayer(OwnerId, out var player)) {
-            _localPlayerStats = player.PlayerStats;
-            _localPlayerStats.OnStatChanged += OnPlayerStatsChange;
+        _localPlayerStats = NetworkedPlayer.LocalInstance.PlayerStats;
+        // DO this instead:
+        if (_localPlayerStats.IsInitialized) {
+            // If stats are already ready (e.g., late join), grab them immediately.
+            InitializeWithCurrentStats(_localPlayerStats);
+        } else {
+            _localPlayerStats.OnInitialized += HandleStatsInitialized; // Wait until initialized
         }
+
+        _localPlayerStats.OnStatChanged += OnPlayerStatsChange;
+    }
+
+    private void HandleStatsInitialized() {
+        InitializeWithCurrentStats(_localPlayerStats);
+    }
+
+    public void OnDisable() {
+        Debug.Log("MINIG BASE DISABLED");
     }
 
     private void OnPlayerStatsChange(StatType stat, float newV) {
@@ -71,8 +88,7 @@ public abstract class MiningBase : NetworkBehaviour, IToolBehaviour {
         Debug.Log($"New upgrade {stat} is: " + newV);
     }
 
-    public override void OnStopClient() {
-        base.OnStartClient();
+    public void OnDestroy() {
         if(_localPlayerStats != null) {
             _localPlayerStats.OnStatChanged -= OnPlayerStatsChange;
         }

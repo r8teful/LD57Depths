@@ -19,14 +19,14 @@ namespace Anarkila.DeveloperConsole {
         /// <summary>
         /// Quit Application
         /// </summary>
-        [ConsoleCommand("quit", info: "Quit application")]
-        private static void QuitApplication() {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
-        }
+//        [ConsoleCommand("quit", info: "Quit application")]
+//        private static void QuitApplication() {
+//#if UNITY_EDITOR
+//            UnityEditor.EditorApplication.isPlaying = false;
+//#else
+//            Application.Quit();
+//#endif
+//        }
 
         /// <summary>
         /// Close console

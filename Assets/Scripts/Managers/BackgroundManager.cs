@@ -74,8 +74,9 @@ public class BackgroundManager : MonoBehaviour {
         foreach (var data in backgroundObjectDatas) {
             spawnedObjects[data] = new List<GameObject>();
         }
-        StartCoroutine(SpawnCoroutine());
-        StartCoroutine(DespawnCoroutine());
+        // Do this later
+        //StartCoroutine(SpawnCoroutine());
+        //StartCoroutine(DespawnCoroutine());
     }
     private IEnumerator SpawnCoroutine() {
         // Wait until player is not null

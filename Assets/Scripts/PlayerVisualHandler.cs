@@ -1,7 +1,6 @@
 ﻿using FishNet.Component.Animating;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using System.Resources;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using static PlayerMovement;
@@ -66,7 +65,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         // Subscribe to handle remote stat changes
         remoteClient.PlayerStats.OnStatChanged += OnRemoteStatsChanged;
         remoteClient.UpgradeManager.OnUpgradePurchased += OnPlayerUpgradePurchased;
-        HandleRemoteToolSetup();
+        HandleRemoteToolSetup(_remotePlayer);
         hasInitializedNonOwner = true;
     }
 
@@ -151,11 +150,11 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
 
     // For remote remote client, tools should be generic, first know which tool they are using, then enable it, then sync it and have the specific tool
     // Logic handle the rest
-    public void HandleRemoteToolSetup() {
+    public void HandleRemoteToolSetup(NetworkedPlayer remotePlayer) {
         // We have to subscribe to the onchange on the toolController so we can know when to enable/disable the tools
         _remotePlayer.ToolController.IsUsingTool.OnChange += RemoteClientToolIsUningChange;
         _remotePlayer.ToolController.Input.OnChange += RemoteClientInputChange;
-        _remotePlayer.ToolController.EquipAllToolsVisualOnly();
+        _remotePlayer.ToolController.EquipAllToolsVisualOnly(remotePlayer);
 
         /* What we want is the following:
         - Know WHICH tool they are using over the network

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7322792910144717697}
   - component: {fileID: 8513912024655949872}
   - component: {fileID: -2243397791120418608}
+  - component: {fileID: 4939802946614760030}
   m_Layer: 2
   m_Name: MiningDrill
   m_TagString: Untagged
@@ -47,9 +48,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6491f9b28f6c964fa34237dd96ebb63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 0
-  _addedNetworkObject: {fileID: -2243397791120418608}
-  _networkObjectCache: {fileID: 0}
   innerSpotAngle: 5
   outerSpotAngle: 30
   Ability: {fileID: 0}
@@ -83,7 +81,8 @@ MonoBehaviour:
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
-  NetworkBehaviours: []
+  NetworkBehaviours:
+  - {fileID: 4939802946614760030}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -108,15 +107,30 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 65535
+  <PrefabId>k__BackingField: 13
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 3972020296144128505
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0, w: 0}
-    Scale: {x: 0, y: 0, z: 0}
-    IsValid: 0
+    Position: {x: -0.07, y: 0.57, z: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    Scale: {x: 1, y: 1, z: 1}
+    IsValid: 1
+--- !u!114 &4939802946614760030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5194426730334375580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a6a39c46bf52104ba8efe3100bce3f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: -2243397791120418608}
+  _networkObjectCache: {fileID: -2243397791120418608}
 --- !u!1 &5934183826178453241
 GameObject:
   m_ObjectHideFlags: 0

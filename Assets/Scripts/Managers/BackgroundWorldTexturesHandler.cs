@@ -1,8 +1,5 @@
 using Sirenix.OdinInspector;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using UnityEditor;
 using UnityEngine;
 
 public class BackgroundWorldTexturesHandler : MonoBehaviour {
