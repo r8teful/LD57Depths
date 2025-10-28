@@ -13,12 +13,17 @@ MonoBehaviour:
   m_Name: UpgradePlayerAbilityDashRecharge
   m_EditorClassIdentifier: 
   nodeName: Dash Recharge
-  uniqueID: 12
+  uniqueID: 205
   icon: {fileID: 776407073, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 052e893be143db04e8e7ba1f5b8320fb, type: 2}
   stages:
-  - upgrade: {fileID: 11400000, guid: 2c191a6d645747f45bffc030b9c8b3b4, type: 2}
+  - upgrade: {fileID: 11400000, guid: f3c77b1b3b444e74aaf69f6815750bbd, type: 2}
     costMultiplier: 1
     tier: 0
-    descriptionOverride: 
+  - upgrade: {fileID: 11400000, guid: e89c1c832c8040148b71127a58cabc8f, type: 2}
+    costMultiplier: 1
+    tier: 0
+  - upgrade: {fileID: 11400000, guid: 8ad4d8e6b16b37b41900cd4d5b011083, type: 2}
+    costMultiplier: 1
+    tier: 0

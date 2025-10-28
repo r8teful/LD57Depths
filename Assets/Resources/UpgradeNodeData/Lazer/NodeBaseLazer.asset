@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
   m_Name: NodeBaseLazer
   m_EditorClassIdentifier: 
-  nodeName: 
-  uniqueID: 100
+  nodeName: Base Lazer
+  uniqueID: 1
   icon: {fileID: 1012510582, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 3fc0c9bd770644d448652616cf99fcec, type: 2}

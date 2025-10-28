@@ -52,10 +52,6 @@ public class UIUpgradeStat : MonoBehaviour {
                 return "Acceleration";
             case StatType.PlayerOxygenMax:
                 return "Max Oxygen";
-            case StatType.PlayerLightRange:
-                return "Light Range";
-            case StatType.PlayerLightIntensity:
-                return "Light Intensity";
             case StatType.MiningKnockback:
                 return "Knockback Force";
                 
@@ -78,10 +74,6 @@ public class UIUpgradeStat : MonoBehaviour {
             case StatType.PlayerAcceleration:
                 return true;
             case StatType.PlayerOxygenMax:
-                return true;
-            case StatType.PlayerLightRange:
-                return true;
-            case StatType.PlayerLightIntensity:
                 return true;
             case StatType.MiningKnockback:
                 return false;

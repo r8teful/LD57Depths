@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
   m_Name: UpgradeLaserBlast
   m_EditorClassIdentifier: 
-  nodeName: 
-  uniqueID: 150
+  nodeName: Lazer Blast
+  uniqueID: 8
   icon: {fileID: -172477240, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 1d1fbfe8ab7b9b84282ec8fd261801f5, type: 2}
@@ -21,4 +21,3 @@ MonoBehaviour:
   - upgrade: {fileID: 11400000, guid: d81356d641983d3469d2973deee6b02f, type: 2}
     costMultiplier: 1
     tier: 3
-    descriptionOverride: Big laser goes zzzzooommmmm
