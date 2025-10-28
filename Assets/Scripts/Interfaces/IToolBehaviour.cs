@@ -14,9 +14,12 @@ public interface IToolBehaviour {
     void ToolStop(ToolController toolController);
     void ToolAbilityStart(ToolController toolController);
     void ToolAbilityStop(ToolController toolController);
-    MiningToolData GetToolData();
-    void InitVisualTool(IToolBehaviour toolBehaviourParent, NetworkedPlayer owningPlayer);
-    public IToolVisual ToolVisual { get; }
+    void Init(NetworkedPlayer owner);
+    void OwnerUpdate();
+    
+    // 'object' allows for any type of data (Vector2, float, custom struct).
+    object VisualData { get; }
+
     public ToolType ToolType { get; }
     public ushort ToolID { get; }
     public GameObject GO { get;}
@@ -24,9 +27,8 @@ public interface IToolBehaviour {
 
 // Order matters and is set as the ID
 public enum ToolType {
-    Drill = 0,
-    CleaningTool = 1,
-    Lazer = 2,
-    RPG = 3,
+    Lazer = 0,
+    Drill = 1,
+    RPG = 2,
     GOD = 99
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 // Based on https://youtu.be/tE1qH8OxO2Y
 // Basically just runs once at the start of the program and stores a dictionary of the different
@@ -13,12 +14,12 @@ public class ResourceSystem {
     public List<UpgradeTreeDataSO> UpgradeTreeData { get; private set; }
 
     private Dictionary<string, GameObject> _prefabDict;
-    private Dictionary<string, Sprite> _spriteDict; 
+    private Dictionary<string, Sprite> _spriteDict;
     private Dictionary<string, Material> _materialDict;
-    
+
     private Dictionary<ushort, TileSO> _tileLookupByID;
     private Dictionary<TileSO, ushort> _idLookupByTile;
-    
+
     private Dictionary<ushort, ItemData> _itemLookupByID;
     private Dictionary<ItemData, ushort> _idLookupByItem;
 
@@ -30,7 +31,7 @@ public class ResourceSystem {
 
     private Dictionary<ushort, UpgradeRecipeSO> _recipeUpgradeLookupByID;
     private Dictionary<UpgradeRecipeSO, ushort> _idLookupByRecipeUpgrade;
-    
+
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
     public const ushort AirID = 0; // Air is ALWAYS 0 
     public const ushort LadderID = 501; // Ladder is always 501, used in SubInterior.cs
@@ -46,14 +47,14 @@ public class ResourceSystem {
         return false;
     }
     public void AssembleResources() {
-   
+
         Prefabs = Resources.LoadAll<GameObject>("Prefabs").ToList();
         _prefabDict = Prefabs.ToDictionary(r => r.name, r => r);
 
         Sprites = Resources.LoadAll<Sprite>("Sprites").ToList();
-        _spriteDict = Sprites.ToDictionary(r => r.name, r => r); 
-        
-        Materials = Resources.LoadAll<Material>("Materials").ToList(); 
+        _spriteDict = Sprites.ToDictionary(r => r.name, r => r);
+
+        Materials = Resources.LoadAll<Material>("Materials").ToList();
         _materialDict = Materials.ToDictionary(r => r.name, r => r);
 
 
@@ -72,7 +73,7 @@ public class ResourceSystem {
 
     private void InitializeWorldEntityOffsets() {
         foreach (var entity in _entityLookupByID) {
-            if(entity.Value is WorldSpawnEntitySO wse) {
+            if (entity.Value is WorldSpawnEntitySO wse) {
                 wse.Init();
             }
         }
@@ -120,7 +121,7 @@ public class ResourceSystem {
 
     public TileSO GetTileByID(ushort id) {
         if (id == InvalidID || !_tileLookupByID.TryGetValue(id, out TileSO tile)) {
-            if(id!=InvalidID)Debug.LogWarning($"Item ID {id} not found in ItemDatabase.");
+            if (id != InvalidID) Debug.LogWarning($"Item ID {id} not found in ItemDatabase.");
             return null;
         }
         return tile;
@@ -155,8 +156,8 @@ public class ResourceSystem {
     }
     public ZoneSO GetZoneByIndex(int zoneIndex) {
         var list = Resources.LoadAll<ZoneSO>("TrenchZones").ToList();
-        var index = list.FindIndex(i =>  i.ZoneIndex == zoneIndex);
-        if(index == -1) {
+        var index = list.FindIndex(i => i.ZoneIndex == zoneIndex);
+        if (index == -1) {
             Debug.LogWarning($"Zoneindex {zoneIndex} not found in database.");
             return null;
         }
@@ -166,7 +167,14 @@ public class ResourceSystem {
         return UpgradeTreeData.FirstOrDefault(s => s.treeName == name);
     }
 
-    public GameObject GetPrefab(string s) => _prefabDict[s];
+    public GameObject GetPrefab(string s) {
+        if (_prefabDict.TryGetValue(s, out var g)) {
+            return g;
+        } else {
+            throw new KeyNotFoundException($"No prefab found in _prefabDict with key '{s}'");
+        }
+    }
+    
     public T GetPrefab<T>(string key) where T : Component {
         if (!_prefabDict.TryGetValue(key, out GameObject prefab))
             throw new KeyNotFoundException($"No prefab found in _prefabDict with key '{key}'");
@@ -195,11 +203,18 @@ public class ResourceSystem {
         return _recipeLookupByID.Values.OfType<SubRecipeSO>().ToList();
     }
     internal List<ItemData> GetAllItems() {
-        return _itemLookupByID.Values.OfType<ItemData>().OrderBy(item=> item.ID).ToList();
+        return _itemLookupByID.Values.OfType<ItemData>().OrderBy(item => item.ID).ToList();
     }
     public List<WorldGenOreSO> GetAllOreData() {
         return Resources.LoadAll<WorldGenOreSO>("Ores").ToList();
-
+    }
+    public List<GameObject> GetAllTools() {
+        List<GameObject> list = new() {
+            GetPrefab("MiningLazer"),
+            GetPrefab("MiningDrill"),
+            GetPrefab("MiningRPG")
+        };
+        return list;
     }
  
     internal Dictionary<ushort,int> GetMaxItemPool() {

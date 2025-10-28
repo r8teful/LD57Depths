@@ -59,8 +59,6 @@ public class NetworkedPlayersManager : NetworkBehaviour {
 
     #region Server-Side Logic
 
- 
-
     private void HandleRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args) {
         // If a client has disconnected, their state will be Stopped.
         if (args.ConnectionState == RemoteConnectionState.Stopped) {

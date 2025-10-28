@@ -15,15 +15,64 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
 
     private float _range;
     private float _lineWidth;
-    private IToolBehaviour _toolBehaviour;
     private Coroutine _currentRoutine;
+    private PlayerStatsManager _localPlayerStats;
+    private bool _isOwner;
+    private Vector2 _nextInput;
+    private MiningToolData _cachedToolData;
 
     public (Sprite, Sprite) BackSprites => (null,null);
-    public void Init(IToolBehaviour parent, PlayerVisualHandler visuaHandler) {
-        _toolBehaviour = parent;
-        visuaHandler.OnToolInitBack(this); // This should be automatic but eh
+
+    // All clients run this
+    public void Init(bool isOwner, NetworkedPlayer player) {
+        _localPlayerStats = player.PlayerStats;
+        _isOwner = isOwner;
+        if (_localPlayerStats.IsInitialized) {
+            // If stats are already ready (e.g., late join), grab them immediately.
+            InitializeWithCurrentStats(_localPlayerStats);
+        }
+        player.PlayerVisuals.OnToolInitBack(this); // This should be automatic but eh
+        SetupParticlesVisual();
     }
-    private void Start() {
+    private void InitializeWithCurrentStats(PlayerStatsManager pStats) {
+        _cachedToolData = pStats.GetToolData();
+    }
+    // Called once every frame for owner, and once every 0.4s for non owners
+    public void UpdateVisual(object inputData, InputManager inputMan) {
+        if (_isOwner) {
+            if (inputMan == null) Debug.LogError("Need to set InputManager!");
+            HandleVisualUpdate(inputMan);
+        } else {
+            if(inputData is Vector2 vector) {
+                // Update the target position. update will handle the smooth movement.
+                _nextInput = vector;
+            } else {
+                Debug.LogWarning($"Inputdata is not a vector2!");
+            }
+        }
+    }
+
+    public void StartVisual() {
+        // Update tool data
+        if (!_localPlayerStats) return;
+        _cachedToolData = _localPlayerStats.GetToolData();
+        _range = _cachedToolData.ToolRange;
+        _lineWidth = _cachedToolData.ToolWidth;
+        laser.volume = 0.2f;
+        // _lineWidth is 0.1 to 2, so we lerp that to get values from 1 to 0.7
+        laser.pitch = Mathf.Lerp(1f, 0.7f, (Mathf.Clamp(_lineWidth, 0.1f, 2) - 0.1f) / (2f - 0.1f));
+        // Could also have thicker line mean more bloom -> Nice glow
+        FadeInLine(lineRenderer);
+    }
+
+    public void StopVisual() {
+        _hitParticleSystem.Stop();
+        laser.volume = 0.0f;
+        FadeOutLine(lineRenderer);
+        if (_lineLazerParticleSystem.isPlaying)
+            _lineLazerParticleSystem.Stop();
+    }
+    private void SetupParticlesVisual() {
         _hitParticleSystem = Instantiate(ParticlesPrefabHit);
         _hitParticleSystem.Stop();
         _lineLazerParticleSystem.Stop();
@@ -33,36 +82,27 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         lineRenderer.enabled = false;
         laser = AudioController.Instance.PlaySound2D("Laser", 0.0f, looping: true);
     }
-    public void HandleVisualStart(PlayerVisualHandler playerVisualHandler) {
-        // Update the stats, this is ugly but it works I think, we could add an event when we change it and only then update it, but this also works
-        var toolData = _toolBehaviour.GetToolData();
-        _range = toolData.ToolRange;
-        _lineWidth = toolData.ToolWidth;
-        laser.volume = 0.2f;
-        // _lineWidth is 0.1 to 2, so we lerp that to get values from 1 to 0.7
-        laser.pitch = Mathf.Lerp(1f, 0.7f, (Mathf.Clamp(_lineWidth,0.1f,2) - 0.1f) / (2f - 0.1f));
-        // Could also have thicker line mean more bloom -> Nice glow
-        FadeInLine(lineRenderer);
+
+    // interpolation loop for remote clients
+    private void Update() {
+        if (_isOwner) 
+            return;
+        _inputCurrent = _nextInput;
+        if (_inputCurrent != _inputPrev) {
+            if (_currentRoutine != null) {
+                StopCoroutine(_currentRoutine);
+            }
+            _currentRoutine = StartCoroutine(SmoothInterpolate(_inputPrev, _inputCurrent));    
+        }
     }
 
-    public void HandleVisualStop(PlayerVisualHandler playerVisualHandler) {
-        HandleLaserVisualStop();
-    }
-
-    public void HandleVisualUpdate(Vector2 inputDir, InputManager inputManager, bool isAbility) {
+    public void HandleVisualUpdate(InputManager inputManager) {
         // Update visuals each frame when mining
-        //var pos = inputManager.GetAimWorldInput();
-        var pos = inputDir;
-        //Debug.Log(pos);
+        var pos = inputManager.GetAimWorldInput();
+
+        bool isAbility = inputManager.IsUsingAbility;
         SetCorrectLaserPos(inputManager.GetMovementInput().x);
         LaserVisual(pos, isAbility);
-    }
-    private void HandleLaserVisualStop() {
-        _hitParticleSystem.Stop();
-        laser.volume = 0.0f;
-        FadeOutLine(lineRenderer);
-        if (_lineLazerParticleSystem.isPlaying)
-            _lineLazerParticleSystem.Stop();
     }
     private void FadeOutLine(LineRenderer lineRenderer) {
         Color2 startColor = new(lineRenderer.startColor, lineRenderer.endColor);
@@ -95,16 +135,16 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         }
     }
 
-    private void LaserVisual(Vector2 pos, bool isAbility) {
+    private void LaserVisual(Vector2 inputWorldPos, bool isAbility) {
         if (!_lineLazerParticleSystem.isPlaying) {
             _lineLazerParticleSystem.Play();
         }
-
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
+        Vector2 targetDirection = (inputWorldPos - objectPos2D).normalized;
+
         var localPos = transform.InverseTransformPoint(objectPos2D);
         if (!isAbility) {
-            RaycastHit2D hit = Physics2D.Raycast(objectPos2D, pos, _range, LayerMask.GetMask("MiningHit"));
-            //Debug.Log("objectPos2D" + objectPos2D);
+            RaycastHit2D hit = Physics2D.Raycast(objectPos2D, targetDirection, _range, LayerMask.GetMask("MiningHit"));
             if (hit.collider != null) {
                 CreateLaserEffect(localPos, transform.InverseTransformPoint(hit.point), isAbility);
                 _hitParticleSystem.transform.position = hit.point;
@@ -114,10 +154,10 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
                 // not in reange
                 if (_hitParticleSystem.isPlaying)
                     _hitParticleSystem.Stop();
-                CreateLaserEffect(localPos, transform.InverseTransformPoint(objectPos2D + pos * _range), isAbility);
+                CreateLaserEffect(localPos, transform.InverseTransformPoint(objectPos2D + targetDirection * _range), isAbility);
             }
         } else {
-                CreateLaserEffect(localPos, transform.InverseTransformPoint(objectPos2D + pos * _range), isAbility);
+                CreateLaserEffect(localPos, transform.InverseTransformPoint(objectPos2D + targetDirection * _range), isAbility);
         }
     }
 
@@ -156,16 +196,6 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
             var vel = _lineLazerParticleSystem.limitVelocityOverLifetime;
             lineRenderer.material.SetColor("_Color", new(3, 0, 0));
             vel.drag = 16;
-        }
-    }
-
-    public void HandleVisualUpdateRemote(Vector2 nextInput) {
-        _inputCurrent = nextInput;
-        if (_inputCurrent != _inputPrev) {
-            if (_currentRoutine != null) {
-                StopCoroutine(_currentRoutine);
-            }
-            _currentRoutine = StartCoroutine(SmoothInterpolate(_inputPrev, _inputCurrent));
         }
     }
     private IEnumerator SmoothInterpolate(Vector2 from, Vector2 to) {

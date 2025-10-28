@@ -23,6 +23,8 @@ public class NetworkedPlayer : NetworkBehaviour {
     public PopupManager PopupManager => UiManager.PopupManager;
     public NetworkObject PlayerNetworkedObject => base.NetworkObject; // Expose NetworkObject for other scripts to use
     public InventoryManager GetInventory() => InventoryN.GetInventoryManager();
+    public bool IsInitialized => _isInitialized;
+    private bool _isInitialized = false;
 
     // To avoid any wierd bugs, this should be the only OnStartClient on the player
     public override void OnStartClient() {
@@ -33,11 +35,13 @@ public class NetworkedPlayer : NetworkBehaviour {
         if (!base.IsOwner) {
             GetComponent<PlayerMovement>().enabled = false;
             PlayerVisuals.InitializeOnNotOwner(this);
+            ToolController.InitalizeNotOwner(this);
             return;
         }
         LocalInstance = this;
         InitializePlayer();
         CmdNotifyServerOfInitialization();
+        _isInitialized = true;
         // Subscribe to other clients joining so we can properly initialize our local version of them
 
 #if UNITY_EDITOR

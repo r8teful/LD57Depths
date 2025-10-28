@@ -53,14 +53,27 @@ public class MiningRPGVisual : MonoBehaviour, IToolVisual {
         RPGVisual(to);
         _currentRoutine = null;// Cleanup
     }
-    public void Init(IToolBehaviour parent, PlayerVisualHandler visuaHandler) {
-        visuaHandler.OnToolInitBack(this as IToolVisual); // Tell the backvisual that we're the rpg is now equiped
-    }
 
     private void RPGVisual(Vector2 pos) {
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
         Vector2 directionToMouse = (pos - objectPos2D).normalized;
         float angle = Mathf.Atan2(directionToMouse.y, directionToMouse.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0, 0, angle);
+    }
+
+    public void Init(bool isOwner, NetworkedPlayer visuaHandler) {
+        visuaHandler.PlayerVisuals.OnToolInitBack(this as IToolVisual); // Tell the backvisual that we're the rpg is now equiped
+    }
+
+    public void UpdateVisual(object data, InputManager inputManager = null) {
+        throw new System.NotImplementedException();
+    }
+
+    public void StartVisual() {
+        throw new System.NotImplementedException();
+    }
+
+    public void StopVisual() {
+        throw new System.NotImplementedException();
     }
 }

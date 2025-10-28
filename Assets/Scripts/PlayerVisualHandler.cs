@@ -65,7 +65,6 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         // Subscribe to handle remote stat changes
         remoteClient.PlayerStats.OnStatChanged += OnRemoteStatsChanged;
         remoteClient.UpgradeManager.OnUpgradePurchased += OnPlayerUpgradePurchased;
-        HandleRemoteToolSetup(_remotePlayer);
         hasInitializedNonOwner = true;
     }
 
@@ -147,42 +146,9 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
                 break;
         }
     }
-
-    // For remote remote client, tools should be generic, first know which tool they are using, then enable it, then sync it and have the specific tool
-    // Logic handle the rest
-    public void HandleRemoteToolSetup(NetworkedPlayer remotePlayer) {
-        // We have to subscribe to the onchange on the toolController so we can know when to enable/disable the tools
-        _remotePlayer.ToolController.IsUsingTool.OnChange += RemoteClientToolIsUningChange;
-        _remotePlayer.ToolController.Input.OnChange += RemoteClientInputChange;
-        _remotePlayer.ToolController.EquipAllToolsVisualOnly(remotePlayer);
-
-        /* What we want is the following:
-        - Know WHICH tool they are using over the network
-        - Know WHEN that tool is being used
-        - Know WHERE they are aiming that tool
-         */
-    }
-
-    private void RemoteClientInputChange(Vector2 prev, Vector2 next, bool asServer) {
-        Debug.Log("RemoteClient input is now: " + next);
-        _remotePlayer.ToolController.GetCurrentTool(true).HandleVisualUpdateRemote(next);
-    }
-
-    private void RemoteClientToolIsUningChange(bool prev, bool next, bool asServer) {
-        if (!HasVisibility())
-            return;
-        var tool = _remotePlayer.ToolController.GetCurrentTool(true);
-        if (next) {
-            // tool enabled
-            tool.HandleVisualStart(this);
-        } else {
-            // Tool disabled
-            tool.HandleVisualStop(this);
-        }
-        CheckBackVisualTool(next,true); // update back visual for remote player
-        // TODO then somehow we would need to set what input they have and communicate it over the network, Thats about it
-    }
     private void CheckBackVisualTool(bool isStartUsingTool, bool isRemote) {
+        return;
+        /*
         var tool = isRemote ? _remotePlayer.ToolController.GetCurrentTool(isRemote) : 
                               _localPlayer.ToolController.GetCurrentTool(isRemote);
         if (isStartUsingTool) {
@@ -196,6 +162,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
                 _bobBackHandler.OnToolUseStop();
             }
         }
+         */
     }
     // Such a wierd function but basically when a tool that goes on the back is initialized, this function is called, so we can set the back visual approprietly 
     public void OnToolInitBack(IToolVisual toolVisual) {

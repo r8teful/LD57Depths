@@ -250,9 +250,18 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             RecalculateStat(stat);
         }
     }
+
+
+    public MiningToolData GetToolData() {
+        return new MiningToolData {
+            ToolRange = GetStat(StatType.MiningRange),
+            ToolWidth = GetStat(StatType.MiningDamage), //_isUsingAbility ? Mathf.Min(DamagePerHit * 0.3f, 0.6f) : 0.05f * DamagePerHit, // OLD
+            toolTier = 0 //TODO
+        };
+    }
+
     #endregion
 
-    #region Event Handling
 
     private void OnFinalStatChanged(SyncDictionaryOperation op, StatType key, float value, bool asServer) {
         // This method is called on ALL clients whenever the dictionary changes.
@@ -272,10 +281,17 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
                 break;
         }
     }
-    #endregion
 #if UNITY_EDITOR
     public void DEBUGSetStat(StatType stat, float value) {
         _finalStats[stat] = value;
     }
 #endif
+}
+// Should probably not be here, or be there at all, working on a solution!!!
+// Created and sent to the Visual part so that we know how to draw it properly
+public struct MiningToolData {
+    public float ToolRange;
+    public float ToolWidth;
+    public int toolTier;
+    // Add more as needed
 }

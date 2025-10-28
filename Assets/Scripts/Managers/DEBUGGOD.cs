@@ -19,6 +19,8 @@ public class DEBUGGOD : MonoBehaviour, IToolBehaviour {
 
     public ushort ToolID => (ushort)ToolType;
 
+    public object VisualData => throw new System.NotImplementedException();
+
     public MiningToolData GetToolData() {
         throw new System.NotImplementedException();
     }
@@ -79,6 +81,14 @@ public class DEBUGGOD : MonoBehaviour, IToolBehaviour {
     }
 
     public void InitVisualTool(IToolBehaviour toolBehaviourParent, NetworkedPlayer owningPlayer) {
+        throw new System.NotImplementedException();
+    }
+
+    public void Init(NetworkedPlayer owner) {
+        throw new System.NotImplementedException();
+    }
+
+    public void OwnerUpdate() {
         throw new System.NotImplementedException();
     }
 }

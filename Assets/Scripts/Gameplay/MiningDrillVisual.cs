@@ -50,15 +50,27 @@ public class MiningDrillVisual : MonoBehaviour, IToolVisual {
         DrillVisual(to);
         _currentRoutine = null;// Cleanup
     }
-    public void Init(IToolBehaviour parent, PlayerVisualHandler visuaHandler) {
-        // Don't need any special visuals atm
-        visuaHandler.OnToolInitBack(this); // Removes whatever backvisual we've got
-    }
 
     private void DrillVisual(Vector2 pos) {
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
         Vector2 directionToMouse = (pos - objectPos2D).normalized;
         float angle = Mathf.Atan2(directionToMouse.y, directionToMouse.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0, 0, angle);
+    }
+
+    public void Init(bool isOwner, NetworkedPlayer parent) {
+        parent.PlayerVisuals.OnToolInitBack(this); // Removes whatever backvisual we've got
+    }
+
+    public void UpdateVisual(object data, InputManager inputManager = null) {
+        throw new System.NotImplementedException();
+    }
+
+    public void StartVisual() {
+        throw new System.NotImplementedException();
+    }
+
+    public void StopVisual() {
+        throw new System.NotImplementedException();
     }
 }

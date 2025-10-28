@@ -12,7 +12,7 @@ public class MiningLazer : MiningBase {
     public override ToolAbilityBaseSO AbilityData => Ability;
 
     public ToolAbilityBaseSO Ability;
-
+    public override object VisualData => _currentDirection;
     public static event Action<Vector2> OnPlayerKnockbackRequested;
 
     // --- State Variables ---
@@ -22,7 +22,8 @@ public class MiningLazer : MiningBase {
     private bool _isFirstShot; // Flag to handle initial direction logic
 
 
-    protected override void Update() {
+    public override void OwnerUpdate() {
+        //Debug.Log(_isMining);
         if (!_isMining) {
             return;
         }
@@ -45,7 +46,7 @@ public class MiningLazer : MiningBase {
             _currentDirection = Vector3.RotateTowards(_currentDirection, targetDirection, maxAngleDelta * Mathf.Deg2Rad, 0.0f).normalized;
         }
 
-        ToolVisual.HandleVisualUpdate(_currentDirection, base._inputManager,_isUsingAbility); // using new "lagging" direction now
+        //ToolVisual.HandleVisualUpdate(_currentDirection, base._inputManager,_isUsingAbility); // using new "lagging" direction now
 
         // Knockback
         if (KnockbackStrength > 0) {
@@ -88,7 +89,7 @@ public class MiningLazer : MiningBase {
 
         // Use the (potentially smoothed) _currentDirection for the raycast
         RaycastHit2D hit = Physics2D.Raycast(toolPosition, _currentDirection, Range, LayerMask.GetMask("MiningHit"));
-
+        Debug.Log($"Range: {Range} Dir: {_currentDirection}");
         if (hit.collider != null) {
             Vector2 nudgedPoint = hit.point + _currentDirection * 0.1f; // Nudged point logic seems reversed, correcting it.
 

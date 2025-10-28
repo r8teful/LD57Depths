@@ -6,6 +6,8 @@ public class MiningRPG : MiningBase {
     public float ExplosionVelocity;
     public override ToolAbilityBaseSO AbilityData => Ability;
 
+    public override object VisualData => throw new System.NotImplementedException();
+
     public ToolAbilityBaseSO Ability;
     public override void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {
         Vector2 toolPosition = transform.position;
@@ -33,6 +35,10 @@ public class MiningRPG : MiningBase {
     }
 
     public override IEnumerator MiningRoutineAbility(ToolController controller) {
+        throw new System.NotImplementedException();
+    }
+
+    public override void OwnerUpdate() {
         throw new System.NotImplementedException();
     }
 }

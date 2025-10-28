@@ -1,58 +1,29 @@
-﻿using FishNet.Object;
-using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-// Created and sent to the Visual part so that we know how to draw it properly
-public struct MiningToolData {
-    public float ToolRange;
-    public float ToolWidth;
-    public int toolTier;
-    // Add more as needed
-}
+
 public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
     protected InputManager _inputManager;
     protected Coroutine miningRoutine;
     protected bool _isMining;
     protected bool _isUsingAbility;
     public float Range { get; set; }
-    private float _rangeBeforeAbility;
     public float DamagePerHit { get; set; }
     public float RotationSpeed { get; set; }
     public float KnockbackStrength { get; set; }
     public float FalloffStrength { get; set; }
+    public abstract object VisualData { get; }
     public GameObject GO => gameObject;
-    public IToolVisual ToolVisual { get; private set; }
     public abstract ToolAbilityBaseSO AbilityData { get; }
     public abstract ToolType ToolType { get; }
     public ushort ToolID => (ushort)ToolType;
+
+
     private PlayerStatsManager _localPlayerStats; // The script is attached to a player, this is that players stats, could be our stats, or a remove clients stats
 
-    private void InitializeWithCurrentStats(PlayerStatsManager pStats) {
-      
-        Range = pStats.GetStat(StatType.MiningRange);
-        DamagePerHit = pStats.GetStat(StatType.MiningDamage);
-        RotationSpeed = pStats.GetStat(StatType.MiningRotationSpeed);
-        KnockbackStrength = pStats.GetStat(StatType.MiningKnockback);
-        FalloffStrength = pStats.GetStat(StatType.MiningFalloff);
-    }
-    private void Awake() {
-        if (gameObject.TryGetComponent<IToolVisual>(out var c)) {
-            ToolVisual = c;
-        } else {
-            Debug.LogError($"Could not find ToolVisual on {ToolType}, make sure the prefab has a toolVisual script!");
-        }
-    }
-    // IDK it knows its 180 so why the fuck can't I move the fucking laser?
-    //private void FixedUpdate() {
-    //    if (_localPlayerStats != null) {
-    //        Debug.Log(_localPlayerStats.GetStat(StatType.MiningRotationSpeed));
-    //    }
-    //}
-    public void Start() {
-        Debug.Log("StartBase called on: " + ToolType);
-        _localPlayerStats = NetworkedPlayer.LocalInstance.PlayerStats;
-        // DO this instead:
+    // Only owner runs this
+    public void Init(NetworkedPlayer owner) {
+        _localPlayerStats = owner.PlayerStats;
         if (_localPlayerStats.IsInitialized) {
             // If stats are already ready (e.g., late join), grab them immediately.
             InitializeWithCurrentStats(_localPlayerStats);
@@ -62,13 +33,23 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
 
         _localPlayerStats.OnStatChanged += OnPlayerStatsChange;
     }
+    private void InitializeWithCurrentStats(PlayerStatsManager pStats) {
+        Range = pStats.GetStat(StatType.MiningRange);
+        DamagePerHit = pStats.GetStat(StatType.MiningDamage);
+        RotationSpeed = pStats.GetStat(StatType.MiningRotationSpeed);
+        KnockbackStrength = pStats.GetStat(StatType.MiningKnockback);
+        FalloffStrength = pStats.GetStat(StatType.MiningFalloff);
+    }
+
+    // IDK it knows its 180 so why the fuck can't I move the fucking laser?
+    //private void FixedUpdate() {
+    //    if (_localPlayerStats != null) {
+    //        Debug.Log(_localPlayerStats.GetStat(StatType.MiningRotationSpeed));
+    //    }
+    //}
 
     private void HandleStatsInitialized() {
         InitializeWithCurrentStats(_localPlayerStats);
-    }
-
-    public void OnDisable() {
-        Debug.Log("MINIG BASE DISABLED");
     }
 
     private void OnPlayerStatsChange(StatType stat, float newV) {
@@ -93,37 +74,21 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
             _localPlayerStats.OnStatChanged -= OnPlayerStatsChange;
         }
     }
-    public MiningToolData GetToolData() {
-        return new MiningToolData {
-            ToolRange = Range, 
-            ToolWidth = _isUsingAbility ? Mathf.Min(DamagePerHit * 0.3f,0.6f) : 0.05f * DamagePerHit,
-            toolTier = 0 //TODO
-        };
-    }
-    public void InitVisualTool(IToolBehaviour toolBehaviourParent, NetworkedPlayer owningPlayer) {
-        ToolVisual.Init(toolBehaviourParent, owningPlayer.PlayerVisuals);
-    }
-    protected virtual void Update() {
-        if (_isMining) {
-            ToolVisual.HandleVisualUpdate(_inputManager.GetAimWorldInput(), _inputManager,_isUsingAbility);
-        }
-    }
-
     public virtual void ToolStart(InputManager input, ToolController controller) {
         if (miningRoutine != null) {
             Debug.LogWarning("Mining routine is still running even though it should have stopped!");
             StopCoroutine(miningRoutine);
         }
         _inputManager = input;
+        Debug.Log("Mining true!");
         _isMining = true;
         if (_isUsingAbility) {
-            Debug.Log("ToolStart Ability");
+            //Debug.Log("ToolStart Ability");
             miningRoutine = StartCoroutine(MiningRoutineAbility(controller));
         } else {
-            Debug.Log("ToolStart NORMAL");
+            //Debug.Log("ToolStart NORMAL");
             miningRoutine = StartCoroutine(MiningRoutine(controller));
         }
-        ToolVisual.HandleVisualStart(controller.GetPlayerParent().PlayerVisuals);
     }
     public virtual void ToolStop(ToolController controller) {
         if (miningRoutine != null) {
@@ -131,7 +96,6 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
             miningRoutine = null;
             _isMining = false;
         }
-        ToolVisual.HandleVisualStop(controller.GetPlayerParent().PlayerVisuals);
     }
     public virtual IEnumerator MiningRoutine(ToolController controller) {
         while (true) {
@@ -189,4 +153,6 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
         _localPlayerStats.RemoveModifiersFromSource(ability);
         _isUsingAbility = false;
     }
+
+    public abstract void OwnerUpdate();
 }

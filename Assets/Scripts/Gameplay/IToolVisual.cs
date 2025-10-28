@@ -14,12 +14,10 @@ public interface IToolVisual {
      * With this information, we can then succesfully simulate the visual of the tool locally on the client without it actually
      * effecting any gameplay, but still visually syncing with what the other player is doing.
      */
-    public void HandleVisualUpdate(Vector2 nextInput, InputManager input, bool isAbility); // Can update visuals using two ways, either directly using nextInput, or other ways using inputManager
-    public void HandleVisualUpdateRemote(Vector2 nextInput);
-    public void HandleVisualStart(PlayerVisualHandler playerVisualHandler);
-    public void HandleVisualStop(PlayerVisualHandler playerVisualHandler);
+    public void Init(bool isOwner, NetworkedPlayer visuaHandler);
+    void UpdateVisual(object data, InputManager inputManager = null); // Tool handles its own way to get input
+    void StartVisual();
+    void StopVisual();
 
-    // Should stash the IToolBehaviour so we can call GetToolData for visuals, because they change and depend on the tool
-    public void Init(IToolBehaviour parent, PlayerVisualHandler visuaHandler);
     public (Sprite,Sprite) BackSprites { get; } // If we get more of these info based things we should store them in SO
 }

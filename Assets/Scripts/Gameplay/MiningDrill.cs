@@ -11,6 +11,8 @@ public class MiningDrill : MiningBase {
 
     public override ToolAbilityBaseSO AbilityData => Ability;
 
+    public override object VisualData => throw new System.NotImplementedException();
+
     public ToolAbilityBaseSO Ability;
 
     public override void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {
@@ -41,6 +43,10 @@ public class MiningDrill : MiningBase {
     }
 
     public override IEnumerator MiningRoutineAbility(ToolController controller) {
+        throw new System.NotImplementedException();
+    }
+
+    public override void OwnerUpdate() {
         throw new System.NotImplementedException();
     }
 }

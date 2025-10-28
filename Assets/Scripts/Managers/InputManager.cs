@@ -57,6 +57,8 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
 
     public int InitializationOrder => 101;
 
+    public bool IsUsingAbility { get; internal set; }
+
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _UIManager = playerParent.UiManager;
         _inventoryUIManager = _UIManager.UIManagerInventory;
@@ -320,9 +322,9 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         switch (_currentContext) {
             case PlayerInteractionContext.UsingToolOnWorld:
                 if (context.performed) {
-                    _toolController.PerformMining(this);
+                    _toolController.ToolStart(this);
                 } else if (context.canceled) {
-                    _toolController.StopMining();
+                    _toolController.ToolStop();
                 }
                 break;
             case PlayerInteractionContext.Building:
