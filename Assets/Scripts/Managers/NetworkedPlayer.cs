@@ -44,7 +44,7 @@ public class NetworkedPlayer : NetworkBehaviour {
         _isInitialized = true;
         // Subscribe to other clients joining so we can properly initialize our local version of them
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         DEBUGManager.Instance.RegisterOwningPlayer(this);
 #endif
     }

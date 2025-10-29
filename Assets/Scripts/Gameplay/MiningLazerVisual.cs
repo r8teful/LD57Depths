@@ -64,6 +64,9 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         laser.pitch = Mathf.Lerp(1f, 0.7f, (Mathf.Clamp(_lineWidth, 0.1f, 2) - 0.1f) / (2f - 0.1f));
         // Could also have thicker line mean more bloom -> Nice glow
         FadeInLine(lineRenderer);
+
+        if (!_lineLazerParticleSystem.isPlaying)
+            _lineLazerParticleSystem.Play();
     }
 
     public void StopVisual() {
@@ -141,9 +144,6 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
     }
 
     private void LaserVisual(Vector2 targetDirection, bool isAbility) {
-        if (!_lineLazerParticleSystem.isPlaying) {
-            _lineLazerParticleSystem.Play();
-        }
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
         //Debug.Log($"Target dir: {inputWorldPos} ");
         var localPos = transform.InverseTransformPoint(objectPos2D);
@@ -205,7 +205,7 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
     private IEnumerator SmoothInterpolate(Vector2 from, Vector2 to) {
         float duration = 0.4f; // This should match the syncvar update frequency
         float elapsed = 0f;
-        Debug.Log($"Starting smoothInterpolate from direction {from} to {to} ");
+        //Debug.Log($"Starting smoothInterpolate from direction {from} to {to} ");
         while (elapsed < duration) {
             elapsed += Time.deltaTime;
             Vector2 lerped = Vector2.Lerp(from, to, elapsed / duration);

@@ -281,7 +281,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
                 break;
         }
     }
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
     public void DEBUGSetStat(StatType stat, float value) {
         _finalStats[stat] = value;
     }

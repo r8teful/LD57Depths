@@ -365,7 +365,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         inventoryManager.RemoveItem(itemId, quantityTransferred);
     }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
     public void DEBUGGIVE(int ID, int amount) {
         inventoryManager.AddItem((ushort)ID, amount);
     }

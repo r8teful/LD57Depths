@@ -1,9 +1,10 @@
+using Newtonsoft.Json.Bson;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 public class DEBUGManager : StaticInstance<DEBUGManager> {
     [Header("References")]
     public BiomeManager biomeManager;
@@ -34,6 +35,8 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
 
     public void RegisterOwningPlayer(NetworkedPlayer player) {
         _player = player;
+    }
+    private void GiveAll() {
         _player.InventoryN.DEBUGGIVE(0, 900);
         _player.InventoryN.DEBUGGIVE(1, 900);
         _player.InventoryN.DEBUGGIVE(2, 900);
@@ -43,7 +46,6 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
         _player.InventoryN.DEBUGGIVE(6, 900);
         _player.InventoryN.DEBUGGIVE(7, 900);
     }
-
     protected override void Awake() {
         base.Awake();
         tileLookup = new Dictionary<BiomeType, TileBase>();
@@ -87,6 +89,11 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     [ConsoleCommand("showupgrade")]
     private void debugShowUpgradeScreen() {
         _player.UiManager.UpgradeScreen.PanelToggle();
+    }
+
+    [ConsoleCommand("giveAll")]
+    private void debugGiveAll() {
+        GiveAll();
     }
     [ConsoleCommand("showcontrol")]
     private void debugShowSubControlScreen() {
