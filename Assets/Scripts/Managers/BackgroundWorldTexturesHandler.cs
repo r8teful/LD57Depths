@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class BackgroundWorldTexturesHandler : MonoBehaviour {
     // Example fields
-    public Material layerMaterial; // material instance for one layer
     public List<Texture2D> edgeTextures; // length == numBiomes
     public List<Texture2D> fillTextures; // length == numBiomes
-    public WorldGenSettingSO worldGenSetting;
+    private WorldGenSettingSO _worldGenSetting;
     public List<Material> layerMaterials; // 4 materials for 4 layers
     public List<float> layerParallax; // each layer's parallax
     public List<float> layerPixelSize; // pixel sizes for each layer
@@ -15,11 +14,17 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
     public float DebugupdateMaterial = 10f;
     public int numBiomes = 6;
     private void OnEnable() {
-        worldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterials; });
+        //worldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterials; });
     }
     private void Awake() {
+        GameSetupManager.LocalInstance.OnHostSettingsChanged += HostSettingsChanged;
+    }
+
+    private void HostSettingsChanged(GameSettings obj) {
+        _worldGenSetting = App.ResourceSystem.GetWorldGenByID(obj.WorldGenID);
         PushBiomesToMaterials();
     }
+
     void Update() {
         Vector3 camPos = Camera.main.transform.position;
         foreach (var mat in layerMaterials) {
@@ -56,8 +61,8 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
         Color[] backgroundColors = new Color[numBiomes];
 
         for (int i = 0; i < numBiomes; ++i) {
-            if (i < worldGenSetting.biomes.Count) {
-                var b = worldGenSetting.biomes[i];
+            if (i < _worldGenSetting.biomes.Count) {
+                var b = _worldGenSetting.biomes[i];
                 edgeNoiseScale[i] = b.EdgeNoiseScale;
                 edgeNoiseAmp[i] = b.EdgeNoiseAmp;
                 blockNoiseScale[i] = b.BlockNoiseScale;
@@ -96,16 +101,16 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
         mat.SetColorArray("_ColorArray", backgroundColors);
 
         // global seed
-        mat.SetFloat("_GlobalSeed", worldGenSetting.seed * 1+ matIndex * 2352.124f);
+        mat.SetFloat("_GlobalSeed", _worldGenSetting.seed * 1+ matIndex * 2352.124f);
 
         // Cave and trench
-        mat.SetFloat("_CaveNoiseScale", worldGenSetting.caveNoiseScale);
-        mat.SetFloat("_CaveAmp", worldGenSetting.caveAmp);
-        mat.SetFloat("_CaveCutoff", worldGenSetting.caveCutoff);
+        mat.SetFloat("_CaveNoiseScale", _worldGenSetting.caveNoiseScale);
+        mat.SetFloat("_CaveAmp", _worldGenSetting.caveAmp);
+        mat.SetFloat("_CaveCutoff", _worldGenSetting.caveCutoff);
 
-        mat.SetFloat("_TrenchBaseWiden", worldGenSetting.GetTrenchWiden());
-        mat.SetFloat("_TrenchBaseWidth", worldGenSetting.GetTrenchWidth());
-        mat.SetFloat("_TrenchNoiseScale", worldGenSetting.GetTrenchEdgeFreq());
-        mat.SetFloat("_TrenchEdgeAmp", worldGenSetting.GetTrenchEdgeNoiseAmp());
+        mat.SetFloat("_TrenchBaseWiden", _worldGenSetting.trenchWidenFactor);
+        mat.SetFloat("_TrenchBaseWidth", _worldGenSetting.trenchBaseWidth);
+        mat.SetFloat("_TrenchNoiseScale", _worldGenSetting.trenchEdgeNoiseFrequency);
+        mat.SetFloat("_TrenchEdgeAmp", _worldGenSetting.trenchEdgeNoiseAmplitude);
     }
 }

@@ -59,6 +59,7 @@ public class WorldManager : NetworkBehaviour {
         _sub.transform.position = new Vector3(0, -WorldGen.GetDepth() * GetVisualTilemapGridSize() + offset/4);
         //InstanceFinder.ServerManager.Spawn(sub);
         //StartCoroutine(ServerChunkManagementRoutine()); // Not using atm
+        GameSetupManager.LocalInstance.HostSetGameSettings(new(WorldGenSettings));
     }
     public override void OnStartClient() {
         base.OnStartClient();

@@ -70,8 +70,9 @@ public class DiscoveryManager : NetworkBehaviour {
     public bool IsDiscovered(ItemData item) {
         if (item is ItemData)
             return _discoveredResourceIds.Contains(item.ID);
-        if (item is BiomeLayerSO) // todo not sure if we're doing biomes anymore, but eh
-            return _discoveredBiomeIds.Contains(item.ID);
+       // todo implement some kind of run time biome thing
+       // if (item is WorldGenBiomeSO) 
+         //   return _discoveredBiomeIds.Contains(item.ID);
 
         return false;
     }

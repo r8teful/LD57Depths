@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be00040ac3102f841a04e2b78a008678, type: 3}
   m_Name: WorldGenSettingBiomes
   m_EditorClassIdentifier: 
-  seed: 4728
+  seed: 1882
   associatedMaterial: {fileID: 2100000, guid: b0b8f8dc91677724785e2a37bc63e929, type: 2}
   oreTypes:
   - name: Iron
@@ -23,6 +23,7 @@ MonoBehaviour:
     clusterFrequency: 4
     clusterThreshold: 0.135
     requireCluster: 1
+  id: 0
   worldSpawnEntities:
   - {fileID: 11400000, guid: 5306525d2d402954a8574ca58825fc96, type: 2}
   - {fileID: 11400000, guid: bf06109c54242e345b60ac88fc937303, type: 2}
@@ -47,6 +48,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1ffb90bbd1e91aa449036978729343fa, type: 2}
   - {fileID: 11400000, guid: bc6d32f95086a7047afe8709e3815b4b, type: 2}
   - {fileID: 11400000, guid: 617a023f1b3e8c44e9af5f48699a64a7, type: 2}
+  trenchBaseWidth: 174.5
+  trenchWidenFactor: -0.05
+  trenchEdgeNoiseFrequency: 0.164
+  trenchEdgeNoiseAmplitude: 11.98
   caveNoiseScale: 0.05
   caveAmp: 1.76
   caveCutoff: 0.36

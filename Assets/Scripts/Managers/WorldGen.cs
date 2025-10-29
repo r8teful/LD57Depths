@@ -43,7 +43,6 @@ public class WorldGen : MonoBehaviour {
     private float seedOffsetX;
     private float seedOffsetY;
     private Vector3Int chunkOriginCell;
-    private Dictionary<BiomeType, BiomeLayerSO> biomeLookup = new Dictionary<BiomeType, BiomeLayerSO>();
     private WorldGenSettingSO _settings;
     private float maxDepth;
     private WorldManager worldmanager;
@@ -85,19 +84,19 @@ public class WorldGen : MonoBehaviour {
         _renderTexture = renderTexture;
         _settings = settings;
         Material worldGenMat = _settings.associatedMaterial;
-        _settings.InitWorldSettings(worldGenMat.GetFloat("_TrenchBaseWidth"), worldGenMat.GetFloat("_TrenchBaseWiden"), 
-            worldGenMat.GetFloat("_TrenchNoiseScale"), worldGenMat.GetFloat("_TrenchEdgeAmp"),worldGenMat.GetFloat("_CaveNoiseScale"), 
-            worldGenMat.GetFloat("_CaveAmp"), worldGenMat.GetFloat("_CaveCutoff"),worldGenMat.GetFloat("_GlobalSeed"));
+        // Do this in editor instead, not runtime, it makes bad bugs
+        //_settings.InitWorldSettings(worldGenMat.GetFloat("_TrenchBaseWidth"), worldGenMat.GetFloat("_TrenchBaseWiden"), 
+        //    worldGenMat.GetFloat("_TrenchNoiseScale"), worldGenMat.GetFloat("_TrenchEdgeAmp"),worldGenMat.GetFloat("_CaveNoiseScale"), 
+        //    worldGenMat.GetFloat("_CaveAmp"), worldGenMat.GetFloat("_CaveCutoff"),worldGenMat.GetFloat("_GlobalSeed"));
         this.worldmanager = worldmanager;
         this.chunkManager = chunkManager;
         _renderCamera = renderCamera;
         _entityManager = EntityManager.Instance;
         // This should be in the constructor but I think this works like so?
         InitializeNoise();
-        worldSpawnEntities = _settings.worldSpawnEntities;
-        var maxD = -_settings.GetTrenchWidth() / _settings.GetTrenchWiden();
+        worldSpawnEntities = App.ResourceSystem.GetAllWorldSpawnEntities();
+        var maxD = -_settings.trenchBaseWidth / _settings.trenchWidenFactor;
         maxDepth = Mathf.Abs(maxD) * 0.90f; // 90% of the max theoretical depth, shader also uses 90%
-        biomeLookup.Clear();
        
     }
 

@@ -14,6 +14,7 @@ public class WorldSpawnEntitySO : EntityBaseSO {
     [Header("Spawn Conditions at Anchor Point")]
     public bool requireSolidGround = true; // Must the anchor tile be 'rock'?
     public bool requireWaterAdjacent = false;   // Must be next to MainWater or CaveWater?
+    [HideInInspector]
     public (Vector2Int, Vector2Int) BoundingOffset;
     [OnValueChanged("Test")]
     [TableMatrix(DrawElementMethod = "DrawColoredEnumElement", ResizableColumns = false,

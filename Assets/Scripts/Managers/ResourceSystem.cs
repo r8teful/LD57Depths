@@ -29,6 +29,9 @@ public class ResourceSystem {
     private Dictionary<ushort, RecipeBaseSO> _recipeLookupByID;
     private Dictionary<RecipeBaseSO, ushort> _idLookupByRecipe;
 
+    private Dictionary<ushort, WorldGenSettingSO> _worldGenLookupByID;
+    private Dictionary<WorldGenSettingSO, ushort> _idLookupByWorldGen;
+
     private Dictionary<ushort, UpgradeRecipeSO> _recipeUpgradeLookupByID;
     private Dictionary<UpgradeRecipeSO, ushort> _idLookupByRecipeUpgrade;
 
@@ -66,6 +69,8 @@ public class ResourceSystem {
         InitializeLookup("TileData", out _tileLookupByID, out _idLookupByTile);
         InitializeLookup("EntityData", out _entityLookupByID, out _idLookupByEntity);
         InitializeLookup("RecipeData", out _recipeLookupByID, out _idLookupByRecipe);
+        InitializeLookup("WorldGenData", out _worldGenLookupByID, out _idLookupByWorldGen);
+
         InitializeLookup<UpgradeRecipeSO>("", out _recipeUpgradeLookupByID, out _idLookupByRecipeUpgrade);
 
         InitializeWorldEntityOffsets();
@@ -154,6 +159,13 @@ public class ResourceSystem {
         }
         return recipe;
     }
+    public WorldGenSettingSO GetWorldGenByID(ushort id) {
+        if (id == InvalidID || !_worldGenLookupByID.TryGetValue(id, out WorldGenSettingSO worldGen)) {
+            Debug.LogWarning($"worldGen ID {id} not found in database.");
+            return null;
+        }
+        return worldGen;
+    }
     public ZoneSO GetZoneByIndex(int zoneIndex) {
         var list = Resources.LoadAll<ZoneSO>("TrenchZones").ToList();
         var index = list.FindIndex(i => i.ZoneIndex == zoneIndex);
@@ -215,6 +227,9 @@ public class ResourceSystem {
             GetPrefab("MiningRPG")
         };
         return list;
+    }
+    public List<WorldSpawnEntitySO> GetAllWorldSpawnEntities() {
+        return _entityLookupByID.Values.OfType<WorldSpawnEntitySO>().ToList();
     }
  
     internal Dictionary<ushort,int> GetMaxItemPool() {
