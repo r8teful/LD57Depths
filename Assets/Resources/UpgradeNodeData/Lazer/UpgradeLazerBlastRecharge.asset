@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
   m_Name: UpgradeLazerBlastRecharge
   m_EditorClassIdentifier: 
-  nodeName: UpgradeLazerAbilityDuration
+  nodeName: UpgradeLazerAbilityRecharge
   uniqueID: 12
-  icon: {fileID: 1134582682, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  icon: {fileID: -1955116903, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 87bdf022cae5b9e40aaf9a007cdd5f3c, type: 2}
   stages:
