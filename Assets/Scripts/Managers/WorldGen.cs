@@ -235,14 +235,22 @@ public class WorldGen : MonoBehaviour {
                             tileID = 5; // Bioluminence
                         } else if (IDData.x == 95) {
                             tileID = 6; // Fungal block
+                        } else if (IDData.x == 100) {
+                            tileID = 7; // Forest block
+                        } else if (IDData.x == 245) {
+                            tileID = 8; // Desert block
                         }
                         // Biome    
-                        if (IDData.y == 254) {
+                        if (IDData.y == 1) {
                             biomeID = 1; // Trench
                         } else if(IDData.y == 253) {
                             biomeID = 7; // Bioluminence
                         } else if (IDData.y == 133) {
                             biomeID = 8; // Fungal
+                        } else if (IDData.y == 175) {
+                            biomeID = 9; // Forest
+                        } else if (IDData.y == 220) {
+                            biomeID = 10; // Desert
                         }
                         currentChunkData.tiles[xTileInChunk, yTileInChunk] = tileID;
                         currentChunkData.biomeID[xTileInChunk, yTileInChunk] = biomeID;
@@ -588,16 +596,14 @@ public class WorldGen : MonoBehaviour {
                     if (worldY < entityDef.spawnConditions.minY || worldY > entityDef.spawnConditions.maxY)
                         continue;
 
-                    // Biome Check (ensure GetBiomeNameAt is implemented)
-                    //if (entityDef.requiredBiomes != null && entityDef.requiredBiomes.Count > 0) {
-                    //    byte biomeID = chunkData.biomeID[x,y];
-                    //    if (biomeID == byte.MaxValue || !entityDef.requiredBiomes.Contains((BiomeType)biomeID)) continue;
-                    //}
-
+                    // Early biome check
+                    var b = GetBiomeFromChunk(chunkData, CHUNK_TILE_DIMENSION, x, y);
+                    if (b == byte.MaxValue || !entityDef.spawnConditions.requiredBiomes.Contains((BiomeType)b))
+                        continue;
 
                     // --- 3. Attachment and Clearance Checks ---
                     bool canSpawn = true;
-                    bool canSpawnBiome = false;
+                    //bool canSpawnBiome = false;
                     Quaternion spawnRot = Quaternion.identity; // Default rotation
                     var occopied = new List<Vector2Int>();
                     var bounds = entityDef.BoundingOffset;
@@ -680,11 +686,6 @@ public class WorldGen : MonoBehaviour {
                                         // Debug.Log($"Volume requirement FAILED for {attachment} at world ({checkGlobalX},{checkGlobalY}). Expected Empty/NonBlocking. Tile was: {tileToCheck}");
                                         canSpawn = false;
                                         goto end_loops;
-                                    } else if(!canSpawnBiome){
-                                        // Non blocking, check if any hit the biome, only if we havent met the requirement yet
-                                        var b = GetBiomeFromChunk(chunkData, CHUNK_TILE_DIMENSION, checkLocalX, checkLocalY);
-                                        if (b != byte.MaxValue && entityDef.spawnConditions.requiredBiomes.Contains((BiomeType)b))
-                                            canSpawnBiome = true;
                                     }
                                 }
                                 // Reaching here means we passed this tiles checks, add it to occupied list
@@ -693,12 +694,12 @@ public class WorldGen : MonoBehaviour {
                         }
                         canSpawn = true; // we never hit a false so this must mean we can spawn
                     end_loops:;
-                        if (canSpawn && canSpawnBiome)
+                        if (canSpawn)
                             break; // Break out of the attachment loop if we have found a valid spot to spawn at
                         // Reaching here means we CANT spawn, so clear the occopied list and try a different orrientation
                         occopied.Clear();
                     }
-                    if (!canSpawn || !canSpawnBiome)
+                    if (!canSpawn)
                         continue;
                     // --- ALL CHECKS PASSED --- Spawn this entity ---
                     Vector3Int spawnPos = new(worldX, worldY);

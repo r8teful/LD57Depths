@@ -17,10 +17,11 @@ public class WorldGenSettingSO : ScriptableObject, IIdentifiable {
     public float caveCutoff;
 
     // For now: (order matters for shader which uses the background textures, etc)
+    // -1 Trench/default
     // 0 bioluminesence
     // 1 fungal 
     // 2 Forest
-    // 3 Volcanic
+    // 3 Deadzone
     // 4 Gems
     // 5 Ice
     // 6 Caves

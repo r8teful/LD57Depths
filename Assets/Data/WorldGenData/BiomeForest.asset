@@ -14,14 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EdgeNoiseScale: 8.4
   EdgeNoiseAmp: 0.7
-  BlockNoiseScale: 0.01
-  BlockNoiseAmp: 0.01
-  BlockCutoff: 0.5
+  BlockNoiseScale: 0.2
+  BlockNoiseAmp: 0.02
+  BlockCutoff: 0.01
   HorSize: 886.34
   YHeight: 265
-  TileColor: {r: 1, g: 0, b: 0, a: 1}
-  AirColor: {r: 1, g: 0.48584908, b: 0.48584908, a: 1}
+  TileColor: {r: 0.39215687, g: 0.6862745, b: 0, a: 1}
+  AirColor: {r: 1, g: 0.6862745, b: 0.62352943, a: 1}
   YStart: -2798.8
   XOffset: 1665
-  FillTexture: {fileID: 0}
-  EdgeTexture: {fileID: 0}
+  DarkenedColor: {r: 0, g: 0, b: 0, a: 0}
