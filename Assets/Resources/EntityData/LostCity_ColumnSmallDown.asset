@@ -45,7 +45,7 @@ MonoBehaviour:
       Data: 2
     - Name: 
       Entry: 3
-      Data: 2
+      Data: 3
     - Name: 
       Entry: 8
       Data: 
@@ -314,7 +314,7 @@ MonoBehaviour:
   entityName: LostCity_ColumnSmallDown
   entityPrefab: {fileID: 401910264597585571, guid: f9692cd8efaa33341bb5e5e3c0298d17, type: 3}
   spawnConditions:
-    requiredBiomes: 0a
+    requiredBiomes: 0b
     minY: -10000
     maxY: 2000
     specificSpawnTiles: []

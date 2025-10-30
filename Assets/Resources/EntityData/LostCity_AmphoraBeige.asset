@@ -45,7 +45,7 @@ MonoBehaviour:
       Data: 1
     - Name: 
       Entry: 3
-      Data: 2
+      Data: 3
     - Name: 
       Entry: 8
       Data: 
@@ -314,7 +314,7 @@ MonoBehaviour:
   entityName: LostCity_AmphoraBeige
   entityPrefab: {fileID: 401910264597585571, guid: 835eede57c4b26441b5d189b1ab0daee, type: 3}
   spawnConditions:
-    requiredBiomes: 0a
+    requiredBiomes: 0b
     minY: -10000
     maxY: 2000
     specificSpawnTiles: []
