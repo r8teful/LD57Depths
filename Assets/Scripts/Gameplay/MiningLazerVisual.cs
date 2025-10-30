@@ -65,7 +65,7 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         // Could also have thicker line mean more bloom -> Nice glow
         FadeInLine(lineRenderer);
 
-        if (!_lineLazerParticleSystem.isPlaying)
+        if (!_lineLazerParticleSystem.isEmitting)
             _lineLazerParticleSystem.Play();
     }
 
@@ -113,6 +113,7 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         LaserVisual(dir, isAbility);
     }
     private void FadeOutLine(LineRenderer lineRenderer) {
+        DOTween.Kill(lineRenderer);
         Color2 startColor = new(lineRenderer.startColor, lineRenderer.endColor);
         var alphaStart0 = lineRenderer.startColor;
         alphaStart0.a = 0;
@@ -122,6 +123,7 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         lineRenderer.DOColor(startColor, endColor, 0.2f).OnComplete(() => lineRenderer.enabled = false);
     }
     private void FadeInLine(LineRenderer lineRenderer) {
+        DOTween.Kill(lineRenderer);
         Color2 startColor = new(lineRenderer.startColor, lineRenderer.endColor);
         var alphaStart1 = lineRenderer.startColor;
         alphaStart1.a = 1;

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class CanvasInputWorld : MonoBehaviour {
     private InputPromptIcon _instantiatedPrompt;
@@ -7,6 +8,7 @@ public class CanvasInputWorld : MonoBehaviour {
         _instantiatedPrompt = Instantiate(App.ResourceSystem.GetPrefab("InteractIndicator"),transform).GetComponent<InputPromptIcon>();
         _instantiatedPrompt.Init(interactable.InteractIcon, interactPrompt);
         GetComponent<Canvas>().sortingOrder = 99;
+        GetComponent<Canvas>().sortingLayerName = "NoTilemapShadow";
     }
     // Don't think we actually have to do this because it is a child but eh I've written it now
     public void OnDestroy() {
@@ -20,8 +22,9 @@ public class CanvasInputWorld : MonoBehaviour {
         var rect = _instantiatedPrompt.GetComponent<RectTransform>();
         _instantiatedPrompt.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
         _instantiatedPrompt.transform.SetParent(parent);
-        rect.pivot = new(1, 0.25f); // This is to get the position just right
+        rect.pivot = new(1, -0.5f); // This is to get the position just right
         rect.anchorMin = new(1, 0);
         rect.anchorMax = new(1, 0);
+        rect.anchoredPosition = new(0, 0);
     }
 }

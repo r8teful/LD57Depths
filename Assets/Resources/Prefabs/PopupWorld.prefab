@@ -54,13 +54,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b49dd4eb7d21194598accda71caed1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  popupBackground: {fileID: 2985581413528476927, guid: 03167633e13c99a4493bf288ad65e17a, type: 3}
   rectTransform: {fileID: 6404010437877591634}
   _iconContainer: {fileID: 0}
   _iconImage: {fileID: 0}
+  _statsChangeContainer: {fileID: 0}
+  _ingredientContainer: {fileID: 0}
+  _upgradeBar: {fileID: 0}
   nameText: {fileID: 3747055745480922766}
   descriptionText: {fileID: 1355028763322873514}
-  ingredientsContent: {fileID: 401421720106400339}
   ingredientPrefab: {fileID: 8041682108293643099, guid: 76a13afe29b2a0842b804ebbc4f1bb2e, type: 3}
   itemData: {fileID: 0}
 --- !u!114 &6757066617867599197
@@ -373,7 +374,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 301.9853, y: -518.9223}
+  m_AnchoredPosition: {x: 301.9853, y: -509.9223}
   m_SizeDelta: {x: 541.9706, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &5482458663865740924

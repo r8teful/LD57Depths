@@ -102,7 +102,8 @@ public class FixableEntity : NetworkBehaviour, IInteractable, IPopupInfo {
             }
             _currentlyInteracting = true;
             var clientInventory = player.InventoryN.GetInventoryManager(); // Probably really bad to do this but EH?
-            instantatiatedPopup = Instantiate(App.ResourceSystem.GetPrefab("PopupWorld"), instantatiatedCanvas.transform).GetComponent<UIPopup>();
+            instantatiatedPopup = Instantiate(App.ResourceSystem.GetPrefab("Popup"), instantatiatedCanvas.transform).GetComponent<UIPopup>();
+            instantatiatedPopup.transform.localScale = Vector3.one * 0.015f;
             instantatiatedPopup.SetData(new(fixRecipe.displayName, fixRecipe.description, fixRecipe.GetIngredientStatuses(clientInventory)));
             instantatiatedCanvas.SetPromptNextStage(instantatiatedPopup.transform);
         } else if(instantatiatedPopup != null) {

@@ -183,7 +183,8 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             }
         }
         // Check for UI interaction
-        if (EventSystem.current.IsPointerOverGameObject() || _inventoryUIManager.IsOpen) {
+       // if (EventSystem.current.IsPointerOverGameObject() || _inventoryUIManager.IsOpen) {
+        if (_inventoryUIManager.IsOpen) { // Removed IsPointerOverGameObject because it also does it in world popups which is annyoing
             _currentContext = PlayerInteractionContext.InteractingWithUI;
             // TODO this should sometimes clear the interactable, but sometimes not. As the UI could be the interactable!
             
@@ -342,29 +343,18 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         // Todo some kind of checks to see if this is allowed..
         // This is Left Mouse Click / Gamepad A
         // Switch on the context to decide what Left Click does
-        switch (_currentContext) {
-            case PlayerInteractionContext.UsingToolOnWorld:
-                if (context.performed) {
-                    _toolController.ToolStart(this);
-                } else if (context.canceled) {
-                    _toolController.ToolStop();
-                }
-                break;
-            case PlayerInteractionContext.Building:
-                if (context.performed) {
-                    BuildingManager.Instance.UserPlacedClicked(_clientObject);
-                }
-                break;
-            case PlayerInteractionContext.InteractingWithUI:
-                break;
-            case PlayerInteractionContext.DraggingItem:
-                break;
-            case PlayerInteractionContext.WorldInteractable:
-            case PlayerInteractionContext.None:
-            default:
-                // Do nothing
-                break;
-        }
+        if(_currentContext == PlayerInteractionContext.UsingToolOnWorld || _currentContext == PlayerInteractionContext.WorldInteractable) {
+            if (context.performed) {
+                _toolController.ToolStart(this);
+            } else if (context.canceled) {
+                _toolController.ToolStop();
+            }
+        } 
+        // old building code
+        //        if (context.performed) {
+        //            BuildingManager.Instance.UserPlacedClicked(_clientObject);
+        //        }
+        
     }
     #region INVENTORY
 

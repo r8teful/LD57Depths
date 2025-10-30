@@ -55,7 +55,6 @@ public class InteriorInstance : NetworkBehaviour {
         // bool currentlyActive = (InteriorRootObjects.Count > 0 && InteriorRootObjects[0] != null && InteriorRootObjects[0].activeSelf); // Example check
         // if (currentlyActive == isActive) return;
 
-
         foreach (GameObject rootObj in InteriorRootObjects) {
             if (rootObj != null) {
                 // Using component enabling/disabling is generally safer

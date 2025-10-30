@@ -43,24 +43,27 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         // Name and description
         nameText.text = data.title;
         descriptionText.text = data.description;
-        
+
+        // Destroy old
+        foreach (Transform child in _ingredientContainer) {
+            Destroy(child.gameObject);
+        }
+        foreach (Transform child in _statsChangeContainer) {
+            Destroy(child.gameObject);
+        }
         // Crafting info and Status
         if (data.craftingInfo != null && data.craftingInfo.Count > 0) {
-            foreach (Transform child in _ingredientContainer) {
-                Destroy(child.gameObject);
-            }
             foreach (var ingredient in data.craftingInfo) {
                 Instantiate(ingredientPrefab, _ingredientContainer).Init(ingredient);
             }
-            foreach (Transform child in _statsChangeContainer) {
-                Destroy(child.gameObject);
-            }
+        }
+        if(data.statInfo != null &&  data.statInfo.Count > 0) {
             foreach (var stat in data.statInfo) {
                 //Todo obviously
                 var statChange = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStatPopup"), _statsChangeContainer);
                 statChange.Init(stat); // TODO
             }
-        } 
+        }
 
         // Upgrade Status
         if(data.progressionInfo.ShouldShow) {
