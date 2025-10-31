@@ -7,6 +7,7 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
     public List<Texture2D> edgeTextures; // length == numBiomes
     public List<Texture2D> fillTextures; // length == numBiomes
     private WorldGenSettingSO _worldGenSetting;
+    [SerializeField] private WorldGenSettingSO DEBUGWolrdSetting;
     public List<Material> layerMaterials; // 4 materials for 4 layers
     public List<float> layerParallax; // each layer's parallax
     public List<float> layerPixelSize; // pixel sizes for each layer
@@ -39,6 +40,9 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
     }
     public void PushBiomesToMaterials() {
         Debug.Log("pushing");
+        if(_worldGenSetting == null) {
+            _worldGenSetting = DEBUGWolrdSetting;
+        }
         var index = 0;
         foreach (var mat in layerMaterials) {
             PushBiomeToLayerMaterial(mat, index); // todo set current index where we start!
@@ -54,6 +58,12 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
         float[] blockNoiseScale = new float[numBiomes];
         float[] blockNoiseAmp = new float[numBiomes];
         float[] blockCutoff = new float[numBiomes];
+        float[] baseOctaves = new float[numBiomes];
+        float[] ridgeOctaves = new float[numBiomes];
+        float[] warpAmp = new float[numBiomes];
+        float[] wordleyWeight = new float[numBiomes];
+        float[] caveType = new float[numBiomes];
+
         float[] yStart = new float[numBiomes];
         float[] yHeight = new float[numBiomes];
         float[] horSize = new float[numBiomes];
@@ -68,6 +78,11 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
                 blockNoiseScale[i] = b.BlockNoiseScale;
                 blockNoiseAmp[i] = b.BlockNoiseAmp;
                 blockCutoff[i] = b.BlockCutoff;
+                baseOctaves[i] = b.BaseOctaves;
+                ridgeOctaves[i] = b.RidgeOctaves;
+                warpAmp[i] = b.WarpAmp;
+                wordleyWeight[i] = b.WorleyWeight;
+                caveType[i] = b.CaveType;
                 yStart[i] = b.YStart;
                 yHeight[i] = b.YHeight;
                 horSize[i] = b.HorSize;
@@ -99,6 +114,11 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
         mat.SetFloatArray("_horSize", horSize);
         mat.SetFloatArray("_XOffset", xOffset);
         mat.SetColorArray("_ColorArray", backgroundColors);
+        mat.SetFloatArray("_baseOctaves", baseOctaves);
+        mat.SetFloatArray("_ridgeOctaves", ridgeOctaves);
+        mat.SetFloatArray("_warpAmp", warpAmp);
+        mat.SetFloatArray("_worldeyWeight", wordleyWeight);
+        mat.SetFloatArray("_caveType", caveType);
 
         // global seed
         mat.SetFloat("_GlobalSeed", _worldGenSetting.seed * 1+ matIndex * 2352.124f);
@@ -107,6 +127,10 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
         mat.SetFloat("_CaveNoiseScale", _worldGenSetting.caveNoiseScale);
         mat.SetFloat("_CaveAmp", _worldGenSetting.caveAmp);
         mat.SetFloat("_CaveCutoff", _worldGenSetting.caveCutoff);
+        mat.SetFloat("_BaseOctaves", _worldGenSetting.caveOctavesBase);
+        mat.SetFloat("_RidgeOctaves", _worldGenSetting.caveOctavesRidge);
+        mat.SetFloat("_WarpAmp", _worldGenSetting.cavewWarpamp);
+        mat.SetFloat("_WorleyWeight", _worldGenSetting.caveWorleyWeight);
 
         mat.SetFloat("_TrenchBaseWiden", _worldGenSetting.trenchWidenFactor);
         mat.SetFloat("_TrenchBaseWidth", _worldGenSetting.trenchBaseWidth);

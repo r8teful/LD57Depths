@@ -45,6 +45,7 @@ Shader "Custom/BackgroundWorldGenLayer"
             #pragma target 3.0
 
             #include "UnityCG.cginc"
+            #include "RandomnesHelpers.hlsl"
 
             sampler2D _EdgeTex;
             sampler2D _FillTex;
@@ -68,7 +69,12 @@ Shader "Custom/BackgroundWorldGenLayer"
             float _CaveNoiseScale;
             float _CaveAmp;
             float _CaveCutoff;
+            float _BaseOctaves;
+            float _RidgeOctaves;
+            float _WarpAmp;
+            float _WorleyWeight;
 
+            float _GlobalSeed; 
             // Trench
             float _TrenchBaseWiden;
             float _TrenchBaseWidth;
@@ -89,64 +95,27 @@ Shader "Custom/BackgroundWorldGenLayer"
             float _horSize[NUM_BIOMES];
             float _XOffset[NUM_BIOMES];
 
+            float _baseOctaves[NUM_BIOMES];
+            float _ridgeOctaves[NUM_BIOMES];
+            float _warpAmp[NUM_BIOMES];
+            float _worldeyWeight[NUM_BIOMES];
+            float _caveType[NUM_BIOMES];
+
             float4 _ColorArray[NUM_BIOMES];
             // Background array
             UNITY_DECLARE_TEX2DARRAY(_FillTexArray);
-            float _GlobalSeed; // set from C#
 
-            // --- Minimal value-noise & hash (same idea as WorldGen) ---
-            inline float unity_noise_randomValue(float2 uv) {
-                 return frac(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453);
-            }
-            inline float unity_noise_interpolate(float a, float b, float t) {
-                 return (1.0 - t) * a + (t * b);
-            }
-            inline float unity_valueNoise(float2 uv)
+            float PerBiomeNoise(float2 uv, float globalSeed, int biomeIndex, float scale, int caveType,   
+                int baseOctaves, int ridgeOctaves, float warpAmp, float worleyWeight)
             {
-                float2 i = floor(uv);
-                float2 f = frac(uv);
-                f = f * f * (3.0 - 2.0 * f);
-
-                uv = abs(frac(uv) - 0.5);
-                float2 c0 = i + float2(0.0, 0.0);
-                float2 c1 = i + float2(1.0, 0.0);
-                float2 c2 = i + float2(0.0, 1.0);
-                float2 c3 = i + float2(1.0, 1.0);
-                float r0 = unity_noise_randomValue(c0);
-                float r1 = unity_noise_randomValue(c1);
-                float r2 = unity_noise_randomValue(c2);
-                float r3 = unity_noise_randomValue(c3);
-
-                float bottomOfGrid = unity_noise_interpolate(r0, r1, f.x);
-                float topOfGrid = unity_noise_interpolate(r2, r3, f.x);
-                float t = unity_noise_interpolate(bottomOfGrid, topOfGrid, f.y);
-                return t;
-            }
-
-            float Unity_SimpleNoise_float(float2 UV, float Scale)
-            {
-                float t = 0.0;
-
-                float freq = pow(2.0, float(0));
-                float amp = pow(0.5, float(3 - 0));
-                t += unity_valueNoise(float2(UV.x * Scale / freq, UV.y * Scale / freq)) * amp;
-
-                freq = pow(2.0, float(1));
-                amp = pow(0.5, float(3 - 1));
-                t += unity_valueNoise(float2(UV.x * Scale / freq, UV.y * Scale / freq)) * amp;
-
-                freq = pow(2.0, float(2));
-                amp = pow(0.5, float(3 - 2));
-                t += unity_valueNoise(float2(UV.x * Scale / freq, UV.y * Scale / freq)) * amp;
-
-                return t;
-            }
-
-            float PerBiomeNoise(float2 uv, int biomeIndex, float scale, float seedOffset)
-            {
-                float perBiomeSeed = _GlobalSeed + (float)biomeIndex * 137.731;
-                float2 samplePos = float2(uv.x * scale + perBiomeSeed * 13.19, uv.y * scale + perBiomeSeed * 7.31 + seedOffset);
-                return Unity_SimpleNoise_float(samplePos, 1.0);
+                if(caveType <= 0){
+                    return CaveDensity_Combined(uv,globalSeed,biomeIndex,scale,baseOctaves,ridgeOctaves,warpAmp,worleyWeight);
+                } 
+                // Tunnels
+                if(caveType >= 1){
+                    return CaveDensity_Tunnels(uv,globalSeed,biomeIndex,scale,baseOctaves,warpAmp);
+                }
+                return CaveDensity_Combined(uv,globalSeed,biomeIndex,scale,baseOctaves,ridgeOctaves,warpAmp,worleyWeight);
             }
             int PickBiome2DBetter(float2 uv) {
                 for (int i = 0; i < NUM_BIOMES; i++) { 
@@ -158,9 +127,10 @@ Shader "Custom/BackgroundWorldGenLayer"
                     float b_horSize = _horSize[i];
                     float b_XOffset = _XOffset[i];
 
-                    // Compute biome bounds with noise TODO, could make the noise scale less to have a more natural wave
-                    float edgeNoiseX = (PerBiomeNoise(uv, i, b_edgeScale, 5000.0) - 0.5) * 2.0;
-                    float edgeNoiseY = (PerBiomeNoise(uv, i, b_edgeScale, 2000.0) - 0.5) * 2.0;
+                   
+                    // Compute biome bounds with noise
+                    float edgeNoiseX = (EdgeNoise_Smooth(uv, _GlobalSeed,i, b_edgeScale) - 0.5) * 2.0;
+                    float edgeNoiseY = (EdgeNoise_Smooth(uv, _GlobalSeed,i, b_edgeScale) - 0.5) * 2.0;
 
                     float width = max(0.0, b_horSize + edgeNoiseX * b_edgeAmp);
                     float heightTop = b_YStart + b_YHeight + edgeNoiseY * b_edgeAmp;
@@ -181,28 +151,6 @@ Shader "Custom/BackgroundWorldGenLayer"
                     }
                 }
                 return 0;
-            }
-            
-            float GenerateTrenchAndSurface(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float parallax ,bool useEdge, float seed)
-            {
-                float halfTrenchWidth = (baseWidth + abs(uv.y) * baseWiden) / 2.0;
-                float edgeNoise = (Unity_SimpleNoise_float(float2(uv.x, uv.y + seed), noiseFreq) - 0.5) * 2.0;
-                float noisyHalfWidth = max(0.0, halfTrenchWidth + edgeNoise * edgeAmp);
-
-                float maxDepth = abs(-1 * baseWidth / baseWiden) * 0.9 * (1 + parallax);
-                float surfaceNoise = ((Unity_SimpleNoise_float(float2(uv.x, uv.y + 2000.0), 1.32) - 0.5) * 2.0) * 3.0;
-                if (uv.y > surfaceNoise)
-                    return 0;
-                if (abs(uv.y) > maxDepth)
-                    return 1;
-                if (!useEdge)
-                {
-                    bool mask2 = (abs(uv.x) < noisyHalfWidth);
-                    return mask2 ? 0.0 : 1.0;
-                }
-                float distanceToEdge = abs(abs(uv.x) - noisyHalfWidth);
-                bool mask = distanceToEdge < 0.1;
-                return mask ? 1.0 : 0.0;
             }
 
             void MakeMasksFromSigned(float s, float thickness, out float fillMask, out float edgeMask)
@@ -232,9 +180,7 @@ Shader "Custom/BackgroundWorldGenLayer"
             // caves: s = caveNoise - cutoff  (caveNoise < cutoff -> hole because s < 0)
             float SampleCaveSigned(float2 uv)
             {
-                float caveNoise = Unity_SimpleNoise_float(
-                    float2(uv.x * _CaveNoiseScale + _GlobalSeed * 2.79,
-                            uv.y * _CaveNoiseScale + _GlobalSeed * 8.69), 1.0) * _CaveAmp;
+                float caveNoise = CaveDensity_Combined(uv,_GlobalSeed,0,_CaveNoiseScale,_BaseOctaves, _RidgeOctaves,_WarpAmp,_WorleyWeight)* _CaveAmp;
                 return caveNoise - _CaveCutoff;
             }
 
@@ -245,7 +191,7 @@ Shader "Custom/BackgroundWorldGenLayer"
             {
                 // --- 1. Calculate the noisy, widening trench walls ---
                 float halfTrenchWidth = (baseWidth + abs(uv.y) * baseWiden) / 2.0;
-                float edgeNoise = (Unity_SimpleNoise_float(float2(uv.x, uv.y + seed), noiseFreq) - 0.5) * 2.0;
+                float edgeNoise = (EdgeNoise_Smooth(uv, _GlobalSeed,0,noiseFreq) - 0.5) * 2.0;
                 float noisyHalfWidth = max(0.0, halfTrenchWidth + edgeNoise * edgeAmp);
 
                 // SDF for the vertical trench walls.
@@ -254,7 +200,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                 float trenchWallsSDF = abs(uv.x) - noisyHalfWidth;
 
                 // --- 2. Calculate the noisy top surface ---
-                float surfaceNoise = ((Unity_SimpleNoise_float(float2(uv.x, uv.y + 2000.0), 1.32) - 0.5) * 2.0) * 3.0;
+                float surfaceNoise = (EdgeNoise_Smooth(uv, _GlobalSeed,2,4) - 0.5) * 2.0;
                 
                 // SDF for the top surface. We want the area *above* this surface to be part of the trench.
                 // 'surfaceNoise - uv.y' is negative above the surface line and positive below.
@@ -285,17 +231,20 @@ Shader "Custom/BackgroundWorldGenLayer"
             }
 
             // ---------- Biome block sampler: option to normalize by amplitude ----------
-            float SampleBiomeBlockSigned(float2 uv, int shiftedIndex, float b_blockScale, float b_blockAmp, float b_blockCut, bool normalizeByAmp)
+            float SampleBiomeBlockSigned(
+                float2 uv, float globalSeed, int biomeIndex, float scale, float amp, float blockCut,int caveType,   
+                int baseOctaves, int ridgeOctaves, float warpAmp, float worleyWeight, bool normalizeByAmp)
             {
-                float blockVal = PerBiomeNoise(uv, shiftedIndex, b_blockScale, 7000.0) * b_blockAmp;
+                 float blockVal = PerBiomeNoise(uv,globalSeed, biomeIndex, scale,caveType,
+                        baseOctaves,ridgeOctaves,warpAmp,worleyWeight) * amp;
                 //float s = b_blockCut - blockVal; // >0 filled as before
-                float s = blockVal- b_blockCut ; // >0 filled as before
+                float s = blockVal- blockCut ; // >0 filled as before
 
                 if (normalizeByAmp)
                 {
                     // Normalize per-biome so edge-thickness has similar numeric meaning across biomes.
                     // Be careful if b_blockAmp is near zero.
-                    float denom = max(1e-4, b_blockAmp);
+                    float denom = max(1e-4, amp);
                     s = s / denom;
                 }
 
@@ -309,6 +258,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                 {
                     float sCave = SampleCaveSigned(uv);
                     float sTrench = SampleTrenchSigned(uv, _TrenchBaseWiden, _TrenchBaseWidth, _TrenchNoiseScale, _TrenchEdgeAmp, 0.0, _GlobalSeed);
+                    //return sCave;
                     s = min(sCave, sTrench);
                 }
                 else
@@ -317,7 +267,13 @@ Shader "Custom/BackgroundWorldGenLayer"
                     float b_blockCut   = _blockCutoff[shiftedIndex];
                     float b_blockScale = _blockNoiseScale[shiftedIndex];
                     float b_blockAmp   = _blockNoiseAmp[shiftedIndex];
-                    s = SampleBiomeBlockSigned(uv, shiftedIndex, b_blockScale, b_blockAmp, b_blockCut, true);
+                    float b_baseOctaves   = _baseOctaves[biomeIndex];
+                    float b_ridgeOctaves  = _ridgeOctaves[biomeIndex];
+                    float b_warpAmp       = _warpAmp[biomeIndex];
+                    float b_worldeyWeight = _worldeyWeight[biomeIndex];
+                    float b_caveType      = _caveType[biomeIndex];
+                    s = SampleBiomeBlockSigned(uv,_GlobalSeed, biomeIndex, b_blockScale,b_blockAmp,b_blockCut, b_caveType,
+                        b_baseOctaves,b_ridgeOctaves,b_warpAmp,b_worldeyWeight, true);
                 }
             
                 return s;

@@ -1,5 +1,6 @@
-using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEditor;
+using UnityEngine;
 
 [ExecuteAlways]
 public class BiomeMaterialUploader : MonoBehaviour {
@@ -14,7 +15,9 @@ public class BiomeMaterialUploader : MonoBehaviour {
     void Awake() {
         PushBiomesToMaterial();
     }
-
+    private void OnEnable() {
+        worldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterial; });
+    }
     // Call this whenever you change biome descriptors
     public void PushBiomesToMaterial() {
         if (targetMaterial == null) {
@@ -28,6 +31,12 @@ public class BiomeMaterialUploader : MonoBehaviour {
         var blockNoiseScale = new float[NUM_BIOMES];
         var blockNoiseAmp = new float[NUM_BIOMES];
         var blockCutoff = new float[NUM_BIOMES];
+        var baseOctaves = new float[NUM_BIOMES];
+        var ridgeOctaves = new float[NUM_BIOMES];
+        var warpAmp = new float[NUM_BIOMES];
+        var wordleyWeight = new float[NUM_BIOMES];
+        var caveType = new float[NUM_BIOMES];
+
         var yStart = new float[NUM_BIOMES];
         var yHeight = new float[NUM_BIOMES];
         var horSize = new float[NUM_BIOMES];
@@ -43,6 +52,11 @@ public class BiomeMaterialUploader : MonoBehaviour {
                 blockNoiseScale[i] = b.BlockNoiseScale;
                 blockNoiseAmp[i] = b.BlockNoiseAmp;
                 blockCutoff[i] = b.BlockCutoff;
+                baseOctaves[i] = b.BaseOctaves;
+                ridgeOctaves[i] = b.RidgeOctaves;
+                warpAmp[i] = b.WarpAmp;
+                wordleyWeight[i] = b.WorleyWeight;
+                caveType[i] = b.CaveType;
                 yStart[i] = b.YStart;
                 yHeight[i] = b.YHeight;
                 horSize[i] = b.HorSize;
@@ -70,13 +84,18 @@ public class BiomeMaterialUploader : MonoBehaviour {
         targetMaterial.SetFloatArray("_blockNoiseScale", blockNoiseScale);
         targetMaterial.SetFloatArray("_blockNoiseAmp", blockNoiseAmp);
         targetMaterial.SetFloatArray("_blockCutoff", blockCutoff);
+        targetMaterial.SetFloatArray("_baseOctaves", baseOctaves);
+        targetMaterial.SetFloatArray("_ridgeOctaves", ridgeOctaves);
+        targetMaterial.SetFloatArray("_warpAmp", warpAmp);
+        targetMaterial.SetFloatArray("_worldeyWeight", wordleyWeight);
+        targetMaterial.SetFloatArray("_caveType", caveType);
+        
         targetMaterial.SetFloatArray("_YStart", yStart);
         targetMaterial.SetFloatArray("_YHeight", yHeight);
         targetMaterial.SetFloatArray("_horSize", horSize);
         targetMaterial.SetFloatArray("_XOffset", xOffset);
         targetMaterial.SetVectorArray("_tileColor", tileColors);
         targetMaterial.SetVectorArray("_airColor", airColors);
-
         // global floats
         targetMaterial.SetFloat("_GlobalSeed", globalSeed);
 

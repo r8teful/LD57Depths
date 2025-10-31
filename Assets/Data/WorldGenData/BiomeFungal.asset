@@ -12,15 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b679a26f4a0fe9a409516798c8439ad3, type: 3}
   m_Name: BiomeFungal
   m_EditorClassIdentifier: 
-  EdgeNoiseScale: 8.4
-  EdgeNoiseAmp: 0.7
-  BlockNoiseScale: 0.16
-  BlockNoiseAmp: 0.02
+  EdgeNoiseScale: 0.1
+  EdgeNoiseAmp: 16.81
+  BlockNoiseScale: 0.02
+  BlockNoiseAmp: 0.04
   BlockCutoff: 0.01
+  BaseOctaves: 3
+  RidgeOctaves: 2
+  WarpAmp: 2.21
+  WorleyWeight: 2.42
+  CaveType: 0
   HorSize: 668.2
-  YHeight: 624
+  YHeight: 463
   TileColor: {r: 0.37254903, g: 0.52156866, b: 0, a: 1}
   AirColor: {r: 1, g: 0.52156866, b: 1, a: 1}
-  YStart: -4769
+  YStart: -3981
   XOffset: 0
   DarkenedColor: {r: 0.0022105263, g: 0.0029473682, b: 0.0139999995, a: 1}

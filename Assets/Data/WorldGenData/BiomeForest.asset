@@ -12,15 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b679a26f4a0fe9a409516798c8439ad3, type: 3}
   m_Name: BiomeForest
   m_EditorClassIdentifier: 
-  EdgeNoiseScale: 8.4
-  EdgeNoiseAmp: 0.7
-  BlockNoiseScale: 0.2
-  BlockNoiseAmp: 0.02
+  EdgeNoiseScale: 0.2
+  EdgeNoiseAmp: 29.1
+  BlockNoiseScale: 0.03
+  BlockNoiseAmp: 0.05
   BlockCutoff: 0.01
+  BaseOctaves: 2
+  RidgeOctaves: 1
+  WarpAmp: 0.24
+  WorleyWeight: 0.56
+  CaveType: 1
   HorSize: 886.34
   YHeight: 265
   TileColor: {r: 0.39215687, g: 0.6862745, b: 0, a: 1}
   AirColor: {r: 1, g: 0.6862745, b: 0.62352943, a: 1}
-  YStart: -2798.8
-  XOffset: 1665
+  YStart: -2975
+  XOffset: 1057
   DarkenedColor: {r: 0, g: 0, b: 0, a: 0}

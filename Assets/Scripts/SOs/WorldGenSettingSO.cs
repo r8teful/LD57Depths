@@ -15,6 +15,10 @@ public class WorldGenSettingSO : ScriptableObject, IIdentifiable {
     public float caveNoiseScale;
     public float caveAmp;
     public float caveCutoff;
+    public float caveOctavesBase;
+    public float caveOctavesRidge;
+    public float cavewWarpamp;
+    public float caveWorleyWeight;
 
     // For now: (order matters for shader which uses the background textures, etc)
     // -1 Trench/default

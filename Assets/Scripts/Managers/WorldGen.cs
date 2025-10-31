@@ -642,14 +642,14 @@ public class WorldGen : MonoBehaviour {
                                         checkLocalY = y - local_yy;
                                         spawnRot = Quaternion.Euler(0, 0, 180);
                                         break;
-                                    case AttachmentType.WallLeft:
+                                    case AttachmentType.WallRight:
                                         // Canonical +x (entity's right) becomes world +y (up).
                                         // Canonical +y (entity's up) becomes world -x (left).
                                         checkLocalX = x - local_yy;
                                         checkLocalY = y + local_xx;
                                         spawnRot = Quaternion.Euler(0, 0, 90);
                                         break;
-                                    case AttachmentType.WallRight:
+                                    case AttachmentType.WallLeft:
                                         // Canonical +x (entity's right) becomes world -y (down).
                                         // Canonical +y (entity's up) becomes world +x (right).
                                         checkLocalX = x + local_yy;

@@ -12,49 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be00040ac3102f841a04e2b78a008678, type: 3}
   m_Name: WorldGenSettingBiomes
   m_EditorClassIdentifier: 
-  seed: 1882
+  seed: 1915
   associatedMaterial: {fileID: 2100000, guid: b0b8f8dc91677724785e2a37bc63e929, type: 2}
-  oreTypes:
-  - name: Iron
-    tile: {fileID: 11400000, guid: f4b09cb01edb0244da271b27ca802fa3, type: 2}
-    allowedBiomeNames: []
-    frequency: 0.05
-    threshold: 0.828
-    clusterFrequency: 4
-    clusterThreshold: 0.135
-    requireCluster: 1
   id: 0
-  worldSpawnEntities:
-  - {fileID: 11400000, guid: 5306525d2d402954a8574ca58825fc96, type: 2}
-  - {fileID: 11400000, guid: bf06109c54242e345b60ac88fc937303, type: 2}
-  - {fileID: 11400000, guid: 24662d2fba81ac84792b73518d1fd5b4, type: 2}
-  - {fileID: 11400000, guid: 6778987ec3cb2e74c9057df1ec83ae95, type: 2}
-  - {fileID: 11400000, guid: 2933644f3ad3dd14cace992cbb4eabcb, type: 2}
-  - {fileID: 11400000, guid: c88ebaaf04d12ed459ea116f3114cb7d, type: 2}
-  - {fileID: 11400000, guid: d43c3f02f91b332498b32a9be1ee129e, type: 2}
-  - {fileID: 11400000, guid: d38c04f5644b5fe4b8577fdbaeedb3c3, type: 2}
-  - {fileID: 11400000, guid: c5137d53643422042a3e53d1f214cb16, type: 2}
-  - {fileID: 11400000, guid: 1df3d5c3532cc6e48a451fd34e31747a, type: 2}
-  - {fileID: 11400000, guid: eb860dfb335333544892a61d97932982, type: 2}
-  - {fileID: 11400000, guid: 7d5289f3fc1bd484985297a164fe63be, type: 2}
-  - {fileID: 11400000, guid: 294ada26efa9ea04fbbe8a306429e946, type: 2}
-  - {fileID: 11400000, guid: fe416d792a9bb9746a34c97be84d1811, type: 2}
-  - {fileID: 11400000, guid: cb995799b7ab9d34a9b6cf06e6eb6d2a, type: 2}
-  - {fileID: 11400000, guid: 0e43d47aae0ba9a48ab3ce3c77b4d17c, type: 2}
-  - {fileID: 11400000, guid: 21a3582802a54ea4388fedfe83ce7d5f, type: 2}
-  - {fileID: 11400000, guid: 8690cd4494f51944abce0b4b07a3325d, type: 2}
-  - {fileID: 11400000, guid: 4cf7671524c25f0448734be9b592372b, type: 2}
-  - {fileID: 11400000, guid: c2e728b0b4102864b923043c2216bd5c, type: 2}
-  - {fileID: 11400000, guid: 1ffb90bbd1e91aa449036978729343fa, type: 2}
-  - {fileID: 11400000, guid: bc6d32f95086a7047afe8709e3815b4b, type: 2}
-  - {fileID: 11400000, guid: 617a023f1b3e8c44e9af5f48699a64a7, type: 2}
   trenchBaseWidth: 174.5
   trenchWidenFactor: -0.05
   trenchEdgeNoiseFrequency: 0.164
-  trenchEdgeNoiseAmplitude: 11.98
-  caveNoiseScale: 0.05
-  caveAmp: 1.76
-  caveCutoff: 0.36
+  trenchEdgeNoiseAmplitude: 7.8
+  caveNoiseScale: 0.03
+  caveAmp: 0.8
+  caveCutoff: 0.03
+  caveOctavesBase: 4.31
+  caveOctavesRidge: 1.89
+  cavewWarpamp: 0.81
+  caveWorleyWeight: 2.5
   biomes:
   - {fileID: 11400000, guid: 5183ec9dd8eded44aa227b8ca5268657, type: 2}
   - {fileID: 11400000, guid: 42ff9b5deefacb34d9c6f3fbe089caee, type: 2}

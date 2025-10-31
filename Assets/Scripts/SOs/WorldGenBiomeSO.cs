@@ -8,6 +8,11 @@ public class WorldGenBiomeSO : ScriptableObject {
     public float BlockNoiseScale = 2.0f;
     public float BlockNoiseAmp = 0.8f;
     public float BlockCutoff = 0.5f;
+    public int BaseOctaves = 1;
+    public int RidgeOctaves = 1;
+    public float WarpAmp = 0.5f;
+    public float WorleyWeight = 0.5f;
+    public int CaveType = 0; // 0 Default, 1 Tunnels
 
     [Header("Size")]
     public float HorSize = 40.0f;

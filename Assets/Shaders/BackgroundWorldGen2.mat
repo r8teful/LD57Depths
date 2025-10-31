@@ -41,9 +41,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _CaveAmp: 1.76
-    - _CaveCutoff: 0.36
-    - _CaveNoiseScale: 0.05
+    - _CaveAmp: 0.8
+    - _CaveCutoff: 0.03
+    - _CaveNoiseScale: 0.03
     - _CurrentBiomeIndex: 3
     - _DarkenCurve: 0.82
     - _DarkenMax: 0.5
@@ -60,12 +60,12 @@ Material:
     - _TextureTiling: 0.5
     - _TrenchBaseWiden: -0.05
     - _TrenchBaseWidth: 174.5
-    - _TrenchEdgeAmp: 11.98
+    - _TrenchEdgeAmp: 7.8
     - _TrenchEdgeSens: 0.61
     - _TrenchNoiseScale: 0.164
     - _WorldUVScale: 1
     m_Colors:
-    - _CameraPos: {r: 311.4, g: -3058.1, b: 0, a: 0}
+    - _CameraPos: {r: -125.1, g: -3673.8, b: 0, a: 0}
     - _EdgeColor: {r: 1, g: 0, b: 0, a: 1}
     - _EdgeTintColor: {r: 0, g: 0, b: 0, a: 0.5529412}
     - _NonEdgeDarkness: {r: 0.017472003, g: 0.017472003, b: 0.10399995, a: 1}
