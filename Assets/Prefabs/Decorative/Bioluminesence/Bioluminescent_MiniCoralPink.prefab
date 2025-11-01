@@ -12,8 +12,9 @@ GameObject:
   - component: {fileID: 1307973467916195601}
   - component: {fileID: -3384772447077890300}
   - component: {fileID: -4337400107092281026}
+  - component: {fileID: 2623560504934017284}
   m_Layer: 6
-  m_Name: BioPlant5
+  m_Name: Bioluminescent_MiniCoralPink
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,7 +81,7 @@ MonoBehaviour:
   _teleportThreshold: 1
   <PrefabId>k__BackingField: 13
   <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 11446641498455272779
+  <AssetPathHash>k__BackingField: 15987261749895755603
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}
@@ -123,6 +124,23 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 1307973467916195601}
   _networkObjectCache: {fileID: 1307973467916195601}
   IsDestroyedPermanently: 1
+--- !u!114 &2623560504934017284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401910264597585571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ae15511eb5c7d043b628e692cdfc39f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _twiddlies:
+  - {fileID: 1743436953, guid: 2f21fe990c460594691ea2f262e7a31e, type: 3}
+  - {fileID: 1884466507, guid: 2f21fe990c460594691ea2f262e7a31e, type: 3}
+  - {fileID: -1755141526, guid: 2f21fe990c460594691ea2f262e7a31e, type: 3}
+  _spriteRenderer: {fileID: 3328544000559549426}
 --- !u!1 &4862316603667267363
 GameObject:
   m_ObjectHideFlags: 0
@@ -149,7 +167,7 @@ Transform:
   m_GameObject: {fileID: 4862316603667267363}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.2, y: 0.7, z: 0}
+  m_LocalPosition: {x: 0, y: 0.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -171,7 +189,7 @@ MonoBehaviour:
   m_LightType: 3
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.5
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.72156864, g: 0.9960785, b: 0.94117653, a: 1}
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
@@ -196,7 +214,7 @@ MonoBehaviour:
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 0
-  m_PointLightOuterRadius: 2.12
+  m_PointLightOuterRadius: 5.07
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
   m_ShapeLightParametricRadius: 1
@@ -233,7 +251,7 @@ Transform:
   m_GameObject: {fileID: 4908480005588468802}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.2, y: 0.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0.375, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -283,7 +301,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 971948341, guid: 2f21fe990c460594691ea2f262e7a31e, type: 3}
+  m_Sprite: {fileID: 1884466507, guid: 2f21fe990c460594691ea2f262e7a31e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6cba2696d15a0aa4f8ca9bf747113acc, type: 3}
-  m_Name: BioPlant2
+  m_Name: Bioluminescent_TallGrassPink
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -150,18 +150,6 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
       Data: true
     - Name: 
       Entry: 5
@@ -171,22 +159,7 @@ MonoBehaviour:
       Data: true
     - Name: 
       Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
+      Data: true
     - Name: 
       Entry: 5
       Data: true
@@ -204,7 +177,25 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
     - Name: 
       Entry: 5
       Data: false
@@ -213,7 +204,16 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
     - Name: 
       Entry: 5
       Data: true
@@ -310,9 +310,9 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  entityID: 202
-  entityName: Plant2
-  entityPrefab: {fileID: 401910264597585571, guid: c771f7c1fdcd79b458519d4ea4529bb1, type: 3}
+  entityID: 211
+  entityName: Bioluminescent_TallGrassPink
+  entityPrefab: {fileID: 401910264597585571, guid: 9a1dbcda21a528141b0e8f52aeb11c2c, type: 3}
   spawnConditions:
     requiredBiomes: 07
     minY: -10000
@@ -320,7 +320,7 @@ MonoBehaviour:
     specificSpawnTiles: []
   placementFrequency: 0.24
   placementThreshold: 0.865
-  allowedAttachmentTypes: 01000000020000000300000004000000
+  allowedAttachmentTypes: 0100000002000000
   requireSolidGround: 1
   requireWaterAdjacent: 1
   randomYRotation: 0

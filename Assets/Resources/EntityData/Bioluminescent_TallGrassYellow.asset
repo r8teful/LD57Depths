@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6cba2696d15a0aa4f8ca9bf747113acc, type: 3}
-  m_Name: BioPlant4
+  m_Name: Bioluminescent_TallGrassYellow
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -123,43 +123,16 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
+      Data: true
     - Name: 
       Entry: 5
-      Data: false
+      Data: true
     - Name: 
       Entry: 5
-      Data: false
+      Data: true
     - Name: 
       Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
+      Data: true
     - Name: 
       Entry: 5
       Data: true
@@ -177,18 +150,6 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
       Data: true
     - Name: 
       Entry: 5
@@ -198,22 +159,7 @@ MonoBehaviour:
       Data: true
     - Name: 
       Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
+      Data: true
     - Name: 
       Entry: 5
       Data: true
@@ -231,7 +177,25 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
     - Name: 
       Entry: 5
       Data: false
@@ -240,7 +204,25 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
     - Name: 
       Entry: 5
       Data: false
@@ -249,7 +231,25 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
     - Name: 
       Entry: 5
       Data: false
@@ -310,9 +310,9 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  entityID: 204
-  entityName: Plant4
-  entityPrefab: {fileID: 401910264597585571, guid: ae345b3caa93e5d42998feb728b5baf0, type: 3}
+  entityID: 212
+  entityName: Bioluminescent_TallGrassYellow
+  entityPrefab: {fileID: 401910264597585571, guid: e3d6e70dc64ee064a9d421cb6767137d, type: 3}
   spawnConditions:
     requiredBiomes: 07
     minY: -10000
@@ -320,7 +320,7 @@ MonoBehaviour:
     specificSpawnTiles: []
   placementFrequency: 0.24
   placementThreshold: 0.865
-  allowedAttachmentTypes: 01000000020000000300000004000000
+  allowedAttachmentTypes: 0100000002000000
   requireSolidGround: 1
   requireWaterAdjacent: 1
   randomYRotation: 0

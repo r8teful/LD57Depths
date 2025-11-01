@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -3384772447077890300}
   - component: {fileID: -4337400107092281026}
   m_Layer: 6
-  m_Name: BioPlant0
+  m_Name: Bioluminescent_TallGrassPink 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,7 +80,7 @@ MonoBehaviour:
   _teleportThreshold: 1
   <PrefabId>k__BackingField: 13
   <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 2857331487603758251
+  <AssetPathHash>k__BackingField: 3874196976758635971
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}
@@ -233,7 +233,7 @@ Transform:
   m_GameObject: {fileID: 4908480005588468802}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.2, y: 0.81, z: 0}
+  m_LocalPosition: {x: 0.2, y: 1.301, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -283,7 +283,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1904944685, guid: 2f21fe990c460594691ea2f262e7a31e, type: 3}
+  m_Sprite: {fileID: -62971889, guid: 2f21fe990c460594691ea2f262e7a31e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

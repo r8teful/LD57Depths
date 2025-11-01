@@ -307,6 +307,204 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Bioluminescent_MiniMushrooms
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 38
+        width: 8
+        height: 4
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0fb2a1fd2b68b1c419ef083e103b9e35
+      internalID: 318694926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bioluminescent_GrassRed
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 38
+        width: 5
+        height: 3
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9be6c5118a786a64b98426459f35670e
+      internalID: 1740428979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bioluminescent_GrassGreen
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 38
+        width: 5
+        height: 3
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50cd84d697ee80e47abe1eb7889dc9ef
+      internalID: 1676279291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bioluminescent_MushroomsBlueGreen
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 6
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 059ad31097563d94698099124bbc0bb9
+      internalID: 2134693459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bioluminescent_MushroomsOrangePurple
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 6
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bbe3e1726bbb71941852986740411388
+      internalID: -1350739168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bioluminescent_GrassPinks
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 6
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f7f0e593ffc4634b9d269a403ff4b70
+      internalID: -238118314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bioluminescent_CoralBlue
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 6
+        width: 17
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7db639dc44dc27940ac06b8d1cae4bb5
+      internalID: 884389414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bioluminescent_TallGrassYellow
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 6
+        width: 10
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0062dbe9320dc5c4a9be0a41a6dabea5
+      internalID: 1227853011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bioluminescent_TallGrassPink
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 6
+        width: 12
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c2979a53c0df18f4cb3a430a355e769f
+      internalID: -62971889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -324,9 +522,18 @@ TextureImporter:
       Bioluminescent_BlueMushrooms: 1904944685
       Bioluminescent_Bush: -793410364
       Bioluminescent_Coral: 1630967386
+      Bioluminescent_CoralBlue: 884389414
+      Bioluminescent_GrassGreen: 1676279291
+      Bioluminescent_GrassPinks: -238118314
+      Bioluminescent_GrassRed: 1740428979
       Bioluminescent_GreenLeaves: 596007144
+      Bioluminescent_MiniMushrooms: 318694926
+      Bioluminescent_MushroomsBlueGreen: 2134693459
+      Bioluminescent_MushroomsOrangePurple: -1350739168
       Bioluminescent_PinkLeaves: 508037818
       Bioluminescent_SmallPinkMushrooms: 971948341
+      Bioluminescent_TallGrassPink: -62971889
+      Bioluminescent_TallGrassYellow: 1227853011
       Bioluminescent_TwiddlyBlue: 1743436953
       Bioluminescent_TwiddlyPurple: 1884466507
       Bioluminescent_TwiddlyRed: -1755141526
