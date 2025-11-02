@@ -111,5 +111,49 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     private void debugSetDamage(float v) {
         NetworkedPlayer.LocalInstance.PlayerStats.DEBUGSetStat(StatType.MiningDamage,v);
     }
+    [ConsoleCommand("toggleHitbox")]
+    private void debugToggleHitbox() {
+        _player.PlayerMovement.DEBUGToggleHitbox();
+    }
+    [ConsoleCommand("toggleGod")]
+    private void debugToggleGOD() {
+        _player.PlayerMovement.DEBUGToggleGodMove();
+    }
+    [ConsoleCommand("setSpeed")]
+    private void debugSetSpeed(float speed) {
+        _player.PlayerMovement.DEBUGSetSpeed(speed);
+    }
+    [ConsoleCommand("setZoom")]
+    private void debugSetZoom(float size) {
+        Camera.main.orthographicSize = size;   
+    }
+    [ConsoleCommand("toggleUI")]
+    private void debugToggleUI() {
+        _player.UiManager.DEBUGToggleALLUI();
+    }
+    [ConsoleCommand("gotoBiome",value: "bio,fungal,forest,desert")]
+    private void debugGotoBiome(string biome) {
+        GameSetupManager.LocalInstance.TryGetHostSettings(out var settings);
+        if(settings == null) {
+            Debug.LogError("Couldnt get host settings!");
+            return;
+        }
+        int index = 0;
+        if(biome == "bio") {
+            index = 0;
+        }
+        if (biome == "fungal") {
+            index = 1;
+        }
+        if (biome == "forest") {
+            index = 2;
+        }
+        if (biome == "desert") {
+            index = 3;
+        }
+        var worldBiome = App.ResourceSystem.GetWorldGenByID(settings.WorldGenID).biomes[index];
+        _player.gameObject.transform.position = 
+            new(worldBiome.XOffset, worldBiome.YStart + worldBiome.YHeight * 0.5f);
+    }
 }
 #endif

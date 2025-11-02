@@ -12,11 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b679a26f4a0fe9a409516798c8439ad3, type: 3}
   m_Name: BiomeDesert
   m_EditorClassIdentifier: 
-  EdgeNoiseScale: 8.4
-  EdgeNoiseAmp: 0.7
-  BlockNoiseScale: 0.2
-  BlockNoiseAmp: 0.02
+  EdgeNoiseScale: 0.43
+  EdgeNoiseAmp: 3.14
+  BlockNoiseScale: 0.03
+  BlockNoiseAmp: 0.07
   BlockCutoff: 0.01
+  BaseOctaves: 2
+  RidgeOctaves: 1
+  WarpAmp: 0
+  WorleyWeight: 0.7
+  CaveType: 1
   HorSize: 886.34
   YHeight: 265
   TileColor: {r: 0.9607843, g: 0.8627451, b: 0, a: 1}

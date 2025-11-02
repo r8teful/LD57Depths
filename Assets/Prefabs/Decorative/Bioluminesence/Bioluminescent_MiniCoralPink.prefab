@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 1307973467916195601}
   - component: {fileID: -3384772447077890300}
   - component: {fileID: -4337400107092281026}
-  - component: {fileID: 2623560504934017284}
   m_Layer: 6
   m_Name: Bioluminescent_MiniCoralPink
   m_TagString: Untagged
@@ -81,7 +80,7 @@ MonoBehaviour:
   _teleportThreshold: 1
   <PrefabId>k__BackingField: 13
   <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 15987261749895755603
+  <AssetPathHash>k__BackingField: 10608219837651940307
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}
@@ -124,23 +123,6 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 1307973467916195601}
   _networkObjectCache: {fileID: 1307973467916195601}
   IsDestroyedPermanently: 1
---- !u!114 &2623560504934017284
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 401910264597585571}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ae15511eb5c7d043b628e692cdfc39f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _twiddlies:
-  - {fileID: 1743436953, guid: 2f21fe990c460594691ea2f262e7a31e, type: 3}
-  - {fileID: 1884466507, guid: 2f21fe990c460594691ea2f262e7a31e, type: 3}
-  - {fileID: -1755141526, guid: 2f21fe990c460594691ea2f262e7a31e, type: 3}
-  _spriteRenderer: {fileID: 3328544000559549426}
 --- !u!1 &4862316603667267363
 GameObject:
   m_ObjectHideFlags: 0
@@ -235,6 +217,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2868808266039439494}
   - component: {fileID: 3328544000559549426}
+  - component: {fileID: 5091545441773163997}
   m_Layer: 6
   m_Name: Sprite
   m_TagString: Untagged
@@ -312,6 +295,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5091545441773163997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4908480005588468802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ae15511eb5c7d043b628e692cdfc39f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _spritesVariants:
+  - {fileID: 1743436953, guid: 2f21fe990c460594691ea2f262e7a31e, type: 3}
+  - {fileID: 1884466507, guid: 2f21fe990c460594691ea2f262e7a31e, type: 3}
+  - {fileID: -1755141526, guid: 2f21fe990c460594691ea2f262e7a31e, type: 3}
+  _spriteRenderer: {fileID: 3328544000559549426}
 --- !u!1 &6476897495741750321
 GameObject:
   m_ObjectHideFlags: 0

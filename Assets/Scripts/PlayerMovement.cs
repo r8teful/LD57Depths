@@ -62,6 +62,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     private Collider2D _topTrigger;
     private bool _dashUnlocked;
     private bool _isInsideOxygenZone;
+    private bool DEBUGIsGOD;
 
     public int InitializationOrder => 999; 
     internal bool CanUseTool() => _currentState == PlayerState.Swimming;
@@ -486,6 +487,9 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
         maxOxygen= 9999999;
         currentOxygen = 999999;
     }
+    internal void DEBUGToggleHitbox() {
+        _visualHandler.DEBUGToggleHitbox(_currentState);
+    }
     private void Resurect() {
         playerHealth = maxHealth;
         currentOxygen = maxOxygen;
@@ -504,5 +508,26 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
     internal void SetOxygenZone(bool v) {
         _isInsideOxygenZone = v;
+    }
+
+    internal void DEBUGToggleGodMove() {
+        if (!DEBUGIsGOD) {
+            DEBUGIsGOD = true;
+            accelerationForce *= 10;
+            swimSpeed *= 10;
+            DEBUGToggleHitbox();
+        } else {
+            DEBUGIsGOD = false;
+            DEBUGExitGodMove();
+        }
+    }
+    private void DEBUGExitGodMove() {
+        accelerationForce *= 0.1f;
+        swimSpeed *= 0.1f;
+        DEBUGToggleHitbox();
+    }
+
+    internal void DEBUGSetSpeed(float speed) {
+        swimSpeed = speed;
     }
 }

@@ -94,7 +94,9 @@ public class WorldGen : MonoBehaviour {
         _entityManager = EntityManager.Instance;
         // This should be in the constructor but I think this works like so?
         InitializeNoise();
+        
         worldSpawnEntities = App.ResourceSystem.GetAllWorldSpawnEntities();
+        //worldSpawnEntities = App.ResourceSystem.GetDebugEntity(); // For debug only!!
         var maxD = -_settings.trenchBaseWidth / _settings.trenchWidenFactor;
         maxDepth = Mathf.Abs(maxD) * 0.90f; // 90% of the max theoretical depth, shader also uses 90%
        
@@ -107,6 +109,7 @@ public class WorldGen : MonoBehaviour {
         // Generate large offsets based on the seed to shift noise patterns
         seedOffsetX = noiseRandomGen.NextFloat(-10000f, 10000f);
         seedOffsetY = noiseRandomGen.NextFloat(-10000f, 10000f);
+        App.ResourceSystem.InitializeWorldEntities(_settings.seed, new(seedOffsetX, seedOffsetY));
         // Note: Unity.Mathematics.noise doesn't *directly* use this Random object for per-call randomness,
         // but we use it here to get deterministic offsets for the noise input coordinates.
     }
@@ -566,8 +569,9 @@ public class WorldGen : MonoBehaviour {
         List<EntitySpawnInfo> entities = new List<EntitySpawnInfo>();
         HashSet<Vector2Int> occupiedAnchors = new HashSet<Vector2Int>();
         List<WorldSpawnEntitySO> entityList = new List<WorldSpawnEntitySO>(worldSpawnEntities);
-        Shuffle(entityList);  // So it doesn't just always try to spawn the first entity first
-
+        //Shuffle(entityList);  // So it doesn't just always try to spawn the first entity first
+        // So larger entities have a chanse to spawn first. 
+        entityList.Sort((a, b) => b.GetBoundSize().CompareTo(a.GetBoundSize()));
         for (int y = 0; y < CHUNK_TILE_DIMENSION; y++) {
             for (int x = 0; x < CHUNK_TILE_DIMENSION; x++) {
                 ushort anchorTileID = chunkData.tiles[x, y];
@@ -581,6 +585,9 @@ public class WorldGen : MonoBehaviour {
                 int worldX = chunkOriginCell.x * CHUNK_TILE_DIMENSION + x;
                 int worldY = chunkOriginCell.y * CHUNK_TILE_DIMENSION + y;
 
+                // Global placement value
+                if (SampleNoise(worldX, worldY, 0.5f, new(seedOffsetX, seedOffsetY)) < 0.7f)
+                    continue;
                 // --- Iterate through Entity Definitions ---
                 foreach (var entityDef in entityList) {
                     if (entityDef.entityPrefab == null)
@@ -588,7 +595,7 @@ public class WorldGen : MonoBehaviour {
                     if (entityDef.spawnConditions == null)
                         continue;
                     // 1. Stochastic Check
-                    float placementValue = GetNoise(worldX, worldY, entityDef.placementFrequency,entityDef.ID);
+                    float placementValue = SampleNoise(worldX, worldY, entityDef.placementFrequency, entityDef.PlacementOffset);
                     if (placementValue < entityDef.placementThreshold)
                         continue;
 
@@ -600,7 +607,13 @@ public class WorldGen : MonoBehaviour {
                     var b = GetBiomeFromChunk(chunkData, CHUNK_TILE_DIMENSION, x, y);
                     if (b == byte.MaxValue || !entityDef.spawnConditions.requiredBiomes.Contains((BiomeType)b))
                         continue;
-
+                    /*
+                    // DEBUG JUST LOOKING HOW NOISE LOOKS
+                    // --- ALL CHECKS PASSED --- Spawn this entity ---
+                    Vector3Int spawnPoz = new(worldX, worldY);
+                    entities.Add(new EntitySpawnInfo(entityDef.entityID, spawnPoz, Quaternion.identity));
+                    break;
+                    */
                     // --- 3. Attachment and Clearance Checks ---
                     bool canSpawn = true;
                     //bool canSpawnBiome = false;
@@ -704,8 +717,8 @@ public class WorldGen : MonoBehaviour {
                     // --- ALL CHECKS PASSED --- Spawn this entity ---
                     Vector3Int spawnPos = new(worldX, worldY);
                     entities.Add(new EntitySpawnInfo(entityDef.entityID, spawnPos, spawnRot));
-                    //occupiedAnchors.Add(new Vector2Int(x, y));
                     occupiedAnchors.AddRange(occopied);
+                    //occupiedAnchors.Add(new Vector2Int(x, y));
                     break; // Spawned one entity for this anchor, move to next anchor
                 }
             }
@@ -768,14 +781,11 @@ public class WorldGen : MonoBehaviour {
         }
         return false;
     }
-    private float GetNoise(float x, float y, float frequency, int seed = 0) {
-        // Apply seed offsets and frequency
-        System.Random random = new System.Random(seed);
-        var rx = random.Next(-10000, 10000); // min inclusive, max exclusive
-        var ry = random.Next(-10000, 10000); // min inclusive, max exclusive
-        float sampleX = (x + seedOffsetX + rx) * frequency;
-        float sampleY = (y + seedOffsetY + ry) * frequency;
-        // noise.snoise returns value in range [-1, 1], remap to [0, 1]
+
+    private float SampleNoise(float x, float y, float frequency, Vector2 offset) {
+        float sampleX = (x + offset.x) * frequency;
+        float sampleY = (y + offset.y) * frequency;
+        // noise.snoise returns [-1,1]
         return (noise.snoise(new float2(sampleX, sampleY)) + 1f) * 0.5f;
     }
     // Helper for deterministic hashing (useful for structure placement)

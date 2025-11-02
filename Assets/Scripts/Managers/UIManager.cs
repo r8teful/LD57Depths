@@ -49,4 +49,14 @@ public class UIManager : Singleton<UIManager> {
 
         UpgradeScreen.PanelHide();
     }
+
+    public void DEBUGToggleALLUI() {
+        var cg = GetComponent<CanvasGroup>();
+        if(cg.alpha >= 1) {
+            cg.alpha = 0.0f;
+        } else {
+            cg.alpha = 1.0f;
+        }
+
+    }
 }

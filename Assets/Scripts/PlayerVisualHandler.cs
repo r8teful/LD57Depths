@@ -1,6 +1,7 @@
 ﻿using FishNet.Component.Animating;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using System;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using static PlayerMovement;
@@ -335,6 +336,27 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
                     collider.enabled = isActive;
             }
             // Add more types if necessary (Light, ParticleSystem, etc.)
+        }
+    }
+
+    internal void DEBUGToggleHitbox(PlayerState state) {
+        switch (state) {
+            case PlayerState.Swimming:
+                if (playerSwimCollider.enabled) {
+                    playerSwimCollider.enabled = false;
+                } else {
+                    playerSwimCollider.enabled = true;
+                }
+                break;
+            case PlayerState.Grounded:
+                if (playerWalkCollider.enabled) {
+                    playerWalkCollider.enabled = false;
+                } else {
+                    playerWalkCollider.enabled = true;
+                }
+                break;
+            default:
+                break;
         }
     }
 }

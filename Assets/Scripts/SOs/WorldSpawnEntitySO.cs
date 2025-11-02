@@ -9,17 +9,17 @@ using UnityEngine;
 public class WorldSpawnEntitySO : EntityBaseSO {
     [Header("Placement Rules")]
     public float placementFrequency = 0.1f; // Noise frequency for density/clustering control
-    [Range(0f, 1f)] public float placementThreshold = 0.7f; // Noise value needed at anchor point
+    [Range(0f, 1f)] public float placementThreshold = 0.7f; // Noise value needed at anchor point less = more dence 
     public List<AttachmentType> allowedAttachmentTypes;
-    [Header("Spawn Conditions at Anchor Point")]
-    public bool requireSolidGround = true; // Must the anchor tile be 'rock'?
-    public bool requireWaterAdjacent = false;   // Must be next to MainWater or CaveWater?
-    [HideInInspector]
-    public (Vector2Int, Vector2Int) BoundingOffset;
+    [ReadOnly]
+    public (Vector2Int, Vector2Int) BoundingOffset; 
     [OnValueChanged("Test")]
     [TableMatrix(DrawElementMethod = "DrawColoredEnumElement", ResizableColumns = false,
         SquareCells =true,HideColumnIndices =false,HideRowIndices =false)]
     public bool[,] areaMatrix = new bool[9, 9];
+
+    [HideInInspector]
+    public Vector2 PlacementOffset; // used for world gen to have it sample randomly for each entity
 #if UNITY_EDITOR
     private static bool DrawColoredEnumElement(Rect rect, bool value) {
         if (Event.current.type == EventType.MouseDown && rect.Contains(Event.current.mousePosition)) {
@@ -69,8 +69,15 @@ public class WorldSpawnEntitySO : EntityBaseSO {
         var (minRowOffset, minColOffset, maxRowOffset, maxColOffset) = RemapBounds(minRow,minCol,maxRow,maxCol);
 
         //Debug.Log($"OLD {minRow}, {minCol} AND {maxRow}, {maxCol}");
-        //Debug.Log($"{minRowOffset}, {minColOffset} AND {maxRowOffset}, {maxColOffset}");
+        Debug.Log($"{minRowOffset}, {minColOffset} AND {maxRowOffset}, {maxColOffset}");
         return (new(minRowOffset, minColOffset), new(maxRowOffset, maxColOffset));
+    }
+
+    // Used so that we can spawn higher size before smaller size in world gen 
+    public int GetBoundSize() {
+        var lowerLeft = BoundingOffset.Item1;
+        var topRight = BoundingOffset.Item2;
+        return Mathf.Abs(lowerLeft.x - topRight.x) * Mathf.Abs(topRight.y - lowerLeft.y);
     }
     // Remaps a single (row, col) point.
     private static (int row, int col) RemapPoint(int row, int col) {
@@ -99,8 +106,28 @@ public class WorldSpawnEntitySO : EntityBaseSO {
         return (newMinRow, newMinCol, newMaxRow, newMaxCol);
     }
 
-    internal void Init() {
+    internal void Init(int worldSeed, Vector2 worldOffset) {
+
         BoundingOffset = GetBoundingOffset();
+        PlacementOffset = GetPlaceOffset(worldSeed, worldOffset);
+    }
+
+    internal Vector2 GetPlaceOffset(int seed, Vector2 worldOffset) {
+        uint combinedSeed = HashCombine((uint)seed, (uint)((int)placementFrequency ^ ID));
+
+        var rnd = new Unity.Mathematics.Random(combinedSeed);
+        float perX = rnd.NextFloat(-2000f, 2000f); // smaller range relative to world offset
+        float perY = rnd.NextFloat(-2000f, 2000f);
+        return new Vector2(worldOffset.x + perX, worldOffset.y + perY);
+    }
+
+    // Simple deterministic seed combiner (non-cryptographic)
+    private static uint HashCombine(uint a, uint b) {
+        // SplitMix-like mixing
+        uint x = a + 0x9e3779b9u + (b << 6) + (b >> 2);
+        x ^= b;
+        x *= 0x85ebca6bu;
+        return x;
     }
 }
 

@@ -1,6 +1,7 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Playables;
 using UnityEngine.Animations;
+using UnityEngine.Playables;
 
 [AddComponentMenu("Debug/Debug Play Animation")]
 public class DebugPlayAnimation : MonoBehaviour {
@@ -12,24 +13,31 @@ public class DebugPlayAnimation : MonoBehaviour {
     [Header("Animation selection")]
     [Tooltip("If true the assigned AnimationClip will be played directly (via Playables). Otherwise the Animator state name will be used.")]
     public bool useClip = false;
+
     public bool playFollowUp = false;
+    
     [Tooltip("Animation clip to play when 'useClip' is true.")]
+
+    [ShowIf("useClip")]
     public AnimationClip clip;
+    [ShowIf("playFollowUp")]
     public AnimationClip followUpClip;
     [Tooltip("Animator state name (or full path like \"LayerName.StateName\") used when 'useClip' is false.")]
+
+    [HideIf("useClip")]
     public string stateName;
     [Tooltip("Normalized start time (0..1) when using stateName playback.")]
+    [HideIf("useClip")]
     [Range(0f, 1f)]
     public float normalizedStartTime = 0f;
 
     private Coroutine clipCoroutine;         
     private Coroutine followUpCoroutine;   
 
-    public float followUpDelay = 0f;
     [Header("Crossfade (state-name playback)")]
     [Tooltip("Crossfade instead of hard play when playing by state name.")]
     public bool crossfade = true;
-    [Tooltip("Crossfade duration in seconds.")]
+    [ShowIf("crossfade")]
     public float crossfadeDuration = 0.1f;
 
     // Playables
@@ -121,7 +129,7 @@ public class DebugPlayAnimation : MonoBehaviour {
         {
             // if we're allowed to play a follow-up, and this clip isn't already the follow-up itself
             if (playFollowUp && !isFollowUp && followUpClip != null) {
-                followUpCoroutine = StartCoroutine(PlayFollowUpAfter(followUpDelay));
+                followUpCoroutine = StartCoroutine(PlayerFollowUp());
             }
         }));
     }
@@ -135,13 +143,11 @@ public class DebugPlayAnimation : MonoBehaviour {
 
         onComplete?.Invoke();
     }
-    private System.Collections.IEnumerator PlayFollowUpAfter(float delay) {
-        if (delay > 0f)
-            yield return new WaitForSeconds(delay);
-
+    private System.Collections.IEnumerator PlayerFollowUp() {
         followUpCoroutine = null;
         // call PlayClip for the follow-up; mark it as 'isFollowUp' so we don't recursively schedule it again
         PlayClip(followUpClip, isFollowUp: true);
+        yield return null;
     }
 
     private System.Collections.IEnumerator WaitForStateAndThenPlayFollowUp(string stateNameToWaitFor) {
@@ -156,7 +162,7 @@ public class DebugPlayAnimation : MonoBehaviour {
                 // Calculate remaining time in that state's current cycle (respect normalizedStartTime)
                 float remaining = Mathf.Max(0f, (1f - normalizedStartTime) * info.length);
                 // Wait for remaining + optional followUpDelay, then play the follow-up
-                yield return new WaitForSeconds(remaining + followUpDelay);
+                yield return new WaitForSeconds(remaining);
                 followUpCoroutine = null;
                 PlayClip(followUpClip, isFollowUp: true);
                 yield break;
@@ -168,9 +174,6 @@ public class DebugPlayAnimation : MonoBehaviour {
 
         // If we hit the timeout, just attempt to play follow-up after the delay as a fallback
         followUpCoroutine = null;
-        if (followUpDelay > 0f)
-            yield return new WaitForSeconds(followUpDelay);
-
         PlayClip(followUpClip, isFollowUp: true);
     }
     private void StopAndDestroyGraph() {

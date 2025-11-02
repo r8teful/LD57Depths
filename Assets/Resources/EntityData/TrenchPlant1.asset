@@ -45,7 +45,7 @@ MonoBehaviour:
       Data: 1
     - Name: 
       Entry: 3
-      Data: 1
+      Data: 2
     - Name: 
       Entry: 8
       Data: 
@@ -318,10 +318,11 @@ MonoBehaviour:
     minY: -10000
     maxY: 2000
     specificSpawnTiles: []
-  placementFrequency: 0.24
-  placementThreshold: 0.9
+  placementFrequency: 0.5
+  placementThreshold: 0.5
   allowedAttachmentTypes: 010000000300000004000000
   requireSolidGround: 1
   requireWaterAdjacent: 1
+  PlacementOffset: {x: -7101.73, y: 5905.538}
   randomYRotation: 0
   scaleVariation: {x: 1, y: 1}
