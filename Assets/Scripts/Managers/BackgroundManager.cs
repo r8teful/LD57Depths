@@ -41,23 +41,34 @@ public class BackgroundManager : MonoBehaviour {
         _blackSprite.enabled = false;
         biomeManager = bio;
 
+        bio.OnNewClientBiome += NewClientBiome;
         // Spawn particle systems
+        //SpawnTrashParticles();
+        
+    }
+
+    private void NewClientBiome(BiomeType biomeOld, BiomeType biomeNew) {
+        // This will only work for server host but you should make it so that its run locally on the client
+        // This now means that we should locally change particles / lighting / etc.
+
+    }
+
+    private void SpawnTrashParticles() {
         var parMain = Instantiate(trashParticles, Camera.main.transform).main;
         parMain.simulationSpace = ParticleSystemSimulationSpace.World;
-        
+
 
         var parMain2 = Instantiate(trashParticles, Camera.main.transform).main;
         parMain2.startSize = new ParticleSystem.MinMaxCurve(0.05f, 0.08f);
         parMain2.simulationSpace = ParticleSystemSimulationSpace.Custom;
         parMain2.customSimulationSpace = _parallaxLayers[1];
-        parMain2.maxParticles = 500;
-        
+        parMain2.maxParticles = 200;
+
         var parMain3 = Instantiate(trashParticles, Camera.main.transform).main;
         parMain3.startSize = new ParticleSystem.MinMaxCurve(0.03f, 0.05f);
         parMain3.simulationSpace = ParticleSystemSimulationSpace.Custom;
         parMain3.customSimulationSpace = _parallaxLayers[3];
-        parMain3.maxParticles = 500;
-    
+        parMain3.maxParticles = 200;
     }
 
     public void SetInteriorBackground(bool isInterior) {

@@ -73,8 +73,9 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             return;
         }
         // Only using these two for runtime spawning
-        StartCoroutine(SpawnCheckLoop());
-        StartCoroutine(DespawnCheckLoop());
+        
+        //StartCoroutine(SpawnCheckLoop());
+        //StartCoroutine(DespawnCheckLoop());
     }
 
     #region Runtime spawning

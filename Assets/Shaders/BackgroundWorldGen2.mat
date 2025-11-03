@@ -45,14 +45,15 @@ Material:
     - _CaveCutoff: 0.03
     - _CaveNoiseScale: 0.03
     - _CurrentBiomeIndex: 3
-    - _DarkenCurve: 0.82
-    - _DarkenMax: 0.5
+    - _DarkenCurve: 1
+    - _DarkenMax: 0
     - _DebugMode: 0.2
     - _EdgeColor: 0.1
     - _EdgeInnerRim: 7.4
     - _EdgeOuterRim: 48.29
-    - _EdgeThickness: 0.04
+    - _EdgeThickness: 11.4
     - _EdgeThicknessPixels: -8.65
+    - _FillMaskStep: 0
     - _NonEdgeDarkness: 0.92
     - _ParallaxFactor: 0.4
     - _PixelSize: 1.4
@@ -61,11 +62,11 @@ Material:
     - _TrenchBaseWiden: -0.05
     - _TrenchBaseWidth: 174.5
     - _TrenchEdgeAmp: 7.8
-    - _TrenchEdgeSens: 0.61
+    - _TrenchEdgeSens: 0.16
     - _TrenchNoiseScale: 0.164
     - _WorldUVScale: 1
     m_Colors:
-    - _CameraPos: {r: 1676.2079, g: -3807.4702, b: 0, a: 0}
+    - _CameraPos: {r: -2017.2971, g: -3311.1367, b: 0, a: 0}
     - _EdgeColor: {r: 1, g: 0, b: 0, a: 1}
     - _EdgeTintColor: {r: 0, g: 0, b: 0, a: 0.5529412}
     - _NonEdgeDarkness: {r: 0.017472003, g: 0.017472003, b: 0.10399995, a: 1}
