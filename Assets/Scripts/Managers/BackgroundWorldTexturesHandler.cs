@@ -1,4 +1,5 @@
 using Sirenix.OdinInspector;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,12 +10,21 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
     private WorldGenSettingSO _worldGenSetting;
     [SerializeField] private WorldGenSettingSO DEBUGWolrdSetting;
     public List<Material> layerMaterials; // 4 materials for 4 layers
+    public Material blurMat;
     public List<float> layerParallax; // each layer's parallax
     public List<float> layerPixelSize; // pixel sizes for each layer
     [OnValueChanged("PushBiomesToMaterials")]
     public float DebugupdateMaterial = 10f;
     public int numBiomes = 6;
+
+    public SpriteRenderer targetSprite; // sprite which will display final blurred RT
+    // 
+    RenderTexture rtA;
+    RenderTexture rtB;
+    int rtW, rtH;
+    public int downsample = 2;
     private void OnEnable() {
+        SetupRTs();
         //worldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterials; });
     }
     private void Awake() {
@@ -27,6 +37,7 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
     }
 
     void Update() {
+        if (Screen.width == 0 || Screen.height == 0) return;
         Vector3 camPos = Camera.main.transform.position;
         foreach (var mat in layerMaterials) {
             mat.SetVector("_CameraPos", new Vector4(camPos.x, camPos.y, 0, 0));
@@ -37,6 +48,65 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
             m.SetFloat("_ParallaxFactor", layerParallax[i]);
             m.SetFloat("_PixelSize", layerPixelSize[i]);
         }
+        /*
+        var blurIterations = 2;
+        var blurSpread = 1.0f;
+        int desiredW = Mathf.Max(1, Screen.width / Mathf.Max(1, downsample));
+        int desiredH = Mathf.Max(1, Screen.height / Mathf.Max(1, downsample));
+        if (rtA == null || rtW != desiredW || rtH != desiredH) {
+            SetupRTs();
+        }
+
+        // Render procedural material into rtA
+        Graphics.Blit(null, rtA, layerMaterials[0]); // TODO need render textures for all the backgrounds that will get blurred
+
+        // Start with rtA -> rtB (copy) so we always blur the procedural output
+        Graphics.Blit(rtA, rtB);
+
+        // Separable blur iterations: horizontal then vertical
+        for (int i = 0; i < blurIterations; i++) {
+            float iterationSpread = blurSpread + i;
+            blurMat.SetFloat("_BlurSize", iterationSpread);
+
+            // horizontal
+            Graphics.Blit(rtB, rtA, blurMat, 0);
+            // vertical
+            Graphics.Blit(rtA, rtB, blurMat, 1);
+        }
+
+        // Assign final blurred RT (rtB) to the sprite's material
+        // Make sure the sprite uses a shader that samples _MainTex (Sprites/Default or Unlit/Transparent)
+        Material matInstance = targetSprite.sharedMaterial;
+        if (matInstance == null || matInstance.name.Contains(" (Instance)") == false) {
+            // Create or clone to avoid modifying other sprites
+            matInstance = new Material(Shader.Find("Sprites/Default"));
+            targetSprite.sharedMaterial = matInstance;
+        }
+
+        matInstance.SetTexture("_MainTex", rtB);
+        */
+    }
+
+    void OnDisable() {
+        ReleaseRTs();
+    }
+
+  
+    void SetupRTs() {
+        ReleaseRTs();
+        rtW = Mathf.Max(1, Screen.width / Mathf.Max(1, downsample));
+        rtH = Mathf.Max(1, Screen.height / Mathf.Max(1, downsample));
+
+        rtA = new RenderTexture(rtW, rtH, 0, RenderTextureFormat.DefaultHDR) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+        rtA.Create();
+
+        rtB = new RenderTexture(rtW, rtH, 0, RenderTextureFormat.DefaultHDR) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+        rtB.Create();
+    }
+
+    void ReleaseRTs() {
+        if (rtA) { rtA.Release(); DestroyImmediate(rtA); rtA = null; }
+        if (rtB) { rtB.Release(); DestroyImmediate(rtB); rtB = null; }
     }
     public void PushBiomesToMaterials() {
         Debug.Log("pushing");

@@ -1,5 +1,22 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4065103772329332669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 153548b3f9259ba44a446ccd90e80ac3, type: 3}
+  m_Name: BackgroundBlurRenderFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings:
+    horizontalBlur: 0.4
+    verticalBlur: 0.315
+  shader: {fileID: 4800000, guid: 8247b436fb5ae0340943ec8c9668668b, type: 3}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24,9 +41,13 @@ MonoBehaviour:
     probeSamplingDebugMesh: {fileID: -3555484719484374845, guid: 57d7c4c16e2765b47a4d2069b311bffe, type: 3}
     probeSamplingDebugTexture: {fileID: 2800000, guid: 24ec0e140fb444a44ab96ee80844e18e, type: 3}
     probeVolumeBlendStatesCS: {fileID: 0}
-  m_RendererFeatures: []
-  m_RendererFeatureMap: 
+  m_RendererFeatures:
+  - {fileID: -4065103772329332669}
+  m_RendererFeatureMap: 43b0352ba8d995c7
   m_UseNativeRenderPass: 0
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_TransparencySortMode: 0
   m_TransparencySortAxis: {x: 0, y: 1, z: 0}
   m_HDREmulationScale: 1

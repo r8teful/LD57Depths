@@ -220,8 +220,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                 float band = saturate(s / localThickness);
             
                 // edge shape: keep the fillMask to ensure edges appear only inside filled area
-                // sharpen the inner rim with a power, as you did
-                edgeMask = pow(1.0 - smoothstep(0.0, 1.0, band), 3) * fillMask;
+                edgeMask = pow(1.0 - smoothstep(0.0, 1.0, band), 1.8) * fillMask;
             }
 
             // caves: s = caveNoise - cutoff  (caveNoise < cutoff -> hole because s < 0)
@@ -314,12 +313,12 @@ Shader "Custom/BackgroundWorldGenLayer"
                     float b_blockCut   = _blockCutoff[shiftedIndex];
                     float b_blockScale = _blockNoiseScale[shiftedIndex];
                     float b_blockAmp   = _blockNoiseAmp[shiftedIndex];
-                    float b_baseOctaves   = _baseOctaves[biomeIndex];
-                    float b_ridgeOctaves  = _ridgeOctaves[biomeIndex];
-                    float b_warpAmp       = _warpAmp[biomeIndex];
-                    float b_worldeyWeight = _worldeyWeight[biomeIndex];
-                    float b_caveType      = _caveType[biomeIndex];
-                    s = SampleBiomeBlockSigned(uv,_GlobalSeed, biomeIndex, b_blockScale,b_blockAmp,b_blockCut, b_caveType,
+                    float b_baseOctaves   = _baseOctaves[shiftedIndex];
+                    float b_ridgeOctaves  = _ridgeOctaves[shiftedIndex];
+                    float b_warpAmp       = _warpAmp[shiftedIndex];
+                    float b_worldeyWeight = _worldeyWeight[shiftedIndex];
+                    float b_caveType      = _caveType[shiftedIndex];
+                    s = SampleBiomeBlockSigned(uv,_GlobalSeed, shiftedIndex, b_blockScale,b_blockAmp,b_blockCut, b_caveType,
                         b_baseOctaves,b_ridgeOctaves,b_warpAmp,b_worldeyWeight, true);
                 }
             
