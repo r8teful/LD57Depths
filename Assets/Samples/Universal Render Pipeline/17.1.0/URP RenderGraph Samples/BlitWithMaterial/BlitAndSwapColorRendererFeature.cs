@@ -29,12 +29,20 @@ public class BlitAndSwapColorPass : ScriptableRenderPass
         //It's good practice to set it here and not from the RenderFeature. This way, the pass is selfcontaining and you can use it to directly enqueue the pass from a monobehaviour without a RenderFeature.
         requiresIntermediateTexture = true;
     }
-
-    public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
-    {
+    class PassData {
+        public TextureHandle backgroundTexture;
+        public TextureHandle tempBlurTexture;
+    }
+    public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData) {
+        using var builder = renderGraph.AddRasterRenderPass<PassData>("Create yellow texture", out var passData);
         // UniversalResourceData contains all the texture handles used by the renderer, including the active color and depth textures
         // The active color and depth textures are the main color and depth buffers that the camera renders into
         var resourceData = frameData.Get<UniversalResourceData>();
+
+        // Create a texture the size of the screen
+        TextureDesc textureDesc = resourceData.activeColorTexture.GetDescriptor(renderGraph);
+        TextureHandle textureHandle = renderGraph.CreateTexture(textureDesc);
+        builder.UseTexture(textureHandle); // Read texture? 
 
         //This should never happen since we set m_Pass.requiresIntermediateTexture = true;
         //Unless you set the render event to AfterRendering, where we only have the BackBuffer. 
@@ -47,7 +55,6 @@ public class BlitAndSwapColorPass : ScriptableRenderPass
         // The destination texture is created here, 
         // the texture is created with the same dimensions as the active color texture
         var source = resourceData.activeColorTexture;
-
         var destinationDesc = renderGraph.GetTextureDesc(source);
         destinationDesc.name = $"CameraColor-{m_PassName}";
         destinationDesc.clearBuffer = false;
