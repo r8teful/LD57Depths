@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Custom_GausianBlurBlit
+  m_Name: Background1Blur
   m_Shader: {fileID: 4800000, guid: 8d6511aee6925ba49a2242b10a33613d, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -29,11 +29,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BlurSize: 2
+    - _BlurSize: 1
     - _Glossiness: 0.5
     - _Metallic: 0
-    - _Radius: 3
-    - _Sigma: 2
+    - _Radius: 0.4
+    - _Sigma: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

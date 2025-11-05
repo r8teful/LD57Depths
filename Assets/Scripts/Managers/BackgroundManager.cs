@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BackgroundManager : MonoBehaviour {
     public GameObject trenchBackgroundContainer;
@@ -8,7 +9,6 @@ public class BackgroundManager : MonoBehaviour {
     public ParticleSystem trashParticles;
     private Transform[] _parallaxLayers; // The four parallax layers
     public SpriteRenderer _blackSprite;
-    private List<TranchBackgroundSprite> _trenchSprites= new List<TranchBackgroundSprite>();
 
     private List<BackgroundObjectSO> backgroundObjectDatas;
     private Transform player;
@@ -25,10 +25,6 @@ public class BackgroundManager : MonoBehaviour {
         var parallaxCount = parallaxObjectsContainer.transform.childCount;
         _parallaxLayers = new Transform[parallaxCount];
         objectsPerLayer = new int[_parallaxLayers.Length];
-        foreach(var t in trenchBackgroundContainer.GetComponentsInChildren<TranchBackgroundSprite>()) {
-            t.SetTrenchSettings(worldGenSettings);
-            _trenchSprites.Add(t);
-        }
         
         for (int i = 0; i < parallaxCount; i++)
         {
@@ -135,7 +131,9 @@ public class BackgroundManager : MonoBehaviour {
                         GameObject newObj = Instantiate(data.prefab, new Vector3(spawnPos.x, spawnPos.y, 0), Quaternion.identity);
                         if (newObj.TryGetComponent<IBackgroundObject>(out var iBackground)) {
                             // iComp is your interface reference
-                            iBackground.Init(_trenchSprites[layerIndex].BackgroundColor,layerIndex, _trenchSprites[layerIndex].OrderInLayer);
+                            // TODO we changed the background, its not just a solid colour anymore, we could just spawn objects with their usual colour?
+                            // They'll need to be set as the same layer as the background they are on, then they'll get blurred nicely
+                            //iBackground.Init(_trenchSprites[layerIndex].BackgroundColor,layerIndex, _trenchSprites[layerIndex].OrderInLayer);
                         }
                         newObj.transform.SetParent(_parallaxLayers[layerIndex], true);
                         spawnedObjects[data].Add(newObj);

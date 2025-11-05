@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab96b7bab340136419d51565c9c2a1d2, type: 3}
   m_Name: BackgroundBlurSimple
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   settings:
-    horizontalBlur: 0.114
-    verticalBlur: 0.103
-  shader: {fileID: 4800000, guid: 8d6511aee6925ba49a2242b10a33613d, type: 3}
+    horizontalBlur: 0.033
+    verticalBlur: 0.025
+  shader: {fileID: 4800000, guid: 8247b436fb5ae0340943ec8c9668668b, type: 3}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45,12 +45,13 @@ MonoBehaviour:
   - {fileID: 2512346518236175523}
   - {fileID: 6823609508337139348}
   - {fileID: -979114512148208843}
-  m_RendererFeatureMap: a31c28ecd8a5dd2294be69deb154b25e35e3f9ec897c69f2
+  - {fileID: 2512186350461540093}
+  m_RendererFeatureMap: a31c28ecd8a5dd2294be69deb154b25e35e3f9ec897c69f2fd56d8f42c14dd22
   m_UseNativeRenderPass: 0
   m_LayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_TransparencySortMode: 0
+  m_TransparencySortMode: 2
   m_TransparencySortAxis: {x: 0, y: 1, z: 0}
   m_HDREmulationScale: 1
   m_LightRenderTextureScale: 0.287
@@ -76,6 +77,29 @@ MonoBehaviour:
   m_PostProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_DefaultMaterialType: 0
   m_DefaultCustomMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+--- !u!114 &2512186350461540093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 980a78cc4df543b29a2663be288cd2f5, type: 3}
+  m_Name: UniversalBlurFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  iterations: 6
+  downsample: 5.47
+  enableMipMaps: 0
+  scale: 2.7
+  offset: 1.25
+  scaleBlurWith: 1
+  scaleReferenceSize: 1080
+  blurType: 0
+  injectionPoint: 500
+  shader: {fileID: 4800000, guid: bb11bdc2e8aaf4c80b5315f3778d7ad4, type: 3}
 --- !u!114 &2512346518236175523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,9 +129,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 0
   settings:
-    horizontalBlur: 0.139
-    verticalBlur: 0.133
-  shader: {fileID: 4800000, guid: 8d6511aee6925ba49a2242b10a33613d, type: 3}
+    horizontalBlur: 0.185
+    verticalBlur: 0.145
+  shader: {fileID: 4800000, guid: 8247b436fb5ae0340943ec8c9668668b, type: 3}
   layerMask:
     serializedVersion: 2
     m_Bits: 8183

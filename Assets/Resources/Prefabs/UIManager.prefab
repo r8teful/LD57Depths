@@ -1562,6 +1562,10 @@ MonoBehaviour:
   <UpgradeScreen>k__BackingField: {fileID: 7822304368068707891}
   <UIManagerInventory>k__BackingField: {fileID: 3842612885317811593}
   <UISubControlPanel>k__BackingField: {fileID: 875838258953143664}
+  _backgroundRawImages:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &4979282666481976631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1583,7 +1587,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8002886730946339955}
   m_Enabled: 1
-  m_Alpha: 0.71
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0

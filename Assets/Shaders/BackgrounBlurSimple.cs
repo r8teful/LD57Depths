@@ -81,8 +81,6 @@ public class BackgroundBlurSimple : ScriptableRendererFeature {
             if (!srcCamColor.IsValid() || !dst.IsValid())
                 return;
 
-            // finally run the fucking shader
-
             // The AddBlitPass method adds a vertical blur render graph pass that blits from the source texture (camera color in this case) to the destination texture using the first shader pass (the shader pass is defined in the last parameter).
             RenderGraphUtils.BlitMaterialParameters paraVertical = new(srcCamColor, dst, material, 0);
             renderGraph.AddBlitPass(paraVertical, k_VerticalPassName);

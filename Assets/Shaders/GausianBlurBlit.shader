@@ -70,8 +70,8 @@ Shader "Hidden/GausianBlurblit"
             float4 GaussianBlurSeparable(Texture2D tex, SamplerState samp, float2 delta, float2 uv, float sigma, int radius)
             {
                 int idx = -radius;
-                float4 res = 0;
-
+                float3 accumRGB = float3(0.0, 0.0, 0.0);
+                float accumA = 0.0;
                 const float totalWeightRcp = 1.0 / GaussianWeightSum1D(sigma, radius);
 
                 // iterate radius+1 pairing, using bilinear sampling to fetch two texels
@@ -87,9 +87,10 @@ Shader "Hidden/GausianBlurblit"
                     const float texelOffset = isNarrow ? 0.0 : w1 / (w0 + w1);
                     const float2 sampleUV = uv + (x0 + texelOffset) * delta;
                     const float weight = (w0 + w1) * totalWeightRcp;
-
-                    res += tex.Sample(samp, sampleUV) * weight;
-
+                    
+                    float4 s = tex.Sample(samp, sampleUV);
+                    accumRGB += s.rgb * s.a * weight;
+                    accumA   += s.a * weight;
                     // step
                     if ((radius & 1) == 1 && x1 == 0)
                     {
@@ -100,7 +101,22 @@ Shader "Hidden/GausianBlurblit"
                         idx = x1 + 1;
                     }
                 }
-                return res;
+                
+                float centerA = tex.Sample(samp, uv).a;
+                if (centerA <= 1e-5)   // treat as fully transparent
+                    return float4(0,0,0,0);
+                
+                // if no alpha contributed, return transparent; otherwise return straight alpha color
+                if (accumA <= 1e-6)
+                {
+                    return float4(0, 0, 0, 0);
+                }
+                else
+                {
+                    return float4(accumRGB, saturate(accumA));
+                    //float3 outRGB = accumRGB / accumA;
+                    //return float4(outRGB, accumA);
+                }
             }
 
             float4 frag_h(v2f i) : SV_Target
@@ -169,10 +185,11 @@ Shader "Hidden/GausianBlurblit"
             float4 GaussianBlurSeparable(Texture2D tex, SamplerState samp, float2 delta, float2 uv, float sigma, int radius)
             {
                 int idx = -radius;
-                float4 res = 0;
-
+                float3 accumRGB = float3(0.0, 0.0, 0.0);
+                float accumA = 0.0;
                 const float totalWeightRcp = 1.0 / GaussianWeightSum1D(sigma, radius);
 
+                // iterate radius+1 pairing, using bilinear sampling to fetch two texels
                 for (int i = 0; i < radius + 1; ++i)
                 {
                     const int x0 = idx;
@@ -185,9 +202,11 @@ Shader "Hidden/GausianBlurblit"
                     const float texelOffset = isNarrow ? 0.0 : w1 / (w0 + w1);
                     const float2 sampleUV = uv + (x0 + texelOffset) * delta;
                     const float weight = (w0 + w1) * totalWeightRcp;
-
-                    res += tex.Sample(samp, sampleUV) * weight;
-
+                    
+                    float4 s = tex.Sample(samp, sampleUV);
+                    accumRGB += s.rgb * s.a * weight;
+                    accumA   += s.a * weight;
+                    // step
                     if ((radius & 1) == 1 && x1 == 0)
                     {
                         idx = 0;
@@ -197,7 +216,22 @@ Shader "Hidden/GausianBlurblit"
                         idx = x1 + 1;
                     }
                 }
-                return res;
+                
+                float centerA = tex.Sample(samp, uv).a;
+                if (centerA <= 1e-5)   // treat as fully transparent
+                    return float4(0,0,0,0);
+                
+                // if no alpha contributed, return transparent; otherwise return straight alpha color
+                if (accumA <= 1e-6)
+                {
+                    return float4(0, 0, 0, 0);
+                }
+                else
+                {
+                    return float4(accumRGB, saturate(accumA));
+                    //float3 outRGB = accumRGB / accumA;
+                    //return float4(outRGB, accumA);
+                }
             }
 
             float4 frag_v(v2f i) : SV_Target

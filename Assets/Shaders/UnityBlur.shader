@@ -16,7 +16,7 @@ Shader "CustomEffects/UnityBlur"
             const float BLUR_SAMPLES_RANGE = BLUR_SAMPLES / 2;
             
             float3 color = 0;
-            float blurPixels = _VerticalBlur * _ScreenParams.y;
+            float blurPixels = 10 * _ScreenParams.y;
             
             for(float i = -BLUR_SAMPLES_RANGE; i <= BLUR_SAMPLES_RANGE; i++)
             {
@@ -35,7 +35,7 @@ Shader "CustomEffects/UnityBlur"
             
             UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
             float3 color = 0;
-            float blurPixels = _HorizontalBlur * _ScreenParams.x;
+            float blurPixels = 10 * _ScreenParams.x;
             for(float i = -BLUR_SAMPLES_RANGE; i <= BLUR_SAMPLES_RANGE; i++)
             {
                 float2 sampleOffset =
