@@ -41,12 +41,8 @@ MonoBehaviour:
     probeSamplingDebugMesh: {fileID: -3555484719484374845, guid: 57d7c4c16e2765b47a4d2069b311bffe, type: 3}
     probeSamplingDebugTexture: {fileID: 2800000, guid: 24ec0e140fb444a44ab96ee80844e18e, type: 3}
     probeVolumeBlendStatesCS: {fileID: 0}
-  m_RendererFeatures:
-  - {fileID: 2512346518236175523}
-  - {fileID: 6823609508337139348}
-  - {fileID: -979114512148208843}
-  - {fileID: 2512186350461540093}
-  m_RendererFeatureMap: a31c28ecd8a5dd2294be69deb154b25e35e3f9ec897c69f2fd56d8f42c14dd22
+  m_RendererFeatures: []
+  m_RendererFeatureMap: 
   m_UseNativeRenderPass: 0
   m_LayerMask:
     serializedVersion: 2
@@ -77,44 +73,6 @@ MonoBehaviour:
   m_PostProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_DefaultMaterialType: 0
   m_DefaultCustomMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
---- !u!114 &2512186350461540093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 980a78cc4df543b29a2663be288cd2f5, type: 3}
-  m_Name: UniversalBlurFeature
-  m_EditorClassIdentifier: 
-  m_Active: 1
-  iterations: 6
-  downsample: 5.47
-  enableMipMaps: 0
-  scale: 2.7
-  offset: 1.25
-  scaleBlurWith: 1
-  scaleReferenceSize: 1080
-  blurType: 0
-  injectionPoint: 500
-  shader: {fileID: 4800000, guid: bb11bdc2e8aaf4c80b5315f3778d7ad4, type: 3}
---- !u!114 &2512346518236175523
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77eb6cb355f03b344a41286db9580ec6, type: 3}
-  m_Name: BlitAndSwapColorRendererFeature
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  material: {fileID: 2100000, guid: 8a71df55532db1d43b360c40a9f67532, type: 2}
-  renderPassEvent: 500
 --- !u!114 &6823609508337139348
 MonoBehaviour:
   m_ObjectHideFlags: 0

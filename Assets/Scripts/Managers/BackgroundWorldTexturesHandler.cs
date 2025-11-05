@@ -2,30 +2,19 @@ using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using static Unity.VisualScripting.Member;
 
 public class BackgroundWorldTexturesHandler : MonoBehaviour {
     // Example fields
     private WorldGenSettingSO _worldGenSetting;
     [SerializeField] private WorldGenSettingSO DEBUGWolrdSetting;
     public List<Material> layerMaterials; // 4 materials for 4 layers
-    public Material[] blurMaterials;
-    public Material[] outputMaterials;
     public List<float> layerParallax; // each layer's parallax
     public List<float> layerPixelSize; // pixel sizes for each layer
     [OnValueChanged("PushBiomesToMaterials")]
     public float DebugupdateMaterial = 10f;
     public int numBiomes = 6;
-    private static readonly int BlurSizeID = Shader.PropertyToID("_BlurSize");
-    public SpriteRenderer targetSprite; // sprite which will display final blurred RT
-    // 
-    [SerializeField] private RenderTextureCamera[] _backgroundCameras; // The cameras that render the background layers
-    [SerializeField] private RenderTexture[] _outputRenderTextures; // The cameras that render the background layers
     
-    private RenderTexture[] _intermediateRenderTextures = new RenderTexture[3]; // The cameras that render the background layers
     private void OnEnable() {
-        SetupRTs();
         //worldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterials; });
     }
     private void Awake() {
@@ -49,70 +38,9 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
             m.SetFloat("_ParallaxFactor", layerParallax[i]);
             m.SetFloat("_PixelSize", layerPixelSize[i]);
         }
-        
-        var blurIterations = 1;
-        var blurSpread = 1.0f;
-        if (_intermediateRenderTextures == null || _intermediateRenderTextures.Length == 0) {
-            SetupRTs();
-        }
-
-        // Render procedural material into rtA
-        //Graphics.Blit(null, rtA, layerMaterials[0]); // TODO need render textures for all the backgrounds that will get blurred
-
-        // Start with rtA -> rtB (copy) so we always blur the procedural output
-        //Graphics.Blit(rtA, rtB);
-        // Separable blur iterations: horizontal then vertical
-        for (int i = 0; i < blurIterations; i++) {
-            float iterationSpread = blurSpread + i;
-            blurMaterials[i].SetFloat(BlurSizeID, iterationSpread);
-
-            // Now loop through the backgrounds
-            for (int j = 0; j < _backgroundCameras.Length; j++) {
-                // horizontal
-                Graphics.Blit(_backgroundCameras[j].GetInput, _intermediateRenderTextures[j], blurMaterials[j], 0);
-                // vertical
-                Graphics.Blit(_intermediateRenderTextures[j], _outputRenderTextures[j], blurMaterials[j], 1);
-            }
-        }
-
-        // Assign final blurred RT (rtB) to the sprite's material
-        // Make sure the sprite uses a shader that samples _MainTex (Sprites/Default or Unlit/Transparent)
-        //if (targetSprite == null)
-        //    return;
-        //Material matInstance = targetSprite.material;
-        //if (matInstance == null || matInstance.name.Contains(" (Instance)") == false) {
-        //    // Create or clone to avoid modifying other sprites
-        //    matInstance = new Material(Shader.Find("Sprites/Default"));
-        //    targetSprite.sharedMaterial = matInstance;
-        //}
-        for (int j = 0; j < _backgroundCameras.Length; j++) {
-            // horizontal
-            if (outputMaterials[j] == null) continue;
-            outputMaterials[j].SetTexture("_InputTex", _outputRenderTextures[j]);
-        }
+       
     }
-
-    void OnDisable() {
-        ReleaseRTs();
-    }
-
   
-    void SetupRTs() {
-        _intermediateRenderTextures = new RenderTexture[3]; 
-        //rtA = new RenderTexture(rtW, rtH, 0, RenderTextureFormat.DefaultHDR) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
-        for (int i = 0; i < _backgroundCameras.Length; i++) {
-            _intermediateRenderTextures[i] = new RenderTexture(_outputRenderTextures[i]); // Copy the settings of the destination output rT
-            _intermediateRenderTextures[i].Create();
-        }
-    }
-
-    void ReleaseRTs() {
-        for (int i = 0; i < _backgroundCameras.Length; i++) {
-            _intermediateRenderTextures[i].Release();
-            DestroyImmediate(_intermediateRenderTextures[i]);
-            _intermediateRenderTextures[i] = null;
-        }
-    }
     public void PushBiomesToMaterials() {
         Debug.Log("pushing");
         if(_worldGenSetting == null) {
