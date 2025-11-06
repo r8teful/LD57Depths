@@ -26,18 +26,23 @@ public struct GenerateOresJob : IJob {
                 float worldX = chunkCoord.x * chunkSize + x;
                 float worldY = chunkCoord.y * chunkSize + y;
 
+                if (currentTile == 0) {
+                    continue; // This ore can't replace the current tile, try the next ore
+                }
+
                 // Loop through all possible ores for this tile
                 for (int i = 0; i < oreDefinitions.Length; i++) {
                     OreDefinition ore = oreDefinitions[i];
 
+                    // !! Removing specific tile replacements now, ores can just spawn anyware if its not a air or special other block, I guess..
                     // 1. Check if we can even place this ore here
-                    if (currentTile != ore.replaceableTileID) {
-                        continue; // This ore can't replace the current tile, try the next ore
-                    }
+                    //if (currentTile != ore.replaceableTileID) {
+                    //    continue; // This ore can't replace the current tile, try the next ore
+                    //}
                     // 1. Quick check: Are we even within this ore's vertical band?
                     // (Remember, deeper means smaller Y values)
-                    if (worldY < ore.startDepth || worldY > ore.stopDepth) {
-                        //Debug.Log("ORE: " + ore.tileID  + " worldY: " + worldY + " startDepth: " + ore.startDepth + " stopDepth: " + ore.stopDepth);
+                    //Debug.Log("ORE: " + ore.tileID  + " worldY: " + worldY + " startDepth: " + ore.startDepth + " stopDepth: " + ore.stopDepth);
+                    if (worldY <= ore.startDepth || worldY >= ore.stopDepth) {
                         continue;
                     }
                     float currentChance;

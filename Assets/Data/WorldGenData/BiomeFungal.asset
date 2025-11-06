@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EdgeNoiseScale: 0.1
   EdgeNoiseAmp: 16.81
-  BlockNoiseScale: 0.02
-  BlockNoiseAmp: 0.04
+  BlockNoiseScale: 0.03
+  BlockNoiseAmp: 0.05
   BlockCutoff: 0.01
   BaseOctaves: 3
-  RidgeOctaves: 2
-  WarpAmp: 2.21
-  WorleyWeight: 2.42
+  RidgeOctaves: 20
+  WarpAmp: 1
+  WorleyWeight: 3.59
   CaveType: 0
   HorSize: 668.2
   YHeight: 463
@@ -28,4 +28,4 @@ MonoBehaviour:
   AirColor: {r: 1, g: 0.52156866, b: 1, a: 1}
   YStart: -3981
   XOffset: -736.4
-  DarkenedColor: {r: 0.034999993, g: 0, b: 0.05, a: 1}
+  DarkenedColor: {r: 0.055384636, g: 0, b: 0.08, a: 1}

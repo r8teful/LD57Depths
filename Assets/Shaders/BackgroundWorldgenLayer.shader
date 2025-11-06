@@ -9,7 +9,7 @@ Shader "Custom/BackgroundWorldGenLayer"
         _WorldUVScale ("World UV Scale", Float) = 1.0
         _CameraPos ("Camera World Pos", Vector) = (0,0,0,0)
         _ParallaxFactor ("Parallax Factor", Float) = 0.5
-
+        _BackgroundScaleFactor("Scale Factor", Float) = 1.0
         // pixelization
         _PixelSize ("Pixels per Unit (pixelization)", Float) = 8.0
         _ScreenRatio ("Screen Ratio (H/W)", Float) = 1.0
@@ -81,6 +81,7 @@ Shader "Custom/BackgroundWorldGenLayer"
             float _TrenchEdgeAmp;
 
             float _FillMaskStep;
+            float _BackgroundScaleFactor;
 
             // ---------- Per-biome param arrays (set from C# like in your WorldGen) ----------
             // Make sure NUM_BIOMES here matches what your C# uploader uses.
@@ -311,7 +312,8 @@ Shader "Custom/BackgroundWorldGenLayer"
                 {
                     int shiftedIndex = biomeIndex - 1;
                     float b_blockCut   = _blockCutoff[shiftedIndex];
-                    float b_blockScale = _blockNoiseScale[shiftedIndex];
+                    float b_blockScale = _blockNoiseScale[shiftedIndex]; 
+                    b_blockScale *= _BackgroundScaleFactor; // Gives us bigger blobs making it less "aggressive"
                     float b_blockAmp   = _blockNoiseAmp[shiftedIndex];
                     float b_baseOctaves   = _baseOctaves[shiftedIndex];
                     float b_ridgeOctaves  = _ridgeOctaves[shiftedIndex];

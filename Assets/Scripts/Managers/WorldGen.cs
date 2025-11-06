@@ -454,14 +454,15 @@ public class WorldGen : MonoBehaviour {
         for (int i = 0; i < oreTypes.Count; i++) {
             WorldGenOreSO data = oreTypes[i];
             //float yStart = worldmanager.GetWorldLayerYPos(data.LayerStartSpawn);
-            float yStart;
+            float yStart, yMost;
             if (data.LayerStartSpawn <= 0) {
-                yStart = -99999; // quick hack to make ores spawn below 0 
+                yStart = -999999.0f; // quick hack to make ores spawn below 0 
+                yMost = yStart;
             } else {
                 yStart = worldmanager.GetWorldLayerYPos(data.LayerStartSpawn);
+                yMost = worldmanager.GetWorldLayerYPos(data.LayerMostCommon);
             }
-                float yStop = worldmanager.GetWorldLayerYPos(data.LayerStopCommon);
-            float yMost = worldmanager.GetWorldLayerYPos(data.LayerMostCommon);
+            float yStop = worldmanager.GetWorldLayerYPos(data.LayerStopCommon);
             nativeOreDefinitions[i] = new OreDefinition {
                 tileID = data.oreTile.ID,
                 replaceableTileID = data.replaceableTileID,
@@ -577,7 +578,11 @@ public class WorldGen : MonoBehaviour {
         List<WorldSpawnEntitySO> entityList = new List<WorldSpawnEntitySO>(worldSpawnEntities);
         //Shuffle(entityList);  // So it doesn't just always try to spawn the first entity first
         // So larger entities have a chanse to spawn first. 
-        entityList.Sort((a, b) => b.GetBoundSize().CompareTo(a.GetBoundSize()));
+        System.Random rng = new System.Random();
+        entityList = entityList
+            .OrderByDescending(e => e.GetBoundSize())        // primary: largest first
+            .ThenBy(e => rng.Next())                         // secondary: random order among equals
+            .ToList();
         for (int y = 0; y < CHUNK_TILE_DIMENSION; y++) {
             for (int x = 0; x < CHUNK_TILE_DIMENSION; x++) {
                 ushort anchorTileID = chunkData.tiles[x, y];
@@ -592,7 +597,7 @@ public class WorldGen : MonoBehaviour {
                 int worldY = chunkOriginCell.y * CHUNK_TILE_DIMENSION + y;
 
                 // Global placement value
-                if (SampleNoise(worldX, worldY, 0.5f, new(seedOffsetX, seedOffsetY)) < 0.7f)
+                if (SampleNoise(worldX, worldY, 0.3f, new(seedOffsetX, seedOffsetY)) < 0.5f)
                     continue;
                 // --- Iterate through Entity Definitions ---
                 foreach (var entityDef in entityList) {

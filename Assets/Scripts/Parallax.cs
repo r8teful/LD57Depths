@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class Parallax : MonoBehaviour {
     [Header("Settings")]
@@ -29,13 +30,13 @@ public class Parallax : MonoBehaviour {
 
         // Apply parallax movement scaled by factor
         Vector2 parallaxMovement = new Vector2(
-            deltaCam.x * shaderParallaxFactor,
-            yMovement ? deltaCam.y * shaderParallaxFactor : 0
+            deltaCam.x * shaderParallaxFactor, yMovement ? deltaCam.y * -shaderParallaxFactor : 0
         );
 
         Vector2 parallaxMovement2 = new Vector2(
              Camera.main.transform.position.x * _parallaxFactor,
-            yMovement ? deltaCam.y * _parallaxFactor : transform.position.y
+             yMovement ? Camera.main.transform.position.y * _parallaxFactor
+              : transform.position.y
         );
         transform.position = (Vector3)parallaxMovement2;
         if (infinateWrap) {

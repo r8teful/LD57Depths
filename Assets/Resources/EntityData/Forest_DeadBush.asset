@@ -318,8 +318,8 @@ MonoBehaviour:
     minY: -10000
     maxY: 2000
     specificSpawnTiles: []
-  placementFrequency: 0.3
-  placementThreshold: 0.9
+  placementFrequency: 0.2
+  placementThreshold: 0.5
   allowedAttachmentTypes: 01000000
   PlacementOffset: {x: -7222.339, y: 7223.8394}
   randomYRotation: 0

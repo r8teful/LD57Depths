@@ -15,12 +15,12 @@ MonoBehaviour:
   EdgeNoiseScale: 0.2
   EdgeNoiseAmp: 29.1
   BlockNoiseScale: 0.03
-  BlockNoiseAmp: 0.1
-  BlockCutoff: 0.01
+  BlockNoiseAmp: 0.05
+  BlockCutoff: 0.004
   BaseOctaves: 1
   RidgeOctaves: 0
-  WarpAmp: 0
-  WorleyWeight: 1.02
+  WarpAmp: 0.32
+  WorleyWeight: 1.51
   CaveType: 1
   HorSize: 737.3
   YHeight: 346.5

@@ -41,6 +41,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BackgroundScaleFactor: 0.7
     - _CaveAmp: 0.8
     - _CaveCutoff: 0.03
     - _CaveNoiseScale: 0.03
@@ -53,7 +54,7 @@ Material:
     - _EdgeOuterRim: 48.29
     - _EdgeThickness: 28.1
     - _EdgeThicknessPixels: -8.65
-    - _FillMaskStep: 0
+    - _FillMaskStep: 1
     - _NonEdgeDarkness: 0.92
     - _ParallaxFactor: 0.4
     - _PixelSize: 1.4
@@ -66,7 +67,7 @@ Material:
     - _TrenchNoiseScale: 0.164
     - _WorldUVScale: 1
     m_Colors:
-    - _CameraPos: {r: -13.774779, g: -3137.453, b: 0, a: 0}
+    - _CameraPos: {r: 983.72546, g: -3728.24, b: 0, a: 0}
     - _EdgeColor: {r: 1, g: 0, b: 0, a: 1}
     - _EdgeTintColor: {r: 0, g: 0, b: 0, a: 0.76862746}
     - _NonEdgeDarkness: {r: 0.017472003, g: 0.017472003, b: 0.10399995, a: 1}
