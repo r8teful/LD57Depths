@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BackgroundManager : MonoBehaviour {
     public GameObject trenchBackgroundContainer;
@@ -8,7 +9,6 @@ public class BackgroundManager : MonoBehaviour {
     public ParticleSystem trashParticles;
     private Transform[] _parallaxLayers; // The four parallax layers
     public SpriteRenderer _blackSprite;
-    private List<TranchBackgroundSprite> _trenchSprites= new List<TranchBackgroundSprite>();
 
     private List<BackgroundObjectSO> backgroundObjectDatas;
     private Transform player;
@@ -25,10 +25,6 @@ public class BackgroundManager : MonoBehaviour {
         var parallaxCount = parallaxObjectsContainer.transform.childCount;
         _parallaxLayers = new Transform[parallaxCount];
         objectsPerLayer = new int[_parallaxLayers.Length];
-        foreach(var t in trenchBackgroundContainer.GetComponentsInChildren<TranchBackgroundSprite>()) {
-            t.SetTrenchSettings(worldGenSettings);
-            _trenchSprites.Add(t);
-        }
         
         for (int i = 0; i < parallaxCount; i++)
         {
@@ -41,23 +37,34 @@ public class BackgroundManager : MonoBehaviour {
         _blackSprite.enabled = false;
         biomeManager = bio;
 
+        bio.OnNewClientBiome += NewClientBiome;
         // Spawn particle systems
+        //SpawnTrashParticles();
+        
+    }
+
+    private void NewClientBiome(BiomeType biomeOld, BiomeType biomeNew) {
+        // This will only work for server host but you should make it so that its run locally on the client
+        // This now means that we should locally change particles / lighting / etc.
+
+    }
+
+    private void SpawnTrashParticles() {
         var parMain = Instantiate(trashParticles, Camera.main.transform).main;
         parMain.simulationSpace = ParticleSystemSimulationSpace.World;
-        
+
 
         var parMain2 = Instantiate(trashParticles, Camera.main.transform).main;
         parMain2.startSize = new ParticleSystem.MinMaxCurve(0.05f, 0.08f);
         parMain2.simulationSpace = ParticleSystemSimulationSpace.Custom;
         parMain2.customSimulationSpace = _parallaxLayers[1];
-        parMain2.maxParticles = 500;
-        
+        parMain2.maxParticles = 200;
+
         var parMain3 = Instantiate(trashParticles, Camera.main.transform).main;
         parMain3.startSize = new ParticleSystem.MinMaxCurve(0.03f, 0.05f);
         parMain3.simulationSpace = ParticleSystemSimulationSpace.Custom;
         parMain3.customSimulationSpace = _parallaxLayers[3];
-        parMain3.maxParticles = 500;
-    
+        parMain3.maxParticles = 200;
     }
 
     public void SetInteriorBackground(bool isInterior) {
@@ -124,7 +131,9 @@ public class BackgroundManager : MonoBehaviour {
                         GameObject newObj = Instantiate(data.prefab, new Vector3(spawnPos.x, spawnPos.y, 0), Quaternion.identity);
                         if (newObj.TryGetComponent<IBackgroundObject>(out var iBackground)) {
                             // iComp is your interface reference
-                            iBackground.Init(_trenchSprites[layerIndex].BackgroundColor,layerIndex, _trenchSprites[layerIndex].OrderInLayer);
+                            // TODO we changed the background, its not just a solid colour anymore, we could just spawn objects with their usual colour?
+                            // They'll need to be set as the same layer as the background they are on, then they'll get blurred nicely
+                            //iBackground.Init(_trenchSprites[layerIndex].BackgroundColor,layerIndex, _trenchSprites[layerIndex].OrderInLayer);
                         }
                         newObj.transform.SetParent(_parallaxLayers[layerIndex], true);
                         spawnedObjects[data].Add(newObj);

@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json.Bson;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,6 +22,8 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
 
 
     private PlayerStatsManager _localPlayerStats; // The script is attached to a player, this is that players stats, could be our stats, or a remove clients stats
+
+    public event Action<bool> AbilityStateChanged;
 
     // Only owner runs this
     public void Init(NetworkedPlayer owner) {
@@ -126,7 +130,6 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
        
     }
     public void StartAbility(ToolController toolController,ToolAbilityBaseSO ability) {
-        _isUsingAbility = true;
         // Create the StatModifier instances from our ScriptableObject data
         var modifiersToAdd = new List<StatModifier>();
         foreach (var modData in ability.Modifiers) {
@@ -140,18 +143,17 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
         // Start a coroutine to remove them after the duration
         StartCoroutine(AbilityCountDown(ability));
     }
-    public void ToolAbilityStop(ToolController toolController) {
-        if (!_isUsingAbility)
-            return;
-        _isUsingAbility = false;
-    }
     private IEnumerator AbilityCountDown(ToolAbilityBaseSO ability) {
-        _isUsingAbility = true;
+        ChangeAbilityState(true);
         yield return new WaitForSeconds(ability.Duration); // Possible have it cancel when certain things happen? Don't think we have to though..
         Debug.Log("Ability wore off!");
 
         _localPlayerStats.RemoveModifiersFromSource(ability);
-        _isUsingAbility = false;
+        ChangeAbilityState(false);
+    }
+    private void ChangeAbilityState(bool isUsing) {
+        _isUsingAbility = isUsing;
+        AbilityStateChanged?.Invoke(isUsing);
     }
 
     public abstract void OwnerUpdate();

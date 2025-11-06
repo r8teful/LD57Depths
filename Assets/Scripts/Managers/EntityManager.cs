@@ -73,8 +73,9 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             return;
         }
         // Only using these two for runtime spawning
-        StartCoroutine(SpawnCheckLoop());
-        StartCoroutine(DespawnCheckLoop());
+        
+        //StartCoroutine(SpawnCheckLoop());
+        //StartCoroutine(DespawnCheckLoop());
     }
 
     #region Runtime spawning
@@ -442,8 +443,9 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
                 // Link instance BEFORE spawn
                 // Spawn server-side FIRST (observers added after)
                 InstanceFinder.ServerManager.Spawn(nob);
-                var entity = instance.GetComponent<DestroyEntityCallback>();
-                entity.OnServerStopped += HandleEntityDespawned;
+                if (instance.TryGetComponent<DestroyEntityCallback>(out var entityDestroyCallback)) { 
+                    entityDestroyCallback.OnServerStopped += HandleEntityDespawned;
+                }
                 data.activeInstance = nob;
                 RaiseEntitySpawnedNew(data);
             } else {
@@ -507,8 +509,9 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
                     UpdateDataFromInstance(nob, data);
 
                     // Unsubscribe FIRST
-                    nob.GetComponent<DestroyEntityCallback>().OnServerStopped -= HandleEntityDespawned;
-
+                    if (nob.TryGetComponent<DestroyEntityCallback>(out var entityDestroyCallback)) {
+                        entityDestroyCallback.OnServerStopped -= HandleEntityDespawned;
+                    }
                     // Despawn server instance
                     Debug.Log($"Despawning {nob.name} for client {requester.ClientId}");
                     nob.Despawn(DespawnType.Destroy);
@@ -576,14 +579,14 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
             if (currentEntityCounts.TryGetValue(prefabKey, out int count)) {
                 currentEntityCounts[prefabKey] = Mathf.Max(0, count - 1); // Decrement, ensure non-negative
             }   
-        }  
+        }
         // ^^^ Up here is for runtime spawning, not using atm...
-        // Unsubscribe to prevent memory leaks - VERY IMPORTANT
-        var c = nob.GetComponent<DestroyEntityCallback>();
-        c.OnServerStopped -= HandleEntityDespawned;
-        if (c.IsDestroyedPermanently) {
-            ulong persistentId = FindIdForInstance(nob);
-            ServerRemovePersistentEntity(persistentId);
+        if (nob.TryGetComponent<DestroyEntityCallback>(out var entityDestroyCallback)) {
+            entityDestroyCallback.OnServerStopped -= HandleEntityDespawned;
+            if (entityDestroyCallback.IsDestroyedPermanently) {
+                ulong persistentId = FindIdForInstance(nob);
+                ServerRemovePersistentEntity(persistentId);
+            }
         }
     }
     // --- Deactivate (Despawn NetworkObject) ---
@@ -597,7 +600,9 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
                 UpdateDataFromInstance(data.activeInstance, data);
 
                 // Remove the unexpected despawn listener FIRST to avoid issues
-                data.activeInstance.GetComponent<DestroyEntityCallback>().OnServerStopped -= HandleEntityDespawned;
+                if (data.activeInstance.TryGetComponent<DestroyEntityCallback>(out var entityDestroyCallback)) {
+                    entityDestroyCallback.OnServerStopped -= HandleEntityDespawned;
+                }
                 InstanceFinder.ServerManager.Despawn(data.activeInstance); // Despawn it
             } else {
                 // Instance was already null or despawned, ensure data ref is null

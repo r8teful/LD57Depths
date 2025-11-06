@@ -52,7 +52,6 @@ public class WorldManager : NetworkBehaviour {
         //InstanceFinder.ServerManager.Spawn(ChunkManager.gameObject, Owner);
         //ChunkManager.Spawn(ChunkManager.gameObject, Owner);
         if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
-        BiomeManager = gameObject.GetComponent<BiomeManager>(); // No clue if we have to set the owner
         BiomeManager.SetWorldManager(this);
         var offset = GetVisualTilemapGridSize() * 6;
         playerSpawn.transform.position = new Vector3(0,-WorldGen.GetDepth()* GetVisualTilemapGridSize() + offset); // Depths is in blocks, so times it with grid size to get world space pos

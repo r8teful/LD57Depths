@@ -30,7 +30,7 @@ MonoBehaviour:
       Data: UnityEngine.Vector2Int, UnityEngine.CoreModule
     - Name: 
       Entry: 3
-      Data: 0
+      Data: -1
     - Name: 
       Entry: 3
       Data: 0
@@ -42,7 +42,7 @@ MonoBehaviour:
       Data: UnityEngine.Vector2Int, UnityEngine.CoreModule
     - Name: 
       Entry: 3
-      Data: 0
+      Data: 1
     - Name: 
       Entry: 3
       Data: 3
@@ -318,10 +318,11 @@ MonoBehaviour:
     minY: -10000
     maxY: 2000
     specificSpawnTiles: []
-  placementFrequency: 0.24
-  placementThreshold: 0.891
+  placementFrequency: 0.5
+  placementThreshold: 0.5
   allowedAttachmentTypes: 010000000300000004000000
   requireSolidGround: 1
   requireWaterAdjacent: 1
+  PlacementOffset: {x: -8229.318, y: 7343.2305}
   randomYRotation: 0
   scaleVariation: {x: 1, y: 1}

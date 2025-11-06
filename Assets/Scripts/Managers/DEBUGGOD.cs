@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -11,6 +12,9 @@ public class DEBUGGOD : MonoBehaviour, IToolBehaviour {
     public ChunkManager _chunkManager;
     public TileBase _airTile;
     private bool _isDamaging = false;
+
+    public event Action<bool> AbilityStateChanged;
+
     public GameObject GO => null;
 
     public IToolVisual ToolVisual => throw new System.NotImplementedException();

@@ -1453,6 +1453,7 @@ GameObject:
   - component: {fileID: 7463083678202148388}
   - component: {fileID: 2402324419998552674}
   - component: {fileID: 4979282666481976631}
+  - component: {fileID: 6896251118358081648}
   m_Layer: 5
   m_Name: UIManager
   m_TagString: Untagged
@@ -1561,6 +1562,10 @@ MonoBehaviour:
   <UpgradeScreen>k__BackingField: {fileID: 7822304368068707891}
   <UIManagerInventory>k__BackingField: {fileID: 3842612885317811593}
   <UISubControlPanel>k__BackingField: {fileID: 875838258953143664}
+  _backgroundRawImages:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &4979282666481976631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1574,6 +1579,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popupPrefab: {fileID: 8655694010588922278, guid: 7f5ae1b47a4bc024fa9dbe8cd424eb83, type: 3}
+--- !u!225 &6896251118358081648
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8002886730946339955}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &8345835125950742920
 GameObject:
   m_ObjectHideFlags: 0

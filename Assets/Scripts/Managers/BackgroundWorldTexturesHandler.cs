@@ -1,11 +1,10 @@
 using Sirenix.OdinInspector;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BackgroundWorldTexturesHandler : MonoBehaviour {
     // Example fields
-    public List<Texture2D> edgeTextures; // length == numBiomes
-    public List<Texture2D> fillTextures; // length == numBiomes
     private WorldGenSettingSO _worldGenSetting;
     [SerializeField] private WorldGenSettingSO DEBUGWolrdSetting;
     public List<Material> layerMaterials; // 4 materials for 4 layers
@@ -14,6 +13,7 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
     [OnValueChanged("PushBiomesToMaterials")]
     public float DebugupdateMaterial = 10f;
     public int numBiomes = 6;
+    
     private void OnEnable() {
         //worldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterials; });
     }
@@ -27,6 +27,7 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
     }
 
     void Update() {
+        if (Screen.width == 0 || Screen.height == 0) return;
         Vector3 camPos = Camera.main.transform.position;
         foreach (var mat in layerMaterials) {
             mat.SetVector("_CameraPos", new Vector4(camPos.x, camPos.y, 0, 0));
@@ -37,7 +38,9 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
             m.SetFloat("_ParallaxFactor", layerParallax[i]);
             m.SetFloat("_PixelSize", layerPixelSize[i]);
         }
+       
     }
+  
     public void PushBiomesToMaterials() {
         Debug.Log("pushing");
         if(_worldGenSetting == null) {

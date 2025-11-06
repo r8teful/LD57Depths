@@ -21,12 +21,12 @@ Shader "Custom/BackgroundWorldGenLayer"
         _DarkenMax ("_DarkenMax", Float) = 1.0
         _DarkenCurve("_DarkenCurve", Float) = 1.0
         _EdgeTintColor ("EdgeColor", Color) = (1, 1, 1, 1)
-        _NonEdgeDarkness("NonEdgeBackgroundColor", Color) = (0, 0, 0, 0)
         // debug
         _DebugMode ("Debug Mode (0=off,1=mask,2=edge)", Float) = 0.0
         _TrenchBaseWiden ("Widen)", Float) = 0.0
         _TrenchBaseWidth ("Width)", Float) = 0.0
         _TrenchNoiseScale ("Scale)", Float) = 0.0
+        _FillMaskStep ("_FillMaskStep)", Float) = 0.0
         _TrenchEdgeAmp ("EdgeAmp)", Float) = 0.0
     }
 
@@ -61,7 +61,6 @@ Shader "Custom/BackgroundWorldGenLayer"
             float _EdgeThickness;     
             float _EdgeInnerRim;            // 0 = off, 1 = on (if you want a rim inside hole)
             float _EdgeOuterRim;            // 0 = off, 1 = on (rim on the filled side)
-            float4 _NonEdgeDarkness;
             float4 _EdgeTintColor;
             float _DarkenMax;
             float _DarkenCurve;
@@ -80,6 +79,8 @@ Shader "Custom/BackgroundWorldGenLayer"
             float _TrenchBaseWidth;
             float _TrenchNoiseScale;
             float _TrenchEdgeAmp;
+
+            float _FillMaskStep;
 
             // ---------- Per-biome param arrays (set from C# like in your WorldGen) ----------
             // Make sure NUM_BIOMES here matches what your C# uploader uses.
@@ -153,13 +154,28 @@ Shader "Custom/BackgroundWorldGenLayer"
                 return 0;
             }
 
-            void MakeMasksFromSigned(float s, float thickness, out float fillMask, out float edgeMask)
+            void MakeMasksFromSigned2(float s, float thickness, out float fillMask, out float edgeMask)
             {
+                
+                // Compute screen-space derivative
+                float ds = fwidth(s);
+                ds = max(ds, 1e-5);
+
+                // Convert desired world thickness to screen space
+                float screenThickness = thickness / ds; // now in "sdf units per pixel"
+
+                // Anti-aliasing width: ~1 pixel
+                float aa = 1.0;
+
+                // Fill mask: sharp at SDF=0
+                fillMask = saturate((s / ds + aa) / (2.0 * aa)); // or use smoothstep
+                //fillMask = step(0,s); 
+
                 // anti-alias around zero using the derivative of s
-                float aa = max(1e-5, fwidth(s) * 0.5);
+                //float aa = max(1e-5, fwidth(s) * 0.5);
             
                 // fillMask: smooth step from hole (s<=0) to filled (s>0)
-                fillMask = smoothstep(-aa, aa, s);
+                //fillMask = smoothstep(-aa, aa, s);
             
                 if (thickness <= 0.0)
                 {
@@ -173,8 +189,38 @@ Shader "Custom/BackgroundWorldGenLayer"
                 // Use smoothstep for soft falloff and multiply by fillMask so holes get zero edge.
                 
                 //edgeMask = (1.0 - smoothstep(0.0, 1.0, band)) * fillMask;
-                edgeMask = pow(1.0 - smoothstep(0.0, 1.0, band), 1.8) * fillMask; //sharper peak at the inner rim
+                edgeMask = pow(1.0 - smoothstep(0.0, 1.0, band), 3) * fillMask; //sharper peak at the inner rim
                 //edgeMask = 1.0 - smoothstep(_EdgeThickness, _EdgeThickness+ fwidth(s), abs(s));
+            
+            }
+            void MakeMasksFromSigned(float s, float thickness, out float fillMask, out float edgeMask)
+            {
+                fillMask = step(0,s); 
+                if (thickness <= 0.0)
+                {
+                    edgeMask = 0.0;
+                    return;
+                }
+            
+                // Compute local gradient length of s. Use ddx/ddy for more accurate gradient direction
+                float2 grad = float2(ddx(s), ddy(s));
+                float gradLen = length(grad);
+            
+                // If ddx/ddy aren't available or for platforms that prefer, fallback to fwidth-based approx:
+                // float gradLen = max(length(float2(ddx(s), ddy(s))), max(1e-6, fwidth(s))); // optional hybrid
+            
+                // Avoid division by zero and clamp to reasonable range
+                gradLen = max(gradLen, 1e-6);
+            
+                // Convert desired 'thickness' (in SDF/world units) into SDF-space scale at this pixel:
+                // If the SDF is not a true distance field, s grows at rate 'gradLen', so the effective sdf-thickness must be scaled up:
+                float localThickness = thickness * gradLen;
+            
+                // band: 0 at s=0 (rim), 1 at s >= localThickness
+                float band = saturate(s / localThickness);
+            
+                // edge shape: keep the fillMask to ensure edges appear only inside filled area
+                edgeMask = pow(1.0 - smoothstep(0.0, 1.0, band), 1.8) * fillMask;
             }
 
             // caves: s = caveNoise - cutoff  (caveNoise < cutoff -> hole because s < 0)
@@ -267,12 +313,12 @@ Shader "Custom/BackgroundWorldGenLayer"
                     float b_blockCut   = _blockCutoff[shiftedIndex];
                     float b_blockScale = _blockNoiseScale[shiftedIndex];
                     float b_blockAmp   = _blockNoiseAmp[shiftedIndex];
-                    float b_baseOctaves   = _baseOctaves[biomeIndex];
-                    float b_ridgeOctaves  = _ridgeOctaves[biomeIndex];
-                    float b_warpAmp       = _warpAmp[biomeIndex];
-                    float b_worldeyWeight = _worldeyWeight[biomeIndex];
-                    float b_caveType      = _caveType[biomeIndex];
-                    s = SampleBiomeBlockSigned(uv,_GlobalSeed, biomeIndex, b_blockScale,b_blockAmp,b_blockCut, b_caveType,
+                    float b_baseOctaves   = _baseOctaves[shiftedIndex];
+                    float b_ridgeOctaves  = _ridgeOctaves[shiftedIndex];
+                    float b_warpAmp       = _warpAmp[shiftedIndex];
+                    float b_worldeyWeight = _worldeyWeight[shiftedIndex];
+                    float b_caveType      = _caveType[shiftedIndex];
+                    s = SampleBiomeBlockSigned(uv,_GlobalSeed, shiftedIndex, b_blockScale,b_blockAmp,b_blockCut, b_caveType,
                         b_baseOctaves,b_ridgeOctaves,b_warpAmp,b_worldeyWeight, true);
                 }
             
@@ -332,7 +378,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                 float fillMask_HighRes, edgeMask_HighRes;
                 MakeMasksFromSigned(s_HighRes, _EdgeThickness, fillMask_HighRes, edgeMask_HighRes);
                 
-                float fillMask = step(0.0, s_HighRes);
+                float fillMask = step(0, s_HighRes);
 
                 float3 uvw = float3(parUV * _TextureTiling, biomeIndex); // ParallaxUV + biome index is shifted to +1 because texture array is setup to have 0 as default, and rest as biomes
                 fixed4 baseCol = UNITY_SAMPLE_TEX2DARRAY(_FillTexArray, uvw);
@@ -344,10 +390,19 @@ Shader "Custom/BackgroundWorldGenLayer"
                 //float3 nonEdgeDarkness = _ColorArray[biomeIndex].rgb * (1.0 - _ParallaxFactor*2);
                 //float3 nonEdgeDarkness = _ColorArray[biomeIndex].rgb;
                 // Scale parallax into [0,1]
-                float t = saturate(_ParallaxFactor / 0.4); // Should be dividing by the MAX parralex effect that will results in fully black  if 
-                t = pow(t, _DarkenCurve);
-                t *= _DarkenMax;
-                float3 nonEdgeDarkness = lerp(_ColorArray[biomeIndex].rgb, float3(0,0,0), t);
+                // float t = saturate(_ParallaxFactor / 0.4); // Should be dividing by the MAX parralex effect that will results in fully black  if 
+                // t = pow(t, _DarkenCurve);
+                // t *= _DarkenMax;
+                //float t = saturate((_ParallaxFactor / 0.4) * _DarkenMax);
+                float t = saturate(_DarkenMax);
+                float4 backgroundColor;
+                if(biomeIndex < 1){
+                    // This means its 0, so not in any biome, use 
+                    backgroundColor = float4(0,0,0.007,1); // World color
+                } else {
+                    backgroundColor = _ColorArray[biomeIndex-1]; // shifting BACK the index again, because first biome color is at position 0 
+                }
+                float3 nonEdgeDarkness = lerp(backgroundColor, float3(0,0,0), t);
                 //float3 nonEdgeDarkness = _NonEdgeDarkness.rgb; // This is pulled from the color array now
                 float3 darkenedColor =  nonEdgeDarkness * nonEdgeFilled; 
                 
@@ -363,7 +418,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                 // Debugging modes
                 if (_DebugMode > 0.5)
                 {
-                    //if (_DebugMode < 1.5) return float4(fillMask_Pixelated, fillMask_Pixelated, fillMask_Pixelated, 1.0); // mask visualization
+                    if (_DebugMode < 1.5) return float4(s_HighRes*_FillMaskStep, 0, 0, 1); // red = positive, blue = negative
                     if (_DebugMode < 2.5) return float4(edgeMask_HighRes, edgeMask_HighRes, edgeMask_HighRes, 1.0); // edge visual
                 }
 

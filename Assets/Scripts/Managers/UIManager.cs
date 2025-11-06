@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 // Root of all player UI
 public class UIManager : Singleton<UIManager> {
@@ -24,6 +26,8 @@ public class UIManager : Singleton<UIManager> {
         UpgradeScreen.Init(this,client);
         UIManagerInventory.Init(owningPlayer,client);
         PopupManager.Init(_localInventoryManager);
+
+
     }
 
     internal void ShowMessage(string v) {
@@ -48,5 +52,15 @@ public class UIManager : Singleton<UIManager> {
     internal void UpgradePanelUIClose() {
 
         UpgradeScreen.PanelHide();
+    }
+
+    public void DEBUGToggleALLUI() {
+        var cg = GetComponent<CanvasGroup>();
+        if(cg.alpha >= 1) {
+            cg.alpha = 0.0f;
+        } else {
+            cg.alpha = 1.0f;
+        }
+
     }
 }

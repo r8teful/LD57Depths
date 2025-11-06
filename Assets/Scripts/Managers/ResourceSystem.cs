@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -72,14 +73,12 @@ public class ResourceSystem {
         InitializeLookup("WorldGenData", out _worldGenLookupByID, out _idLookupByWorldGen);
 
         InitializeLookup<UpgradeRecipeSO>("", out _recipeUpgradeLookupByID, out _idLookupByRecipeUpgrade);
-
-        InitializeWorldEntityOffsets();
     }
 
-    private void InitializeWorldEntityOffsets() {
+    public void InitializeWorldEntities(int worldSeed,Vector2 worldOffset) {
         foreach (var entity in _entityLookupByID) {
             if (entity.Value is WorldSpawnEntitySO wse) {
-                wse.Init();
+                wse.Init(worldSeed, worldOffset);
             }
         }
     }
@@ -240,5 +239,11 @@ public class ResourceSystem {
             d.Add(item.ID, 999);
         }
         return d;
+    }
+
+    internal List<WorldSpawnEntitySO> GetDebugEntity() {
+        return new() {
+            _entityLookupByID[9999] as WorldSpawnEntitySO
+        };
     }
 }

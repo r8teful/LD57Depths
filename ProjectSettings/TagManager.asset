@@ -19,9 +19,9 @@ TagManager:
   - WorldImageRender
   - MiningHit
   - Waste
-  - 
-  - 
-  - 
+  - Background0
+  - Background1
+  - Background2
   - 
   - 
   - 
@@ -39,6 +39,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Backgorund
+    uniqueID: 3630971275
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

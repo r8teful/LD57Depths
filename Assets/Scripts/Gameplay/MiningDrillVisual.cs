@@ -73,4 +73,8 @@ public class MiningDrillVisual : MonoBehaviour, IToolVisual {
     public void StopVisual() {
         throw new System.NotImplementedException();
     }
+
+    public void FlipVisual(bool isFlipped) {
+        // Do nothing
+    }
 }

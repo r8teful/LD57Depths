@@ -1,6 +1,7 @@
 ﻿using FishNet.Component.Animating;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using System;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using static PlayerMovement;
@@ -24,6 +25,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     public NetworkedPlayer _localPlayer;
     private float lightIntensityOn;
     private readonly SyncVar<bool> _isFlipped = new SyncVar<bool>(false);
+    public event Action<bool> OnFlipChange;
     public int InitializationOrder => 2;
     private bool hasInitializedNonOwner; // Sometimes the init function gets called twice so this is just for that
 
@@ -205,6 +207,8 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         if (sprite == null)
             return;
         FlipPlayer(next);
+        //if (IsOwner)
+            OnFlipChange?.Invoke(next); // 
     }
     private void FlipPlayer(bool shouldFlip) {
         if (shouldFlip) {
@@ -335,6 +339,27 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
                     collider.enabled = isActive;
             }
             // Add more types if necessary (Light, ParticleSystem, etc.)
+        }
+    }
+
+    internal void DEBUGToggleHitbox(PlayerState state) {
+        switch (state) {
+            case PlayerState.Swimming:
+                if (playerSwimCollider.enabled) {
+                    playerSwimCollider.enabled = false;
+                } else {
+                    playerSwimCollider.enabled = true;
+                }
+                break;
+            case PlayerState.Grounded:
+                if (playerWalkCollider.enabled) {
+                    playerWalkCollider.enabled = false;
+                } else {
+                    playerWalkCollider.enabled = true;
+                }
+                break;
+            default:
+                break;
         }
     }
 }

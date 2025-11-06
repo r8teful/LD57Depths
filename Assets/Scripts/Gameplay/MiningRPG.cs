@@ -5,8 +5,9 @@ public class MiningRPG : MiningBase {
     public override ToolType ToolType => ToolType.RPG;
     public float ExplosionVelocity;
     public override ToolAbilityBaseSO AbilityData => Ability;
+    private Vector2 _visualDirection;
 
-    public override object VisualData => throw new System.NotImplementedException();
+    public override object VisualData => _visualDirection;
 
     public ToolAbilityBaseSO Ability;
     public override void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {
@@ -39,6 +40,6 @@ public class MiningRPG : MiningBase {
     }
 
     public override void OwnerUpdate() {
-        throw new System.NotImplementedException();
+        _visualDirection = _inputManager.GetAimWorldInput(transform);
     }
 }

@@ -10,25 +10,11 @@ public class MiningRPGVisual : MonoBehaviour, IToolVisual {
     private Vector2 _inputPrev;
     private Vector2 _inputCurrent;
     private Coroutine _currentRoutine;
+    private bool _isOwner;
+    private PlayerVisualHandler _cachedVisualHandler;
+    private Vector2 _nextInput;
 
     public (Sprite, Sprite) BackSprites => (_spriteSwiming,_spriteStanding);
-
-    public void HandleVisualStart(PlayerVisualHandler playerVisualHandler) {
-        // Show the drill
-        playerVisualHandler.OnStartDrilling();
-        _spriteRPG.enabled = true;
-        _spriteHand.enabled = true;
-    }
-    public void HandleVisualStop(PlayerVisualHandler playerVisualHandler) {
-        // Hide the drill
-        playerVisualHandler.OnStopDrilling();
-        _spriteRPG.enabled = false;
-        _spriteHand.enabled = false;
-    }
-
-    public void HandleVisualUpdate(Vector2 dir, InputManager inputManager, bool isAbility) {
-        RPGVisual(inputManager.GetAimWorldInput());
-    }
 
     public void HandleVisualUpdateRemote(Vector2 nextInput) {
         _inputCurrent = nextInput;
@@ -61,19 +47,63 @@ public class MiningRPGVisual : MonoBehaviour, IToolVisual {
         transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
-    public void Init(bool isOwner, NetworkedPlayer visuaHandler) {
-        visuaHandler.PlayerVisuals.OnToolInitBack(this as IToolVisual); // Tell the backvisual that we're the rpg is now equiped
+    public void Init(bool isOwner, NetworkedPlayer networkedPlayer) {
+        _isOwner = isOwner;
+        // Cache visual handler
+        _cachedVisualHandler = networkedPlayer.PlayerVisuals;
+        // Init is NOT when we equip, its called on Initialize, we should have a different way to handle when we actually equip a tool
+        //visuaHandler.PlayerVisuals.OnToolInitBack(this as IToolVisual); // Tell the backvisual that we're the rpg is now equiped
     }
 
+    // Called once every frame for owner, and once every 0.4s for non owners
     public void UpdateVisual(object data, InputManager inputManager = null) {
-        throw new System.NotImplementedException();
+        if (_isOwner) { 
+                Vector2 dir;
+            if (data is Vector2 inputDir) {
+                dir = inputDir;
+            } else {
+                dir = inputManager.GetDirFromPos(transform.position);
+            }
+            RPGVisual(dir);
+        } else {
+            // Non owner
+            if (data is Vector2 vector) {
+                // Update the target position. update will handle the smooth movement.
+                _nextInput = vector;
+                Debug.Log($"Setting next input to: {_nextInput}");
+            } else {
+                Debug.LogWarning($"Inputdata is not a vector2!");
+            }
+        }
     }
-
+    // interpolation loop for remote clients
+    private void Update() {
+        if (_isOwner)
+            return;
+        _inputCurrent = _nextInput;
+        if (_inputCurrent != _inputPrev) {
+            if (_currentRoutine != null) {
+                StopCoroutine(_currentRoutine);
+            }
+            _currentRoutine = StartCoroutine(SmoothInterpolate(_inputPrev, _inputCurrent));
+        }
+    }
     public void StartVisual() {
-        throw new System.NotImplementedException();
+        if (_cachedVisualHandler != null)
+            _cachedVisualHandler.OnStartDrilling();
+        _spriteRPG.enabled = true;
+        _spriteHand.enabled = true;
     }
 
     public void StopVisual() {
-        throw new System.NotImplementedException();
+        if (_cachedVisualHandler != null)
+            _cachedVisualHandler.OnStopDrilling();
+        _spriteRPG.enabled = false;
+        _spriteHand.enabled = false;
     }
+
+    public void FlipVisual(bool isFlipped) {
+        // Do nothing
+    }
+
 }
