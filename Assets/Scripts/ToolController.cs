@@ -14,7 +14,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     private List<IToolVisual> _toolVisuals = new List<IToolVisual>();
     private List<GameObject> _toolInstances = new List<GameObject>();
     public NetworkedPlayer GetPlayerParent() => _playerParent;
-    private IToolBehaviour CurrentToolBehaviour => _toolBehaviours.Count > _currentToolID.Value ? _toolBehaviours[_currentToolID.Value] : null;
+    public IToolBehaviour CurrentToolBehaviour => _toolBehaviours.Count > _currentToolID.Value ? _toolBehaviours[_currentToolID.Value] : null;
     private IToolVisual CurrentToolVisual => _toolVisuals.Count > _currentToolID.Value ? _toolVisuals[_currentToolID.Value] : null;
 
     private float _inputSendTimer;
@@ -32,11 +32,17 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
 
     public void StartClient(bool isOwner, NetworkedPlayer owner) {
         InstantiateTools(owner);
-        SetToolVisualState(0, true, true); // Enable first one, ID will depend on what client has selected 
+        SetToolVisualState(0, true); // Enable first one, ID will depend on what client has selected 
         //SetToolUseVisualState(_isUsingTool.Value);
         _isUsingTool.OnChange += OnIsUsingToolChanged;
         _currentToolID.OnChange += OnToolChange;
         _input.OnChange += OnInputChange;
+        owner.PlayerVisuals.OnFlipChange += PlayerVisuals_OnFlipChange;
+    }
+
+    private void PlayerVisuals_OnFlipChange(bool isFlipped) {
+        if (IsOwner) return; // Only care if we are remote
+        CurrentToolVisual?.FlipVisual(isFlipped);
     }
 
     private void OnInputChange(Vector2 prev, Vector2 next, bool asServer) {
@@ -151,10 +157,7 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         CurrentToolVisual?.StopVisual();
         ToolStopServerRpc(); // Let others know we've stopped 
     }
-    internal void AbilityPerformed() {
-        // TODO, check cooldowns, etc...
-        CurrentToolBehaviour?.ToolAbilityStart(this);
-    }
+
     private void SetToolUseVisualState(bool isUsing) {
         if (isUsing) {
             CurrentToolVisual?.StartVisual();
@@ -166,16 +169,16 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         }
     }
 
-    private void SetToolVisualState(ushort toolID, bool active, bool force = false) {
+    private void SetToolVisualState(ushort toolID, bool active) {
         if (toolID >= _toolInstances.Count) return;
         GameObject instance = _toolInstances[toolID];
-        if (instance != null && (force || instance.activeSelf != active)) {
+        if (instance != null && (instance.activeSelf != active)) {
+            // Only set active if we aren't in that state already
             instance.SetActive(active);
         }
     }
-
     #region Networking
-    
+
     /*
 * These two functions are called by the owning player, then, in PlayerVisualHandler attached to this playerObject on the 
 * remove client will recieve an OnChangeEvent saying "This player just started/stopped using their tool!" and then they
@@ -217,4 +220,17 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
         _worldManager.RequestDamageTile(cellPos, damageAmount);
     }
     #endregion
+
+    private void DEBUGSetMineTool(string tool) {
+        Debug.Log("CALLED");
+        if (tool == "lazer" || tool == "laser") {
+            ToolChangeServerRpc(0);
+        }
+        if (tool == "dril" || tool == "drill") {
+            ToolChangeServerRpc(1);
+        }
+        if (tool == "RPG" || tool == "rpg" || tool == "launcher" || tool == "rocket") {
+            ToolChangeServerRpc(2);
+        }
+    }
 }

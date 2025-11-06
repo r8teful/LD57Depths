@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public interface IToolBehaviour {
     /// <summary>
@@ -13,7 +14,7 @@ public interface IToolBehaviour {
     /// <param name="controller"></param>
     void ToolStop(ToolController toolController);
     void ToolAbilityStart(ToolController toolController);
-    void ToolAbilityStop(ToolController toolController);
+    event Action<bool> AbilityStateChanged;
     void Init(NetworkedPlayer owner);
     void OwnerUpdate();
     

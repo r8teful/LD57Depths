@@ -18,6 +18,7 @@ public interface IToolVisual {
     void UpdateVisual(object data, InputManager inputManager = null); // Tool handles its own way to get input
     void StartVisual();
     void StopVisual();
+    void FlipVisual(bool isFlipped); // Anyoying thing we need for mininLazer
 
     public (Sprite,Sprite) BackSprites { get; } // If we get more of these info based things we should store them in SO
 }

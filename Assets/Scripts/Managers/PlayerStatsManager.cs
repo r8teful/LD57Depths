@@ -255,7 +255,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     public MiningToolData GetToolData() {
         return new MiningToolData {
             ToolRange = GetStat(StatType.MiningRange),
-            ToolWidth = GetStat(StatType.MiningDamage) * 0.05f, //_isUsingAbility ? Mathf.Min(DamagePerHit * 0.3f, 0.6f) : 0.05f * DamagePerHit, // OLD
+            ToolWidth = Mathf.Min(GetStat(StatType.MiningDamage) * 0.05f, 1f), //_isUsingAbility ? Mathf.Min(DamagePerHit * 0.3f, 0.6f) : 0.05f * DamagePerHit, // OLD
             toolTier = 0 //TODO
         };
     }

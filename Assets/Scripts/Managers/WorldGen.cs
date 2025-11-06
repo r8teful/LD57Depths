@@ -453,8 +453,14 @@ public class WorldGen : MonoBehaviour {
         var nativeOreDefinitions = new NativeArray<OreDefinition>(oreTypes.Count, Allocator.TempJob);
         for (int i = 0; i < oreTypes.Count; i++) {
             WorldGenOreSO data = oreTypes[i];
-            float yStart = worldmanager.GetWorldLayerYPos(data.LayerStartSpawn);
-            float yStop = worldmanager.GetWorldLayerYPos(data.LayerStopCommon);
+            //float yStart = worldmanager.GetWorldLayerYPos(data.LayerStartSpawn);
+            float yStart;
+            if (data.LayerStartSpawn <= 0) {
+                yStart = -99999; // quick hack to make ores spawn below 0 
+            } else {
+                yStart = worldmanager.GetWorldLayerYPos(data.LayerStartSpawn);
+            }
+                float yStop = worldmanager.GetWorldLayerYPos(data.LayerStopCommon);
             float yMost = worldmanager.GetWorldLayerYPos(data.LayerMostCommon);
             nativeOreDefinitions[i] = new OreDefinition {
                 tileID = data.oreTile.ID,

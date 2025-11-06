@@ -333,9 +333,23 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     }
 
     private void OnAbilityPerformed(InputAction.CallbackContext context) {
-        if (context.performed) {
-            _toolController.AbilityPerformed();
+        if (!context.performed) return;
+
+        var behaviour = _toolController.CurrentToolBehaviour;
+        if (behaviour == null) return;
+
+        // local handler so we can remove it easily
+        void OnAbilityStateChanged(bool isUsing) {
+            IsUsingAbility = isUsing;
+            if (!isUsing) behaviour.AbilityStateChanged -= OnAbilityStateChanged; // auto-unsubscribe once ended
         }
+
+        // avoid double-subscribe
+        behaviour.AbilityStateChanged -= OnAbilityStateChanged;
+        behaviour.AbilityStateChanged += OnAbilityStateChanged;
+
+        // now start — safe because we are already subscribed
+        behaviour.ToolAbilityStart(_toolController);
     }
 
     public void OnPrimaryInteraction(InputAction.CallbackContext context) {

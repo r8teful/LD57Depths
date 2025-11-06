@@ -109,6 +109,7 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         }
         // Update visuals each frame when mining
         bool isAbility = inputManager.IsUsingAbility;
+        Debug.Log("IsAbility: " + isAbility);
         SetCorrectLaserPos(inputManager.GetMovementInput().x);
         LaserVisual(dir, isAbility);
     }
@@ -135,13 +136,9 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
 
     private void SetCorrectLaserPos(float horizontalInput) {
         if (horizontalInput > 0.01f) {
-            var pos = transform.localPosition;
-            pos.x = 0.25f;
-            transform.localPosition = pos;
+            FlipVisual(false);
         } else if (horizontalInput < -0.01f) {
-            var pos = transform.localPosition;
-            pos.x = -0.25f;
-            transform.localPosition = pos;
+            FlipVisual(true);
         }
     }
 
@@ -163,7 +160,7 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
                 CreateLaserEffect(localPos, transform.InverseTransformPoint(objectPos2D + targetDirection * _range), isAbility);
             }
         } else {
-                CreateLaserEffect(localPos, transform.InverseTransformPoint(objectPos2D + targetDirection * _range), isAbility);
+            CreateLaserEffect(localPos, transform.InverseTransformPoint(objectPos2D + targetDirection * _range), isAbility);
         }
     }
 
@@ -217,5 +214,18 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         }
         LaserVisual(to,false);
         _currentRoutine = null;// Cleanup
+    }
+
+    public void FlipVisual(bool isFlipped) {
+        // I'm just as confused as you are when it comes to this bool. 
+        if (!isFlipped) {
+            var pos = transform.localPosition;
+            pos.x = 0.5f;
+            transform.localPosition = pos;
+        } else {
+            var pos = transform.localPosition;
+            pos.x = -0.5f;
+            transform.localPosition = pos;
+        }
     }
 }

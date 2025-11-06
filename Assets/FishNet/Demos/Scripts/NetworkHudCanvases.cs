@@ -82,7 +82,7 @@ namespace FishNet.Example
     private EventSystem _eventSystem;
 #endif
         #endregion
-
+        /*
         void OnGUI()
         {
 #if ENABLE_INPUT_SYSTEM
@@ -127,6 +127,7 @@ namespace FishNet.Example
 #endif
         }
 
+         */
         private void Start()
         {
 #if !ENABLE_INPUT_SYSTEM

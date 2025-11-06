@@ -319,10 +319,8 @@ MonoBehaviour:
     maxY: 2000
     specificSpawnTiles: []
   placementFrequency: 0.3
-  placementThreshold: 0.891
+  placementThreshold: 0.9
   allowedAttachmentTypes: 01000000
-  requireSolidGround: 1
-  requireWaterAdjacent: 1
   PlacementOffset: {x: -7222.339, y: 7223.8394}
   randomYRotation: 0
   scaleVariation: {x: 1, y: 1}

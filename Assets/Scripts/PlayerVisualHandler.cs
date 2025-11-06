@@ -25,6 +25,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     public NetworkedPlayer _localPlayer;
     private float lightIntensityOn;
     private readonly SyncVar<bool> _isFlipped = new SyncVar<bool>(false);
+    public event Action<bool> OnFlipChange;
     public int InitializationOrder => 2;
     private bool hasInitializedNonOwner; // Sometimes the init function gets called twice so this is just for that
 
@@ -206,6 +207,8 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         if (sprite == null)
             return;
         FlipPlayer(next);
+        //if (IsOwner)
+            OnFlipChange?.Invoke(next); // 
     }
     private void FlipPlayer(bool shouldFlip) {
         if (shouldFlip) {
