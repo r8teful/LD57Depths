@@ -18,6 +18,7 @@ public class BackgroundManager : MonoBehaviour {
     [SerializeField] private float despawnInterval = 1f;
 
 
+    private GameObject _instantiatedParticles;
     private Dictionary<BackgroundObjectSO, List<GameObject>> spawnedObjects = new Dictionary<BackgroundObjectSO, List<GameObject>>();
     private BiomeManager biomeManager;
     private int[] objectsPerLayer;
@@ -46,7 +47,41 @@ public class BackgroundManager : MonoBehaviour {
     private void NewClientBiome(BiomeType biomeOld, BiomeType biomeNew) {
         // This will only work for server host but you should make it so that its run locally on the client
         // This now means that we should locally change particles / lighting / etc.
-
+        var prefabString = "";
+        switch (biomeNew) {
+            case BiomeType.Bioluminescent:
+                prefabString = "Bio";
+                break;
+            case BiomeType.Fungal:
+                prefabString = "Fungal";
+                break;
+            case BiomeType.Forest:
+                prefabString = "Forest";
+                break;
+            case BiomeType.Deadzone:
+                prefabString = "Deadzone";
+                break;
+            default:
+                break;
+        }
+        
+        if(App.ResourceSystem.TryGetPrefab($"Particles{prefabString}", out var particles)) {
+            if (_instantiatedParticles != null) {
+                if (_instantiatedParticles.TryGetComponent<ParticleSystem>(out var oldSystem)) {
+                    // Stop emission but let existing particles finish
+                    oldSystem.Stop();
+                    Destroy(_instantiatedParticles, oldSystem.main.startLifetime.constantMax);
+                }
+            }
+            _instantiatedParticles = Instantiate(particles, trenchBackgroundContainer.transform);
+            // Way back "trench" particles are always there now
+            //if (prefabString == "Trench") {
+            //    if(_instantiatedParticles.TryGetComponent<ParticleSystem>(out var par)) {
+            //        var main = par.main;
+            //        main.customSimulationSpace =  _parallaxLayers[2];
+            //    }
+            //}
+        }
     }
 
     private void SpawnTrashParticles() {

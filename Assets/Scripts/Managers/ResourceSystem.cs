@@ -185,7 +185,15 @@ public class ResourceSystem {
             throw new KeyNotFoundException($"No prefab found in _prefabDict with key '{s}'");
         }
     }
-    
+    public bool TryGetPrefab(string s, out GameObject gameObject) {
+        if (_prefabDict.TryGetValue(s, out var g)) {
+            gameObject = g;
+            return true;
+        } else {
+            gameObject = null;
+            return false;
+        }
+    }
     public T GetPrefab<T>(string key) where T : Component {
         if (!_prefabDict.TryGetValue(key, out GameObject prefab))
             throw new KeyNotFoundException($"No prefab found in _prefabDict with key '{key}'");

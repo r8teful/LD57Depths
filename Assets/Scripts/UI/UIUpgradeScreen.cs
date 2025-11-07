@@ -9,6 +9,9 @@ public class UIUpgradeScreen : MonoBehaviour {
     private UIManager _UIManagerParent;
     private UpgradeTreeDataSO _treeDataTool;
     private UIUpgradeTree _upgradeTreeInstance;
+
+    public bool IsOpen => _upgradePanel.activeSelf;
+
     public UIManager GetUIManager() => _UIManagerParent;
     public static event Action<UpgradeTreeDataSO> OnTabChanged; // Used to show correct stats 
     public static event Action<UpgradeNodeSO> OnSelectedNodeChanged; // Used to show correct stats 

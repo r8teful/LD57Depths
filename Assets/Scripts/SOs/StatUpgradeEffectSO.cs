@@ -18,7 +18,7 @@ public class StatUpgradeEffectSO : UpgradeEffect {
     }
     public StatChangeStatus GetStatChange() {
         var stat = upgradeType;
-        var currentValue = NetworkedPlayer.LocalInstance.PlayerStats.GetStat(stat); // This seems sketchy but should work fine
+        var currentValue = NetworkedPlayer.LocalInstance.PlayerStats.GetStatBase(stat); // Need go get the BASE values, not the final
         var nextValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, increaseType, modificationValue);
         return new(stat, currentValue, nextValue);
     }

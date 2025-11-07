@@ -73,7 +73,7 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
         }
 
         // 4. Add upgrade to player's data
-        unlockedUpgrades.Add(recipe.ID);
+        unlockedUpgrades.Add(recipe.ID); // Will fire the OnChange event
         return true;
     }
 

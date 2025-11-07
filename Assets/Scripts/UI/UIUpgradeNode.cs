@@ -238,7 +238,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         UpgradeRecipeSO upgradeData = _preparedRecipeForPurchase;
 
         // Stat data
-        return new PopupData(upgradeData.displayName, upgradeData.description, 
+        return new PopupData(_boundNode.nodeName, upgradeData.description, 
             upgradeData.GetIngredientStatuses(clientInv),
             statInfo: upgradeData.GetStatStatuses(),
             progressionInfo: new(_boundNode.MaxLevel, _cachedLevel));

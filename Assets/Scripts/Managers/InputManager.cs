@@ -184,7 +184,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         }
         // Check for UI interaction
        // if (EventSystem.current.IsPointerOverGameObject() || _inventoryUIManager.IsOpen) {
-        if (_inventoryUIManager.IsOpen) { // Removed IsPointerOverGameObject because it also does it in world popups which is annyoing
+        if (_UIManager.IsAnyUIOpen()) { // Removed IsPointerOverGameObject because it also does it in world popups which is annyoing
             _currentContext = PlayerInteractionContext.InteractingWithUI;
             // TODO this should sometimes clear the interactable, but sometimes not. As the UI could be the interactable!
             

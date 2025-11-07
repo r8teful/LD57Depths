@@ -11,6 +11,16 @@ public class UIManager : Singleton<UIManager> {
     [field: SerializeField] public UISubControlPanel UISubControlPanel {  get; private set; }
 
     private GameObject _playerGameObject;
+    public bool IsAnyUIOpen() {
+        if (UIManagerInventory.IsOpen)
+            return true;
+        if (UpgradeScreen.IsOpen)
+            return true;
+        if (UISubControlPanel.IsOpen)
+            return true;
+        return false;
+
+    }
     public void Init(NetworkedPlayer client, GameObject owningPlayer) {
         _localInventoryManager = client.InventoryN.GetInventoryManager();
         PopupManager = GetComponent<PopupManager>();

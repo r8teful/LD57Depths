@@ -140,8 +140,9 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         if (!base.IsOwner) return;
         if (!_permanentStats.ContainsKey(stat)) return;
 
-        float finalValue = _permanentStats[stat];
+        float permanentValue = _permanentStats[stat];
 
+        float finalValue = permanentValue;
         // 1. Apply all ADDITIVE modifiers first.
         foreach (var mod in _activeModifiers) {
             if (mod.Stat == stat && mod.Type == IncreaseType.Add) {
@@ -176,6 +177,23 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             return 0f;
         }
     }
+    /// <summary>
+    /// Get the stat without any of the extra modifiers attached to it
+    /// </summary>
+    public float GetStatBase(StatType stat) {
+        if (!_isInitialized) {
+            Debug.LogWarning($"Attempted to GetStat({stat}) before PlayerStatsManager was initialized!");
+            // Return a sensible default from the local SO if possible.
+            var statDefault = _baseStats.BaseStats.FirstOrDefault(s => s.Stat == stat);
+            return statDefault?.BaseValue ?? 0f;
+        }
+        if (_permanentStats.TryGetValue(stat, out float value)) {
+            return value;
+        } else {
+            Debug.LogWarning($"Attempted to get stat '{stat}' but it was not initialized. Returning 0.");
+            return 0f;
+        }
+    }
 
     /// <summary>
     /// The method used by UpgradeEffects to modify a stat.
@@ -194,9 +212,9 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
         float currentValue = _permanentStats[stat];
         float newValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, increaseType, value);
+        //RecalculateStat(stat); // We could do this here, we recalcualte with an "override" with the new value, this way, we get instant feedback
         ServerUpdatePermanentStat(stat, newValue);
         //_permanentStats[stat] = newValue;
-        //RecalculateStat(stat);
     }
     [ServerRpc(RequireOwnership = true)]
     private void ServerUpdatePermanentStat(StatType stat, float newValue) {

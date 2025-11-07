@@ -113,7 +113,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -40, y: -40}
+  m_SizeDelta: {x: -400, y: -40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1621246366461918266
 GameObject:
@@ -1562,10 +1562,6 @@ MonoBehaviour:
   <UpgradeScreen>k__BackingField: {fileID: 7822304368068707891}
   <UIManagerInventory>k__BackingField: {fileID: 3842612885317811593}
   <UISubControlPanel>k__BackingField: {fileID: 875838258953143664}
-  _backgroundRawImages:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!114 &4979282666481976631
 MonoBehaviour:
   m_ObjectHideFlags: 0
