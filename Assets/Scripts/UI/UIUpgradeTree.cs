@@ -52,6 +52,7 @@ public class UIUpgradeTree : MonoBehaviour {
             _nodeMap.Add(nodeData.ID, uiNode);
         }
         UpdateConnectionLines(tree, existingUpgrades);
+        RefreshNodes(existingUpgrades); // This makes lines update their state, which needs to be done because we just created them
 
         UIUpgradeScreen.OnSelectedNodeChanged += SelectedChange;
     }
@@ -75,11 +76,9 @@ public class UIUpgradeTree : MonoBehaviour {
 
             foreach (var prereqNode in dataNode.prerequisiteNodesAny) {
                 if (!_nodeMap.TryGetValue(prereqNode.ID, out UIUpgradeNode parentUiNode)) continue;
-                var line = AddLine(prereqNode.ID, childUiNode.transform, parentUiNode.transform);
+                var line = AddLine(prereqNode.ID, parentUiNode.transform,childUiNode.transform);
                 // Now, set the line's color based on state.
-                //bool parentIsMaxed = treeData.IsNodeMaxedOut(prereqNode, unlockedUpgrades);
-                
-                //line.gameObject.AddComponent<UIUpgradeLine>().Init(dataToNodeLookup[p], uiNode, line);
+                line.gameObject.AddComponent<UIUpgradeLine>().Init(parentUiNode,childUiNode, line);
                 // line.color = parentIsMaxed ? Color.yellow : Color.gray;
             }
         }
@@ -131,22 +130,32 @@ public class UIUpgradeTree : MonoBehaviour {
     //    return uiNode;
     //}
 
-    internal void OnUpgradeButtonClicked(UpgradeNodeSO upgradeNode) {
+    internal void OnUpgradeButtonClicked(UIUpgradeNode uIUpgradeNode, UpgradeNodeSO upgradeNode) {
         //_uiParent.OnUpgradeNodeClicked(upgradeData); // We where doing in it the upgradeScreen script but why not just do it here?
         //App.AudioController.PlaySound2D("ButtonClick");
         if (UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(upgradeNode)) {
             // Local code only
+
+            // Unlocked upgrades list has the just newly purchased upgrade in it now, BUT, this wont work for non client host, because that would not have arrived yet
             var unlockedUpgrades = UpgradeManagerPlayer.LocalInstance.GetUnlockedUpgrades(); // Ugly but sometimes that is okay
             if (!upgradeNode.IsNodeMaxedOut(unlockedUpgrades)) {
                 _nodeMap[upgradeNode.ID].DoPurchaseAnim(); // Purchase anim when not maxed, if we are maxed, setting to purchase state will play the animation
             }
+            // Calculate the next upgrade cost for that node
+            uIUpgradeNode.SetNewPreparedUpgrade(upgradeNode.GetNextUpgradeForNode(unlockedUpgrades, _treeData));
             RefreshNodes(unlockedUpgrades); // We could make it more performant by checking which nodes could have actually changed, but its not that performant heavy anyway.
         }
     }   
     public void RefreshNodes(IReadOnlyCollection<ushort> unlockedUpgrades) {
         foreach (var node in _treeData.nodes) {
+            var uiNode = _nodeMap[node.ID];
             UpgradeNodeState status = node.GetState(unlockedUpgrades);
-            _nodeMap[node.ID].UpdateVisual(status,node.GetCurrentLevel(unlockedUpgrades));
+            if(status == UpgradeNodeState.Active) {
+                // Need to fetch new data if we're now active
+                uiNode.SetNewPreparedUpgrade(node.GetNextUpgradeForNode(unlockedUpgrades, _treeData));
+
+            }
+            uiNode.UpdateVisual(status,node.GetCurrentLevel(unlockedUpgrades));
         }
 
     }

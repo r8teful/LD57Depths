@@ -10,11 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c68dc6e67c048b344aa9b1b86f2093c3, type: 3}
-  m_Name: BasicTier2
+  m_Name: BasicTier5
   m_EditorClassIdentifier: 
-  Tier: 2
+  Tier: 5
   TierType: 0
   ItemsInTier:
-  - {fileID: 11400000, guid: fba8153d7534bba43bcbf978298368bd, type: 2}
-  - {fileID: 11400000, guid: 291f16ed98415924b878e99e284ea42f, type: 2}
-  - {fileID: 11400000, guid: 4f9aa67e00b3bad44914e13578ec7f08, type: 2}
+  - {fileID: 11400000, guid: 9d0232111212fe64bb70e8b2b8d85ce4, type: 2}
+  - {fileID: 11400000, guid: 2a4b3108387f1e942908163f21ae5051, type: 2}

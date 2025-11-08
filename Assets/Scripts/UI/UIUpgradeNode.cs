@@ -26,10 +26,11 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public event Action<UpgradeNodeState> OnStateChange;
     public enum UpgradeNodeState {Purchased,Active,Inactive }
 
-    private static readonly string ICON_PURCHASED_HEX = "#FFAA67";     // icon on purchased (orange) background
-    private static readonly string ICON_AVAILABLE_HEX = "#FFFFFF";     // icon when available (active)
-    private static readonly string ICON_NOT_AVAILABLE_HEX = "#9FB3B7";  // icon when unavailable (inactive / dim)
-    private static readonly string ICON_PRESSED_HEX = "#ECECEC";       // icon when pressed (slightly different)  
+    private static readonly string ICON_PURCHASED_HEX = "#FFAA67";    
+    private static readonly string ICON_AVAILABLE_HEX = "#FFFFFF";    
+    private static readonly string ICON_NOT_AVAILABLE_HEX = "#9FB3B7"; 
+    private static readonly string ICON_PRESSED_HEX = "#ECECEC";
+    private static readonly string PARTICLE_PURCHASED = "#C41F66";      
 
     // 0 = Blue | Green | Orange
     // 1 = Active | Inactive | Pressed
@@ -40,6 +41,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Color _iconAvailableColor;
     private Color _iconNotAvailableColor;
     private Color _iconPressedColor;
+    private Color _particlePurchasedColor;
     private UpgradeNodeState _cachedState;
     private int _cachedLevel;
     private bool _isSelected;
@@ -50,6 +52,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         ColorUtility.TryParseHtmlString(ICON_AVAILABLE_HEX, out _iconAvailableColor);
         ColorUtility.TryParseHtmlString(ICON_NOT_AVAILABLE_HEX, out _iconNotAvailableColor);
         ColorUtility.TryParseHtmlString(ICON_PRESSED_HEX, out _iconPressedColor);
+        ColorUtility.TryParseHtmlString(PARTICLE_PURCHASED, out _particlePurchasedColor);
     }
     public void InspectorBigChange() {
         if (IsBig) {
@@ -71,6 +74,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         SetIcon();
         UpdateVisual(status,currentLevel);
         //UpdateVisualState();
+    }
+    public void SetNewPreparedUpgrade(UpgradeRecipeSO prep) {
+        _preparedRecipeForPurchase = prep;
     }
 
     private void SetIcon() {
@@ -127,9 +133,8 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         PopupManager.Instance.ShowPopup(this, false);
     }
     private void OnUpgradeButtonClicked() {
-        Debug.Log("CLICKKKKKKKK!!");
         // UICraftingManager.Instance.AttemptCraft(upgradeData, null, null);
-        _treeParent.OnUpgradeButtonClicked(_boundNode);
+        _treeParent.OnUpgradeButtonClicked(this,_boundNode);
     }
     
     public void UpdateVisual(UpgradeNodeState state, int currentLevel = -1) {
@@ -240,7 +245,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // Stat data
         return new PopupData(_boundNode.nodeName, upgradeData.description, 
             upgradeData.GetIngredientStatuses(clientInv),
-            statInfo: upgradeData.GetStatStatuses(),
+            statInfo: upgradeData.GetStatStatuses(), // This lagging behind, for some reason, rest is updating correctly
             progressionInfo: new(_boundNode.MaxLevel, _cachedLevel));
     }
 

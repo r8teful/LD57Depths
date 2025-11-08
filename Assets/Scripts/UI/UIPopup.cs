@@ -65,7 +65,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
             }
         }
 
-        // Upgrade Status
+        // Upgrade progression status
         if(data.progressionInfo.ShouldShow) {
             // Set the status for the bar
             _upgradeBar.gameObject.SetActive(true);

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeName: Oxygen Capacity
   uniqueID: 102
+  description: 
   icon: {fileID: 799119123, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 595fa79cf1f003e4686a19fb3724d614, type: 2}
@@ -22,29 +23,29 @@ MonoBehaviour:
     costMultiplier: 1
     tier: 0
   - upgrade: {fileID: 11400000, guid: 25fdc499c799ce34da94229df0a36254, type: 2}
-    costMultiplier: 1
+    costMultiplier: 1.55
     tier: 0
   - upgrade: {fileID: 11400000, guid: 177c383a25445fe4eb5050a99ba100a7, type: 2}
     costMultiplier: 1
-    tier: 0
+    tier: 1
   - upgrade: {fileID: 11400000, guid: c3ae53bdf5f300640a1b257c8337bc76, type: 2}
-    costMultiplier: 1
-    tier: 0
+    costMultiplier: 1.42
+    tier: 1
   - upgrade: {fileID: 11400000, guid: 65972dc0fee4d6d49b9680056bc48191, type: 2}
     costMultiplier: 1
-    tier: 0
+    tier: 2
   - upgrade: {fileID: 11400000, guid: 249a5e0e02754db4990cfcfb7e04c388, type: 2}
-    costMultiplier: 1
-    tier: 0
+    costMultiplier: 1.69
+    tier: 2
   - upgrade: {fileID: 11400000, guid: 896e639126296534c85644565791036e, type: 2}
     costMultiplier: 1
-    tier: 0
+    tier: 3
   - upgrade: {fileID: 11400000, guid: ec3602cda3f44044bad44e04418ee6f4, type: 2}
-    costMultiplier: 1
-    tier: 0
+    costMultiplier: 1.4
+    tier: 3
   - upgrade: {fileID: 11400000, guid: 2b65e73335043af41866155bcc0b5eca, type: 2}
     costMultiplier: 1
-    tier: 0
+    tier: 4
   - upgrade: {fileID: 11400000, guid: eea9418f3aea7764484f4a512852a27c, type: 2}
-    costMultiplier: 1
-    tier: 0
+    costMultiplier: 1.53
+    tier: 4

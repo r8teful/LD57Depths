@@ -26,6 +26,8 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
     public string nodeName;
     [VerticalGroup("Identification/Left/2")]
     [SerializeField] private ushort uniqueID;
+    [VerticalGroup("Identification/Left/2")]
+    [SerializeField] private string description;
     [VerticalGroup("Identification/Left/1")]
     [PreviewField(75), HideLabel,LabelWidth(0)]
     public Sprite icon;

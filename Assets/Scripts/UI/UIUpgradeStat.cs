@@ -1,5 +1,7 @@
+using System;
 using TMPro;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 // A player stat can also be a tool stat, etc... Used in upgrade screen to show the numerical values of a statistic
 public class UIUpgradeStat : MonoBehaviour {
@@ -20,14 +22,14 @@ public class UIUpgradeStat : MonoBehaviour {
 
     internal void Init(StatType stat, float valueNow, float valueLater = -1) {
         _statName.text = GetStatString(stat);
-        _statNow.text = valueNow.ToString();
+        _statNow.text = valueNow.ToString("0.#");
         _statLater.color = IsLowerBad(stat) && valueLater > valueNow ? Color.green : Color.red;
         if(valueLater < 0) {
             // Dissable
             _statLater.gameObject.SetActive(false);
             _arrowImage.SetActive(false);
         } else {
-            _statLater.text = valueLater.ToString();
+            _statLater.text = valueLater.ToString("0.#");
             _arrowImage.SetActive(true);
         }
     }
@@ -39,27 +41,29 @@ public class UIUpgradeStat : MonoBehaviour {
     }
 
     private string GetStatString(StatType stat) {
-        switch (stat) {
-            case StatType.MiningRange:
-                return "Range";
-            case StatType.MiningDamage:
-                return "Damage";
-            case StatType.MiningRotationSpeed:
-                return "Movement Speed";
-            case StatType.PlayerSpeedMax:
-                return "Max Speed";
-            case StatType.PlayerAcceleration:
-                return "Acceleration";
-            case StatType.PlayerOxygenMax:
-                return "Max Oxygen";
-            case StatType.MiningKnockback:
-                return "Knockback Force";
-                
-            case StatType.MiningFalloff:
-                return "Damage Falloff";
-            default:
-                return "NULL";
-        }
+        return stat switch {
+            StatType.MiningRange =>         "Range",
+            StatType.MiningDamage =>        "Damage",
+            StatType.MiningRotationSpeed => "Movement Speed",
+            StatType.PlayerSpeedMax =>      "Maximum Speed",
+            StatType.PlayerAcceleration =>  "Acceleration",
+            StatType.PlayerOxygenMax =>     "Capacity (seconds)",
+            StatType.MiningKnockback =>     "Knockback Force",
+            StatType.MiningFalloff =>       "Falloff",
+            StatType.MiningCombo =>         "Damage Falloff",
+            StatType.BlastDamage =>         "Damage",
+            StatType.BlastRecharge =>       "Recharge (seconds)",
+            StatType.BlastDuration =>       "Duration (seconds)",
+            StatType.BlastRange =>          "Range",
+            StatType.PlayerDrag =>          "Player Drag",
+            StatType.PlayerMagnetism =>     "Player Drag",
+            StatType.DashSpeed =>           "Dash Speed",
+            StatType.DashRecharge =>        "Dash Recharge",
+            StatType.DashDistance =>        "Dash Distance",
+            StatType.BlockOxygenReleased => "Block Oxygen Released",
+            StatType.BlockOxygenChance =>   "Block Oxygen Chance",
+            _ => "NULL",
+        };
     }
     private bool IsLowerBad(StatType stat) {
         switch (stat) {

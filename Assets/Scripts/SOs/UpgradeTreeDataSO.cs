@@ -11,18 +11,12 @@ public struct UpgradeTreeCosts {
     public float linearIncrease; // How much points are added each level
     public float expIncrease; // Procent of points added each level
 }
-[Serializable]
-public struct UpgradeTreeTiers {
-    [PropertyTooltip("X inlcusive, Y Exlusive ")]
-    public Vector2Int tierStartStop; // At what LEVEL does this tier start and stop? This could also be a list of start and stop if we want it to come back at a later level
-    public UpgradeTierSO tier; // Which tier are we talking about here?
-}
 
 // Defines how the upgrade tree should look
 [CreateAssetMenu(fileName = "UpgradeTreeDataSO", menuName = "ScriptableObjects/Upgrades/UpgradeTreeDataSO")]
 public class UpgradeTreeDataSO : ScriptableObject {
     public UpgradeTreeCosts costsValues; // How the costs of the upgrades increases
-    public List<UpgradeTreeTiers> tiers;
+    public List<UpgradeTierSO> tiers;
     public List<StatType> statsToDisplay; // Used in the upgrade screen UI, shows what the values of the suplied stats are
     public string treeName; 
     public List<UpgradeNodeSO> nodes = new List<UpgradeNodeSO>();
@@ -67,12 +61,13 @@ public class UpgradeTreeDataSO : ScriptableObject {
     private List<ItemQuantity> GetItemPoolForTier(int tier) {
         var itemPool = new List<ItemQuantity>();
         foreach (var treeTier in tiers) {
-            if (tier >= treeTier.tierStartStop.x && tier < treeTier.tierStartStop.y) {
-                foreach (var tierItem in treeTier.tier.ItemsInTier) {
-                    itemPool.Add(new ItemQuantity(tierItem, 999)); // Assuming a large or "infinite" quantity for calculation
-                }
+            if(treeTier.Tier != tier) continue; // Only care about the their we are checking for
+            foreach (var tierItem in treeTier.ItemsInTier) {
+                itemPool.Add(new ItemQuantity(tierItem, 999)); // Assuming a large or "infinite" quantity for calculation
             }
         }
+        if (itemPool.Count == 0)
+            Debug.LogError("Tree does not have a definition for tier: " + tier);
         return itemPool;
     }
 
@@ -91,12 +86,9 @@ public class UpgradeTreeDataSO : ScriptableObject {
     /// <returns>The final prepared recipe with calculated costs.</returns>
     public UpgradeRecipeSO GetPreparedRecipeForStage(UpgradeStage stage) {
         int currentStageLevel = stage.tier;
-
-        // Determine tier, calculate cost, etc. (This logic is moved from GenerateUpgradeTree)
-        int tierToUse = 0; // Replace with your GetGlobalTierForLevel logic
         float baseCost = UpgradeCalculator.CalculateCostForLevel(currentStageLevel, costsValues.baseValue, costsValues.linearIncrease, costsValues.expIncrease);
         float finalCost = baseCost * stage.costMultiplier;
-        List<ItemQuantity> itemPool = GetItemPoolForTier(tierToUse); // Your method for this
+        List<ItemQuantity> itemPool = GetItemPoolForTier(currentStageLevel);
 
         UpgradeRecipeSO recipeInstance = Instantiate(stage.upgrade);
         recipeInstance.name = $"{stage.upgrade.name}_Preview"; // Use a temporary name

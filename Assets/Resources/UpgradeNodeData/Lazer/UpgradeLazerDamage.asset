@@ -12,39 +12,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
   m_Name: UpgradeLazerDamage
   m_EditorClassIdentifier: 
-  nodeName: Damage
+  nodeName: Lazer Damage
   uniqueID: 2
+  description: 
   icon: {fileID: 1054548254, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 1d1fbfe8ab7b9b84282ec8fd261801f5, type: 2}
   stages:
   - upgrade: {fileID: 11400000, guid: 93c1c2c1a62af3d489bb54e1587b70e5, type: 2}
     costMultiplier: 1
-    tier: 1
+    tier: 0
   - upgrade: {fileID: 11400000, guid: d9687c281ce58d9499a681d2dcc0a2a5, type: 2}
     costMultiplier: 1
-    tier: 0
+    tier: 1
   - upgrade: {fileID: 11400000, guid: 3f577335913f60049a8429166b5cc4d6, type: 2}
     costMultiplier: 1
-    tier: 0
+    tier: 2
   - upgrade: {fileID: 11400000, guid: 1b480e4108dd69f4fbe8d64a94e8b91a, type: 2}
-    costMultiplier: 1
-    tier: 0
+    costMultiplier: 1.36
+    tier: 2
   - upgrade: {fileID: 11400000, guid: 4e5bbdb0e0906854abc618cec1944d3d, type: 2}
     costMultiplier: 1
-    tier: 0
+    tier: 3
   - upgrade: {fileID: 11400000, guid: 9afd5a209b135294fafabf64002b8a8d, type: 2}
-    costMultiplier: 1
-    tier: 0
+    costMultiplier: 1.51
+    tier: 3
   - upgrade: {fileID: 11400000, guid: 052a3bea86cc90d4cb3b6ac3bee2ce45, type: 2}
-    costMultiplier: 1
-    tier: 0
+    costMultiplier: 1.82
+    tier: 3
   - upgrade: {fileID: 11400000, guid: 8b83abcde114f75429f0344f23b0af5d, type: 2}
     costMultiplier: 1
-    tier: 0
+    tier: 4
   - upgrade: {fileID: 11400000, guid: fee9a7a676cc3cf42871a6a864fe6f02, type: 2}
-    costMultiplier: 1
-    tier: 0
+    costMultiplier: 1.37
+    tier: 4
   - upgrade: {fileID: 11400000, guid: 3692abdb6288d8e4d874aecbdd1ece19, type: 2}
     costMultiplier: 1
-    tier: 0
+    tier: 5

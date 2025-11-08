@@ -178,9 +178,10 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         }
     }
     /// <summary>
-    /// Get the stat without any of the extra modifiers attached to it
+    /// Get the stat without any of the extra modifiers attached to it, useful for UI
     /// </summary>
     public float GetStatBase(StatType stat) {
+
         if (!_isInitialized) {
             Debug.LogWarning($"Attempted to GetStat({stat}) before PlayerStatsManager was initialized!");
             // Return a sensible default from the local SO if possible.
@@ -188,6 +189,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             return statDefault?.BaseValue ?? 0f;
         }
         if (_permanentStats.TryGetValue(stat, out float value)) {
+            Debug.Log($"Getting base stat for {stat} ... returned {value}");
             return value;
         } else {
             Debug.LogWarning($"Attempted to get stat '{stat}' but it was not initialized. Returning 0.");
@@ -209,12 +211,12 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             Debug.LogError($"Cannot modify stat '{stat}' because it has not been initialized.");
             return;
         }
-
         float currentValue = _permanentStats[stat];
         float newValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, increaseType, value);
+        Debug.Log($"Modifying permanent stat {stat} from {currentValue} to {newValue}!");
         //RecalculateStat(stat); // We could do this here, we recalcualte with an "override" with the new value, this way, we get instant feedback
         ServerUpdatePermanentStat(stat, newValue);
-        //_permanentStats[stat] = newValue;
+        _permanentStats[stat] = newValue; // BADDD?? I DONT KNOW BUT ITS NOT ACUTALLY CHANGING IT ON THE SERVER IN TIME FOR ME TO SEE IT ON THE UPGRADE UI SCREEN POP WHEN I PURCHASE THE UPGRADE
     }
     [ServerRpc(RequireOwnership = true)]
     private void ServerUpdatePermanentStat(StatType stat, float newValue) {
@@ -273,7 +275,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     public MiningToolData GetToolData() {
         return new MiningToolData {
             ToolRange = GetStat(StatType.MiningRange),
-            ToolWidth = Mathf.Min(GetStat(StatType.MiningDamage) * 0.05f, 1f), //_isUsingAbility ? Mathf.Min(DamagePerHit * 0.3f, 0.6f) : 0.05f * DamagePerHit, // OLD
+            ToolWidth = Mathf.Min(GetStat(StatType.MiningDamage) * 0.02f, 1f), //_isUsingAbility ? Mathf.Min(DamagePerHit * 0.3f, 0.6f) : 0.05f * DamagePerHit, // OLD
             toolTier = 0 //TODO
         };
     }

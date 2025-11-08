@@ -8,8 +8,5 @@ using UnityEngine;
 public class UpgradeTierSO : ScriptableObject {
     public int Tier; // The higher the tier, the better resources a recipe will require. Tiers will go up periodicly each level
     
-    // None tierTypes are the "core" resources such as ores
-    public BiomeType TierType; 
-
     public List<ItemData> ItemsInTier; // The actuall itempool of that tier
 }

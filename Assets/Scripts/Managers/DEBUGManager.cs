@@ -37,6 +37,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
         _player = player;
     }
     private void GiveAll() {
+        /*
         _player.InventoryN.DEBUGGIVE(0, 900);
         _player.InventoryN.DEBUGGIVE(1, 900);
         _player.InventoryN.DEBUGGIVE(2, 900);
@@ -45,6 +46,21 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
         _player.InventoryN.DEBUGGIVE(5, 900);
         _player.InventoryN.DEBUGGIVE(6, 900);
         _player.InventoryN.DEBUGGIVE(7, 900);
+        _player.InventoryN.DEBUGGIVE(8, 900);
+        _player.InventoryN.DEBUGGIVE(9, 900);
+        _player.InventoryN.DEBUGGIVE(10, 900);
+    */
+        _player.InventoryN.DEBUGGIVE(0, Random.Range(300,600));
+        _player.InventoryN.DEBUGGIVE(1, Random.Range(300,500));
+        _player.InventoryN.DEBUGGIVE(2, Random.Range(200,400));
+        _player.InventoryN.DEBUGGIVE(3, Random.Range(100,300));
+        _player.InventoryN.DEBUGGIVE(4, Random.Range(100,300));
+        _player.InventoryN.DEBUGGIVE(5, Random.Range(100,300));
+        _player.InventoryN.DEBUGGIVE(6, Random.Range(100,300));
+        _player.InventoryN.DEBUGGIVE(7, Random.Range(100,300));
+        _player.InventoryN.DEBUGGIVE(8, Random.Range(50, 100));
+        _player.InventoryN.DEBUGGIVE(9, Random.Range(50, 100));
+        _player.InventoryN.DEBUGGIVE(10,Random.Range(50, 100));
     }
     protected override void Awake() {
         base.Awake();
@@ -110,6 +126,10 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     [ConsoleCommand("setMineDamage")]
     private void debugSetDamage(float v) {
         NetworkedPlayer.LocalInstance.PlayerStats.DEBUGSetStat(StatType.MiningDamage,v);
+    }
+    [ConsoleCommand("setMineRange")]
+    private void debugSetRange(float v) {
+        NetworkedPlayer.LocalInstance.PlayerStats.DEBUGSetStat(StatType.MiningRange, v);
     }
     [ConsoleCommand("toggleHitbox")]
     private void debugToggleHitbox() {

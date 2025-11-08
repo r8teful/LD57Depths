@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 157d6033f8e5dc543af7a1b905b54b05, type: 3}
-  m_Name: OreCopperSO
+  m_Name: OreAmethystSO
   m_EditorClassIdentifier: 
-  oreTile: {fileID: 11400000, guid: 9389412dcdec5f743b8b4395d74529f2, type: 2}
+  oreTile: {fileID: 11400000, guid: cc29cbaa13188af4bb1e52cc0d81ae33, type: 2}
   replaceableTileID: 1
-  LayerStartSpawn: 0
-  LayerStopCommon: 2
+  LayerStartSpawn: 3
+  LayerStopCommon: 4
   LayerMostCommon: 0
-  minChance: 0.291
-  maxChance: 0.835
-  noiseScale: 0.05
-  noiseThreshold: 0.726
-  noiseOffset: {x: 2320, y: 2132}
+  minChance: 0.01
+  maxChance: 0.2
+  noiseScale: 0.1
+  noiseThreshold: 0.6
+  noiseOffset: {x: 239847, y: 2235}
   useRichness: 0
   richnessNoiseScale: 0
   minRichnessMultiplier: 0

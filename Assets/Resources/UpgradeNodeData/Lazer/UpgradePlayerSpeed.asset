@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeName: Speed
   uniqueID: 202
+  description: 
   icon: {fileID: 868697242, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 1e936e11309167b439be31fbe7723f08, type: 2}
@@ -22,29 +23,29 @@ MonoBehaviour:
     costMultiplier: 1
     tier: 0
   - upgrade: {fileID: 11400000, guid: 6191a7dac0b9db24f947c40f55d7cb29, type: 2}
-    costMultiplier: 1
+    costMultiplier: 1.51
     tier: 0
   - upgrade: {fileID: 11400000, guid: b41700fa93bc8ac4ea71a7dc99002665, type: 2}
     costMultiplier: 1
-    tier: 0
+    tier: 1
   - upgrade: {fileID: 11400000, guid: 0cfb4ecff86727542865388a8dc25da4, type: 2}
-    costMultiplier: 1
-    tier: 0
+    costMultiplier: 1.4
+    tier: 1
   - upgrade: {fileID: 11400000, guid: 02795f0b1a11e0e4082702b91ad36937, type: 2}
     costMultiplier: 1
-    tier: 0
+    tier: 2
   - upgrade: {fileID: 11400000, guid: 5588680ea72ebe540b2fdcc48e829a79, type: 2}
-    costMultiplier: 1
-    tier: 0
+    costMultiplier: 1.49
+    tier: 2
   - upgrade: {fileID: 11400000, guid: 9f93dcac4fd7050498a2e27d4ac6b977, type: 2}
     costMultiplier: 1
-    tier: 0
+    tier: 3
   - upgrade: {fileID: 11400000, guid: 0d1091e67e719004b8d0279078359e46, type: 2}
-    costMultiplier: 1
-    tier: 0
+    costMultiplier: 1.73
+    tier: 3
   - upgrade: {fileID: 11400000, guid: 9615127dae1324b4497ae2ad3e8741b3, type: 2}
     costMultiplier: 1
-    tier: 0
+    tier: 4
   - upgrade: {fileID: 11400000, guid: 1d49716c74e6e224199ae1ac96808590, type: 2}
-    costMultiplier: 1
-    tier: 0
+    costMultiplier: 1.7
+    tier: 4

@@ -4,8 +4,8 @@ using static UIUpgradeNode;
 
 public class UIUpgradeLine : MonoBehaviour {
     private static readonly string LINE_PURCHASED_HEX = "#D58141";
-    private static readonly string LINE_AVAILABLE_HEX = "#3DB2AD";
-    private static readonly string LINE_NOT_AVAILABLE_HEX = "#10325B";
+    private static readonly string LINE_AVAILABLE_HEX = "#9D1952";
+    private static readonly string LINE_NOT_AVAILABLE_HEX = "#20062D";
     private Color _linePurchasedColor;
     private Color _lineAvailableColor;
     private Color _lineNotAvailableColor;
@@ -29,14 +29,14 @@ public class UIUpgradeLine : MonoBehaviour {
     }
     private void StateChangeTo(UpgradeNodeState state) {
         _upgradeNodeStateTo = state;
-        if(gameObject.name == "Line LazerDamage1_Instance (UpgradeRecipeSO)") {
+        if(gameObject.name == "Line 1") {
             Debug.Log("State To change to: " + state);
         }
         UpdateColor();
     }
 
     private void StateChangeFrom(UpgradeNodeState state) {
-        if (gameObject.name == "Line LazerDamage1_Instance (UpgradeRecipeSO)") {
+        if (gameObject.name == "Line 1") {
             Debug.Log("State From change to: " + state);
         }
         _upgradeNodeStateFrom = state;
