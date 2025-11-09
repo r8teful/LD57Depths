@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class MiningDrillVisual : MonoBehaviour, IToolVisual {
@@ -7,26 +8,26 @@ public class MiningDrillVisual : MonoBehaviour, IToolVisual {
     private Vector2 _inputPrev;
     private Vector2 _inputCurrent;
     private Coroutine _currentRoutine;
+    private PlayerVisualHandler _cachedVisualHandler;
+    private AudioSource drill;
+    private bool _isOwner;
 
     public (Sprite, Sprite) BackSprites => (null,null);
 
     public void HandleVisualStart(PlayerVisualHandler playerVisualHandler) {
         // Show the drill
         playerVisualHandler.OnStartDrilling();
-        _spriteDrill.enabled = true;
-        _spriteHand.enabled = true;
     }
     public void HandleVisualStop(PlayerVisualHandler playerVisualHandler) {
         // Hide the drill
         playerVisualHandler.OnStopDrilling();
-        _spriteDrill.enabled = false;
-        _spriteHand.enabled = false;
     }
 
     public void HandleVisualUpdate(Vector2 dir, InputManager inputManager,bool isAbility) {
         DrillVisual(inputManager.GetAimWorldInput());
     }
 
+    // TODO Should happen within update by checking if we are owner or not
     public void HandleVisualUpdateRemote(Vector2 nextInput) {
         _inputCurrent = nextInput;
         if (_inputCurrent != _inputPrev) {
@@ -59,19 +60,48 @@ public class MiningDrillVisual : MonoBehaviour, IToolVisual {
     }
 
     public void Init(bool isOwner, NetworkedPlayer parent) {
-        parent.PlayerVisuals.OnToolInitBack(this); // Removes whatever backvisual we've got
+        _isOwner = isOwner;
+        _cachedVisualHandler = parent.PlayerVisuals;
+        //parent.PlayerVisuals.OnToolInitBack(this); // Removes whatever backvisual we've got
+        drill = AudioController.Instance.PlaySound2D("Drill", 0.0f, looping: true);
     }
 
     public void UpdateVisual(object data, InputManager inputManager = null) {
-        throw new System.NotImplementedException();
+        if (_isOwner) {
+            Vector2 dir;
+            if (data is Vector2 inputDir) {
+                dir = inputDir;
+            } else {
+                dir = inputManager.GetDirFromPos(transform.position);
+            }
+            DrillVisual(dir);
+        } else {
+            if (data is Vector2 vector) {
+                // Update the target position. update will handle the smooth movement.
+                // TODO handle remote input
+                //_nextInput = vector;
+                //Debug.Log($"Setting next input to: {_nextInput}");
+            } else {
+                Debug.LogWarning($"Inputdata is not a vector2!");
+            }
+        }
     }
 
     public void StartVisual() {
-        throw new System.NotImplementedException();
+        if (_cachedVisualHandler != null)
+            _cachedVisualHandler.OnStartDrilling();
+        drill.volume = 0.2f;
+
+        _spriteDrill.enabled = true;
+        _spriteHand.enabled = true;
     }
 
     public void StopVisual() {
-        throw new System.NotImplementedException();
+        if (_cachedVisualHandler != null)
+            _cachedVisualHandler.OnStopDrilling();
+        drill.volume = 0;
+        _spriteDrill.enabled = false;
+        _spriteHand.enabled = false;
     }
 
     public void FlipVisual(bool isFlipped) {

@@ -303,7 +303,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public void DEBUGSetStat(StatType stat, float value) {
-        _finalStats[stat] = value;
+        _permanentStats[stat] = value;
     }
 #endif
 }

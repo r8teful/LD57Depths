@@ -193,7 +193,9 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         }
 
         // Check for nearby world interactables (your existing logic)
-        CheckForNearbyInteractables(); // This method now just *finds* the interactable, doesn't handle input
+        
+        //CheckForNearbyInteractables(); // This method now just *finds* the interactable, doesn't handle input
+        
         if (_currentInteractable != null) {
             _currentContext = PlayerInteractionContext.WorldInteractable;
             return;

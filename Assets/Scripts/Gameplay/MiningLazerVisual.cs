@@ -20,7 +20,7 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
     private bool _isOwner;
     private Vector2 _nextInput;
     private MiningToolData _cachedToolData;
-
+    private bool _isUsingAbility;
     public (Sprite, Sprite) BackSprites => (null,null);
 
     // All clients run this
@@ -61,7 +61,10 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         _lineWidth = _cachedToolData.ToolWidth;
         laser.volume = 0.2f;
         // _lineWidth is 0.1 to 2, so we lerp that to get values from 1 to 0.7
-        laser.pitch = Mathf.Lerp(1f, 0.7f, (Mathf.Clamp(_lineWidth, 0.1f, 2) - 0.1f) / (2f - 0.1f));
+        var min = 0.1f;
+        var max = 4f;
+        //laser.pitch = Mathf.Lerp(1f, 0.7f, (Mathf.Clamp(_lineWidth, min, max) - min) / (max - min));
+        laser.pitch = 0.7f;
         // Could also have thicker line mean more bloom -> Nice glow
         FadeInLine(lineRenderer);
 
@@ -73,8 +76,14 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         _hitParticleSystem.Stop();
         laser.volume = 0.0f;
         FadeOutLine(lineRenderer);
-        if (_lineLazerParticleSystem.isPlaying)
-            _lineLazerParticleSystem.Stop();
+        if (_lineLazerParticleSystem.isPlaying) {
+            if (_isUsingAbility) {
+                _lineLazerParticleSystem.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
+            } else {
+                _lineLazerParticleSystem.Stop();
+
+            }
+        }
     }
     private void SetupParticlesVisual() {
         _hitParticleSystem = Instantiate(ParticlesPrefabHit);
@@ -109,6 +118,7 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         }
         // Update visuals each frame when mining
         bool isAbility = inputManager.IsUsingAbility;
+        _isUsingAbility = isAbility;
         Debug.Log("IsAbility: " + isAbility);
         SetCorrectLaserPos(inputManager.GetMovementInput().x);
         LaserVisual(dir, isAbility);
@@ -187,10 +197,10 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         // Set depending on ability
         if (isAbility) {
             var main = _lineLazerParticleSystem.main;
-            main.startSpeed = new(-10, 10);
-            main.startSize = 0.1f;
+            main.startSpeed = new(-30, 30);
+            main.startSize = 0.0f;
             var vel = _lineLazerParticleSystem.limitVelocityOverLifetime;
-            vel.drag = 4;
+            vel.drag = 1;
             lineRenderer.material.SetColor("_Color", new(6, 0, 0)); // Gives it more glow
         } else {
             var main = _lineLazerParticleSystem.main;

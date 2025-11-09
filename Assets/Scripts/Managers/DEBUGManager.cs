@@ -37,19 +37,18 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
         _player = player;
     }
     private void GiveAll() {
+        _player.InventoryN.DEBUGGIVE(0, 90000);
+        _player.InventoryN.DEBUGGIVE(1, 90000);
+        _player.InventoryN.DEBUGGIVE(2, 90000);
+        _player.InventoryN.DEBUGGIVE(3, 90000);
+        _player.InventoryN.DEBUGGIVE(4, 90000);
+        _player.InventoryN.DEBUGGIVE(5, 90000);
+        _player.InventoryN.DEBUGGIVE(6, 90000);
+        _player.InventoryN.DEBUGGIVE(7, 90000);
+        _player.InventoryN.DEBUGGIVE(8, 90000);
+        _player.InventoryN.DEBUGGIVE(9, 90000);
+        _player.InventoryN.DEBUGGIVE(10,90000);
         /*
-        _player.InventoryN.DEBUGGIVE(0, 900);
-        _player.InventoryN.DEBUGGIVE(1, 900);
-        _player.InventoryN.DEBUGGIVE(2, 900);
-        _player.InventoryN.DEBUGGIVE(3, 900);
-        _player.InventoryN.DEBUGGIVE(4, 900);
-        _player.InventoryN.DEBUGGIVE(5, 900);
-        _player.InventoryN.DEBUGGIVE(6, 900);
-        _player.InventoryN.DEBUGGIVE(7, 900);
-        _player.InventoryN.DEBUGGIVE(8, 900);
-        _player.InventoryN.DEBUGGIVE(9, 900);
-        _player.InventoryN.DEBUGGIVE(10, 900);
-    */
         _player.InventoryN.DEBUGGIVE(0, Random.Range(300,600));
         _player.InventoryN.DEBUGGIVE(1, Random.Range(300,500));
         _player.InventoryN.DEBUGGIVE(2, Random.Range(200,400));
@@ -61,6 +60,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
         _player.InventoryN.DEBUGGIVE(8, Random.Range(50, 100));
         _player.InventoryN.DEBUGGIVE(9, Random.Range(50, 100));
         _player.InventoryN.DEBUGGIVE(10,Random.Range(50, 100));
+    */
     }
     protected override void Awake() {
         base.Awake();

@@ -1,5 +1,6 @@
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -163,7 +164,6 @@ public class SubmarineManager : NetworkBehaviour {
                 Debug.Log("All recipe stages done"!);
                 // play sound effect idk? 
                 StartNextUpgrade();
-                return;
             }
         }
 

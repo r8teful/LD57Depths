@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: AbilityBromstone
   m_EditorClassIdentifier: 
   Modifiers:
-  - Value: 1.5
+  - Value: 3
     Stat: 0
     Type: 1
-  - Value: 1.2
+  - Value: 3
     Stat: 1
     Type: 1
   - Value: 0.2
     Stat: 2
     Type: 1
-  - Value: 130
+  - Value: 20
     Stat: 3
     Type: 0
-  Duration: 5
+  Duration: 10

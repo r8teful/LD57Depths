@@ -10,13 +10,15 @@ public class MiningDrill : MiningBase {
     public int RayCount { get; set; } // How many blocks can simultaneously be mined 
 
     public override ToolAbilityBaseSO AbilityData => Ability;
-
-    public override object VisualData => throw new System.NotImplementedException();
+    private Vector2 _visualDirection;
+    public override object VisualData => _visualDirection;
 
     public ToolAbilityBaseSO Ability;
 
     public override void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {
-        for (int i = 0; i < RayCount; i++) {
+        Debug.Log($"range:{Range} DMG: {DamagePerHit}");
+        Range = 4f;
+        for (int i = 0; i < 4; i++) {
             Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
             Vector2 directionToMouse = (pos - objectPos2D).normalized;
 
@@ -47,6 +49,6 @@ public class MiningDrill : MiningBase {
     }
 
     public override void OwnerUpdate() {
-        throw new System.NotImplementedException();
+        _visualDirection = _inputManager.GetAimWorldInput(transform);
     }
 }

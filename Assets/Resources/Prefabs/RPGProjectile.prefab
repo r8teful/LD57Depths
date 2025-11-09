@@ -138,6 +138,7 @@ MonoBehaviour:
   hitBoxRadius: 0.38
   damageAmount: 10
   checkInterval: 0.1
+  explosionParticlePrefab: {fileID: 2526767786964123504, guid: 6ac3ba02fa200cf4eb5fe429e6c7cab2, type: 3}
 --- !u!50 &3485765747425421868
 Rigidbody2D:
   serializedVersion: 5

@@ -118,6 +118,39 @@ public class MiningLazer : MiningBase {
         HashSet<Vector3Int> processedCells = new HashSet<Vector3Int>(); // To avoid duplicate tiles
 
         Vector2 origin = transform.position;
+        Vector2 dir = _currentDirection.normalized;
+        float range = Range;
+
+        // Tunables — adjust these to change accuracy/performance/thickness
+        float stepAlong = 0.2f;   // how far we move along the ray per sample (keeps your original style)
+        float thickness = 2.0f;   // total width (world units) of the "thick" ray
+        float stepAcross = 0.25f; // sampling step across the perpendicular (smaller = more coverage)
+
+        // Perpendicular to direction (points to the "side" of the ray)
+        Vector2 perp = new Vector2(-dir.y, dir.x);
+        float halfWidth = thickness * 0.5f;
+
+        // Walk along the ray and at each step sample across the perpendicular
+        for (float distance = 0f; distance <= range; distance += stepAlong) {
+            Vector2 alongPoint = origin + dir * distance;
+
+            // sample across the thickness
+            for (float offset = -halfWidth; offset <= halfWidth + 1e-6f; offset += stepAcross) {
+                Vector2 samplePoint = alongPoint + perp * offset;
+
+                // Convert world position to the tilemap cell and process once
+                Vector3Int cellPosition = WorldManager.Instance.WorldToCell((Vector3)samplePoint);
+                if (!processedCells.Contains(cellPosition)) {
+                    processedCells.Add(cellPosition);
+                    controller.CmdRequestDamageTile(cellPosition, (short)DamagePerHit);
+                }
+            }
+        }
+    }
+    public void CastRaysAbilityOld(Vector2 targetPos, ToolController controller, bool isFlipped) {
+        HashSet<Vector3Int> processedCells = new HashSet<Vector3Int>(); // To avoid duplicate tiles
+
+        Vector2 origin = transform.position;
 
         Vector2 dir = _currentDirection.normalized;
         float range = Range;
@@ -147,8 +180,6 @@ public class MiningLazer : MiningBase {
             // Increment the distance
             distance += 0.2f;
         }
-
-
     }
     private void OnDrawGizmos() {
         Gizmos.color = Color.yellow;

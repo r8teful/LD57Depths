@@ -2,6 +2,7 @@
 using UnityEngine;
 
 public class MiningRPG : MiningBase {
+    [SerializeField] private Transform spawnPos;
     public override ToolType ToolType => ToolType.RPG;
     public float ExplosionVelocity;
     public override ToolAbilityBaseSO AbilityData => Ability;
@@ -19,7 +20,8 @@ public class MiningRPG : MiningBase {
         // Create a quaternion for the rotation (rotate around Z-axis for 2D)
         Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
         // Instantiate the projectile with the calculated rotation
-        Instantiate(App.ResourceSystem.GetPrefab<RPGProjectile>("RPGProjectile"),transform.position, rotation).Init(targetDirection * ExplosionVelocity,controller);
+        AudioController.Instance.PlaySound2D("RPGShoot",1);
+        Instantiate(App.ResourceSystem.GetPrefab<RPGProjectile>("RPGProjectile"), spawnPos.position, rotation).Init(targetDirection * ExplosionVelocity,controller);
     }
     public override IEnumerator MiningRoutine(ToolController controller) {
         while (true) {

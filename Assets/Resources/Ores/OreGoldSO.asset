@@ -14,11 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   oreTile: {fileID: 11400000, guid: 7393cf54b8b2a6b49a410357454b9a56, type: 2}
   replaceableTileID: 1
-  LayerStartSpawn: 1
+  LayerStartSpawn: 0
   LayerStopCommon: 2
   LayerMostCommon: 0
   minChance: 0.01
   maxChance: 0.2
-  noiseScale: 0.1
+  noiseScale: 0.15
   noiseThreshold: 0.6
-  noiseOffset: {x: 0, y: 0}
+  noiseOffset: {x: 234, y: 12312}
+  useRichness: 0
+  richnessNoiseScale: 0
+  minRichnessMultiplier: 0
+  maxRichnessMultiplier: 0
+  useDomainWarp: 0
+  warpNoiseScale: 0
+  warpStrength: 0

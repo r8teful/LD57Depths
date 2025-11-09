@@ -6,6 +6,7 @@ public class RPGProjectile : MonoBehaviour {
     [SerializeField] private float hitBoxRadius = 2f; // Hitbox
     [SerializeField] private short damageAmount = 10; // Damage per tile
     [SerializeField] private float checkInterval = 0.1f; // How often to check for collisions
+    [SerializeField] private GameObject explosionParticlePrefab;
 
     private ToolController toolController; // Reference to ToolController
     private float checkTimer = 0f;
@@ -56,8 +57,8 @@ public class RPGProjectile : MonoBehaviour {
             }
         }
 
-        // Optional: Add visual/audio effects here (e.g., spawn explosion particle system)
-
+        Instantiate(explosionParticlePrefab, transform.position,Quaternion.identity);
+        AudioController.Instance.PlaySound2D("RPGExplode", 1);
         // Destroy the projectile after exploding
         Destroy(gameObject);
     }

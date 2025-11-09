@@ -52,7 +52,6 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 1873932610366431353}
   _networkObjectCache: {fileID: 1873932610366431353}
   containerSize: 16
-  interactionRadius: 20
   _popupPos: {fileID: 5514814907184239011}
 --- !u!114 &1873932610366431353
 MonoBehaviour:
@@ -96,7 +95,7 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 16
+  <PrefabId>k__BackingField: 92
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 16843141712778158807
   <SceneId>k__BackingField: 0
@@ -257,8 +256,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: -5329366403148133511, guid: 7e65c3cb59e6ff942afd491862f71480, type: 3}
+  m_SortingOrder: 2
+  m_Sprite: {fileID: -876653642, guid: 7e65c3cb59e6ff942afd491862f71480, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
