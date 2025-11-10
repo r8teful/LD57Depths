@@ -7,7 +7,7 @@ public class DestroyEntityCallback : NetworkBehaviour {
     public event Action<NetworkObject> OnServerStopped;
     public override void OnStopServer() {
         base.OnStopServer();
-        Debug.Log("Onstop server");
+        //Debug.Log("Onstop server");
         OnServerStopped?.Invoke(NetworkObject);
     }
 }

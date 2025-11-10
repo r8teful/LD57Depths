@@ -70,7 +70,7 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
             KnockbackStrength = newV;
         }
 
-        Debug.Log($"New upgrade {stat} is: " + newV);
+        //Debug.Log($"New upgrade {stat} is: " + newV);
     }
 
     public void OnDestroy() {

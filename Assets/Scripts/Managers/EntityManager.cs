@@ -513,7 +513,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
                         entityDestroyCallback.OnServerStopped -= HandleEntityDespawned;
                     }
                     // Despawn server instance
-                    Debug.Log($"Despawning {nob.name} for client {requester.ClientId}");
+                    //Debug.Log($"Despawning {nob.name} for client {requester.ClientId}");
                     nob.Despawn(DespawnType.Destroy);
                     //InstanceFinder.ServerManager.Despawn(nob);
                     // Debug.Log($"Server: Despawned instance for entity {persistentId} as ref count hit 0.");

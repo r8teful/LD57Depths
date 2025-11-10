@@ -50,7 +50,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   innerSpotAngle: 5
   outerSpotAngle: 30
-  Ability: {fileID: 0}
+  Ability: {fileID: 11400000, guid: 7da5e55e13d1ed84b82cfe2169eb8daa, type: 2}
+  DrillAbilityParticles: {fileID: 668928258219162552, guid: 8e4137bf7ea228543a1ef154e7a0aa2b, type: 3}
 --- !u!114 &8513912024655949872
 MonoBehaviour:
   m_ObjectHideFlags: 0

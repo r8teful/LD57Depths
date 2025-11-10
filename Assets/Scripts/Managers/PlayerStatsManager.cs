@@ -285,7 +285,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
     private void OnFinalStatChanged(SyncDictionaryOperation op, StatType key, float value, bool asServer) {
         // This method is called on ALL clients whenever the dictionary changes.
-        Debug.Log("STAT CHANGE!");
+       // Debug.Log("STAT CHANGE!");
         switch (op) {
             case SyncDictionaryOperation.Add:
                 OnStatChanged?.Invoke(key, value);
