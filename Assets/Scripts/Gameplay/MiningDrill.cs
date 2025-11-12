@@ -19,7 +19,7 @@ public class MiningDrill : MiningBase {
 
     public override void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {
         //Debug.Log($"range:{Range} DMG: {DamagePerHit}");
-        Range = 4f;
+        Range = 2f;
         for (int i = 0; i < 4; i++) {
             Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
             Vector2 directionToMouse = (pos - objectPos2D).normalized;
@@ -111,6 +111,7 @@ public class MiningDrill : MiningBase {
             Quaternion rotation = Quaternion.Euler(-angle, 90f, 0f);
 
             Instantiate(DrillAbilityParticles,transform.position, rotation, transform);
+            AudioController.Instance.PlaySound2D("DrillAbility", 0.5f);
             //if (!_isUsingAbility) yield break;
         }
     }
