@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class ChunkSaveData {
     public List<ushort> tileIds; // Flattened list of Tile IDs
-    public List<short> tileDurabilities; // Save durability state
+    public List<float> tileDurabilities; // Save durability state
     public ChunkSaveData() { tileIds = new List<ushort>(); }
     public ChunkSaveData(int capacity) { tileIds = new List<ushort>(capacity); }
     // Todo add entities

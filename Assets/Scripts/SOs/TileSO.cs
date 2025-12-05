@@ -26,6 +26,18 @@ public class TileSO : RuleTile, IIdentifiable {
             return -1; // error
         return Mathf.Clamp(current / maxDurability, 0f, 1f);
     }
+    public TileBase GetCrackTileForDurability(float currentDurability) {
+        if (breakVersions == null || breakVersions.Count == 0) return null;
+        float r = GetDurabilityRatio(currentDurability);
+        // Map ratio -> index:
+        // r == 1  -> index 0 (no crack)
+        // r == 0  -> index versions.Length - 1 (fully cracked)
+        int len = breakVersions.Count;
+        int index = Mathf.FloorToInt((1f - r) * len);
+        index = Mathf.Clamp(index, 0, len - 1);
+
+        return breakVersions[index];
+    }
     public override void GetTileData(Vector3Int position, ITilemap tilemap, ref TileData tileData) {
         base.GetTileData(position, tilemap, ref tileData);
         if (biomeIndex == -1) return;

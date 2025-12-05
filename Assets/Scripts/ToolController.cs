@@ -204,9 +204,9 @@ public class ToolController : NetworkBehaviour, INetworkedPlayerModule {
     }
 
     [ServerRpc(RequireOwnership = true)]
-    public void CmdRequestDamageTile(Vector3 worldPos, short damageAmount) {
+    public void CmdRequestDamageTile(Vector3 worldPos, float damageAmount) {
         // TODO: Server-side validation (range, tool, cooldowns, etc.)
-        //Debug.Log($"worldPos {worldPos}, damageAmount {damageAmount} _Worldmanager: {_worldManager}");
+        //Debug.Log($"Requesting damage worldPos {worldPos}, damageAmount {damageAmount}");
         // Pass request to WorldGenerator for processing
         // TODO somehow _worldmanager is null here and it cant find it 
         if (_worldManager == null)

@@ -1,30 +1,42 @@
-GOOD FUCKING TRAILER
-- Show RESOURCES and CONTENT
-- Show that there are different tools
-	- Drill destroying big chunks in one spot **DONE**
-	- Explosion tool! **DONE**
-	- Cool ass death lazer destroying everything **DONE**
-- Show Biomes
-	- TODO
-- Make nice background shader
-	- Make edges have separate pattern 
-	- Biomes should have different patterns, just texture fade in and out
-CONTENT
-- Update ship layout **DONE**
-- Add interactive elements to upgrade & ship exit **DONE**
-- Hookup upgrades to console **DONE**
-- Implement knockback and handling **DONE**
-- Show player stats in UI, and how they change when you upgrade something **DONE**
-- Lazer upgrades 
-	- Tree **DONE**
-	- Implementation
-	- Balance
-- Player upgrades
-	- Tree **DONE**
-	- Implementation
-	- Balance
-- Make lazer work on remote client
-	- Check if range is showed properly 
-Add Biomes
-Add Resources
-Balance
+IS THE GAME FUN??
+
+
+
+
+
+Hover over base nodes to see what it is and possibly their current stats
+
+
+
+Iron drops way to much each node. Maybe this is good?
+
+
+
+MAKE THE MINING MORE SATISFYING
+
+
+
+* Having actual veins is way more satisfying to mine, it just feels more rewarding mining the whole thing and not the ores being scattered around, Also fuller veins look more satisfying, like a whole block of it looks cool
+* Need a counter of the ores you're collecting because it is satisfying to see it go up
+
+
+
+
+
+Blocks ARE enemies, you MINE/defeat them and gain a REWARD
+
+
+
+Procedural world -> your advantage! Utilize it! Is it bad to have a base? NO its good, but maybe you can teleport? You want to be able to go FAR from your base swimming back the same way is boring! 
+
+
+
+* you SHOULD have different ways to change up the generation as you progress, it could be cool to have UPGRADES focus on this.
+* Would be cool if ENTITIES could effect gameplay, and maybe these could be generated as well
+
+
+
+Upgrade three is the "base"
+
+Then there are items that enhance the base. 
+

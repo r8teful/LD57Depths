@@ -103,7 +103,7 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
     }
     public virtual IEnumerator MiningRoutine(ToolController controller) {
         while (true) {
-            yield return new WaitForSeconds(0.1f); 
+            yield return new WaitForSeconds(0.02f); 
             if (!_isMining) yield break;
                 
             var pos = _inputManager.GetAimWorldInput();

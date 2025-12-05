@@ -163,12 +163,12 @@ public class WorldManager : NetworkBehaviour {
     public Vector3Int WorldToCell(Vector3 worldPosition) {
         return mainTilemap.WorldToCell(worldPosition);
     }
-    public void RequestDamageTile(Vector3 worldPosition,short dmg) {
+    public void RequestDamageTile(Vector3 worldPosition,float dmg) {
         var cell = WorldToCell(worldPosition);
         //Debug.Log($"Requesting processdamage of:{cell} with {dmg}");
         ChunkManager.ServerProcessDamageTile(cell, dmg);
     }
-    public void RequestDamageTile(Vector3Int cellPos, short dmg) {
+    public void RequestDamageTile(Vector3Int cellPos, float dmg) {
         //Debug.Log($"Requesting processdamage of:{cell} with {dmg}");
         ChunkManager.ServerProcessDamageTile(cellPos, dmg);
     }

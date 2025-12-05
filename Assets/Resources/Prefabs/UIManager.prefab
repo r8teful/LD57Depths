@@ -75,6 +75,68 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &1273154037096334843
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3370019034843413774}
+  - component: {fileID: 617350542214467306}
+  m_Layer: 5
+  m_Name: ItemPopupLayout
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3370019034843413774
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1273154037096334843}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2409864663239365323}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 144.18857, y: 856.6455}
+  m_SizeDelta: {x: 206.3772, y: 306.2086}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &617350542214467306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1273154037096334843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 6
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &1585380306700848584
 GameObject:
   m_ObjectHideFlags: 0
@@ -235,6 +297,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2409864663239365323}
   - component: {fileID: 3842612885317811593}
+  - component: {fileID: 1043029143620205799}
   m_Layer: 5
   m_Name: UIManagerInventory
   m_TagString: Untagged
@@ -256,6 +319,7 @@ RectTransform:
   m_Children:
   - {fileID: 4326532328232001417}
   - {fileID: 5562954507784866312}
+  - {fileID: 3370019034843413774}
   m_Father: {fileID: 7420718813479569091}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -283,6 +347,20 @@ MonoBehaviour:
   slotInvContainer: {fileID: 9034783000325302402}
   containerSlotContainer: {fileID: 1258568471935486163}
   containerTitleText: {fileID: 9131479212034697177}
+--- !u!114 &1043029143620205799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2192511777979914718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9301dc6c8c54fe24293318727b12e2a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  popupPrefab: {fileID: 0}
+  popupParent: {fileID: 3370019034843413774}
 --- !u!1 &2261421801698203721
 GameObject:
   m_ObjectHideFlags: 0

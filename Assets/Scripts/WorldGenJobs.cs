@@ -47,14 +47,14 @@ public struct GenerateOresJob : IJob {
                     }
                     float currentChance;
                     // 2. Determine if we are in the 'ramp-up' or 'ramp-down' section of the band.
-                    if (worldY < ore.mostDepth) {
-                        // We're in the upper part of the band (between spawn and max rarity)
-                        float depthT = math.remap(worldY, ore.startDepth, ore.mostDepth, 0, 1);
-                        currentChance = math.lerp(ore.minChance, ore.maxChance, depthT);
+                    if (worldY <= ore.mostDepth) {
+                        // rising edge from min → max
+                        float t = math.unlerp(ore.startDepth, ore.mostDepth, worldY);
+                        currentChance = math.lerp(ore.minChance, ore.maxChance, t);
                     } else {
-                        // We're in the lower part of the band (between max rarity and stop)
-                        float depthT = math.remap(worldY, ore.mostDepth, ore.stopDepth, 0, 1);
-                        currentChance = math.lerp(ore.maxChance, ore.minChance, depthT); // HERE you could change minChange to be a different number if you want the ore to show more freq higher up, or something
+                        // falling edge from max → min
+                        float t = math.unlerp(ore.mostDepth, ore.stopDepth, worldY);
+                        currentChance = math.lerp(ore.maxChance, ore.minChance, t);
                     }
 
                     // 3. Quick check: if random chance fails, don't bother with expensive noise calculation

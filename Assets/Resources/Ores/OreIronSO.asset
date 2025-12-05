@@ -15,10 +15,17 @@ MonoBehaviour:
   oreTile: {fileID: 11400000, guid: f4b09cb01edb0244da271b27ca802fa3, type: 2}
   replaceableTileID: 1
   LayerStartSpawn: 0
-  LayerStopCommon: 1
+  LayerStopCommon: 2
   LayerMostCommon: 0
-  minChance: 0.01
-  maxChance: 0.2
+  minChance: 0.179
+  maxChance: 1
   noiseScale: 0.1
-  noiseThreshold: 0.6
+  noiseThreshold: 0.641
   noiseOffset: {x: 0, y: 0}
+  useRichness: 0
+  richnessNoiseScale: 0
+  minRichnessMultiplier: 0
+  maxRichnessMultiplier: 0
+  useDomainWarp: 0
+  warpNoiseScale: 0
+  warpStrength: 0

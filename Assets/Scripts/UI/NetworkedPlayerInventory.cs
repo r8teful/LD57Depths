@@ -4,6 +4,7 @@ using FishNet.Connection; // Required for NetworkConnection
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
+using System;
 
 public class NetworkedPlayerInventory : NetworkBehaviour {
     [Header("References")]
@@ -16,9 +17,12 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
     [Header("Container Interaction")]
     [SerializeField] private LayerMask containerLayerMask; // Layer your containers are on
     private SharedContainer currentOpenContainer = null; // Track which container UI is open LOCALLY
-    public event System.Action<SharedContainer> OnContainerOpened; // UI listens to this
-    public event System.Action<bool> OnContainerClosed;       // UI listens to this
+    public event Action<SharedContainer> OnContainerOpened; // UI listens to this
+    public event Action<bool> OnContainerClosed;       // UI listens to this
 
+
+    // Local event that gets called when we pickup an item
+    public static event Action<ushort,int> OnItemPickup;       
     [ShowInInspector]
     private InventoryManager inventoryManager;
 
@@ -112,6 +116,7 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         bool added = inventoryManager.AddItem(itemID, quantity); // Assume AddItem returns bool for success
         if (added) {
             //Debug.Log($"Client: Picked up and added item {itemID} x{quantity} to inventory.");
+            OnItemPickup?.Invoke(itemID, quantity);
             DiscoveryManager.Instance.ServerDiscoverResource(itemID);
             AudioController.Instance.PlaySound2D("popPickup", 0.1f, pitch: new AudioParams.Pitch(AudioParams.Pitch.Variation.Small));
         } else {

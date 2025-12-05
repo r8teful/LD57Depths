@@ -97,17 +97,17 @@ public class MiningLazer : MiningBase {
             float distance = hit.distance;
             float falloffFactor = Mathf.Clamp01(1f - (distance / Range) * FalloffStrength);
             float finalDamage = DamagePerHit * falloffFactor;
-            controller.CmdRequestDamageTile(new Vector3(nudgedPoint.x, nudgedPoint.y, 0), (short)finalDamage);
+            controller.CmdRequestDamageTile(new Vector3(nudgedPoint.x, nudgedPoint.y, 0), finalDamage);
         }
     }
 
     public override IEnumerator MiningRoutineAbility(ToolController controller) {
         while (true) {
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.02f); // 0.02 is also fixed update btw
             if (!_isMining) yield break;
 
             var pos = _inputManager.GetAimWorldInput();
-            //Debug.Log("MiningAbilityRoutine!");
+            Debug.Log("MiningAbilityRoutine!");
             var isFlipped = false;
             var horizontalInput = _inputManager.GetMovementInput().x;
 

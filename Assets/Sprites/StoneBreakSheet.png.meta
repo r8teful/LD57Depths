@@ -119,12 +119,12 @@ TextureImporter:
       name: StoneBreakSheet_0
       rect:
         serializedVersion: 2
-        x: 8
+        x: 0
         y: 0
         width: 8
         height: 8
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -141,12 +141,12 @@ TextureImporter:
       name: StoneBreakSheet_1
       rect:
         serializedVersion: 2
-        x: 16
+        x: 8
         y: 0
         width: 8
         height: 8
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -163,7 +163,139 @@ TextureImporter:
       name: StoneBreakSheet_2
       rect:
         serializedVersion: 2
+        x: 16
+        y: 0
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 09fd8a2e7e3fe724bb7256bee698e7b6
+      internalID: 1520122334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoneBreakSheet_3
+      rect:
+        serializedVersion: 2
         x: 24
+        y: 0
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a90792f73efba449b4ad3216c3a4660
+      internalID: -1372198733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoneBreakSheet_4
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ad21048018b75e4081b5a91be6501c5
+      internalID: -1954168444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoneBreakSheet_5
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 0
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba1407b3c7fe2284b9cac98a3c861023
+      internalID: 438637055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoneBreakSheet_6
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 430623e2d7f525f49a5734a2fbc41646
+      internalID: 146529923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoneBreakSheet_7
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 0
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 305de4364ecc51c4e95a2b55f0be9676
+      internalID: 230906794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoneBreakSheet_8
+      rect:
+        serializedVersion: 2
+        x: 64
         y: 0
         width: 8
         height: 8
@@ -175,8 +307,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 09fd8a2e7e3fe724bb7256bee698e7b6
-      internalID: 1520122334
+      spriteID: a398819ca8c02af49907838155ed9b3c
+      internalID: 676889176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StoneBreakSheet_9
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 0
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b9ba6bfb713613441ba34bc3969405ca
+      internalID: -222987604
       vertices: []
       indices: 
       edges: []
@@ -198,6 +352,13 @@ TextureImporter:
       StoneBreakSheet_0: -8428240406631307816
       StoneBreakSheet_1: 4504688706742447968
       StoneBreakSheet_2: 1520122334
+      StoneBreakSheet_3: -1372198733
+      StoneBreakSheet_4: -1954168444
+      StoneBreakSheet_5: 438637055
+      StoneBreakSheet_6: 146529923
+      StoneBreakSheet_7: 230906794
+      StoneBreakSheet_8: 676889176
+      StoneBreakSheet_9: -222987604
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

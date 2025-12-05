@@ -455,13 +455,9 @@ public class WorldGen : MonoBehaviour {
             WorldGenOreSO data = oreTypes[i];
             //float yStart = worldmanager.GetWorldLayerYPos(data.LayerStartSpawn);
             float yStart, yMost;
-            if (data.LayerStartSpawn <= 0) {
-                yStart = -999999.0f; // quick hack to make ores spawn below 0 
-                yMost = yStart;
-            } else {
-                yStart = worldmanager.GetWorldLayerYPos(data.LayerStartSpawn);
-                yMost = worldmanager.GetWorldLayerYPos(data.LayerMostCommon);
-            }
+            // TODO for layerStartSpawn 0 it should be wherever the bedrock starts 
+            yStart = worldmanager.GetWorldLayerYPos(data.LayerStartSpawn);
+            yMost = worldmanager.GetWorldLayerYPos(data.LayerMostCommon);
             float yStop = worldmanager.GetWorldLayerYPos(data.LayerStopCommon);
             nativeOreDefinitions[i] = new OreDefinition {
                 tileID = data.oreTile.ID,
@@ -489,7 +485,7 @@ public class WorldGen : MonoBehaviour {
         for (int tileIdx = 0; tileIdx < data.OreTileIDs_NA.Length; tileIdx++) {
             finalOreIdsList.Add(data.OreTileIDs_NA[tileIdx]);
         }
-        List<short> durabilities = new List<short>(CHUNK_TILE_DIMENSION*CHUNK_TILE_DIMENSION);
+        List<float> durabilities = new List<float>(CHUNK_TILE_DIMENSION*CHUNK_TILE_DIMENSION);
         for (int i = 0; i < CHUNK_TILE_DIMENSION * CHUNK_TILE_DIMENSION; i++)
         {
             durabilities.Add(-1);
