@@ -328,9 +328,11 @@ public class ChunkManager : NetworkBehaviour {
         // --- Fallback to SetTiles per chunk if optimization wasn't possible ---
         Dictionary<BoundsInt, TileBase[]> tiles = new Dictionary<BoundsInt, TileBase[]>();
         Dictionary<BoundsInt, TileBase[]> ores = new Dictionary<BoundsInt, TileBase[]>();
+        Dictionary<BoundsInt, TileBase[]> tilesShading = new Dictionary<BoundsInt, TileBase[]>();
         foreach (var chunkPayload in chunks) {
             TileBase[] tilesToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
             TileBase[] oresToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
+            TileBase[] tilesShadingToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
             //List<short> durabilities = new List<short>(CHUNK_SIZE * CHUNK_SIZE);
             int tileIndex = 0;
             for (int y = 0; y < CHUNK_SIZE; y++) {
@@ -340,6 +342,7 @@ public class ChunkManager : NetworkBehaviour {
                     //durabilities.Add(chunkPayload.Durabilities[tileIndex]);
                     tilesToSet[tileIndex] = App.ResourceSystem.GetTileByID(tileID);
                     oresToSet[tileIndex] = App.ResourceSystem.GetTileByID(oreID);
+                    tilesShadingToSet[tileIndex] = tileID != 0 ? App.ResourceSystem.GetTileByID(9999) : null;
                     tileIndex++;
                 }
             }
@@ -348,13 +351,14 @@ public class ChunkManager : NetworkBehaviour {
             //ApplySingleChunkPayload(chunkPayload);
             tiles.Add(chunkBounds, tilesToSet);
             ores.Add(chunkBounds, oresToSet);
+            tilesShading.Add(chunkBounds, tilesShadingToSet);
             ClientCacheChunkDurability(chunkPayload.ChunkCoord, chunkPayload.Durabilities);
             // Entities!!
             if (chunkPayload.EntityPersistantIds != null) {
                 _entitySpawner.ProcessReceivedEntityIds(chunkPayload.ChunkCoord, chunkPayload.EntityPersistantIds);
             }
         }
-        _worldManager.SetTileIEnumerator(tiles);
+        _worldManager.SetTileIEnumerator(tiles, tilesShading);
         _worldManager.SetOreIEnumerator(ores);
         _lightManager.RequestLightUpdate();
         // for (int i = 0; i < chunk.TileIds.Count; i++) {

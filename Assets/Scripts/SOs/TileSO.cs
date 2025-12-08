@@ -6,7 +6,8 @@ using System.Collections.Generic;
 public class TileSO : RuleTile, IIdentifiable {
     [Header("Game Properties")]
     public short maxDurability = 10; // How many "hits" it takes to break. -1 means non solid.
-    public int biomeIndex = -1; // Used in the shader to know what the texture should be, set as -1 only if not used by shader
+
+    public int textureIndex = -1; // Used in the shader to know what the texture should be, set as -1 only if not used by shader
     ushort IIdentifiable.ID => ID;
     public ushort ID; 
     public bool IsSolid => maxDurability != -1;
@@ -40,8 +41,8 @@ public class TileSO : RuleTile, IIdentifiable {
     }
     public override void GetTileData(Vector3Int position, ITilemap tilemap, ref TileData tileData) {
         base.GetTileData(position, tilemap, ref tileData);
-        if (biomeIndex == -1) return;
-        float encodedIndex = (float)biomeIndex / INDEX_SCALE;
+        if (textureIndex == -1) return;
+        float encodedIndex = (float)textureIndex / INDEX_SCALE;
         tileData.color = new Color(encodedIndex, 0f, 0f, 1f).gamma;
     }
 }

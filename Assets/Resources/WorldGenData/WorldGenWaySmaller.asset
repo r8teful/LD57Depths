@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be00040ac3102f841a04e2b78a008678, type: 3}
+  m_Name: WorldGenWaySmaller
+  m_EditorClassIdentifier: 
+  seed: 1915
+  associatedMaterial: {fileID: 2100000, guid: 47edbc30f335d7c49898dfd38c8683b4, type: 2}
+  id: 1
+  trenchBaseWidth: 82.9
+  trenchWidenFactor: -0.04
+  trenchEdgeNoiseFrequency: 0.164
+  trenchEdgeNoiseAmplitude: 7.8
+  caveNoiseScale: 0.03
+  caveAmp: 0.8
+  caveCutoff: 0.03
+  caveOctavesBase: 4.31
+  caveOctavesRidge: 1.89
+  cavewWarpamp: 0.81
+  caveWorleyWeight: 2.5
+  biomes:
+  - {fileID: 11400000, guid: 5183ec9dd8eded44aa227b8ca5268657, type: 2}
+  - {fileID: 11400000, guid: 42ff9b5deefacb34d9c6f3fbe089caee, type: 2}
+  - {fileID: 11400000, guid: b5686ffd4a4c4074081a25eafcf8170a, type: 2}
+  - {fileID: 11400000, guid: a8b35a535230b3d499f2082bb35b3bf9, type: 2}

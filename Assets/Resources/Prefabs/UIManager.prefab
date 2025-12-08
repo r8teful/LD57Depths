@@ -106,11 +106,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2409864663239365323}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 144.18857, y: 856.6455}
-  m_SizeDelta: {x: 206.3772, y: 306.2086}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: 391}
+  m_SizeDelta: {x: 142.7657, y: 306.2086}
+  m_Pivot: {x: 1, y: 0}
 --- !u!114 &617350542214467306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -359,7 +359,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9301dc6c8c54fe24293318727b12e2a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  popupPrefab: {fileID: 0}
   popupParent: {fileID: 3370019034843413774}
 --- !u!1 &2261421801698203721
 GameObject:

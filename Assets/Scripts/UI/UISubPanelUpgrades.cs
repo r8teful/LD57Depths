@@ -12,6 +12,9 @@ public class UISubPanelUpgrades : MonoBehaviour {
     [SerializeField] private Transform _upgradeBarContainer;
     private Dictionary<ushort,UISubUpgradeBar> _upgradeBars = new Dictionary<ushort, UISubUpgradeBar>(); // Runtime instantiated bars
     private SubRecipeSO _curRecipeData;
+    private SubRecipeSO _cachedNewRecipe;
+    private bool _playingAnimation;
+
     private void Awake() {
         SubmarineManager.Instance.OnUpgradeDataChanged += UpgradeDataChanged; // When someone succesefully contributes
         SubmarineManager.Instance.OnCurRecipeChanged += CurRecipeChanged; // When next stage is reached
@@ -22,8 +25,16 @@ public class UISubPanelUpgrades : MonoBehaviour {
         InitializeUpgradeBars();
         UpdatePanelVisuals();
     }
-
- 
+    private void OnEnable() {
+        UpdatePanelVisuals();
+        InitializeUpgradeBars();
+    }
+    private void OnDisable() {
+        if (_playingAnimation) {
+            _playingAnimation = false;
+            _curRecipeData = _cachedNewRecipe; // Start new recipe this is so confusing and messy but omg should have just coded it well in the first place
+        }
+    }
 
     // Initializes the empty state of a recipeBar.
     private void InitializeUpgradeBars() {
@@ -54,6 +65,8 @@ public class UISubPanelUpgrades : MonoBehaviour {
         SubRecipeSO changedRecipe = App.ResourceSystem.GetRecipeByID(id) as SubRecipeSO;
         if (_curRecipeData != changedRecipe) {
             // Play animation
+            _cachedNewRecipe = changedRecipe;
+            _playingAnimation = true;
             StartCoroutine(NewRecipeRoutine(changedRecipe));
         }
     }
@@ -78,6 +91,7 @@ public class UISubPanelUpgrades : MonoBehaviour {
         InitializeUpgradeBars();
         UpdatePanelVisuals(); // This will now uppdate  _currentUpgradeStageSprite
         // Here we actually set the sprite because we don't want to do it everytime in UpdatePanelVisual,  
+        _playingAnimation = false;
          
     }
 

@@ -34,12 +34,12 @@ public class UISubUpgradeBar : MonoBehaviour {
             _resourceImageBig.sprite = sprite;
             _resourceImageSmall.sprite = sprite;
         }
-        UpdateVisuals();
+        UpdateVisuals(true);
     }
     public void SetNewData(IngredientStatus ingredient, int contributed) {
         _cachedStatus = ingredient;
         _contributed = contributed;
-        UpdateVisuals();
+        UpdateVisuals(false);
         // Recipe and its related parts stays the same, when they change the object just gets removed, handled by UISUbPanelUpgrades
     }
     private void ContributeClicked() {
@@ -49,7 +49,7 @@ public class UISubUpgradeBar : MonoBehaviour {
         SubmarineManager.Instance.AttemptContribute(_recipe.ID, _cachedStatus.Item.ID, _cachedStatus.RequiredAmount);
     }
     
-    private void UpdateVisuals() {
+    private void UpdateVisuals(bool fromInit) {
         string color = _cachedStatus.HasEnough ? "white" : "red";
         _inventoryAmountText.text = $"<color=\"{color}\">{_cachedStatus.CurrentAmount}";
         if(_contributed >= 0) {
@@ -57,8 +57,8 @@ public class UISubUpgradeBar : MonoBehaviour {
             _contributedText.text = _contributed.ToString();
         } 
         if(_contributed >= _total) {
-            if(_contributingButton.gameObject.activeSelf)
-                _parent.BarCompleteAnimation(); // Ugly but works, make sure we only call it once 
+            if(_contributingButton.gameObject.activeSelf && !fromInit) // Another bool woo even more complicated now!
+                _parent.BarCompleteAnimation(); // UGLY AND DOESN'T WORK BECAUSE WE WILl call this on INIT which is called on enable and we will always play it holy shit what a mess
             _contributingButton.onClick.RemoveListener(ContributeClicked);
             _contributingButton.gameObject.SetActive(false);
             _invAmountContianer.SetActive(false);

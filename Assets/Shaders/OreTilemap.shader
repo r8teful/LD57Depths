@@ -12,7 +12,8 @@ Shader "Custom/WorldTilemap"
     {
         Tags { "Queue"="Transparent" "RenderType"="Transparent" "PreviewType"="Plane" }
         LOD 100
-
+        ZWrite Off
+        Blend SrcAlpha OneMinusSrcAlpha
         Pass
         {
             CGPROGRAM
@@ -66,9 +67,11 @@ Shader "Custom/WorldTilemap"
                 fixed4 seamlessColor = UNITY_SAMPLE_TEX2DARRAY(_TextureArray, float3(worldUV.x, worldUV.y, index));
 
                 // Optional: Combine with original sprite texture (e.g., multiply or replace)
+                
                 fixed4 spriteColor = tex2D(_MainTex, i.uv);
 
                 fixed4 finalColor = lerp(seamlessColor,spriteColor, spriteColor.a);
+                //fixed4 finalColor = seamlessColor;
                 //fixed4 finalColor = fixed4(seamlessColor.rgb, spriteColor.a);
                 if(_DebugMode > 0.5){
                     if(_DebugMode < 1){
@@ -76,10 +79,10 @@ Shader "Custom/WorldTilemap"
                         return fixed4(debugValue,debugValue,debugValue,1);
                     }
                     if(_DebugMode < 2){
-                        return fixed4(spriteColor.rgb,spriteColor.a);
+                        return fixed4(finalColor.rgb,finalColor.a);
                     }
                      if(_DebugMode < 3){                    
-                        return fixed4(spriteColor.a, spriteColor.a, spriteColor.a, 1.0);
+                        return fixed4(finalColor.a, finalColor.a, finalColor.a, 1.0);
                     }
                     if(_DebugMode < 4){                    
                         return fixed4(i.uv.x, i.uv.y, 0.0, 1.0);

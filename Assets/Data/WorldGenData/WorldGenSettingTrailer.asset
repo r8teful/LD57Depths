@@ -14,20 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 4728
   associatedMaterial: {fileID: 2100000, guid: 7d4e6188ebf6b6c4a8d8c6f40e45890e, type: 2}
-  oreTypes:
-  - name: Iron
-    tile: {fileID: 11400000, guid: f4b09cb01edb0244da271b27ca802fa3, type: 2}
-    allowedBiomeNames: []
-    frequency: 0.05
-    threshold: 0.828
-    clusterFrequency: 4
-    clusterThreshold: 0.135
-    requireCluster: 1
-  worldSpawnEntities:
-  - {fileID: 11400000, guid: d38c04f5644b5fe4b8577fdbaeedb3c3, type: 2}
-  - {fileID: 11400000, guid: d43c3f02f91b332498b32a9be1ee129e, type: 2}
-  - {fileID: 11400000, guid: c5137d53643422042a3e53d1f214cb16, type: 2}
-  - {fileID: 11400000, guid: 14a577ad9c82e3349939b493e617616d, type: 2}
-  - {fileID: 11400000, guid: 5306525d2d402954a8574ca58825fc96, type: 2}
-  - {fileID: 11400000, guid: bf06109c54242e345b60ac88fc937303, type: 2}
-  - {fileID: 11400000, guid: 24662d2fba81ac84792b73518d1fd5b4, type: 2}
+  id: 1
+  trenchBaseWidth: 0
+  trenchWidenFactor: 0
+  trenchEdgeNoiseFrequency: 0
+  trenchEdgeNoiseAmplitude: 0
+  caveNoiseScale: 0
+  caveAmp: 0
+  caveCutoff: 0
+  caveOctavesBase: 0
+  caveOctavesRidge: 0
+  cavewWarpamp: 0
+  caveWorleyWeight: 0
+  biomes: []

@@ -1,5 +1,6 @@
 using FishNet.Object;
 using Sirenix.OdinInspector;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,8 +25,10 @@ public class WorldManager : NetworkBehaviour {
     public Transform GetSubTransform() => _sub;
     
     [SerializeField] private Tilemap mainTilemap; // Main visual grid component for the game
-    [SerializeField] private Tilemap overlayTilemapOre; // Main visual grid component for the game
+    [SerializeField] private Tilemap overlayTilemapOre; // Ores are overlayed ontop of the main tilemap, when we break a tile, we first check if there is an ore there and use that as drop
+    [SerializeField] private Tilemap overlayTilemapShading; 
     [SerializeField] private Tilemap overlayTilemapDamage; // for damaged tiles
+    [SerializeField] private TileSO _shadeTile; // We can set this with the resource system but just doing this now
     public float GetVisualTilemapGridSize() => mainTilemap.transform.parent.GetComponent<Grid>().cellSize.x; // Cell size SHOULD be square
     public bool useSave; 
     [SerializeField] Transform playerSpawn;
@@ -100,15 +103,19 @@ public class WorldManager : NetworkBehaviour {
         //mainTilemap.lock(pos, TileFlags.LockAll);
         mainTilemap.SetTilesBlock(chunkBounds, tilesToSet);
     }
-    public void SetTileIEnumerator(Dictionary<BoundsInt, TileBase[]> tilesToSet) {
-        StartCoroutine(SetWorldTiles(tilesToSet));
+    public void SetTileIEnumerator(Dictionary<BoundsInt, TileBase[]> tilesToSet, Dictionary<BoundsInt, TileBase[]> tilesShading) {
+        StartCoroutine(SetWorldTiles(tilesToSet, tilesShading));
     }
     internal void SetOreIEnumerator(Dictionary<BoundsInt, TileBase[]> ores) {
         StartCoroutine(SetWorldOres(ores));    
     }
-    private IEnumerator SetWorldTiles(Dictionary<BoundsInt, TileBase[]> tilesToSet) {
+    private IEnumerator SetWorldTiles(Dictionary<BoundsInt, TileBase[]> tilesToSet, Dictionary<BoundsInt, TileBase[]> tilesShading) {
         foreach (var kvp in tilesToSet) {
             mainTilemap.SetTilesBlock(kvp.Key, kvp.Value);
+            yield return null; // pause one frame
+        }
+        foreach (var kvp in tilesShading) {
+            overlayTilemapShading.SetTilesBlock(kvp.Key, kvp.Value);
             yield return null; // pause one frame
         }
     }
@@ -127,6 +134,10 @@ public class WorldManager : NetworkBehaviour {
     }
     internal void SetTile(Vector3Int cellPos, ushort tileToSet) {
         mainTilemap.SetTile(cellPos, App.ResourceSystem.GetTileByID(tileToSet));
+        if (tileToSet == 0) {
+            // Remove shading
+            overlayTilemapShading.SetTile(cellPos, null);
+        }
     }
 
     // =============================================
