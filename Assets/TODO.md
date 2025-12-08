@@ -1,33 +1,13 @@
-IS THE GAME FUN??
+---------- MAKE THE GAME FUN!!! ---------------- 
 
-
-
-
-
-Hover over base nodes to see what it is and possibly their current stats
-
-
-
-Iron drops way to much each node. Maybe this is good?
-
-
-
-MAKE THE MINING MORE SATISFYING
-
-
-
-* Having actual veins is way more satisfying to mine, it just feels more rewarding mining the whole thing and not the ores being scattered around, Also fuller veins look more satisfying, like a whole block of it looks cool
-* Need a counter of the ores you're collecting because it is satisfying to see it go up
-
-
-
-
+* Hover over base nodes to see what it is and possibly their current stats
+* 
 
 Blocks ARE enemies, you MINE/defeat them and gain a REWARD
 
 
 
-Procedural world -> your advantage! Utilize it! Is it bad to have a base? NO its good, but maybe you can teleport? You want to be able to go FAR from your base swimming back the same way is boring! 
+Procedural world -> your advantage! Utilize it! Is it bad to have a base? NO its good, but maybe you can teleport? You want to be able to go FAR from your base swimming back the same way is boring!
 
 
 
@@ -36,7 +16,51 @@ Procedural world -> your advantage! Utilize it! Is it bad to have a base? NO its
 
 
 
-Upgrade three is the "base"
+Item based and you just have the items show levels
 
-Then there are items that enhance the base. 
+
+
+
+
+Make the game PLAYABLE
+
+1. Make it so the first stage takes about 10-20 minutes to complete
+
+
+
+Code Temp status effects and make them show up in UI
+
+* What temp stats do we show? What is a temp stat, its not the \_activeModifiers, because that is each StatModifier individualy, we'd need a collection of the actuall buff part, and show that to the player, not what is RAW under the hood
+
+
+
+This all needs to be in the POPUP, it will need a major extention, maybe different verions of the popup prefab?
+
+
+
+Code ability UI status
+
+Hover effect on both of these
+
+
+
+
+
+
+
+Flow:
+
+
+
+We get a stat increase, need to know some kind of scriptable object with info about it (description, title, icon, effect)
+
+
+
+
+
+
+
+
+
+
 

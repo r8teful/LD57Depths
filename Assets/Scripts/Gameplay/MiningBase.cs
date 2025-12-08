@@ -16,7 +16,7 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
     public float FalloffStrength { get; set; }
     public abstract object VisualData { get; }
     public GameObject GO => gameObject;
-    public abstract ToolAbilityBaseSO AbilityData { get; }
+    public abstract AbilityBaseSO AbilityData { get; }
     public abstract ToolType ToolType { get; }
     public ushort ToolID => (ushort)ToolType;
 
@@ -129,27 +129,13 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
         StartAbility(toolController, AbilityData);
        
     }
-    public void StartAbility(ToolController toolController,ToolAbilityBaseSO ability) {
-        // Create the StatModifier instances from our ScriptableObject data
-        var modifiersToAdd = new List<StatModifier>();
-        foreach (var modData in ability.Modifiers) {
-            // IMPORTANT: We use the ScriptableObject asset itself as the 'Source'.
-            // This guarantees a unique and reliable ID to remove the modifiers later.
-            modifiersToAdd.Add(new StatModifier(modData.Value, modData.Stat, modData.Type, ability));
-        }
-        // Add all modifiers to the player stats manager
-        _localPlayerStats.AddModifiers(modifiersToAdd);
-
-        // Start a coroutine to remove them after the duration
-        StartCoroutine(AbilityCountDown(ability));
-    }
-    private IEnumerator AbilityCountDown(ToolAbilityBaseSO ability) {
+    public void StartAbility(ToolController toolController,AbilityBaseSO ability) {
+        var b = _localPlayerStats.TriggerAbility(ability,() => {
+            Debug.Log("Ability wore off!");
+            ChangeAbilityState(false);
+        }, ability
+        );
         ChangeAbilityState(true);
-        yield return new WaitForSeconds(ability.Duration); // Possible have it cancel when certain things happen? Don't think we have to though..
-        Debug.Log("Ability wore off!");
-
-        _localPlayerStats.RemoveModifiersFromSource(ability);
-        ChangeAbilityState(false);
     }
     private void ChangeAbilityState(bool isUsing) {
         _isUsingAbility = isUsing;

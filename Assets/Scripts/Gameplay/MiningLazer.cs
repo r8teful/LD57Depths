@@ -9,9 +9,9 @@ public class MiningLazer : MiningBase {
     [SerializeField] private float directionMemoryTime = 1.5f;
     public bool CanMine { get; set; } = true;
     public override ToolType ToolType => ToolType.Lazer; 
-    public override ToolAbilityBaseSO AbilityData => Ability;
+    public override AbilityBaseSO AbilityData => Ability;
 
-    public ToolAbilityBaseSO Ability;
+    public AbilityBaseSO Ability;
     public override object VisualData => _currentDirection;
     public static event Action<Vector2> OnPlayerKnockbackRequested;
 

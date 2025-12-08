@@ -8,6 +8,7 @@ public class UIManager : Singleton<UIManager> {
     public PopupManager PopupManager { get; private set; }
     [field:SerializeField] public UIUpgradeScreen UpgradeScreen { get; private set; }
     [field: SerializeField] public UIManagerInventory UIManagerInventory {  get; private set; }
+    [field: SerializeField] public UIManagerStats UIManagerStats {  get; private set; }
     [field: SerializeField] public UISubControlPanel UISubControlPanel {  get; private set; }
 
     private GameObject _playerGameObject;

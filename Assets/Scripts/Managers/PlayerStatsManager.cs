@@ -2,6 +2,7 @@
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -41,6 +42,26 @@ public enum StatType {
     BlockOxygenReleased = 40,
     BlockOxygenChance = 41
 }
+// We use this instance to get RUNTIME information about the buff, we'll need it for UI
+public class ActiveBuff {
+    public AbilityBaseSO ability;
+    public float timeRemaining; // -1 for conditional
+
+    public BuffHandle handle;
+    public Action onConditionEnd;
+    internal float startTime;
+    internal float duration;
+    internal float endTime;
+    internal object source;
+}
+// We return this object which other classes can utilize, it's a very cool class, and very usefull! I'm understanding more complicated concepts lol
+public sealed class BuffHandle {
+    public AbilityBaseSO ability;
+    public Action onRemove; // called when buff ends
+    public void Remove() {
+        onRemove?.Invoke();
+    }
+}
 [RequireComponent(typeof(NetworkedPlayer))]
 public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     [SerializeField] private PlayerBaseStatsSO _baseStats;
@@ -51,7 +72,9 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     
     // This list ONLY exists on the owning client. It does not need to be synced
     // because only the owner calculates their stats and syncs the result via _finalStats.
-    private readonly List<StatModifier> _activeModifiers = new();
+    private readonly List<ActiveBuff> _activeBuffs = new(); // This now changes to the active buff instances
+    private readonly Dictionary<AbilityBaseSO, ActiveBuff> _buffLookup = new();
+    // activeModifers 
 
     private bool _isInitialized = false;
     public bool IsInitialized => _isInitialized;
@@ -62,6 +85,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     // The crucial event system. Other components (like PlayerMovement, ToolController)
     // will listen to this to know when a stat they care about has changed.
     public event Action<StatType, float> OnStatChanged;
+    public event Action OnBuffAdded;
 
     #region Initialization
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
@@ -144,16 +168,20 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
         float finalValue = permanentValue;
         // 1. Apply all ADDITIVE modifiers first.
-        foreach (var mod in _activeModifiers) {
-            if (mod.Stat == stat && mod.Type == IncreaseType.Add) {
-                finalValue += mod.Value;
+        foreach (var buff in _activeBuffs) {
+            foreach (var mod in buff.ability.Modifiers) {
+                if (mod.Stat == stat && mod.Type == IncreaseType.Add) {
+                    finalValue += mod.Value;
+                }
             }
         }
 
         // 2. Apply all MULTIPLIER modifiers next.
-        foreach (var mod in _activeModifiers) {
-            if (mod.Stat == stat && mod.Type == IncreaseType.Multiply) {
-                finalValue *= mod.Value;
+        foreach (var buff in _activeBuffs) {
+            foreach (var mod in buff.ability.Modifiers) {
+                if (mod.Stat == stat && mod.Type == IncreaseType.Multiply) {
+                    finalValue *= mod.Value;
+                }
             }
         }
         ServerUpdateFinalStat(stat, finalValue);
@@ -228,28 +256,75 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         // Update the synced dictionary. This triggers the OnChange event on all clients.
         _finalStats[stat] = newValue;
     }
-    /// <summary>
-    /// Adds a temporary stat modifier (e.g., from an ability or location boost).
-    /// </summary>
-    public void AddModifier(StatModifier modifier) {
-        if (!base.IsOwner) return;
 
-        _activeModifiers.Add(modifier);
-        RecalculateStat(modifier.Stat);
-    }
-    public void AddModifiers(IEnumerable<StatModifier> modifiers) {
+    // Its wierd we used to add and track modifiers in a list, but now we just
+    // track the entire buff, so here instead we just recalculate the new modifiers we've added
+    public void RecalculateModifiers(IEnumerable<StatModifier> modifiers) {
         if (!base.IsOwner) return;
 
         var affectedStats = new HashSet<StatType>();
         foreach (var mod in modifiers) {
-            _activeModifiers.Add(mod);
             affectedStats.Add(mod.Stat);
         }
-
         foreach (var stat in affectedStats) {
             RecalculateStat(stat);
         }
-    }  
+    }
+    internal void AddTimedModifiers(List<StatModifier> modifiersToAdd, object source, float duration, Action onComplete) {
+        StartCoroutine(AddTimedModifiersRoutine(modifiersToAdd, duration, source, onComplete));
+    }
+    internal BuffHandle TriggerAbility(AbilityBaseSO ability, Action externalConditionEnd, object source) {
+        // Prevent duplicates unless ability is explicitly stackable
+        if (_buffLookup.TryGetValue(ability, out var existing)) {
+            Debug.Log("Buff already applied. What would you like to happen? CODE IT!!");
+            return null;
+            // TODO
+            //if (ability.refreshOnReapply) {
+            //    if (existing.duration > 0) {
+            //        existing.startTime = Time.time;
+            //        existing.duration = durationOverride ?? ability.duration;
+            //        existing.endTime = existing.startTime + existing.duration;
+            //        OnBuffUpdated?.Invoke();
+            //    }
+            //}
+            //return existing.handle;
+        }
+        // Create runtime buff instance
+        var buff = new ActiveBuff {
+            ability = ability,
+            startTime = Time.time,
+            duration = ability.Duration,
+            endTime = ability.Duration > 0 ? Time.time + ability.Duration : -1f, // indefinite
+            source = source
+        };
+
+        var modifiersToAdd = new List<StatModifier>();
+        foreach (var modData in ability.Modifiers) {
+            modifiersToAdd.Add(new StatModifier(modData.Value, modData.Stat, modData.Type, ability));
+        }
+        RecalculateModifiers(modifiersToAdd);
+
+        // Conditional? Subscribe to external condition so we can remove it when its met
+        if (ability.Type == AbilityType.Conditional && externalConditionEnd != null) {
+            buff.onConditionEnd = externalConditionEnd;
+            externalConditionEnd += () => RemoveModifiersFromSource(ability);
+        }
+        // Build handle
+        buff.handle = new BuffHandle {
+            ability = ability,
+            onRemove = () => RemoveModifiersFromSource(ability)
+        };
+        _activeBuffs.Add(buff);
+        _buffLookup[ability] = buff;
+
+        OnBuffAdded?.Invoke();
+        return buff.handle;
+        //AddTimedModifiers(modifiersToAdd, ability, ability.Duration, externalConditionEnd);
+
+        //OnPlayerAbilityStart?.Invoke(ability);
+        // HERE, now we have the actual SO, with data about the ability, now set that as the visual info 
+        // HOW? Could do it with an event, or direct call, event seems clean 
+    }
     /// <summary>
     /// Removes all temporary modifiers that came from a specific source.
     /// </summary>
@@ -257,13 +332,21 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         if (!base.IsOwner) return;
 
         // Find which stats will be affected BEFORE we remove the modifiers
-        var statsToRecalculate = _activeModifiers
-            .Where(mod => mod.Source == source)
-            .Select(mod => mod.Stat)
-            .Distinct()
-            .ToList();
+        // l
 
-        _activeModifiers.RemoveAll(mod => mod.Source == source);
+        List<StatType> statsToRecalculate = new();
+        foreach(var buff in _activeBuffs) {
+            if (buff.source != source) continue;
+            foreach (var mod in buff.ability.Modifiers) {
+                statsToRecalculate.Add(mod.Stat);
+            }
+        }
+        statsToRecalculate.Distinct();
+        //   .Where(mod => mod.source == source)
+        //   .Select(mod => mod.ability.Modifiers.)
+        //   .Distinct()
+        //   .ToList();
+        _activeBuffs.RemoveAll(buff => buff.source == source); //  IDK ???
 
         // Now recalculate only the stats that were changed
         foreach (var stat in statsToRecalculate) {
@@ -281,8 +364,13 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     }
 
     #endregion
-
-
+    private IEnumerator AddTimedModifiersRoutine(List<StatModifier> modifiersToAdd, float duration, object source, Action onComplete) {
+        RecalculateModifiers(modifiersToAdd); // Add first
+        yield return new WaitForSeconds(duration); // Wait
+        RemoveModifiersFromSource(source); // Remove;
+        onComplete?.Invoke(); // Notify
+    }
+    
     private void OnFinalStatChanged(SyncDictionaryOperation op, StatType key, float value, bool asServer) {
         // This method is called on ALL clients whenever the dictionary changes.
        // Debug.Log("STAT CHANGE!");
