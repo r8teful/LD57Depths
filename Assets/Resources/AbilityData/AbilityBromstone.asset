@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0183601e43946ba498966f9df2fef387, type: 3}
   m_Name: AbilityBromstone
   m_EditorClassIdentifier: 
+  id: 1
   Modifiers:
   - Value: 3
     Stat: 0
@@ -26,3 +27,7 @@ MonoBehaviour:
     Stat: 3
     Type: 0
   Duration: 10
+  Type: 0
+  Title: Brimstone
+  Description: 'Your lazer power has been inhanced '
+  Icon: {fileID: 0}

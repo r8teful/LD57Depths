@@ -130,11 +130,11 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
        
     }
     public void StartAbility(ToolController toolController,AbilityBaseSO ability) {
-        var b = _localPlayerStats.TriggerAbility(ability,() => {
+        var bh = _localPlayerStats.TriggerAbility(ability);
+        bh.OnRemoved += () => {
             Debug.Log("Ability wore off!");
             ChangeAbilityState(false);
-        }, ability
-        );
+        };
         ChangeAbilityState(true);
     }
     private void ChangeAbilityState(bool isUsing) {

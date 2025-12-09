@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0183601e43946ba498966f9df2fef387, type: 3}
   m_Name: AbilityDrill
   m_EditorClassIdentifier: 
+  id: 2
   Modifiers:
   - Value: 1.5
     Stat: 0
@@ -20,3 +21,7 @@ MonoBehaviour:
     Stat: 1
     Type: 1
   Duration: 10
+  Type: 0
+  Title: 
+  Description: 
+  Icon: {fileID: 0}

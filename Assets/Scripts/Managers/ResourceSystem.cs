@@ -25,16 +25,14 @@ public class ResourceSystem {
     private Dictionary<ItemData, ushort> _idLookupByItem;
 
     private Dictionary<ushort, EntityBaseSO> _entityLookupByID;
-    private Dictionary<EntityBaseSO, ushort> _idLookupByEntity;
 
     private Dictionary<ushort, RecipeBaseSO> _recipeLookupByID;
-    private Dictionary<RecipeBaseSO, ushort> _idLookupByRecipe;
 
     private Dictionary<ushort, WorldGenSettingSO> _worldGenLookupByID;
-    private Dictionary<WorldGenSettingSO, ushort> _idLookupByWorldGen;
 
     private Dictionary<ushort, UpgradeRecipeSO> _recipeUpgradeLookupByID;
-    private Dictionary<UpgradeRecipeSO, ushort> _idLookupByRecipeUpgrade;
+
+    private Dictionary<ushort, AbilityBaseSO> _abilityLookupByID;
 
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
     public const ushort AirID = 0; // Air is ALWAYS 0 
@@ -65,14 +63,17 @@ public class ResourceSystem {
         BackgroundObjects = Resources.LoadAll<BackgroundObjectSO>("BackgroundObjectData").ToList();
 
         UpgradeTreeData = Resources.LoadAll<UpgradeTreeDataSO>("UpgradeTreeData").ToList();
+        
+        UpgradeTreeData = Resources.LoadAll<UpgradeTreeDataSO>("UpgradeTreeData").ToList();
 
         InitializeLookup("ItemData", out _itemLookupByID, out _idLookupByItem);
         InitializeLookup("TileData", out _tileLookupByID, out _idLookupByTile);
-        InitializeLookup("EntityData", out _entityLookupByID, out _idLookupByEntity);
-        InitializeLookup("RecipeData", out _recipeLookupByID, out _idLookupByRecipe);
-        InitializeLookup("WorldGenData", out _worldGenLookupByID, out _idLookupByWorldGen);
+        InitializeLookup("EntityData", out _entityLookupByID, out _);
+        InitializeLookup("RecipeData", out _recipeLookupByID, out _);
+        InitializeLookup("WorldGenData", out _worldGenLookupByID, out _);
+        InitializeLookup("AbilityData", out _abilityLookupByID, out _);
 
-        InitializeLookup<UpgradeRecipeSO>("", out _recipeUpgradeLookupByID, out _idLookupByRecipeUpgrade);
+        InitializeLookup<UpgradeRecipeSO>("", out _recipeUpgradeLookupByID, out _);
     }
 
     public void InitializeWorldEntities(int worldSeed,Vector2 worldOffset) {
@@ -164,6 +165,13 @@ public class ResourceSystem {
             return null;
         }
         return worldGen;
+    }
+    public AbilityBaseSO GetAbilityByID(ushort id) {
+        if (id == InvalidID || !_abilityLookupByID.TryGetValue(id, out AbilityBaseSO ability)) {
+            Debug.LogWarning($"ability ID {id} not found in database.");
+            return null;
+        }
+        return ability;
     }
     public ZoneSO GetZoneByIndex(int zoneIndex) {
         var list = Resources.LoadAll<ZoneSO>("TrenchZones").ToList();
