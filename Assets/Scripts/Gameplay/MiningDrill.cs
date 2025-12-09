@@ -10,11 +10,11 @@ public class MiningDrill : MiningBase {
     public override ToolType ToolType => ToolType.Drill;
     public int RayCount { get; set; } // How many blocks can simultaneously be mined 
 
-    public override AbilityBaseSO AbilityData => Ability;
+    public override BuffSO AbilityData => Ability;
     private Vector2 _visualDirection;
     public override object VisualData => _visualDirection;
 
-    public AbilityBaseSO Ability;
+    public BuffSO Ability;
     public GameObject DrillAbilityParticles;
 
     public override void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {

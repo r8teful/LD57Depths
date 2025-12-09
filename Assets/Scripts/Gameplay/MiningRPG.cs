@@ -5,12 +5,12 @@ public class MiningRPG : MiningBase {
     [SerializeField] private Transform spawnPos;
     public override ToolType ToolType => ToolType.RPG;
     public float ExplosionVelocity;
-    public override AbilityBaseSO AbilityData => Ability;
+    public override BuffSO AbilityData => Ability;
     private Vector2 _visualDirection;
 
     public override object VisualData => _visualDirection;
 
-    public AbilityBaseSO Ability;
+    public BuffSO Ability;
     public override void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {
         Vector2 toolPosition = transform.position;
         Vector2 targetDirection = (pos - toolPosition).normalized;

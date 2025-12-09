@@ -3,7 +3,7 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "AbilityBaseSO", menuName = "ScriptableObjects/AbilityBaseSO", order = 7)]
 // Ability that changes the stat
-public class AbilityBaseSO : ScriptableObject, IIdentifiable {
+public class BuffSO : ScriptableObject, IIdentifiable {
     [SerializeField] private ushort id;
     public ushort ID => id;
     public List<StatModifier> Modifiers;

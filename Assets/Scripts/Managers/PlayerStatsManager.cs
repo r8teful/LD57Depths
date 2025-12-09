@@ -45,14 +45,14 @@ public enum StatType {
 }
 // We use this instance to get RUNTIME information about the buff, we'll need it for UI
 public class ActiveBuff {
-    public ushort abilityID;
+    public ushort buffID;
     public float timeRemaining; // -1 for conditional
     public BuffHandle handle;
     internal float startTime;
     internal float duration;
     internal float endTime;
 
-    public AbilityBaseSO GetAbilityData() => App.ResourceSystem.GetAbilityByID(abilityID);
+    public BuffSO GetAbilityData() => App.ResourceSystem.GetBuffByID(buffID);
 }
 // We return this object which other classes can utilize, it's a very cool class, and very usefull! I'm understanding more complicated concepts lol
 public sealed class BuffHandle {
@@ -70,7 +70,7 @@ public sealed class BuffHandle {
     internal void NotifyRemoved() {
         try { OnRemoved?.Invoke(); } catch (Exception ex) { UnityEngine.Debug.LogException(ex); }
     }
-    public AbilityBaseSO GetAbilityData() => App.ResourceSystem.GetAbilityByID(abilityID);
+    public BuffSO GetAbilityData() => App.ResourceSystem.GetBuffByID(abilityID);
 }
 [RequireComponent(typeof(NetworkedPlayer))]
 public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
@@ -181,7 +181,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             for (int i = _activeBuffs.Count - 1; i >= 0; i--) {
                 var b = _activeBuffs[i];
                 if (b.duration > 0 && Time.time >= b.endTime) {
-                    RemoveAbility(b.abilityID);
+                    RemoveAbility(b.buffID);
                 }
             }
         }
@@ -288,7 +288,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             float remaining = b.duration > 0 ? Mathf.Max(0f, b.endTime - Time.time) : -1f;
             float total = b.duration > 0 ? b.duration : -1f;
             _snapshotCache.Add(new BuffSnapshot {
-                abilityId = b.abilityID,
+                abilityId = b.buffID,
                 displayName = b.GetAbilityData().Title,
                 icon = b.GetAbilityData().Icon,
                 remainingSeconds = remaining,
@@ -310,9 +310,9 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     ///   Usage: registerUnsubscribe?.Invoke(removeAction);
     /// - durationOverride: optional runtime duration
     /// </summary>
-    internal BuffHandle TriggerAbility(AbilityBaseSO ability, Action<Action> registerUnsubscribe = null) {
+    internal BuffHandle TriggerBuff(BuffSO buffData, Action<Action> registerUnsubscribe = null) {
         // Prevent duplicates unless ability is explicitly stackable
-        var id = ability.ID;
+        var id = buffData.ID;
         if (_activeBuffsByID.TryGetValue(id, out var existing)) {
             Debug.Log("Buff already applied. What would you like to happen? CODE IT!!");
             return null;
@@ -329,10 +329,10 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         }
         // Create runtime buff instance
         var buff = new ActiveBuff {
-            abilityID = id,
+            buffID = id,
             startTime = Time.time,
-            duration = ability.Duration,
-            endTime = ability.Duration > 0 ? Time.time + ability.Duration : -1f, // indefinite
+            duration = buffData.Duration,
+            endTime = buffData.Duration > 0 ? Time.time + buffData.Duration : -1f, // indefinite
         };
 
         // Actions are so fancy, so this basically points to this function which when we invoke the action will call, and we can pass the action around 
@@ -347,8 +347,8 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         _activeBuffsByID[id] = buff;
         registerUnsubscribe?.Invoke(removeAction);
         var modifiersToAdd = new List<StatModifier>();
-        foreach (var modData in ability.Modifiers) {
-            modifiersToAdd.Add(new StatModifier(modData.Value, modData.Stat, modData.Type, ability));
+        foreach (var modData in buffData.Modifiers) {
+            modifiersToAdd.Add(new StatModifier(modData.Value, modData.Stat, modData.Type, buffData));
         }
         RecalculateModifiers(modifiersToAdd);
 
@@ -361,7 +361,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         // HOW? Could do it with an event, or direct call, event seems clean 
     }
 
-    private void RemoveAbility(AbilityBaseSO ability) => RemoveAbility(ability.ID);
+    private void RemoveAbility(BuffSO ability) => RemoveAbility(ability.ID);
 
     /// <summary>
     /// Removes all temporary modifiers that came from a specific source.

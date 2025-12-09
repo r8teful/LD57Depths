@@ -32,7 +32,7 @@ public class ResourceSystem {
 
     private Dictionary<ushort, UpgradeRecipeSO> _recipeUpgradeLookupByID;
 
-    private Dictionary<ushort, AbilityBaseSO> _abilityLookupByID;
+    private Dictionary<ushort, BuffSO> _abilityLookupByID;
 
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
     public const ushort AirID = 0; // Air is ALWAYS 0 
@@ -166,8 +166,8 @@ public class ResourceSystem {
         }
         return worldGen;
     }
-    public AbilityBaseSO GetAbilityByID(ushort id) {
-        if (id == InvalidID || !_abilityLookupByID.TryGetValue(id, out AbilityBaseSO ability)) {
+    public BuffSO GetBuffByID(ushort id) {
+        if (id == InvalidID || !_abilityLookupByID.TryGetValue(id, out BuffSO ability)) {
             Debug.LogWarning($"ability ID {id} not found in database.");
             return null;
         }

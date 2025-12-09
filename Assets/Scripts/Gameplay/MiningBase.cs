@@ -16,7 +16,7 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
     public float FalloffStrength { get; set; }
     public abstract object VisualData { get; }
     public GameObject GO => gameObject;
-    public abstract AbilityBaseSO AbilityData { get; }
+    public abstract BuffSO AbilityData { get; }
     public abstract ToolType ToolType { get; }
     public ushort ToolID => (ushort)ToolType;
 
@@ -129,8 +129,8 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
         StartAbility(toolController, AbilityData);
        
     }
-    public void StartAbility(ToolController toolController,AbilityBaseSO ability) {
-        var bh = _localPlayerStats.TriggerAbility(ability);
+    public void StartAbility(ToolController toolController,BuffSO ability) {
+        var bh = _localPlayerStats.TriggerBuff(ability);
         bh.OnRemoved += () => {
             Debug.Log("Ability wore off!");
             ChangeAbilityState(false);
