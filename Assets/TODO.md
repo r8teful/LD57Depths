@@ -1,4 +1,4 @@
----------- MAKE THE GAME FUN!!! ---------------- 
+---------- MAKE THE GAME FUN!!! ----------------
 
 * Hover over base nodes to see what it is and possibly their current stats
 * 
@@ -46,21 +46,35 @@ Hover effect on both of these
 
 
 
+Implement some kinod of ability inventory?? Then it pulls it from there?
 
-
-Flow:
-
-
-
-We get a stat increase, need to know some kind of scriptable object with info about it (description, title, icon, effect)
+Active abilities:
 
 
 
+Shows all the time, two states
 
 
 
+Passive abilities:
+
+Shows all the time, one state
 
 
+
+**Upgrades ATTACH to the abilityInstance, this way we can target a single "item" upgrade**
+
+It's not have you have it programmed now, right now, when we upgrade the mining dmg, it just increases that stat globally
+
+Not specifically to the mining dmg to of the tool we are using
+
+Doing it this way also actually makes the passive abilities truly global
+
+
+
+Temporary Stat changes: - THIS WE HAVE IMPLEMENTED
+
+only shows when active
 
 
 
