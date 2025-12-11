@@ -17,7 +17,7 @@ public enum StatType {
     MiningRange = 0,
     MiningDamage = 1,
     MiningRotationSpeed = 2,
-    MiningKnockback = 3,
+    Knockback = 3,
     MiningFalloff = 4,
     MiningCombo = 5,
 
@@ -41,7 +41,10 @@ public enum StatType {
     
     // Block oxygen
     BlockOxygenReleased = 40,
-    BlockOxygenChance = 41
+    BlockOxygenChance = 41,
+
+    // General
+    Cooldown = 1000
 }
 // We use this instance to get RUNTIME information about the buff, we'll need it for UI
 public class ActiveBuff {

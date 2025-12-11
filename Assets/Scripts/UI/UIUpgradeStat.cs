@@ -48,7 +48,7 @@ public class UIUpgradeStat : MonoBehaviour {
             StatType.PlayerSpeedMax =>      "Maximum Speed",
             StatType.PlayerAcceleration =>  "Acceleration",
             StatType.PlayerOxygenMax =>     "Capacity (seconds)",
-            StatType.MiningKnockback =>     "Knockback Force",
+            StatType.Knockback =>     "Knockback Force",
             StatType.MiningFalloff =>       "Falloff",
             StatType.MiningCombo =>         "Damage Falloff",
             StatType.BlastDamage =>         "Damage",
@@ -79,7 +79,7 @@ public class UIUpgradeStat : MonoBehaviour {
                 return true;
             case StatType.PlayerOxygenMax:
                 return true;
-            case StatType.MiningKnockback:
+            case StatType.Knockback:
                 return false;
             case StatType.MiningFalloff:
                 return false;

@@ -41,7 +41,7 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
         Range = pStats.GetStat(StatType.MiningRange);
         DamagePerHit = pStats.GetStat(StatType.MiningDamage);
         RotationSpeed = pStats.GetStat(StatType.MiningRotationSpeed);
-        KnockbackStrength = pStats.GetStat(StatType.MiningKnockback);
+        KnockbackStrength = pStats.GetStat(StatType.Knockback);
         FalloffStrength = pStats.GetStat(StatType.MiningFalloff);
     }
 
@@ -66,7 +66,7 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
         if (stat == StatType.MiningRotationSpeed) {
             RotationSpeed = newV;
         }
-        if (stat == StatType.MiningKnockback) {
+        if (stat == StatType.Knockback) {
             KnockbackStrength = newV;
         }
 

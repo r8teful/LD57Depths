@@ -54,6 +54,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     [ShowInInspector]
     private PlayerInteractionContext _currentContext;
     private Vector2 _mousePos;
+    private bool _primaryInputToggle;
 
     public int InitializationOrder => 101;
 
@@ -316,7 +317,14 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             return Vector2.zero; // Not supported atm
         }
     }
-
+    public bool IsHoldingDownPrimaryInput() {
+        // Could add some more checks here later idk
+        return _primaryInputToggle;
+    }
+    public bool IsAllowedMiningUse() {
+        // Could add some more checks here later idk
+        return IsHoldingDownPrimaryInput() && _playerMovement.CanUseTool();
+    }
     public void OnInteract(InputAction.CallbackContext context) {
 
     }
@@ -361,9 +369,11 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         // Switch on the context to decide what Left Click does
         if(_currentContext == PlayerInteractionContext.UsingToolOnWorld || _currentContext == PlayerInteractionContext.WorldInteractable) {
             if (context.performed) {
-                _toolController.ToolStart(this);
+                _primaryInputToggle = true;
+                //_toolController.ToolStart(this);
             } else if (context.canceled) {
-                _toolController.ToolStop();
+                _primaryInputToggle = false;
+                //_toolController.ToolStop();
             }
         } 
         // old building code

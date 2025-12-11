@@ -20,9 +20,13 @@ public class NetworkedPlayer : NetworkBehaviour {
     public ToolController ToolController { get; private set; }
     public static NetworkedPlayer LocalInstance { get; private set; } // Singleton for local player
     public PlayerStatsManager PlayerStats { get; private set; } 
+    public PlayerAbilities PlayerAbilities { get; private set; } 
     public PopupManager PopupManager => UiManager.PopupManager;
     public NetworkObject PlayerNetworkedObject => base.NetworkObject; // Expose NetworkObject for other scripts to use
     public InventoryManager GetInventory() => InventoryN.GetInventoryManager();
+
+    // World manager should be in some kind of gamemanager or something but eh just get it like this
+    private WorldManager _worldManager;
     public bool IsInitialized => _isInitialized;
     private bool _isInitialized = false;
 
@@ -38,6 +42,7 @@ public class NetworkedPlayer : NetworkBehaviour {
             ToolController.InitalizeNotOwner(this);
             return;
         }
+        _worldManager = FindFirstObjectByType<WorldManager>();
         LocalInstance = this;
         InitializePlayer();
         CmdNotifyServerOfInitialization();
@@ -86,6 +91,7 @@ public class NetworkedPlayer : NetworkBehaviour {
         PlayerLayerController = GetComponent<PlayerLayerController>();
         PlayerVisuals = GetComponent<PlayerVisualHandler>();
         ToolController = GetComponent<ToolController>();
+        PlayerAbilities = GetComponent<PlayerAbilities>();
         PlayerMovement = GetComponent<PlayerMovement>();
 
         InventoryN.Initialize(); // We have to do this first before everything else, then spawn the UI manager, and then start the other inits 
@@ -127,5 +133,22 @@ public class NetworkedPlayer : NetworkBehaviour {
     }
     public string GetPlayerName() {
         return $"Player: {OwnerId}"; // TODO, get steam name or user defined name etc..
+    }
+
+    [ServerRpc(RequireOwnership = true)]
+    internal void CmdRequestDamageTile(Vector3Int cellPos, float damage) {
+        if (_worldManager == null)
+            _worldManager = FindFirstObjectByType<WorldManager>();
+        _worldManager.RequestDamageTile(cellPos, damage);
+    }
+    [ServerRpc(RequireOwnership = true)]
+    public void CmdRequestDamageTile(Vector3 worldPos, float damageAmount) {
+        // TODO: Server-side validation (range, tool, cooldowns, etc.)
+        //Debug.Log($"Requesting damage worldPos {worldPos}, damageAmount {damageAmount}");
+        // Pass request to WorldGenerator for processing
+        // TODO somehow _worldmanager is null here and it cant find it 
+        if (_worldManager == null)
+            _worldManager = FindFirstObjectByType<WorldManager>();
+        _worldManager.RequestDamageTile(worldPos, damageAmount);
     }
 }

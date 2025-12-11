@@ -26,6 +26,7 @@ GameObject:
   - component: {fileID: 7835090482241713945}
   - component: {fileID: 681475204193010044}
   - component: {fileID: 1978658108044632745}
+  - component: {fileID: 7040180018344758678}
   m_Layer: 2
   m_Name: PlayerOnline
   m_TagString: Player
@@ -51,6 +52,7 @@ Transform:
   - {fileID: 6972150252673196342}
   - {fileID: 1480892972741626469}
   - {fileID: 8651582872665796198}
+  - {fileID: 1673831068457264495}
   - {fileID: 4480196020193820798}
   - {fileID: 3911613047571001315}
   - {fileID: 7269383724727597847}
@@ -391,6 +393,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 7783e15b-6e5f-40c3-abb1-a6dfe783661c
     m_ActionName: 'Player/Ability[/Keyboard/space]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 16efc363-f768-4f22-a75d-cadb4ddd7a34
+    m_ActionName: 'Player/UI_Scroll[/Mouse/scroll]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 65e44046-c4bc-4146-937e-c55b85392925
+    m_ActionName: 'Player/UI_PanAction[/Mouse/leftButton]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -692,6 +702,50 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 6962948237969374493}
   _networkObjectCache: {fileID: 0}
+--- !u!114 &7040180018344758678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228294681075539138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a2be30724e3b7c41b43af699e5576e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _abilitySlotTransform: {fileID: 1673831068457264495}
+--- !u!1 &1942967068140502079
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1673831068457264495}
+  m_Layer: 2
+  m_Name: AbilitySlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1673831068457264495
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1942967068140502079}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7361887707154562350}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2741042111641852411
 GameObject:
   m_ObjectHideFlags: 0

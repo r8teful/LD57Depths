@@ -32,7 +32,10 @@ public class ResourceSystem {
 
     private Dictionary<ushort, UpgradeRecipeSO> _recipeUpgradeLookupByID;
 
-    private Dictionary<ushort, BuffSO> _abilityLookupByID;
+    private Dictionary<ushort, BuffSO> _buffLookupByID;
+    
+    private Dictionary<ushort, AbilitySO> _abilityLookupByID;
+
 
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
     public const ushort AirID = 0; // Air is ALWAYS 0 
@@ -71,6 +74,7 @@ public class ResourceSystem {
         InitializeLookup("EntityData", out _entityLookupByID, out _);
         InitializeLookup("RecipeData", out _recipeLookupByID, out _);
         InitializeLookup("WorldGenData", out _worldGenLookupByID, out _);
+        InitializeLookup("BuffData", out _buffLookupByID, out _);
         InitializeLookup("AbilityData", out _abilityLookupByID, out _);
 
         InitializeLookup<UpgradeRecipeSO>("", out _recipeUpgradeLookupByID, out _);
@@ -167,7 +171,14 @@ public class ResourceSystem {
         return worldGen;
     }
     public BuffSO GetBuffByID(ushort id) {
-        if (id == InvalidID || !_abilityLookupByID.TryGetValue(id, out BuffSO ability)) {
+        if (id == InvalidID || !_buffLookupByID.TryGetValue(id, out BuffSO buff)) {
+            Debug.LogWarning($"ability ID {id} not found in database.");
+            return null;
+        }
+        return buff;
+    }
+    public AbilitySO GetAbilityByID(ushort id) {
+        if (id == InvalidID || !_abilityLookupByID.TryGetValue(id, out AbilitySO ability)) {
             Debug.LogWarning($"ability ID {id} not found in database.");
             return null;
         }
