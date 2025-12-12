@@ -37,7 +37,7 @@ public class MiningLazerVisualNew : MonoBehaviour {
         // Update visuals each frame when mining
         bool isAbility = _player.InputManager.IsUsingAbility;
         _isUsingAbility = isAbility;
-        Debug.Log("IsAbility: " + isAbility);
+        //Debug.Log("IsAbility: " + isAbility);
         SetCorrectLaserPos(_player.InputManager.GetMovementInput().x);
         LaserVisual(dir, isAbility);
     }

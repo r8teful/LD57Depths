@@ -112,7 +112,7 @@ public class MiningLazerNew : MonoBehaviour {
         //Debug.Log($"Range: {Range} Dir: {_currentDirection}");
         if (hit.collider != null) {
 
-            Debug.Log($"MINING HIT!!");
+            //Debug.Log($"MINING HIT!!");
             Vector2 nudgedPoint = hit.point + _currentDirection * 0.1f; // Nudged point logic seems reversed, correcting it.
 
             // Damage Calculation

@@ -22,8 +22,8 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
     }
 
     private void HostSettingsChanged(GameSettings obj) {
-        _worldGenSetting = App.ResourceSystem.GetWorldGenByID(obj.WorldGenID);
-        PushBiomesToMaterials();
+        //_worldGenSetting = App.ResourceSystem.GetWorldGenByID(obj.WorldGenID);
+        //PushBiomesToMaterials();
     }
 
     void Update() {

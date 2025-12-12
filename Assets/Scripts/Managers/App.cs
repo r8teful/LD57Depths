@@ -20,6 +20,7 @@ public static class App {
         if (app == null) {
             throw new ApplicationException();
         }
+        Application.targetFrameRate = 60;
         Debug.Log("Initialised persistent managers");
         Object.DontDestroyOnLoad(app);
         //EventManager  = app.GetComponentInChildren<EventManager>();

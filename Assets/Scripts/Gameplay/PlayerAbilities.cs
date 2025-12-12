@@ -12,6 +12,7 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _player = playerParent;
         AddAbility(App.ResourceSystem.GetAbilityByID(0)); // Lazer is ID 0 
+        //AddAbility(App.ResourceSystem.GetAbilityByID(69)); 
     }
 
     public void AddAbility(AbilitySO data) {

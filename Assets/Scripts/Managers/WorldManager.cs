@@ -137,6 +137,7 @@ public class WorldManager : NetworkBehaviour {
         if (tileToSet == 0) {
             // Remove shading
             overlayTilemapShading.SetTile(cellPos, null);
+            overlayTilemapDamage.SetTile(cellPos, null);
         }
     }
 
@@ -183,6 +184,42 @@ public class WorldManager : NetworkBehaviour {
         //Debug.Log($"Requesting processdamage of:{cell} with {dmg}");
         ChunkManager.ServerProcessDamageTile(cellPos, dmg);
     }
+    public void RequestDamageNearestSolidTile(Vector3 worldPosition, float dmg, int searchRadius = 3) {
+        // Use your tilemap conversion
+        Vector3Int originCell = WorldToCell(worldPosition);
+
+        Vector3Int bestCell = originCell;
+        float bestDistSqr = float.MaxValue;
+        bool found = false;
+
+        // Search square region around originCell
+        for (int dx = -searchRadius; dx <= searchRadius; dx++) {
+            for (int dy = -searchRadius; dy <= searchRadius; dy++) {
+                int tx = originCell.x + dx;
+                int ty = originCell.y + dy;
+
+                // Directly use your integer-solid check
+                if (ChunkManager.IsSolidTileAtWorldPos(tx, ty)) {
+                    // Compute distance using the *center of the cell* in world space
+                    // to ensure closest-tile behavior is consistent.
+                    Vector3 candidateWorld = CellToWorld(new Vector3Int(tx, ty, originCell.z));
+                    float distSqr = (candidateWorld - worldPosition).sqrMagnitude;
+
+                    if (distSqr < bestDistSqr) {
+                        bestDistSqr = distSqr;
+                        bestCell = new Vector3Int(tx, ty, originCell.z);
+                        found = true;
+                    }
+                }
+            }
+        }
+
+        if (found) {
+            ChunkManager.ServerProcessDamageTile(bestCell, dmg);
+        } else {
+            Debug.Log($"No solid tile found near {worldPosition} (radius {searchRadius})");
+        }
+    }
 
     internal void ClearAllData() {
         ChunkManager.ClearWorldChunks();
@@ -194,6 +231,7 @@ public class WorldManager : NetworkBehaviour {
     }
 
     internal void SetOverlayTile(Vector3Int cellPos, TileBase crackTile) {
+        Debug.Log($"SETTING OVERLAY TILE {crackTile}");
         overlayTilemapDamage.SetTile(cellPos, crackTile); // Set tile on overlay layer
     }
 

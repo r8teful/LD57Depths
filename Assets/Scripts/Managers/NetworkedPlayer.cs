@@ -151,4 +151,10 @@ public class NetworkedPlayer : NetworkBehaviour {
             _worldManager = FindFirstObjectByType<WorldManager>();
         _worldManager.RequestDamageTile(worldPos, damageAmount);
     }
+    [ServerRpc(RequireOwnership = true)]
+    public void CmdRequestDamageNearestSolidTile(Vector3 worldPosition, float dmg, int searchRadius = 3) {
+        if (_worldManager == null)
+            _worldManager = FindFirstObjectByType<WorldManager>();
+        _worldManager.RequestDamageNearestSolidTile(worldPosition, dmg, searchRadius);
+    }
 }

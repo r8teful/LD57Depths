@@ -502,6 +502,7 @@ public class ChunkManager : NetworkBehaviour {
             int localY = cellPos.y - chunkCoord.y * CHUNK_SIZE;
             if (localX >= 0 && localX < CHUNK_SIZE && localY >= 0 && localY < CHUNK_SIZE) {
                 chunkDurability[localX, localY] = newDurability;
+                Debug.Log($"new dur: {newDurability}");
                 UpdateTileVisuals(cellPos, newDurability);
             }
         } else {
@@ -727,6 +728,12 @@ public class ChunkManager : NetworkBehaviour {
         } else {
             return ResourceSystem.InvalidID; // Chunk not generated yet
         }
+    }
+    public bool IsSolidTileAtWorldPos(int x, int y) {
+        var tileId = GetTileAtWorldPos(x, y);
+        if (tileId == 0) return false;
+        if (tileId == ResourceSystem.InvalidID) return false;
+        return true;
     }
     // Tile should be as unique global position,
     internal (HashSet<Vector2Int>, Dictionary<Vector2Int, BiomeType>) GetAllNonSolidTilesInLoadedChunks() {

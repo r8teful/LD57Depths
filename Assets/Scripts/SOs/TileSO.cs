@@ -29,6 +29,7 @@ public class TileSO : RuleTile, IIdentifiable {
     }
     public TileBase GetCrackTileForDurability(float currentDurability) {
         if (breakVersions == null || breakVersions.Count == 0) return null;
+        if (currentDurability < 0) return null;
         float r = GetDurabilityRatio(currentDurability);
         // Map ratio -> index:
         // r == 1  -> index 0 (no crack)
