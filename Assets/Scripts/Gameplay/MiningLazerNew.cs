@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Windows;
 
@@ -20,7 +21,7 @@ public class MiningLazerNew : MonoBehaviour {
         _abilityInstance = instance;
         _player = player;
         _visual = GetComponent<MiningLazerVisualNew>();
-        _visual.Init(player);
+        _visual.Init(player,instance);
     }
     private void Update() {
         UpdateCurDir();
@@ -29,7 +30,11 @@ public class MiningLazerNew : MonoBehaviour {
         _isShooting = _player.InputManager.IsAllowedMiningUse();
         if (!_isShooting) return;
         if (MineDelayCheck()) {
-            Mine();
+            if (_player.PlayerAbilities.IsBrimstoneAbilityActive()) {
+                MineAbility();
+            } else {
+                Mine();
+            }
             _visual.HandleVisualUpdate();
         }
     }
@@ -101,9 +106,7 @@ public class MiningLazerNew : MonoBehaviour {
     }
 
     private void Mine() {
-        Vector2 input = _player.InputManager.GetAimWorldInput();
         Vector2 toolPosition = transform.position;
-        Vector2 targetDirection = (input - toolPosition).normalized;
         var range = _abilityInstance.GetEffectiveStat(StatType.MiningRange);
         var falloff = _abilityInstance.GetEffectiveStat(StatType.MiningFalloff);
         var damage = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
@@ -121,6 +124,41 @@ public class MiningLazerNew : MonoBehaviour {
             float finalDamage = damage * falloffFactor;
             
             _player.CmdRequestDamageTile(new Vector3(nudgedPoint.x, nudgedPoint.y, 0), finalDamage);
+        }
+    }
+    public void MineAbility() {
+        HashSet<Vector3Int> processedCells = new HashSet<Vector3Int>(); // To avoid duplicate tiles
+
+        var range = _abilityInstance.GetEffectiveStat(StatType.MiningRange);
+        var falloff = _abilityInstance.GetEffectiveStat(StatType.MiningFalloff);
+        var damage = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
+        Vector2 origin = transform.position;
+        Vector2 dir = _currentDirection.normalized;
+
+        // Tunables — adjust these to change accuracy/performance/thickness
+        float stepAlong = 0.2f;   // how far we move along the ray per sample (keeps your original style)
+        float thickness = 2.0f;   // total width (world units) of the "thick" ray
+        float stepAcross = 0.25f; // sampling step across the perpendicular (smaller = more coverage)
+
+        // Perpendicular to direction (points to the "side" of the ray)
+        Vector2 perp = new Vector2(-dir.y, dir.x);
+        float halfWidth = thickness * 0.5f;
+
+        // Walk along the ray and at each step sample across the perpendicular
+        for (float distance = 0f; distance <= range; distance += stepAlong) {
+            Vector2 alongPoint = origin + dir * distance;
+
+            // sample across the thickness
+            for (float offset = -halfWidth; offset <= halfWidth + 1e-6f; offset += stepAcross) {
+                Vector2 samplePoint = alongPoint + perp * offset;
+
+                // Convert world position to the tilemap cell and process once
+                Vector3Int cellPosition = WorldManager.Instance.WorldToCell((Vector3)samplePoint);
+                if (!processedCells.Contains(cellPosition)) {
+                    processedCells.Add(cellPosition);
+                    _player.CmdRequestDamageTile(cellPosition, damage);
+                }
+            }
         }
     }
 }

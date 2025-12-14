@@ -502,7 +502,7 @@ public class ChunkManager : NetworkBehaviour {
             int localY = cellPos.y - chunkCoord.y * CHUNK_SIZE;
             if (localX >= 0 && localX < CHUNK_SIZE && localY >= 0 && localY < CHUNK_SIZE) {
                 chunkDurability[localX, localY] = newDurability;
-                Debug.Log($"new dur: {newDurability}");
+                //Debug.Log($"new dur: {newDurability}");
                 UpdateTileVisuals(cellPos, newDurability);
             }
         } else {

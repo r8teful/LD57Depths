@@ -117,7 +117,8 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
             dir = inputManager.GetDirFromPos(transform.position);
         }
         // Update visuals each frame when mining
-        bool isAbility = inputManager.IsUsingAbility;
+        //bool isAbility = inputManager.IsUsingAbility;
+        bool isAbility = false; // We don't have inputManager.IsUsingAbility anymore
         _isUsingAbility = isAbility;
         Debug.Log("IsAbility: " + isAbility);
         SetCorrectLaserPos(inputManager.GetMovementInput().x);

@@ -20,7 +20,6 @@ GameObject:
   - component: {fileID: 147320980772328580}
   - component: {fileID: -7626533647889685779}
   - component: {fileID: 8161649982983680990}
-  - component: {fileID: 2511403419373690701}
   - component: {fileID: 3312860346397150876}
   - component: {fileID: 6902581419565130942}
   - component: {fileID: 7835090482241713945}
@@ -472,7 +471,7 @@ MonoBehaviour:
   - {fileID: -7626533647889685779}
   - {fileID: 8161649982983680990}
   - {fileID: 0}
-  - {fileID: 2511403419373690701}
+  - {fileID: 0}
   - {fileID: 1329228130332512456}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
@@ -598,22 +597,6 @@ MonoBehaviour:
   containerLayerMask:
     serializedVersion: 2
     m_Bits: 128
---- !u!114 &2511403419373690701
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1228294681075539138}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac99a17a16dc2a44aa4404675c5791d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 6
-  _addedNetworkObject: {fileID: 6962948237969374493}
-  _networkObjectCache: {fileID: 6962948237969374493}
-  _toolSlotMining: {fileID: 8651582872665796198}
 --- !u!114 &3312860346397150876
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +13,8 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _player = playerParent;
         AddAbility(App.ResourceSystem.GetAbilityByID(0)); // Lazer is ID 0 
-        //AddAbility(App.ResourceSystem.GetAbilityByID(69)); 
+        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BrimstoneBuffID)); // Lazer blast
+        //AddAbility(App.ResourceSystem.GetAbilityByID(69)); // Fish gun
     }
 
     public void AddAbility(AbilitySO data) {
@@ -42,7 +44,8 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
             inst.Tick(dt);
     }
 
-    // Example: call to use an active ability
+    
+
     public bool UseActive(ushort id) {
         var inst = GetInstance(id);
         if (inst == null) return false;
@@ -98,4 +101,14 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
         // For brevity, omitted implementation; simple map abilityId->List<StatModifier>
     }
 
+    internal bool IsBrimstoneAbilityActive() {
+        // Simple, just check if we have the brimstone buff on the ability
+        return AbilityHasBuff(ResourceSystem.LazerEffectID, ResourceSystem.BrimstoneBuffID);
+    }
+
+    private bool AbilityHasBuff(ushort abilityID, ushort buffID) {
+        var inst = GetInstance(abilityID);
+        if (inst == null) return false;
+        return inst.HasBuff(buffID); // I'm so smart, and your so good at pixel i love you hug4art
+    }
 }

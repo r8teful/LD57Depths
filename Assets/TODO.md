@@ -34,23 +34,7 @@ Code Temp status effects and make them show up in UI
 
 
 
-This all needs to be in the POPUP, it will need a major extention, maybe different verions of the popup prefab?
-
-
-
-Code ability UI status
-
-Hover effect on both of these
-
-
-
-
-
-Implement some kind of ability inventory?? Then it pulls it from there?
-
 Active abilities:
-
-
 
 Shows all the time, two states
 
@@ -64,7 +48,7 @@ Shows all the time, one state
 
 **Upgrades ATTACH to the abilityInstance, this way we can target a single "item" upgrade**
 
-It's not have you have it programmed now, right now, when we upgrade the mining dmg, it just increases that stat globally
+It's not how you have it programmed now, right now, when we upgrade the mining dmg, it just increases that stat globally
 
 Not specifically to the mining dmg to of the tool we are using
 
@@ -86,74 +70,14 @@ only shows when active
 
 
 
-## The plan:
-
-Change tools so that the are abilities. This makes it more flexible to add more tools and abilities later
+TODO NOW ACTUALLY:
 
 
 
-**Core idea:**
+* Implement laser blast ability - DONE
+* Make abilities with cooldown show up in a different part of the UI
 
-* Abilities live within AbilityInstance scripts, they implement one or several IAbilityEffect/IPassiveEffect
+Easiest way would be to have it event driven and just subscribe to ability changes, add/remove, and update for timed based ones
 
- 	- EffectPassive we do if its passive, which gets activated when we ADD the ability, through the Apply function
-
- 	- EffectActive which implements the Execute function
-
-* PlayerAbilities has a dictionary of all AbilityInstances, we use this script to add and remove abilities, we also use the effect of the abilities here, we also apply upgrades to the abilities here, abilities hold their own upgrades
-* .
-
-
-
-How buffs and upgrades work
-
-base 10
-
-lazer 0.5 -> 0.6
-
-20 -> 12
-
-1.5 - > 
-
-5 -> 6
-
-15 -> 16
-
-
-
-
-
-First base stat -> then apply specific ability upgrades -> then apply buffs
-
-
-
-First base stat -> then apply buffs
-
-
-
-Different ways of actually holding the stats  either:
-
-Have each ability hold its own stat or
-
-Have the playerStatManager hold all the stats and each ability take from that list or
-
-
-
-It also depends how generic you make the stats, you could have stats that are like, minigDamage, and then everything that uses miningDamage will get a buff. But 
-
-
-
-## The Schedule:
-
-**11/12/2025**
-
-Finish rework, delete tool controller and replace it with PlayerAbilities,  try and make the lazer work with the new system
-
-**12/12/2025**
-
-Implement fish gun using the new system
-
-**13/12/2025** record, edit, post, etc
-
-
-
+* Change the upgrades to use new ability system -> upgrades add modifiers to the AbilityInstance which store them into \_instanceMods, we use GetEffectiveStat within the ability logic to get the stat. If we want to upgrade a buff ( like the brimstone ) its modifiers will be on its own AbilityInstance, when we add a buff to the lazer AbilityInstance, we create a new buffInstance which takes into account the "upgrades" we've done on the brimstone, and add that to the lazer, and boom we have a better lazer ability
+* Add compass

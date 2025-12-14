@@ -27,6 +27,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private UIManagerInventory _inventoryUIManager;
     private UIManager _UIManager;
     private NetworkObject _clientObject;
+    private PlayerAbilities _playerAbilities;
     private InputDevice lastUsedDevice;
     // UI
     private InputAction _UItoggleInventoryAction; // Assign your toggle input action asset
@@ -43,7 +44,6 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     
     
     private LayerMask _interactableLayerMask;
-    private ToolController _toolController;
     private PlayerMovement _playerMovement;
     private float _interactionRadius = 2f;
     private bool _dashPefromed;
@@ -57,14 +57,11 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private bool _primaryInputToggle;
 
     public int InitializationOrder => 101;
-
-    public bool IsUsingAbility { get; internal set; }
-
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _UIManager = playerParent.UiManager;
         _inventoryUIManager = _UIManager.UIManagerInventory;
         _clientObject = playerParent.PlayerNetworkedObject;
-        _toolController = playerParent.ToolController;
+        _playerAbilities = playerParent.PlayerAbilities;
         _playerMovement = playerParent.PlayerMovement;
         _interactableLayerMask = 1 << LayerMask.NameToLayer("Interactables"); // Don't ask me why, its in the unity documentation
         SetupInputs();
@@ -345,6 +342,10 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private void OnAbilityPerformed(InputAction.CallbackContext context) {
         if (!context.performed) return;
 
+        // This should either use all the active, or it should depend on what we have equipped
+        // Or it should depend on what button we pressed, so many options! Just always do ability for now
+        _playerAbilities.UseActive(ResourceSystem.BrimstoneBuffID);
+        /* Old toolcontroller code, we're not using toolcontroller anymore
         var behaviour = _toolController.CurrentToolBehaviour;
         if (behaviour == null) return;
 
@@ -360,6 +361,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
 
         // now start — safe because we are already subscribed
         behaviour.ToolAbilityStart(_toolController);
+         */
     }
 
     public void OnPrimaryInteraction(InputAction.CallbackContext context) {

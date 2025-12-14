@@ -130,6 +130,7 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
        
     }
     public void StartAbility(ToolController toolController,BuffSO ability) {
+        // This shouldn't add a buff to the player stats, it should add it to the lazerAbility Instance...
         var bh = _localPlayerStats.TriggerBuff(ability);
         bh.OnRemoved += () => {
             Debug.Log("Ability wore off!");

@@ -9,6 +9,7 @@ public class StatModifier {
     // The "Source" is a unique identifier for who/what applied this modifier.
     // Used for removing it later when the stat is done
     public readonly object Source;
+    public StatModifier() { }
     public StatModifier(float value, StatType stat, IncreaseType type, object source) {
         Value = value;
         Stat = stat;

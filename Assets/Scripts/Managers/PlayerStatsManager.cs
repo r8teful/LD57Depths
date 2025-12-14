@@ -46,16 +46,71 @@ public enum StatType {
     // General
     Cooldown = 1000
 }
-// We use this instance to get RUNTIME information about the buff, we'll need it for UI
-public class ActiveBuff {
+// We use this instance to get RUNTIME information about the buff, we'll need it for UI,
+// but also if we increase the buff strength we'll modify its Stat modifiers
+public class BuffInstance {
     public ushort buffID;
     public float timeRemaining; // -1 for conditional
     public BuffHandle handle;
     internal float startTime;
     internal float duration;
     internal float endTime;
+    public List<StatModifier> RuntimeModifiers { get; private set; } // Can be null and then we just use BuffSO.Modifiers
 
-    public BuffSO GetAbilityData() => App.ResourceSystem.GetBuffByID(buffID);
+    public BuffSO GetBuffData() => App.ResourceSystem.GetBuffByID(buffID);
+    public BuffInstance() { }
+
+    // Factory: create a BuffInstance from a BuffSO
+    public static BuffInstance CreateFromSO(BuffSO so, float durationOverride = -1f) {
+        var inst = new BuffInstance {
+            buffID = so.ID,
+            startTime = Time.time,
+            duration = durationOverride > 0f ? durationOverride : so.Duration,
+            timeRemaining = durationOverride > 0f ? durationOverride : so.Duration,
+            endTime = (durationOverride > 0f ? Time.time + durationOverride :
+                       so.Duration > 0 ? Time.time + so.Duration : -1)
+        };
+
+        // deep copy modifiers
+        inst.RuntimeModifiers = so.Modifiers?.Select(m => new StatModifier {
+            Stat = m.Stat,
+            Value = m.Value,
+            Type = m.Type
+        }).ToList() ?? new List<StatModifier>();
+
+        return inst;
+    }
+    /// <summary>
+    /// Use this only if you want to change the strength of the buff
+    /// </summary>
+    /// <param name="source"></param>
+    public void ApplyAbilityInstanceModifiers(AbilityInstance source) {
+        if (RuntimeModifiers == null) return;
+
+        foreach (var mod in RuntimeModifiers) {
+            // get totals from the source (helpers below)
+            float flatFromSource = source.GetTotalFlatModifier(mod.Stat);     // e.g. Mining knockback + 20
+            float percentFromSource = source.GetTotalPercentModifier(mod.Stat); // e.g. Damage + 20%
+
+            if (mod.Type == IncreaseType.Add) {
+                // treat Value as a flat base
+                // newValue = (base + flatFromSource) * (1 + percentFromSource)
+                float baseVal = mod.Value;
+                baseVal += flatFromSource;
+                baseVal *= (1f + percentFromSource);
+                mod.Value = baseVal;
+            } else { // Percent mode
+                // treat mod.Value as a percent (e.g. 0.5 for +50%)
+                float combinedPercent = mod.Value + percentFromSource;
+                // Optionally also incorporate flatFromSource in a sensible way:
+                // if flatFromSource should affect absolute value, you'd need the base stat value.
+                mod.Value = combinedPercent;
+            }
+        }
+    }
+    public StatModifier GetModifierFor(StatType stat) {
+        return RuntimeModifiers.FirstOrDefault(m => m.Stat == stat);
+    }
 }
 // We return this object which other classes can utilize, it's a very cool class, and very usefull! I'm understanding more complicated concepts lol
 public sealed class BuffHandle {
@@ -85,8 +140,8 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     
     // This list ONLY exists on the owning client. It does not need to be synced
     // because only the owner calculates their stats and syncs the result via _finalStats.
-    private readonly List<ActiveBuff> _activeBuffs = new(); // This now changes to the active buff instances
-    private readonly Dictionary<ushort, ActiveBuff> _activeBuffsByID = new();
+    private readonly List<BuffInstance> _activeBuffs = new(); // This now changes to the active buff instances
+    private readonly Dictionary<ushort, BuffInstance> _activeBuffsByID = new();
     // activeModifers 
 
     private bool _isInitialized = false;
@@ -184,7 +239,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             for (int i = _activeBuffs.Count - 1; i >= 0; i--) {
                 var b = _activeBuffs[i];
                 if (b.duration > 0 && Time.time >= b.endTime) {
-                    RemoveAbility(b.buffID);
+                    RemoveBuff(b.buffID);
                 }
             }
         }
@@ -206,7 +261,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
         // 1. Apply all ADDITIVE modifiers first.
         foreach (var buff in _activeBuffs) {
-            foreach (var mod in buff.GetAbilityData().Modifiers) {
+            foreach (var mod in buff.GetBuffData().Modifiers) {
                 if (mod.Stat == stat && mod.Type == IncreaseType.Add) {
                     finalValue += mod.Value;
                 }
@@ -215,7 +270,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
         // 2. Apply all MULTIPLIER modifiers next.
         foreach (var buff in _activeBuffs) {
-            foreach (var mod in buff.GetAbilityData().Modifiers) {
+            foreach (var mod in buff.GetBuffData().Modifiers) {
                 if (mod.Stat == stat && mod.Type == IncreaseType.Multiply) {
                     finalValue *= mod.Value;
                 }
@@ -292,8 +347,8 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             float total = b.duration > 0 ? b.duration : -1f;
             _snapshotCache.Add(new BuffSnapshot {
                 abilityId = b.buffID,
-                displayName = b.GetAbilityData().Title,
-                icon = b.GetAbilityData().Icon,
+                displayName = b.GetBuffData().Title,
+                icon = b.GetBuffData().Icon,
                 remainingSeconds = remaining,
                 totalSeconds = total
             });
@@ -308,11 +363,9 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
 
     /// <summary>
-    /// Trigger an ability. 
-    /// - registerUnsubscribe: optional callback where StatsManager will give the caller the "remove action" (Action) so the caller can subscribe it to its own events.
-    ///   Usage: registerUnsubscribe?.Invoke(removeAction);
-    /// - durationOverride: optional runtime duration
-    /// </summary>
+    /// Trigger a buff, note that this will take the base buff stats, and upgrading buff isn't possible from here (yet). 
+    /// </summary> 
+    /// <param name="registerUnsubscribe">optional callback where StatsManager will give the caller the "remove action" so the caller can subscribe it to its own events.</param> 
     internal BuffHandle TriggerBuff(BuffSO buffData, Action<Action> registerUnsubscribe = null) {
         // Prevent duplicates unless ability is explicitly stackable
         var id = buffData.ID;
@@ -331,7 +384,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             //return existing.handle;
         }
         // Create runtime buff instance
-        var buff = new ActiveBuff {
+        var buff = new BuffInstance {
             buffID = id,
             startTime = Time.time,
             duration = buffData.Duration,
@@ -339,7 +392,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         };
 
         // Actions are so fancy, so this basically points to this function which when we invoke the action will call, and we can pass the action around 
-        Action removeAction = () => RemoveAbility(id);
+        Action removeAction = () => RemoveBuff(id);
         // Build handle
         buff.handle = new BuffHandle(id, removeAction);
 
@@ -364,12 +417,12 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         // HOW? Could do it with an event, or direct call, event seems clean 
     }
 
-    private void RemoveAbility(BuffSO ability) => RemoveAbility(ability.ID);
+    private void RemoveBuff(BuffSO ability) => RemoveBuff(ability.ID);
 
     /// <summary>
     /// Removes all temporary modifiers that came from a specific source.
     /// </summary>
-    public void RemoveAbility(ushort abilityID) {
+    public void RemoveBuff(ushort abilityID) {
         if (!base.IsOwner) return;
 
         // Find which stats will be affected BEFORE we remove the modifiers
@@ -379,7 +432,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         }
 
         List<StatType> statsToRecalculate = new();
-        foreach(var mod in buff.GetAbilityData().Modifiers) {
+        foreach(var mod in buff.GetBuffData().Modifiers) {
             statsToRecalculate.Add(mod.Stat);
         }
         statsToRecalculate.Distinct();

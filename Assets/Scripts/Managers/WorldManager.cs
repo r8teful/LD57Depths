@@ -231,7 +231,7 @@ public class WorldManager : NetworkBehaviour {
     }
 
     internal void SetOverlayTile(Vector3Int cellPos, TileBase crackTile) {
-        Debug.Log($"SETTING OVERLAY TILE {crackTile}");
+        //Debug.Log($"SETTING OVERLAY TILE {crackTile}");
         overlayTilemapDamage.SetTile(cellPos, crackTile); // Set tile on overlay layer
     }
 

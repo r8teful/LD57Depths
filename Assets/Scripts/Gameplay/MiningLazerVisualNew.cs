@@ -9,17 +9,16 @@ public class MiningLazerVisualNew : MonoBehaviour {
     public ParticleSystem _lineLazerParticleSystem;
     private ParticleSystem _hitParticleSystem;
     private NetworkedPlayer _player;
+    private AbilityInstance _abilityInstance;
     private AudioSource lazerSound;
     private bool _isUsingAbility;
-    private float _lineWidth;
-    private MiningToolData _cachedToolData;
-    private float _range;
 
     private void Awake() {
         SetupParticlesVisual();
     }
-    public void Init(NetworkedPlayer player) {
+    public void Init(NetworkedPlayer player, AbilityInstance ability) {
         _player = player;
+        _abilityInstance = ability; // Need this for lazer length 
     }
     private void SetupParticlesVisual() {
         _hitParticleSystem = Instantiate(ParticlesPrefabHit);
@@ -35,7 +34,12 @@ public class MiningLazerVisualNew : MonoBehaviour {
     public void HandleVisualUpdate() {
         Vector2 dir = _player.InputManager.GetDirFromPos(transform.position);
         // Update visuals each frame when mining
-        bool isAbility = _player.InputManager.IsUsingAbility;
+        //bool isAbility = _player.InputManager.IsUsingAbility; // This is not really what we are wanting to know here
+        // All we want to know if is the brimstone ability is active, so we can do those visuals. 
+        // So maybe we just make a method in PlayerAbilities that is like
+        bool isAbility = _player.PlayerAbilities.IsBrimstoneAbilityActive();
+
+
         _isUsingAbility = isAbility;
         //Debug.Log("IsAbility: " + isAbility);
         SetCorrectLaserPos(_player.InputManager.GetMovementInput().x);
@@ -44,9 +48,6 @@ public class MiningLazerVisualNew : MonoBehaviour {
 
     public void StartVisual() {
         // Update tool data
-        _cachedToolData = _player.PlayerStats.GetToolData();
-        _range = _cachedToolData.ToolRange;
-        _lineWidth = _cachedToolData.ToolWidth;
         lazerSound.volume = 0.2f;
         // _lineWidth is 0.1 to 2, so we lerp that to get values from 1 to 0.7
         //var min = 0.1f;
@@ -74,11 +75,12 @@ public class MiningLazerVisualNew : MonoBehaviour {
         }
     }
     private void LaserVisual(Vector2 targetDirection, bool isAbility) {
+        var range = _abilityInstance.GetEffectiveStat(StatType.MiningRange);
         Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
         //Debug.Log($"Target dir: {inputWorldPos} ");
         var localPos = transform.InverseTransformPoint(objectPos2D);
         if (!isAbility) {
-            RaycastHit2D hit = Physics2D.Raycast(objectPos2D, targetDirection, _range, LayerMask.GetMask("MiningHit"));
+            RaycastHit2D hit = Physics2D.Raycast(objectPos2D, targetDirection, range, LayerMask.GetMask("MiningHit"));
             if (hit.collider != null) {
                 CreateLaserEffect(localPos, transform.InverseTransformPoint(hit.point), isAbility);
                 _hitParticleSystem.transform.position = hit.point;
@@ -88,10 +90,10 @@ public class MiningLazerVisualNew : MonoBehaviour {
                 // not in reange
                 if (_hitParticleSystem.isPlaying)
                     _hitParticleSystem.Stop();
-                CreateLaserEffect(localPos, transform.InverseTransformPoint(objectPos2D + targetDirection * _range), isAbility);
+                CreateLaserEffect(localPos, transform.InverseTransformPoint(objectPos2D + targetDirection * range), isAbility);
             }
         } else {
-            CreateLaserEffect(localPos, transform.InverseTransformPoint(objectPos2D + targetDirection * _range), isAbility);
+            CreateLaserEffect(localPos, transform.InverseTransformPoint(objectPos2D + targetDirection * range), isAbility);
         }
     }
 
@@ -115,10 +117,12 @@ public class MiningLazerVisualNew : MonoBehaviour {
         }
     }
     void CreateLaserEffect(Vector3 start, Vector3 end, bool isAbility) {
+        var dmg = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
+        var lineWidth = Mathf.Min(dmg * 0.02f, 1f);
         lineRenderer.SetPosition(0, start);
         lineRenderer.SetPosition(1, end);
-        lineRenderer.startWidth = _lineWidth;
-        lineRenderer.endWidth = _lineWidth * 0.7f;
+        lineRenderer.startWidth = lineWidth;
+        lineRenderer.endWidth = lineWidth * 0.7f;
         Vector3 midpoint = (start + end) / 2;
         Vector3 direction = (end - start).normalized;
         float distance = (end - start).magnitude;

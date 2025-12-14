@@ -42,6 +42,9 @@ public class ResourceSystem {
     public const ushort LadderID = 501; // Ladder is always 501, used in SubInterior.cs
     public const ushort ControlPanellRecipeID = 101; // FixRecipe.cs
 
+    public const ushort BrimstoneBuffID = 1; // There must be a better way
+    public const ushort LazerEffectID = 0; // There must be a better way
+
     public const ushort UpgradeFlippersID = 102; // Max speed 3 
     public const ushort UpgradeOxygenID = 122;  // Oxygen tier 3
     public const ushort UpgradeJetpackID = 132; // Special handling 
