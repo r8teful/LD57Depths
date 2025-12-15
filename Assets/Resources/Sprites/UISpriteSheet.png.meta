@@ -3475,6 +3475,94 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UIBrimstone0
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 348
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 624b3977f96603a43abff87857f08500
+      internalID: -917287309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIBrimstone1
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 348
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 32d88c26a69da7d4588f452228f288a6
+      internalID: -526431394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIBrimstone3
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 348
+        width: 19
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 16e83c25e9d8305478f247cd3004b742
+      internalID: -1724539373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIAbilityActiveBoarder
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 327
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 3, y: 2, z: 3, w: 2}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 687948c67523d244698d370931b6a7f2
+      internalID: -1507697884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -3558,11 +3646,11 @@ TextureImporter:
       SubFixFin_0: -177491173
       SubFixFin_1: 546586542
       SubFixFin_2: 918829239
-      SubFixFin_3: -535102082
-      SubFixHull_0: -518060854
+      SubFixFin_3: 1825189606
+      SubFixHull_0: -1172732033
       SubFixHull_1: 1096764976
-      SubFixHull_2: -979866722
-      SubFixHull_3: 260270178
+      SubFixHull_2: 601464545
+      SubFixHull_3: 519229451
       SubFixUICable: -988727820
       SubFixUICogg: 1983392162
       SubFixUIFin: 202132493
@@ -3575,27 +3663,31 @@ TextureImporter:
       TrenchProgression3: 1054361870
       TrenchProgression4: 1361359748
       TrenchWhole: 1359521255
+      UIAbilityActiveBoarder: -1507697884
+      UIBrimstone0: -917287309
+      UIBrimstone1: -526431394
+      UIBrimstone3: -1724539373
       UIButton: -1863908995
       UILine: 511341760
       UISimpleBoarder: 1878530721
       UISliderBall: 401562208
       UISpriteSheet_0: -1359263483
-      UISpriteSheet_22: -1062496699
-      UISpriteSheet_29: -1523729976
-      UISpriteSheet_30: -1766157220
-      UISpriteSheet_31: 1032254462
-      UISpriteSheet_32: 302823976
-      UISpriteSheet_33: 2038382086
-      UISpriteSheet_34: -951872532
-      UISpriteSheet_39: 1088762100
-      UISpriteSheet_41: 394970122
-      UISpriteSheet_42: -2067614705
-      UISpriteSheet_44: -1375839985
-      UISpriteSheet_45: -25905123
-      UISpriteSheet_46: 209294501
-      UISpriteSheet_47: 1042009565
-      UISpriteSheet_54: 1913473331
-      UISpriteSheet_64: -1587015040
+      UISpriteSheet_22: 1049651342
+      UISpriteSheet_29: 1935044993
+      UISpriteSheet_30: 1091052041
+      UISpriteSheet_31: 2138624059
+      UISpriteSheet_32: -1616846809
+      UISpriteSheet_33: -222115176
+      UISpriteSheet_34: 1794458255
+      UISpriteSheet_39: -693778800
+      UISpriteSheet_41: 65268891
+      UISpriteSheet_42: -1088629753
+      UISpriteSheet_44: -485614385
+      UISpriteSheet_45: -1447379764
+      UISpriteSheet_46: -525040094
+      UISpriteSheet_47: -834952813
+      UISpriteSheet_54: -1439600899
+      UISpriteSheet_64: 1311666043
       UpgradeAccuracy: 1441869239
       UpgradeBar0: 1275372579
       UpgradeFilterExtracted: 1228492800
@@ -3630,7 +3722,7 @@ TextureImporter:
       UpgradeMiningRange1: 595226712
       UpgradeMiningRange2: -1646224493
       UpgradeMiningStrong: -765993463
-      UpgradeNodeBigPurchased: 1267944118
+      UpgradeNodeBigPurchased: -177109098
       UpgradeOxygenGillsUnlock: -1876437063
       UpgradeOxygenMax: -947507640
       UpgradeOxygenMax2: 494696768
