@@ -6,29 +6,34 @@ using UnityEngine;
 // Holds runtime information about abilities.
 // Abilities could be: Tools, 
 public class AbilityInstance {
-    public AbilitySO data { get; }
+    public AbilitySO Data { get; }
 
     private NetworkedPlayer _player;
 
-    public float cooldownRemaining { get; private set; }
 
     private List<StatModifier> _instanceMods = new();
     private readonly List<BuffInstance> _activeBuffs = new(); 
     private readonly Dictionary<ushort, BuffInstance> _activeBuffsByID = new();
     
-    public bool IsReady => cooldownRemaining <= 0f;
-    public bool IsBeingUsed => !IsReady;
-
+    // Timing
+    private float _activeRemaining = 0f;
+    private float _cooldownRemaining = 0f;
+    public bool IsActive => _activeRemaining > 0f;
+    public bool IsReady => _cooldownRemaining <= 0f && _activeRemaining <= 0f;
 
     public event Action<float> OnCooldownChanged; // sends fraction 0..1 or raw remaining
-    public event Action OnReady;
-    public event Action OnUsed; // optional, e.g. to play VFX
+    public event Action<float> OnActiveTimeChanged;
+    
+    public event Action OnActivated; // When player presses the ability button and we start to use it
+    public event Action OnDeactivated; // active finished (before cooldown)
+    public event Action OnReady; // Ability is ready to be used
+    public event Action OnUsed; // Ability is used. (For when any abilities is used) 
 
     public event Action OnModifiersChanged;
     public AbilityInstance(AbilitySO data, NetworkedPlayer player) {
-        this.data = data;
+        this.Data = data;
         _player = player;
-        cooldownRemaining = 0f;
+        _cooldownRemaining = 0f;
     }
     public bool HasStatModifier(StatType stat) {
         return _instanceMods.Any(s => s.Stat == stat);
@@ -36,22 +41,38 @@ public class AbilityInstance {
     public bool HasBuff(ushort id) {
         return _activeBuffsByID.ContainsKey(id);
     }
+    internal float GetAbilityTime() {
+        if (!Data.isTimed) return 0f; 
+        var buff = Data.effects?.OfType<IEffectBuff>().FirstOrDefault();
+        return buff.Buff.Duration;
+    }
     // call each frame from player controller
     public void Tick(float dt) {
         // First check if any of our timed buffs are still valid
         if (_activeBuffs.Count > 0) {
             for (int i = _activeBuffs.Count - 1; i >= 0; i--) { // inverted for loop suports removing within loop
                 var b = _activeBuffs[i];
-                if (b.duration > 0 && Time.time >= b.endTime) {
+                if (b.duration > 0 && Time.time >= b.expiresAt) {
                     RemoveBuff(b.buffID);
                 }
             }
         }
-        // Update cooldown
-        if (cooldownRemaining <= 0f) return;
-        cooldownRemaining = Mathf.Max(0f, cooldownRemaining - dt);
-        OnCooldownChanged?.Invoke(cooldownRemaining);
-        if (cooldownRemaining == 0f) OnReady?.Invoke();
+        // Update cooldowns
+        if (_activeRemaining > 0f) {
+            _activeRemaining = Mathf.Max(0f, _activeRemaining - dt);
+            OnActiveTimeChanged?.Invoke(_activeRemaining);
+            if (_activeRemaining == 0f) {
+                // active ended -> start cooldown
+                OnDeactivated?.Invoke();
+                _cooldownRemaining = GetFinalAbilityMultiplier(StatType.Cooldown);
+                OnCooldownChanged?.Invoke(_cooldownRemaining);
+            }
+        // The else here makes it so that the cooldown only starts after we have no active time remaining!
+        } else if (_cooldownRemaining > 0f) { 
+            _cooldownRemaining = Mathf.Max(0f, _cooldownRemaining - dt);
+            OnCooldownChanged?.Invoke(_cooldownRemaining);
+            if (_cooldownRemaining == 0f) OnReady?.Invoke();
+        }
     }
     public void AddInstanceModifier(StatModifier mod) {
         //mod.Source = id; // tie to this ability instance (or to upgrade id)
@@ -71,7 +92,7 @@ public class AbilityInstance {
 
     // combine base cooldown with modifiers: ability modifiers first, then global StatManager if desired
     public float GetFinalAbilityMultiplier(StatType stat) {
-        float baseCd = data.GetBaseModifierForStat(stat);
+        float baseCd = Data.GetBaseModifierForStat(stat);
 
         // apply instance-level mods
         var instAdds = GetTotalFlatModifier(stat);
@@ -141,7 +162,7 @@ public class AbilityInstance {
             buffID = id,
             startTime = Time.time,
             duration = buffData.Duration,
-            endTime = buffData.Duration > 0 ? Time.time + buffData.Duration : -1f, // indefinite
+            expiresAt = buffData.Duration > 0 ? Time.time + buffData.Duration : -1f, // indefinite
         };
 
         // Actions are so fancy, so this basically points to this function which when we invoke the action will call, and we can pass the action around 
@@ -182,17 +203,39 @@ public class AbilityInstance {
 
     // Tick and Use similar to before but use GetEffectiveCooldown() when setting cooldownRemaining
     public bool Use(Func<bool> performEffect) {
-        if (data.type != AbilityType.Active) return false;
-        Debug.Log($"Trying to use ability {data.displayName}, we have {cooldownRemaining} time left");
+        if (Data.type != AbilityType.Active) return false;
+        Debug.Log($"Trying to use ability {Data.displayName}, we have {_cooldownRemaining} time left");
         if (!IsReady) return false;
         bool effectSuccess = performEffect?.Invoke() ?? true;
         if (!effectSuccess) return false;
         // We've now performed the effects and can update cooldowns
-
-        cooldownRemaining = GetFinalAbilityMultiplier(StatType.Cooldown);
+        var abilityT = GetAbilityTime();
+        if (GetAbilityTime() > 0) {
+            // This ability has a certain time it has to be active for 
+            _activeRemaining = abilityT;
+            OnActivated?.Invoke();
+            OnActiveTimeChanged?.Invoke(_activeRemaining);
+        } else {
+            // Instant ability 
+            _cooldownRemaining = GetFinalAbilityMultiplier(StatType.Cooldown);
+            OnCooldownChanged?.Invoke(_cooldownRemaining);
+        }
         OnUsed?.Invoke();
-        OnCooldownChanged?.Invoke(cooldownRemaining);
         return true;
+    }
+
+    // allow effects or external systems to prematurely end active phase (optionally start cooldown)
+    // Might come in handy later
+    public void EndActiveEarly(bool startCooldown = true, float remainingCooldownOverride = -1f) {
+        if (_activeRemaining <= 0f) return;
+        _activeRemaining = 0f;
+        OnActiveTimeChanged?.Invoke(0f);
+        OnDeactivated?.Invoke();
+        if (startCooldown) {
+            _cooldownRemaining = remainingCooldownOverride >= 0f ?
+                remainingCooldownOverride : GetFinalAbilityMultiplier(StatType.Cooldown);
+            OnCooldownChanged?.Invoke(_cooldownRemaining);
+        }
     }
 }
 // Ability data -> Ability Instance -> Ability Effect -> Buff instance -> statmanager

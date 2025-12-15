@@ -6,3 +6,6 @@ public interface IEffectActive {
     // Called when an active ability is used (one-shot)
     void Execute(AbilityInstance source, NetworkedPlayer player);
 }
+public interface IEffectBuff {
+    BuffSO Buff { get; }
+}

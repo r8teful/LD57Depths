@@ -1,19 +1,45 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 // Shows stats, items etc.
 public class UIManagerStats : MonoBehaviour {
     private PlayerStatsManager _playerStats;
-    private Dictionary<ushort, UIHudIconStatus> _hudIconsByID = new();
-    [SerializeField] Transform _iconContainer;
-    internal void Init(PlayerStatsManager playerStats) {
-        _playerStats = playerStats;
+
+    // Maybe we could have a generic "uihudiconbase" dictionary but eh...
+    private Dictionary<ushort, UIHudIconStatus> _buffIconsByID = new();
+    private Dictionary<ushort, UIHudIconAbilityActive> _activeIconsByID = new();
+    [SerializeField] Transform _iconContainerPassive;
+    [SerializeField] Transform _iconContainerBuffs;
+    [SerializeField] Transform _iconContainerActive;
+
+    internal void Init(NetworkedPlayer client) {
+        _playerStats = client.PlayerStats;
         _playerStats.OnBuffListChanged += RebuildList;
         _playerStats.OnBuffsUpdated += RefreshTimes;
+        client.PlayerAbilities.OnAbilityAdd += OnAddAbility;
+        client.PlayerAbilities.OnabilityRemove += OnRemoveAbility;
         RebuildList();
     }
+
+    private void OnAddAbility(AbilityInstance ability) {
+        // If the ability is an active ability, add it to the bottom of the screen
+        if(ability.Data.type == AbilityType.Active) {
+            var icon = Instantiate(App.ResourceSystem.GetPrefab<UIHudIconAbilityActive>("UIHudIconAbilityActive"), _iconContainerActive);
+            icon.Init(ability);
+            _activeIconsByID.Add(ability.Data.ID, icon);
+        }
+    }
+    private void OnRemoveAbility(AbilityInstance ability) {
+        if (ability.Data.type == AbilityType.Active) {
+            if(_activeIconsByID.TryGetValue(ability.Data.ID,out var icon)) {
+                Destroy(icon.gameObject); // Just destroy it? Idk what else we would need to do
+            } else {
+                Debug.LogWarning("Tried to remove ability that isn't registered in dictionary. Did we forget to add it?");
+            }
+        }
+    }
+
+
     void OnDestroy() {
         if (_playerStats != null) {
             _playerStats.OnBuffListChanged -= RebuildList;
@@ -23,7 +49,7 @@ public class UIManagerStats : MonoBehaviour {
     private void RefreshTimes() {
         var snapshots = _playerStats.GetBuffSnapshots();
         foreach (var snapshot in snapshots) { 
-            if(!_hudIconsByID.TryGetValue(snapshot.abilityId, out var icon)) {
+            if(!_buffIconsByID.TryGetValue(snapshot.buffID, out var icon)) {
                 Debug.LogWarning("trying to update and icon before it has been createad, try syncing before refreshing");
             }
             icon.SetTime(snapshot.remainingSeconds);
@@ -35,28 +61,28 @@ public class UIManagerStats : MonoBehaviour {
         var snapshots = _playerStats.GetBuffSnapshots();
         HashSet<ushort> currentIds = new();
         foreach (var snapshot in snapshots) {
-            currentIds.Add(snapshot.abilityId);
+            currentIds.Add(snapshot.buffID);
         }
         // Remove first
         var toRemove = new List<ushort>();
-        foreach (var kvp in _hudIconsByID) {
+        foreach (var kvp in _buffIconsByID) {
             if(!currentIds.Contains(kvp.Key))
                 toRemove.Add(kvp.Key);
         }
         foreach (var id in toRemove) {
-            Destroy(_hudIconsByID[id].gameObject);
-            _hudIconsByID.Remove(id);
+            Destroy(_buffIconsByID[id].gameObject);
+            _buffIconsByID.Remove(id);
         }
         // Now add 
         foreach (var snapshot in snapshots) {
-            if (!_hudIconsByID.ContainsKey(snapshot.abilityId)) {
+            if (!_buffIconsByID.ContainsKey(snapshot.buffID)) {
                 var hudIcon = CreateHudIcon(snapshot);
-                _hudIconsByID.Add(snapshot.abilityId, hudIcon);
+                _buffIconsByID.Add(snapshot.buffID, hudIcon);
             }
         }
     }
     private UIHudIconStatus CreateHudIcon(BuffSnapshot snapshot) {
-        var uiIcon = Instantiate(App.ResourceSystem.GetPrefab<UIHudIconStatus>("UIHudIconStatus"), _iconContainer);
+        var uiIcon = Instantiate(App.ResourceSystem.GetPrefab<UIHudIconStatus>("UIHudIconStatus"), _iconContainerBuffs);
         uiIcon.Init(snapshot.icon,snapshot.displayName);
         return uiIcon; 
     }

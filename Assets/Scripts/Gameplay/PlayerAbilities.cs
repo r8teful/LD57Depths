@@ -10,6 +10,9 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
     public Transform AbilitySlot => _abilitySlotTransform;
     public int InitializationOrder => 998; // Idk just do it last?
 
+    public event Action<AbilityInstance> OnabilityRemove;
+    public event Action<AbilityInstance> OnAbilityAdd;
+
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _player = playerParent;
         AddAbility(App.ResourceSystem.GetAbilityByID(0)); // Lazer is ID 0 
@@ -28,8 +31,20 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
                 if (so is IEffectPassive pe)
                     pe.Apply(inst, _player);
         }
-
-        // Hook: apply queued upgrades targeting this ability, etc.
+        OnAbilityAdd?.Invoke(inst);
+    }
+    public void RemoveAbility(AbilitySO data) {
+        // No clue if this ever will happen, need to test first
+        Debug.LogWarning("REMOVING ABILITY NOT TESTED TEST IT FIRST PLEASE1!!");
+        if (!_abilities.TryGetValue(data.ID, out var inst)) return;
+        // For passives, apply passive effects now
+        if (data.type == AbilityType.Passive) {
+            foreach (var so in data.effects)
+                if (so is IEffectPassive pe)
+                    pe.Remove(inst, _player);
+        }
+        _abilities.Remove(data.ID);
+        OnabilityRemove?.Invoke(inst);
     }
     public bool HasAbility(ushort id) => _abilities.ContainsKey(id);
 
@@ -51,7 +66,7 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
         if (inst == null) return false;
         return inst.Use(() => {
             // performEffect provided but we delegate to effects
-            foreach (var so in inst.data.effects)
+            foreach (var so in inst.Data.effects)
                 if (so is IEffectActive effect) effect.Execute(inst, _player);
             return true;
         });

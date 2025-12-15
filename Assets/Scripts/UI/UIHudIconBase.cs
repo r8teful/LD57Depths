@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public abstract class UIHudIconBase : MonoBehaviour, IPopupInfo {
-    [SerializeField] private Image _iconImage;
+    [SerializeField] protected Image _iconImage;
     private string _descText;
     private string _headerText;
 

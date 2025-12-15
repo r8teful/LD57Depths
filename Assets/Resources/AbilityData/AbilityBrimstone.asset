@@ -17,5 +17,6 @@ MonoBehaviour:
   displayName: Brimstone
   type: 1
   cooldown: 8.32
+  isTimed: 1
   effects:
   - {fileID: 11400000, guid: eab51e7b608e6cf419de18e9018bacd9, type: 2}

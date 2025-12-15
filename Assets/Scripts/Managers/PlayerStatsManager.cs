@@ -54,10 +54,11 @@ public class BuffInstance {
     public BuffHandle handle;
     internal float startTime;
     internal float duration;
-    internal float endTime;
+    internal float expiresAt;
     public List<StatModifier> RuntimeModifiers { get; private set; } // Can be null and then we just use BuffSO.Modifiers
 
     public BuffSO GetBuffData() => App.ResourceSystem.GetBuffByID(buffID);
+    public bool IsExpired => Time.time >= expiresAt;
     public BuffInstance() { }
 
     // Factory: create a BuffInstance from a BuffSO
@@ -67,7 +68,7 @@ public class BuffInstance {
             startTime = Time.time,
             duration = durationOverride > 0f ? durationOverride : so.Duration,
             timeRemaining = durationOverride > 0f ? durationOverride : so.Duration,
-            endTime = (durationOverride > 0f ? Time.time + durationOverride :
+            expiresAt = (durationOverride > 0f ? Time.time + durationOverride :
                        so.Duration > 0 ? Time.time + so.Duration : -1)
         };
 
@@ -238,7 +239,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         if (_activeBuffs.Count > 0) {
             for (int i = _activeBuffs.Count - 1; i >= 0; i--) {
                 var b = _activeBuffs[i];
-                if (b.duration > 0 && Time.time >= b.endTime) {
+                if (b.duration > 0 && Time.time >= b.expiresAt) {
                     RemoveBuff(b.buffID);
                 }
             }
@@ -343,10 +344,10 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     public IReadOnlyList<BuffSnapshot> GetBuffSnapshots() {
         _snapshotCache.Clear();
         foreach (var b in _activeBuffs) {
-            float remaining = b.duration > 0 ? Mathf.Max(0f, b.endTime - Time.time) : -1f;
+            float remaining = b.duration > 0 ? Mathf.Max(0f, b.expiresAt - Time.time) : -1f;
             float total = b.duration > 0 ? b.duration : -1f;
             _snapshotCache.Add(new BuffSnapshot {
-                abilityId = b.buffID,
+                buffID = b.buffID,
                 displayName = b.GetBuffData().Title,
                 icon = b.GetBuffData().Icon,
                 remainingSeconds = remaining,
@@ -358,7 +359,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
     public float GetRemainingTime(ushort abilityId) {
         if (!_activeBuffsByID.TryGetValue(abilityId, out var b)) return -1f;
-        return b.duration > 0 ? Mathf.Max(0f, b.endTime - Time.time) : -1f;
+        return b.duration > 0 ? Mathf.Max(0f, b.expiresAt - Time.time) : -1f;
     }
 
 
@@ -388,7 +389,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             buffID = id,
             startTime = Time.time,
             duration = buffData.Duration,
-            endTime = buffData.Duration > 0 ? Time.time + buffData.Duration : -1f, // indefinite
+            expiresAt = buffData.Duration > 0 ? Time.time + buffData.Duration : -1f, // indefinite
         };
 
         // Actions are so fancy, so this basically points to this function which when we invoke the action will call, and we can pass the action around 
@@ -520,7 +521,7 @@ public struct MiningToolData {
 }
 
 public struct BuffSnapshot {
-    public ushort abilityId;
+    public ushort buffID;
     public string displayName;
     public Sprite icon;
     public float remainingSeconds; // -1 => indefinite
