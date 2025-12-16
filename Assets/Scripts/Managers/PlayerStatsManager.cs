@@ -7,45 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Collections;
 using UnityEngine;
-[System.Serializable]
-public class StatDefault {
-    public StatType Stat;
-    public float BaseValue;
-}
-public enum StatType {
-    // MINING
-    MiningRange = 0,
-    MiningDamage = 1,
-    MiningRotationSpeed = 2,
-    Knockback = 3,
-    MiningFalloff = 4,
-    MiningCombo = 5,
 
-    // Lazer blast
-    BlastDamage = 10,
-    BlastRecharge = 11,
-    BlastDuration = 12,
-    BlastRange = 13,
-
-    // PLAYER 
-    PlayerSpeedMax = 20,
-    PlayerAcceleration = 21,
-    PlayerDrag = 22,
-    PlayerMagnetism = 23,
-    PlayerOxygenMax = 24,
-    
-    // Player dash
-    DashSpeed = 30,
-    DashRecharge = 31,
-    DashDistance = 32,
-    
-    // Block oxygen
-    BlockOxygenReleased = 40,
-    BlockOxygenChance = 41,
-
-    // General
-    Cooldown = 1000
-}
 // We use this instance to get RUNTIME information about the buff, we'll need it for UI,
 // but also if we increase the buff strength we'll modify its Stat modifiers
 public class BuffInstance {
@@ -73,11 +35,9 @@ public class BuffInstance {
         };
 
         // deep copy modifiers
-        inst.RuntimeModifiers = so.Modifiers?.Select(m => new StatModifier {
-            Stat = m.Stat,
-            Value = m.Value,
-            Type = m.Type
-        }).ToList() ?? new List<StatModifier>();
+        // NO, when we create it, we don't have any runtime modfiers. Runtime modifiers get added when we UPGRADE it. that is the whole point of this
+        inst.RuntimeModifiers = so.Modifiers?.Select(
+            m => new StatModifier(m.Value, m.Stat, m.Type, so.ID)).ToList() ?? new List<StatModifier>();
 
         return inst;
     }
@@ -86,14 +46,20 @@ public class BuffInstance {
     /// </summary>
     /// <param name="source"></param>
     public void ApplyAbilityInstanceModifiers(AbilityInstance source) {
-        if (RuntimeModifiers == null) return;
-
+        if (RuntimeModifiers == null) return; 
         foreach (var mod in RuntimeModifiers) {
             // get totals from the source (helpers below)
             float flatFromSource = source.GetTotalFlatModifier(mod.Stat);     // e.g. Mining knockback + 20
             float percentFromSource = source.GetTotalPercentModifier(mod.Stat); // e.g. Damage + 20%
 
-            if (mod.Type == IncreaseType.Add) {
+            // It doesn't work when you say (mod.Type == IncreaseType.Add) because it needs to be the source mod more (or something!?)
+            // This is the problem:
+            // For the brimstone effect, if we upgrade it twice, flatFromSource will be 0.4 (0.2+0.2) 
+            // mod.Value is 1.5, so we would need to ADD it to 1.5. But, the mod.Type doesn't determine how we add 
+            // flatFromSource to the base ( or percentFromSource ), I want it to be that because flatFromSource is added using (0.2+0.2)
+            // that would also mean that the 0.4 needs to be ADDED to the 1.5 value. Its all very fucking annoying and we need a clear way to say, 
+            // This number will add a procent, and this number will add a numeric value. That's it. 
+            if (flatFromSource > percentFromSource) {
                 // treat Value as a flat base
                 // newValue = (base + flatFromSource) * (1 + percentFromSource)
                 float baseVal = mod.Value;

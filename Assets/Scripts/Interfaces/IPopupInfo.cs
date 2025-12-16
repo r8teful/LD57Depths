@@ -14,7 +14,7 @@ public class PopupData {
     public string description;
     public Sprite Icon;
     public List<IngredientStatus> craftingInfo; // int is quantity
-    public List<StatChangeStatus> statInfo;
+    public List<StatChangeStatus> upgradeEffects; // in its core this is what we want to know
     public NodeProgressionStatus progressionInfo;
 
     public PopupData(string title, string description, List<IngredientStatus> craftingInfo, Sprite icon = null, List<StatChangeStatus> statInfo = null,
@@ -22,7 +22,7 @@ public class PopupData {
         this.title = title;
         this.description = description;
         this.craftingInfo = craftingInfo;
-        this.statInfo = statInfo;
+        this.upgradeEffects = statInfo;
         this.progressionInfo = progressionInfo;
         Icon = icon;
     }

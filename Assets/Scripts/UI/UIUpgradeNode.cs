@@ -245,6 +245,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // Stat data
         return new PopupData(_boundNode.nodeName, upgradeData.description, 
             upgradeData.GetIngredientStatuses(clientInv),
+            // We need a new way to get the stat statuses, it will depend on the upgrade. 
             statInfo: upgradeData.GetStatStatuses(), // This lagging behind, for some reason, rest is updating correctly
             progressionInfo: new(_boundNode.MaxLevel, _cachedLevel));
     }

@@ -12,7 +12,7 @@ public class AbilityLazerBrimstone : ScriptableObject, IEffectActive, IEffectBuf
         // This ability should add multiplier buffs to the lazer passive
         Debug.Log("Triggering brimstone buff!");
         var buffinst = BuffInstance.CreateFromSO(_buff);
-        buffinst.ApplyAbilityInstanceModifiers(source);
-        player.PlayerAbilities.GetInstance(_lazerAbilityTarget.ID).TriggerBuff(buffinst);
+        buffinst.ApplyAbilityInstanceModifiers(source); // Somehow here we already have 4 buffs on our own buff!?
+        player.PlayerAbilities.GetAbilityInstance(_lazerAbilityTarget.ID).TriggerBuff(buffinst);
     }
 }

@@ -34,16 +34,6 @@ public struct IngredientStatus {
         CurrentAmount = currentAmount;
     }
 }
-public struct StatChangeStatus {
-    public StatType StatType { get; }
-    public float ValueNow {get; }
-    public float ValueNext { get; }
-    public StatChangeStatus(StatType stat, float valueNow, float valueNext) {
-        StatType = stat;
-        ValueNow = valueNow;
-        ValueNext = valueNext;
-    }
-}
 public struct NodeProgressionStatus {
     public int LevelMax { get; }
     public int LevelCurr { get; }

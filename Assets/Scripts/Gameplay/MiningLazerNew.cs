@@ -112,7 +112,7 @@ public class MiningLazerNew : MonoBehaviour {
         var damage = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
         // Use the (potentially smoothed) _currentDirection for the raycast
         RaycastHit2D hit = Physics2D.Raycast(toolPosition, _currentDirection, range, LayerMask.GetMask("MiningHit"));
-        //Debug.Log($"Range: {Range} Dir: {_currentDirection}");
+        Debug.Log($"damage: {damage}");
         if (hit.collider != null) {
 
             //Debug.Log($"MINING HIT!!");
@@ -134,7 +134,7 @@ public class MiningLazerNew : MonoBehaviour {
         var damage = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
         Vector2 origin = transform.position;
         Vector2 dir = _currentDirection.normalized;
-
+        Debug.Log($"damage ability: {damage}");
         // Tunables — adjust these to change accuracy/performance/thickness
         float stepAlong = 0.2f;   // how far we move along the ray per sample (keeps your original style)
         float thickness = 2.0f;   // total width (world units) of the "thick" ray

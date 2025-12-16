@@ -57,8 +57,8 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
                 Instantiate(ingredientPrefab, _ingredientContainer).Init(ingredient);
             }
         }
-        if(data.statInfo != null &&  data.statInfo.Count > 0) {
-            foreach (var stat in data.statInfo) {
+        if(data.upgradeEffects != null &&  data.upgradeEffects.Count > 0) {
+            foreach (var stat in data.upgradeEffects) {
                 //Todo obviously
                 var statChange = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStatPopup"), _statsChangeContainer);
                 statChange.Init(stat); // TODO

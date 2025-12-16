@@ -276,4 +276,60 @@ public class ResourceSystem {
             _entityLookupByID[9999] as WorldSpawnEntitySO
         };
     }
+
+
+    public static bool IsLowerBad(StatType stat) {
+        return stat switch {
+            StatType.MiningRange => true,
+            StatType.MiningDamage => true,
+            StatType.MiningRotationSpeed => true,
+            StatType.PlayerSpeedMax => true,
+            StatType.PlayerAcceleration => true,
+            StatType.PlayerOxygenMax => true,
+            StatType.Knockback => false,
+            StatType.MiningFalloff => false,
+            _ => true,
+        };
+    }
+    public static string GetStatString(StatType stat) {
+        return stat switch {
+            StatType.MiningRange => "Range",
+            StatType.MiningDamage => "Damage",
+            StatType.MiningRotationSpeed => "Movement Speed",
+            StatType.PlayerSpeedMax => "Maximum Speed",
+            StatType.PlayerAcceleration => "Acceleration",
+            StatType.PlayerOxygenMax => "Capacity (seconds)",
+            StatType.Knockback => "Knockback Force",
+            StatType.MiningFalloff => "Falloff",
+            StatType.MiningCombo => "Damage Falloff",
+            StatType.PlayerDrag => "Player Drag",
+            StatType.PlayerMagnetism => "Player Drag",
+            _ => "NULL",
+        };
+    }
+}
+
+[System.Serializable]
+public class StatDefault {
+    public StatType Stat;
+    public float BaseValue;
+}
+public enum StatType {
+    // MINING
+    MiningRange = 0,
+    MiningDamage = 1,
+    MiningRotationSpeed = 2,
+    Knockback = 3,
+    MiningFalloff = 4,
+    MiningCombo = 5,
+
+    // PLAYER 
+    PlayerSpeedMax = 20,
+    PlayerAcceleration = 21,
+    PlayerDrag = 22,
+    PlayerMagnetism = 23,
+    PlayerOxygenMax = 24,
+
+    // General
+    Cooldown = 1000
 }

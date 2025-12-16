@@ -4,9 +4,21 @@
 public abstract class UpgradeEffect : ScriptableObject, IIdentifiable{
     public ushort Id;
     public ushort ID => Id;
-
-    public abstract void Apply(GameObject target);
+    public abstract void Apply(NetworkedPlayer target);
+    public abstract StatChangeStatus GetChangeStatus();
 }
 
+public struct StatChangeStatus {
+    public string StatName { get; }
+    public float ValueNow { get; }
+    public float ValueNext { get; }
+    public bool IsLowerBad { get; }
 
+    public StatChangeStatus(string statName, float valueNow, float valueNext, bool isLowerBad) {
+        StatName = statName;
+        ValueNow = valueNow;
+        ValueNext = valueNext;
+        IsLowerBad = isLowerBad;
+    }
+}
 public enum IncreaseType { Add, Multiply }

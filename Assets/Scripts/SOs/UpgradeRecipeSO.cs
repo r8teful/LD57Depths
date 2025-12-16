@@ -9,16 +9,16 @@ using UnityEngine;
 public class UpgradeRecipeSO: RecipeBaseSO {
     [SerializeReference]
     public List<UpgradeEffect> effects = new List<UpgradeEffect>(); // The results the upgrade has when purchased 
-    
+   
+    public List<StatModAbilityEffectSO> GetTargetEffects() {
+        return effects.OfType<StatModAbilityEffectSO>().ToList();
+    }
     public override bool ExecuteRecipe(RecipeExecutionContext context) {
         foreach (var effect in effects) {
-            effect.Apply(context.Player.gameObject); // TODO have to see how this will actualyl work now...
+            effect.Apply(context.Player);
         }
-        return true; // Handled by events in UpgradeManager.OnUpgradePurchased
-        // This is because we'd need mining controller, movement, vision, and more, in the context. It could work, but 
-        // gets quite messy to setup the context when calling execute recipe.
-        // Trust me, I've tried it, it will just get messy, and in the end we check the individual ID anyway, so if we're 
-        // Already doing that, why not just stick with it?
+        return true; // Assume we've succeded
+
     }
     public override void PrepareRecipe(float value, List<ItemQuantity> resourcePool) {
         base.PrepareRecipe(value, resourcePool);
@@ -75,9 +75,7 @@ public class UpgradeRecipeSO: RecipeBaseSO {
     public List<StatChangeStatus> GetStatStatuses() {
         var statuses = new List<StatChangeStatus>();
         foreach (var effect in effects) {
-            if(effect is StatUpgradeEffectSO statEffect) {
-                statuses.Add(statEffect.GetStatChange());
-            }
+            statuses.Add(effect.GetChangeStatus());
         }
         return statuses;
     }

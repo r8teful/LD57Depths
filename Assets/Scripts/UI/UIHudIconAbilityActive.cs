@@ -26,7 +26,7 @@ public class UIHudIconAbilityActive : UIHudIconBase {
     }
 
     private void OnAbilityActiveTimeChanged(float time) {
-        Debug.Log($"Active Time changed: {time}");
+        //Debug.Log($"Active Time changed: {time}");
         timeText.text = FormatSeconds(time);
         timeText.color = Color.green;
         

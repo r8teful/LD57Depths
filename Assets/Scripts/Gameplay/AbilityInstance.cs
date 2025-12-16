@@ -46,6 +46,14 @@ public class AbilityInstance {
         var buff = Data.effects?.OfType<IEffectBuff>().FirstOrDefault();
         return buff.Buff.Duration;
     }
+    internal float GetBuffStatStrength(StatType stat) {
+        var buff = Data.effects?.OfType<IEffectBuff>().FirstOrDefault();
+        if(buff == null) return 0f;
+        var mod = buff.Buff.Modifiers.FirstOrDefault(m => m.Stat == stat);
+        if(mod == null) return 0f;
+        return GetFinalAbilityMultiplier(mod.Stat, mod.Value); // Quite beautiful
+    }
+    
     // call each frame from player controller
     public void Tick(float dt) {
         // First check if any of our timed buffs are still valid
@@ -91,14 +99,14 @@ public class AbilityInstance {
     }
 
     // combine base cooldown with modifiers: ability modifiers first, then global StatManager if desired
-    public float GetFinalAbilityMultiplier(StatType stat) {
-        float baseCd = Data.GetBaseModifierForStat(stat);
+    public float GetFinalAbilityMultiplier(StatType stat, float baseOverride = -1) {
+        float baseCd = baseOverride == -1 ? Data.GetBaseModifierForStat(stat) : baseOverride; 
 
         // apply instance-level mods
         var instAdds = GetTotalFlatModifier(stat);
-        var instMult = GetTotalPercentModifier(stat);
+        var instMult = GetTotalPercentModifier(stat); // Instance mods mining damage -> 2.5... WHY??
         //var lastSet = _instanceMods.Where(m => m.Stat == StatType.Cooldown && m.op == ModifierOp.Set).LastOrDefault();
-        float cd = (baseCd + instAdds) * instMult;
+        float cd = (baseCd + instAdds) * Mathf.Max(1,instMult); // don't multiply with 0 if we have no multiplier
         //if (lastSet.op == ModifierOp.Set) cd = lastSet.value;
 
         // Optionally incorporate global stat manager effects (if cooldowns are globally affected)
@@ -112,8 +120,8 @@ public class AbilityInstance {
         return _instanceMods.Where(m => m.Stat == stat && m.Type == IncreaseType.Add).Sum(m => m.Value);
     }
     public float GetTotalPercentModifier(StatType stat) {
-        //return _instanceMods.Where(m => m.Stat == stat && m.Type == IncreaseType.Multiply).Sum(m => m.Value);
-        return _instanceMods.Where(m => m.Stat == stat && m.Type == IncreaseType.Multiply).Aggregate(1f, (a, m) => a * m.Value);
+        return _instanceMods.Where(m => m.Stat == stat && m.Type == IncreaseType.Multiply).Sum(m => m.Value);
+       //return _instanceMods.Where(m => m.Stat == stat && m.Type == IncreaseType.Multiply).Aggregate(1f, (a, m) => a * m.Value);
     }
     public float GetEffectiveStat(StatType stat) {
         float baseStat = _player.PlayerStats.GetStat(stat);
