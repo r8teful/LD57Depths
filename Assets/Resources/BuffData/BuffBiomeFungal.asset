@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0183601e43946ba498966f9df2fef387, type: 3}
+  m_Name: BuffBiomeFungal
+  m_EditorClassIdentifier: 
+  id: 204
+  Modifiers: []
+  Duration: 10
+  Title: Brimstone
+  Description: 'Your lazer power has been temporary enhanced '
+  Icon: {fileID: -172477240, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}

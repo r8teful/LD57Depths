@@ -43,6 +43,7 @@ public class ResourceSystem {
     public const ushort ControlPanellRecipeID = 101; // FixRecipe.cs
 
     public const ushort BrimstoneBuffID = 1; // There must be a better way
+    public const ushort BiomeBuffID = 99; // There must be a better way
     public const ushort LazerEffectID = 0; // There must be a better way
 
     public const ushort UpgradeFlippersID = 102; // Max speed 3 
@@ -175,7 +176,7 @@ public class ResourceSystem {
     }
     public BuffSO GetBuffByID(ushort id) {
         if (id == InvalidID || !_buffLookupByID.TryGetValue(id, out BuffSO buff)) {
-            Debug.LogWarning($"ability ID {id} not found in database.");
+            Debug.LogWarning($"buff ID {id} not found in database.");
             return null;
         }
         return buff;

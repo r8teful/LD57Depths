@@ -17,6 +17,7 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
         _player = playerParent;
         AddAbility(App.ResourceSystem.GetAbilityByID(0)); // Lazer is ID 0 
         AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BrimstoneBuffID)); // Lazer blast
+        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BiomeBuffID)); // Biome buffs
         //AddAbility(App.ResourceSystem.GetAbilityByID(69)); // Fish gun
     }
 
@@ -58,8 +59,6 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
         foreach (var inst in _abilities.Values)
             inst.Tick(dt);
     }
-
-    
 
     public bool UseActive(ushort id) {
         var inst = GetAbilityInstance(id);

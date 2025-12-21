@@ -4,12 +4,12 @@ using System.Linq;
 using UnityEngine;
 
 // Holds runtime information about abilities.
-// Abilities could be: Tools, 
+// Think of abilities as being behaviours we can add to the player.
+// Like a mining tool, or an ability does makes that mining tool more powerfull, or something that applies other abilities (like the biome buffs)
 public class AbilityInstance {
     public AbilitySO Data { get; }
 
     private NetworkedPlayer _player;
-
 
     private List<StatModifier> _instanceMods = new();
     private readonly List<BuffInstance> _activeBuffs = new(); 
@@ -211,7 +211,7 @@ public class AbilityInstance {
 
     // Tick and Use similar to before but use GetEffectiveCooldown() when setting cooldownRemaining
     public bool Use(Func<bool> performEffect) {
-        if (Data.type != AbilityType.Active) return false;
+        if (Data.type == AbilityType.Passive) return false;
         Debug.Log($"Trying to use ability {Data.displayName}, we have {_cooldownRemaining} time left");
         if (!IsReady) return false;
         bool effectSuccess = performEffect?.Invoke() ?? true;

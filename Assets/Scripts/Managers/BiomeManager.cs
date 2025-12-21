@@ -45,7 +45,7 @@ public class BiomeChunkInfo {
     }
 }
 
-public class BiomeManager : NetworkBehaviour 
+public class BiomeManager : StaticInstance<BiomeManager>
 {
     private WorldManager _worldManager;
     private ChunkManager _chunkManager;
@@ -61,9 +61,20 @@ public class BiomeManager : NetworkBehaviour
         _chunkManager = parent.ChunkManager;
         chunkSize = _worldManager.GetChunkSize();
     }
-    public override void OnStartClient() {
-        base.OnStartClient();
-        // Ownership is checked in coroutine
+    // Not having multiplayer atm 
+    //public override void OnStartClient() {
+    //    base.OnStartClient();
+    //    // Ownership is checked in coroutine
+    //    StartCoroutine(ClientMovingRoutine());
+    //}
+    //protected override void Awake() {
+    //    base.Awake();
+    //    StartCoroutine(ClientMovingRoutine());
+    //    StartCoroutine(Routine());
+    //}
+
+    // For some fucking reason if we have this in awake it never fucking finds NEtworkedPlayer.LocalInstance!?!?
+    private void Start() {
         StartCoroutine(ClientMovingRoutine());
     }
 
@@ -71,8 +82,9 @@ public class BiomeManager : NetworkBehaviour
         var checkInterval = 0.2f;
         Vector2Int clientCurrentChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
         // Wait until the player object owned by this client is spawned and available
-        Debug.Log("waiting...");
-        yield return new WaitUntil(() => base.Owner != null && NetworkedPlayer.LocalInstance != null); 
+        //Debug.Log("starting biome moving routine...");
+        //yield return new WaitUntil(() => base.Owner != null && NetworkedPlayer.LocalInstance != null); 
+        yield return new WaitUntil(() => NetworkedPlayer.LocalInstance != null); 
         Transform localPlayerTransform = NetworkedPlayer.LocalInstance.transform;
         while (true) {
             if (localPlayerTransform == null) { // Safety check if player despawns
@@ -165,10 +177,10 @@ public class BiomeManager : NetworkBehaviour
         }
         // 3) Store it in chunk lookup 
         if (serverBiomeData.ContainsKey(chunkCoord)) {
-            Debug.Log("changed existing data in biomemanager");
+            //Debug.Log("changed existing data in biomemanager");
             serverBiomeData[chunkCoord] = info;
         } else {
-            Debug.Log("added new data to biomemanager");
+            //Debug.Log("added new data to biomemanager");
             serverBiomeData.Add(chunkCoord, info);
 
         }

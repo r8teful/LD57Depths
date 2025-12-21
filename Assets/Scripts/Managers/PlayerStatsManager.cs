@@ -368,7 +368,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
         _activeBuffs.Add(buff);
         _activeBuffsByID[id] = buff;
-        registerUnsubscribe?.Invoke(removeAction);
+        //registerUnsubscribe?.Invoke(removeAction);// We od it either before or after 
         var modifiersToAdd = new List<StatModifier>();
         foreach (var modData in buffData.Modifiers) {
             modifiersToAdd.Add(new StatModifier(modData.Value, modData.Stat, modData.Type, buffData));

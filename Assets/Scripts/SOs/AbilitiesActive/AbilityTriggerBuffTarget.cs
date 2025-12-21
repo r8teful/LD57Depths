@@ -2,8 +2,8 @@
 using UnityEngine;
 using System.Linq;
 [CreateAssetMenu(fileName = "EffectLazerBrimstone", menuName = "ScriptableObjects/AbilityEffects/Brimstone")]
-public class AbilityLazerBrimstone : ScriptableObject, IEffectActive, IEffectBuff {
-    [SerializeField] AbilitySO _lazerAbilityTarget;
+public class AbilityTriggerBuffTarget : ScriptableObject, IEffectActive, IEffectBuff {
+    [SerializeField] AbilitySO _targetAbility;
     [SerializeField] private BuffSO _buff;
 
     public BuffSO Buff => _buff;
@@ -13,6 +13,6 @@ public class AbilityLazerBrimstone : ScriptableObject, IEffectActive, IEffectBuf
         Debug.Log("Triggering brimstone buff!");
         var buffinst = BuffInstance.CreateFromSO(_buff);
         buffinst.ApplyAbilityInstanceModifiers(source); // Somehow here we already have 4 buffs on our own buff!?
-        player.PlayerAbilities.GetAbilityInstance(_lazerAbilityTarget.ID).TriggerBuff(buffinst);
+        player.PlayerAbilities.GetAbilityInstance(_targetAbility.ID).TriggerBuff(buffinst);
     }
 }

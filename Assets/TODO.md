@@ -75,17 +75,9 @@ TODO NOW ACTUALLY:
 
 
 * Implement laser blast ability - DONE
-* Make abilities with cooldown show up in a different part of the UI
-
-Easiest way would be to have it event driven and just subscribe to ability changes, add/remove, and update for timed based ones
-
-
-
-NOTE: We have to extend our AbilityInstance logic to account for abilities that are timed, so cooldown + abilityDuration, or something
+* Make abilities with cooldown show up in a different part of the UI - DONE
+* Change the upgrades to use new ability system -> upgrades add modifiers to the AbilityInstance which store them into \_instanceMods, we use GetEffectiveStat within the ability logic to get the stat. If we want to upgrade a buff ( like the brimstone ) its modifiers will be on its own AbilityInstance, when we add a buff to the lazer AbilityInstance, we create a new buffInstance which takes into account the "upgrades" we've done on the brimstone, and add that to the lazer, and boom we have a better lazer ability - DONE (need to add lots of other upgrades)
 
 
 
-
-
-* Change the upgrades to use new ability system -> upgrades add modifiers to the AbilityInstance which store them into \_instanceMods, we use GetEffectiveStat within the ability logic to get the stat. If we want to upgrade a buff ( like the brimstone ) its modifiers will be on its own AbilityInstance, when we add a buff to the lazer AbilityInstance, we create a new buffInstance which takes into account the "upgrades" we've done on the brimstone, and add that to the lazer, and boom we have a better lazer ability
-* Add compass
+* Now actually add the content?

@@ -394,7 +394,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
         EntitySpecificData data = CreateEntitySpecificDataByID(id); // This obviously doesn't scale properly
         PersistentEntityData newEntityData = new(uniqueID, id, pos, rot, entityData);
         persistentEntityDatabase.Add(uniqueID, newEntityData);
-        Debug.Log($"Added new persistent entity ID:{uniqueID} at {pos}");
+        //Debug.Log($"Added new persistent entity ID:{uniqueID} at {pos}");
         return newEntityData;
     }
     private EntitySpecificData CreateEntitySpecificDataByID(ushort id) {
