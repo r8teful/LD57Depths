@@ -117,10 +117,10 @@ public class AbilityInstance {
         return cd;
     }
     public float GetTotalFlatModifier(StatType stat) {
-        return _instanceMods.Where(m => m.Stat == stat && m.Type == IncreaseType.Add).Sum(m => m.Value);
+        return _instanceMods.Where(m => m.Stat == stat && m.Type == StatModifyType.Add).Sum(m => m.Value);
     }
     public float GetTotalPercentModifier(StatType stat) {
-        return _instanceMods.Where(m => m.Stat == stat && m.Type == IncreaseType.Multiply).Sum(m => m.Value);
+        return _instanceMods.Where(m => m.Stat == stat && m.Type == StatModifyType.Multiply).Sum(m => m.Value);
        //return _instanceMods.Where(m => m.Stat == stat && m.Type == IncreaseType.Multiply).Aggregate(1f, (a, m) => a * m.Value);
     }
     public float GetEffectiveStat(StatType stat) {

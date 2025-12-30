@@ -1,8 +1,5 @@
 ---------- MAKE THE GAME FUN!!! ----------------
 
-* Hover over base nodes to see what it is and possibly their current stats
-* 
-
 Blocks ARE enemies, you MINE/defeat them and gain a REWARD
 
 
@@ -56,6 +53,17 @@ Doing it this way also actually makes the passive abilities truly global
 
 
 
+Now a brimstone upgrade works like so:
+
+1. Player purchases brimstone dmg UpgradeRecipeSO
+2. StatModAbilityEffectSO triggers Apply method, this creates a new StatModifier, and applies it to the brimstoneAbility with AddInstanceModifier
+
+3\. Next time we use the brimstone, it will use the value through GetFinalAbilityMultiplier()
+
+Now the same has to happen with other upgrades, like the lazer, we add a statModifier to the ability, and the lazer will use that modifier in its new calculations
+
+
+
 A tool applies an temporary buff when activated. Which can be said is a temporary ability
 
 The laser tool is a permanent ability, which can unlock temporary ability, which result into a temporary buff
@@ -77,7 +85,22 @@ TODO NOW ACTUALLY:
 * Implement laser blast ability - DONE
 * Make abilities with cooldown show up in a different part of the UI - DONE
 * Change the upgrades to use new ability system -> upgrades add modifiers to the AbilityInstance which store them into \_instanceMods, we use GetEffectiveStat within the ability logic to get the stat. If we want to upgrade a buff ( like the brimstone ) its modifiers will be on its own AbilityInstance, when we add a buff to the lazer AbilityInstance, we create a new buffInstance which takes into account the "upgrades" we've done on the brimstone, and add that to the lazer, and boom we have a better lazer ability - DONE (need to add lots of other upgrades)
+* Hover over base nodes to see what it is and possibly their current stats - Wait for this
+* Add biome buffs - DONE 
+
+Make internal playtest: 
+
+* Update upgrade to support new stats
+
+&nbsp;	- Unlocks now add ABILITIES through PlayerAbilities.AddAbility
+
+&nbsp;	- 
 
 
 
-* Now actually add the content?
+
+
+
+
+
+

@@ -4,19 +4,17 @@ using UnityEngine;
 
 
 // Ads a StatModifier to a specific ability target
-
 [CreateAssetMenu(fileName = "StatModAbilityEffectSO", menuName = "ScriptableObjects/Upgrades/StatModAbilityEffectSO")]
 public class StatModAbilityEffectSO : UpgradeEffect {
 
     public StatType upgradeType;
-    public IncreaseType increaseType;
+    public StatModifyType increaseType;
     public float modificationValue;
 
     public AbilitySO targetAbility;
 
-
     public override void Apply(NetworkedPlayer target) {
-        Debug.Log("Applying brimstone buff");
+        Debug.Log($"Applying ability buff to {targetAbility.displayName}");
         var mod = new StatModifier(modificationValue, upgradeType, increaseType, this);
         target.PlayerAbilities.GetAbilityInstance(targetAbility.ID).AddInstanceModifier(mod);
     }

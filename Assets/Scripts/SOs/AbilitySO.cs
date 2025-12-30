@@ -4,7 +4,7 @@ using UnityEngine;
 // An ability can be passive (like a permanent buff, or tool, or passive destruction)
 // Or active (like a tool ability)
 
-[CreateAssetMenu(fileName = "AbilityBaseSO", menuName = "ScriptableObjects/AbilityBaseSO", order = 8)]
+[CreateAssetMenu(fileName = "AbilityBaseSO", menuName = "ScriptableObjects/Abilities/AbilityBaseSO", order = 8)]
 public class AbilitySO : ScriptableObject, IIdentifiable {
     [SerializeField] private ushort id;
     public ushort ID => id;

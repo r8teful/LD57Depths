@@ -21,4 +21,4 @@ public struct StatChangeStatus {
         IsLowerBad = isLowerBad;
     }
 }
-public enum IncreaseType { Add, Multiply }
+public enum StatModifyType { Add, Multiply }

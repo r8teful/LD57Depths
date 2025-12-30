@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb3d0041ed540d04d9d938a5f700a60c, type: 3}
+  m_Name: BrimstoneRangeEffect
+  m_EditorClassIdentifier: 
+  Id: 0
+  upgradeType: 1
+  increaseType: 0
+  modificationValue: 0.2
+  targetAbility: {fileID: 11400000, guid: 684d11520b9ebe74ba73394e13a15771, type: 2}

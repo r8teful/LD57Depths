@@ -4,7 +4,7 @@
 public class StatUpgradeEffectSO : UpgradeEffect {
 
     public StatType upgradeType;
-    public IncreaseType increaseType;
+    public StatModifyType increaseType;
     public float modificationValue;
     public override void Apply(NetworkedPlayer target) {
         // The effect's job is to find the relevant component and tell it to update.

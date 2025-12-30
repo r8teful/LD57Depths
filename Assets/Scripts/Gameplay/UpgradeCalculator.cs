@@ -12,11 +12,11 @@ public static class UpgradeCalculator {
         }
         return points;
     }
-    public static float CalculateUpgradeChange(float current, IncreaseType type, float increaseAmount) {
+    public static float CalculateUpgradeChange(float current, StatModifyType type, float increaseAmount) {
         switch (type) {
-            case IncreaseType.Add:
+            case StatModifyType.Add:
                 return current + increaseAmount;
-            case IncreaseType.Multiply:
+            case StatModifyType.Multiply:
                 return current * increaseAmount;
             default:
                 Debug.LogWarning("Fallback, coudn't find approriate increase type calculation!");

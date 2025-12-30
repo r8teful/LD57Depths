@@ -103,7 +103,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
     private readonly SyncDictionary<StatType, float> _finalStats = new(); // Permament + modifiers
 
-    private readonly SyncDictionary<StatType, float> _permanentStats = new(); // Just stats without modifiers, we REVERT to this
+    private readonly SyncDictionary<StatType, float> _rawStats = new(); // Just stats without modifiers, we REVERT to this
     
     // This list ONLY exists on the owning client. It does not need to be synced
     // because only the owner calculates their stats and syncs the result via _finalStats.
@@ -159,7 +159,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     }
     [ServerRpc(RequireOwnership = true)]
     private void ServerInitializeStats(StatType[] statTypes, float[] baseValues) {
-        if (_permanentStats.Count > 0) {
+        if (_rawStats.Count > 0) {
             Debug.LogWarning("ServerInitializeStats called, but stats are already initialized.");
             return; // Already initialized, do nothing.
         }
@@ -167,14 +167,14 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             StatType stat = statTypes[i];
             float value = baseValues[i];
 
-            if (!_permanentStats.ContainsKey(stat)) {
-                _permanentStats.Add(stat, value);
+            if (!_rawStats.ContainsKey(stat)) {
+                _rawStats.Add(stat, value);
                 _finalStats.Add(stat, value); // Initially, final stats are the same as permanent.
             }
         }
         foreach (var statDefault in _baseStats.BaseStats) {
-            if (!_permanentStats.ContainsKey(statDefault.Stat)) {
-                _permanentStats.Add(statDefault.Stat, statDefault.BaseValue);
+            if (!_rawStats.ContainsKey(statDefault.Stat)) {
+                _rawStats.Add(statDefault.Stat, statDefault.BaseValue);
                 // After initializing, we must calculate the final stat for the first time.
                 RecalculateStat(statDefault.Stat);
             } else {
@@ -221,15 +221,15 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
     private void RecalculateStat(StatType stat) {
         if (!base.IsOwner) return;
-        if (!_permanentStats.ContainsKey(stat)) return;
+        if (!_rawStats.ContainsKey(stat)) return;
 
-        float permanentValue = _permanentStats[stat];
+        float permanentValue = _rawStats[stat];
         float finalValue = permanentValue;
 
         // 1. Apply all ADDITIVE modifiers first.
         foreach (var buff in _activeBuffs) {
             foreach (var mod in buff.GetBuffData().Modifiers) {
-                if (mod.Stat == stat && mod.Type == IncreaseType.Add) {
+                if (mod.Stat == stat && mod.Type == StatModifyType.Add) {
                     finalValue += mod.Value;
                 }
             }
@@ -238,7 +238,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         // 2. Apply all MULTIPLIER modifiers next.
         foreach (var buff in _activeBuffs) {
             foreach (var mod in buff.GetBuffData().Modifiers) {
-                if (mod.Stat == stat && mod.Type == IncreaseType.Multiply) {
+                if (mod.Stat == stat && mod.Type == StatModifyType.Multiply) {
                     finalValue *= mod.Value;
                 }
             }
@@ -276,7 +276,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             var statDefault = _baseStats.BaseStats.FirstOrDefault(s => s.Stat == stat);
             return statDefault?.BaseValue ?? 0f;
         }
-        if (_permanentStats.TryGetValue(stat, out float value)) {
+        if (_rawStats.TryGetValue(stat, out float value)) {
             Debug.Log($"Getting base stat for {stat} ... returned {value}");
             return value;
         } else {
@@ -289,7 +289,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     /// The method used by UpgradeEffects to modify a stat.
     /// This should ONLY be called on the owning client.
     /// </summary>
-    public void ModifyPermamentStat(StatType stat, float value, IncreaseType increaseType) {
+    public void ModifyPermamentStat(StatType stat, float value, StatModifyType increaseType) {
         if (!base.IsOwner) {
             Debug.LogWarning("ModifyStat was called on a non-owning client. This should not happen in a client-authoritative model.");
             return;
@@ -299,12 +299,12 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             Debug.LogError($"Cannot modify stat '{stat}' because it has not been initialized.");
             return;
         }
-        float currentValue = _permanentStats[stat];
+        float currentValue = _rawStats[stat];
         float newValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, increaseType, value);
         Debug.Log($"Modifying permanent stat {stat} from {currentValue} to {newValue}!");
         //RecalculateStat(stat); // We could do this here, we recalcualte with an "override" with the new value, this way, we get instant feedback
         ServerUpdatePermanentStat(stat, newValue);
-        _permanentStats[stat] = newValue; // BADDD?? I DONT KNOW BUT ITS NOT ACUTALLY CHANGING IT ON THE SERVER IN TIME FOR ME TO SEE IT ON THE UPGRADE UI SCREEN POP WHEN I PURCHASE THE UPGRADE
+        _rawStats[stat] = newValue; // BADDD?? I DONT KNOW BUT ITS NOT ACUTALLY CHANGING IT ON THE SERVER IN TIME FOR ME TO SEE IT ON THE UPGRADE UI SCREEN POP WHEN I PURCHASE THE UPGRADE
     }
 
     public IReadOnlyList<BuffSnapshot> GetBuffSnapshots() {
@@ -431,7 +431,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
 
     [ServerRpc(RequireOwnership = true)]
     private void ServerUpdatePermanentStat(StatType stat, float newValue) {
-        _permanentStats[stat] = newValue;
+        _rawStats[stat] = newValue;
     }
 
     [ServerRpc(RequireOwnership = true)]
@@ -473,7 +473,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public void DEBUGSetStat(StatType stat, float value) {
-        _permanentStats[stat] = value;
+        _rawStats[stat] = value;
     }
 #endif
 }
