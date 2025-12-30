@@ -134,7 +134,7 @@ public class MiningLazerNew : MonoBehaviour {
         var damage = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
         Vector2 origin = transform.position;
         Vector2 dir = _currentDirection.normalized;
-        Debug.Log($"damage ability: {damage}");
+        //Debug.Log($"damage ability: {damage}");
         // Tunables — adjust these to change accuracy/performance/thickness
         float stepAlong = 0.2f;   // how far we move along the ray per sample (keeps your original style)
         float thickness = 2.0f;   // total width (world units) of the "thick" ray

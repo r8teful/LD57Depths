@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-
-[CreateAssetMenu(fileName = "EffectBiome", menuName = "ScriptableObjects/AbilityEffects/EffectBiome")]
+// Just need one asset for now 
+//[CreateAssetMenu(fileName = "EffectBiome", menuName = "ScriptableObjects/AbilityEffects/EffectBiome")]
 public class EffectBiome : ScriptableObject, IEffectPassive {
     [SerializeField] GameObject prefab;
     private GameObject _instantiatedObject;

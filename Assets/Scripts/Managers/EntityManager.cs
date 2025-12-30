@@ -567,7 +567,7 @@ public class EntityManager : NetworkBehaviour // Needs to be NetworkBehaviour to
     // Called when a NetworkObject tracked by this spawner is despawned/destroyed on the server
     private void HandleEntityDespawned(NetworkObject nob) {
         if (!IsServerInitialized) return; // Should only be invoked on server
-        Debug.Log("StoppedTracking: " + nob.name);
+        //Debug.Log("StoppedTracking: " + nob.name);
         spawnedEntities.Remove(nob); // Stop tracking
         // Decrement the count for its prefab type
         // This requires knowing the original prefab. You might need to store this

@@ -35,6 +35,7 @@ public class ResourceSystem {
     private Dictionary<ushort, BuffSO> _buffLookupByID;
     
     private Dictionary<ushort, AbilitySO> _abilityLookupByID;
+    private Dictionary<ushort, BiomeDataSO> _biomeLookupByID;
 
 
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
@@ -80,6 +81,7 @@ public class ResourceSystem {
         InitializeLookup("WorldGenData", out _worldGenLookupByID, out _);
         InitializeLookup("BuffData", out _buffLookupByID, out _);
         InitializeLookup("AbilityData", out _abilityLookupByID, out _);
+        InitializeLookup("BiomeData", out _biomeLookupByID, out _);
 
         InitializeLookup<UpgradeRecipeSO>("", out _recipeUpgradeLookupByID, out _);
     }
@@ -180,6 +182,13 @@ public class ResourceSystem {
             return null;
         }
         return buff;
+    }
+    public BiomeDataSO GetBiomeData(ushort id) {
+        if (id == InvalidID || !_biomeLookupByID.TryGetValue(id, out BiomeDataSO biome)) {
+            Debug.LogWarning($"biome ID {id} not found in database.");
+            return null;
+        }
+        return biome;
     }
     public AbilitySO GetAbilityByID(ushort id) {
         if (id == InvalidID || !_abilityLookupByID.TryGetValue(id, out AbilitySO ability)) {
