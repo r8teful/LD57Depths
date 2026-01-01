@@ -2,12 +2,9 @@ using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+public class BackgroundWorldTexturesHandler : StaticInstance<BackgroundWorldTexturesHandler> {
 
-public class BackgroundWorldTexturesHandler : MonoBehaviour {
-    // Example fields
-
-    public static WorldGenSettingSO WorldGenSetting { get => ResourceSystem.GetMainMap(); }
-    [SerializeField] private WorldGenSettingSO DEBUGWolrdSetting;
+    public static WorldGenSettings WorldGenSetting { get => WorldGenSettingsManager.Instance.WorldGenSettings; }
     public List<Material> layerMaterials; // 4 materials for 4 layers
     public List<float> layerParallax; // each layer's parallax
     public List<float> layerPixelSize; // pixel sizes for each layer
@@ -18,10 +15,8 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
     private void OnEnable() {
         //worldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterials; });
     }
-    private void Awake() {
-        GameSetupManager.LocalInstance.OnHostSettingsChanged += HostSettingsChanged;
-    }
-
+       // GameSetupManager.LocalInstance.OnHostSettingsChanged += HostSettingsChanged;
+    
     private void HostSettingsChanged(GameSettings obj) {
         //_worldGenSetting = App.ResourceSystem.GetWorldGenByID(obj.WorldGenID);
         //PushBiomesToMaterials();
@@ -42,7 +37,7 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
        
     }
   
-    public static void PushBiomesToMaterials() {
+    public void PushBiomesToMaterials() {
         Debug.Log("pushing");
         if(WorldGenSetting == null) {
             Debug.LogWarning("WorldGenSettings are null");
@@ -54,7 +49,7 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
             index++;
         }
     }
-    public static void PushBiomeToLayerMaterial(Material mat,int matIndex) {
+    public void PushBiomeToLayerMaterial(Material mat,int matIndex) {
         if (mat == null) return;
 
         // push per-biome arrays (if not already pushed globally)
@@ -76,8 +71,8 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
         Color[] backgroundColors = new Color[numBiomes];
 
         for (int i = 0; i < numBiomes; ++i) {
-            if (i < _worldGenSetting.biomes.Count) {
-                var b = _worldGenSetting.biomes[i];
+            if (i < WorldGenSetting.biomes.Count) {
+                var b = WorldGenSetting.biomes[i];
                 edgeNoiseScale[i] = b.EdgeNoiseScale;
                 edgeNoiseAmp[i] = b.EdgeNoiseAmp;
                 blockNoiseScale[i] = b.BlockNoiseScale;
@@ -126,20 +121,20 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
         mat.SetFloatArray("_caveType", caveType);
 
         // global seed
-        mat.SetFloat("_GlobalSeed", _worldGenSetting.seed * 1+ matIndex * 2352.124f);
+        mat.SetFloat("_GlobalSeed", WorldGenSetting.seed * 1+ matIndex * 2352.124f);
 
         // Cave and trench
-        mat.SetFloat("_CaveNoiseScale", _worldGenSetting.caveNoiseScale);
-        mat.SetFloat("_CaveAmp", _worldGenSetting.caveAmp);
-        mat.SetFloat("_CaveCutoff", _worldGenSetting.caveCutoff);
-        mat.SetFloat("_BaseOctaves", _worldGenSetting.caveOctavesBase);
-        mat.SetFloat("_RidgeOctaves", _worldGenSetting.caveOctavesRidge);
-        mat.SetFloat("_WarpAmp", _worldGenSetting.cavewWarpamp);
-        mat.SetFloat("_WorleyWeight", _worldGenSetting.caveWorleyWeight);
+        mat.SetFloat("_CaveNoiseScale", WorldGenSetting.caveNoiseScale);
+        mat.SetFloat("_CaveAmp", WorldGenSetting.caveAmp);
+        mat.SetFloat("_CaveCutoff", WorldGenSetting.caveCutoff);
+        mat.SetFloat("_BaseOctaves", WorldGenSetting.caveOctavesBase);
+        mat.SetFloat("_RidgeOctaves", WorldGenSetting.caveOctavesRidge);
+        mat.SetFloat("_WarpAmp", WorldGenSetting.cavewWarpamp);
+        mat.SetFloat("_WorleyWeight", WorldGenSetting.caveWorleyWeight);
 
-        mat.SetFloat("_TrenchBaseWiden", _worldGenSetting.trenchWidenFactor);
-        mat.SetFloat("_TrenchBaseWidth", _worldGenSetting.trenchBaseWidth);
-        mat.SetFloat("_TrenchNoiseScale", _worldGenSetting.trenchEdgeNoiseFrequency);
-        mat.SetFloat("_TrenchEdgeAmp", _worldGenSetting.trenchEdgeNoiseAmplitude);
+        mat.SetFloat("_TrenchBaseWiden", WorldGenSetting.trenchWidenFactor);
+        mat.SetFloat("_TrenchBaseWidth", WorldGenSetting.trenchBaseWidth);
+        mat.SetFloat("_TrenchNoiseScale", WorldGenSetting.trenchEdgeNoiseFrequency);
+        mat.SetFloat("_TrenchEdgeAmp", WorldGenSetting.trenchEdgeNoiseAmplitude);
     }
 }

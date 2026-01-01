@@ -2,8 +2,8 @@ using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 
-[ExecuteAlways]
-public class BiomeMaterialUploader : MonoBehaviour {
+[ExecuteAlways] // This is so cool it lets us call PushBiomesToMaterial when changing the asset
+public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
     public static int NUM_BIOMES = 6; // MUST match shader's NUM_BIOMES
     public float uvScale = 100.0f; // tune to match the transform in shader (if using the example uv transform)
     [OnValueChanged("PushBiomesToMaterial")]
@@ -11,16 +11,14 @@ public class BiomeMaterialUploader : MonoBehaviour {
 
     public static WorldGenSettingSO WorldGenSetting { get => ResourceSystem.GetMainMap(); }
 
-    void Awake() {
-        PushBiomesToMaterial();
-    }
-    public static void Push() {
-    }
+    //void Awake() {
+    //    PushBiomesToMaterial();
+    //}
     private void OnEnable() {
         WorldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterial; });
     }
     // Call this whenever you change biome descriptors
-    public static void PushBiomesToMaterial() {
+    public void PushBiomesToMaterial() {
         Debug.Log("Pushing..,");
         var targetMaterial = WorldGenSetting.associatedMaterial;
         if (targetMaterial == null) {
