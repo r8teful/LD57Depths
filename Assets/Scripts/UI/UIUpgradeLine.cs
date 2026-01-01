@@ -49,7 +49,7 @@ public class UIUpgradeLine : MonoBehaviour {
 
             // Animation pasive 
             _line.material.SetFloat("_Intensity", 0.3f);
-        } else if (_upgradeNodeStateFrom == UpgradeNodeState.Purchased && _upgradeNodeStateTo == UpgradeNodeState.Active) {
+        } else if (_upgradeNodeStateFrom == UpgradeNodeState.Purchased && _upgradeNodeStateTo == UpgradeNodeState.Unlocked) {
             // Just from purchased, next is available, make line blue
             _line.color = _lineAvailableColor;
             // animation prominent

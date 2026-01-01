@@ -10,7 +10,7 @@ public class UIUpgradeTree : MonoBehaviour {
     private Dictionary<ushort, List<UILineRenderer>> _lineMap = new Dictionary<ushort, List<UILineRenderer>>();
     private UIUpgradeScreen _uiParent;
     private UpgradeTreeDataSO _treeData;
-    internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades) {
+    internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades, InventoryManager inv) {
         _nodeMap.Clear();
         _uiParent = uIUpgradeScreen;
         _treeData = tree;
@@ -39,16 +39,19 @@ public class UIUpgradeTree : MonoBehaviour {
                 continue;
             }
             // Now have the node that is an EXISTING child
-            // 3. Calculate the node's current state from the player's progress.
+            // Calculate the node's current state from the player's progress.
             int currentLevel = nodeData.GetCurrentLevel(existingUpgrades);
 
-            // 4. Determine the node's visual status.
-            UpgradeNodeState status = nodeData.GetState(existingUpgrades);
-            // 5. Get the correct recipe data for display.
+            // Get the correct recipe data for display.
             UpgradeRecipeSO preparedRecipe = nodeData.GetNextUpgradeForNode(existingUpgrades, tree);
-
-            // 6. Update the UI element with all the calculated information.
-            uiNode.Init(this, nodeData, currentLevel, preparedRecipe, status);
+            bool canAfford = false;
+            if (preparedRecipe != null) {
+                canAfford = preparedRecipe.CanAfford(inv);
+            }
+            // Determine the node's visual status.
+            UpgradeNodeState status = nodeData.GetState(existingUpgrades, canAfford);
+            // Update the UI element with all the calculated information.
+            uiNode.Init(this, inv, nodeData, currentLevel, preparedRecipe, status);
             _nodeMap.Add(nodeData.ID, uiNode);
         }
         UpdateConnectionLines(tree, existingUpgrades);
@@ -149,8 +152,9 @@ public class UIUpgradeTree : MonoBehaviour {
     public void RefreshNodes(IReadOnlyCollection<ushort> unlockedUpgrades) {
         foreach (var node in _treeData.nodes) {
             var uiNode = _nodeMap[node.ID];
-            UpgradeNodeState status = node.GetState(unlockedUpgrades);
-            if(status == UpgradeNodeState.Active) {
+            bool canAfford = false; // TODO
+            UpgradeNodeState status = node.GetState(unlockedUpgrades, canAfford);
+            if(status == UpgradeNodeState.Unlocked) {
                 // Need to fetch new data if we're now active
                 uiNode.SetNewPreparedUpgrade(node.GetNextUpgradeForNode(unlockedUpgrades, _treeData));
 

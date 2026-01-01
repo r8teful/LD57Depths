@@ -15,7 +15,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Image _iconImage;
     private Button _buttonCurrent;
     private Image _imageCurrent;
+    private CanvasGroup _canvasGroup;
     private UpgradeRecipeSO _preparedRecipeForPurchase;
+    private InventoryManager _playerInventory;
     private RectTransform _rectTransform;
     private UpgradeNodeSO _boundNode;
     private UIUpgradeTree _treeParent;
@@ -24,7 +26,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public bool IsBig;
     public event Action PopupDataChanged;
     public event Action<UpgradeNodeState> OnStateChange;
-    public enum UpgradeNodeState {Purchased,Active,Inactive }
+    public enum UpgradeNodeState {Purchased,Purchable,Unlocked,Locked }
 
     private static readonly string ICON_PURCHASED_HEX = "#FFAA67";    
     private static readonly string ICON_AVAILABLE_HEX = "#FFFFFF";    
@@ -63,11 +65,14 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonSmall.gameObject.SetActive(true);
         }
     }
-    internal void Init(UIUpgradeTree parent, UpgradeNodeSO boundNode, int currentLevel, UpgradeRecipeSO preparedUpgrade, UpgradeNodeState status) {
+    internal void Init(UIUpgradeTree parent, InventoryManager inv, UpgradeNodeSO boundNode, int currentLevel, UpgradeRecipeSO preparedUpgrade, UpgradeNodeState status) {
         _treeParent = parent;
         _boundNode = boundNode;
         _preparedRecipeForPurchase = preparedUpgrade;
+        _playerInventory = inv;
         _rectTransform = GetComponent<RectTransform>();
+        _canvasGroup = GetComponent<CanvasGroup>();
+        _canvasGroup.alpha = 1;
         HandleButtonSize(); // Sets _buttonCurrent
         _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
         _iconImage = _buttonCurrent.transform.GetChild(1).GetComponent<Image>();// Even worse
@@ -140,7 +145,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public void UpdateVisual(UpgradeNodeState state, int currentLevel = -1) {
         // Derive the old boolean flags so we can still cache them if other code expects them.
         bool isPurchased = state == UpgradeNodeState.Purchased;
-        bool prerequisitesMet = state == UpgradeNodeState.Active;
+        bool prerequisitesMet = state == UpgradeNodeState.Unlocked;
 
         // Determine variant string (Orange for purchased, otherwise Green (IsBig) or Blue).
         string variant = isPurchased ? "Orange" : (IsBig ? "Green" : "Blue");
@@ -175,27 +180,30 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             case UpgradeNodeState.Purchased:
                 ApplySprite("Orange", "Inactive"); // purchased shows Orange Inactive
                                                    //SetLinesColour(_linePurchasedColor);
+                _canvasGroup.alpha = 1; 
                 _iconImage.color = _iconPurchasedColor;
                 _buttonCurrent.interactable = false;
                 OnStateChange?.Invoke(UpgradeNodeState.Purchased);
                 break;
 
-            case UpgradeNodeState.Active:
+            case UpgradeNodeState.Unlocked:
                 ApplySprite(variant, "Active");
                 //SetLinesColour(_lineAvailableColor);
+                _canvasGroup.alpha = 1; 
                 _iconImage.color = _iconAvailableColor;
                 _buttonCurrent.interactable = true;
-                OnStateChange?.Invoke(UpgradeNodeState.Active);
+                OnStateChange?.Invoke(UpgradeNodeState.Unlocked);
                 //_treeParent.SetNodeAvailable(_upgradeData);
                 break;
 
-            case UpgradeNodeState.Inactive:
+            case UpgradeNodeState.Locked:
             default:
-                ApplySprite(variant, "Inactive");
+                ApplySprite(variant, "Inactive"); 
+                _canvasGroup.alpha = 0; // Just hide it for now, 
                 //SetLinesColour(_lineNotAvailableColor);
                 _iconImage.color = _iconNotAvailableColor;
                 _buttonCurrent.interactable = false;
-                OnStateChange?.Invoke(UpgradeNodeState.Inactive);
+                OnStateChange?.Invoke(UpgradeNodeState.Locked);
                 break;
         }
 

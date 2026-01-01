@@ -87,19 +87,20 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
         return prerequisiteNodesAny.Any(p => p != null && p.IsNodeMaxedOut(unlockedUpgrades));
     }
 
-    internal UIUpgradeNode.UpgradeNodeState GetState(IReadOnlyCollection<ushort> unlockedUpgrades) {
+    internal UIUpgradeNode.UpgradeNodeState GetState(IReadOnlyCollection<ushort> unlockedUpgrades, bool canAfford) {
         int currentLevel = GetCurrentLevel(unlockedUpgrades);
         bool isMaxed = currentLevel >= MaxLevel;
         bool prereqsMet = ArePrerequisitesMet(unlockedUpgrades);
         if (!prereqsMet && currentLevel == 0) {
-            return UpgradeNodeState.Inactive;
+            return UpgradeNodeState.Locked;
         } else if (isMaxed) {
             return UpgradeNodeState.Purchased;
         } else if (currentLevel > 0) {
+            
             //status = UpgradeNodeState.InProgress; // Don't have this yet but might need later
-            return UpgradeNodeState.Active;
+            return UpgradeNodeState.Unlocked;
         } else { // prereqsMet and currentLevel is 0
-            return UpgradeNodeState.Active;
+            return UpgradeNodeState.Unlocked;
         }
     }
 }

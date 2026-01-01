@@ -19,7 +19,7 @@ Item based and you just have the items show levels
 
 
 
-Make the game PLAYABLE
+Make the game PLAYABLE, first two stages, game finish at reaching 3rd stage
 
 1. Make it so the first stage takes about 10-20 minutes to complete
 
@@ -82,23 +82,29 @@ TODO NOW ACTUALLY:
 
 
 
+LOCK IN!!!
+
+
+
 * Implement laser blast ability - DONE
 * Make abilities with cooldown show up in a different part of the UI - DONE
 * Change the upgrades to use new ability system -> upgrades add modifiers to the AbilityInstance which store them into \_instanceMods, we use GetEffectiveStat within the ability logic to get the stat. If we want to upgrade a buff ( like the brimstone ) its modifiers will be on its own AbilityInstance, when we add a buff to the lazer AbilityInstance, we create a new buffInstance which takes into account the "upgrades" we've done on the brimstone, and add that to the lazer, and boom we have a better lazer ability - DONE (need to add lots of other upgrades)
 * Hover over base nodes to see what it is and possibly their current stats - Wait for this
-* Add biome buffs - DONE 
+* Add biome buffs - DONE
 
-Make internal playtest: 
+Make internal playtest:
 
 * Update upgrade to support new stats
 
-&nbsp;	- Unlocks now add ABILITIES through PlayerAbilities.AddAbility
+ 	- Unlocks now add ABILITIES through PlayerAbilities.AddAbility.
 
-&nbsp;	- 
+* Make biomes spawn randomly \& Make artifacts, spawn at random spots, you mine it, you get the biome ability
+* implement specific biome abilities 
+* 
 
 
 
-
+Hide un obtainable upgrades, darken ones you don't have money for
 
 
 

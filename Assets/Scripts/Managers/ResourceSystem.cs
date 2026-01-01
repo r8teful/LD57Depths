@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -316,6 +317,22 @@ public class ResourceSystem {
             StatType.PlayerMagnetism => "Player Drag",
             _ => "NULL",
         };
+    }
+    public static WorldGenSettingSO GetMapByID(ushort id) {
+#if UNITY_EDITOR
+        var allAssets = Resources.LoadAll<WorldGenSettingSO>("WorldGenData").ToList();
+        //var guids = AssetDatabase.FindAssets("t:WorldGenSettingSO");
+        foreach (var world in allAssets) {
+            //var path = AssetDatabase.GUIDToAssetPath(guid);
+            //var so = AssetDatabase.LoadAssetAtPath<WorldGenSettingSO>(path);
+            if (world != null && world.ID == id)
+                return world;
+        }
+#endif
+        return null;
+    }
+    public static WorldGenSettingSO GetMainMap() {
+        return GetMapByID(WorldManager.WORLD_MAP_ID);
     }
 }
 

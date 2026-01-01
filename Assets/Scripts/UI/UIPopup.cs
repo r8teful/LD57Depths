@@ -88,4 +88,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
             transform.DOShakePosition(0.2f,15f,30);
         }
     }
+    private void OnDestroy() {
+        DOTween.KillAll();
+    }
 }

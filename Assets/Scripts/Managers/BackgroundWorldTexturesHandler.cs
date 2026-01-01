@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class BackgroundWorldTexturesHandler : MonoBehaviour {
     // Example fields
-    private WorldGenSettingSO _worldGenSetting;
+
+    public static WorldGenSettingSO WorldGenSetting { get => ResourceSystem.GetMainMap(); }
     [SerializeField] private WorldGenSettingSO DEBUGWolrdSetting;
     public List<Material> layerMaterials; // 4 materials for 4 layers
     public List<float> layerParallax; // each layer's parallax
@@ -41,10 +42,11 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
        
     }
   
-    public void PushBiomesToMaterials() {
+    public static void PushBiomesToMaterials() {
         Debug.Log("pushing");
-        if(_worldGenSetting == null) {
-            _worldGenSetting = DEBUGWolrdSetting;
+        if(WorldGenSetting == null) {
+            Debug.LogWarning("WorldGenSettings are null");
+            return;
         }
         var index = 0;
         foreach (var mat in layerMaterials) {
@@ -52,7 +54,7 @@ public class BackgroundWorldTexturesHandler : MonoBehaviour {
             index++;
         }
     }
-    public void PushBiomeToLayerMaterial(Material mat,int matIndex) {
+    public static void PushBiomeToLayerMaterial(Material mat,int matIndex) {
         if (mat == null) return;
 
         // push per-biome arrays (if not already pushed globally)

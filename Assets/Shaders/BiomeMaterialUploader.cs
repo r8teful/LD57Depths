@@ -4,22 +4,25 @@ using UnityEngine;
 
 [ExecuteAlways]
 public class BiomeMaterialUploader : MonoBehaviour {
-    public Material targetMaterial;
-    [OnCollectionChanged("PushBiomesToMaterial", "PushBiomesToMaterial")]
-    public WorldGenSettingSO worldGenSetting;
-    public int NUM_BIOMES = 6; // MUST match shader's NUM_BIOMES
-    public float globalSeed = 1234.0f;
+    public static int NUM_BIOMES = 6; // MUST match shader's NUM_BIOMES
     public float uvScale = 100.0f; // tune to match the transform in shader (if using the example uv transform)
     [OnValueChanged("PushBiomesToMaterial")]
     public float DebugupdateMaterial = 10f;
+
+    public static WorldGenSettingSO WorldGenSetting { get => ResourceSystem.GetMainMap(); }
+
     void Awake() {
         PushBiomesToMaterial();
     }
+    public static void Push() {
+    }
     private void OnEnable() {
-        worldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterial; });
+        WorldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterial; });
     }
     // Call this whenever you change biome descriptors
-    public void PushBiomesToMaterial() {
+    public static void PushBiomesToMaterial() {
+        Debug.Log("Pushing..,");
+        var targetMaterial = WorldGenSetting.associatedMaterial;
         if (targetMaterial == null) {
             Debug.LogWarning("No target material assigned.");
             return;
@@ -45,8 +48,8 @@ public class BiomeMaterialUploader : MonoBehaviour {
         var airColors = new Vector4[NUM_BIOMES];
 
         for (int i = 0; i < NUM_BIOMES; ++i) {
-            if (i < worldGenSetting.biomes.Count) {
-                var b = worldGenSetting.biomes[i];
+            if (i < WorldGenSetting.biomes.Count) {
+                var b = WorldGenSetting.biomes[i];
                 edgeNoiseScale[i] = b.EdgeNoiseScale;
                 edgeNoiseAmp[i] = b.EdgeNoiseAmp;
                 blockNoiseScale[i] = b.BlockNoiseScale;
@@ -97,7 +100,7 @@ public class BiomeMaterialUploader : MonoBehaviour {
         targetMaterial.SetVectorArray("_tileColor", tileColors);
         targetMaterial.SetVectorArray("_airColor", airColors);
         // global floats
-        targetMaterial.SetFloat("_GlobalSeed", globalSeed);
+        targetMaterial.SetFloat("_GlobalSeed", WorldGenSetting.seed);
 
     }
 }

@@ -8,6 +8,7 @@ using UnityEngine.Tilemaps;
 
 public class WorldManager : NetworkBehaviour {
     public static WorldManager Instance { get; private set; }
+    public static ushort WORLD_MAP_ID = 1;
     // --- Managers ---
     public WorldDataManager WorldDataManager;
     public WorldGen WorldGen;

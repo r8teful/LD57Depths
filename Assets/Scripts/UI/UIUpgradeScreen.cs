@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class UIUpgradeScreen : MonoBehaviour {
@@ -41,11 +42,11 @@ public class UIUpgradeScreen : MonoBehaviour {
         //    treeObj.name = $"UpgradeTreePlayer_{tree.treeName}";
         //}
 
-        _upgradeTreeInstance = InstantiateTree(_treeDataTool, _upgradePanelTree.transform, pUpgrades);
+        _upgradeTreeInstance = InstantiateTree(_treeDataTool, _upgradePanelTree.transform, pUpgrades, client.GetInventory());
         PanAndZoom.Init(client.InputManager);
         //InstantiateTree(_treeDataPlayer, _upgradePanelPlayer.transform, pUpgrades);
     }
-    private UIUpgradeTree InstantiateTree(UpgradeTreeDataSO treeData, Transform transformParent, HashSet<ushort> pUpgrades) {
+    private UIUpgradeTree InstantiateTree(UpgradeTreeDataSO treeData, Transform transformParent, HashSet<ushort> pUpgrades, InventoryManager inv) {
         if (treeData == null) {
             Debug.LogError("Could not find tree!");
             return null;
@@ -55,7 +56,7 @@ public class UIUpgradeScreen : MonoBehaviour {
             return null;
         }
         var treeObj = Instantiate(treeData.prefab, transformParent);
-        treeObj.Init(this, treeData, pUpgrades);
+        treeObj.Init(this, treeData, pUpgrades, inv);
         treeObj.name = $"UpgradeTree_{treeData.treeName}";
         return treeObj;
     }
