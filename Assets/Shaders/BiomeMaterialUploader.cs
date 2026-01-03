@@ -1,4 +1,5 @@
 using Sirenix.OdinInspector;
+using System.Resources;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,9 +15,9 @@ public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
     //    PushBiomesToMaterial();
     //}
     private void OnEnable() {
-        //WorldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterial; });
     }
     // Call this whenever you change biome descriptors
+
     public void PushBiomesToMaterial() {
         Debug.Log("Pushing..,");
         var targetMaterial = WorldGenSetting.worldGenSquareSprite;
@@ -102,4 +103,6 @@ public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
         // Finally we set the material to the target, we have to do this because when we create the runtime instance of the worldGenSettings we copy the original 
         worldSpriteRenderer.material = targetMaterial;
     }
+
+   
 }
