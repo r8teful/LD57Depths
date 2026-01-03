@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d283f47e58bd0e2429af7b3c6ea7dc9c, type: 3}
-  m_Name: BlockOxygenRelease
-  m_EditorClassIdentifier: Assembly-CSharp::StatUpgradeEffect
-  Id: 101
-  upgradeType: 40
+  m_Script: {fileID: 11500000, guid: cb3d0041ed540d04d9d938a5f700a60c, type: 3}
+  m_Name: BrimstoneDurationEffect
+  m_EditorClassIdentifier: 
+  Id: 121
+  upgradeType: 1000
   increaseType: 0
-  modificationValue: 20
+  modificationValue: 0.2
+  targetAbility: {fileID: 11400000, guid: 684d11520b9ebe74ba73394e13a15771, type: 2}
