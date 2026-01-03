@@ -304,7 +304,13 @@ public class ChunkManager : NetworkBehaviour {
             tilesToSet[i] = App.ResourceSystem.GetTileByID(tileIds[i]);
         }
         _worldManager.SetTiles(chunkBounds, tilesToSet);
+        TileBase[] existing = _worldManager.GetOreTiles(chunkBounds);
         for (int i = 0; i < OreIDs.Count; i++) {
+            if (existing[i] != null) {
+                Debug.Log("FOUND EXISTING ORE!!");
+                oresToSet[i] = existing[i]; // Don't overwrite existing ores (artifact in this case)
+                continue;
+            }
             // Don't add if there is no ore, TODO, we could just shorten the array by filtering out invalidID before we get here
             if (OreIDs[i] == ResourceSystem.InvalidID)
                 continue; // skip
@@ -334,6 +340,10 @@ public class ChunkManager : NetworkBehaviour {
             TileBase[] oresToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
             TileBase[] tilesShadingToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
             //List<short> durabilities = new List<short>(CHUNK_SIZE * CHUNK_SIZE);
+            Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkPayload.ChunkCoord);
+            BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, CHUNK_SIZE, CHUNK_SIZE, 1);
+            TileBase[] existing = _worldManager.GetOreTiles(chunkBounds);
+
             int tileIndex = 0;
             for (int y = 0; y < CHUNK_SIZE; y++) {
                 for (int x = 0; x < CHUNK_SIZE; x++) {
@@ -341,13 +351,15 @@ public class ChunkManager : NetworkBehaviour {
                     ushort oreID = chunkPayload.OreIds[tileIndex];
                     //durabilities.Add(chunkPayload.Durabilities[tileIndex]);
                     tilesToSet[tileIndex] = App.ResourceSystem.GetTileByID(tileID);
-                    oresToSet[tileIndex] = App.ResourceSystem.GetTileByID(oreID);
+                    if (existing[tileIndex] != null) {
+                        oresToSet[tileIndex] = existing[tileIndex];
+                    } else {
+                        oresToSet[tileIndex] = App.ResourceSystem.GetTileByID(oreID);
+                    }
                     tilesShadingToSet[tileIndex] = tileID != 0 ? App.ResourceSystem.GetTileByID(9999) : null;
                     tileIndex++;
                 }
             }
-            Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkPayload.ChunkCoord);
-            BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, CHUNK_SIZE, CHUNK_SIZE, 1);
             //ApplySingleChunkPayload(chunkPayload);
             tiles.Add(chunkBounds, tilesToSet);
             ores.Add(chunkBounds, oresToSet);

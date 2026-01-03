@@ -393,12 +393,16 @@ public class WorldGen : MonoBehaviour {
             
             
             // --!!! --- Assuming none of the original chunkdata is actually modified,
+            // If we're generating other tiles before and (LIKE ARTIFACT) here that data would be overwritten
             // TODO if it is, we have to recostruct base layer aswell
             var finalChunk = data.OriginalChunkData; 
             var k = 0;
             for (int y = 0; y < CHUNK_TILE_DIMENSION; y++) {
                 for (int x = 0; x < CHUNK_TILE_DIMENSION; x++) {
-                    finalChunk.oreID[x,y] = data.OreTileIDs_NA[k++]; 
+                    // Add if original tile is invalid, 
+                    if (finalChunk.oreID[x,y] == ResourceSystem.InvalidID) {
+                        finalChunk.oreID[x,y] = data.OreTileIDs_NA[k++]; 
+                    }
                     //finalChunk.tiles[x,y] = data.ProcessedTileIDs_NA[k++]; 
                 }
             }

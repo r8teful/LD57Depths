@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 // Runtime data of a world gen setting
 [Serializable]
@@ -58,6 +59,7 @@ public class WorldGenSettings {
         PlaceBiomes(s.biomes);
         return s;
     }
+
     private static void PlaceBiomes(List<WorldGenBiomeData> biomes) {
         // Start from the bottom, using the pool (or weighted chance based) of that layer, (if we are having that some biomes appear at the top)
         //var placedBiomes = new List<WorldGenBiomeData>();
@@ -96,7 +98,7 @@ public class WorldGenSettings {
         }
 
         // Ystart is the bottom of the biome, meaning that yStart+yHeight is the top of the biome, meaning that, incase there is a biome under us, we need atleast yStart+yHeight+ofssetToBiome of y height between it
-        // But instead of that we could also just ensure the position + height never passes a certain range so that biomes would not overlap
+        // But instead of that we could also just ensure the position + height never passes a certain range so that biomes would not overlap, or we just let themoverlap lol
 
     }
 }
@@ -127,9 +129,11 @@ public class WorldGenBiomeData {
     [Header("Runtime")]
     public float YStart = 0.0f;
     public float XOffset = 0.0f;
+
     public bool placed = false;
     [Header("Visual Shader")]
     public Color DarkenedColor;
+
     public static WorldGenBiomeData FromSO(WorldGenBiomeSO so) {
         var b = new WorldGenBiomeData();
         b.EdgeNoiseScale = so.EdgeNoiseScale;
@@ -157,5 +161,63 @@ public class WorldGenBiomeData {
     }
     public bool IsPlacedLeft() {
         return XOffset <= 0;
+    }
+    // Basic bounds
+    public float Left() =>
+        XOffset - HorSize;
+
+    public float Right() =>
+        XOffset + HorSize;
+
+    public float Bottom() => YStart;
+
+    public float Top() => YStart + YHeight;
+
+    // Size helpers
+    public float Width(float horizontalSize) => HorSize * 2f;
+
+    public float Height(float yHeight) => yHeight;
+
+    // Center point (x is already the center)
+    public Vector2 Center(float xOffset, float yStart, float yHeight) =>
+        new Vector2(xOffset, yStart + yHeight * 0.5f);
+
+    // Corners
+    public Vector2 BottomLeft() =>
+        new Vector2(Left(), Bottom());
+
+    public Vector2 BottomRight() =>
+        new Vector2(Right(), Bottom());
+
+    public Vector2 TopLeft() =>
+        new Vector2(Left(), Top());
+
+    public Vector2 TopRight() =>
+        new Vector2(Right(), Top());
+
+    public Vector2 RandomInside(Vector2 padding) {
+
+        // padded bounds
+        float minX = Left() + padding.x;
+        float maxX = Right() - padding.x;
+
+        // If padding removes horizontal space, fall back to X center (xOffset)
+        if (minX > maxX) {
+            minX = maxX = XOffset;
+        }
+
+        float minY = Bottom() + padding.y;
+        float maxY = Top() - padding.y;
+
+        // If padding removes vertical space, fall back to Y center
+        float centerY = YStart + YHeight * 0.5f;
+        if (minY > maxY) {
+            minY = maxY = centerY;
+        }
+
+        float x = Random.Range(minX, maxX);
+        float y = Random.Range(minY, maxY);
+
+        return new Vector2(x, y);
     }
 }

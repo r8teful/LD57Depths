@@ -53,18 +53,28 @@ public class WorldManager : NetworkBehaviour {
         base.OnStartServer();
         // Server-only initialization
         WorldGen.Init(worldRenderTexture, WorldGenSettings, this, ChunkManager, _worldGenCamera);
-        //InstanceFinder.ServerManager.Spawn(ChunkManager.gameObject, Owner);
-        //ChunkManager.Spawn(ChunkManager.gameObject, Owner);
-        if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
-        BiomeManager.SetWorldManager(this);
-        var offset = GetVisualTilemapGridSize() * 6;
-        playerSpawn.transform.position = new Vector3(0,-WorldGen.GetDepth()* GetVisualTilemapGridSize() + offset); // Depths is in blocks, so times it with grid size to get world space pos
-        _sub.transform.position = new Vector3(0, -WorldGen.GetDepth() * GetVisualTilemapGridSize() + offset/4);
-        //InstanceFinder.ServerManager.Spawn(sub);
-        //StartCoroutine(ServerChunkManagementRoutine()); // Not using atm
-        GameSetupManager.LocalInstance.HostSetGameSettings(new(WorldGenSettings));
         WorldGenSettingsManager.Instance.Init();// Oh my god we have to have some kind of init order for this because its getting messy, we need this because we need to have maxDepth set
+        BiomeManager.Init(this);
+        SetSubAndPlayerSpawn();
+        if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
+        SpawnArtifacts();
+        GameSetupManager.LocalInstance.HostSetGameSettings(new(WorldGenSettings));
     }
+
+    private void SpawnArtifacts() {
+        var settings = WorldGenSettingsManager.Instance.WorldGenSettings;
+        foreach(var biome in settings.biomes) {
+            // We can just pre spawn them because there wont be that many
+            Instantiate(App.ResourceSystem.GetPrefab<Artifact>("Artifact")).Init(biome, this);
+        }
+    }
+
+    private void SetSubAndPlayerSpawn() {
+        var offset = GetVisualTilemapGridSize() * 6;
+        playerSpawn.transform.position = new Vector3(0, -WorldGen.GetDepth() * GetVisualTilemapGridSize() + offset); // Depths is in blocks, so times it with grid size to get world space pos
+        _sub.transform.position = new Vector3(0, -WorldGen.GetDepth() * GetVisualTilemapGridSize() + offset / 4);
+    }
+
     public override void OnStartClient() {
         base.OnStartClient();
         Debug.Log("Start client");
@@ -244,24 +254,26 @@ public class WorldManager : NetworkBehaviour {
 
     // Somehow got to get the worldGen to pick one spot in the biome for the artifact to be, then this has to be called 
     // Most likely from the chunk manager, and generated. 
-    public void Place3x3Artifact(Vector3Int centerCell, GameObject prefab) {
+    public void Place3x3Artifact(Transform t, Vector3Int centerCell, List<TileBase> tiles) {
         // set tiles in tilemap
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 Vector3Int pos = centerCell + new Vector3Int(dx, dy, 0);
-                //tilemap.SetTile(pos, tileToPlace);
                 var i = IndexFromOffset(dx, dy);
-                TileSO tileToPlace = new();//TODO
+                TileBase tileToPlace = tiles[i];
+                overlayTilemapOre.SetTile(pos, tileToPlace); // Ore generation will overwrite this (I think)
             }
         }
         // instantiate background prefab at the cell center in world coords
         Vector3 worldPos = mainTilemap.CellToWorld(centerCell) + mainTilemap.cellSize * 0.5f;
-        GameObject go = Instantiate(prefab, worldPos, Quaternion.identity, transform);
-        go.name = prefab.name + $"_{centerCell.x}_{centerCell.y}";
+        t.position = worldPos;
     }
     // Index helper: (dx, dy) in [-1..1]
     private int IndexFromOffset(int dx, int dy) {
         // top-to-bottom, left-to-right mapping
         return (1 - dy) * 3 + (dx + 1);
     }
+
+    internal TileBase[] GetOreTiles(BoundsInt chunkBounds) =>
+        overlayTilemapOre.GetTilesBlock(chunkBounds);
 }

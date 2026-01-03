@@ -56,7 +56,7 @@ public class BiomeManager : StaticInstance<BiomeManager>
     private BiomeType _currentClientBiome;
     public BiomeType GetCurrentClientBiome() => _currentClientBiome;
 
-    public void SetWorldManager(WorldManager parent) {
+    public void Init(WorldManager parent) {
         _worldManager = parent;
         _chunkManager = parent.ChunkManager;
         chunkSize = _worldManager.GetChunkSize();

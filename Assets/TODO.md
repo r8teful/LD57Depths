@@ -102,6 +102,14 @@ Make internal playtest:
 * implement specific biome abilities 
 * 
 
+Bit of a hiccup here, we need to prespawn the artifact. But the world generation generates a completely blank chunk when we enter it for the first time, meaning, that if we populate the chunk with the artifact, it will just overwrite it. The solution would simply be to not overwrite it, but check each tile and look if it has data on it. But then again, how would you spawn the thing? Surelly it would have to be on actual stone tiles
+
+
+
+
+
+
+
 
 
 Hide un obtainable upgrades, darken ones you don't have money for
