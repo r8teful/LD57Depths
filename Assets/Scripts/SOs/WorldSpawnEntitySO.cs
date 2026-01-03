@@ -69,7 +69,7 @@ public class WorldSpawnEntitySO : EntityBaseSO {
         var (minRowOffset, minColOffset, maxRowOffset, maxColOffset) = RemapBounds(minRow,minCol,maxRow,maxCol);
 
         //Debug.Log($"OLD {minRow}, {minCol} AND {maxRow}, {maxCol}");
-        Debug.Log($"{minRowOffset}, {minColOffset} AND {maxRowOffset}, {maxColOffset}");
+        //Debug.Log($"{minRowOffset}, {minColOffset} AND {maxRowOffset}, {maxColOffset}");
         return (new(minRowOffset, minColOffset), new(maxRowOffset, maxColOffset));
     }
 

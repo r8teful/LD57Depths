@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 // Runtime data of a world gen setting
@@ -33,9 +34,11 @@ public class WorldGenSettings {
     public WorldGenSettings() { }
 
     public static WorldGenSettings FromSO(WorldGenSettingSO so) {
+        Debug.Log("generating runinstance of worldSettings!"); 
         var s = new WorldGenSettings();
         s.seed = so.seed;
         s.id = so.ID;
+
         s.trenchBaseWidth = so.trenchBaseWidth;
         s.trenchWidenFactor = so.trenchWidenFactor;
         s.trenchEdgeNoiseFrequency = so.trenchEdgeNoiseFrequency;
@@ -51,7 +54,50 @@ public class WorldGenSettings {
         s.biomes = new List<WorldGenBiomeData>();
         foreach (var bSO in so.biomes)
             s.biomes.Add(WorldGenBiomeData.FromSO(bSO));
+        // Each biome has set their size, so now we need to place them properly
+        PlaceBiomes(s.biomes);
         return s;
+    }
+    private static void PlaceBiomes(List<WorldGenBiomeData> biomes) {
+        // Start from the bottom, using the pool (or weighted chance based) of that layer, (if we are having that some biomes appear at the top)
+        //var placedBiomes = new List<WorldGenBiomeData>();
+        // Just use random placement for now
+        System.Random rng = new System.Random();
+        biomes = biomes.OrderBy(e => rng.Next()).ToList(); // Randomize list
+        var currentLayer = 0;
+        var amountPlaced = 0;
+        foreach (var biome in biomes) {
+            // Place biomes one by one, selecting either left or right side of trench
+
+            /* Old place code 
+            bool placeLeft = false;
+            if (UnityEngine.Random.value > 0.5f) placeLeft = true;
+            // After selecting a side, check if it is not already full on that side
+            
+            // Simplification right now: each side can only have two biomes, this would have to be in WorldGenBiomeData, or we calculate it dynamically based on parametres or something
+            int amountPlacedOnSpecifiedSide = biomes.Count(b => b.IsPlacedLeft() == placeLeft);
+            if (amountPlacedOnSpecifiedSide >= 2) {
+                // Too many on specified side
+                placeLeft = !placeLeft; // This assumes there is enough space on the other side now
+            }
+             */
+            bool firstLayerPlacement = amountPlaced % 2 == 0;
+            // X placement
+            var edgePos = firstLayerPlacement ? -biome.HorSize : biome.HorSize; // Place it on the very edge
+            var OFFSET_TO_TRENCH = UnityEngine.Random.Range(50,90); // a min 100 seems fine for now but it would ofcourse depend on world size 
+            biome.XOffset = firstLayerPlacement ? edgePos - OFFSET_TO_TRENCH : edgePos + OFFSET_TO_TRENCH; // Shift it by offsetToTrench
+            
+            // y placement
+            var yPos = WorldManager.Instance.GetWorldLayerYPos(currentLayer);
+            biome.YStart = UnityEngine.Random.Range(yPos*0.95f, yPos* 1.05f);
+            amountPlaced++;
+            if (!firstLayerPlacement) currentLayer++; // increment only when not first placed, that would be every other because that would put two on each layer
+            biome.placed = true;
+        }
+
+        // Ystart is the bottom of the biome, meaning that yStart+yHeight is the top of the biome, meaning that, incase there is a biome under us, we need atleast yStart+yHeight+ofssetToBiome of y height between it
+        // But instead of that we could also just ensure the position + height never passes a certain range so that biomes would not overlap
+
     }
 }
 
@@ -81,7 +127,7 @@ public class WorldGenBiomeData {
     [Header("Runtime")]
     public float YStart = 0.0f;
     public float XOffset = 0.0f;
-
+    public bool placed = false;
     [Header("Visual Shader")]
     public Color DarkenedColor;
     public static WorldGenBiomeData FromSO(WorldGenBiomeSO so) {
@@ -96,14 +142,20 @@ public class WorldGenBiomeData {
         b.WarpAmp = so.WarpAmp;
         b.WorleyWeight = so.WorleyWeight;
         b.CaveType = so.CaveType;
-        b.HorSize = so.HorSize;
-        b.YHeight = so.YHeight;
         b.TileColor = so.TileColor;
         b.AirColor = so.AirColor;
-
-        // Todo here you'd put random pos depending on stuff I guess??
+        // Biome placement rules
+        // Generate size of biome first
+        b.HorSize = UnityEngine.Random.Range(so.HorSize * 0.8f, so.HorSize * 1.2f); // Using 80 to 120% of biome size right now but could also just have a set size
+        b.YHeight = UnityEngine.Random.Range(so.YHeight* 0.8f, so.YHeight* 1.2f); // Using 80 to 120% of biome size right now but could also just have a set size
+    
+        // Set for now, will be overwritten by the random placement
+        b.placed = false;
         b.YStart = so.YStart; 
         b.XOffset = so.XOffset;
         return b;
+    }
+    public bool IsPlacedLeft() {
+        return XOffset <= 0;
     }
 }

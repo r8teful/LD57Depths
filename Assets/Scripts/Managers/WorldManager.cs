@@ -63,6 +63,7 @@ public class WorldManager : NetworkBehaviour {
         //InstanceFinder.ServerManager.Spawn(sub);
         //StartCoroutine(ServerChunkManagementRoutine()); // Not using atm
         GameSetupManager.LocalInstance.HostSetGameSettings(new(WorldGenSettings));
+        WorldGenSettingsManager.Instance.Init();// Oh my god we have to have some kind of init order for this because its getting messy, we need this because we need to have maxDepth set
     }
     public override void OnStartClient() {
         base.OnStartClient();

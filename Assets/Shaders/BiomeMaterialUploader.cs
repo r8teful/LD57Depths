@@ -8,19 +8,18 @@ public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
     public float uvScale = 100.0f; // tune to match the transform in shader (if using the example uv transform)
     [OnValueChanged("PushBiomesToMaterial")]
     public float DebugupdateMaterial = 10f;
-
-    public static WorldGenSettingSO WorldGenSetting { get => ResourceSystem.GetMainMap(); }
-
+    [SerializeField] SpriteRenderer worldSpriteRenderer;
+    public static WorldGenSettings WorldGenSetting { get => WorldGenSettingsManager.Instance.WorldGenSettings; }
     //void Awake() {
     //    PushBiomesToMaterial();
     //}
     private void OnEnable() {
-        WorldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterial; });
+        //WorldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterial; });
     }
     // Call this whenever you change biome descriptors
     public void PushBiomesToMaterial() {
         Debug.Log("Pushing..,");
-        var targetMaterial = WorldGenSetting.associatedMaterial;
+        var targetMaterial = WorldGenSetting.worldGenSquareSprite;
         if (targetMaterial == null) {
             Debug.LogWarning("No target material assigned.");
             return;
@@ -100,5 +99,7 @@ public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
         // global floats
         targetMaterial.SetFloat("_GlobalSeed", WorldGenSetting.seed);
 
+        // Finally we set the material to the target, we have to do this because when we create the runtime instance of the worldGenSettings we copy the original 
+        worldSpriteRenderer.material = targetMaterial;
     }
 }

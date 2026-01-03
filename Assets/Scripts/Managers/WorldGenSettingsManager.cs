@@ -6,7 +6,11 @@ public class WorldGenSettingsManager : StaticInstance<WorldGenSettingsManager> {
     public WorldGenSettings WorldGenSettings;
     protected override void Awake() {
         base.Awake();
+        //InitializeFromSO();
+    }
+    public void Init() {
         InitializeFromSO();
+
     }
     private void Start() {
         BackgroundWorldTexturesHandler.Instance.PushBiomesToMaterials();
@@ -16,8 +20,10 @@ public class WorldGenSettingsManager : StaticInstance<WorldGenSettingsManager> {
     void InitializeFromSO() {
         var so = ResourceSystem.GetMainMap();
         var runtime = WorldGenSettings.FromSO(so); // This does most the heavy lifting for us
-        if (so.associatedMaterial != null)
-            runtime.worldGenSquareSprite = new Material(so.associatedMaterial);
+        if (so.associatedMaterial != null) {
+            runtime.worldGenSquareSprite = new Material(so.associatedMaterial); // Don't want to change original 
+            runtime.worldGenSquareSprite.name = "WorldRunInstanceMat";
+        }
         WorldGenSettings = runtime;
     }
 }
