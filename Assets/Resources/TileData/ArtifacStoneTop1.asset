@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9a8a567975dd6e4990789c9b0981ba7, type: 3}
+  m_Name: ArtifacStoneTop1
+  m_EditorClassIdentifier: 
+  m_DefaultSprite: {fileID: 741301757, guid: d4bb875a8253bc64480cb2a8aeb1b434, type: 3}
+  m_DefaultGameObject: {fileID: 0}
+  m_DefaultColliderType: 1
+  m_TilingRules: []
+  maxDurability: 25
+  textureIndex: 9
+  ID: 2007
+  dropTable: {fileID: 0}
+  breakEffectPrefab: {fileID: 0}
+  hitEffectPrefab: {fileID: 0}
+  breakVersions:
+  - {fileID: 11400000, guid: 8e7dd3e707e6ab642bee1415e7dc7bf6, type: 2}
+  - {fileID: 11400000, guid: 806494e32afd5784b8f6c55fc2058a19, type: 2}
+  - {fileID: 11400000, guid: e3f9cf83d4f31aa428f860d06fafb558, type: 2}
+  - {fileID: 11400000, guid: 92eddc562be545f459f7fe7aca0f9a10, type: 2}
+  - {fileID: 11400000, guid: b2e92242bcbb8184ea87a422e2b346f6, type: 2}
+  - {fileID: 11400000, guid: 626aff75c42557f48a2809618b5bea1e, type: 2}
+  - {fileID: 11400000, guid: 50e5b5e3149a43a41948d155a91c1953, type: 2}
+  - {fileID: 11400000, guid: 37f9b9193bc4770438c1c12d64eada8d, type: 2}
+  - {fileID: 11400000, guid: 19d019a63b457b04eb144fa12e20ced2, type: 2}
+  - {fileID: 11400000, guid: b79310f5bc422f14f9682793098833a1, type: 2}

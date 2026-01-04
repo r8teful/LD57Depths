@@ -1,14 +1,18 @@
 using FishNet.Connection;
 using Sirenix.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
+using UnityEditor.Experimental;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Tilemaps;
+using static UnityEditor.PlayerSettings;
 
 
 [System.Serializable]
@@ -42,7 +46,6 @@ public class WorldGen : MonoBehaviour {
     private Unity.Mathematics.Random noiseRandomGen;
     private float seedOffsetX;
     private float seedOffsetY;
-    private Vector3Int chunkOriginCell;
     private WorldGenSettingSO _settings;
     private float maxDepth;
     private WorldManager worldmanager;
@@ -429,9 +432,13 @@ public class WorldGen : MonoBehaviour {
         }
         // Jobs done, now main thread...
 
-        // Structures, which would include Artifacts TODO
-        // But how will this structure be generated? Will they use the tile ID, will they get put on the ore layer?
-        // It seems a bit fucked
+
+        // Here we go
+
+        // Get structure defintition
+        foreach (var chunk in chunksToSend) {
+            SpawnStructuresInChunk(chunk.Value, chunk.Key, chunkManager);
+        }
 
         // Entities
         Dictionary<Vector2Int,List<ulong>> entityIdsDict = new Dictionary<Vector2Int,List<ulong>>();
@@ -496,7 +503,7 @@ public class WorldGen : MonoBehaviour {
         }
         return new ChunkPayload(data.ChunkCoord, finalTileIdsList, finalOreIdsList, durabilities, null);
     }
-   
+
     /*
     // --- Pass 4: Structure Placement ---
     private  void PlaceStructuresInChunk(ChunkData chunkData, Vector3Int chunkOriginCell, int chunkSize) {
@@ -571,7 +578,79 @@ public class WorldGen : MonoBehaviour {
             }
         }
     }*/
+    private void SpawnStructuresInChunk(ChunkData chunkData, Vector2Int chunkCoord, ChunkManager chunkManager) {
+        // For artifact
+        var artifacts = worldmanager.StructureManager.ArtifactPlacements;
+        var artifactsToPlace = new List<StructurePlacementResult>();
+        // Check what biome artifacts need to be generated
+        foreach (var artifact in artifacts) {
+            if (!artifact.Value.fullyStamped)
+                artifactsToPlace.Add(artifact.Value);
+        }
+        if (artifactsToPlace.Count <= 0) return; // already placed all artifacts! 
+        var chunkRect = ChunkCoordToRect(chunkCoord);
+        foreach (var artifact in artifactsToPlace) {
+            var structureRect = new RectInt(artifact.centerAnchor, Vector2Int.one * 3);
+            var intersect = RectIntersection(chunkRect, structureRect); // artifact is 3x3
+            if (intersect == RectInt.zero) {
+                continue; // No intersection, this chunk does not generate specified artifact
+            }
+            // Stamp only the intersection cells
+            List<TileBase> tiles = App.ResourceSystem.GetPrefab<Artifact>("Artifact").tiles;
+            for (int wy = intersect.yMin; wy <= intersect.yMax-1; ++wy) {
+                for (int wx = intersect.xMin; wx <= intersect.xMax-1; ++wx) {
+                    int localDx = wx - structureRect.x; // 0..2
+                    int localDy = wy - structureRect.y; // 0..2
+                    int index = localDx + localDy * 3; // 3 is width
+                    var tile = tiles[index] as TileSO;
+                    chunkData.tiles[localDx, localDy] = ResourceSystem.StoneID;// stone for now
+                    chunkData.oreID[localDx, localDy] = tile.ID;
+                }
+            }
+        }
 
+
+        // If it is, place the parts that are within this chunk
+
+        // Done
+    }
+
+    private RectInt ChunkCoordToRect(Vector2Int chunkCoord) {
+        // I'm assuming chunkcoord is bottom left
+        int worldX = chunkCoord.x * CHUNK_TILE_DIMENSION;
+        int worldY = chunkCoord.y * CHUNK_TILE_DIMENSION;
+        return new RectInt(worldX, worldY, CHUNK_TILE_DIMENSION, CHUNK_TILE_DIMENSION);
+    }
+
+    public RectInt RectIntersection(RectInt chunkRect, RectInt structureRect) {
+        // inclusive max coordinates for each rect
+        int aMinX = chunkRect.x;
+        int aMinY = chunkRect.y;
+        int aMaxX = chunkRect.x + chunkRect.width - 1;
+        int aMaxY = chunkRect.y + chunkRect.height - 1;
+
+        int bMinX = structureRect.x;
+        int bMinY = structureRect.y;
+        int bMaxX = structureRect.x + structureRect.width - 1;
+        int bMaxY = structureRect.y + structureRect.height - 1;
+
+        // intersection inclusive bounds
+        int ixMin = Math.Max(aMinX, bMinX);
+        int iyMin = Math.Max(aMinY, bMinY);
+        int ixMax = Math.Min(aMaxX, bMaxX);
+        int iyMax = Math.Min(aMaxY, bMaxY);
+
+        // no overlap
+        if (ixMin > ixMax || iyMin > iyMax) {
+            return RectInt.zero;
+        }
+
+        // convert inclusive max back to width/height (both inclusive -> +1)
+        int width = ixMax - ixMin + 1;
+        int height = iyMax - iyMin + 1;
+
+        return new RectInt(ixMin, iyMin, width, height);
+    }
     private List<EntitySpawnInfo> SpawnEntitiesInChunk(ChunkData chunkData, Vector2Int chunkOriginCell, ChunkManager cm) {
         List<EntitySpawnInfo> entities = new List<EntitySpawnInfo>();
         HashSet<Vector2Int> occupiedAnchors = new HashSet<Vector2Int>();

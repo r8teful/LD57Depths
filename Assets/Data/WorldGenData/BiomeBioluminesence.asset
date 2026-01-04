@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b679a26f4a0fe9a409516798c8439ad3, type: 3}
   m_Name: BiomeBioluminesence
   m_EditorClassIdentifier: 
+  biomeType: 7
   EdgeNoiseScale: 0.08
   EdgeNoiseAmp: 10.55
   BlockNoiseScale: 0.04
@@ -22,10 +23,10 @@ MonoBehaviour:
   WarpAmp: 0
   WorleyWeight: 14.89
   CaveType: 1
-  HorSize: 162.8
-  YHeight: 221
+  HorSize: 49
+  YHeight: 108.9
   TileColor: {r: 0.3529412, g: 0.99215686, b: 1, a: 1}
   AirColor: {r: 1, g: 0.99215686, b: 1, a: 1}
-  YStart: -1866.6
+  YStart: -1858.68
   XOffset: -976.8
   DarkenedColor: {r: 0.008999999, g: 0.018000007, b: 0.06, a: 1}

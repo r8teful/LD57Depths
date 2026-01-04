@@ -105,6 +105,7 @@ public class WorldGenSettings {
 
 [Serializable]
 public class WorldGenBiomeData {
+    public BiomeType BiomeType;
     public float EdgeNoiseScale = 1.0f;
     public float EdgeNoiseAmp = 0.2f;
     public float BlockNoiseScale = 2.0f;
@@ -136,6 +137,7 @@ public class WorldGenBiomeData {
 
     public static WorldGenBiomeData FromSO(WorldGenBiomeSO so) {
         var b = new WorldGenBiomeData();
+        b.BiomeType = so.biomeType;
         b.EdgeNoiseScale = so.EdgeNoiseScale;
         b.EdgeNoiseAmp = so.EdgeNoiseAmp;
         b.BlockNoiseScale = so.BlockNoiseScale;
@@ -195,7 +197,7 @@ public class WorldGenBiomeData {
     public Vector2 TopRight() =>
         new Vector2(Right(), Top());
 
-    public Vector2 RandomInside(Vector2 padding) {
+    public Vector2Int RandomInside(Vector2 padding) {
 
         // padded bounds
         float minX = Left() + padding.x;
@@ -218,6 +220,6 @@ public class WorldGenBiomeData {
         float x = Random.Range(minX, maxX);
         float y = Random.Range(minY, maxY);
 
-        return new Vector2(x, y);
+        return new Vector2Int(Mathf.RoundToInt(x), Mathf.RoundToInt(y));
     }
 }

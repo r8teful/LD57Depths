@@ -738,7 +738,7 @@ public class ChunkManager : NetworkBehaviour {
             // Return the tile from the chunk's tile array
             return chunk.tiles[localX, localY];
         } else {
-            return ResourceSystem.InvalidID; // Chunk not generated yet
+            return ResourceSystem.InvalidID; // Chunk not generated yet, todo generate it!?
         }
     }
     public bool IsSolidTileAtWorldPos(int x, int y) {
@@ -777,5 +777,9 @@ public class ChunkManager : NetworkBehaviour {
         }
 
         return (validTiles,tilesByBiome);
+    }
+
+    internal bool HasGeneratedBiomeArtifact(BiomeType b) {
+        return false;// todo
     }
 }

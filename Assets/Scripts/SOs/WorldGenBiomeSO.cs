@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "WorldGenBiomeSO", menuName = "ScriptableObjects/WorldGen/WorldGenBiomeSO", order = 2)]
 
 public class WorldGenBiomeSO : ScriptableObject {
+    public BiomeType biomeType;
     public float EdgeNoiseScale = 1.0f;
     public float EdgeNoiseAmp = 0.2f;
     public float BlockNoiseScale = 2.0f;

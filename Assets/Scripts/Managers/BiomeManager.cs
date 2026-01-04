@@ -55,7 +55,9 @@ public class BiomeManager : StaticInstance<BiomeManager>
     private Dictionary<Vector2Int, BiomeChunkInfo> serverBiomeData = new Dictionary<Vector2Int, BiomeChunkInfo>();
     private BiomeType _currentClientBiome;
     public BiomeType GetCurrentClientBiome() => _currentClientBiome;
-
+    public WorldGenBiomeData GetBiomeData(BiomeType biome) {
+        return _worldManager.WorldSettings.biomes.FirstOrDefault(b => b.BiomeType == biome);
+    }
     public void Init(WorldManager parent) {
         _worldManager = parent;
         _chunkManager = parent.ChunkManager;

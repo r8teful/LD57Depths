@@ -1,11 +1,11 @@
 using FishNet.Object;
 using Sirenix.OdinInspector;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+// Handles visual display of the world, also acts as a central part for references 
 public class WorldManager : NetworkBehaviour {
     public static WorldManager Instance { get; private set; }
     public static ushort WORLD_MAP_ID = 1;
@@ -14,6 +14,8 @@ public class WorldManager : NetworkBehaviour {
     public WorldGen WorldGen;
     public ChunkManager ChunkManager;
     public BiomeManager BiomeManager;
+    public WorldGenSettings WorldSettings;
+    public StructureManager StructureManager;
     [SerializeField] private RenderTexture worldRenderTexture;
     [SerializeField] private Transform _sub;
     [SerializeField] private Transform _worldRoot; // All world entities have this as their parent, used for hiding when entering sub or other interiors
@@ -56,6 +58,7 @@ public class WorldManager : NetworkBehaviour {
         WorldGenSettingsManager.Instance.Init();// Oh my god we have to have some kind of init order for this because its getting messy, we need this because we need to have maxDepth set
         BiomeManager.Init(this);
         SetSubAndPlayerSpawn();
+        StructureManager = new StructureManager();
         if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
         SpawnArtifacts();
         GameSetupManager.LocalInstance.HostSetGameSettings(new(WorldGenSettings));
@@ -64,8 +67,9 @@ public class WorldManager : NetworkBehaviour {
     private void SpawnArtifacts() {
         var settings = WorldGenSettingsManager.Instance.WorldGenSettings;
         foreach(var biome in settings.biomes) {
-            // We can just pre spawn them because there wont be that many
-            Instantiate(App.ResourceSystem.GetPrefab<Artifact>("Artifact")).Init(biome, this);
+            var data = StructureManager.GenerateArtifact(biome);
+            // Now after this is done, we can access the position within worldgen
+            Instantiate(App.ResourceSystem.GetPrefab<Artifact>("Artifact")).Init(data);
         }
     }
 

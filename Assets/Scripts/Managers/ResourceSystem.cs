@@ -41,6 +41,7 @@ public class ResourceSystem {
 
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
     public const ushort AirID = 0; // Air is ALWAYS 0 
+    public const ushort StoneID = 1; // stone is ALWAYS 1 
     public const ushort LadderID = 501; // Ladder is always 501, used in SubInterior.cs
     public const ushort ControlPanellRecipeID = 101; // FixRecipe.cs
 
