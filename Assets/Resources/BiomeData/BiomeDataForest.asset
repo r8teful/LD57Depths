@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BiomeType: 9
   BiomeTempAbilities: []
-  BiomeTempBuffs: []
+  BiomeTempBuffs:
+  - {fileID: 11400000, guid: 93302a34ad8c7c147affb0d510ef0ce1, type: 2}

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class BiomeBuffSpawner : MonoBehaviour {
+public class BiomeBuffSpawner : MonoBehaviour, IInitializableAbility {
     private NetworkedPlayer _player;
     private AbilityInstance _instance;
 
@@ -10,7 +10,7 @@ public class BiomeBuffSpawner : MonoBehaviour {
     private readonly List<BuffHandle> _currentBiomeBuffs = new();
 
 
-    internal void Init(AbilityInstance instance, NetworkedPlayer player) {
+    public void Init(AbilityInstance instance, NetworkedPlayer player) {
         _player = player;
         _instance = instance;
         BiomeManager.Instance.OnNewClientBiome += NewClientBiome;

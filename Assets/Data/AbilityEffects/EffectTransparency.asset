@@ -9,10 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38b2e6c671cd1ec4ebc7d98f7406d389, type: 3}
-  m_Name: BiomeDataBio
+  m_Script: {fileID: 11500000, guid: a3c72f2ab6d63534a9cce831ba6285c9, type: 3}
+  m_Name: EffectTransparency
   m_EditorClassIdentifier: 
-  BiomeType: 7
-  BiomeTempAbilities:
-  - {fileID: 11400000, guid: c56b5d3240c474746ae2b6698371e126, type: 2}
-  BiomeTempBuffs: []
+  prefabToSpawn: {fileID: 6858270054936375335, guid: db457782f440f41489a8e450749f9d69, type: 3}

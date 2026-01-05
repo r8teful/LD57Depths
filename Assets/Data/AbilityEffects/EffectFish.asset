@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b14c4e452baf96a4b90ee95d798b2eec, type: 3}
+  m_Script: {fileID: 11500000, guid: a3c72f2ab6d63534a9cce831ba6285c9, type: 3}
   m_Name: EffectFish
   m_EditorClassIdentifier: 
-  Fish_Projectile: {fileID: 2655812518975194425, guid: 45c48d88645e5c2418f4ee5306bec0e0, type: 3}
+  prefabToSpawn: {fileID: 2655812518975194425, guid: 45c48d88645e5c2418f4ee5306bec0e0, type: 3}

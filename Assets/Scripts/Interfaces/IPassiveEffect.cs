@@ -14,3 +14,7 @@ public interface IEffectActive {
 public interface IEffectBuff {
     BuffSO Buff { get; }
 }
+// So we can have a generic "Add ability with prefab" SO
+public interface IInitializableAbility {
+    void Init(AbilityInstance instance, NetworkedPlayer player);
+}

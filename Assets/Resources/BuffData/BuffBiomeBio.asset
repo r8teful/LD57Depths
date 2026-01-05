@@ -12,21 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0183601e43946ba498966f9df2fef387, type: 3}
   m_Name: BuffBiomeBio
   m_EditorClassIdentifier: 
-  id: 207
-  Modifiers:
-  - Value: 1.1
-    Stat: 0
-    Type: 1
-  - Value: 1.1
-    Stat: 1
-    Type: 1
-  - Value: 1.1
-    Stat: 2
-    Type: 1
-  - Value: 1.1
-    Stat: 3
-    Type: 1
-  Duration: -1
-  Title: BiomBuff
-  Description: You feel powerfull
-  Icon: {fileID: -1101943279, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  id: 204
+  Modifiers: []
+  Duration: 10
+  Title: Brimstone
+  Description: 'Your lazer power has been temporary enhanced '
+  Icon: {fileID: -172477240, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}

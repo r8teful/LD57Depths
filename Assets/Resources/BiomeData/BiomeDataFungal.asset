@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 38b2e6c671cd1ec4ebc7d98f7406d389, type: 3}
-  m_Name: BiomeDataBio
+  m_Name: BiomeDataFungal
   m_EditorClassIdentifier: 
-  BiomeType: 7
-  BiomeTempAbilities:
-  - {fileID: 11400000, guid: c56b5d3240c474746ae2b6698371e126, type: 2}
-  BiomeTempBuffs: []
+  BiomeType: 8
+  BiomeTempAbilities: []
+  BiomeTempBuffs:
+  - {fileID: 11400000, guid: a66457901c8dc4244bc32ebd20ad270d, type: 2}

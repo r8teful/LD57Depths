@@ -6,6 +6,8 @@ using FishNet.Object;
 using FishNet.Connection;
 using Sirenix.OdinInspector;
 using UnityEditor;
+using System;
+using Random = UnityEngine.Random;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
     public ushort[,] tiles; // The ground layer 
@@ -120,6 +122,8 @@ public class ChunkManager : NetworkBehaviour {
     private WorldManager _worldManager;
     private EntityManager _entitySpawner;
     private WorldLightingManager _lightManager;
+
+    public static event Action<Vector3Int, ushort> OnTileChanged;
 
     public void DEBUGNewGen() {
         worldChunks.Clear();
@@ -483,6 +487,9 @@ public class ChunkManager : NetworkBehaviour {
 
                 // Entity behaviour might change state, notify entitymanager
                 _entitySpawner.NotifyTileChanged(cellPos, chunkCoord, newTileId);
+
+                // Above is the "proper" way to do it for multiplayer but we just do this event for now which will work fine in singleplayer
+                OnTileChanged?.Invoke(cellPos, newTileId);
             }
         } else {
             Debug.LogWarning($"Server: Invalid local coordinates for modification at {cellPos}");

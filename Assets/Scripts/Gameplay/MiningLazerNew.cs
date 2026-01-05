@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Windows;
 
 // Making a totally clean and new class because I don't want to mess up the other stuff, we'll just delete that old code afterwards
-public class MiningLazerNew : MonoBehaviour {
+public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     private AbilityInstance _abilityInstance;
     private NetworkedPlayer _player;
     private const float MINING_COOLDOWN = 0.02f;
