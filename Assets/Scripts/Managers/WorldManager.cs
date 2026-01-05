@@ -278,6 +278,4 @@ public class WorldManager : NetworkBehaviour {
         return (1 - dy) * 3 + (dx + 1);
     }
 
-    internal TileBase[] GetOreTiles(BoundsInt chunkBounds) =>
-        overlayTilemapOre.GetTilesBlock(chunkBounds);
 }

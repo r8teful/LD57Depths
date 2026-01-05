@@ -18,6 +18,7 @@ public class StructureManager {
     }
     public StructurePlacementResult GenerateArtifact(WorldGenBiomeData biome) {
         var pos = biome.RandomInside(new(20, 20)); // 20 blocks padding
+        Debug.Log($"generated new artifact for biome {biome.BiomeType} at {pos}");
         AddStructureData((byte)biome.BiomeType, new(pos));
         return ArtifactPlacements[(byte)biome.BiomeType];
     }

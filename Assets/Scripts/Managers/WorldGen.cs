@@ -1,4 +1,5 @@
 using FishNet.Connection;
+using GameKit.Dependencies.Utilities;
 using Sirenix.Utilities;
 using System;
 using System.Collections;
@@ -584,17 +585,23 @@ public class WorldGen : MonoBehaviour {
         var artifactsToPlace = new List<StructurePlacementResult>();
         // Check what biome artifacts need to be generated
         foreach (var artifact in artifacts) {
+
+            var structureRect = new RectInt(artifact.Value.centerAnchor, Vector2Int.one * 3);
+            Debug.Log($"structureRect for artifact at {artifact.Value.centerAnchor} is : {structureRect}");
             if (!artifact.Value.fullyStamped)
                 artifactsToPlace.Add(artifact.Value);
         }
         if (artifactsToPlace.Count <= 0) return; // already placed all artifacts! 
         var chunkRect = ChunkCoordToRect(chunkCoord);
+        Debug.Log($"chunkrect: {chunkRect}");
         foreach (var artifact in artifactsToPlace) {
             var structureRect = new RectInt(artifact.centerAnchor, Vector2Int.one * 3);
             var intersect = RectIntersection(chunkRect, structureRect); // artifact is 3x3
             if (intersect == RectInt.zero) {
                 continue; // No intersection, this chunk does not generate specified artifact
             }
+
+            Debug.Log($"generated new artifact for biome at {artifact.centerAnchor}");
             // Stamp only the intersection cells
             List<TileBase> tiles = App.ResourceSystem.GetPrefab<Artifact>("Artifact").tiles;
             for (int wy = intersect.yMin; wy <= intersect.yMax-1; ++wy) {
