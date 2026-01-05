@@ -19,19 +19,21 @@ public class StructureManager {
     public StructurePlacementResult GenerateArtifact(WorldGenBiomeData biome) {
         var pos = biome.RandomInside(new(20, 20)); // 20 blocks padding
         Debug.Log($"generated new artifact for biome {biome.BiomeType} at {pos}");
-        AddStructureData((byte)biome.BiomeType, new(pos));
+        AddStructureData((byte)biome.BiomeType, new(pos, biome.BiomeType));
         return ArtifactPlacements[(byte)biome.BiomeType];
     }
    
 }
 public class StructurePlacementResult {
+    public BiomeType biome;
     public bool generated;       // true if a structure exists
-    public Vector2Int centerAnchor; // only valid if generated==true
+    public Vector2Int bottomLeftAnchor; // only valid if generated==true
     public bool fullyStamped;    // whether all chunk pieces are stamped
 
-    public StructurePlacementResult(Vector2Int pos) {
+    public StructurePlacementResult(Vector2Int pos,BiomeType biome) {
         generated = true;
-        centerAnchor = pos;
+        bottomLeftAnchor = pos;
         fullyStamped = false;
+        this.biome = biome;
     }
 }

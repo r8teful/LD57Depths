@@ -239,13 +239,13 @@ public class WorldGen : MonoBehaviour {
                         } else if (IDData.x == 0 || IDData.x==255) {
                             tileID = 0;  // AIR
                         } else if (IDData.x == 90) {
-                            tileID = 5; // Bioluminence
+                            tileID =  ResourceSystem.GetTileFromBiome(BiomeType.Bioluminescent); 
                         } else if (IDData.x == 95) {
-                            tileID = 6; // Fungal block
+                            tileID = ResourceSystem.GetTileFromBiome(BiomeType.Fungal);
                         } else if (IDData.x == 100) {
-                            tileID = 7; // Forest block
+                            tileID = ResourceSystem.GetTileFromBiome(BiomeType.Forest);
                         } else if (IDData.x == 245) {
-                            tileID = 8; // Desert block
+                            tileID = ResourceSystem.GetTileFromBiome(BiomeType.Deadzone);
                         }
                         // Biome    
                         if (IDData.y == 1) {
@@ -382,7 +382,7 @@ public class WorldGen : MonoBehaviour {
             jh.Complete(); // This will block if not already done
         }
 
-
+    
         // --- 3. Process Results and Dispose NativeArrays ---
         Dictionary<Vector2Int, ChunkData> chunksToSend = new Dictionary<Vector2Int, ChunkData>(); // For server
         Dictionary<Vector2Int, List<EntitySpawnInfo>> entitySpawnInfos = new Dictionary<Vector2Int, List<EntitySpawnInfo>>();
@@ -403,10 +403,7 @@ public class WorldGen : MonoBehaviour {
             var k = 0;
             for (int y = 0; y < CHUNK_TILE_DIMENSION; y++) {
                 for (int x = 0; x < CHUNK_TILE_DIMENSION; x++) {
-                    // Add if original tile is invalid, 
-                    if (finalChunk.oreID[x,y] == ResourceSystem.InvalidID) {
-                        finalChunk.oreID[x,y] = data.OreTileIDs_NA[k++]; 
-                    }
+                    finalChunk.oreID[x,y] = data.OreTileIDs_NA[k++]; 
                     //finalChunk.tiles[x,y] = data.ProcessedTileIDs_NA[k++]; 
                 }
             }
@@ -436,9 +433,11 @@ public class WorldGen : MonoBehaviour {
 
         // Here we go
 
-        // Get structure defintition
+        // Structure here
         foreach (var chunk in chunksToSend) {
-            SpawnStructuresInChunk(chunk.Value, chunk.Key, chunkManager);
+            var chunkPayload = payloadsToSend[chunk.Key];
+            // Structure logic will have to modify both chunk and payload data that we got from the jobs
+            SpawnStructuresInChunk(chunk.Value, chunk.Key, chunkPayload); 
         }
 
         // Entities
@@ -455,7 +454,6 @@ public class WorldGen : MonoBehaviour {
             var entityList = entityIdsDict.TryGetValue(data.Key, out var entities);
             clientPayload.Add(new ChunkPayload(data.Value, entities));
         }
-     
         Debug.Log($"All chunk processing jobs complete. {clientPayload.Count} payloads ready.");
         onProcessingComplete?.Invoke(clientPayload, chunksToSend,entitySpawnInfos);
     }
@@ -579,47 +577,51 @@ public class WorldGen : MonoBehaviour {
             }
         }
     }*/
-    private void SpawnStructuresInChunk(ChunkData chunkData, Vector2Int chunkCoord, ChunkManager chunkManager) {
+    private void SpawnStructuresInChunk(ChunkData chunkData, Vector2Int chunkCoord, ChunkPayload chunkPayload) {
         // For artifact
         var artifacts = worldmanager.StructureManager.ArtifactPlacements;
         var artifactsToPlace = new List<StructurePlacementResult>();
         // Check what biome artifacts need to be generated
         foreach (var artifact in artifacts) {
 
-            var structureRect = new RectInt(artifact.Value.centerAnchor, Vector2Int.one * 3);
-            Debug.Log($"structureRect for artifact at {artifact.Value.centerAnchor} is : {structureRect}");
+            var s = new RectInt(artifact.Value.bottomLeftAnchor, Vector2Int.one * 3); 
+            //Debug.Log($"structureRect for artifact at {artifact.Value.centerAnchor} is : {s}, xMin: {s.xMin} yMin: {s.yMin} xMax: {s.xMax} yMax {s.yMax}");
             if (!artifact.Value.fullyStamped)
                 artifactsToPlace.Add(artifact.Value);
         }
         if (artifactsToPlace.Count <= 0) return; // already placed all artifacts! 
         var chunkRect = ChunkCoordToRect(chunkCoord);
-        Debug.Log($"chunkrect: {chunkRect}");
         foreach (var artifact in artifactsToPlace) {
-            var structureRect = new RectInt(artifact.centerAnchor, Vector2Int.one * 3);
+            var structureRect = new RectInt(artifact.bottomLeftAnchor, Vector2Int.one * 3);
             var intersect = RectIntersection(chunkRect, structureRect); // artifact is 3x3
             if (intersect == RectInt.zero) {
                 continue; // No intersection, this chunk does not generate specified artifact
             }
+            Debug.Log($"structure {structureRect} and chunk {chunkRect} intersection is : {intersect}, xMin: {intersect.xMin} yMin: {intersect.yMin} xMax: {intersect.xMax} yMax {intersect.yMax}");
 
-            Debug.Log($"generated new artifact for biome at {artifact.centerAnchor}");
+            Debug.Log($"generated new artifact for biome at {artifact.bottomLeftAnchor}");
             // Stamp only the intersection cells
             List<TileBase> tiles = App.ResourceSystem.GetPrefab<Artifact>("Artifact").tiles;
-            for (int wy = intersect.yMin; wy <= intersect.yMax-1; ++wy) {
-                for (int wx = intersect.xMin; wx <= intersect.xMax-1; ++wx) {
-                    int localDx = wx - structureRect.x; // 0..2
-                    int localDy = wy - structureRect.y; // 0..2
+            for (int wy = intersect.yMin; wy < intersect.yMax; ++wy) {
+                for (int wx = intersect.xMin; wx < intersect.xMax; ++wx) {
+
+                    // structure-local coords (used to index structure template)
+                    int localDx = wx - structureRect.x; // expected 0..2
+                    int localDy = wy - structureRect.y; // expected 0..2
+
+                    // chunk-local coords (where to write in the chunk buffer)
+                    int chunkLocalX = wx - chunkRect.x; // expected 0..chunkRect.width-1
+                    int chunkLocalY = wy - chunkRect.y; // expected 0..chunkRect.height-1
+
                     int index = localDx + localDy * 3; // 3 is width
                     var tile = tiles[index] as TileSO;
-                    chunkData.tiles[localDx, localDy] = ResourceSystem.StoneID;// stone for now
-                    chunkData.oreID[localDx, localDy] = tile.ID;
+                    chunkData.tiles[chunkLocalX, chunkLocalY] = ResourceSystem.GetTileFromBiome(artifact.biome);// Use artifact biome 
+                    chunkData.oreID[chunkLocalX, chunkLocalY] = tile.ID;
+                    chunkPayload.OreIds[chunkLocalX + chunkLocalY * CHUNK_TILE_DIMENSION] = tile.ID;
+                    chunkPayload.TileIds[chunkLocalX + chunkLocalY * CHUNK_TILE_DIMENSION] = ResourceSystem.GetTileFromBiome(artifact.biome);// Use artifact biome 
                 }
             }
         }
-
-
-        // If it is, place the parts that are within this chunk
-
-        // Done
     }
 
     private RectInt ChunkCoordToRect(Vector2Int chunkCoord) {
@@ -629,11 +631,10 @@ public class WorldGen : MonoBehaviour {
         return new RectInt(worldX, worldY, CHUNK_TILE_DIMENSION, CHUNK_TILE_DIMENSION);
     }
 
-    public RectInt RectIntersection(RectInt chunkRect, RectInt structureRect) {
-        // inclusive max coordinates for each rect
+    public static RectInt RectIntersection(RectInt chunkRect, RectInt structureRect) {
         int aMinX = chunkRect.x;
         int aMinY = chunkRect.y;
-        int aMaxX = chunkRect.x + chunkRect.width - 1;
+        int aMaxX = chunkRect.x + chunkRect.width - 1; // inclusive max
         int aMaxY = chunkRect.y + chunkRect.height - 1;
 
         int bMinX = structureRect.x;
@@ -641,22 +642,34 @@ public class WorldGen : MonoBehaviour {
         int bMaxX = structureRect.x + structureRect.width - 1;
         int bMaxY = structureRect.y + structureRect.height - 1;
 
-        // intersection inclusive bounds
         int ixMin = Math.Max(aMinX, bMinX);
         int iyMin = Math.Max(aMinY, bMinY);
         int ixMax = Math.Min(aMaxX, bMaxX);
         int iyMax = Math.Min(aMaxY, bMaxY);
 
-        // no overlap
         if (ixMin > ixMax || iyMin > iyMax) {
-            return RectInt.zero;
+            return new RectInt(0, 0, 0, 0); // no intersection
         }
 
-        // convert inclusive max back to width/height (both inclusive -> +1)
         int width = ixMax - ixMin + 1;
         int height = iyMax - iyMin + 1;
-
         return new RectInt(ixMin, iyMin, width, height);
+    }
+    public RectInt RectIntersection2(RectInt chunkRect, RectInt structureRect) {
+        var cx = chunkRect.x; var cy = chunkRect.y;
+        var ch = chunkRect.height; var cw = chunkRect.width;
+        var sx = structureRect.x; var sy = structureRect.y;
+        var sh = structureRect.height; var sw = structureRect.width;  // Corrected variable names (assuming typo in original)
+        var left = Math.Max(cx, sx);
+        var bottom = Math.Max(cy, sy);
+        var right = Math.Min(cx + cw, sx + sw);
+        var top = Math.Min(cy + ch, sy + sh);
+        var width = right - left;
+        var height = top - bottom;
+        if (width <= 0 || height <= 0) {
+            return RectInt.zero;
+        }
+        return new RectInt(left, bottom, width, height);
     }
     private List<EntitySpawnInfo> SpawnEntitiesInChunk(ChunkData chunkData, Vector2Int chunkOriginCell, ChunkManager cm) {
         List<EntitySpawnInfo> entities = new List<EntitySpawnInfo>();

@@ -11,6 +11,6 @@ public class Artifact : MonoBehaviour {
     }
 
     internal void Init(StructurePlacementResult data) {
-        transform.position = new(data.centerAnchor.x, data.centerAnchor.y,0);
+        transform.position = new(data.bottomLeftAnchor.x, data.bottomLeftAnchor.y,0);
     }
 }

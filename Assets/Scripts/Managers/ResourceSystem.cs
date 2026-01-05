@@ -319,6 +319,23 @@ public class ResourceSystem {
             _ => "NULL",
         };
     }
+    public static ushort GetTileFromBiome(BiomeType b) {
+        return b switch {
+            BiomeType.Trench => 1,
+            BiomeType.Bioluminescent => 5,
+            BiomeType.Fungal => 6,
+            BiomeType.Forest => 7,
+            BiomeType.Deadzone => 8,
+            BiomeType.Surface => InvalidID,
+            BiomeType.Cave => InvalidID,
+            BiomeType.Algea => InvalidID,
+            BiomeType.Coral => InvalidID,
+            BiomeType.Ocean => InvalidID,
+            BiomeType.LostCity => InvalidID,
+            BiomeType.None => AirID,
+                _ => 0,
+        };
+    }
     public static WorldGenSettingSO GetMapByID(ushort id) {
 #if UNITY_EDITOR
         var allAssets = Resources.LoadAll<WorldGenSettingSO>("WorldGenData").ToList();
