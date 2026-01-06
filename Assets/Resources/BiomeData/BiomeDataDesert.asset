@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: BiomeDataDesert
   m_EditorClassIdentifier: 
   BiomeType: 10
-  BiomeTempAbilities:
-  - {fileID: 11400000, guid: c56b5d3240c474746ae2b6698371e126, type: 2}
-  BiomeTempBuffs: []
+  BiomeTempAbility: {fileID: 11400000, guid: c56b5d3240c474746ae2b6698371e126, type: 2}
+  BiomeTempBuff: {fileID: 0}
+  BiomePermanentAbility: {fileID: 11400000, guid: c56b5d3240c474746ae2b6698371e126, type: 2}
+  BiomePermanentBuff: {fileID: 0}

@@ -6,9 +6,8 @@ public class BiomeBuffSpawner : MonoBehaviour, IInitializableAbility {
     private NetworkedPlayer _player;
     private AbilityInstance _instance;
 
-    private readonly List<AbilitySO> _currentAbilities = new();        
-    private readonly List<BuffHandle> _currentBiomeBuffs = new();
-
+    private AbilitySO _currentAbility;        
+    private BuffHandle _currentBiomeBuff;
 
     public void Init(AbilityInstance instance, NetworkedPlayer player) {
         _player = player;
@@ -28,7 +27,6 @@ public class BiomeBuffSpawner : MonoBehaviour, IInitializableAbility {
 
         // Remove previously-applied biome effects (abilities + buffs)
         RemoveCurrentBiomeEffects();
-
         if (newB == BiomeType.None || newB == BiomeType.Trench || newB == BiomeType.Surface) {
             return;
         }
@@ -36,43 +34,29 @@ public class BiomeBuffSpawner : MonoBehaviour, IInitializableAbility {
         var b = App.ResourceSystem.GetBiomeData((ushort)newB);
         if (b == null) return;
 
-        foreach (var ability in b.BiomeTempAbilities) {
-            if (ability == null) continue;
-
-            // Avoid double-adding the same ability
-            if (_currentAbilities.Contains(ability)) continue;
-
-            _currentAbilities.Add(ability);
-            _player.PlayerAbilities.AddAbility(ability);
+        if (b.BiomeTempAbility != null) {
+            _currentAbility = b.BiomeTempAbility;
+            _player.PlayerAbilities.AddAbility(b.BiomeTempAbility);
         }
-
-        // I guess we need to have these buffs under some unique "biome" icon or something, will look into this later 
-        foreach (var buff in b.BiomeTempBuffs) {
-            if (buff == null) continue;
-
-            var inst = _player.PlayerStats.TriggerBuff(buff);
+        if (b.BiomeTempBuff != null) { 
+            var inst = _player.PlayerStats.TriggerBuff(b.BiomeTempBuff);
             if (inst != null) {
-                _currentBiomeBuffs.Add(inst);
+                _currentBiomeBuff = inst;
             }
         }
+        
     }
 
-    private void RemoveCurrentBiomeEffects() {
-        // Remove abilities that were given by the biome
-        if (_currentAbilities.Count > 0) {
-            foreach (var ability in _currentAbilities) {
-                if (ability == null) continue;
-                _player.PlayerAbilities.RemoveAbility(ability);
-            }
-            _currentAbilities.Clear();
+    public void RemoveCurrentBiomeEffects() {
+        // Remove ability 
+        if(_currentAbility != null) {
+            _player.PlayerAbilities.RemoveAbility(_currentAbility);
+            _currentAbility = null;
         }
-
-        // Remove active buff instances
-        if (_currentBiomeBuffs.Count > 0) {
-            foreach (var buffInstance in _currentBiomeBuffs) {
-                buffInstance?.Remove();
-            }
-            _currentBiomeBuffs.Clear();
+        // Remove active buff 
+        if (_currentBiomeBuff != null) {
+            _currentBiomeBuff?.Remove();
+            _currentBiomeBuff = null;
         }
     }
 }

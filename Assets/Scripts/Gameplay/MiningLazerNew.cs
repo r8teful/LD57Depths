@@ -112,7 +112,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         var damage = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
         // Use the (potentially smoothed) _currentDirection for the raycast
         RaycastHit2D hit = Physics2D.Raycast(toolPosition, _currentDirection, range, LayerMask.GetMask("MiningHit"));
-        Debug.Log($"damage: {damage}");
+        //Debug.Log($"damage: {damage}");
         if (hit.collider != null) {
 
             //Debug.Log($"MINING HIT!!");

@@ -81,11 +81,11 @@ public class BuffInstance {
 }
 // We return this object which other classes can utilize, it's a very cool class, and very usefull! I'm understanding more complicated concepts lol
 public sealed class BuffHandle {
-    public ushort abilityID;
+    public ushort buffID;
     private readonly Action removeAction; // this will call StatsManager.RemoveAbility(id)
     public Action OnRemoved; // called my StatsManager when buff ends, suscribe to this from other scripts to handle buff end
     public BuffHandle(ushort abilityId, Action removeAction) {
-        this.abilityID = abilityId;
+        this.buffID = abilityId;
         this.removeAction = removeAction;
     }
     public void Remove() { // Can be called from other scripts to request removal 
@@ -95,7 +95,7 @@ public sealed class BuffHandle {
     internal void NotifyRemoved() {
         try { OnRemoved?.Invoke(); } catch (Exception ex) { UnityEngine.Debug.LogException(ex); }
     }
-    public BuffSO GetAbilityData() => App.ResourceSystem.GetBuffByID(abilityID);
+    public BuffSO GetAbilityData() => App.ResourceSystem.GetBuffByID(buffID);
 }
 [RequireComponent(typeof(NetworkedPlayer))]
 public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
@@ -308,6 +308,8 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     }
 
     public IReadOnlyList<BuffSnapshot> GetBuffSnapshots() {
+        // Snapshots are only used for UI. Would you not want it to return buffs with the same source?
+        // Eg. If a biome gives two buffs, you'd want it to 
         _snapshotCache.Clear();
         foreach (var b in _activeBuffs) {
             float remaining = b.duration > 0 ? Mathf.Max(0f, b.expiresAt - Time.time) : -1f;

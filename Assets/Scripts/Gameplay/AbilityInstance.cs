@@ -8,7 +8,8 @@ using UnityEngine;
 // Like a mining tool, or an ability does makes that mining tool more powerfull, or something that applies other abilities (like the biome buffs)
 public class AbilityInstance {
     public AbilitySO Data { get; }
-
+    // For getting script reference if we had spawned the effect
+    public GameObject Object { get; private set; }
     private NetworkedPlayer _player;
 
     private List<StatModifier> _instanceMods = new();
@@ -30,10 +31,12 @@ public class AbilityInstance {
     public event Action OnUsed; // Ability is used. (For when any abilities is used) 
 
     public event Action OnModifiersChanged;
-    public AbilityInstance(AbilitySO data, NetworkedPlayer player) {
+    internal void SetGameObject(GameObject gameObject) => Object = gameObject;
+    public AbilityInstance(AbilitySO data, NetworkedPlayer player, GameObject @object = null) {
         this.Data = data;
         _player = player;
         _cooldownRemaining = 0f;
+        Object = @object;
     }
     public bool HasStatModifier(StatType stat) {
         return _instanceMods.Any(s => s.Stat == stat);

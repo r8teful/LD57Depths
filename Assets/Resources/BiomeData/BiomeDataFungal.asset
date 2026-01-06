@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: BiomeDataFungal
   m_EditorClassIdentifier: 
   BiomeType: 8
-  BiomeTempAbilities: []
-  BiomeTempBuffs:
-  - {fileID: 11400000, guid: a66457901c8dc4244bc32ebd20ad270d, type: 2}
+  BiomeTempAbility: {fileID: 0}
+  BiomeTempBuff: {fileID: 11400000, guid: a66457901c8dc4244bc32ebd20ad270d, type: 2}
+  BiomePermanentAbility: {fileID: 0}
+  BiomePermanentBuff: {fileID: 11400000, guid: a66457901c8dc4244bc32ebd20ad270d, type: 2}

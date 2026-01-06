@@ -10,6 +10,7 @@ public class EffectSpawnPrefab : ScriptableObject, IEffectPassive {
         _instantiatedEffect = Instantiate(prefabToSpawn, player.PlayerAbilities.AbilitySlot);
         if (_instantiatedEffect.TryGetComponent<IInitializableAbility>(out var initComp)) {
             initComp.Init(instance, player);
+            instance.SetGameObject(_instantiatedEffect);
         } else {
             Debug.LogError($"Prefab '{prefabToSpawn.name}' has no component implementing IInitializableAbility.");
             Destroy(_instantiatedEffect);

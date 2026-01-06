@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: BiomeDataForest
   m_EditorClassIdentifier: 
   BiomeType: 9
-  BiomeTempAbilities: []
-  BiomeTempBuffs:
-  - {fileID: 11400000, guid: 93302a34ad8c7c147affb0d510ef0ce1, type: 2}
+  BiomeTempAbility: {fileID: 0}
+  BiomeTempBuff: {fileID: 11400000, guid: 93302a34ad8c7c147affb0d510ef0ce1, type: 2}
+  BiomePermanentAbility: {fileID: 0}
+  BiomePermanentBuff: {fileID: 11400000, guid: 93302a34ad8c7c147affb0d510ef0ce1, type: 2}

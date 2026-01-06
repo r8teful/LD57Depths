@@ -7,9 +7,16 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "BiomeDataSO", menuName = "ScriptableObjects/BiomDataSO", order = 1)]
 public class BiomeDataSO : ScriptableObject, IIdentifiable {
     public BiomeType BiomeType;
-    public List<AbilitySO> BiomeTempAbilities; // The abilities the biome gives when entered
-    public List<BuffSO> BiomeTempBuffs; // The buffs the biome gives when entered                                    
-    // Possibly two other lists of abilities and buffs that we get when we get the artifact!
+
+    // These where all lists but an ability or buff can have several effects. Giving us simpler logic
+    
+    // Temporary ability and buff gained when entering biome
+    public AbilitySO BiomeTempAbility; 
+    public BuffSO BiomeTempBuff; 
+
+    // Permanent ability and buff gained when finding artifact
+    public AbilitySO BiomePermanentAbility; 
+    public BuffSO BiomePermanentBuff;                                    
 
     public ushort ID => (ushort)BiomeType;
 }
