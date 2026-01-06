@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Sirenix.Utilities;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -64,9 +67,14 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     private bool _isInsideOxygenZone;
     private bool DEBUGIsGOD;
 
-    public int InitializationOrder => 999; 
+    List<ContactPoint2D> _contactsMostRecent = new List<ContactPoint2D>(); // Store the contacts we hit on collision enter
+    public List<ContactPoint2D> ContactsMostRecent { get => _contactsMostRecent; set => _contactsMostRecent = value; }
+    public int InitializationOrder => 999;
+
+
     internal bool CanUseTool() => _currentState == PlayerState.Swimming;
     internal bool CanBuild() => _currentState == PlayerState.Swimming;
+    public Rigidbody2D GetRigidbody() => rb;
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         MainCam = Camera.main;
@@ -148,7 +156,12 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
         }
     }
 
-   
+    void OnCollisionEnter2D(Collision2D col) {
+        if (rb.linearVelocity.magnitude > swimSpeed)
+            rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, swimSpeed);
+        ContactsMostRecent.Clear();
+        ContactsMostRecent.AddRange(col.contacts);
+    }
 
     void FixedUpdate() {
         if (_inputManager == null)
@@ -173,7 +186,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
         }
     }
 
-   
+    
     #region SWIMMING
     private void HandleSwimmingUpdate() {
         if (_dashUnlocked && _inputManager.GetDashInput() && !_isDashing && cooldownTimer <= 0f && _currentInput != Vector2.zero) {
