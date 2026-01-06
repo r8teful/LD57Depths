@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb3d0041ed540d04d9d938a5f700a60c, type: 3}
-  m_Name: BrimstoneRangeEffect
+  m_Name: LazerBlastRangeEffect
   m_EditorClassIdentifier: 
-  Id: 0
-  upgradeType: 1
+  Id: 123
+  upgradeType: 0
   increaseType: 0
   modificationValue: 0.2
   targetAbility: {fileID: 11400000, guid: 684d11520b9ebe74ba73394e13a15771, type: 2}

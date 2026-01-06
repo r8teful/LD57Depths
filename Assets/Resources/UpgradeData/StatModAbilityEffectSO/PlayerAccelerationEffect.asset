@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9186bcd1f456f8468a46782412eb5ab, type: 3}
-  m_Name: DashUnlock
+  m_Script: {fileID: 11500000, guid: cb3d0041ed540d04d9d938a5f700a60c, type: 3}
+  m_Name: PlayerAccelerationEffect
   m_EditorClassIdentifier: 
-  Id: 300
-  UnlockedAbilityName: Dash
+  Id: 401
+  upgradeType: 21
+  increaseType: 0
+  modificationValue: 2
+  targetAbility: {fileID: 0}

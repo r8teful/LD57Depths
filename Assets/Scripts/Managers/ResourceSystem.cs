@@ -376,5 +376,6 @@ public enum StatType {
     PlayerOxygenMax = 24,
 
     // General
-    Cooldown = 1000
+    Cooldown = 1000,
+    Duration = 1001
 }
