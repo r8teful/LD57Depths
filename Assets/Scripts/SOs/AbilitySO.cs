@@ -15,6 +15,7 @@ public class AbilitySO : ScriptableObject, IIdentifiable {
     public bool isTimed; // timed meaning that when we reach cooldown, a timed effect will happen (such as a temp buff)
     // Designer adds SOs that implement IAbilityEffect or IPassiveEffect
     public List<ScriptableObject> effects;
+    public List<CosmeticData> costumes;
 
     internal float GetBaseModifierForStat(StatType stat) {
         return 1; // TODO

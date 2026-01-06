@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class MiningFish : MonoBehaviour {
+public class MiningFish : MonoBehaviour,IInitializableAbility {
     private AbilityInstance _abilityInstance;
     private NetworkedPlayer _player;
     private bool _isShooting;

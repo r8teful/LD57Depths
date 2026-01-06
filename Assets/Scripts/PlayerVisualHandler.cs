@@ -7,6 +7,9 @@ using UnityEngine.Rendering.Universal;
 using static PlayerMovement;
 // Handles how the player looks visualy, and also make sure the hitboxes are correct
 public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
+    // We need to rework this to make it easier for us to add costumes and stuff, needs to work with animations, and going into
+    // submarine
+
 
     private SpriteRenderer sprite; 
     [SerializeField] private SpriteRenderer _bobHand; 
