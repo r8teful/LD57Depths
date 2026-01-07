@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,14 +12,29 @@ public class UIManagerStats : MonoBehaviour {
     [SerializeField] Transform _iconContainerPassive;
     [SerializeField] Transform _iconContainerBuffs;
     [SerializeField] Transform _iconContainerActive;
+    [SerializeField] Transform _statDisplayElements;
+    [SerializeField] Transform _abilityDisplayElements;
 
     internal void Init(NetworkedPlayer client) {
         _playerStats = client.PlayerStats;
-        _playerStats.OnBuffListChanged += RebuildList;
+        _playerStats.OnBuffListChanged += BuffListChange;
         _playerStats.OnBuffsUpdated += RefreshTimes;
+        _playerStats.OnStatChanged += StatChange;
         client.PlayerAbilities.OnAbilityAdd += OnAddAbility;
         client.PlayerAbilities.OnabilityRemove += OnRemoveAbility;
         RebuildList();
+        CreateStatDisplays();
+    }
+
+    private void BuffListChange() {
+        RebuildList();
+        CreateStatDisplays();// Also refresh stat displays
+    }
+
+    private void StatChange(StatType type, float arg2) {
+        // Just refresh all statDisplays 
+        CreateStatDisplays();
+
     }
 
     private void OnAddAbility(AbilityInstance ability) {
@@ -28,6 +44,7 @@ public class UIManagerStats : MonoBehaviour {
             icon.Init(ability);
             _activeIconsByID.Add(ability.Data.ID, icon);
         }
+        CreateAbilityUIMenu(ability);
     }
     private void OnRemoveAbility(AbilityInstance ability) {
         if (ability.Data.type == AbilityType.Active) {
@@ -80,6 +97,23 @@ public class UIManagerStats : MonoBehaviour {
                 _buffIconsByID.Add(snapshot.buffID, hudIcon);
             }
         }
+    }
+
+
+    private void CreateStatDisplays() {
+        foreach (Transform child in _statDisplayElements.transform) {
+            Destroy(child.gameObject);
+        }
+        foreach (var stat in (StatType[])Enum.GetValues(typeof(StatType))) {
+            var statValue = _playerStats.GetStat(stat);
+            var e = Instantiate(App.ResourceSystem.GetPrefab<UIStatDisplayElement>("UIStatDisplayElement"), _statDisplayElements);
+            e.Init(stat, statValue);
+        }
+    }
+
+    private void CreateAbilityUIMenu(AbilityInstance ability) {
+        var abilityStats = Instantiate(App.ResourceSystem.GetPrefab<UIAbilityStats>("UIAbilityStats"), _abilityDisplayElements);
+        abilityStats.Init(ability);
     }
     private UIHudIconStatus CreateHudIcon(BuffSnapshot snapshot) {
         var uiIcon = Instantiate(App.ResourceSystem.GetPrefab<UIHudIconStatus>("UIHudIconStatus"), _iconContainerBuffs);

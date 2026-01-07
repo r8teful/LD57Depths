@@ -126,6 +126,11 @@ public class AbilityInstance {
         return _instanceMods.Where(m => m.Stat == stat && m.Type == StatModifyType.Multiply).Sum(m => m.Value);
        //return _instanceMods.Where(m => m.Stat == stat && m.Type == IncreaseType.Multiply).Aggregate(1f, (a, m) => a * m.Value);
     }
+    /// <summary>
+    /// Returns final stat value, including all buffs and modifiers
+    /// </summary>
+    /// <param name="stat"></param>
+    /// <returns></returns>
     public float GetEffectiveStat(StatType stat) {
         float baseStat = _player.PlayerStats.GetStat(stat);
         float finalMult = GetFinalAbilityMultiplier(stat);

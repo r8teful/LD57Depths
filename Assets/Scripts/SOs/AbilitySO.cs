@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 // An ability can be passive (like a permanent buff, or tool, or passive destruction)
 // Or active (like a tool ability)
@@ -13,12 +14,19 @@ public class AbilitySO : ScriptableObject, IIdentifiable {
     public AbilityType type;
     public float cooldown;
     public bool isTimed; // timed meaning that when we reach cooldown, a timed effect will happen (such as a temp buff)
-    // Designer adds SOs that implement IAbilityEffect or IPassiveEffect
+    public List<StatTypesBase> statTypes;
     public List<ScriptableObject> effects;
     public List<CosmeticData> costumes;
 
     internal float GetBaseModifierForStat(StatType stat) {
-        return 1; // TODO
+        var b = statTypes.FirstOrDefault(s => s.stat == stat);
+        return b != null ? b.baseMofifier : 1; 
     }
+}
+[System.Serializable]
+public class StatTypesBase {
+    public StatType stat;
+    public float baseMofifier;
+    // This could have the "base" increase type for this stat right?
 }
 public enum AbilityType { Passive, Active }

@@ -27,7 +27,10 @@ public class StatModAbilityEffectSO : UpgradeEffect {
 
         // First we need the current multiplier value, which we need to pull from our targetAbility instance
         var abilityInstance = NetworkedPlayer.LocalInstance.PlayerAbilities.GetAbilityInstance(targetAbility.ID);
-
+        if(abilityInstance == null) {
+            Debug.LogError("Can't get target ability for upgrade. We probably don't have it unlocked yet");
+            return new();
+        }
         // If this works I'm a genius 
         // This below doesn't work because the GetTotal function just returns the modified values ( like if we'd have a buff)
         //var currentValue = increaseType == IncreaseType.Multiply ? abilityInstance.GetTotalPercentModifier(upgradeType) :

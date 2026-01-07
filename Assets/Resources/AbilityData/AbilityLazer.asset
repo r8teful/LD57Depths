@@ -14,9 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   icon: {fileID: 0}
-  displayName: A straightforward lazer
+  displayName: Lazer
   type: 0
   cooldown: 0
   isTimed: 0
+  statTypes:
+  - stat: 1
+    baseMofifier: 1
+  - stat: 0
+    baseMofifier: 1
+  - stat: 2
+    baseMofifier: 1
   effects:
   - {fileID: 11400000, guid: a3fd00cf526c9ce44a2ee8416517e97b, type: 2}
+  costumes: []

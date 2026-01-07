@@ -305,6 +305,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         //RecalculateStat(stat); // We could do this here, we recalcualte with an "override" with the new value, this way, we get instant feedback
         ServerUpdatePermanentStat(stat, newValue);
         _rawStats[stat] = newValue; // BADDD?? I DONT KNOW BUT ITS NOT ACUTALLY CHANGING IT ON THE SERVER IN TIME FOR ME TO SEE IT ON THE UPGRADE UI SCREEN POP WHEN I PURCHASE THE UPGRADE
+        RecalculateStat(stat);
     }
 
     public IReadOnlyList<BuffSnapshot> GetBuffSnapshots() {

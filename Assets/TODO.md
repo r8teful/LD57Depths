@@ -98,21 +98,22 @@ Make internal playtest:
 
  	- Unlocks now add ABILITIES through PlayerAbilities.AddAbility.
 
-* Make biomes spawn randomly \& Make artifacts, spawn at random spots, you mine it, you get the biome ability
+* Make biomes spawn randomly \& Make artifacts, spawn at random spots, you mine it, you get the biome ability - DONE
 * implement specific biome abilities 
-* 
-
-Bit of a hiccup here, we need to prespawn the artifact. But the world generation generates a completely blank chunk when we enter it for the first time, meaning, that if we populate the chunk with the artifact, it will just overwrite it. The solution would simply be to not overwrite it, but check each tile and look if it has data on it. But then again, how would you spawn the thing? Surelly it would have to be on actual stone tiles
-
-
-
-
-
-
 
 
 
 Hide un obtainable upgrades, darken ones you don't have money for
+
+
+
+What do we do now? Do we go back to the upgrades? It does need work. Especially the tree because it is very broken right now
+
+After that we can add the level up system
+
+* Make sure ALL upgrades work!
+
+
 
 
 
