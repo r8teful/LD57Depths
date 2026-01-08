@@ -24,16 +24,16 @@ public class UIUpgradeStat : MonoBehaviour {
         var stat = status.StatName;
         var valueNow = status.ValueNow;
         var valueLater = status.ValueNext;
-        var isLowerBad = status.IsLowerBad;
+        var isBad = status.IsBadChange;
         _statName.text = stat;
-        _statNow.text = valueNow.ToString("0.#");
-        _statLater.color = isLowerBad && valueLater > valueNow ? Color.green : Color.red;
-        if (valueLater < 0) {
+        _statNow.text = valueNow;
+        _statLater.color = isBad ? Color.red : Color.green;
+        if (valueLater == String.Empty) {
             // Dissable
             _statLater.gameObject.SetActive(false);
             _arrowImage.SetActive(false);
         } else {
-            _statLater.text = valueLater.ToString("0.#");
+            _statLater.text = valueLater;
             _arrowImage.SetActive(true);
         }
     }

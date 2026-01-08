@@ -10,15 +10,21 @@ public abstract class UpgradeEffect : ScriptableObject, IIdentifiable{
 
 public struct StatChangeStatus {
     public string StatName { get; }
-    public float ValueNow { get; }
-    public float ValueNext { get; }
-    public bool IsLowerBad { get; }
+    public string ValueNow { get; }
+    public string ValueNext { get; }
+    public bool IsBadChange { get; }
 
-    public StatChangeStatus(string statName, float valueNow, float valueNext, bool isLowerBad) {
+    public StatChangeStatus(string statName, float valueNow, float valueNext, bool isBadChange) {
+        StatName = statName;
+        ValueNow = valueNow.ToString("F2");
+        ValueNext = valueNext.ToString("F2");
+        IsBadChange = isBadChange;
+    }
+    public StatChangeStatus(string statName, string valueNow, string valueNext, bool isBadChange) {
         StatName = statName;
         ValueNow = valueNow;
         ValueNext = valueNext;
-        IsLowerBad = isLowerBad;
+        IsBadChange = isBadChange;
     }
 }
 public enum StatModifyType { Add, Multiply }

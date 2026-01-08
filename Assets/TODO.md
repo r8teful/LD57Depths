@@ -99,7 +99,7 @@ Make internal playtest:
  	- Unlocks now add ABILITIES through PlayerAbilities.AddAbility.
 
 * Make biomes spawn randomly \& Make artifacts, spawn at random spots, you mine it, you get the biome ability - DONE
-* implement specific biome abilities 
+* implement specific biome abilities
 
 
 
@@ -112,6 +112,39 @@ What do we do now? Do we go back to the upgrades? It does need work. Especially 
 After that we can add the level up system
 
 * Make sure ALL upgrades work!
+
+
+
+How should the upgrades actually change the values?
+
+* "Normal" lazer upgrades, should just say the mining damage, or the range it has, don't have it 
+* Blast upgrade should say how much the blast multiplies the value by 
+
+
+
+What should the blast do? 
+
+First, read the base blast buff damage mult. This is 1.5 and on the buff instance
+
+
+
+
+
+What the fuck man, I need a flow of the buffs,
+
+Trigger buff -> create a new buffInstance from the base stats -> Add upgrades to the buff which we take FROM the ability instance, which has modifiers on which we APPLY to the buff. 
+
+This modified buff now gets triggered ONTO the target ability, which is the lazer
+
+
+
+How do upgrade work with buffs?
+
+We said that we needed to add statMods to the ability that we where going to upgrade. Well, the brimstone upgrade gets added to the brimstone ability instance, so that would say multiply damage by +2, so if the base is 1.5x then it would be 3.5x
+
+
+
+SO, when we calculate the actual value, all we would need to do is 
 
 
 

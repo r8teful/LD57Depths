@@ -26,7 +26,9 @@ public class AbilitySO : ScriptableObject, IIdentifiable {
 [System.Serializable]
 public class StatTypesBase {
     public StatType stat;
+    public StatModifyType modType; // If add, we show effective value, if mult, we show mult value
     public float baseMofifier;
+
     // This could have the "base" increase type for this stat right?
 }
 public enum AbilityType { Passive, Active }

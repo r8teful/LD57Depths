@@ -1,9 +1,11 @@
+using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
     // runtime map from id -> instance
+    [ShowInInspector]
     private Dictionary<ushort, AbilityInstance> _abilities = new();
     private NetworkedPlayer _player;
     [SerializeField] private Transform _abilitySlotTransform;
@@ -61,6 +63,7 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
             inst.Tick(dt);
     }
 
+    // When we press space:
     public bool UseActive(ushort id) {
         var inst = GetAbilityInstance(id);
         if (inst == null) return false;

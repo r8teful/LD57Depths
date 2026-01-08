@@ -25,7 +25,11 @@ public class UIAbilityStats : MonoBehaviour {
         }
         foreach (var statData in _cachedAbility.Data.statTypes) {
             var e = Instantiate(App.ResourceSystem.GetPrefab<UIStatDisplayElement>("UIStatDisplayElement"), _statDisplayElements);
-            e.Init(statData.stat, _cachedAbility.GetEffectiveStat(statData.stat));
+            if(statData.stat == StatType.MiningDamage && _cachedAbility.Data.ID == ResourceSystem.BrimstoneBuffID) {
+                Debug.Log("This is mining damage");
+            }
+            var statValue = _cachedAbility.GetBuffStatStrength(statData.stat,statData.modType);
+            e.Init(statData.stat,statValue);
         }
     }
 }
