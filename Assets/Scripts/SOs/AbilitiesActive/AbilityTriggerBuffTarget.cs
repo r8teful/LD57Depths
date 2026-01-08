@@ -13,12 +13,10 @@ public class AbilityTriggerBuffTarget : ScriptableObject, IEffectActive, IEffect
         // This ability should add multiplier buffs to the lazer passive
         Debug.Log("Triggering brimstone buff!");
 
-        // Create a new buffInstance from the base stats
-        var buffinst = BuffInstance.CreateFromSO(_buff); // This is fucked, makes 1.5dmg to 3.5 somehow, we simply need to actually add the modifiers properly
+        // Create a new buffInstance from the base buff stats
+        var buffinst = BuffInstance.CreateFromSO(_buff); 
 
         // Add upgrades to the buff which we take FROM the ability instance, this is why we need the source
-        // IMPORTANT: we need to make sure that we ADD these to our buffinstance, we don't just replace, because the modifiers ADD
-        // to the base of the buff, this is the whole reason the buffs become stronger
         buffinst.ApplyAbilityInstanceModifiers(source);
         // I dont understand this still doesn't work!!! Why is this so complicated, surelly there is a better way of doing this!?
         player.PlayerAbilities.GetAbilityInstance(_targetAbility.ID).TriggerBuff(buffinst); // Adds buff to MINING Lazer instance

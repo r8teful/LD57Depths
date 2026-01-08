@@ -26,7 +26,9 @@ MonoBehaviour:
   - Value: 20
     Stat: 3
     Type: 0
-  Duration: 10
+  - Value: 1
+    Stat: 1001
+    Type: 1
   Title: Brimstone
   Description: 'Your lazer power has been temporary enhanced '
   Icon: {fileID: -172477240, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}

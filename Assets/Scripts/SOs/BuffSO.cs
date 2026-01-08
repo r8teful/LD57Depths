@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "BuffSO", menuName = "ScriptableObjects/BuffSO", order = 7)]
@@ -7,11 +8,12 @@ public class BuffSO : ScriptableObject, IIdentifiable {
     [SerializeField] private ushort id;
     public ushort ID => id;
     public List<StatModifier> Modifiers;
-    public float Duration; // -1 is indefinate, but still not "permanent", such as a locational biome buff
-                           // But would this not be better being separate, because when do we know that the buff would be finished? How would we get
-                           // The reference to the SO and turn it off?? Something sexy we could do is abstracting how we "end" the buff, 
-                           // If duration is more than 0, then it is the enumerator, but it could be anything really, as long as a certain condition is met.
     public string Title;
     public string Description;
     public Sprite Icon;
+
+    public float GetDuration() {
+        var dur = Modifiers.FirstOrDefault(m => m.Stat == StatType.Duration);
+        return dur == null ? -1 : dur.Value; // -1 meaning the duration goes on indefinately
+    }
 }

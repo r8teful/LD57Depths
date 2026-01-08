@@ -148,6 +148,30 @@ SO, when we calculate the actual value, all we would need to do is
 
 
 
+OKAY, I'm doing duration and recharge times now, BUT HOW THE FUCK ARE WE GOING TO DO IT??
+
+In the upgrade node I just want to see the upgrade time, so 10 dur to 20 for example, nice and easy
+
+BUT, the big question is, do we have the duration and recharge be their own separate stats? For example, one character could have a default duration time of 20, and if a different character has a duration of 10, and all the durations are based on the duration, than the second character would have all the durations halved. This would be quite cool right? So then under the hood, the upgrade really just multiplies the base duration by an amount, meaning if our base duration is 10s, and say the blast is 1 dur, than it would do 10 \* 1, and later, and upgrade, will increase the mult to 1.2x so then it would be 10\*1.2 = 12s BUT. We'd still want to show the END result, which is different compared to the blast damage for example, where we want to see the multiplication number, but here we want to see the end number. 
+
+&nbsp;	We could also have it be based on the duration, but as a flat number, so we could start with a base dur of 10, and then a buff could say 5, which would ADD the base dur by 5 -> 15s. Then another character could have base dur be 5 and then we add 5 and it would be 10, but that would not be fair really and not actually give a point to it
+
+
+
+Trigger buff -> It puts the stat mods of that buff on the instance
+
+but then the stats mods are 0.2+0.2+0.2 which is 0.6, and then it will just do 5\*max(1,0.8) = 5 that's why its showing 5 
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,4 +1,5 @@
 ﻿using Sirenix.OdinInspector;
+using Steamworks.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,9 +51,14 @@ public class AbilityInstance {
         return _activeBuffsByID.ContainsKey(id);
     }
     internal float GetAbilityTime() {
-        if (!Data.isTimed) return 0f; 
+        if (!Data.isTimed) return 0f;
+        // In our case now, this method is called from the Brimstone ability, which will
+        //return GetEffectiveStat(StatType.Duration); // This simply doesn't work, say we have three statmods 0.2 on it, this would give us 5*max(1,0.8) = 5, we need the base dur
         var buff = Data.effects?.OfType<IEffectBuff>().FirstOrDefault();
-        return buff.Buff.Duration;
+        if (buff == null) return 0f;
+        var baseBuffDur = buff.Buff.GetDuration();
+        float baseDur = GetBaseStat(StatType.Duration);
+        return baseDur * (baseBuffDur + GetTotalPercentModifier(StatType.Duration));
     }
     internal float GetBuffStatStrength(StatType stat,StatModifyType modType) {
         // OK here it is fucked, becaues it shows the right value if we have the lazer base for example.
@@ -89,7 +95,7 @@ public class AbilityInstance {
             if (_activeRemaining == 0f) {
                 // active ended -> start cooldown
                 OnDeactivated?.Invoke();
-                _cooldownRemaining = GetEffectiveStat(StatType.Cooldown);
+                _cooldownRemaining = GetCooldown();
                 OnCooldownChanged?.Invoke(_cooldownRemaining);
             }
         // The else here makes it so that the cooldown only starts after we have no active time remaining!
@@ -99,6 +105,14 @@ public class AbilityInstance {
             if (_cooldownRemaining == 0f) OnReady?.Invoke();
         }
     }
+
+    private float GetCooldown() {
+        var baseS = Data.cooldown;
+        var modT = GetTotalPercentModifier(StatType.Cooldown);
+
+        return GetBaseStat(StatType.Cooldown) * (baseS + modT);
+    }
+
     public void AddInstanceModifier(StatModifier mod) {
         //mod.Source = id; // tie to this ability instance (or to upgrade id)
         _instanceMods.Add(mod);
@@ -130,16 +144,26 @@ public class AbilityInstance {
     /// <param name="stat"></param>
     /// <returns></returns>
     public float GetEffectiveStat(StatType stat) {
+        if(stat == StatType.Cooldown || stat == StatType.Duration) {
+            Debug.LogWarning("You should probably not get cooldown or duration from GetEffectiveStat, use their own functions instead");
+        }
         //float baseCd = Data.GetBaseModifierForStat(stat);
-        float baseCd = _player.PlayerStats.GetStatBase(stat);
+        float baseCd = GetBaseStat(stat);
 
         var instAdds = GetTotalFlatModifier(stat);
         var instMult = GetTotalPercentModifier(stat);
+        float cd;
+        if (stat.Equals(StatType.Duration)) {
+            cd = (baseCd + instAdds) * Mathf.Max(1, instMult); 
+        } else {
+            cd = (baseCd + instAdds) * Mathf.Max(1, instMult); // don't multiply with 0 if we have no multiplier
 
-        float cd = (baseCd + instAdds) * Mathf.Max(1, instMult); // don't multiply with 0 if we have no multiplier
+        }
 
         return cd;
     }
+    public float GetBaseStat(StatType stat) => _player.PlayerStats.GetStatBase(stat);
+    
     public BuffHandle TriggerBuff(BuffInstance buff) {
         var id = buff.buffID;
         if (_activeBuffsByID.TryGetValue(id, out var existing)) {
@@ -182,7 +206,6 @@ public class AbilityInstance {
             RemoveInstanceModifier(mod);
         }
     }
-
     // Tick and Use similar to before but use GetEffectiveCooldown() when setting cooldownRemaining
     public bool Use(Func<bool> performEffect) {
         if (Data.type == AbilityType.Passive) return false;
@@ -192,14 +215,14 @@ public class AbilityInstance {
         if (!effectSuccess) return false;
         // We've now performed the effects and can update cooldowns
         var abilityT = GetAbilityTime();
-        if (GetAbilityTime() > 0) {
+        if (abilityT > 0) {
             // This ability has a certain time it has to be active for 
             _activeRemaining = abilityT;
             OnActivated?.Invoke();
             OnActiveTimeChanged?.Invoke(_activeRemaining);
         } else {
             // Instant ability 
-            _cooldownRemaining = GetEffectiveStat(StatType.Cooldown);
+            _cooldownRemaining = GetCooldown();
             OnCooldownChanged?.Invoke(_cooldownRemaining);
         }
         OnUsed?.Invoke();
@@ -215,7 +238,7 @@ public class AbilityInstance {
         OnDeactivated?.Invoke();
         if (startCooldown) {
             _cooldownRemaining = remainingCooldownOverride >= 0f ?
-                remainingCooldownOverride : GetEffectiveStat(StatType.Cooldown);
+                remainingCooldownOverride : GetCooldown();
             OnCooldownChanged?.Invoke(_cooldownRemaining);
         }
     }

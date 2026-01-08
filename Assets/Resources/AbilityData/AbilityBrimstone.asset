@@ -16,9 +16,15 @@ MonoBehaviour:
   icon: {fileID: -917287309, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   displayName: Brimstone
   type: 1
-  cooldown: 8.32
+  cooldown: 1
   isTimed: 1
   statTypes:
+  - stat: 1001
+    modType: 0
+    baseMofifier: 0
+  - stat: 1000
+    modType: 0
+    baseMofifier: 0
   - stat: 1
     modType: 1
     baseMofifier: 0

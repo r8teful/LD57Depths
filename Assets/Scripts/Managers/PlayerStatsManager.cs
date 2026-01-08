@@ -221,8 +221,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     }
 
     public IReadOnlyList<BuffSnapshot> GetBuffSnapshots() {
-        // Snapshots are only used for UI. Would you not want it to return buffs with the same source?
-        // Eg. If a biome gives two buffs, you'd want it to 
+        // Snapshots are only used for UI.
         _snapshotCache.Clear();
         foreach (var b in _activeBuffs) {
             float remaining = b.duration > 0 ? Mathf.Max(0f, b.expiresAt - Time.time) : -1f;
@@ -269,8 +268,8 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         var buff = new BuffInstance {
             buffID = id,
             startTime = Time.time,
-            duration = buffData.Duration,
-            expiresAt = buffData.Duration > 0 ? Time.time + buffData.Duration : -1f, // indefinite
+            duration = buffData.GetDuration(),
+            expiresAt = buffData.GetDuration() > 0 ? Time.time + buffData.GetDuration() : -1f, // indefinite
         };
 
         // Actions are so fancy, so this basically points to this function which when we invoke the action will call, and we can pass the action around 
@@ -289,7 +288,7 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             modifiersToAdd.Add(new StatModifier(modData.Value, modData.Stat, modData.Type, buffData));
         }
         RecalculateModifiers(modifiersToAdd);
-
+        Debug.Log("added buff to player!");
         OnBuffListChanged?.Invoke();
         return buff.handle;
         //AddTimedModifiers(modifiersToAdd, ability, ability.Duration, externalConditionEnd);

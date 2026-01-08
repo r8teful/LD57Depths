@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Search;
 using UnityEngine;
 
 public class BuffInstance {
@@ -20,16 +19,16 @@ public class BuffInstance {
 
     // Factory: create a BuffInstance from a BuffSO
     public static BuffInstance CreateFromSO(BuffSO so, float durationOverride = -1f) {
+        var dur = so.GetDuration();
         var inst = new BuffInstance {
             buffID = so.ID,
             startTime = Time.time,
-            duration = durationOverride > 0f ? durationOverride : so.Duration,
-            timeRemaining = durationOverride > 0f ? durationOverride : so.Duration,
+            duration = durationOverride > 0f ? durationOverride : dur,
+            timeRemaining = durationOverride > 0f ? durationOverride : dur,
             expiresAt = (durationOverride > 0f ? Time.time + durationOverride :
-                       so.Duration > 0 ? Time.time + so.Duration : -1),
+                       dur > 0 ? Time.time + dur : -1),
             Modifiers = new()
         };
-
         // deep copy modifiers. We want to do this because these modifiers is what actually give the buffs
         inst.Modifiers = so.Modifiers?.Select(
              m => new StatModifier(m.Value, m.Stat, m.Type, so)).ToList() ?? new List<StatModifier>();
@@ -41,13 +40,20 @@ public class BuffInstance {
     /// </summary>
     /// <param name="source"></param>
     public void ApplyAbilityInstanceModifiers(AbilityInstance source) {
-        if (!source.HasStatModifiers()) return;
+        //if (!source.HasStatModifiers()) return;
         foreach (var mod in Modifiers) {
+    
             // Here we take the modifiers from the ability, and add them to the runtimeModifiers of the buff. This way, when we add the buff to another ability, that abilitu will now simply have a stronger buff
 
             // This calculation now works for when we have a multiplier value, and add another multiplier value to it.
             float baseBuffValue = mod.Value;
             mod.Value = baseBuffValue + source.GetTotalPercentModifier(mod.Stat);
+            if (mod.Stat == StatType.Duration) {
+                var dur = mod.Value * source.GetBaseStat(mod.Stat); // This kind of is like source.GetEffective stat, but we take into acount the baseBuffValue
+                duration = dur;
+                timeRemaining = dur;
+                expiresAt = Time.time + dur;
+            }
             continue;
             // get totals from the source
             float flatFromSource = source.GetTotalFlatModifier(mod.Stat);     // e.g. Mining knockback + 20

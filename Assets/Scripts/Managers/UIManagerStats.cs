@@ -22,12 +22,13 @@ public class UIManagerStats : MonoBehaviour {
         _playerStats.OnStatChanged += StatChange;
         client.PlayerAbilities.OnAbilityAdd += OnAddAbility;
         client.PlayerAbilities.OnabilityRemove += OnRemoveAbility;
-        RebuildList();
+        RebuildBuffList();
         CreateStatDisplays();
     }
 
     private void BuffListChange() {
-        RebuildList();
+        Debug.Log("BUFF LIST CHANGE!!");
+        RebuildBuffList();
         CreateStatDisplays();// Also refresh stat displays
     }
 
@@ -59,7 +60,7 @@ public class UIManagerStats : MonoBehaviour {
 
     void OnDestroy() {
         if (_playerStats != null) {
-            _playerStats.OnBuffListChanged -= RebuildList;
+            _playerStats.OnBuffListChanged -= RebuildBuffList;
             _playerStats.OnBuffsUpdated -= RefreshTimes;
         }
     }
@@ -73,7 +74,7 @@ public class UIManagerStats : MonoBehaviour {
         }
     }
 
-    void RebuildList() {
+    void RebuildBuffList() {
         //  Add new entries & remove the ones that aren't there
         var snapshots = _playerStats.GetBuffSnapshots();
         HashSet<ushort> currentIds = new();
