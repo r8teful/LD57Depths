@@ -32,7 +32,7 @@ public class BuffInstance {
 
         // deep copy modifiers. We want to do this because these modifiers is what actually give the buffs
         inst.Modifiers = so.Modifiers?.Select(
-             m => new StatModifier(m.Value, m.Stat, m.Type, so.ID)).ToList() ?? new List<StatModifier>();
+             m => new StatModifier(m.Value, m.Stat, m.Type, so)).ToList() ?? new List<StatModifier>();
 
         return inst;
     }

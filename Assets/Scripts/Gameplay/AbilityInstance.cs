@@ -104,8 +104,11 @@ public class AbilityInstance {
         _instanceMods.Add(mod);
         OnModifiersChanged?.Invoke();
     }
-    public void RemoveInstanceModifier(StatType stat) {
-        _instanceMods.RemoveAll(m => m.Stat == stat);
+    public void RemoveInstanceModifier(StatModifier mod) {
+        var success= _instanceMods.Remove(mod);
+        if (!success) {
+            Debug.LogError($"Coudn't remove StatModifier {mod}, it was not in the instance mod list");
+        }
         OnModifiersChanged?.Invoke();
     }
     private void AddInstanceModifiers(List<StatModifier> modifiersToAdd) {
@@ -156,44 +159,6 @@ public class AbilityInstance {
         AddInstanceModifiers(modifiersToAdd);
         return buff.handle;
     }
-    public BuffHandle TriggerBuff(BuffSO buffData) {
-        // Prevent duplicates unless ability is explicitly stackable
-        var id = buffData.ID;
-        if (_activeBuffsByID.TryGetValue(id, out var existing)) {
-            Debug.Log("Buff already applied to instance. What would you like to happen? CODE IT!!");
-            return null;
-            // TODO
-            //if (ability.refreshOnReapply) {
-            //    if (existing.duration > 0) {
-            //        existing.startTime = Time.time;
-            //        existing.duration = durationOverride ?? ability.duration;
-            //        existing.endTime = existing.startTime + existing.duration;
-            //        OnBuffUpdated?.Invoke();
-            //    }
-            //}
-            //return existing.handle;
-        }
-        // Create runtime buff instance
-        var buff = new BuffInstance {
-            buffID = id,
-            startTime = Time.time,
-            duration = buffData.Duration,
-            expiresAt = buffData.Duration > 0 ? Time.time + buffData.Duration : -1f, // indefinite
-        };
-
-        // Actions are so fancy, so this basically points to this function which when we invoke the action will call, and we can pass the action around 
-        Action removeAction = () => RemoveBuff(id);
-        // Build handle
-        buff.handle = new BuffHandle(id, removeAction);
-        _activeBuffs.Add(buff);
-        _activeBuffsByID[id] = buff;
-        var modifiersToAdd = new List<StatModifier>();
-        foreach (var modData in buffData.Modifiers) {
-            modifiersToAdd.Add(new StatModifier(modData.Value, modData.Stat, modData.Type, buffData));
-        }
-        AddInstanceModifiers(modifiersToAdd);
-        return buff.handle;
-    }
 
     public void RemoveBuff(ushort abilityID) {
         Debug.Log($"removing buff with ID {abilityID}");
@@ -202,11 +167,11 @@ public class AbilityInstance {
             Debug.LogWarning($"Tried to remove buff with ID {abilityID} which isn't active");
             return;
         }
-
-        List<StatModifier> modsToRemove = new();
-        foreach (var mod in buff.GetBuffData().Modifiers) {
-            modsToRemove.Add(mod);
-        }
+        // IMPORTANT: ONLY REMOVE WITH SOURCE MATCH, otherwise it will remove all the upgrades attached to this instance
+        List<StatModifier> modsToRemove = _instanceMods.Where(m => (object)m.Source == buff.GetBuffData()).ToList();
+        //foreach (var mod in buff.GetBuffData().Modifiers) {
+        //    modsToRemove.Add(mod);
+        //}
         // We do it before so we could still access activeBuffs and its details
         buff.handle?.NotifyRemoved();
         _activeBuffs.Remove(buff);
@@ -214,7 +179,7 @@ public class AbilityInstance {
         // Now recalculate only the stats that were changed
         Debug.Log($"Removing {modsToRemove.Count} modifiers from ability {Data.displayName}");
         foreach (var mod in modsToRemove) {
-            RemoveInstanceModifier(mod.Stat);
+            RemoveInstanceModifier(mod);
         }
     }
 
