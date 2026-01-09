@@ -32,14 +32,24 @@ public class StatModAbilityEffectSO : UpgradeEffect {
             Debug.LogError("Can't get target ability for upgrade. We probably don't have it unlocked yet");
             return new();
         }
-        var increaseString = increaseType == StatModifyType.Multiply ? "X" : ""; 
         // If this works I'm a genius 
         // This below doesn't work because the GetTotal function just returns the modified values ( like if we'd have a buff)
         //var currentValue = increaseType == IncreaseType.Multiply ? abilityInstance.GetTotalPercentModifier(upgradeType) :
         //    abilityInstance.GetTotalFlatModifier(upgradeType);
-        var currentValue = abilityInstance.GetBuffStatStrength(upgradeType,increaseType);
         //var nextValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, increaseType, modificationValue);
-        var nextValue = currentValue + modificationValue; // Next value always additive, no matter its increase type (I think)
-        return new(statName, currentValue.ToString("F2")+increaseString, nextValue.ToString("F2") + increaseString, ResourceSystem.IsLowerBad(upgradeType));
+        var currentValue = abilityInstance.GetBuffStatStrength(upgradeType,increaseType);
+        var nextValue = 0f;
+        if (increaseType == StatModifyType.Multiply) { 
+            // current value represents a MULTIPLICATIVE element, meaning we ADD the modification type, and then times it with the base stat
+            var increaseValue= currentValue + modificationValue;
+            nextValue = abilityInstance.GetEffectiveStat(upgradeType) * increaseValue; // This shouldn't be base but depending on the value we are targeting
+            // convert the "multiplicative currentValue to an actual one
+            currentValue = currentValue * abilityInstance.GetBaseStat(upgradeType);
+        } else {
+            currentValue= abilityInstance.GetBuffStatStrength(upgradeType,increaseType);
+            nextValue = currentValue + modificationValue;
+
+        }
+        return new(statName, currentValue.ToString("F2"), nextValue.ToString("F2"), ResourceSystem.IsLowerBad(upgradeType));
     }
 }

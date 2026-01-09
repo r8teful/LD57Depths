@@ -12,7 +12,7 @@ public class AbilitySO : ScriptableObject, IIdentifiable {
     public Sprite icon;
     public string displayName;
     public AbilityType type;
-    public float cooldown;
+    public float cooldown; // Same as duration, this number is MULTIPLYING our base cooldown stat
     public bool isTimed; // timed meaning that when we reach cooldown, a timed effect will happen (such as a temp buff)
     public List<StatTypesBase> statTypes; // Literally just used for diplaying them in the debug UI atm
     public List<ScriptableObject> effects;
