@@ -27,4 +27,7 @@ public struct StatChangeStatus {
         IsBadChange = isBadChange;
     }
 }
-public enum StatModifyType { Add, Multiply }
+public enum StatModifyType { 
+    Add, 
+    Multiply 
+}

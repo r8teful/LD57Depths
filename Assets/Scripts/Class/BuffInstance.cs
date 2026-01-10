@@ -1,5 +1,6 @@
 // We use this instance to get RUNTIME information about the buff, we'll need it for UI,
 // but also if we increase the buff strength we'll modify its Stat modifiers
+using GameKit.Dependencies.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ public class BuffInstance {
     internal float startTime;
     internal float duration;
     internal float expiresAt;
-    public List<StatModifier> Modifiers { get; private set; }
+    public List<StatModifier> Modifiers { get; private set; } = new();
     public BuffSO GetBuffData() => App.ResourceSystem.GetBuffByID(buffID);
     public bool IsExpired => Time.time >= expiresAt;
     public BuffInstance() { }
@@ -31,53 +32,35 @@ public class BuffInstance {
         };
         // deep copy modifiers. We want to do this because these modifiers is what actually give the buffs
         inst.Modifiers = so.Modifiers?.Select(
-             m => new StatModifier(m.Value, m.Stat, m.Type, so)).ToList() ?? new List<StatModifier>();
+        m => new StatModifier(m.Value, m.Stat, m.Type, inst)).ToList() ?? new List<StatModifier>();
+      
 
         return inst;
     }
-    /// <summary>
-    /// Use this only if you want to change the strength of the buff. We ADD the modifiers the source ability has into this buff
-    /// </summary>
-    /// <param name="source"></param>
-    public void ApplyAbilityInstanceModifiers(AbilityInstance source) {
-        //if (!source.HasStatModifiers()) return;
-        foreach (var mod in Modifiers) {
-    
-            // Here we take the modifiers from the ability, and add them to the runtimeModifiers of the buff. This way, when we add the buff to another ability, that abilitu will now simply have a stronger buff
 
-            // This calculation now works for when we have a multiplier value, and add another multiplier value to it.
-            float baseBuffValue = mod.Value;
-            mod.Value = baseBuffValue + source.GetTotalPercentModifier(mod.Stat);
-            if (mod.Stat == StatType.Duration) {
-                var dur = mod.Value * source.GetBaseStat(mod.Stat); // This kind of is like source.GetEffective stat, but we take into acount the baseBuffValue
-                duration = dur;
-                timeRemaining = dur;
-                expiresAt = Time.time + dur;
-            }
-            continue;
-            // get totals from the source
-            float flatFromSource = source.GetTotalFlatModifier(mod.Stat);     // e.g. Mining knockback + 20
-            float percentFromSource = source.GetTotalPercentModifier(mod.Stat); // e.g. Damage + 20%
-            // We dont have a way to have both flat from source, and percentFrom source right now, have to find a way to combine them
-            if (flatFromSource > percentFromSource) {
-                // treat Value as a flat base
-                // newValue = (base + flatFromSource) * (1 + percentFromSource)
-                float baseVal = mod.Value;
-                baseVal += flatFromSource;
-                baseVal *= (1f + percentFromSource);
-                mod.Value = baseVal;
-            } else { // Percent mode
-                // treat mod.Value as a percent (e.g. 0.5 for +50%)
-                float combinedPercent = mod.Value + percentFromSource;
-                // Optionally also incorporate flatFromSource in a sensible way:
-                // if flatFromSource should affect absolute value, you'd need the base stat value.
-                mod.Value = combinedPercent;
+    public void IncreaseBuffPower(AbilityInstance source) {
+        foreach (var mod in Modifiers) {
+            // Check Source for a matching stat multiplier
+            // Use 1.0f as default if the source doesn't track this stat
+            float sourceMult = source.GetEffectiveStat(mod.Stat);
+
+            // If source has a valid multiplier (e.g., 1.5x damage), apply it.
+            // If source returns 1.0 (no change), value stays same.
+            if (sourceMult != 1.0f && sourceMult != 0f) {
+                mod.Value *= sourceMult;
             }
         }
     }
+    public void Remove(AbilityInstance targetAbility) {
+        targetAbility.RemoveModifiersFromSource(this);
+        handle?.NotifyRemoved();
+        //Modifiers.Clear();
+    }
 
-    public StatModifier GetModifierFor(StatType stat) {
-        return Modifiers.FirstOrDefault(m => m.Stat == stat);
+    public void Apply(AbilityInstance targetAbility) {
+        foreach (var mod in Modifiers) {
+            targetAbility.AddInstanceModifier(mod); // Add to the Stat Dictionary
+        }
     }
 }
 // We return this object which other classes can utilize, it's a very cool class, and very usefull! I'm understanding more complicated concepts lol

@@ -14,14 +14,10 @@ public class AbilitySO : ScriptableObject, IIdentifiable {
     public AbilityType type;
     public float cooldown; // Same as duration, this number is MULTIPLYING our base cooldown stat
     public bool isTimed; // timed meaning that when we reach cooldown, a timed effect will happen (such as a temp buff)
-    public List<StatTypesBase> statTypes; // Literally just used for diplaying them in the debug UI atm
+    public List<StatTypesBase> StatTypes;
     public List<ScriptableObject> effects;
     public List<CosmeticData> costumes;
 
-    internal float GetBaseModifierForStat(StatType stat) {
-        var b = statTypes.FirstOrDefault(s => s.stat == stat);
-        return b != null ? b.baseMofifier : 1; 
-    }
 }
 [System.Serializable]
 public class StatTypesBase {

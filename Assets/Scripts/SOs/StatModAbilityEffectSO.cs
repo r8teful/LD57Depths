@@ -32,24 +32,23 @@ public class StatModAbilityEffectSO : UpgradeEffect {
             Debug.LogError("Can't get target ability for upgrade. We probably don't have it unlocked yet");
             return new();
         }
-        // If this works I'm a genius 
-        // This below doesn't work because the GetTotal function just returns the modified values ( like if we'd have a buff)
-        //var currentValue = increaseType == IncreaseType.Multiply ? abilityInstance.GetTotalPercentModifier(upgradeType) :
-        //    abilityInstance.GetTotalFlatModifier(upgradeType);
-        //var nextValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, increaseType, modificationValue);
-        var currentValue = abilityInstance.GetBuffStatStrength(upgradeType,increaseType);
-        var nextValue = 0f;
-        if (increaseType == StatModifyType.Multiply) { 
-            // current value represents a MULTIPLICATIVE element, meaning we ADD the modification type, and then times it with the base stat
-            var increaseValue= currentValue + modificationValue;
-            nextValue = abilityInstance.GetEffectiveStat(upgradeType) * increaseValue; // This shouldn't be base but depending on the value we are targeting
-            // convert the "multiplicative currentValue to an actual one
-            currentValue = currentValue * abilityInstance.GetBaseStat(upgradeType);
-        } else {
-            currentValue= abilityInstance.GetBuffStatStrength(upgradeType,increaseType);
-            nextValue = currentValue + modificationValue;
+        // For brimstone
+        // Target: Brimstone
+        // Brimstone targets lazer ability
+        // Solution: 
+        // Let each AbilityInstance implement their own logic of how to get current and next value. 
+        // Instead of having it all in here
+        StatModifier tempMod = new(modificationValue, upgradeType, increaseType, this);
 
-        }
+        // Get pure multiplicative values first
+
+
+        // Now check if the ability we are targeting is applying buff, if so, we need to get the effective stat of the buff target and display that instead
+        //var currentValue = abilityInstance.GetCurValue(upgradeType) * abilityInstance.GetEffectiveStat(upgradeType);
+        var currentValue = 0; // todo
+        var nextValue = abilityInstance.GetNextValue(upgradeType,tempMod);
+        //var nextValue = abilityInstance.GetRawValue(upgradeType) + modificationValue; // This will break if modification isn't adding multipliers
+        
         return new(statName, currentValue.ToString("F2"), nextValue.ToString("F2"), ResourceSystem.IsLowerBad(upgradeType));
     }
 }

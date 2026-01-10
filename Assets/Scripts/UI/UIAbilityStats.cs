@@ -23,13 +23,15 @@ public class UIAbilityStats : MonoBehaviour {
         foreach (Transform child in _statDisplayElements.transform) {
             Destroy(child.gameObject);
         }
-        foreach (var statData in _cachedAbility.Data.statTypes) {
+        foreach (var statData in _cachedAbility.Stats) {
             var e = Instantiate(App.ResourceSystem.GetPrefab<UIStatDisplayElement>("UIStatDisplayElement"), _statDisplayElements);
-            if(statData.stat == StatType.MiningDamage && _cachedAbility.Data.ID == ResourceSystem.BrimstoneBuffID) {
+            if(statData.Key == StatType.MiningDamage && _cachedAbility.Data.ID == ResourceSystem.BrimstoneBuffID) {
                 Debug.Log("This is mining damage");
             }
-            var statValue = _cachedAbility.GetBuffStatStrength(statData.stat,statData.modType);
-            e.Init(statData.stat,statValue);
+            var statRaw = 0; // tdo 
+            //var statRaw = _cachedAbility.GetRawValue(statData.Key);
+            var statEffective = _cachedAbility.GetEffectiveStat(statData.Key);
+            e.Init(statData.Key,statEffective, statRaw);
         }
     }
 }

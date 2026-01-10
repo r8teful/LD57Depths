@@ -1,10 +1,11 @@
-﻿using Sirenix.OdinInspector;
+﻿using r8teful;
+using Sirenix.OdinInspector;
 using Steamworks.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
+using Stat = r8teful.Stat;
 // Holds runtime information about abilities.
 // Think of abilities as being behaviours we can add to the player.
 // Like a mining tool, or an ability does makes that mining tool more powerfull, or something that applies other abilities (like the biome buffs)
@@ -15,8 +16,8 @@ public class AbilityInstance {
     public GameObject Object { get; private set; }
     private NetworkedPlayer _player;
     [ShowInInspector]
-    private List<StatModifier> _instanceMods = new();
-    public List<StatModifier> InstanceMods { get => _instanceMods;}
+    private Dictionary<StatType, Stat> _stats = new();
+    public Dictionary<StatType, Stat> Stats => _stats;
     private readonly List<BuffInstance> _activeBuffs = new(); 
     private readonly Dictionary<ushort, BuffInstance> _activeBuffsByID = new();
     
@@ -37,46 +38,37 @@ public class AbilityInstance {
 
     public event Action OnModifiersChanged;
     internal void SetGameObject(GameObject gameObject) => Object = gameObject;
+    public bool TryGetBuffEffect(out IEffectBuff buff) {
+        buff = Data.effects?.OfType<IEffectBuff>().FirstOrDefault();
+        return buff != null;
+    }
     public AbilityInstance(AbilitySO data, NetworkedPlayer player, GameObject @object = null) {
-        this.Data = data;
+        Data = data;
         _player = player;
         _cooldownRemaining = 0f;
         Object = @object;
+        InitStats();
+    
     }
-    public bool HasStatModifier(StatType stat) {
-        return _instanceMods.Any(s => s.Stat == stat);
+
+    private void InitStats() {
+        if(TryGetBuffEffect(out var buff)) {
+            foreach (var baseStat in buff.Buff.Modifiers) {
+                // Buff acts as stat defaults
+                _stats.Add(baseStat.Stat, new(baseStat.Value));
+            }
+            return;
+        } else {
+            foreach (var baseStat in Data.StatTypes) {
+                _stats.Add(baseStat.stat, new(baseStat.baseMofifier));
+            }
+        }
     }
-    public bool HasStatModifiers() => _instanceMods.Count > 0;
+
     public bool HasBuff(ushort id) {
         return _activeBuffsByID.ContainsKey(id);
     }
-    internal float GetAbilityTime() {
-        if (!Data.isTimed) return 0f;
-        // In our case now, this method is called from the Brimstone ability, which will
-        //return GetEffectiveStat(StatType.Duration); // This simply doesn't work, say we have three statmods 0.2 on it, this would give us 5*max(1,0.8) = 5, we need the base dur
-        var buff = Data.effects?.OfType<IEffectBuff>().FirstOrDefault();
-        if (buff == null) return 0f;
-        var baseBuffDur = buff.Buff.GetDuration();
-        float baseDur = GetBaseStat(StatType.Duration);
-        return baseDur * (baseBuffDur + GetTotalPercentModifier(StatType.Duration));
-    }
-    internal float GetBuffStatStrength(StatType stat,StatModifyType modType) {
-        // OK here it is fucked, becaues it shows the right value if we have the lazer base for example.
-        // But for the blast we want to show the multiplier value...
-        if(modType == StatModifyType.Add)
-            return GetEffectiveStat(stat); // Simply just show the effective stat
-        
-        var buff = Data.effects?.OfType<IEffectBuff>().FirstOrDefault();
-        if(buff == null) return 0f;
-        var mod = buff.Buff.Modifiers.FirstOrDefault(m => m.Stat == stat);
-        if(mod == null) return 0f;
-        var extraMod = 0f;
-        if (HasStatModifier(stat))  // Problem here is that if we have 1.5x already, and perent modifier is 2x then we need to add them, giving us 3.5x
-            extraMod = GetTotalPercentModifier(stat); // Then we use those
-        return mod.Value + extraMod; // we just take base mod value, asumming there is just one modifiers with the stat
-        //return GetFinalAbilityMultiplier(mod.Stat, mod.Value); // Quite beautiful
-    }
-    
+ 
     // call each frame from player controller
     public void Tick(float dt) {
         // First check if any of our timed buffs are still valid
@@ -84,7 +76,7 @@ public class AbilityInstance {
             for (int i = _activeBuffs.Count - 1; i >= 0; i--) { // inverted for loop suports removing within loop
                 var b = _activeBuffs[i];
                 if (b.duration > 0 && Time.time >= b.expiresAt) {
-                    RemoveBuff(b.buffID);
+                    RemoveBuff(b);
                 }
             }
         }
@@ -95,7 +87,7 @@ public class AbilityInstance {
             if (_activeRemaining == 0f) {
                 // active ended -> start cooldown
                 OnDeactivated?.Invoke();
-                _cooldownRemaining = GetCooldown();
+                _cooldownRemaining = GetEffectiveStat(StatType.Cooldown);
                 OnCooldownChanged?.Invoke(_cooldownRemaining);
             }
         // The else here makes it so that the cooldown only starts after we have no active time remaining!
@@ -106,62 +98,44 @@ public class AbilityInstance {
         }
     }
 
-    private float GetCooldown() {
-        var baseS = Data.cooldown;
-        var modT = GetTotalPercentModifier(StatType.Cooldown);
-
-        return GetBaseStat(StatType.Cooldown) * (baseS + modT);
-    }
-
     public void AddInstanceModifier(StatModifier mod) {
-        //mod.Source = id; // tie to this ability instance (or to upgrade id)
-        _instanceMods.Add(mod);
-        OnModifiersChanged?.Invoke();
-    }
-    public void RemoveInstanceModifier(StatModifier mod) {
-        var success= _instanceMods.Remove(mod);
-        if (!success) {
-            Debug.LogError($"Coudn't remove StatModifier {mod}, it was not in the instance mod list");
+        // If the ability doesn't have this stat, we ignore it 
+        if (_stats.TryGetValue(mod.Stat, out Stat statContainer)) {
+            statContainer.AddModifier(mod);
+            OnModifiersChanged?.Invoke();
         }
-        OnModifiersChanged?.Invoke();
     }
-    private void AddInstanceModifiers(List<StatModifier> modifiersToAdd) {
-        foreach (StatModifier mod in modifiersToAdd) { 
-            _instanceMods.Add(mod);
-        } 
-        OnModifiersChanged?.Invoke();
-    }
-    public float GetTotalFlatModifier(StatType stat) {
-        return _instanceMods.Where(m => m.Stat == stat && m.Type == StatModifyType.Add).Sum(m => m.Value);
-    }
-    public float GetTotalPercentModifier(StatType stat) {
-        return _instanceMods.Where(m => m.Stat == stat && m.Type == StatModifyType.Multiply).Sum(m => m.Value);
-       //return _instanceMods.Where(m => m.Stat == stat && m.Type == IncreaseType.Multiply).Aggregate(1f, (a, m) => a * m.Value);
-    }
-    /// <summary>
-    /// Returns final stat value, including all buffs and modifiers
-    /// </summary>
-    /// <param name="stat"></param>
-    /// <returns></returns>
-    public float GetEffectiveStat(StatType stat) {
-        if(stat == StatType.Cooldown || stat == StatType.Duration) {
-            Debug.LogWarning("You should probably not get cooldown or duration from GetEffectiveStat, use their own functions instead");
-        }
-        //float baseCd = Data.GetBaseModifierForStat(stat);
-        float baseCd = GetBaseStat(stat);
+    public void RemoveModifiersFromSource(object source) {
+        bool changed = false;
 
-        var instAdds = GetTotalFlatModifier(stat);
-        var instMult = GetTotalPercentModifier(stat);
-        float cd;
-        if (stat.Equals(StatType.Duration)) {
-            cd = (baseCd + instAdds) * Mathf.Max(1, instMult); 
-        } else {
-            cd = (baseCd + instAdds) * Mathf.Max(1, instMult); // don't multiply with 0 if we have no multiplier
-
+        foreach (var statContainer in _stats.Values) {
+            if (statContainer.RemoveModifiersFromSource(source)) {
+                changed = true;
+            }
         }
 
-        return cd;
+        if (changed) OnModifiersChanged?.Invoke();
     }
+
+    public float GetEffectiveStat(StatType statType) {
+        return GetEffectiveStatInternal(statType, null);
+    }
+    // Used for UI to get the next value
+    public float GetPreviewStat(StatType statType, StatModifier tempMod) {
+        return GetEffectiveStatInternal(statType, tempMod);
+    }
+    private float GetEffectiveStatInternal(StatType stat, StatModifier tempMod) {
+        // Handle "Internal Stats" (Direct Lookup)
+        if(_stats.TryGetValue(stat, out Stat rawStat)) {
+            var modToPass = (tempMod != null && tempMod.Stat == stat) ? tempMod : null;
+
+            var baseStat = GetBaseStat(stat);
+            return baseStat * rawStat.CalculateFinalValue(modToPass);
+        }
+        return 0;
+    }
+
+
     public float GetBaseStat(StatType stat) => _player.PlayerStats.GetStatBase(stat);
     
     public BuffHandle TriggerBuff(BuffInstance buff) {
@@ -171,40 +145,27 @@ public class AbilityInstance {
             return null;
         }
         // handle
-        Action removeAction = () => RemoveBuff(id);
+        Action removeAction = () => RemoveBuff(buff);
         // Build handle
         buff.handle = new BuffHandle(id, removeAction);
         _activeBuffs.Add(buff);
         _activeBuffsByID[id] = buff;
-        var modifiersToAdd = new List<StatModifier>();
-        foreach (var modData in buff.Modifiers) {
-            modifiersToAdd.Add(modData);
-        }
-        AddInstanceModifiers(modifiersToAdd);
+        buff.Apply(this); // This will then add the censisarry instance mods to this instance
         return buff.handle;
     }
 
-    public void RemoveBuff(ushort abilityID) {
-        Debug.Log($"removing buff with ID {abilityID}");
-        // Find which stats will be affected BEFORE we remove the modifiers
-        if (!_activeBuffsByID.TryGetValue(abilityID, out var buff)) {
-            Debug.LogWarning($"Tried to remove buff with ID {abilityID} which isn't active");
+    public void RemoveBuff(BuffInstance buff) {
+        if (!_activeBuffs.Contains(buff)) {
+            Debug.LogWarning($"Tried to remove buff {buff} with ID {buff.buffID} which isn't active");
             return;
         }
-        // IMPORTANT: ONLY REMOVE WITH SOURCE MATCH, otherwise it will remove all the upgrades attached to this instance
-        List<StatModifier> modsToRemove = _instanceMods.Where(m => (object)m.Source == buff.GetBuffData()).ToList();
-        //foreach (var mod in buff.GetBuffData().Modifiers) {
-        //    modsToRemove.Add(mod);
-        //}
-        // We do it before so we could still access activeBuffs and its details
-        buff.handle?.NotifyRemoved();
         _activeBuffs.Remove(buff);
-        _activeBuffsByID.Remove(abilityID);
-        // Now recalculate only the stats that were changed
-        Debug.Log($"Removing {modsToRemove.Count} modifiers from ability {Data.displayName}");
-        foreach (var mod in modsToRemove) {
-            RemoveInstanceModifier(mod);
-        }
+        _activeBuffsByID.Remove(buff.buffID);
+
+        // The buff knows how to clean up the modifiers it created
+        buff.Remove(this);
+
+        Debug.Log($"Removed buff {buff.buffID}");
     }
     // Tick and Use similar to before but use GetEffectiveCooldown() when setting cooldownRemaining
     public bool Use(Func<bool> performEffect) {
@@ -214,7 +175,7 @@ public class AbilityInstance {
         bool effectSuccess = performEffect?.Invoke() ?? true;
         if (!effectSuccess) return false;
         // We've now performed the effects and can update cooldowns
-        var abilityT = GetAbilityTime();
+        var abilityT = GetEffectiveStat(StatType.Duration);
         if (abilityT > 0) {
             // This ability has a certain time it has to be active for 
             _activeRemaining = abilityT;
@@ -222,7 +183,7 @@ public class AbilityInstance {
             OnActiveTimeChanged?.Invoke(_activeRemaining);
         } else {
             // Instant ability 
-            _cooldownRemaining = GetCooldown();
+            _cooldownRemaining = GetEffectiveStat(StatType.Cooldown);
             OnCooldownChanged?.Invoke(_cooldownRemaining);
         }
         OnUsed?.Invoke();
@@ -238,9 +199,28 @@ public class AbilityInstance {
         OnDeactivated?.Invoke();
         if (startCooldown) {
             _cooldownRemaining = remainingCooldownOverride >= 0f ?
-                remainingCooldownOverride : GetCooldown();
+                remainingCooldownOverride : GetEffectiveStat(StatType.Cooldown);
             OnCooldownChanged?.Invoke(_cooldownRemaining);
         }
     }
+
+    internal float GetNextValue(StatType stat, StatModifier tempMod) {
+        if (TryGetBuffEffect(out var buff)) {
+            if(buff.Target == null) {
+                Debug.LogError("Found buff effect but it has no target!");
+                return -1;
+            }
+            var ab = _player.PlayerAbilities.GetAbilityInstance(buff.Target.ID);
+            if (ab == null) {
+                Debug.LogError("Found target but ability is not spawned!");
+                return -1;
+            }
+            var statV = ab.GetEffectiveStat(stat);
+            return statV * tempMod.Value;
+        }
+        // No buff ability, simply get current stat?
+        return GetEffectiveStat(stat) * tempMod.Value;
+    }
+
 }
 // Ability data -> Ability Instance -> Ability Effect -> Buff instance -> statmanager

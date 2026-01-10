@@ -13,6 +13,7 @@ public interface IEffectActive {
 }
 public interface IEffectBuff {
     BuffSO Buff { get; }
+    AbilitySO Target { get; }
 }
 // So we can have a generic "Add ability with prefab" SO
 public interface IInitializableAbility {

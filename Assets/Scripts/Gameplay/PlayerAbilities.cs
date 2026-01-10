@@ -82,23 +82,6 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
         // Keep passive effect code centralized (or data-driven)
         // e.g., if you have IPassiveEffect components on ScriptableObject, call data.Apply(player)
     }
-    // Upgrading abilities...
-    public void ApplyUpgrade(UpgradeRecipeSO up) {
-        /* Core idea is that we need to add a statModifer TO the ability instance,  
-         we'll have to loop through all the upgrade effects and somehow apply them to the upgrade, or find which abilities are effected, idk
-        surelly the upgrade recipe will be specifically for an ability, so we would know that we could apply the upgrade to it
-         */
-
-        foreach (var effect in up.GetTargetEffects()) {
-            var mod = effect.GetStatModifer();
-            if (_abilities.TryGetValue(effect.targetAbility.ID, out var inst)) {
-                inst.AddInstanceModifier(mod);
-            } else {
-                Debug.LogWarning("We don't have the ability yet and we are trying to upgrade it");
-            }
-        }
-
-    }
 
     private void QueuePendingUpgradeForAbility(UpgradeRecipeSO up, StatModifier mod) {
         // store pending to apply later when ability added
