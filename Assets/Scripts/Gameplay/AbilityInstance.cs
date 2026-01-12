@@ -40,18 +40,16 @@ public class AbilityInstance {
     internal void SetGameObject(GameObject gameObject) => Object = gameObject;
 
 
+   public bool TryGetBuffEffect(out IEffectBuff buff) {
+        buff = Data.effects?.OfType<IEffectBuff>().FirstOrDefault();
+        return buff != null;
+    }
     // If true, that means that the stats of this ability DEPEND on a different ability, will have to further
     // extend this or find a better way of doing it if one ability has a target, and another one not.
     // Anyway, because currently this is the case with the brimstone buff, we set this to true, and then
     // we will look through the effect list, find the buff that has another ability target, and then we multiply this abilities stat increases by
     // the effective value of the buff target. Meaning, if base is 10, lazer is 20 damage, and brimstone is 1.5 well get 30 output and not 15, because brimstone depends on lazer 
     // Basically we need a bool like this to know if when we get the effective value we use multiply by the base stat or the target ability stat
-    public bool IsTargetAbility() => TryGetBuffAbilityTarget(out _);
-    
-    public bool TryGetBuffEffect(out IEffectBuff buff) {
-        buff = Data.effects?.OfType<IEffectBuff>().FirstOrDefault();
-        return buff != null;
-    }
     public bool TryGetBuffAbilityTarget(out AbilityInstance ability) {
         ability = null;
         if (TryGetBuffEffect(out var buff)) {
@@ -75,10 +73,12 @@ public class AbilityInstance {
         _cooldownRemaining = 0f;
         Object = @object;
         InitStats();
-    
+
     }
 
     private void InitStats() {
+        // Cooldown is specific to the ability and not the buff, thats why we add it here
+        if(Data.cooldown > 0) _stats.Add(StatType.Cooldown, new(Data.cooldown));
         if(TryGetBuffEffect(out var buff)) {
             foreach (var baseStat in buff.Buff.Modifiers) {
                 // Buff acts as stat defaults
@@ -155,14 +155,20 @@ public class AbilityInstance {
             var modToPass = (tempMod != null && tempMod.Stat == stat) ? tempMod : null;
 
             float baseStat;
+            bool isAbilitySpecificStat = (stat == StatType.Cooldown) || (stat == StatType.Duration); // Cooldown and duration are always specific to THIS ability
             // If this ability has a buff with a valid target, the effective stats of this ability is multiplied by that targets effective stats and not the players base stat
             // This works because we would already have multiplied the targets stats by the base stats
-            if (TryGetBuffAbilityTarget(out var targetAbility)) {
+            if (!isAbilitySpecificStat && TryGetBuffAbilityTarget(out var targetAbility)) {
                 baseStat = targetAbility.GetEffectiveStat(stat); // This could lead to recursive calls, which is trippy
             } else {
                 baseStat = GetBaseStat(stat);
             }
-            return baseStat * rawStat.CalculateFinalValue(modToPass);
+            var modifier = rawStat.CalculateFinalValue(modToPass);
+            if (stat == StatType.Cooldown) {
+                // cooldown is also special, the more cooldown we have, the quicker the cooldown will be
+                return baseStat / MathF.Max(0.001f, modifier);
+            }
+            return baseStat * modifier;
             // The line above basically says that all raw stat are treated as a multiplier,
             // We might not want this to happen for certain abilities, or stats, but right now this is the case
         }
@@ -178,6 +184,12 @@ public class AbilityInstance {
         }
         return -1;
     } 
+    public Stat GetStat(StatType stat) {
+        if (_stats.TryGetValue(stat, out Stat rawStat)) {
+            return rawStat;
+        }
+        return null;
+    }
 
     public float GetBaseStat(StatType stat) => _player.PlayerStats.GetStatBase(stat);
     

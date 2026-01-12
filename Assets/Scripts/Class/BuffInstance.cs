@@ -40,14 +40,21 @@ public class BuffInstance {
 
     public void IncreaseBuffPower(AbilityInstance source) {
         foreach (var mod in Modifiers) {
-            // Check Source for a matching stat multiplier
-            // Use 1.0f as default if the source doesn't track this stat
-            float sourceMult = source.GetEffectiveStat(mod.Stat);
+            // We need to check if the source stat has modifiers. Source stat is the brimstoneBuffAbility, if that has 
+            // any modifiers on its stats, we need to add those modifiers onto the modifiers of the buff, this is what makes it stronger
 
-            // If source has a valid multiplier (e.g., 1.5x damage), apply it.
-            // If source returns 1.0 (no change), value stays same.
-            if (sourceMult != 1.0f && sourceMult != 0f) {
-                mod.Value *= sourceMult;
+            // But instead of doing that, we could simple SET the buff value to the value of what the stats are in the buff ability, right?
+            // This could work because we set the _stats equal to the buffSO values, and if we'd upgrade the ability those stats would change aswell
+            mod.Value = source.GetRawStat(mod.Stat);
+
+            // However, because this simply can't be that easy, the duration needs to know the effective because that is
+            // on the source itself
+            if (mod.Stat == StatType.Duration) {
+                var dur = source.GetEffectiveStat(mod.Stat);
+                mod.Value = dur;
+                duration = dur;
+                timeRemaining = dur;
+                expiresAt = Time.time + dur;
             }
         }
     }

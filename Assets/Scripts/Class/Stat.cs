@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 namespace r8teful {
     public class Stat {
         public float BaseValue; 
@@ -21,7 +23,8 @@ namespace r8teful {
                 return _value;
             }
         }
-    
+        internal bool HasModifiers() => _modifiers.Count > 0;
+
         public void AddModifier(StatModifier mod) {
             _isDirty = true;
             _modifiers.Add(mod);
@@ -59,9 +62,9 @@ namespace r8teful {
             float baseValue = BaseValue;
 
             var flat = GetTotalFlatModifier(extraMod);
-            var percentAdd = GetTotalPercentModifier(extraMod);
-            var finalValue = (baseValue + flat) * (1+percentAdd);
-            //var finalValue = (baseValue + flat) * Mathf.Max(1,percentAdd);
+            var percentAdd = GetTotalPercentModifier(extraMod); // Multiplier value we want to use if its a buf
+            //var finalValue = (baseValue + flat) * (1+percentAdd); 
+            var finalValue = (baseValue + flat) * Mathf.Max(1,percentAdd);
             /*
              * Maybe this later?
             // Apply Multiplicative Percentages 
@@ -73,6 +76,5 @@ namespace r8teful {
     
             return finalValue; // Math.Max(0, finalValue) if you want no negatives
         }
-    
     }
 }
