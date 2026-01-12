@@ -200,3 +200,19 @@ We should treat the duration and cooldown the same way as any other stat. Say ou
 
 
 
+
+
+CCooldown doesn't work right now because we multiply the value with 0.2 giving us max(1,0.2) so that wouldn't work 
+
+Solution would be to internally change the cooldown to go lower when its higher. Would it be speed? 10 seconds cooldown, 1.2 cooldown multiplier, that would then be (1.2-1 \* 10 ) = 8s say its 2 then we would get (2-1 \* 10 ) = 5? no 
+
+it will be base/cooldownStat
+
+
+
+
+
+
+
+
+

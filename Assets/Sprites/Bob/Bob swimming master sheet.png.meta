@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f610ab393e4cb2347966d794a636a1ee
+guid: d647620a2c936c640a91f25172d910cf
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,111 +97,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Character2_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 14
-        height: 24
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7f9857edb1c32c190800000000000000
-      internalID: -7943720702334105097
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: BobHead
-      rect:
-        serializedVersion: 2
-        x: 1
-        y: 135
-        width: 11
-        height: 13
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1f915d1a2bd26b84394877940dfeaa4f
-      internalID: -476037312
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: BobBody
-      rect:
-        serializedVersion: 2
-        x: 15
-        y: 139
-        width: 9
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 415038a9b24b4b04fb0ae2b7e9d29507
-      internalID: -2077235406
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: BobArm
-      rect:
-        serializedVersion: 2
-        x: 27
-        y: 140
-        width: 9
-        height: 3
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 71857d1162793184da63b18d6da1f910
-      internalID: -885760798
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: BobSwim0
       rect:
         serializedVersion: 2
-        x: 38
-        y: 137
-        width: 9
-        height: 9
+        x: 0
+        y: 81
+        width: 24
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7c623490399a6454a802b2bc3240652b
-      internalID: -1249093287
+      spriteID: ddd5014cdaf9bc3459ec13750f55c33d
+      internalID: -1426106323
       vertices: []
       indices: 
       edges: []
@@ -210,20 +122,20 @@ TextureImporter:
       name: BobSwim1
       rect:
         serializedVersion: 2
-        x: 50
-        y: 137
-        width: 9
-        height: 9
+        x: 24
+        y: 81
+        width: 24
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ed76c54d7653d2a479c412107063bcb1
-      internalID: 1649876853
+      spriteID: 37915bc6dff9f164b9ba4519d67a5bc3
+      internalID: -130823416
       vertices: []
       indices: 
       edges: []
@@ -232,20 +144,20 @@ TextureImporter:
       name: BobSwim2
       rect:
         serializedVersion: 2
-        x: 61
-        y: 137
-        width: 9
-        height: 9
+        x: 48
+        y: 81
+        width: 24
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c6f02168f86c6be4aa49f827fcdc9fb1
-      internalID: 188525590
+      spriteID: 515e07b16075b8d4eb67f27bf8d4b001
+      internalID: -1943863138
       vertices: []
       indices: 
       edges: []
@@ -254,64 +166,108 @@ TextureImporter:
       name: BobSwim3
       rect:
         serializedVersion: 2
-        x: 73
-        y: 137
-        width: 9
-        height: 9
+        x: 72
+        y: 81
+        width: 24
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5a9cd788226ef2c478971ade655d2b8b
-      internalID: -1312989898
+      spriteID: 3992f428626e11344be891da39d3ade5
+      internalID: 1389348742
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: BobSwim4
+      name: BobSwimCactus0
       rect:
         serializedVersion: 2
-        x: 86
-        y: 137
-        width: 9
-        height: 9
+        x: 0
+        y: 62
+        width: 24
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e7feb0ca656bcec43b9cc9d863713542
-      internalID: -1245597103
+      spriteID: d615a4af7f5468a4eb21df74cf7dd4dc
+      internalID: 197629316
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: BobArmStand
+      name: BobSwimCactus1
       rect:
         serializedVersion: 2
-        x: 101
-        y: 140
-        width: 3
-        height: 4
+        x: 24
+        y: 62
+        width: 24
+        height: 19
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: baf1c34535036b64487d7a2cc553ddd7
-      internalID: 972738676
+      spriteID: bffd90701ac7d534bb0eef32f6eadfa6
+      internalID: 305009782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BobSwimCactus2
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 62
+        width: 24
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3c7a2630e27db24a8260a8ac2de5044
+      internalID: -1748810088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BobSwimCactus3
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 62
+        width: 24
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 694046eb39ec94747b2b76507b697097
+      internalID: -1568929871
       vertices: []
       indices: 
       edges: []
@@ -320,7 +276,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 8021ab03e1bc21d429504ce1020bcbe8
+    spriteID: 23295aca17719e843aebf6414ad5ed70
     internalID: 0
     vertices: []
     indices: 
@@ -328,19 +284,18 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":24.0,"y":19.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      BobArm: -885760798
-      BobArmStand: 972738676
-      BobBody: -2077235406
-      BobHead: -476037312
-      BobSheet_0: 401951785
-      BobSwim0: -1249093287
-      BobSwim1: 1649876853
-      BobSwim2: 188525590
-      BobSwim3: -1312989898
-      BobSwim4: -1245597103
-      Character2_0: -7943720702334105097
+      BobSwim0: -1426106323
+      BobSwim1: -130823416
+      BobSwim2: -1943863138
+      BobSwim3: 1389348742
+      BobSwimCactus0: 197629316
+      BobSwimCactus1: 305009782
+      BobSwimCactus2: -1748810088
+      BobSwimCactus3: -1568929871
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: EndingLoopAnim
+  m_Name: BobSwimAnim
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,21 +21,21 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -839046209, guid: ddc371e59243ae440bde2426794adee5, type: 3}
+      value: {fileID: -1426106323, guid: d647620a2c936c640a91f25172d910cf, type: 3}
     - time: 0.083333336
-      value: {fileID: 1979277439, guid: ddc371e59243ae440bde2426794adee5, type: 3}
+      value: {fileID: -130823416, guid: d647620a2c936c640a91f25172d910cf, type: 3}
     - time: 0.16666667
-      value: {fileID: -1629424132, guid: ddc371e59243ae440bde2426794adee5, type: 3}
+      value: {fileID: -1943863138, guid: d647620a2c936c640a91f25172d910cf, type: 3}
     - time: 0.25
-      value: {fileID: 702873818, guid: ddc371e59243ae440bde2426794adee5, type: 3}
+      value: {fileID: 1389348742, guid: d647620a2c936c640a91f25172d910cf, type: 3}
     - time: 0.33333334
-      value: {fileID: 1904378578, guid: ddc371e59243ae440bde2426794adee5, type: 3}
+      value: {fileID: -1943863138, guid: d647620a2c936c640a91f25172d910cf, type: 3}
     - time: 0.41666666
-      value: {fileID: 2037719815, guid: ddc371e59243ae440bde2426794adee5, type: 3}
+      value: {fileID: -130823416, guid: d647620a2c936c640a91f25172d910cf, type: 3}
     attribute: m_Sprite
     path: 
-    classID: 114
-    script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+    classID: 212
+    script: {fileID: 0}
     flags: 2
   m_SampleRate: 12
   m_WrapMode: 0
@@ -46,20 +46,20 @@ AnimationClip:
     genericBindings:
     - serializedVersion: 2
       path: 0
-      attribute: 2015549526
-      script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-      typeID: 114
-      customType: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
       isPPtrCurve: 1
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: -839046209, guid: ddc371e59243ae440bde2426794adee5, type: 3}
-    - {fileID: 1979277439, guid: ddc371e59243ae440bde2426794adee5, type: 3}
-    - {fileID: -1629424132, guid: ddc371e59243ae440bde2426794adee5, type: 3}
-    - {fileID: 702873818, guid: ddc371e59243ae440bde2426794adee5, type: 3}
-    - {fileID: 1904378578, guid: ddc371e59243ae440bde2426794adee5, type: 3}
-    - {fileID: 2037719815, guid: ddc371e59243ae440bde2426794adee5, type: 3}
+    - {fileID: -1426106323, guid: d647620a2c936c640a91f25172d910cf, type: 3}
+    - {fileID: -130823416, guid: d647620a2c936c640a91f25172d910cf, type: 3}
+    - {fileID: -1943863138, guid: d647620a2c936c640a91f25172d910cf, type: 3}
+    - {fileID: 1389348742, guid: d647620a2c936c640a91f25172d910cf, type: 3}
+    - {fileID: -1943863138, guid: d647620a2c936c640a91f25172d910cf, type: 3}
+    - {fileID: -130823416, guid: d647620a2c936c640a91f25172d910cf, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}

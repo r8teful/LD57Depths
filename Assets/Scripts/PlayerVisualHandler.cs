@@ -9,14 +9,13 @@ using static PlayerMovement;
 public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     // We need to rework this to make it easier for us to add costumes and stuff, needs to work with animations, and going into
     // submarine
-
-
-    private SpriteRenderer sprite; 
+    [SerializeField] private SpriteRenderer sprite; 
     [SerializeField] private SpriteRenderer _bobHand; 
+    [SerializeField] private Sprite _bobHandNormal; 
+    [SerializeField] private Sprite _bobHandCactus; 
     [SerializeField] private BobBackVisual _bobBackHandler; 
-    [SerializeField] private Transform _bobBackVisual; 
-    private Animator animator;
-    private NetworkAnimator animatorNetwork;
+    [SerializeField] private Transform _bobBackVisual;
+    [SerializeField] private Animator animator;
     private bool _hasFlippers;
     private string currentAnimation = "";
     public Collider2D playerSwimCollider;
@@ -32,6 +31,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     public int InitializationOrder => 2;
     private bool hasInitializedNonOwner; // Sometimes the init function gets called twice so this is just for that
 
+    private bool HasCactus => _localPlayer.PlayerAbilities.HasAbility(ResourceSystem.CactusAbilityID);
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         InitCommon();
         _localPlayer = playerParent;
@@ -52,9 +52,6 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         _isFlipped.OnChange += OnFlipChanged;
     }
     private void InitCommon() {
-        animator = GetComponent<Animator>();
-        animatorNetwork = GetComponent<NetworkAnimator>();
-        sprite = GetComponent<SpriteRenderer>();
         lightIntensityOn = lightSpot.intensity;
         _bobBackHandler.SetVisualNone();
         // Surelly we have to subscribe to the upgrade purchase event here? For example, I purchase an upgrade. 
@@ -118,12 +115,21 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
 
         if (currentInput.magnitude != 0) {
             // So ugly, will break if we need more than just flippers on the actual animation but this works
-            ChangeAnimation(_hasFlippers ? "SwimFlippers" : "Swim");
+            //ChangeAnimation(_hasFlippers ? "SwimFlippers" : "Swim");
+            ChangeAnimation(HasCactus ? "CactusSwim" : "Swim");
         } else {
-            ChangeAnimation(_hasFlippers ? "SwimIdleFlippers" : "SwimIdle");
+            //ChangeAnimation(_hasFlippers ? "SwimIdleFlippers" : "SwimIdle");
+            ChangeAnimation(HasCactus ? "CactusSwimIdle" : "SwimIdle");
         }
+        SetHandSprite();
         CheckFlipSprite(currentInput.x);
     }
+
+    private void SetHandSprite() {
+        // This is so uggly and we need a better way to handle visuals but this works
+        _bobHand.sprite = HasCactus ? _bobHandCactus : _bobHandNormal;
+    }
+
     internal void OnStateEnter(PlayerState state) {
         SetHitbox(state);
         switch (state) {
@@ -233,7 +239,6 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         if (currentAnimation != animationName) {
             currentAnimation = animationName;
             animator.CrossFade(animationName, 0.2f,0);
-            animatorNetwork.CrossFade(animationName, 0.2f, 0);
             // animator.Play(animationName); // Or use this one instead of crossfade
         }
     }
