@@ -17,11 +17,13 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     private bool _isShooting;
     private bool _wasShootingLastFrame;
     private MiningLazerVisualNew _visual;
+    private bool _firstShot;
+    public Vector2 CurrentDir => _currentDirection;
     public void Init(AbilityInstance instance, NetworkedPlayer player) {
         _abilityInstance = instance;
         _player = player;
         _visual = GetComponent<MiningLazerVisualNew>();
-        _visual.Init(player,instance);
+        _visual.Init(player,instance,this);
     }
     private void Update() {
         UpdateCurDir();
@@ -55,6 +57,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     }
 
     private void OnStartShoot() {
+        _firstShot = true;
         _visual.StartVisual();
 
     }
@@ -77,15 +80,13 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         // Handle the "first shot" logic to either snap or use memory
         
         
-        // TODO obviously!!
-        var _isFirstShot = true; // TODO obviously!!
-        if (_isFirstShot) {
+        if (_firstShot) {
             if (Time.time - _timeToolStopped < directionMemoryTime && _lastKnownDirection.sqrMagnitude > 0) {
                 _currentDirection = _lastKnownDirection;
             } else {
                 _currentDirection = targetDirection; // Snap instantly on the first frame
             }
-            _isFirstShot = false;
+            _firstShot = false;
         } else {
             // Smoothly rotate towards the target direction over time
             float maxAngleDelta = _abilityInstance.GetEffectiveStat(StatType.MiningRotationSpeed) * Time.deltaTime; // Use Time.deltaTime for per-frame smoothness

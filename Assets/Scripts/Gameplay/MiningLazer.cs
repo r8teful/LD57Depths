@@ -21,7 +21,7 @@ public class MiningLazer : MiningBase {
     private float _timeToolStopped;
     private bool _isFirstShot; // Flag to handle initial direction logic
 
-
+    public Vector2 GetCurrentDir => _currentDirection;
     public override void OwnerUpdate() {
         //Debug.Log(_isMining);
         if (!_isMining) {

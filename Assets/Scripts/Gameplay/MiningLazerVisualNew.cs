@@ -10,15 +10,17 @@ public class MiningLazerVisualNew : MonoBehaviour {
     private ParticleSystem _hitParticleSystem;
     private NetworkedPlayer _player;
     private AbilityInstance _abilityInstance;
+    private MiningLazerNew _lazerLogic;
     private AudioSource lazerSound;
     private bool _isUsingAbility;
 
     private void Awake() {
         SetupParticlesVisual();
     }
-    public void Init(NetworkedPlayer player, AbilityInstance ability) {
+    public void Init(NetworkedPlayer player, AbilityInstance ability, MiningLazerNew miningLazerNew) {
         _player = player;
         _abilityInstance = ability; // Need this for lazer length 
+        _lazerLogic = miningLazerNew;
     }
     private void SetupParticlesVisual() {
         _hitParticleSystem = Instantiate(ParticlesPrefabHit);
@@ -32,7 +34,8 @@ public class MiningLazerVisualNew : MonoBehaviour {
     }
 
     public void HandleVisualUpdate() {
-        Vector2 dir = _player.InputManager.GetDirFromPos(transform.position);
+        //Vector2 dir = _player.InputManager.GetDirFromPos(transform.position);
+        Vector2 dir = _lazerLogic.CurrentDir; //  
         // Update visuals each frame when mining
         //bool isAbility = _player.InputManager.IsUsingAbility; // This is not really what we are wanting to know here
         // All we want to know if is the brimstone ability is active, so we can do those visuals. 
