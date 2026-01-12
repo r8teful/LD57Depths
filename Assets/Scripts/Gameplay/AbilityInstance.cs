@@ -38,9 +38,36 @@ public class AbilityInstance {
 
     public event Action OnModifiersChanged;
     internal void SetGameObject(GameObject gameObject) => Object = gameObject;
+
+
+    // If true, that means that the stats of this ability DEPEND on a different ability, will have to further
+    // extend this or find a better way of doing it if one ability has a target, and another one not.
+    // Anyway, because currently this is the case with the brimstone buff, we set this to true, and then
+    // we will look through the effect list, find the buff that has another ability target, and then we multiply this abilities stat increases by
+    // the effective value of the buff target. Meaning, if base is 10, lazer is 20 damage, and brimstone is 1.5 well get 30 output and not 15, because brimstone depends on lazer 
+    // Basically we need a bool like this to know if when we get the effective value we use multiply by the base stat or the target ability stat
+    public bool IsTargetAbility() => TryGetBuffAbilityTarget(out _);
+    
     public bool TryGetBuffEffect(out IEffectBuff buff) {
         buff = Data.effects?.OfType<IEffectBuff>().FirstOrDefault();
         return buff != null;
+    }
+    public bool TryGetBuffAbilityTarget(out AbilityInstance ability) {
+        ability = null;
+        if (TryGetBuffEffect(out var buff)) {
+            if (buff.Target == null) {
+                Debug.LogError("Found buff effect but it has no target!");
+                return false;
+            }
+            var ab = _player.PlayerAbilities.GetAbilityInstance(buff.Target.ID);
+            if (ab == null) {
+                Debug.LogError("Found target but ability is not spawned!");
+                return false;
+            }
+            ability = ab;
+            return true;
+        }
+        return false;
     }
     public AbilityInstance(AbilitySO data, NetworkedPlayer player, GameObject @object = null) {
         Data = data;
@@ -116,25 +143,41 @@ public class AbilityInstance {
 
         if (changed) OnModifiersChanged?.Invoke();
     }
-
-    public float GetEffectiveStat(StatType statType) {
-        return GetEffectiveStatInternal(statType, null);
-    }
-    // Used for UI to get the next value
-    public float GetPreviewStat(StatType statType, StatModifier tempMod) {
-        return GetEffectiveStatInternal(statType, tempMod);
-    }
-    private float GetEffectiveStatInternal(StatType stat, StatModifier tempMod) {
+    /// <summary>
+    /// Get the final value of this stat
+    /// </summary>
+    /// <param name="statType"></param>
+    /// <param name="tempMod">Optional parameter to calculate the next value</param>
+    /// <returns></returns>
+    public float GetEffectiveStat(StatType stat, StatModifier tempMod = null) {
         // Handle "Internal Stats" (Direct Lookup)
-        if(_stats.TryGetValue(stat, out Stat rawStat)) {
+        if (_stats.TryGetValue(stat, out Stat rawStat)) {
             var modToPass = (tempMod != null && tempMod.Stat == stat) ? tempMod : null;
 
-            var baseStat = GetBaseStat(stat);
+            float baseStat;
+            // If this ability has a buff with a valid target, the effective stats of this ability is multiplied by that targets effective stats and not the players base stat
+            // This works because we would already have multiplied the targets stats by the base stats
+            if (TryGetBuffAbilityTarget(out var targetAbility)) {
+                baseStat = targetAbility.GetEffectiveStat(stat); // This could lead to recursive calls, which is trippy
+            } else {
+                baseStat = GetBaseStat(stat);
+            }
             return baseStat * rawStat.CalculateFinalValue(modToPass);
+            // The line above basically says that all raw stat are treated as a multiplier,
+            // We might not want this to happen for certain abilities, or stats, but right now this is the case
         }
         return 0;
     }
 
+    /// <summary>
+    /// Raw is simply the final multiplier this instance has to the base stat
+    /// </summary>
+    public float GetRawStat(StatType stat) {
+        if (_stats.TryGetValue(stat, out Stat rawStat)) {
+            return rawStat.Value;
+        }
+        return -1;
+    } 
 
     public float GetBaseStat(StatType stat) => _player.PlayerStats.GetStatBase(stat);
     
@@ -203,24 +246,5 @@ public class AbilityInstance {
             OnCooldownChanged?.Invoke(_cooldownRemaining);
         }
     }
-
-    internal float GetNextValue(StatType stat, StatModifier tempMod) {
-        if (TryGetBuffEffect(out var buff)) {
-            if(buff.Target == null) {
-                Debug.LogError("Found buff effect but it has no target!");
-                return -1;
-            }
-            var ab = _player.PlayerAbilities.GetAbilityInstance(buff.Target.ID);
-            if (ab == null) {
-                Debug.LogError("Found target but ability is not spawned!");
-                return -1;
-            }
-            var statV = ab.GetEffectiveStat(stat);
-            return statV * tempMod.Value;
-        }
-        // No buff ability, simply get current stat?
-        return GetEffectiveStat(stat) * tempMod.Value;
-    }
-
 }
 // Ability data -> Ability Instance -> Ability Effect -> Buff instance -> statmanager

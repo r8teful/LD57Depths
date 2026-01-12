@@ -36,19 +36,12 @@ public class StatModAbilityEffectSO : UpgradeEffect {
         // Target: Brimstone
         // Brimstone targets lazer ability
         // Solution: 
-        // Let each AbilityInstance implement their own logic of how to get current and next value. 
-        // Instead of having it all in here
+       
         StatModifier tempMod = new(modificationValue, upgradeType, increaseType, this);
 
-        // Get pure multiplicative values first
-
-
-        // Now check if the ability we are targeting is applying buff, if so, we need to get the effective stat of the buff target and display that instead
-        //var currentValue = abilityInstance.GetCurValue(upgradeType) * abilityInstance.GetEffectiveStat(upgradeType);
-        var currentValue = 0; // todo
-        var nextValue = abilityInstance.GetNextValue(upgradeType,tempMod);
-        //var nextValue = abilityInstance.GetRawValue(upgradeType) + modificationValue; // This will break if modification isn't adding multipliers
-        
+        var currentValue = abilityInstance.GetEffectiveStat(upgradeType); 
+        var nextValue = abilityInstance.GetEffectiveStat(upgradeType,tempMod);
+ 
         return new(statName, currentValue.ToString("F2"), nextValue.ToString("F2"), ResourceSystem.IsLowerBad(upgradeType));
     }
 }
