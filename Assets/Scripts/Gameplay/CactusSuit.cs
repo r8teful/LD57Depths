@@ -1,113 +1,79 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class CactusSuit : MonoBehaviour, IInitializableAbility {
-
-    public Rigidbody2D rb; // assign in inspector (will fallback to GetComponent in Awake)
-
-    [Header("Detection")]
-    [Tooltip("How many previous FixedUpdate frames to look back when deciding pre-impact speed.")]
-    public int lookBackFrames = 3;
-    [Tooltip("Minimum previous speed magnitude required to damage the tile")]
-    public float minSignificantSpeed = 1.5f;
-    [Tooltip("How small the current speed must be to count as stopped")]
-    public float stopThreshold = 0.05f; // near zero
-    [Tooltip("Minimum opposing speed required to count as a bounce")]
-    public float bounceMinOpposingSpeed = 0.5f;
-    [Tooltip("Minimum drop required between previous max and current to consider it a big change.")]
-    public float minDelta = 1.0f;
-    [Tooltip("Ignore repeated triggers for this many fixed-updates after a detection")]
-    public int cooldownFrames = 3;
-
-    // internal
-    Queue<Vector2> _history;
-    int _cooldownCounter;
+    private AbilityInstance _abilityInstance;
+    private PlayerAbilities _owner;
     private NetworkedPlayer _player;
+    private Coroutine _loop;
 
+    [Header("Bullet Settings")]
+    public GameObject cactusProjectile;      
+    public int bulletsPerBurst = 8;
+    public float angleRandomness = 5f;
+    public float bulletSpeed = 8f;
+    public float bulletLifetime = 5f;
     public void Init(AbilityInstance instance, NetworkedPlayer player) {
-        Debug.Log("Cactus suit equiped!");
-        _history = new Queue<Vector2>(lookBackFrames + 1);
-        _cooldownCounter = 0;
         _player = player;
+        _abilityInstance = instance;
+        _loop = StartCoroutine(FireLoop());
     }
-    private void Start() {
-        // Playermovement is not initialized in our init functoin, so wait until start to get the reference
-        if (rb == null) rb = NetworkedPlayer.LocalInstance.PlayerMovement.GetRigidbody();
+
+    IEnumerator FireLoop() {
+        while (true) {
+            if (_abilityInstance == null) yield break; 
+            float wait = _abilityInstance.GetEffectiveStat(StatType.Cooldown); // this clamps 
+            Shoot();
+            yield return new WaitForSeconds(wait);
+        }
     }
-    private void OnDestroy() {
-        Debug.Log("Cactus suit GONE!");
-    }
-    void FixedUpdate() {
-        if (rb == null) return;
 
-        Vector2 current = rb.linearVelocity;
-        //Debug.Log(current);
-        // Check only if we have any history to compare against
-        if (_history.Count > 0 && _cooldownCounter <= 0) {
-            // Find maximum absolute previous value for each axis and keep the signed val at that moment
-            float maxPrevXAbs = 0f; float signedAtMaxX = 0f;
-            float maxPrevYAbs = 0f; float signedAtMaxY = 0f;
-
-            foreach (var v in _history) {
-                float ax = Mathf.Abs(v.x);
-                if (ax > maxPrevXAbs) { maxPrevXAbs = ax; signedAtMaxX = v.x; }
-                float ay = Mathf.Abs(v.y);
-                if (ay > maxPrevYAbs) { maxPrevYAbs = ay; signedAtMaxY = v.y; }
-            }
-
-            float currentXAbs = Mathf.Abs(current.x);
-            float currentYAbs = Mathf.Abs(current.y);
-
-            if (maxPrevXAbs >= minSignificantSpeed) {
-                bool stopped =
-                    currentXAbs <= stopThreshold &&
-                    (maxPrevXAbs - currentXAbs) >= minDelta;
-
-                bool bounced =
-                    Mathf.Sign(signedAtMaxX) != Mathf.Sign(current.x) &&
-                    Mathf.Abs(current.x) >= bounceMinOpposingSpeed;
-
-                if (stopped || bounced) {
-                    TriggerImpact("X", maxPrevXAbs, signedAtMaxX, current);
-                }
-            }
-
-            // Y axis
-            if (maxPrevYAbs >= minSignificantSpeed) {
-                bool stopped =
-                    currentYAbs <= stopThreshold &&
-                    (maxPrevYAbs - currentYAbs) >= minDelta;
-
-                bool bounced =
-                    Mathf.Sign(signedAtMaxY) != Mathf.Sign(current.y) &&
-                    Mathf.Abs(current.y) >= bounceMinOpposingSpeed;
-
-                if (stopped || bounced) {
-                    TriggerImpact("Y", maxPrevYAbs, signedAtMaxY, current);
-                }
-            }
+    // The Shoot function the user requested
+    void Shoot() {
+        if (cactusProjectile == null) {
+            Debug.LogWarning("Shooter: bulletPrefab is not assigned.");
+            return;
         }
 
-        // push current into history, limit length to lookBackFrames
-        _history.Enqueue(current);
-        while (_history.Count > lookBackFrames) _history.Dequeue();
+        int count = Mathf.Max(1, bulletsPerBurst);
+        float angleStep = 360f / count;
 
-        if (_cooldownCounter > 0) _cooldownCounter--;
-    }
+        float burstRotation = Random.Range(0f, 360f);
 
-    private void TriggerImpact(string axis, float preImpactMagnitudeAbs, float signedValueAtMax, Vector2 currentVelocity) {
-        //Debug.Log($"Hard impact on axis {axis}: pre-impact speed = {preImpactMagnitudeAbs:F2} (signed {signedValueAtMax:F2}) -> current {(axis == "X" ? currentVelocity.x : currentVelocity.y):F2}");
-        var dmg = GetContactDamage(preImpactMagnitudeAbs);
-        var contacts = _player.PlayerMovement.ContactsMostRecent;
-        foreach (var contact in contacts) {
-            _player.CmdRequestDamageTile(contact.point, dmg);
+        float[] angles = new float[count];
+        for (int i = 0; i < count; i++) {
+            float baseAngle = burstRotation + i * angleStep;
+            float jitter = Random.Range(-angleRandomness, angleRandomness);
+            angles[i] = baseAngle + jitter;
         }
-        // start cooldown to avoid repeated triggers for the same collision
-        _cooldownCounter = cooldownFrames;
+
+        // Spawn bullets for each angle
+        for (int i = 0; i < count; i++) {
+            float a = angles[i];
+            float rad = a * Mathf.Deg2Rad;
+            Vector2 dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)).normalized;
+
+            // Get a bullet instance (pooled or new)
+            CactusProjectile prickle = null;
+            GameObject go = Instantiate(cactusProjectile);
+            prickle = go.GetComponent<CactusProjectile>();
+            if (prickle == null) {
+                Debug.LogError("bulletPrefab does not have a Bullet component.");
+                Destroy(go);
+                continue;
+                
+            }
+            // Initialize and position the bullet
+            prickle.transform.SetPositionAndRotation(transform.position, Quaternion.Euler(0f, 0f, a));
+            prickle.gameObject.SetActive(true);
+            prickle.Init(_player, dir, bulletSpeed, bulletLifetime);
+        }
     }
 
-    private float GetContactDamage(float velocity) {
-        return velocity;
+    void OnDestroy() {
+        if (_loop != null) StopCoroutine(_loop);
     }
 }

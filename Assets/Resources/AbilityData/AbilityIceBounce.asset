@@ -10,18 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0bd08606626a8904b990accdb65bb0aa, type: 3}
-  m_Name: AbilityCactusSuit
+  m_Name: AbilityIceBounce
   m_EditorClassIdentifier: 
-  id: 101
+  id: 103
   icon: {fileID: 0}
-  displayName: Its prickly
+  displayName: Bouncy
   type: 0
   cooldown: 0
   isTimed: 0
-  StatTypes:
-  - stat: 1000
-    modType: 1
-    baseMofifier: 10
+  StatTypes: []
   effects:
   - {fileID: 11400000, guid: 4956db97d6207f140b5a9a3536dcfa8d, type: 2}
   costumes:
