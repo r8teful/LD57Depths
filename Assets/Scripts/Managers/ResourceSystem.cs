@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 // Based on https://youtu.be/tE1qH8OxO2Y
 // Basically just runs once at the start of the program and stores a dictionary of the different
@@ -50,6 +47,7 @@ public class ResourceSystem {
     public const ushort LazerEffectID = 0; // There must be a better way
     public const ushort CactusAbilityID = 101; 
     public const ushort BlockOxygenID = 104; 
+    public const ushort PlayerDashID = 9; 
 
     public const ushort UpgradeFlippersID = 102; // Max speed 3 
     public const ushort UpgradeOxygenID = 122;  // Oxygen tier 3

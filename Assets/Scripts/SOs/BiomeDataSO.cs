@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 // Hold gameplay things of the biome
 // For example, what buffs the player gets when entering the biome, and informational things like what name it has, etc

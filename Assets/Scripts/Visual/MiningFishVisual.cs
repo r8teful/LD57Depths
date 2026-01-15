@@ -1,5 +1,3 @@
-using FishNet.Demo.AdditiveScenes;
-using System;
 using UnityEngine;
 
 public class MiningFishVisual : MonoBehaviour

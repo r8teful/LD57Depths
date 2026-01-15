@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.RendererUtils;
 using UnityEngine.Rendering.Universal;
 
 // This example clears the current active color texture, then renders the scene geometry associated to the m_LayerMask layer.

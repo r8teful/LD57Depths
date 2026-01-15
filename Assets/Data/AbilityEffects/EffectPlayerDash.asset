@@ -9,8 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9186bcd1f456f8468a46782412eb5ab, type: 3}
-  m_Name: BlockOxygenUnlock
+  m_Script: {fileID: 11500000, guid: 39dcfce45ec38524cba39bcaaefaa560, type: 3}
+  m_Name: EffectPlayerDash
   m_EditorClassIdentifier: 
-  Id: 110
-  abilityToUnlock: {fileID: 11400000, guid: 01735761dacdaa7459e7a2c3ff7bc109, type: 2}
+  _buff: {fileID: 11400000, guid: 2eedfc3348ecdcd4798a91ff1240c5e2, type: 2}

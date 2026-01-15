@@ -1,6 +1,4 @@
 using Sirenix.OdinInspector;
-using System.Resources;
-using UnityEditor;
 using UnityEngine;
 
 [ExecuteAlways] // This is so cool it lets us call PushBiomesToMaterial when changing the asset

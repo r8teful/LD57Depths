@@ -1,6 +1,5 @@
 // We use this instance to get RUNTIME information about the buff, we'll need it for UI,
 // but also if we increase the buff strength we'll modify its Stat modifiers
-using GameKit.Dependencies.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

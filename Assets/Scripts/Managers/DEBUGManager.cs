@@ -1,4 +1,3 @@
-using Newtonsoft.Json.Bson;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,10 +27,6 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     public float playerSpeed;
     private NetworkedPlayer _player;
 
-    private void PlayerSpeed() {
-        player.accelerationForce = playerSpeed;
-        player.swimSpeed = playerSpeed;
-    }
 
     public void RegisterOwningPlayer(NetworkedPlayer player) {
         _player = player;
@@ -135,14 +130,15 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     private void debugToggleHitbox() {
         _player.PlayerMovement.DEBUGToggleHitbox();
     }
-    [ConsoleCommand("toggleGod")]
-    private void debugToggleGOD() {
-        _player.PlayerMovement.DEBUGToggleGodMove();
-    }
-    [ConsoleCommand("setSpeed")]
-    private void debugSetSpeed(float speed) {
-        _player.PlayerMovement.DEBUGSetSpeed(speed);
-    }
+
+    //[ConsoleCommand("toggleGod")]
+    //private void debugToggleGOD() {
+    //    _player.PlayerMovement.DEBUGToggleGodMove();
+    //}
+    //[ConsoleCommand("setSpeed")]
+    //private void debugSetSpeed(float speed) {
+    //    _player.PlayerMovement.DEBUGSetSpeed(speed);
+    //}
     [ConsoleCommand("setZoom")]
     private void debugSetZoom(float size) {
         Camera.main.orthographicSize = size;   

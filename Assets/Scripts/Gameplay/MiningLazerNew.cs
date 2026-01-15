@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Windows;
 
 // Making a totally clean and new class because I don't want to mess up the other stuff, we'll just delete that old code afterwards
 public class MiningLazerNew : MonoBehaviour, IInitializableAbility {

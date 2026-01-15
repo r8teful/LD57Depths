@@ -1,19 +1,15 @@
 using FishNet.Connection;
-using GameKit.Dependencies.Utilities;
 using Sirenix.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEditor.Experimental;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Tilemaps;
-using static UnityEditor.PlayerSettings;
 
 
 [System.Serializable]

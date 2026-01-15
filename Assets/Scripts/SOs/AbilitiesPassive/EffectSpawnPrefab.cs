@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "EffectSpawnPrefab", menuName = "ScriptableObjects/AbilityEffects/EffectSpawnPrefab")]
 public class EffectSpawnPrefab : ScriptableObject, IEffectPassive {

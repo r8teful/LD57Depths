@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class OxygenBubble : MonoBehaviour {
     private Rigidbody2D _rb;

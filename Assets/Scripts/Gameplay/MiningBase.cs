@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json.Bson;
-using System;
+﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class MiningBase : MonoBehaviour, IToolBehaviour {

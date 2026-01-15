@@ -1,7 +1,6 @@
 using System;
 using TMPro;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
 // A player stat can also be a tool stat, etc... Used in upgrade screen to show the numerical values of a statistic
 public class UIUpgradeStat : MonoBehaviour {

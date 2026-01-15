@@ -1,10 +1,9 @@
-﻿using Sirenix.Utilities;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.Rendering.DebugUI;
 
 public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
@@ -17,15 +16,8 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
     [Header("Movement Parameters")]
     [Tooltip("Maximum speed the swimmer can reach.")]
-    public float swimSpeed = 5f;
     public float walkSpeed = 5f;
     public float climbSpeed = 5f;
-
-    [Tooltip("Acceleration force applied when moving.")]
-    public float accelerationForce = 20f;
-    public float dashForce = 8f;
-    [SerializeField] private float dashDuration = 0.25f;          // How long the dash lasts (seconds)
-    [SerializeField] private float cooldownDuration = 2f;        // Cooldown period after dash (seconds)
     [Tooltip("Deceleration force applied when no input is given, simulating water resistance.")]
     public float decelerationForce = 15f;
 
@@ -41,11 +33,11 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     #endregion
     public enum PlayerState {None, Swimming, Grounded, Cutscene, ClimbingLadder}
     private PlayerState _currentState;
+    private PlayerStatsManager _playerStats;
     private InputManager _inputManager;
     private PlayerVisualHandler _visualHandler;
 
     public GameObject OxygenWarning;
-    private bool peepPlayed;
     private bool _isFlashing;
     private Coroutine _flashCoroutine;
     private InputAction _playerMoveInput;
@@ -54,14 +46,14 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     private bool _isGrounded;
     private Vector2 _currentInput;
     private bool _isDashing;
-    private float dashTimer = 0f;
-    private float cooldownTimer = 0f;
     private Collider2D _topTrigger;
-    private bool _dashUnlocked;
     private bool _isInsideOxygenZone;
     private bool DEBUGIsGOD;
 
     List<ContactPoint2D> _contactsMostRecent = new List<ContactPoint2D>(); // Store the contacts we hit on collision enter
+    private bool _dashUnlocked = false;
+    private float _cachedSwimSpeed;
+
     public List<ContactPoint2D> ContactsMostRecent { get => _contactsMostRecent; set => _contactsMostRecent = value; }
     public int InitializationOrder => 999;
 
@@ -75,6 +67,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
         MainCam = Camera.main;
         MainCam.transform.SetParent(transform);
         MainCam.transform.localPosition = new Vector3(0, 0, -10);
+        _playerStats = playerParent.PlayerStats;
         _inputManager = playerParent.InputManager;
         _visualHandler = playerParent.PlayerVisuals;
         rb = GetComponent<Rigidbody2D>();
@@ -94,12 +87,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     }
 
     private void OnStatChanged(StatType type, float value) {
-        if(type == StatType.PlayerSpeedMax) {
-            swimSpeed = value;
-        } 
-        if(type == StatType.PlayerAcceleration) {
-            accelerationForce = value;
-        }
+        
         
         // TODO unlock dash
     }
@@ -143,8 +131,8 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     }
 
     void OnCollisionEnter2D(Collision2D col) {
-        if (rb.linearVelocity.magnitude > swimSpeed)
-            rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, swimSpeed);
+        if (rb.linearVelocity.magnitude > _cachedSwimSpeed)
+            rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, _cachedSwimSpeed);
         ContactsMostRecent.Clear();
         ContactsMostRecent.AddRange(col.contacts);
     }
@@ -166,24 +154,19 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
                 CheckEnvironment(); // For ladder checks
                 break;
         }
-        // Always update dash cooldown
-        if (cooldownTimer > 0f) {
-            cooldownTimer -= Time.fixedDeltaTime;
-        }
     }
 
     
     #region SWIMMING
     private void HandleSwimmingUpdate() {
-        if (_dashUnlocked && _inputManager.GetDashInput() && !_isDashing && cooldownTimer <= 0f && _currentInput != Vector2.zero) {
-            // Start dashing
-            _isDashing = true;
-            dashTimer = dashDuration; // Reset dash timer
-        }
+        // Dash logic was here but its nothing now
     }
 
     // --- State Handlers for FixedUpdate (Physics) ---
     private void HandleSwimmingPhysics() {
+        var accelerationForce = _playerStats.GetStat(StatType.PlayerAcceleration);
+        _cachedSwimSpeed = _playerStats.GetStat(StatType.PlayerSpeedMax);
+     
         Vector2 moveDirection = _currentInput.normalized;
 
         if (moveDirection != Vector2.zero) {
@@ -196,21 +179,11 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
                 rb.linearVelocity = Vector2.zero;
             }
         }
-        if (_isDashing) {
-            // Set velocity directly to dash speed in the direction of current input
-            rb.linearVelocity = moveDirection * dashForce;
-
-            // Decrease dash timer and check if dash should end
-            dashTimer -= Time.fixedDeltaTime;
-            if (dashTimer <= 0f) {
-                _isDashing = false;
-                cooldownTimer = cooldownDuration;
-            }
-        } else {
+        if (!_isDashing) {
             float speed = rb.linearVelocity.magnitude;
-            if (speed > swimSpeed) {
+            if (speed > _cachedSwimSpeed) {
                 // lerp the magnitude down toward swimSpeed each FixedUpdate
-                float newSpeed = Mathf.Lerp(speed, swimSpeed, 5 * Time.fixedDeltaTime);
+                float newSpeed = Mathf.Lerp(speed, _cachedSwimSpeed, 5 * Time.fixedDeltaTime);
                 rb.linearVelocity = rb.linearVelocity.normalized * newSpeed;
             }
         }
@@ -440,7 +413,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     internal void SetOxygenZone(bool v) {
         _isInsideOxygenZone = v;
     }
-
+    /*
     internal void DEBUGToggleGodMove() {
         if (!DEBUGIsGOD) {
             DEBUGIsGOD = true;
@@ -461,4 +434,5 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     internal void DEBUGSetSpeed(float speed) {
         swimSpeed = speed;
     }
+     */
 }

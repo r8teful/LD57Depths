@@ -1,5 +1,4 @@
-﻿using FishNet.Component.Animating;
-using FishNet.Object;
+﻿using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System;
 using UnityEngine;

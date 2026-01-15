@@ -2,10 +2,8 @@
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Collections;
 using UnityEngine;
 
 
@@ -158,7 +156,6 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         Debug.Log($"Recalculated stat {stat} from {permanentValue} to {finalValue}");
         ServerUpdateFinalStat(stat, finalValue);
     }
-    #region Public API
 
     /// <summary>
     /// The primary way for other scripts to get a stat value.
@@ -298,7 +295,28 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         // HOW? Could do it with an event, or direct call, event seems clean 
     }
 
-    private void RemoveBuff(BuffSO ability) => RemoveBuff(ability.ID);
+    public BuffHandle TriggerBuff(BuffInstance buffData) {
+        var id = buffData.buffID;
+        if (_activeBuffsByID.TryGetValue(id, out var existing)) {
+            Debug.Log("Buff already applied. What would you like to happen? CODE IT!!");
+            return null;
+        }
+        Action removeAction = () => RemoveBuff(id);
+        // Build handle
+        buffData.handle = new BuffHandle(id, removeAction);
+
+        _activeBuffs.Add(buffData);
+        _activeBuffsByID[id] = buffData;
+        //registerUnsubscribe?.Invoke(removeAction);// We od it either before or after 
+        var modifiersToAdd = new List<StatModifier>();
+        foreach (var modData in buffData.Modifiers) {
+            modifiersToAdd.Add(new StatModifier(modData.Value, modData.Stat, modData.Type, buffData));
+        }
+        RecalculateModifiers(modifiersToAdd);
+        Debug.Log("added buff to player!");
+        OnBuffListChanged?.Invoke();
+        return buffData.handle;
+    }
 
     /// <summary>
     /// Removes all temporary modifiers that came from a specific source.
@@ -341,7 +359,6 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         };
     }
 
-    #endregion
 
     [ServerRpc(RequireOwnership = true)]
     private void ServerUpdatePermanentStat(StatType stat, float newValue) {

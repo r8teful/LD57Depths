@@ -1,4 +1,3 @@
-using FishNet.Demo.AdditiveScenes;
 using UnityEngine;
 
 public class FishProjectileDumb : MonoBehaviour {

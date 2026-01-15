@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BlockOxygen : MonoBehaviour, IInitializableAbility {
     private AbilityInstance _ability;

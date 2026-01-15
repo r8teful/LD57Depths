@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Linq;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
-using UnityEngine;
+﻿using UnityEngine;
 [CreateAssetMenu(fileName = "EffectLazerBrimstone", menuName = "ScriptableObjects/AbilityEffects/Brimstone")]
 public class AbilityTriggerBuffTarget : ScriptableObject, IEffectActive, IEffectBuff {
     [SerializeField] AbilitySO _targetAbility;

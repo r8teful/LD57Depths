@@ -21,7 +21,8 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BrimstoneBuffID)); // Lazer blast
         AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BiomeBuffID)); // Biome buffs
         //AddAbility(App.ResourceSystem.GetAbilityByID(101)); // cactus suit
-        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BlockOxygenID)); // block Oxygen
+        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BlockOxygenID));
+        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.PlayerDashID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(69)); // Fish gun
     }
 

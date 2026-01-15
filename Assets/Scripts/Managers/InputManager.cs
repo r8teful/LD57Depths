@@ -2,7 +2,6 @@
 using Sirenix.OdinInspector;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 public enum PlayerInteractionContext {
     None,                 // Default state, no specific interaction available
@@ -333,6 +332,8 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     //}
     private void OnDashPerformed(InputAction.CallbackContext context) {
         if (context.performed) {
+            _playerAbilities.UseActive(ResourceSystem.PlayerDashID);
+
             _dashPefromed = true;
         } else if(context.canceled) {
             _dashPefromed = false;

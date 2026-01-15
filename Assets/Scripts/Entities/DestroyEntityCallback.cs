@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using FishNet.Object;
+﻿using FishNet.Object;
 using System;
 
 public class DestroyEntityCallback : NetworkBehaviour {

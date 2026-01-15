@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 // Shows temp buffs 
 public class UIHudIconStatus: UIHudIconBase{

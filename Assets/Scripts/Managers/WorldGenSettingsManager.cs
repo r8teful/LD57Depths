@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 // One single spot where the world settings are handled, we create runtime instances here
 public class WorldGenSettingsManager : StaticInstance<WorldGenSettingsManager> {
     public WorldGenSettings WorldGenSettings;

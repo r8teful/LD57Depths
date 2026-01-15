@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 // An ability can be passive (like a permanent buff, or tool, or passive destruction)
 // Or active (like a tool ability)

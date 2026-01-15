@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MiningFish : MonoBehaviour,IInitializableAbility {
     private AbilityInstance _abilityInstance;

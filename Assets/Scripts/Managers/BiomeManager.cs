@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
-using FishNet.Object;
 using System;
 
 // Data structure to hold calculated biome info for a chunk

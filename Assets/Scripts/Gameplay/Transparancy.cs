@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Transparancy : MonoBehaviour, IInitializableAbility {
     public void Init(AbilityInstance instance, NetworkedPlayer player) {
