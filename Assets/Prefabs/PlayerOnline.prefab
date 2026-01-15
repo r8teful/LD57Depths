@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 681475204193010044}
   - component: {fileID: 1978658108044632745}
   - component: {fileID: 7040180018344758678}
+  - component: {fileID: 1918865514594608421}
   m_Layer: 2
   m_Name: PlayerOnline
   m_TagString: Player
@@ -477,9 +478,6 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
-  maxOxygen: 30
-  oxygenDepletionRate: 1
-  currentOxygen: 0
   OxygenWarning: {fileID: 0}
 --- !u!114 &-7626533647889685779
 MonoBehaviour:
@@ -602,6 +600,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _abilitySlotTransform: {fileID: 1673831068457264495}
+--- !u!114 &1918865514594608421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228294681075539138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0841cc0eef41d034992d78afc3108dd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxOxygen: 250
+  oxygenDepletionRate: 1
 --- !u!1 &1942967068140502079
 GameObject:
   m_ObjectHideFlags: 0

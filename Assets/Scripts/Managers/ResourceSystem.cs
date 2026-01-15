@@ -49,6 +49,7 @@ public class ResourceSystem {
     public const ushort BiomeBuffID = 99; // There must be a better way
     public const ushort LazerEffectID = 0; // There must be a better way
     public const ushort CactusAbilityID = 101; 
+    public const ushort BlockOxygenID = 104; 
 
     public const ushort UpgradeFlippersID = 102; // Max speed 3 
     public const ushort UpgradeOxygenID = 122;  // Oxygen tier 3

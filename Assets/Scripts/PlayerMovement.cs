@@ -13,7 +13,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     public Transform insideSubTransform;
     public Transform groundCheck;
     //public CanvasGroup blackout;
-    public static event Action<float,float> OnOxygenChanged;
     #region Movement Parameters
 
     [Header("Movement Parameters")]
@@ -44,12 +43,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     private PlayerState _currentState;
     private InputManager _inputManager;
     private PlayerVisualHandler _visualHandler;
-    [Header("Oxygen")]
-    public float maxOxygen = 250f;
-    public float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
-    public float currentOxygen;
-    private float maxHealth = 15; // amount in seconds the player can survive with 0 oxygen 
-    private float playerHealth;
+
     public GameObject OxygenWarning;
     private bool peepPlayed;
     private bool _isFlashing;
@@ -74,6 +68,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
     internal bool CanUseTool() => _currentState == PlayerState.Swimming;
     internal bool CanBuild() => _currentState == PlayerState.Swimming;
+    public event Action<PlayerState> OnPlayerStateChanged;
     public Rigidbody2D GetRigidbody() => rb;
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
@@ -84,8 +79,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
         _visualHandler = playerParent.PlayerVisuals;
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0;
-        currentOxygen = maxOxygen;
-        playerHealth = maxHealth;
         ChangeState(PlayerState.Swimming);
         SubscribeToEvents();
     }
@@ -107,9 +100,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
         if(type == StatType.PlayerAcceleration) {
             accelerationForce = value;
         }
-        if(type == StatType.PlayerOxygenMax) {
-            maxOxygen = value;
-        }
+        
         // TODO unlock dash
     }
 
@@ -149,11 +140,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
                 break;
         }
         _visualHandler.HandleVisualUpdate(_currentState, _currentInput);
-        if (ShouldDepleteOxygen()) {
-            DepleteOxygen();
-        } else {
-            ReplenishOxygen();
-        }
     }
 
     void OnCollisionEnter2D(Collision2D col) {
@@ -194,7 +180,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
             _isDashing = true;
             dashTimer = dashDuration; // Reset dash timer
         }
-        DepleteOxygen();
     }
 
     // --- State Handlers for FixedUpdate (Physics) ---
@@ -234,7 +219,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
     #region GROUNDED
     private void HandleGroundedUpdate() {
-    ReplenishOxygen();
         if(_isOnLadder) {
             if(_topTrigger != null && _currentInput.y < -0.01f) {
                 ChangeState(PlayerState.ClimbingLadder);
@@ -260,7 +244,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
     #region LADDER
     private void HandleClimbingLadderUpdate() {
-        ReplenishOxygen();
         if(_currentLadder == null) 
             return;
         if (!_isOnLadder) {
@@ -337,9 +320,9 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
         _currentState = newState;
          Debug.Log("Changed state to: " + _currentState);
-
         // Enter new state logic
         OnStateEnter(_currentState, newState);
+        OnPlayerStateChanged?.Invoke(newState);
     }
 
     void OnStateEnter(PlayerState state, PlayerState oldState) {
@@ -414,48 +397,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     // --- Helper Functions ---
 
 
-    private bool ShouldDepleteOxygen() {
-        if( _currentState == PlayerState.Swimming ) {
-            if (_isInsideOxygenZone) {
-                return false; 
-            } else {
-                return true; 
-            }
-        } else if (_currentState == PlayerState.Grounded || _currentState == PlayerState.ClimbingLadder) {
-            return false; // Replenish oxygen when grounded
-        }
-        return true;
-    }
-    void DepleteOxygen() {
-        currentOxygen -= oxygenDepletionRate * Time.deltaTime;
-        currentOxygen = Mathf.Clamp(currentOxygen, 0, maxOxygen);
-        UpdateSlider();
-        if(currentOxygen <= 10 && !peepPlayed) {
-
-            if(AudioController.Instance != null) AudioController.Instance.PlaySound2D("PeepPeep", 1f);
-            peepPlayed = true;
-            //SliderFlash(true);
-        }
-        if (currentOxygen <= 0) {
-            // Slowly fade out and then teleport player back to base?
-            playerHealth -= 1 * Time.deltaTime;
-            if(playerHealth <= 0) {
-                // Todo remove resources?
-                Debug.LogWarning("No logic for resource removement");
-                Resurect();
-            }
-            UpdateFadeOutVisual();
-        }
-    }
-    void ReplenishOxygen() {
-        peepPlayed = false;
-        //SliderFlash(false);
-        currentOxygen += oxygenDepletionRate * 50 * Time.deltaTime;
-        currentOxygen = Mathf.Clamp(currentOxygen, 0, maxOxygen);
-        playerHealth = maxHealth;
-        UpdateSlider();
-        UpdateFadeOutVisual();
-    }
+   
     // Call this function to start or stop the flashing
     public void SliderFlash(bool shouldFlash) {
         if (OxygenWarning == null) {
@@ -489,35 +431,11 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
         }
     }
 
-    public void DEBUGSet0Oxygen() {
-        currentOxygen = 0;
-    }
-    public void DEBUGPlayerPassOut() {
-        currentOxygen = 1;
-        playerHealth = 1;
-    }
-    public void DEBUGinfOx() {
-        maxOxygen= 9999999;
-        currentOxygen = 999999;
-    }
+   
     internal void DEBUGToggleHitbox() {
         _visualHandler.DEBUGToggleHitbox(_currentState);
     }
-    private void Resurect() {
-        playerHealth = maxHealth;
-        currentOxygen = maxOxygen;
-        UpdateFadeOutVisual();
-    }
 
-    private void UpdateFadeOutVisual() {
-        float healthRatio = playerHealth / maxHealth;
-        float easedValue = 1 - Mathf.Pow(healthRatio, 2); // Quadratic ease-out
-        
-        //blackout.alpha = easedValue;
-    }
-    private void UpdateSlider() {
-        OnOxygenChanged?.Invoke(currentOxygen,maxOxygen);
-    }
 
     internal void SetOxygenZone(bool v) {
         _isInsideOxygenZone = v;

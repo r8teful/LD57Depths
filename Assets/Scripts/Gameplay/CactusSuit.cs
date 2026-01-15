@@ -31,7 +31,6 @@ public class CactusSuit : MonoBehaviour, IInitializableAbility {
         }
     }
 
-    // The Shoot function the user requested
     void Shoot() {
         if (cactusProjectile == null) {
             Debug.LogWarning("Shooter: bulletPrefab is not assigned.");

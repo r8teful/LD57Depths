@@ -20,11 +20,12 @@ public class NetworkedPlayer : NetworkBehaviour {
     public ToolController ToolController { get; private set; }
     public static NetworkedPlayer LocalInstance { get; private set; } // Singleton for local player
     public PlayerStatsManager PlayerStats { get; private set; } 
+    public OxygenManager OxygenManager { get; private set; }
     public PlayerAbilities PlayerAbilities { get; private set; } 
     public PopupManager PopupManager => UiManager.PopupManager;
     public NetworkObject PlayerNetworkedObject => base.NetworkObject; // Expose NetworkObject for other scripts to use
     public InventoryManager GetInventory() => InventoryN.GetInventoryManager();
-
+    public Vector3 GetWorldPosition => transform.position;
     // World manager should be in some kind of gamemanager or something but eh just get it like this
     private WorldManager _worldManager;
     public bool IsInitialized => _isInitialized;
@@ -92,6 +93,7 @@ public class NetworkedPlayer : NetworkBehaviour {
         PlayerVisuals = GetComponent<PlayerVisualHandler>();
         ToolController = GetComponent<ToolController>();
         PlayerAbilities = GetComponent<PlayerAbilities>();
+        OxygenManager = GetComponent<OxygenManager>();
         PlayerMovement = GetComponent<PlayerMovement>();
 
         InventoryN.Initialize(); // We have to do this first before everything else, then spawn the UI manager, and then start the other inits 

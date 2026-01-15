@@ -500,8 +500,9 @@ public class ChunkManager : NetworkBehaviour {
     [ObserversRpc]
     private void ObserversUpdateTileDurability(Vector3Int cellPos, float newDurability) {
         // Runs on all clients
-        if(newDurability == -1)
+        if(newDurability == -1) {
             _lightManager.RequestLightUpdate(); // Tile broke so update lights
+        }
                                                 // Update local cache if you have one
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
         if (clientDurabilityCache.TryGetValue(chunkCoord, out float[,] chunkDurability)) {
