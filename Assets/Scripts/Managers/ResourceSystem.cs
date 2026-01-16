@@ -108,7 +108,7 @@ public class ResourceSystem {
             }
             ushort id = asset.ID;
             if (lookupByID.ContainsKey(id)) {
-                Debug.LogError($"{typeof(T).Name}Database conflict: ID {id} (index {i}) is already assigned to '{lookupByID[id].name}'. Duplicate or internal error?");
+                Debug.LogError($"{typeof(T).Name}Database conflict: ID {id}, asset {asset.name} (index {i}) is already assigned to '{lookupByID[id].name}'. Duplicate or internal error?");
                 continue;
             }
             if (idByLookup.ContainsKey(asset)) {

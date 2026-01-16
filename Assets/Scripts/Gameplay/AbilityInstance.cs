@@ -85,7 +85,7 @@ public class AbilityInstance {
             return;
         } else {
             foreach (var baseStat in Data.StatTypes) {
-                _stats.Add(baseStat.stat, new(baseStat.baseMofifier));
+                _stats.Add(baseStat.Stat, new(baseStat.BaseValue));
             }
         }
     }
@@ -214,7 +214,6 @@ public class AbilityInstance {
         }
         _activeBuffs.Remove(buff);
         _activeBuffsByID.Remove(buff.buffID);
-
         // The buff knows how to clean up the modifiers it created
         buff.Remove(this);
 

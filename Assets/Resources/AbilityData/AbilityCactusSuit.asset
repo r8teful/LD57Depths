@@ -19,9 +19,8 @@ MonoBehaviour:
   cooldown: 0
   isTimed: 0
   StatTypes:
-  - stat: 1000
-    modType: 1
-    baseMofifier: 10
+  - Stat: 1000
+    BaseValue: 1
   effects:
   - {fileID: 11400000, guid: 4956db97d6207f140b5a9a3536dcfa8d, type: 2}
   costumes:

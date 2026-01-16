@@ -62,10 +62,20 @@ public class BuffInstance {
         handle?.NotifyRemoved();
         //Modifiers.Clear();
     }
+    public void Remove(PlayerStatsManager player) {
+        player.RemoveModifiersFromSource(this);
+        handle?.NotifyRemoved();
+        //Modifiers.Clear();
+    }
 
     public void Apply(AbilityInstance targetAbility) {
         foreach (var mod in Modifiers) {
             targetAbility.AddInstanceModifier(mod); // Add to the Stat Dictionary
+        }
+    }
+    public void Apply(PlayerStatsManager targetAbility) {
+        foreach (var mod in Modifiers) {
+            targetAbility.AddInstanceModifier(mod);
         }
     }
 }

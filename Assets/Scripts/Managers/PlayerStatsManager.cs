@@ -1,6 +1,7 @@
 ﻿using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using r8teful;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,16 +9,12 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(NetworkedPlayer))]
-public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
+public class PlayerStatsManager : MonoBehaviour, INetworkedPlayerModule {
     [SerializeField] private PlayerBaseStatsSO _baseStats;
 
-    private readonly SyncDictionary<StatType, float> _finalStats = new(); // Permament + modifiers
-
-    private readonly SyncDictionary<StatType, float> _rawStats = new(); // Just stats without modifiers, we REVERT to this
+    private Dictionary<StatType, Stat> _stats = new(); 
     
-    // This list ONLY exists on the owning client. It does not need to be synced
-    // because only the owner calculates their stats and syncs the result via _finalStats.
-    private readonly List<BuffInstance> _activeBuffs = new(); // This now changes to the active buff instances
+    private readonly List<BuffInstance> _activeBuffs = new(); 
     private readonly Dictionary<ushort, BuffInstance> _activeBuffsByID = new();
     // activeModifers 
 
@@ -37,79 +34,25 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     public event Action OnBuffListChanged;  // add/remove
     public event Action OnBuffsUpdated;     // periodic tick
 
-    #region Initialization
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         StatType[] statTypes = _baseStats.BaseStats.Select(s => s.Stat).ToArray();
         float[] baseValues = _baseStats.BaseStats.Select(s => s.BaseValue).ToArray();
 
-        ServerInitializeStats(statTypes, baseValues);
+        InitStats(statTypes, baseValues);
         //InitializeStats();
+        _isInitialized = true;
     }
 
-    public override void OnStartClient() {
-        base.OnStartClient();
-
-        // Subscribe to the OnChange event of the SyncDictionary.
-        // This allows us to fire our local C# event whenever a stat changes,
-        // which is essential for updating logic on ALL clients (owner and observers).
-        _finalStats.OnChange += OnFinalStatChanged;
-
-        if (!base.IsOwner) {
-            // For non-owners, we need to populate initial values and fire events
-            // for any stats that are already in the synced dictionary.
-            foreach (var kvp in _finalStats) {
-                OnStatChanged?.Invoke(kvp.Key, kvp.Value);
-            }
-        }
-    }
-
-    public override void OnStopClient() {
-        base.OnStopClient();
-        _finalStats.OnChange -= OnFinalStatChanged;
-    }
-    [ServerRpc(RequireOwnership = true)]
-    private void ServerInitializeStats(StatType[] statTypes, float[] baseValues) {
-        if (_rawStats.Count > 0) {
-            Debug.LogWarning("ServerInitializeStats called, but stats are already initialized.");
-            return; // Already initialized, do nothing.
-        }
+    private void InitStats(StatType[] statTypes, float[] baseValues) {
         for (int i = 0; i < statTypes.Length; i++) {
             StatType stat = statTypes[i];
             float value = baseValues[i];
-
-            if (!_rawStats.ContainsKey(stat)) {
-                _rawStats.Add(stat, value);
-                _finalStats.Add(stat, value); // Initially, final stats are the same as permanent.
+            if (!_stats.ContainsKey(stat)) {
+                _stats.Add(stat,new(value));
             }
         }
-        foreach (var statDefault in _baseStats.BaseStats) {
-            if (!_rawStats.ContainsKey(statDefault.Stat)) {
-                _rawStats.Add(statDefault.Stat, statDefault.BaseValue);
-                // After initializing, we must calculate the final stat for the first time.
-                RecalculateStat(statDefault.Stat);
-            } else {
-                Debug.LogWarning($"Stat {statDefault.Stat} is already initialized. Check for duplicates in Base Stats list.");
-            }
-        }
-        Debug.Log("Server init done for " + Owner.ClientId);
-        RpcInitDone(Owner);
-
     }
-    [TargetRpc]
-    private void RpcInitDone(NetworkConnection conn) {
-        _isInitialized = true;
-        Debug.Log("RPC recieved init donw!");
-        // Fire the event to notify all other scripts that they can now safely access stats.
-        OnInitialized?.Invoke();
-
-        // Fire the OnStatChanged event for every stat so that UI and other systems
-        // can grab their initial values.
-        foreach (var kvp in _finalStats) {
-            OnStatChanged?.Invoke(kvp.Key, kvp.Value);
-        }
-    }
-    #endregion
-
+  
     void Update() {
         // Handle timed expirations
         if (_activeBuffs.Count > 0) {
@@ -129,34 +72,6 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         }
     }
 
-    private void RecalculateStat(StatType stat) {
-        if (!base.IsOwner) return;
-        if (!_rawStats.ContainsKey(stat)) return;
-
-        float permanentValue = _rawStats[stat];
-        float finalValue = permanentValue;
-
-        // 1. Apply all ADDITIVE modifiers first.
-        foreach (var buff in _activeBuffs) {
-            foreach (var mod in buff.GetBuffData().Modifiers) {
-                if (mod.Stat == stat && mod.Type == StatModifyType.Add) {
-                    finalValue += mod.Value;
-                }
-            }
-        }
-
-        // 2. Apply all MULTIPLIER modifiers next.
-        foreach (var buff in _activeBuffs) {
-            foreach (var mod in buff.GetBuffData().Modifiers) {
-                if (mod.Stat == stat && mod.Type == StatModifyType.Multiply) {
-                    finalValue *= mod.Value;
-                }
-            }
-        }
-        Debug.Log($"Recalculated stat {stat} from {permanentValue} to {finalValue}");
-        ServerUpdateFinalStat(stat, finalValue);
-    }
-
     /// <summary>
     /// The primary way for other scripts to get a stat value.
     /// </summary>
@@ -167,54 +82,20 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             var statDefault = _baseStats.BaseStats.FirstOrDefault(s => s.Stat == stat);
             return statDefault?.BaseValue ?? 0f;
         }
-        if (_finalStats.TryGetValue(stat, out float value)) {
-            return value;
+        if (_stats.TryGetValue(stat, out var StatClass)) {
+            return StatClass.Value;
         } else {
             Debug.LogWarning($"Attempted to get stat '{stat}' but it was not initialized. Returning 0.");
             return 0f;
         }
     }
-    /// <summary>
-    /// Get the stat without any of the extra modifiers attached to it, useful for UI
-    /// </summary>
     public float GetStatBase(StatType stat) {
-
-        if (!_isInitialized) {
-            Debug.LogWarning($"Attempted to GetStat({stat}) before PlayerStatsManager was initialized!");
-            // Return a sensible default from the local SO if possible.
-            var statDefault = _baseStats.BaseStats.FirstOrDefault(s => s.Stat == stat);
-            return statDefault?.BaseValue ?? 0f;
+        var baseStat = _baseStats.BaseStats.FirstOrDefault(s => s.Stat == stat);
+        if(baseStat != null) {
+            return baseStat.BaseValue;
         }
-        if (_rawStats.TryGetValue(stat, out float value)) {
-            //Debug.Log($"Getting base stat for {stat} ... returned {value}");
-            return value;
-        } else {
-            Debug.LogWarning($"Attempted to get stat '{stat}' but it was not initialized. Returning 0.");
-            return 0f;
-        }
-    }
-
-    /// <summary>
-    /// The method used by UpgradeEffects to modify a stat.
-    /// This should ONLY be called on the owning client.
-    /// </summary>
-    public void ModifyPermamentStat(StatType stat, float value, StatModifyType increaseType) {
-        if (!base.IsOwner) {
-            Debug.LogWarning("ModifyStat was called on a non-owning client. This should not happen in a client-authoritative model.");
-            return;
-        }
-
-        if (!_finalStats.ContainsKey(stat)) {
-            Debug.LogError($"Cannot modify stat '{stat}' because it has not been initialized.");
-            return;
-        }
-        float currentValue = _rawStats[stat];
-        float newValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, increaseType, value);
-        Debug.Log($"Modifying permanent stat {stat} from {currentValue} to {newValue}!");
-        //RecalculateStat(stat); // We could do this here, we recalcualte with an "override" with the new value, this way, we get instant feedback
-        ServerUpdatePermanentStat(stat, newValue);
-        _rawStats[stat] = newValue; // BADDD?? I DONT KNOW BUT ITS NOT ACUTALLY CHANGING IT ON THE SERVER IN TIME FOR ME TO SEE IT ON THE UPGRADE UI SCREEN POP WHEN I PURCHASE THE UPGRADE
-        RecalculateStat(stat);
+        Debug.LogError("Could not find base stat value in baseStat scriptableobject!");
+        return 0; 
     }
 
     public IReadOnlyList<BuffSnapshot> GetBuffSnapshots() {
@@ -244,9 +125,33 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
     /// Trigger a buff, note that this will take the base buff stats, and upgrading buff isn't possible from here (yet). 
     /// </summary> 
     /// <param name="registerUnsubscribe">optional callback where StatsManager will give the caller the "remove action" so the caller can subscribe it to its own events.</param> 
-    internal BuffHandle TriggerBuff(BuffSO buffData, Action<Action> registerUnsubscribe = null) {
-        // Prevent duplicates unless ability is explicitly stackable
-        var id = buffData.ID;
+
+    public BuffHandle TriggerBuff(BuffSO buffData, Action<Action> registerUnsubscribe = null) {
+        if (buffData == null) throw new ArgumentNullException(nameof(buffData));
+
+        var buff = new BuffInstance {
+            buffID = buffData.ID,
+            startTime = Time.time,
+            duration = buffData.GetDuration(),
+            expiresAt = buffData.GetDuration() > 0 ? Time.time + buffData.GetDuration() : -1f,
+            // optionally store reference to SO if BuffInstance has a field for that:
+            // source = buffData
+        };
+
+        return InternalTriggerBuff(buff, registerUnsubscribe);
+    }
+
+    public BuffHandle TriggerBuff(BuffInstance buffInstance, Action<Action> registerUnsubscribe = null) {
+        if (buffInstance == null) throw new ArgumentNullException(nameof(buffInstance));
+        return InternalTriggerBuff(buffInstance, registerUnsubscribe);
+    }
+
+    // Centralized logic
+    private BuffHandle InternalTriggerBuff(BuffInstance buff, Action<Action> registerUnsubscribe) {
+        var id = buff.buffID;
+
+        // Duplicate handling - simple current behavior: ignore duplicates and return null.
+        // You might want to replace this with Refresh/Stack/Replace behavior later.
         if (_activeBuffsByID.TryGetValue(id, out var existing)) {
             Debug.Log("Buff already applied. What would you like to happen? CODE IT!!");
             return null;
@@ -261,95 +166,59 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
             //}
             //return existing.handle;
         }
-        // Create runtime buff instance
-        var buff = new BuffInstance {
-            buffID = id,
-            startTime = Time.time,
-            duration = buffData.GetDuration(),
-            expiresAt = buffData.GetDuration() > 0 ? Time.time + buffData.GetDuration() : -1f, // indefinite
-        };
 
-        // Actions are so fancy, so this basically points to this function which when we invoke the action will call, and we can pass the action around 
+        // Build remove action and handle
         Action removeAction = () => RemoveBuff(id);
-        // Build handle
         buff.handle = new BuffHandle(id, removeAction);
 
-        // Now we can pass the action to the other script, which can then invoke removeAction which will call RemoveAbility
+        // If external code wants the unsubscribe action, give it.
         registerUnsubscribe?.Invoke(removeAction);
 
+        // Register buff in collections BEFORE applying so Apply() can observe manager state if needed.
         _activeBuffs.Add(buff);
         _activeBuffsByID[id] = buff;
-        //registerUnsubscribe?.Invoke(removeAction);// We od it either before or after 
-        var modifiersToAdd = new List<StatModifier>();
-        foreach (var modData in buffData.Modifiers) {
-            modifiersToAdd.Add(new StatModifier(modData.Value, modData.Stat, modData.Type, buffData));
-        }
-        RecalculateModifiers(modifiersToAdd);
-        Debug.Log("added buff to player!");
+
+        // Apply the buff's effects now that it's registered
+        buff.Apply(this);
+
+        // Notify listeners
         OnBuffListChanged?.Invoke();
+
         return buff.handle;
-        //AddTimedModifiers(modifiersToAdd, ability, ability.Duration, externalConditionEnd);
-
-        //OnPlayerAbilityStart?.Invoke(ability);
-        // HERE, now we have the actual SO, with data about the ability, now set that as the visual info 
-        // HOW? Could do it with an event, or direct call, event seems clean 
     }
-
-    public BuffHandle TriggerBuff(BuffInstance buffData) {
-        var id = buffData.buffID;
-        if (_activeBuffsByID.TryGetValue(id, out var existing)) {
-            Debug.Log("Buff already applied. What would you like to happen? CODE IT!!");
-            return null;
-        }
-        Action removeAction = () => RemoveBuff(id);
-        // Build handle
-        buffData.handle = new BuffHandle(id, removeAction);
-
-        _activeBuffs.Add(buffData);
-        _activeBuffsByID[id] = buffData;
-        //registerUnsubscribe?.Invoke(removeAction);// We od it either before or after 
-        var modifiersToAdd = new List<StatModifier>();
-        foreach (var modData in buffData.Modifiers) {
-            modifiersToAdd.Add(new StatModifier(modData.Value, modData.Stat, modData.Type, buffData));
-        }
-        RecalculateModifiers(modifiersToAdd);
-        Debug.Log("added buff to player!");
-        OnBuffListChanged?.Invoke();
-        return buffData.handle;
-    }
-
     /// <summary>
     /// Removes all temporary modifiers that came from a specific source.
     /// </summary>
     public void RemoveBuff(ushort abilityID) {
-        if (!base.IsOwner) return;
-
         // Find which stats will be affected BEFORE we remove the modifiers
         if (!_activeBuffsByID.TryGetValue(abilityID, out var buff)) {
             Debug.LogWarning($"Tried to remove buff with ID {abilityID} which isn't active");
             return;
-        }
-
-        List<StatType> statsToRecalculate = new();
-        foreach(var mod in buff.GetBuffData().Modifiers) {
-            statsToRecalculate.Add(mod.Stat);
-        }
-        statsToRecalculate.Distinct();
-
-        // We do it before so we could still access activeBuffs and its details
-        buff.handle?.NotifyRemoved();
-        
+        }  
         _activeBuffs.Remove(buff);
         _activeBuffsByID.Remove(abilityID);
-        // Now recalculate only the stats that were changed
-        foreach (var stat in statsToRecalculate) {
-            RecalculateStat(stat);
-        }
 
+        buff.Remove(this);
         // For UI
         OnBuffListChanged?.Invoke();
     }
 
+    public void RemoveModifiersFromSource(object source) {
+        bool changed = false;
+
+        foreach (var statContainer in _stats.Values) {
+            if (statContainer.RemoveModifiersFromSource(source)) {
+                changed = true;
+            }
+        }
+    }
+
+    public void AddInstanceModifier(StatModifier mod) {
+        // If the ability doesn't have this stat, we ignore it 
+        if (_stats.TryGetValue(mod.Stat, out Stat statContainer)) {
+            statContainer.AddModifier(mod);
+        }
+    }
 
     public MiningToolData GetToolData() {
         return new MiningToolData {
@@ -359,53 +228,11 @@ public class PlayerStatsManager : NetworkBehaviour, INetworkedPlayerModule {
         };
     }
 
-
-    [ServerRpc(RequireOwnership = true)]
-    private void ServerUpdatePermanentStat(StatType stat, float newValue) {
-        _rawStats[stat] = newValue;
-    }
-
-    [ServerRpc(RequireOwnership = true)]
-    private void ServerUpdateFinalStat(StatType stat, float newValue) {
-        // Update the synced dictionary. This triggers the OnChange event on all clients.
-        _finalStats[stat] = newValue;
-    }
-
-    // Its wierd we used to add and track modifiers in a list, but now we just
-    // track the entire buff, so here instead we just recalculate the new modifiers we've added
-    private void RecalculateModifiers(IEnumerable<StatModifier> modifiers) {
-        if (!base.IsOwner) return;
-
-        var affectedStats = new HashSet<StatType>();
-        foreach (var mod in modifiers) {
-            affectedStats.Add(mod.Stat);
-        }
-        foreach (var stat in affectedStats) {
-            RecalculateStat(stat);
-        }
-    }
-    private void OnFinalStatChanged(SyncDictionaryOperation op, StatType key, float value, bool asServer) {
-        // This method is called on ALL clients whenever the dictionary changes.
-       // Debug.Log("STAT CHANGE!");
-        switch (op) {
-            case SyncDictionaryOperation.Add:
-                OnStatChanged?.Invoke(key, value);
-                break;
-            case SyncDictionaryOperation.Set:
-                OnStatChanged?.Invoke(key, value);
-                break;
-            case SyncDictionaryOperation.Remove:
-                // Handle stat removal if that's a feature you need
-                break;
-            case SyncDictionaryOperation.Clear:
-                // Handle dictionary being cleared
-                break;
-        }
-    }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public void DEBUGSetStat(StatType stat, float value) {
-        _rawStats[stat] = value;
+        //_rawStats[stat] = value;
     }
+
 #endif
 }
 // Should probably not be here, or be there at all, working on a solution!!!

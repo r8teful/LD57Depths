@@ -12,17 +12,10 @@ public class AbilitySO : ScriptableObject, IIdentifiable {
     public AbilityType type;
     public float cooldown; // Same as duration, this number is MULTIPLYING our base cooldown stat
     public bool isTimed; // timed meaning that when we reach cooldown, a timed effect will happen (such as a temp buff)
-    public List<StatTypesBase> StatTypes;
+    public List<StatDefault> StatTypes;
     public List<ScriptableObject> effects;
     public List<CosmeticData> costumes;
 
 }
-[System.Serializable]
-public class StatTypesBase {
-    public StatType stat;
-    public StatModifyType modType; // If add, we show effective value, if mult, we show mult value
-    public float baseMofifier;
 
-    // This could have the "base" increase type for this stat right?
-}
 public enum AbilityType { Passive, Active }

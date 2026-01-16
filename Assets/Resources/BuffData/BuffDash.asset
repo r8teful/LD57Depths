@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0183601e43946ba498966f9df2fef387, type: 3}
   m_Name: BuffDash
   m_EditorClassIdentifier: 
-  id: 1
+  id: 3
   Modifiers:
-  - Value: 2.62
+  - Value: 0.1
     Stat: 1001
     Type: 1
-  - Value: 2
+  - Value: 3
     Stat: 20
     Type: 1
-  - Value: 2
+  - Value: 4
     Stat: 21
     Type: 1
   - Value: 0.7

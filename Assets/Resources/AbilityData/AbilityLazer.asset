@@ -19,15 +19,12 @@ MonoBehaviour:
   cooldown: 0
   isTimed: 0
   StatTypes:
-  - stat: 0
-    modType: 1
-    baseMofifier: 1
-  - stat: 1
-    modType: 1
-    baseMofifier: 1
-  - stat: 2
-    modType: 1
-    baseMofifier: 1
+  - Stat: 0
+    BaseValue: 1
+  - Stat: 1
+    BaseValue: 1
+  - Stat: 2
+    BaseValue: 1
   effects:
   - {fileID: 11400000, guid: a3fd00cf526c9ce44a2ee8416517e97b, type: 2}
   costumes: []

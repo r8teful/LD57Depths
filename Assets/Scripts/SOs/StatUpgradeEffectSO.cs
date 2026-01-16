@@ -10,7 +10,8 @@ public class StatUpgradeEffectSO : UpgradeEffect {
         // The effect's job is to find the relevant component and tell it to update.
         var playerStats = target.PlayerStats;
         if (playerStats != null) {
-            playerStats.ModifyPermamentStat(upgradeType, modificationValue, increaseType);
+            var inst = new StatModifier(modificationValue, upgradeType, increaseType, this);
+            playerStats.AddInstanceModifier(inst);
             Debug.Log($"Applied stat upgrade: {upgradeType} by {modificationValue}");
         } else {
             Debug.LogWarning($"Could not find PlayerStats component on {target.name} to apply {upgradeType} upgrade.");
