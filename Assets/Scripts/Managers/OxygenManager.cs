@@ -9,6 +9,7 @@ public class OxygenManager : MonoBehaviour, INetworkedPlayerModule {
     private float currentOxygen;
     private float maxHealth = 15; // amount in seconds the player can survive with 0 oxygen 
     private float playerHealth;
+    private NetworkedPlayer _player;
     private bool _isInsideOxygenZone;
     private PlayerState _cachedState;
     private bool peepPlayed;
@@ -29,14 +30,13 @@ public class OxygenManager : MonoBehaviour, INetworkedPlayerModule {
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         CurrentOxygen = maxOxygen;
         playerHealth = maxHealth;
+        _player = playerParent;
         playerParent.PlayerStats.OnStatChanged += OnStatChanged;
         playerParent.PlayerMovement.OnPlayerStateChanged += StateChanged;    
     }
 
-    private void OnStatChanged(StatType type, float value) {
-        if (type == StatType.PlayerOxygenMax) {
-            maxOxygen = value;
-        }
+    private void OnStatChanged() {
+        maxOxygen = _player.PlayerStats.GetStat(StatType.PlayerOxygenMax);
     }
 
     private void StateChanged(PlayerState newState) {

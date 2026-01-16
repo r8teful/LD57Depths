@@ -33,7 +33,6 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
             _localPlayerStats.OnInitialized += HandleStatsInitialized; // Wait until initialized
         }
 
-        _localPlayerStats.OnStatChanged += OnPlayerStatsChange;
     }
     private void InitializeWithCurrentStats(PlayerStatsManager pStats) {
         Range = pStats.GetStat(StatType.MiningRange);
@@ -71,11 +70,6 @@ public abstract class MiningBase : MonoBehaviour, IToolBehaviour {
         //Debug.Log($"New upgrade {stat} is: " + newV);
     }
 
-    public void OnDestroy() {
-        if(_localPlayerStats != null) {
-            _localPlayerStats.OnStatChanged -= OnPlayerStatsChange;
-        }
-    }
     public virtual void ToolStart(InputManager input, ToolController controller) {
         if (miningRoutine != null) {
             Debug.LogWarning("Mining routine is still running even though it should have stopped!");

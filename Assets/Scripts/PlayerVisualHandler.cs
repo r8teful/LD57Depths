@@ -64,16 +64,10 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         InitCommon();
         _remotePlayer = remoteClient;
         // Subscribe to handle remote stat changes
-        remoteClient.PlayerStats.OnStatChanged += OnRemoteStatsChanged;
         remoteClient.UpgradeManager.OnUpgradePurchased += OnPlayerUpgradePurchased;
         hasInitializedNonOwner = true;
     }
-
-    private void OnRemoteStatsChanged(StatType arg1, float arg2) {
-        // In reality, we would only care about the stats that VISUALLY change the remote client, so that those can be shown 
-
-        // Possibly raise an event here but have to make sure we don't mistake it for a LOCAL stat change
-    }
+  
 
     // Called every frame, handles approriate visuals depending on each state
     public void HandleVisualUpdate(PlayerState currentState, Vector2 currentInput) {

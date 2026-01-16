@@ -5,7 +5,6 @@ public class AbilityTriggerBuffTarget : ScriptableObject, IEffectActive, IEffect
     [SerializeField] private BuffSO _buff;
 
     public BuffSO Buff => _buff;
-    public AbilitySO Target => _targetAbility;
 
     public void Execute(AbilityInstance source, NetworkedPlayer player) {
         // This ability should add multiplier buffs to the lazer passive
@@ -21,5 +20,11 @@ public class AbilityTriggerBuffTarget : ScriptableObject, IEffectActive, IEffect
         buffinst.IncreaseBuffPower(source);
         
         targetInst.TriggerBuff(buffinst); 
+    }
+
+    public float GetEffectiveStat(StatType stat, StatModifier tempMod = null) {
+        var id = _targetAbility.ID;
+        var ab = NetworkedPlayer.LocalInstance.PlayerAbilities.GetAbilityInstance(id);
+        return ab.GetEffectiveStat(stat, tempMod);
     }
 }

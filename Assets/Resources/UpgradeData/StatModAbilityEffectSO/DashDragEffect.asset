@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb3d0041ed540d04d9d938a5f700a60c, type: 3}
-  m_Name: DashDistanceEffect
+  m_Name: DashDragEffect
   m_EditorClassIdentifier: 
-  Id: 301
-  upgradeType: 1001
+  Id: 305
+  upgradeType: 22
   increaseType: 0
   modificationValue: 1
   targetAbility: {fileID: 11400000, guid: b169ca4e869088840bd9cdd86a6577bd, type: 2}

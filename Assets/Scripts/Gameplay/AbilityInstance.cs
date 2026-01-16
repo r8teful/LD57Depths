@@ -48,23 +48,7 @@ public class AbilityInstance {
     // we will look through the effect list, find the buff that has another ability target, and then we multiply this abilities stat increases by
     // the effective value of the buff target. Meaning, if base is 10, lazer is 20 damage, and brimstone is 1.5 well get 30 output and not 15, because brimstone depends on lazer 
     // Basically we need a bool like this to know if when we get the effective value we use multiply by the base stat or the target ability stat
-    public bool TryGetBuffAbilityTarget(out AbilityInstance ability) {
-        ability = null;
-        if (TryGetBuffEffect(out var buff)) {
-            if (buff.Target == null) {
-                Debug.LogError("Found buff effect but it has no target!");
-                return false;
-            }
-            var ab = _player.PlayerAbilities.GetAbilityInstance(buff.Target.ID);
-            if (ab == null) {
-                Debug.LogError("Found target but ability is not spawned!");
-                return false;
-            }
-            ability = ab;
-            return true;
-        }
-        return false;
-    }
+  
     public AbilityInstance(AbilitySO data, NetworkedPlayer player, GameObject @object = null) {
         Data = data;
         _player = player;
@@ -156,8 +140,8 @@ public class AbilityInstance {
             bool isAbilitySpecificStat = (stat == StatType.Cooldown) || (stat == StatType.Duration); // Cooldown and duration are always specific to THIS ability
             // If this ability has a buff with a valid target, the effective stats of this ability is multiplied by that targets effective stats and not the players base stat
             // This works because we would already have multiplied the targets stats by the base stats
-            if (!isAbilitySpecificStat && TryGetBuffAbilityTarget(out var targetAbility)) {
-                baseStat = targetAbility.GetEffectiveStat(stat); // This could lead to recursive calls, which is trippy
+            if (!isAbilitySpecificStat && TryGetBuffEffect(out var buffEffect)) {
+                baseStat = buffEffect.GetEffectiveStat(stat); // The interface implements where the effective stat comes from, either from a target ability instance (the case for brimstone), or the player (the case for dash)
             } else {
                 baseStat = GetBaseStat(stat);
             }

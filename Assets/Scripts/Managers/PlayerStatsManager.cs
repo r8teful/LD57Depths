@@ -27,9 +27,7 @@ public class PlayerStatsManager : MonoBehaviour, INetworkedPlayerModule {
     public event Action OnInitialized;
     public int InitializationOrder => 91;
 
-    // The crucial event system. Other components (like PlayerMovement, ToolController)
-    // will listen to this to know when a stat they care about has changed.
-    public event Action<StatType, float> OnStatChanged;
+    public event Action OnStatChanged;
 
     public event Action OnBuffListChanged;  // add/remove
     public event Action OnBuffsUpdated;     // periodic tick
@@ -211,12 +209,14 @@ public class PlayerStatsManager : MonoBehaviour, INetworkedPlayerModule {
                 changed = true;
             }
         }
+        OnStatChanged?.Invoke();
     }
 
     public void AddInstanceModifier(StatModifier mod) {
         // If the ability doesn't have this stat, we ignore it 
         if (_stats.TryGetValue(mod.Stat, out Stat statContainer)) {
             statContainer.AddModifier(mod);
+            OnStatChanged?.Invoke();
         }
     }
 

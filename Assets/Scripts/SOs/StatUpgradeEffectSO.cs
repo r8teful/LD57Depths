@@ -20,7 +20,7 @@ public class StatUpgradeEffectSO : UpgradeEffect {
 
     public override StatChangeStatus GetChangeStatus() {
         var name = ResourceSystem.GetStatString(upgradeType);
-        var currentValue = NetworkedPlayer.LocalInstance.PlayerStats.GetStatBase(upgradeType); // Need go get the BASE values, not the final
+        var currentValue = NetworkedPlayer.LocalInstance.PlayerStats.GetStat(upgradeType);
         var nextValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, increaseType, modificationValue);
         var isLowerBad = ResourceSystem.IsLowerBad(upgradeType);
         return new(name, currentValue, nextValue, isLowerBad);

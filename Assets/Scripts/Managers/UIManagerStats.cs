@@ -32,7 +32,7 @@ public class UIManagerStats : MonoBehaviour {
         CreateStatDisplays();// Also refresh stat displays
     }
 
-    private void StatChange(StatType type, float arg2) {
+    private void StatChange() {
         // Just refresh all statDisplays 
         CreateStatDisplays();
 

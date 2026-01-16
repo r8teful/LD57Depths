@@ -77,7 +77,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     }
     private void SubscribeToEvents() {
         // Subscribe to the event to recalculate stats when a NEW upgrade is bought
-        NetworkedPlayer.LocalInstance.PlayerStats.OnStatChanged += OnStatChanged;
         MiningLazer.OnPlayerKnockbackRequested += OnMiningKnockback;
         WorldVisibilityManager.OnLocalPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
     }
@@ -86,11 +85,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
         rb.AddForce(force);
     }
 
-    private void OnStatChanged(StatType type, float value) {
-        
-        
-        // TODO unlock dash
-    }
 
     private void PlayerVisibilityLayerChanged(VisibilityLayerType type) {
         switch (type) {

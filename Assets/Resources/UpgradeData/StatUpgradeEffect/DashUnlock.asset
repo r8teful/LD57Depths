@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: DashUnlock
   m_EditorClassIdentifier: 
   Id: 300
-  UnlockedAbilityName: Dash
+  abilityToUnlock: {fileID: 11400000, guid: b169ca4e869088840bd9cdd86a6577bd, type: 2}

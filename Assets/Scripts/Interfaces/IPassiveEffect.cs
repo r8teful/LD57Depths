@@ -13,7 +13,7 @@ public interface IEffectActive {
 }
 public interface IEffectBuff {
     BuffSO Buff { get; }
-    AbilitySO Target { get; }
+    float GetEffectiveStat(StatType stat, StatModifier tempMod = null);
 }
 // So we can have a generic "Add ability with prefab" SO
 public interface IInitializableAbility {
