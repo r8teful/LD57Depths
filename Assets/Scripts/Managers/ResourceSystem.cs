@@ -315,7 +315,7 @@ public class ResourceSystem {
             StatType.MiningFalloff => "Falloff",
             StatType.MiningCombo => "Damage Falloff",
             StatType.PlayerDrag => "Player Drag",
-            StatType.PlayerMagnetism => "Player Drag",
+            StatType.PlayerMagnetism => "Item Magnetism",
             StatType.Cooldown => "Cooldown",
             StatType.Duration => "Duration",
             _ => "NULL",

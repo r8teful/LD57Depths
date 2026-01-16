@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 1978658108044632745}
   - component: {fileID: 7040180018344758678}
   - component: {fileID: 1918865514594608421}
+  - component: {fileID: 7250565941071333612}
   m_Layer: 2
   m_Name: PlayerOnline
   m_TagString: Player
@@ -458,13 +459,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   insideSubTransform: {fileID: 0}
   groundCheck: {fileID: 5559968206278809909}
-  swimSpeed: 1.5
   walkSpeed: 5
   climbSpeed: 4
-  accelerationForce: 5
-  dashForce: 8
-  dashDuration: 0.25
-  cooldownDuration: 2
   decelerationForce: 0.7
   directionalChangeSpeed: 0.3
   ladderSensorSize: {x: 0.29, y: 0.67}
@@ -509,11 +505,6 @@ MonoBehaviour:
   _componentIndexCache: 4
   _addedNetworkObject: {fileID: 6962948237969374493}
   _networkObjectCache: {fileID: 6962948237969374493}
-  dropPoint: {fileID: 0}
-  pickupRadius: 2
-  pickupLayerMask:
-    serializedVersion: 2
-    m_Bits: 64
   containerLayerMask:
     serializedVersion: 2
     m_Bits: 128
@@ -568,9 +559,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4700398cfc0012e439f4cd9f3606709e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 6962948237969374493}
-  _networkObjectCache: {fileID: 0}
   _baseStats: {fileID: 11400000, guid: d8685c4b27708d64da3f05ac7c44d328, type: 2}
 --- !u!114 &1978658108044632745
 MonoBehaviour:
@@ -614,6 +602,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxOxygen: 250
   oxygenDepletionRate: 1
+--- !u!114 &7250565941071333612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228294681075539138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa25085489de4584c909b2f9c6c20621, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  magnetAcceleration: 0
+  pickupLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &1942967068140502079
 GameObject:
   m_ObjectHideFlags: 0
@@ -758,7 +762,7 @@ Transform:
   m_GameObject: {fileID: 2741042111641852411}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.156, y: 1.163, z: 0}
+  m_LocalPosition: {x: -0.156, y: 0.541, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -959,7 +963,7 @@ Transform:
   m_GameObject: {fileID: 4971569107695511363}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.57, y: 1.303, z: 0}
+  m_LocalPosition: {x: -0.57, y: 0.681, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1047,7 +1051,7 @@ Transform:
   m_GameObject: {fileID: 4993257294788784869}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.16, y: 1.0365, z: 0}
+  m_LocalPosition: {x: 0.16, y: 0.404, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1155,7 +1159,7 @@ Transform:
   m_GameObject: {fileID: 5741266127992731626}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.61, z: 0}
+  m_LocalPosition: {x: 0, y: -0.279, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1463,7 +1467,7 @@ Transform:
   m_GameObject: {fileID: 8664934994935814639}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.029, y: 0.497, z: 0}
+  m_LocalPosition: {x: 0.029, y: -0.06, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1496,7 +1500,7 @@ Transform:
   m_GameObject: {fileID: 8964401078132450866}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.00000053644175, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0.078, y: 0.461, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

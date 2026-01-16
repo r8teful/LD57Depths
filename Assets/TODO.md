@@ -1,12 +1,25 @@
-* Finish player upgrades, CHECK THEM AND ACTUALLY MAKE SURE THEY WORK, ALL OF THEM!!
+* Make a luck stat, it effects ore drop amount, and item rarity
+* Make magnetism 
 
-&nbsp;	- I think its just dash upgrading left 
+### Leveling system:
 
-&nbsp;	- Decide what ore spawning upgrades you want
+Make a levelling system and add purchasable abilities for it
 
-* Make a levelling system and add purchasable abilities for it
+#### Short range items
 
-&nbsp;	- What abilities? 
+* Shockwave, pulsive shot that is an intense shockwave. It spawns around you and damages blocks close to you, damage falls of the further from the center you are
+* DestroyZone: Constantly deals damage to blocks around you,
+* Boomerang: Thrown in an arc around the character and goes through blocks 
+
+#### Long range items
+
+* Black hole grenades, thrown from your character position in  a random position
+* Bouncing ball: Collides with objects, bounces around and damages blocks
+* Fish gun: Shoots a pyranya in the mining direction, it destroys blocks infront 
+
+
+
+
 
 * Fix the submarine
 
