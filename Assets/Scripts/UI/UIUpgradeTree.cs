@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 using static UIUpgradeNode;
@@ -43,7 +44,7 @@ public class UIUpgradeTree : MonoBehaviour {
             int currentLevel = nodeData.GetCurrentLevel(existingUpgrades);
 
             // Get the correct recipe data for display.
-            UpgradeRecipeSO preparedRecipe = nodeData.GetNextUpgradeForNode(existingUpgrades, tree);
+            UpgradeRecipeSO preparedRecipe = nodeData.GetUpgradeData(existingUpgrades, tree);
             bool canAfford = false;
             if (preparedRecipe != null) {
                 canAfford = preparedRecipe.CanAfford(inv);
@@ -145,7 +146,7 @@ public class UIUpgradeTree : MonoBehaviour {
                 _nodeMap[upgradeNode.ID].DoPurchaseAnim(); // Purchase anim when not maxed, if we are maxed, setting to purchase state will play the animation
             }
             // Calculate the next upgrade cost for that node
-            uIUpgradeNode.SetNewPreparedUpgrade(upgradeNode.GetNextUpgradeForNode(unlockedUpgrades, _treeData));
+            uIUpgradeNode.SetNewPreparedUpgrade(upgradeNode.GetUpgradeData(unlockedUpgrades, _treeData));
             RefreshNodes(unlockedUpgrades); // We could make it more performant by checking which nodes could have actually changed, but its not that performant heavy anyway.
         }
     }   
@@ -156,11 +157,17 @@ public class UIUpgradeTree : MonoBehaviour {
             UpgradeNodeState status = node.GetState(unlockedUpgrades, canAfford);
             if(status == UpgradeNodeState.Unlocked) {
                 // Need to fetch new data if we're now active
-                uiNode.SetNewPreparedUpgrade(node.GetNextUpgradeForNode(unlockedUpgrades, _treeData));
+                uiNode.SetNewPreparedUpgrade(node.GetUpgradeData(unlockedUpgrades, _treeData));
 
             }
             uiNode.UpdateVisual(status,node.GetCurrentLevel(unlockedUpgrades));
         }
-
+    }
+    public UpgradeRecipeSO GetUpgrade() {
+        foreach(var node in _treeData.nodes) {
+            //UpgradeRecipeSO preparedRecipe = node.GetNextUpgradeForNode();
+            // todo 
+        }
+        return null;
     }
 }

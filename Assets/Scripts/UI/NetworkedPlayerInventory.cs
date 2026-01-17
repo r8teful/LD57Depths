@@ -41,6 +41,8 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
         bool added = inventoryManager.AddItem(itemID, 1); 
         if (added) {
             OnItemPickup?.Invoke(itemID, 1);
+            XPEvents.TriggerGainXP(XPCalculation.
+                CalculateXP(App.ResourceSystem.GetItemByID(itemID),1));
             DiscoveryManager.Instance.ServerDiscoverResource(itemID);
         } else {
             Debug.LogWarning($"Client: Could not add item {itemID} to inventory (full?).");

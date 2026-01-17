@@ -102,7 +102,17 @@ public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable {
         }
         return true;
     }
-
+    /// <summary>
+    /// Used to get approriate upgrades
+    /// </summary>
+    /// <returns></returns>
+    public int GetRecipeValue() {
+        int total = 0;
+        foreach (var req in requiredItems) {
+            total += (req.item.itemValue * req.quantity);
+        }
+        return total;
+    }
     /// <summary>
     /// Gets the status of each ingredient for UI display.
     /// </summary>

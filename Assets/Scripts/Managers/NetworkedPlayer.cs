@@ -22,6 +22,7 @@ public class NetworkedPlayer : NetworkBehaviour {
     public PlayerStatsManager PlayerStats { get; private set; } 
     public OxygenManager OxygenManager { get; private set; }
     public PlayerAbilities PlayerAbilities { get; private set; } 
+    public PlayerRewardManager PlayerReward { get; private set; } 
     public PopupManager PopupManager => UiManager.PopupManager;
     public NetworkObject PlayerNetworkedObject => base.NetworkObject; // Expose NetworkObject for other scripts to use
     public InventoryManager GetInventory() => InventoryN.GetInventoryManager();
@@ -94,6 +95,7 @@ public class NetworkedPlayer : NetworkBehaviour {
         ToolController = GetComponent<ToolController>();
         PlayerAbilities = GetComponent<PlayerAbilities>();
         OxygenManager = GetComponent<OxygenManager>();
+        PlayerReward = GetComponent<PlayerRewardManager>();
         PlayerMovement = GetComponent<PlayerMovement>();
 
         InventoryN.Initialize(); // We have to do this first before everything else, then spawn the UI manager, and then start the other inits 

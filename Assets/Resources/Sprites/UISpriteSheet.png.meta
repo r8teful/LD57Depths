@@ -449,7 +449,7 @@ TextureImporter:
         height: 15
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 3, y: 3, z: 3, w: 2}
       customData: 
       outline: []
       physicsShape: []
@@ -3563,6 +3563,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UIXPBoarder
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 498
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 2, y: 3, z: 2, w: 2}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb00f6be32e4983419ed554ae94ea17f
+      internalID: 1438147028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -3688,6 +3710,7 @@ TextureImporter:
       UISpriteSheet_47: -834952813
       UISpriteSheet_54: -1439600899
       UISpriteSheet_64: 1311666043
+      UIXPBoarder: 1438147028
       UpgradeAccuracy: 1441869239
       UpgradeBar0: 1275372579
       UpgradeFilterExtracted: 1228492800
