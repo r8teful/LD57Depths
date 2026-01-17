@@ -112,7 +112,7 @@ public class FixableEntity : NetworkBehaviour, IInteractable, IPopupInfo {
             // Passing the instantiated popup so we can show visual feedback BTW, this should probably be handled by PopupManager, it already has a CurrentPopup variable
             
             //var context = new RecipeExecutionContext { Player = client.GetComponent<NetworkedPlayer>()};
-            var context = RecipeExecutionContext.FromObject(gameObject);
+            var context = ExecutionContext.FromObject(gameObject);
             player.CraftingComponent.AttemptCraft(fixRecipe, context, instantatiatedPopup);
         }
         //PopupManager.Instance.TryShowWorldPopup(this,client);

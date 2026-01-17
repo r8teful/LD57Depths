@@ -3585,6 +3585,72 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UIBoarderBigOrange
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 498
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 4, y: 4, z: 4, w: 4}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b4d161cde56786e4ca54c22ef7187a34
+      internalID: 276201666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIBoarderBigGreen
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 511
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 4, y: 4, z: 4, w: 4}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5be852d6153c5d846b62841c7d300cbc
+      internalID: -702740983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIBoarderBigBlue
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 485
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 4, y: 4, z: 4, w: 4}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2524c6702162fab4a93075d8b3a1e132
+      internalID: 1025421921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -3686,6 +3752,9 @@ TextureImporter:
       TrenchProgression4: 1361359748
       TrenchWhole: 1359521255
       UIAbilityActiveBoarder: -1507697884
+      UIBoarderBigBlue: 1025421921
+      UIBoarderBigGreen: -702740983
+      UIBoarderBigOrange: 276201666
       UIBrimstone0: -917287309
       UIBrimstone1: -526431394
       UIBrimstone3: -1724539373

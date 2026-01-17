@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "EffectSpawnPrefab", menuName = "ScriptableObjects/AbilityEffects/EffectSpawnPrefab")]
-public class EffectSpawnPrefab : ScriptableObject, IEffectPassive {
+public class EffectSpawnPrefab : ScriptableObject, IEffectPassive, IExecutable {
     [SerializeField] GameObject prefabToSpawn;
     private GameObject _instantiatedEffect;
 
@@ -15,6 +15,10 @@ public class EffectSpawnPrefab : ScriptableObject, IEffectPassive {
             Destroy(_instantiatedEffect);
             _instantiatedEffect = null;
         }
+    }
+
+    public void Execute(ExecutionContext context) {
+
     }
 
     public void Remove(AbilityInstance instance, NetworkedPlayer player) {

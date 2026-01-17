@@ -5,7 +5,7 @@
 [CreateAssetMenu(fileName = "AbilityUnlockEffectSO", menuName = "ScriptableObjects/Upgrades/AbilityUnlockEffectSO")]
 public class AbilityUnlockEffectSO : UpgradeEffect {
     public AbilitySO abilityToUnlock;
-    public override void Apply(NetworkedPlayer target) {
+    public override void Execute(ExecutionContext context) {
         // Unlock the ability
         NetworkedPlayer.LocalInstance.PlayerAbilities.AddAbility(abilityToUnlock);
     }

@@ -7,9 +7,11 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
     // runtime map from id -> instance
     [ShowInInspector]
     private Dictionary<ushort, AbilityInstance> _abilities = new();
+    private HashSet<ushort> _ownedAbilities = new HashSet<ushort>();
     private NetworkedPlayer _player;
     [SerializeField] private Transform _abilitySlotTransform;
     public Transform AbilitySlot => _abilitySlotTransform;
+    public HashSet<ushort> OwnedAbilities => _ownedAbilities;
     public int InitializationOrder => 998; // Idk just do it last?
 
     public event Action<AbilityInstance> OnabilityRemove;
@@ -30,7 +32,7 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
         if (_abilities.ContainsKey(data.ID)) return;
         var inst = new AbilityInstance(data, _player);
         _abilities[data.ID] = inst;
-
+        _ownedAbilities.Add(data.ID);
         // For passives, apply passive effects now
         if (data.type == AbilityType.Passive) {
             foreach (var so in data.effects)
@@ -50,9 +52,10 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
                     pe.Remove(inst, _player);
         }
         _abilities.Remove(data.ID);
+        _ownedAbilities.Remove(data.ID);
         OnabilityRemove?.Invoke(inst);
     }
-    public bool HasAbility(ushort id) => _abilities.ContainsKey(id);
+    public bool HasAbility(ushort id) => _ownedAbilities.Contains(id);
 
     public AbilityInstance GetAbilityInstance(ushort id) {
         _abilities.TryGetValue(id, out var inst);

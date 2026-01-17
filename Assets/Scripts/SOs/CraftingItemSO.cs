@@ -5,12 +5,9 @@ using UnityEngine;
 public class CraftingItemSO : CraftingRecipeSO {
     [VerticalGroup("Gamepaly/1")]
     public ItemQuantity CraftingResult;
-    public override bool ExecuteRecipe(RecipeExecutionContext context) {
-        var added = false;
-        
+    public override void Execute(ExecutionContext context) {
         if (context.Player != null) {
-            added = context.Player.GetInventory().AddItem(CraftingResult.item.ID, CraftingResult.quantity);
+            context.Player.GetInventory().AddItem(CraftingResult.item.ID, CraftingResult.quantity);
         }
-        return added;
     }
 }

@@ -6,19 +6,17 @@ using UnityEngine;
 // Holds data for one specific upgrade node
 
 [CreateAssetMenu(fileName = "UpgradeRecipeSO", menuName = "ScriptableObjects/Upgrades/UpgradeRecipeSO", order = 9)]
-public class UpgradeRecipeSO: RecipeBaseSO {
+public class UpgradeRecipeSO : RecipeBaseSO {
     [SerializeReference]
     public List<UpgradeEffect> effects = new List<UpgradeEffect>(); // The results the upgrade has when purchased 
    
     public List<StatModAbilityEffectSO> GetTargetEffects() {
         return effects.OfType<StatModAbilityEffectSO>().ToList();
     }
-    public override bool ExecuteRecipe(RecipeExecutionContext context) {
+    public override void Execute(ExecutionContext context) {
         foreach (var effect in effects) {
-            effect.Apply(context.Player);
+            effect.Execute(context);
         }
-        return true; // Assume we've succeded
-
     }
     public override void PrepareRecipe(float value, List<ItemQuantity> resourcePool) {
         base.PrepareRecipe(value, resourcePool);

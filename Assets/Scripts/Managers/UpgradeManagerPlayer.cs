@@ -65,7 +65,7 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
         if (!node.ArePrerequisitesMet(unlockedUpgrades.Collection)) {
             return false;
         }
-        var context = RecipeExecutionContext.FromPlayer(_localNetworkedPlayer);
+        ExecutionContext context = new(_localNetworkedPlayer);
         // 3. Try Execute recipe
         if (!_crafting.AttemptCraft(recipe,context)) {
             Debug.Log($"Failed to purchase {recipe.name}. Not enough currency.");
@@ -93,7 +93,7 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
         foreach (var recipe in allPurchased) {
             if (unlockedUpgrades.Contains(recipe)){
                 var recipeData = App.ResourceSystem.GetRecipeUpgradeByID(recipe);
-                recipeData.ExecuteRecipe(null); // BRUH how are we going to do this?
+                recipeData.Execute(null); // BRUH how are we going to do this?
                 // We can have the order depening on the ID, then the multiplication and addition will be done in the right order
 
             }

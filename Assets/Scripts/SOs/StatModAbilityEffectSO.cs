@@ -12,10 +12,10 @@ public class StatModAbilityEffectSO : UpgradeEffect {
 
     public AbilitySO targetAbility;
 
-    public override void Apply(NetworkedPlayer target) {
+    public override void Execute(ExecutionContext target) {
         Debug.Log($"Applying ability buff to {targetAbility.displayName}");
         var mod = new StatModifier(modificationValue, upgradeType, increaseType, this);
-        target.PlayerAbilities.GetAbilityInstance(targetAbility.ID).AddInstanceModifier(mod);
+        target.Player.PlayerAbilities.GetAbilityInstance(targetAbility.ID).AddInstanceModifier(mod);
     }
     public StatModifier GetStatModifer() {
         return new StatModifier(modificationValue, upgradeType, increaseType, this);

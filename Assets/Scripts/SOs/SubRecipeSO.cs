@@ -13,8 +13,8 @@ public class SubRecipeSO : RecipeBaseSO {
     public Sprite[] UpgradeIconSteps;
     public Sprite[] UpgradeExteriorSteps;
     public Sprite[] UpgradeInteriorSteps;
-    public override bool ExecuteRecipe(RecipeExecutionContext context) {
+    public override void Execute(ExecutionContext context) {
         // This is not getting called now read what I wrote in RpcContributeToUpgrade in SubmarineManager
-        return true;
+        
     }
 }

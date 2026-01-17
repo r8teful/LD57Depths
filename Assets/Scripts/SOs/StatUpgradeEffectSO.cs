@@ -6,15 +6,15 @@ public class StatUpgradeEffectSO : UpgradeEffect {
     public StatType upgradeType;
     public StatModifyType increaseType;
     public float modificationValue;
-    public override void Apply(NetworkedPlayer target) {
+    public override void Execute(ExecutionContext target) {
         // The effect's job is to find the relevant component and tell it to update.
-        var playerStats = target.PlayerStats;
+        var playerStats = target.Player.PlayerStats;
         if (playerStats != null) {
             var inst = new StatModifier(modificationValue, upgradeType, increaseType, this);
             playerStats.AddInstanceModifier(inst);
             Debug.Log($"Applied stat upgrade: {upgradeType} by {modificationValue}");
         } else {
-            Debug.LogWarning($"Could not find PlayerStats component on {target.name} to apply {upgradeType} upgrade.");
+            Debug.LogWarning($"Could not find PlayerStats component on {target} to apply {upgradeType} upgrade.");
         }
     }
 

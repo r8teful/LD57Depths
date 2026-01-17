@@ -10,7 +10,7 @@ public class CraftingComponent : MonoBehaviour, INetworkedPlayerModule {
         _clientInventory = playerParent.InventoryN.GetInventoryManager();
     }
     // Not that SubmarineManager handles the subupgrading stuff
-    public bool AttemptCraft(RecipeBaseSO recipe, RecipeExecutionContext context = null, UIPopup instantatiatedPopup = null) {
+    public bool AttemptCraft(RecipeBaseSO recipe, ExecutionContext context = null, UIPopup instantatiatedPopup = null) {
         // TODO possible use client inventoy from context here. But no, we don't really want to change that, or have other scripts store it, just have it be stored here and create a new context each time
         // We call ExecuteRecipe
         if (recipe == null || _clientInventory == null) {
@@ -29,19 +29,9 @@ public class CraftingComponent : MonoBehaviour, INetworkedPlayerModule {
             return false;
         }
         // Craft the bitch
-        bool executionSuccess = recipe.ExecuteRecipe(context);
-        if (executionSuccess) {
-            HandleCraftSuccess(recipe);
-            _clientInventory.ConsumeItems(recipe.requiredItems); // Only consume when recipe success
-        } else {
-            HandleCraftFail(recipe, instantatiatedPopup, "Unable to craft!");
-            return false;
-        }
+        recipe.Execute(context);
+        _clientInventory.ConsumeItems(recipe.requiredItems); // Only consume when recipe success
         return true;
-    }
-    private void HandleCraftSuccess(RecipeBaseSO recipe) {
-        string name = recipe != null ? recipe.displayName : recipe.ID.ToString();
-        Debug.Log($"UI: Successfully crafted {name}!");
     }
 
     private void HandleCraftFail(RecipeBaseSO recipe, UIPopup instantatiatedPopup, string reason) {

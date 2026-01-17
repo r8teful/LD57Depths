@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.VisualScripting;
 using UnityEngine;
 
 // Based on https://youtu.be/tE1qH8OxO2Y
@@ -198,6 +200,15 @@ public class ResourceSystem {
             return null;
         }
         return ability;
+    }
+    public AbilitySO GetRandomAvailableAbility(HashSet<ushort> exluded) {
+        var rnd = new System.Random();
+        var validEntries = _abilityLookupByID
+            .Where(kvp => !exluded.Contains(kvp.Key))
+            .ToArray();
+        if (validEntries.Length == 0) return null;
+
+        return validEntries[rnd.Next(validEntries.Length)].Value;
     }
     public ZoneSO GetZoneByIndex(int zoneIndex) {
         var list = Resources.LoadAll<ZoneSO>("TrenchZones").ToList();

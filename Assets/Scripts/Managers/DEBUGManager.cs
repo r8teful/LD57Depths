@@ -95,6 +95,10 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     private void debugGive(int i, int j) {
         _player.InventoryN.DEBUGGIVE(i,j);
     }
+    [ConsoleCommand("giveXP")]
+    private void debugXP(int i) {
+        XPEvents.TriggerGainXP(i);
+    }
 
 
     [ConsoleCommand("showupgrade")]
