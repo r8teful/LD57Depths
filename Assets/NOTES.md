@@ -249,8 +249,15 @@ OK STEP BY STEP:
 2. Make reward system
 3. Make UI NOW, show just a name that's all I care about atm
 4. Make so you can choose it and get the reward!
+5. Now make the ability rewards and actually have a POOL that we can choose from,
 
 
+
+Okay but how will we do the pool? maybe from game setup manager? Because pool could expand depending on our unlocks  
+
+
+
+Its fucked because execute is the result, we do gain the buff and stuff, but nothing is actually tracked, like when we click on an upgrade node from the UI we call TryPurchase upgrade in upgrademanager which then adds to unlocked upgrades 
 
 
 

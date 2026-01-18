@@ -21,7 +21,7 @@ public class UIUpgradeScreen : MonoBehaviour {
     }
     internal void Init(UIManager UIManager, NetworkedPlayer client) {
         _UIManagerParent = UIManager;
-        _treeDataTool = App.ResourceSystem.GetTreeByName(GameSetupManager.LocalInstance.GetUpgradeTreeName()); // This will obviously have to come from some sort of "game selection" manager
+        _treeDataTool = App.ResourceSystem.GetTreeByName(GameSetupManager.Instance.GetUpgradeTreeName()); // This will obviously have to come from some sort of "game selection" manager
         //_treeDataTool = App.ResourceSystem.GetTreeByName("Mining Lazer"); // This will obviously have to come from some sort of "game selection" manager
         //_treeDataPlayer = App.ResourceSystem.GetTreeByName("Player"); // This will obviously have to come from some sort of "game selection" manager
        

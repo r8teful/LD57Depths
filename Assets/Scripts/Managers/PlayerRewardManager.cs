@@ -65,7 +65,7 @@ public class PlayerRewardManager : MonoBehaviour, INetworkedPlayerModule {
     }
 
     private IExecutable TryGetTreeUpgradeReward(int costValue,int rewardNumber) {
-        var tree = App.ResourceSystem.GetTreeByName(GameSetupManager.LocalInstance.GetUpgradeTreeName());
+        var tree = App.ResourceSystem.GetTreeByName(GameSetupManager.Instance.GetUpgradeTreeName());
         var upgrade = tree.GetUpgradeWithValue(costValue, pickedUpgradeNodeIDs);
         if(upgrade == null) return null;
         pickedUpgradeNodeIDs.Add(upgrade.ID);

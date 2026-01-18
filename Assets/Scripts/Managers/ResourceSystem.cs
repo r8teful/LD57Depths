@@ -50,6 +50,9 @@ public class ResourceSystem {
     public const ushort CactusAbilityID = 101; 
     public const ushort BlockOxygenID = 104; 
     public const ushort PlayerDashID = 9; 
+    public const ushort ShockwaveID = 105; 
+    public const ushort BoomerangID = 106; 
+    public const ushort BlackholeID = 107; 
 
     public const ushort UpgradeFlippersID = 102; // Max speed 3 
     public const ushort UpgradeOxygenID = 122;  // Oxygen tier 3
@@ -203,12 +206,13 @@ public class ResourceSystem {
     }
     public AbilitySO GetRandomAvailableAbility(HashSet<ushort> exluded) {
         var rnd = new System.Random();
-        var validEntries = _abilityLookupByID
-            .Where(kvp => !exluded.Contains(kvp.Key))
+        var available = GameSetupManager.Instance.CurrentGameSettings.AvailableAbilityIDs;
+        var validEntries = available
+            .Where(a => !exluded.Contains(a))
             .ToArray();
         if (validEntries.Length == 0) return null;
-
-        return validEntries[rnd.Next(validEntries.Length)].Value;
+        var abilityID = validEntries[rnd.Next(validEntries.Length)];
+        return _abilityLookupByID[abilityID];
     }
     public ZoneSO GetZoneByIndex(int zoneIndex) {
         var list = Resources.LoadAll<ZoneSO>("TrenchZones").ToList();

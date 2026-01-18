@@ -55,7 +55,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     private float _cachedSwimSpeed;
 
     public List<ContactPoint2D> ContactsMostRecent { get => _contactsMostRecent; set => _contactsMostRecent = value; }
-    public int InitializationOrder => 999;
+    public int InitializationOrder => 998;
 
 
     internal bool CanUseTool() => _currentState == PlayerState.Swimming;

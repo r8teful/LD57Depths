@@ -44,17 +44,11 @@ public class RPGProjectile : MonoBehaviour {
         // Get the center of the explosion
         Vector3 explosionCenter = transform.position;
 
-        // Calculate grid positions within the explosion radius
-        // Assuming tiles are on a 1x1 grid (adjust grid size if different)
-        int gridRadius = Mathf.CeilToInt(explosionRadius);
-        for (int x = -gridRadius; x <= gridRadius; x++) {
-            for (int y = -gridRadius; y <= gridRadius; y++) {
-                Vector3 tilePos = explosionCenter + new Vector3(x, y, 0);
-                // Check if the tile is within the explosion radius
-                if (Vector3.Distance(explosionCenter, tilePos) <= explosionRadius) {
-                    toolController.CmdRequestDamageTile(tilePos, damageAmount);
-                }
-            }
+        var tiles = MineHelper.GetCircle(
+            WorldManager.Instance.MainTileMap, transform.position, explosionRadius);
+        foreach (var tile in tiles) {
+            // todo set this to player also I don't know if the circle thing will work but eh
+            toolController.CmdRequestDamageTile(tile.CellPos, damageAmount * tile.DamageRatio);
         }
 
         Instantiate(explosionParticlePrefab, transform.position,Quaternion.identity);

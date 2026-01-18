@@ -114,8 +114,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         if (hit.collider != null) {
 
             //Debug.Log($"MINING HIT!!");
-            Vector2 nudgedPoint = hit.point + _currentDirection * 0.1f; // Nudged point logic seems reversed, correcting it.
-
+            Vector2 nudgedPoint = hit.point + _currentDirection * 0.1f; 
             // Damage Calculation
             float distance = hit.distance;
             float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloff);

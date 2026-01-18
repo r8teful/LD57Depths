@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bd08606626a8904b990accdb65bb0aa, type: 3}
+  m_Name: AbilityShockwave
+  m_EditorClassIdentifier: 
+  id: 105
+  icon: {fileID: 0}
+  displayName: Shockwave
+  type: 0
+  cooldown: 0
+  isTimed: 0
+  StatTypes:
+  - Stat: 1000
+    BaseValue: 1
+  effects:
+  - {fileID: 11400000, guid: 7ce74b3b6163af64485906ecc7688244, type: 2}
+  costumes: []

@@ -153,7 +153,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     }
     [ConsoleCommand("gotoBiome",value: "bio,fungal,forest,desert")]
     private void debugGotoBiome(string biome) {
-        GameSetupManager.LocalInstance.TryGetHostSettings(out var settings);
+        var settings = GameSetupManager.Instance.CurrentGameSettings;
         if(settings == null) {
             Debug.LogError("Couldnt get host settings!");
             return;

@@ -64,7 +64,7 @@ public class WorldLightingManager : MonoBehaviour {
             }
         }
         // References
-        _mainTilemap = _worldManager.GetMainTileMap();
+        _mainTilemap = _worldManager.GetMainTileMapObject();
         _compositeCollider = _mainTilemap.GetComponent<CompositeCollider2D>();
 
         // Subscribe to change lighting when entering interiors

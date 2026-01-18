@@ -12,7 +12,7 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
     [SerializeField] private Transform _abilitySlotTransform;
     public Transform AbilitySlot => _abilitySlotTransform;
     public HashSet<ushort> OwnedAbilities => _ownedAbilities;
-    public int InitializationOrder => 998; // Idk just do it last?
+    public int InitializationOrder => 999; // Has to be after player movement because some abilities need it
 
     public event Action<AbilityInstance> OnabilityRemove;
     public event Action<AbilityInstance> OnAbilityAdd;
@@ -23,8 +23,10 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BrimstoneBuffID)); // Lazer blast
         AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BiomeBuffID)); // Biome buffs
         //AddAbility(App.ResourceSystem.GetAbilityByID(101)); // cactus suit
-        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BlockOxygenID));
-        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.PlayerDashID));
+        //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BlockOxygenID));
+        //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.PlayerDashID));
+        //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.ShockwaveID));
+        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BlackholeID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(69)); // Fish gun
     }
 

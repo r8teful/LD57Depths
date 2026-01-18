@@ -2,11 +2,7 @@ using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class CactusSuit : MonoBehaviour, IInitializableAbility {
-    private AbilityInstance _abilityInstance;
-    private PlayerAbilities _owner;
-    private NetworkedPlayer _player;
-    private Coroutine _loop;
+public class CactusSuit : ShootableAbilityBase {
 
     [Header("Bullet Settings")]
     public GameObject cactusProjectile;      
@@ -14,22 +10,9 @@ public class CactusSuit : MonoBehaviour, IInitializableAbility {
     public float angleRandomness = 5f;
     public float bulletSpeed = 8f;
     public float bulletLifetime = 5f;
-    public void Init(AbilityInstance instance, NetworkedPlayer player) {
-        _player = player;
-        _abilityInstance = instance;
-        _loop = StartCoroutine(FireLoop());
-    }
 
-    IEnumerator FireLoop() {
-        while (true) {
-            if (_abilityInstance == null) yield break; 
-            float wait = _abilityInstance.GetEffectiveStat(StatType.Cooldown); // this clamps 
-            Shoot();
-            yield return new WaitForSeconds(wait);
-        }
-    }
 
-    void Shoot() {
+    public override void Shoot() {
         if (cactusProjectile == null) {
             Debug.LogWarning("Shooter: bulletPrefab is not assigned.");
             return;
@@ -68,9 +51,5 @@ public class CactusSuit : MonoBehaviour, IInitializableAbility {
             prickle.gameObject.SetActive(true);
             prickle.Init(_player, dir, bulletSpeed, bulletLifetime);
         }
-    }
-
-    void OnDestroy() {
-        if (_loop != null) StopCoroutine(_loop);
     }
 }

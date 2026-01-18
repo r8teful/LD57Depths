@@ -24,7 +24,8 @@ public class WorldManager : NetworkBehaviour {
     public WorldGenSettingSO WorldGenSettings;
     public int GetChunkSize() => ChunkManager.GetChunkSize();
     public Transform GetWorldRoot() => _worldRoot;
-    public GameObject GetMainTileMap() => mainTilemap.gameObject;
+    public GameObject GetMainTileMapObject() => mainTilemap.gameObject;
+    public Tilemap MainTileMap => mainTilemap;
     public Transform GetSubTransform() => _sub;
     
     [SerializeField] private Tilemap mainTilemap; // Main visual grid component for the game
@@ -61,7 +62,7 @@ public class WorldManager : NetworkBehaviour {
         StructureManager = new StructureManager();
         if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
         SpawnArtifacts();
-        GameSetupManager.LocalInstance.HostSetGameSettings(new(WorldGenSettings));
+        GameSetupManager.Instance.AddWorldGenSettings(WorldGenSettings);
     }
 
     private void SpawnArtifacts() {
