@@ -21,21 +21,26 @@ public class UILevelUpScreen : MonoBehaviour {
     }
 
     private void SpawnRewardVisuals(IExecutable[] rewards) {
+        foreach (Transform t in _layoutGroup) {
+            Destroy(t.gameObject);
+        }
         foreach (var reward in rewards) {
-            Instantiate(_levelUpReward, _layoutGroup).Init(reward);
+            Instantiate(_levelUpReward, _layoutGroup).Init(this, reward);
         }
     }
 
     private void HideScreen() {
         _screenContainer.gameObject.SetActive(false);
     }
-    public void OnButtonClicked() {
-        LevelReady();
+    public void OnButtonClicked(UILevelUpReward button, IExecutable choice) {
+        // Execute the reward?
+        LevelReady(choice);
+
     }
 
-    private void LevelReady() {
+    private void LevelReady(IExecutable choice) {
         // Player has done its thing we are now ready to continue the game
         HideScreen();
-        XPEvents.TriggerUIReady();
+        XPEvents.TriggerUIReady(choice);
     }
 }

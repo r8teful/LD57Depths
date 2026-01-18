@@ -55,15 +55,17 @@ public class UpgradeTreeDataSO : ScriptableObject {
 
         return recipeInstance;
     }
-    public UpgradeRecipeSO GetUpgradeWithValue(int value) {
+    public UpgradeRecipeSO GetUpgradeWithValue(int value, HashSet<ushort> pickedIDs) {
         // I hate this but we never store any actual upgrade data so we have to make it every time
         var u = NetworkedPlayer.LocalInstance.UpgradeManager.GetUnlockedUpgrades();
-        int bestValueDiff = 0;
+        int bestValueDiff = 99999;
         UpgradeRecipeSO bestMatch = null;
         foreach(var node in nodes) {
             if (!node.ArePrerequisitesMet(u)) continue;
-            if (!node.IsNodeMaxedOut(u)) continue;
+            if (node.IsNodeMaxedOut(u)) continue;
+            // Note that there are two IDs, upgrade NODES, and upgrade RECIPES, we have to check RECIPES ( we could check nodes, it would probably be better, but slighlt more complicated to check for maybe?!?)
             UpgradeRecipeSO recipe = node.GetUpgradeData(u,this);
+            if (pickedIDs.Contains(recipe.ID)) continue; // Don't choose upgrades we already have picked before 
             if (recipe == null) continue;
             var valDiff = Mathf.Abs(recipe.GetRecipeValue() - value);
             if (valDiff < bestValueDiff) {

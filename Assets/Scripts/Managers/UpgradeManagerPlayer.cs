@@ -77,6 +77,10 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
         return true;
     }
 
+    // Rewards are unlocked without "trying" need this to track it so we know we have it unlocked
+    public void AddUnlockedUpgrade(ushort ID) {
+        unlockedUpgrades.Add(ID);
+    }
   
 
 

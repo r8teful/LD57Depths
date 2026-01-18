@@ -1,7 +1,7 @@
 using System;
 
 public static class XPEvents {
-    public static event Action OnUILevelReady; // Ui calls this
+    public static event Action<IExecutable> OnUILevelReady; // Ui calls this with the reward we have chosen (null if skipped)
 
     public static event Action<int> OnGainXP;
 
@@ -14,5 +14,5 @@ public static class XPEvents {
     public static void TriggerGainXP(int amount) => OnGainXP?.Invoke(amount);
     public static void TriggerLevelUp(int newLevel) => OnLevelUpReady?.Invoke(newLevel);
     public static void TriggerXPGained(float ratio, int amount) => OnXPChanged?.Invoke(ratio,amount);
-    public static void TriggerUIReady() => OnUILevelReady?.Invoke();
+    public static void TriggerUIReady(IExecutable choice) => OnUILevelReady?.Invoke(choice);
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PlayerExperienceManager : MonoBehaviour, INetworkedPlayerModule {
     [Header("Player Stats")]
@@ -49,7 +50,10 @@ public class PlayerExperienceManager : MonoBehaviour, INetworkedPlayerModule {
     /// <summary>
     /// Call this function when we've selected level rewards
     /// </summary>
-    public void CommitLevelUp() { 
+    public void CommitLevelUp(IExecutable choice) {
+        // Tell reward manager to execute the reward we have chosen
+        _player.PlayerReward.ExecuteReward(choice);
+
         // Subtract the cost of the level
         levelData.currentXP -= levelData.xpToNextLevel;
         // Increase Level
@@ -62,7 +66,6 @@ public class PlayerExperienceManager : MonoBehaviour, INetworkedPlayerModule {
         Debug.Log($"<color=green>LEVEL UP! Now Level {levelData.currentLevel}</color>");
         TryProcessLevelUp(); // Recursion check 
     }
-
     public void DEBUGAddXP() {
         //ExperienceEvents.TriggerGainXP(50);
     }

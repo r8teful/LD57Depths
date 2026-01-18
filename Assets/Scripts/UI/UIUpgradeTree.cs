@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
@@ -11,10 +12,11 @@ public class UIUpgradeTree : MonoBehaviour {
     private Dictionary<ushort, List<UILineRenderer>> _lineMap = new Dictionary<ushort, List<UILineRenderer>>();
     private UIUpgradeScreen _uiParent;
     private UpgradeTreeDataSO _treeData;
-    internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades, InventoryManager inv) {
+    internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades, NetworkedPlayer player) {
         _nodeMap.Clear();
         _uiParent = uIUpgradeScreen;
         _treeData = tree;
+        var inv = player.GetInventory();
         // Instead of instantiating the nodes, we "link" the existing node prefab to the data, so that it displays the right
         // upgrade. This is how we have to do it if we want more complex trees, instead of just instantiating the nodes
         // in a horizontal layout group. A bit more work to setup now but easier to code
@@ -59,9 +61,14 @@ public class UIUpgradeTree : MonoBehaviour {
         RefreshNodes(existingUpgrades); // This makes lines update their state, which needs to be done because we just created them
 
         UIUpgradeScreen.OnSelectedNodeChanged += SelectedChange;
+        player.UpgradeManager.OnUpgradePurchased += UpgradePurchased;
     }
 
- 
+    private void UpgradePurchased(UpgradeRecipeSO sO) {
+        // We could make it more performant by checking which nodes could have actually changed, but its not that performant heavy anyway.
+        var unlockedUpgrades = UpgradeManagerPlayer.LocalInstance.GetUnlockedUpgrades(); // Ugly but sometimes that is okay
+        RefreshNodes(unlockedUpgrades); 
+    }
 
     private void SelectedChange(UpgradeNodeSO node) {
         if(!_nodeMap.TryGetValue(node.ID, out var nodeUI)){
@@ -147,7 +154,6 @@ public class UIUpgradeTree : MonoBehaviour {
             }
             // Calculate the next upgrade cost for that node
             uIUpgradeNode.SetNewPreparedUpgrade(upgradeNode.GetUpgradeData(unlockedUpgrades, _treeData));
-            RefreshNodes(unlockedUpgrades); // We could make it more performant by checking which nodes could have actually changed, but its not that performant heavy anyway.
         }
     }   
     public void RefreshNodes(IReadOnlyCollection<ushort> unlockedUpgrades) {

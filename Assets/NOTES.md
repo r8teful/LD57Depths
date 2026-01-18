@@ -202,9 +202,9 @@ We should treat the duration and cooldown the same way as any other stat. Say ou
 
 
 
-CCooldown doesn't work right now because we multiply the value with 0.2 giving us max(1,0.2) so that wouldn't work 
+CCooldown doesn't work right now because we multiply the value with 0.2 giving us max(1,0.2) so that wouldn't work
 
-Solution would be to internally change the cooldown to go lower when its higher. Would it be speed? 10 seconds cooldown, 1.2 cooldown multiplier, that would then be (1.2-1 \* 10 ) = 8s say its 2 then we would get (2-1 \* 10 ) = 5? no 
+Solution would be to internally change the cooldown to go lower when its higher. Would it be speed? 10 seconds cooldown, 1.2 cooldown multiplier, that would then be (1.2-1 \* 10 ) = 8s say its 2 then we would get (2-1 \* 10 ) = 5? no
 
 it will be base/cooldownStat
 
@@ -212,7 +212,67 @@ it will be base/cooldownStat
 
 
 
+What does magnatism MEAN!??
+
+We have the following:
+
+* Magnatism force: This should be the force that is applied to the items, the speed they get to you
+* Magnatism range: The range that this forcefield of yours is.
+
+Do we have one variable determine these two values?
 
 
 
+## Planning leveling system:
+
+Actually these systems:
+
+
+
+Experience gain system? Something that actually gains experience. Right now that is literally just from blocks, it should calculate how much XP value we get froma  certain block being destroyed. This could honestly simply be within the level system
+
+
+
+Level system: Should just contain the player levels, and an XP counter. It should alert when we go to the next level
+
+
+
+Reward system: Listens to level system, when we level up, we gain a reward. Reward should be picked from a pool of rewards, which we take from other systems. Upgrade tree should have a function that returns a random reward based on the cost
+
+
+
+
+
+OK STEP BY STEP:
+
+1. Add levelling system
+2. Make reward system
+3. Make UI NOW, show just a name that's all I care about atm
+4. Make so you can choose it and get the reward!
+
+
+
+
+
+BRUH, the upgrade nodes are so fucking badly coded and its not that fucking complicated.
+
+
+
+You have the actual upgrade data, this is what the upgrade DOES. Then you also have the upgrade COSTS. This depends on some factors like what the upgrade tree increasing costs are, what item pool we draw from, what stage this upgrade is in. BUT THIS IS RUNTIME DATA. It shouldn't really be set in the scriptable object it just makes it so ugly. It would be better if it was some kind of plain C# class that simply caches these costs and then we can just get them when we hover over things, or when the tree needs to know the costs of a certain upgrade. Now we have to ask it to generate everytime it doesn't fucking store it anywhere
+
+
+
+Its coded so fucking stupid why is everything calculated dynamically? I see literally no point in it. We use our unlocked upgrades to calculate everything. If we have the stage unlocked, we go to the next stage and then we calculate d
+
+
+
+UpgradeNodeSO. Holds how many stages the node has.
+
+UpgradeNode: Plain class that holds current upgrade data. cost, value, upgradeEffect, etc.
+
+UIUpgradeNode: Holds upgradeNode, and simply displays the data it has.
+
+
+
+Nah I'm not doing that anymore
 
