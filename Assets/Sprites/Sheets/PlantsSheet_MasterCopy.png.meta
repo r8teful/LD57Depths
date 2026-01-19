@@ -110,23 +110,859 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Character2_0
+      name: Gems_ThinBlue
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 14
+        x: 44
+        y: 1180
+        width: 15
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d2484b28956fb54fa5eea3e1386d227
+      internalID: 1596058921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_ThinPink
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 1180
+        width: 15
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8498fcdbacf68a64392b10a7f938f6c2
+      internalID: -1522031286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_ThinGreen
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 1180
+        width: 15
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 739f53c22167e204888c4edaab10b00e
+      internalID: 565375251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_ThinDarkPink
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 1110
+        width: 15
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 153f34e9466911c4aa9125700419fd33
+      internalID: -1156624509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_ThickGreen
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 1179
+        width: 34
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be420b966b3cdda42bc67f9a8f23ae19
+      internalID: -1422981453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_ThickPink
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 1180
+        width: 34
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba2ca11a9f286fb4286f41ea9c45fde1
+      internalID: -1687236507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_ThickDarkPink
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 1110
+        width: 34
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a4a29df8f64ba34fa77e69d94e38d22
+      internalID: -443889497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_ThickBlue
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 1180
+        width: 34
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8debdeb2f3666234ab8087549e5b4574
+      internalID: 1415144644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_SmallThickDarkPink
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 1110
+        width: 30
         height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d700afa5ac27734682104fc9dc6298d
+      internalID: -128479767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_SmallThickBlue
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 1180
+        width: 30
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8801e73cce14bc748a796cbebc0c13ea
+      internalID: 125305639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_SmallThickGreen
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 1179
+        width: 30
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 37e7c77849865b043abaf620ebe7cd7b
+      internalID: -2050302390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_SmallThickPink
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 1180
+        width: 30
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d90197ba8abb05a48a110aae3f78862a
+      internalID: -857930174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_SmallThickPurple
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 1180
+        width: 30
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 487839cf2f4d9424082bed781ea113db
+      internalID: 1723975767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_SmallThinBlue
+      rect:
+        serializedVersion: 2
+        x: 378
+        y: 1180
+        width: 11
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c96b0f374e1040044ba76ac94d2bd242
+      internalID: 227491832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_SmallThinGreen
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 1180
+        width: 11
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 04e64951e242fe2459096b480544b654
+      internalID: -418799625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_SmallThinPink
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 1180
+        width: 11
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3dcba7945e742c44c80fc17f8393adb3
+      internalID: 2123146966
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_SmallThinPurple
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 1180
+        width: 11
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 533eef8711e87d1439967950db278c1d
+      internalID: -94555478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_TreePink
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 1180
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 405dc9c837038e84fa5312bc3e62e57d
+      internalID: 1536796103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_TreePurple
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 1180
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 10ad1f25a93ff31439b09d625d2d70aa
+      internalID: 1874521101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_TreeBlue
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 1180
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0867fc52e5a723e4492f4cc3ff81bb43
+      internalID: 39450965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_TreeOrange
+      rect:
+        serializedVersion: 2
+        x: 484
+        y: 1180
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc2be35a3c66f3749b36caced933ce83
+      internalID: -1017926856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_GeodeBigPink
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 1180
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 789cbc573c08f8b4ca3f98784efa40c9
+      internalID: 117231328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_GeodeBigDarkPink
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 1196
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77fa1b65c72f3c34f868ad771e8d1637
+      internalID: 76557909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_GeodeBigGreen
+      rect:
+        serializedVersion: 2
+        x: 516
+        y: 1180
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9644c8a2b3857bb459baccbcd55097e5
+      internalID: 1883579002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_GeodeBigBlue
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 1180
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 632cfc3b73c6c75408b3e01395d4e3f1
+      internalID: 760021160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_GeodeSmallDarkPink
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 1196
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ffe9ed0098d4d241ad14c3d394eabb1
+      internalID: 42249441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_GeodeSmallGreen
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 1180
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 877ac63741836d047be93034ff4ccefa
+      internalID: 265906000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_GeodeSmallPink
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 1180
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6fdc6c1800e7032449b096315cd6e25a
+      internalID: 261016207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_GeodeSmallBlue
+      rect:
+        serializedVersion: 2
+        x: 563
+        y: 1180
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 703ac5d2a1586c04daf7a493d97eff95
+      internalID: -886125315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ice_Tree1
+      rect:
+        serializedVersion: 2
+        x: 58
+        y: 1033
+        width: 45
+        height: 54
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 13cde2e2f9ff3eb4dba1de34892036ea
+      internalID: 760745347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ice_Tree2
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 1034
+        width: 45
+        height: 54
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4ab401886b245a4fbd43d8f1a52fd5f
+      internalID: -883669948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ice_Tree3
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 1033
+        width: 29
+        height: 49
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 26701874978c891459c37e78085b7c75
+      internalID: 1834423434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ice_SnowClumpBig
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 1040
+        width: 18
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98f643e32033f784b8521a25fbf3de2d
+      internalID: -1523365185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ice_SnowClumpSmall
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 1040
+        width: 7
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef8deeef6ba3d7a46b55b7c3b3d79e0b
+      internalID: -493671851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ice_Log
+      rect:
+        serializedVersion: 2
+        x: 245
+        y: 1040
+        width: 39
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2acc297d088e34e49a4a27bb549ef285
+      internalID: -1616070694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ice_Stump
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 1034
+        width: 23
+        height: 17
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ab4569b65d83624a8673b30a27ad02c
+      internalID: 1308389351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ice_Snowman
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1039
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9798ce4b2d7578740a4e8ca03b655032
+      internalID: -1548928228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gems_Vines
+      rect:
+        serializedVersion: 2
+        x: 589
+        y: 1190
+        width: 16
+        height: 17
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 7f9857edb1c32c190800000000000000
-      internalID: -7943720702334105097
+      spriteID: c80c7fa81f8247e4cacd15961c5cce38
+      internalID: 422276256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ice_PineTree
+      rect:
+        serializedVersion: 2
+        x: 508
+        y: 1036
+        width: 44
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 929eee397f9bbd14191c1ad2081d52e5
+      internalID: 1432126319
       vertices: []
       indices: 
       edges: []
@@ -135,7 +971,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: a65bbe12d9a6d7d4aa884c4e89200e16
     internalID: 0
     vertices: []
     indices: 
@@ -146,6 +982,61 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Character2_0: -7943720702334105097
+      Gems_GeodeBigBlue: 760021160
+      Gems_GeodeBigDarkPink: 76557909
+      Gems_GeodeBigGreen: 1883579002
+      Gems_GeodeBigPink: 117231328
+      Gems_GeodeSmallBlue: -886125315
+      Gems_GeodeSmallDarkPink: 42249441
+      Gems_GeodeSmallGreen: 265906000
+      Gems_GeodeSmallPink: 261016207
+      Gems_SmallThickBlue: 125305639
+      Gems_SmallThickDarkPink: -128479767
+      Gems_SmallThickGreen: -2050302390
+      Gems_SmallThickPink: -857930174
+      Gems_SmallThickPurple: 1723975767
+      Gems_SmallThinBlue: 227491832
+      Gems_SmallThinGreen: -418799625
+      Gems_SmallThinPink: 2123146966
+      Gems_SmallThinPurple: -94555478
+      Gems_ThickBlue: 1415144644
+      Gems_ThickDarkPink: -443889497
+      Gems_ThickGreen: -1422981453
+      Gems_ThickPink: -1687236507
+      Gems_ThinBlue: 1596058921
+      Gems_ThinDarkPink: -1156624509
+      Gems_ThinGreen: 565375251
+      Gems_ThinPink: -1522031286
+      Gems_TreeBlue: 39450965
+      Gems_TreeOrange: -1017926856
+      Gems_TreePink: 1536796103
+      Gems_TreePurple: 1874521101
+      Gems_Vines: 422276256
+      Ice_Log: -1616070694
+      Ice_PineTree: 1432126319
+      Ice_SnowClumpBig: -1523365185
+      Ice_SnowClumpSmall: -493671851
+      Ice_Snowman: -1548928228
+      Ice_Stump: 1308389351
+      Ice_Tree1: 760745347
+      Ice_Tree2: -883669948
+      Ice_Tree3: 1834423434
+      LostCity_AmphoraMedOrange: -739826433
+      LostCity_AmphoraMediumBeige: -1827835178
+      LostCity_AmphoraMediumPurple: -763865072
+      LostCity_AmphoraSmallBeige: -2144114751
+      LostCity_AmphoraSmallOrange: 736629024
+      LostCity_AmphoraSmallPurple: -2126381641
+      LostCity_ColumnHangingSmall: -891283043
+      LostCity_ColumnHorizontal: -695341182
+      LostCity_ColumnStandingSmal: -1842279932
+      LostCity_ColumnStandingSmall: -847636943
+      LostCity_ColumnStandingSmallUp: -124616421
+      LostCity_ColumnUp: 575938928
+      LostCity_Lyre: -244051927
+      LostCity_ManBrokenEnd: 1743495612
+      LostCity_ManFlatEnd: -517559342
+      PlantsSheet_MasterCopy_1: -1633156074
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
