@@ -317,7 +317,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         // Could add some more checks here later idk
         return _primaryInputToggle;
     }
-    public bool IsAllowedMiningUse() {
+    public bool IsShooting() {
         // Could add some more checks here later idk
         return IsHoldingDownPrimaryInput() && _playerMovement.CanUseTool();
     }

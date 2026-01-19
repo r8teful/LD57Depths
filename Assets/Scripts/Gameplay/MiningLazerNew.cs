@@ -26,7 +26,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         UpdateCurDir();
         ApplyKnockback();
         HandleShootStateTransition();
-        _isShooting = _player.InputManager.IsAllowedMiningUse();
+        _isShooting = _player.InputManager.IsShooting();
         if (!_isShooting) return;
         if (MineDelayCheck()) {
             if (_player.PlayerAbilities.IsBrimstoneAbilityActive()) {

@@ -54,6 +54,7 @@ public class ResourceSystem {
     public const ushort BoomerangID = 106; 
     public const ushort BlackholeID = 107; 
     public const ushort BouncingBallID = 108; 
+    public const ushort FishShooterID = 109; 
 
     public const ushort UpgradeFlippersID = 102; // Max speed 3 
     public const ushort UpgradeOxygenID = 122;  // Oxygen tier 3

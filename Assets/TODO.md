@@ -2,16 +2,18 @@
 
 #### Long range items
 
-
-
-* Bouncing ball: Collides with objects, bounces around and damages blocks
 * Fish gun: Shoots a pyranya in the mining direction, it destroys blocks infront
+* Add more details in level screen
+
+ 	- If its a node upgrade. Show what you do in the popup
+
+ 	- Need to show some kind of description text with the item
+
+ 
+
+* Fix the submarine, decide if you still want the sub fixing entities
 
 
-
-* Fix the submarine
-
-Its very broken right now when you enter it
 
 
 

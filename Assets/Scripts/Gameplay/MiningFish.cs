@@ -19,7 +19,7 @@ public class MiningFish : MonoBehaviour,IInitializableAbility {
 
     private void Update() {
         HandleShootStateTransition();
-        _isShooting = _player.InputManager.IsAllowedMiningUse();
+        _isShooting = _player.InputManager.IsShooting();
         if (!_isShooting) return;
         _visual.HandleVisualUpdate();
         if (MineDelayCheck()) {
@@ -40,7 +40,7 @@ public class MiningFish : MonoBehaviour,IInitializableAbility {
         AudioController.Instance.PlaySound2D("RPGShoot", 1);
 
         //var fish = Instantiate(App.ResourceSystem.GetPrefab<FishProjectile>("FishProjectile"), _spawnPos.position, rotation);
-        var fish = Instantiate(App.ResourceSystem.GetPrefab<FishProjectileDumb>("FishProjectile"), _spawnPos.position, rotation);
+        var fish = Instantiate(App.ResourceSystem.GetPrefab<FishProjectile>("FishProjectile"), _spawnPos.position, rotation);
         fish.Init(_player, targetDirection * 3);
 
     }
