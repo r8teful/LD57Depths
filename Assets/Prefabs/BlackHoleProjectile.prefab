@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4576008271365079473}
   - component: {fileID: 1532559563646056556}
+  - component: {fileID: 1166448224495543767}
   m_Layer: 0
   m_Name: Square
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.13, y: 0.2, z: 0.40243906}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6373556478426794711}
@@ -76,8 +77,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 21
-  m_Sprite: {fileID: -4441349559142739645, guid: 9218c0e2fd45ef242be3ac6fcf0ed287, type: 3}
-  m_Color: {r: 0.3018868, g: 0.17752461, b: 0.17752461, a: 1}
+  m_Sprite: {fileID: -601408438, guid: 4b7c9ec5d56f7fd49aa6e05def4bbd40, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -87,6 +88,28 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1166448224495543767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2257635683549901112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7643420e0c9cc844096f60f75a41af5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animationSprites:
+  - {fileID: -601408438, guid: 4b7c9ec5d56f7fd49aa6e05def4bbd40, type: 3}
+  - {fileID: -1430885730, guid: 4b7c9ec5d56f7fd49aa6e05def4bbd40, type: 3}
+  - {fileID: 1751635559, guid: 4b7c9ec5d56f7fd49aa6e05def4bbd40, type: 3}
+  - {fileID: 1274210359, guid: 4b7c9ec5d56f7fd49aa6e05def4bbd40, type: 3}
+  - {fileID: -475304269, guid: 4b7c9ec5d56f7fd49aa6e05def4bbd40, type: 3}
+  - {fileID: 707097098, guid: 4b7c9ec5d56f7fd49aa6e05def4bbd40, type: 3}
+  - {fileID: 1065955542, guid: 4b7c9ec5d56f7fd49aa6e05def4bbd40, type: 3}
+  - {fileID: 1738399517, guid: 4b7c9ec5d56f7fd49aa6e05def4bbd40, type: 3}
+  _animationInterval: 7
 --- !u!1 &6858270054936375335
 GameObject:
   m_ObjectHideFlags: 0

@@ -41,7 +41,7 @@ public class MiningFish : MonoBehaviour,IInitializableAbility {
 
         //var fish = Instantiate(App.ResourceSystem.GetPrefab<FishProjectile>("FishProjectile"), _spawnPos.position, rotation);
         var fish = Instantiate(App.ResourceSystem.GetPrefab<FishProjectile>("FishProjectile"), _spawnPos.position, rotation);
-        fish.Init(_player, targetDirection * 3);
+        fish.Init(_player, _abilityInstance, targetDirection * 3);
 
     }
 

@@ -396,5 +396,9 @@ public enum StatType {
 
     // General
     Cooldown = 1000,
-    Duration = 1001
+    Duration = 1001,
+    Size = 1002,
+    ProjectileCount = 1003,
+    ProjectileSpeed = 1004,
+    ProjectileBounces = 1005
 }

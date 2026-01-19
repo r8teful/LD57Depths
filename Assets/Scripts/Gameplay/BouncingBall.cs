@@ -5,7 +5,7 @@ public class BouncingBall : MonoBehaviour {
     private NetworkedPlayer _player;
     private int _bounceAmount;
     private int _maxBounces;
-
+    private AbilityInstance _ability;
 
     private void Awake() {
         _rb = GetComponent<Rigidbody2D>();
@@ -17,10 +17,11 @@ public class BouncingBall : MonoBehaviour {
         material.friction = 0;
         _rb.sharedMaterial = material;
     }
-    public void Init(Vector2 dir,NetworkedPlayer player) {
-        _rb.AddForce(dir, ForceMode2D.Impulse);
+    public void Init(Vector2 dir,NetworkedPlayer player, AbilityInstance abilityInstance) {
+        _ability = abilityInstance;
         _player = player;
-        _maxBounces = 3; // should be upgradable
+        _maxBounces = Mathf.FloorToInt(_ability.GetEffectiveStat(StatType.ProjectileBounces));
+        _rb.AddForce(dir * _ability.GetEffectiveStat(StatType.ProjectileSpeed), ForceMode2D.Impulse);
     }
     private void OnCollisionEnter2D(Collision2D collision) {
         _player.CmdRequestDamageNearestSolidTile(transform.position,5);

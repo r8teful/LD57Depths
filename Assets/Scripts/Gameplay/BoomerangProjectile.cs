@@ -11,18 +11,20 @@ public class BoomerangProjectile : MonoBehaviour {
 
     private Transform playerTransform;
     private NetworkedPlayer _player;
+    private AbilityInstance _ability;
 
-    public void Init(NetworkedPlayer player) {
+    public void Init(NetworkedPlayer player, AbilityInstance abilityInstance) {
         playerTransform = player.transform;
         _player = player;
+        _ability = abilityInstance;
         StartCoroutine(BoomerangRoutine());
         StartCoroutine(DamageRoutine());
     }
 
     private IEnumerator DamageRoutine() {
         var checkInterval = 0.1f;
-        var size = 2f;
-        var damage = 2f;
+        var size = _ability.GetEffectiveStat(StatType.Size);
+        var damage = _ability.GetEffectiveStat(StatType.MiningDamage);
         while (true) {
             var tiles = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, transform.position, size);
             foreach (var tile in tiles) {

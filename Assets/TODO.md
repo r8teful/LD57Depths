@@ -1,20 +1,19 @@
-* Make a luck stat, it effects ore drop amount, and item rarity
-
-#### Long range items
-
-* Add more details in level screen
-
- 	- If its a node upgrade. Show what you do in the popup
-
- 	- Need to show some kind of description text with the item
-
-&nbsp;	- Boarder changes depending on the reward
-
- 
-
+* Make a luck stat, it effects ore drop amount, and item rarity 
 * Fix the submarine, decide if you still want the sub fixing entities
 
 
+
+* Add upgrades to the abilities, do this now!? Yes
+
+&nbsp;	- Make sure they all have PROPER base stat values
+
+&nbsp;	- 
+
+
+
+Shockwave - DONE 
+
+Boomerang - 
 
 
 
@@ -22,7 +21,7 @@
 
 Later:
 
-* Solo playtest and make ALL values reasonable
+* Solo playtest the shit out of everything and make ALL values reasonable
 
  	- Upgrade values
 

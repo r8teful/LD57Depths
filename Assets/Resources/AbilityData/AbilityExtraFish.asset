@@ -22,6 +22,17 @@ MonoBehaviour:
   StatTypes:
   - Stat: 1000
     BaseValue: 3
+  - Stat: 1
+    BaseValue: 1
+  - Stat: 1003
+    BaseValue: 1
+  UpgradeValues:
+  - Value: 0.2
+    Stat: 1
+    Type: 0
+  - Value: 0.5
+    Stat: 1003
+    Type: 0
   effects:
   - {fileID: 11400000, guid: c148523501c6c744c8c928dee03373ce, type: 2}
   costumes: []
