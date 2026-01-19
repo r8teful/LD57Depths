@@ -211,6 +211,68 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &1755851977890191298
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6213674261336452391}
+  - component: {fileID: 22817778277826355}
+  m_Layer: 5
+  m_Name: UpgradeStatContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6213674261336452391
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755851977890191298}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5718324269941695785}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: 10.169991, y: 0}
+  m_SizeDelta: {x: -80.34001, y: 271.49}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &22817778277826355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755851977890191298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 1
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &2308583587212145666
 GameObject:
   m_ObjectHideFlags: 0
@@ -327,7 +389,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 1218880639317878665}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -513,6 +575,7 @@ RectTransform:
   - {fileID: 1967635771791956779}
   - {fileID: 4955373662877078342}
   - {fileID: 3081219534124778954}
+  - {fileID: 6213674261336452391}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -540,5 +603,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa9d4fa3371837644b5b59d6b471adca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _images:
+  - {fileID: 276201666, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  - {fileID: 1025421921, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  - {fileID: -702740983, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   _rewardText: {fileID: 2871556570216242479}
+  _descriptionText: {fileID: 8934057030749572818}
   _button: {fileID: 4631998775680358329}
+  _statsChangeContainer: {fileID: 6213674261336452391}
+  _boarderImage: {fileID: 1218880639317878665}

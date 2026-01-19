@@ -2,12 +2,13 @@
 
 #### Long range items
 
-* Fish gun: Shoots a pyranya in the mining direction, it destroys blocks infront
 * Add more details in level screen
 
  	- If its a node upgrade. Show what you do in the popup
 
  	- Need to show some kind of description text with the item
+
+&nbsp;	- Boarder changes depending on the reward
 
  
 

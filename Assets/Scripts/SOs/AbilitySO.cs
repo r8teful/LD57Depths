@@ -9,6 +9,7 @@ public class AbilitySO : ScriptableObject, IIdentifiable {
     public ushort ID => id;
     public Sprite icon;
     public string displayName;
+    [TextArea(4, 10)]
     public string description;
     public AbilityType type;
     public float cooldown; // Same as duration, this number is MULTIPLYING our base cooldown stat
