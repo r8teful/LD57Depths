@@ -3594,7 +3594,7 @@ TextureImporter:
         width: 12
         height: 12
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 4, y: 4, z: 4, w: 4}
       customData: 
       outline: []
@@ -3616,7 +3616,7 @@ TextureImporter:
         width: 12
         height: 12
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 4, y: 4, z: 4, w: 4}
       customData: 
       outline: []
@@ -3638,7 +3638,7 @@ TextureImporter:
         width: 12
         height: 12
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 4, y: 4, z: 4, w: 4}
       customData: 
       outline: []
@@ -3647,6 +3647,50 @@ TextureImporter:
       bones: []
       spriteID: 2524c6702162fab4a93075d8b3a1e132
       internalID: 1025421921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIBoarderBackground
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 500
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 3, y: 3, z: 3, w: 3}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7cb1efa411820014a9074e467dcd5bc1
+      internalID: 398889071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIBoarderWhite
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 472
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 4, y: 4, z: 4, w: 4}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30c5c883e6491ab4ca9b4b839dabac58
+      internalID: 1126861340
       vertices: []
       indices: 
       edges: []
@@ -3752,9 +3796,11 @@ TextureImporter:
       TrenchProgression4: 1361359748
       TrenchWhole: 1359521255
       UIAbilityActiveBoarder: -1507697884
+      UIBoarderBackground: 398889071
       UIBoarderBigBlue: 1025421921
       UIBoarderBigGreen: -702740983
       UIBoarderBigOrange: 276201666
+      UIBoarderWhite: 1126861340
       UIBrimstone0: -917287309
       UIBrimstone1: -526431394
       UIBrimstone3: -1724539373

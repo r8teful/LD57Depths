@@ -73,6 +73,7 @@ public class PlayerRewardManager : MonoBehaviour, INetworkedPlayerModule {
     }
 
     internal void ExecuteReward(IExecutable choice) {
+        if(choice == null) return;
         if (choice is AddAbilityEffect a) {
             // no special logic here
         } else if (choice is UpgradeRecipeSO u) {

@@ -37,6 +37,9 @@ public class UILevelUpScreen : MonoBehaviour {
         LevelReady(choice);
 
     }
+    public void OnSkippClicked() {
+        LevelReady(null);
+    }
 
     private void LevelReady(IExecutable choice) {
         // Player has done its thing we are now ready to continue the game
