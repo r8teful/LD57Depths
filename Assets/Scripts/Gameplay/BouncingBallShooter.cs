@@ -1,16 +1,9 @@
 using UnityEngine;
 
-public class BouncingBallShooter : MonoBehaviour
-{
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+public class BouncingBallShooter : ShootableAbilityBase {
+    [SerializeField] private BouncingBall _prefab;
+    public override void Shoot() {
+        var dir = Random.insideUnitCircle.normalized * 4;
+        Instantiate(_prefab, transform.position, Quaternion.identity).Init(dir,_player);
     }
 }

@@ -27,6 +27,7 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.PlayerDashID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.ShockwaveID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BlackholeID));
+        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BouncingBallID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(69)); // Fish gun
     }
 
