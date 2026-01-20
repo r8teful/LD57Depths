@@ -2,8 +2,8 @@
 using Sirenix.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 public class PlayerRewardManager : MonoBehaviour, INetworkedPlayerModule {
     public int InitializationOrder => 99;
@@ -37,8 +37,8 @@ public class PlayerRewardManager : MonoBehaviour, INetworkedPlayerModule {
         int i = RandomnessHelpers.PickIndex(weights);
         // Very cool
         var pickers = new Func<IExecutable>[] {
-            () => TryGetAbilityReward(),
             () => TryGetAbilityUpgradeReward(),
+            () => TryGetAbilityReward(),
             () => TryGetTreeUpgradeReward(30, rewardNumber)
         };
 
@@ -49,14 +49,26 @@ public class PlayerRewardManager : MonoBehaviour, INetworkedPlayerModule {
     }
 
     private IExecutable TryGetAbilityUpgradeReward() {
-        // Check if we have a valid ability to upgrade.
-        // Roll rarity etc...
-        return null;
+        // Pick ability to upgrade
+        if (!_player.PlayerAbilities.TryGetUpgradeableAbilities(out var abilities))
+            return null;
+        var rnd = new System.Random();
+        var a = abilities[rnd.Next(abilities.Count)];
+
+        // Pick a value to upgrade
+        var u = a.Data.UpgradeValues[rnd.Next(a.Data.UpgradeValues.Count)];
+
+        // Pick rarity
+        int[] weights = { 70, 15, 6, 2 };
+        var i = RandomnessHelpers.PickIndexWithLuck(weights, _player.PlayerStats.GetStat(StatType.Luck));
+        var ModValue = u.Value * ResourceSystem.GetIncreaseByRarity((RarityType)i);
+        var mod = new StatModifier(ModValue, u.Stat, u.Type, this);
+        return new AbilityUpgradeEffect(a, mod, (RarityType)i);
     }
 
     private IExecutable TryGetAbilityReward() {
         // Check if we have enough ability slots, etc..
-        var ex = _player.PlayerAbilities.OwnedAbilities;
+        var ex = _player.PlayerAbilities.OwnedAbilitiesIDs;
         ex.AddRange(pickedAbilityIDs);
         var a = App.ResourceSystem.GetRandomAvailableAbility(ex);
         if(a == null) return null;

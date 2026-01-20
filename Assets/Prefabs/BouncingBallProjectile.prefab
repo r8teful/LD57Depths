@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 395ba44c5a492164489641af8601d424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _visualTransform: {fileID: 7906647880956447277}
 --- !u!50 &2016545868685012327
 Rigidbody2D:
   serializedVersion: 5
@@ -120,6 +121,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7906647880956447277}
   - component: {fileID: 3294835070795344018}
+  - component: {fileID: 6231392280620038835}
   m_Layer: 6
   m_Name: Circle
   m_TagString: Untagged
@@ -186,7 +188,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: 2075580938, guid: 7a7d1fa2f4a8bb0458f5a2f29ca8819e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -197,3 +199,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6231392280620038835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8706074352496093000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89c18918d1a23f64ea717a1a7c562bba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  degreesPerSecond: 228.46

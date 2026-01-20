@@ -160,7 +160,12 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     private void HandleSwimmingPhysics() {
         var accelerationForce = _playerStats.GetStat(StatType.PlayerAcceleration);
         _cachedSwimSpeed = _playerStats.GetStat(StatType.PlayerSpeedMax);
-     
+#if UNITY_EDITOR
+        if (DEBUGIsGOD) {
+            _cachedSwimSpeed *= 5;
+            accelerationForce *= 5;
+        }
+#endif
         Vector2 moveDirection = _currentInput.normalized;
 
         if (moveDirection != Vector2.zero) {
@@ -407,12 +412,10 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     internal void SetOxygenZone(bool v) {
         _isInsideOxygenZone = v;
     }
-    /*
+
     internal void DEBUGToggleGodMove() {
         if (!DEBUGIsGOD) {
             DEBUGIsGOD = true;
-            accelerationForce *= 10;
-            swimSpeed *= 10;
             DEBUGToggleHitbox();
         } else {
             DEBUGIsGOD = false;
@@ -420,13 +423,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
         }
     }
     private void DEBUGExitGodMove() {
-        accelerationForce *= 0.1f;
-        swimSpeed *= 0.1f;
         DEBUGToggleHitbox();
     }
-
-    internal void DEBUGSetSpeed(float speed) {
-        swimSpeed = speed;
-    }
-     */
 }

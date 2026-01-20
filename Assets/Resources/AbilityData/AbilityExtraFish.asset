@@ -21,11 +21,15 @@ MonoBehaviour:
   isTimed: 0
   StatTypes:
   - Stat: 1000
-    BaseValue: 3
+    BaseValue: 1.5
   - Stat: 1
-    BaseValue: 1
+    BaseValue: 0.7
   - Stat: 1003
     BaseValue: 1
+  - Stat: 1004
+    BaseValue: 2
+  - Stat: 1002
+    BaseValue: 0.6
   UpgradeValues:
   - Value: 0.2
     Stat: 1

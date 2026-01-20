@@ -15,6 +15,8 @@ public class FishProjectile : MonoBehaviour {
     public void Init(NetworkedPlayer player, AbilityInstance abilityInstance, Vector2 dir) {
         _player = player;
         _ability = abilityInstance;
+        var speedMult = _ability.GetEffectiveStat(StatType.ProjectileSpeed);
+        dir *= speedMult;
         _rb.AddForce(dir, ForceMode2D.Impulse);
         Destroy(gameObject, 5);
     }
@@ -25,8 +27,7 @@ public class FishProjectile : MonoBehaviour {
 
     private void FixedUpdate() {
         // Constant forward push
-        var speedMult = _ability.GetEffectiveStat(StatType.ProjectileSpeed);
-        _rb.AddForce(forwardForce * speedMult * transform.right, ForceMode2D.Force);
+        _rb.AddForce(forwardForce * transform.right, ForceMode2D.Force);
 
         // Mine timer
         _mineTimer -= Time.fixedDeltaTime;

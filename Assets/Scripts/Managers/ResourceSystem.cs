@@ -335,6 +335,11 @@ public class ResourceSystem {
             StatType.PlayerMagnetism => "Item Magnetism",
             StatType.Cooldown => "Cooldown",
             StatType.Duration => "Duration",
+            StatType.Size => "Size",
+            StatType.ProjectileCount => "Projectile Count",
+            StatType.ProjectileSpeed => "Projectile Speed",
+            StatType.ProjectileBounces => "Projectile Bounces",
+            StatType.Luck => "Luck",
             _ => "NULL",
         };
     }
@@ -353,6 +358,15 @@ public class ResourceSystem {
             BiomeType.LostCity => InvalidID,
             BiomeType.None => AirID,
                 _ => 0,
+        };
+    }
+    public static float GetIncreaseByRarity(RarityType t) {
+        return t switch {
+            RarityType.Common => 1f,
+            RarityType.Uncommon => 1.4f,
+            RarityType.Rare => 1.6f,
+            RarityType.Legendary => 2f,
+            _ => 0,
         };
     }
     public static WorldGenSettingSO GetMapByID(ushort id) {
@@ -400,5 +414,12 @@ public enum StatType {
     Size = 1002,
     ProjectileCount = 1003,
     ProjectileSpeed = 1004,
-    ProjectileBounces = 1005
+    ProjectileBounces = 1005,
+    Luck = 1006
+}
+public enum RarityType { 
+    Common,
+    Uncommon,
+    Rare,
+    Legendary
 }

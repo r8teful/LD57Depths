@@ -253,11 +253,11 @@ OK STEP BY STEP:
 
 
 
-Okay but how will we do the pool? maybe from game setup manager? Because pool could expand depending on our unlocks  
+Okay but how will we do the pool? maybe from game setup manager? Because pool could expand depending on our unlocks
 
 
 
-Its fucked because execute is the result, we do gain the buff and stuff, but nothing is actually tracked, like when we click on an upgrade node from the UI we call TryPurchase upgrade in upgrademanager which then adds to unlocked upgrades 
+Its fucked because execute is the result, we do gain the buff and stuff, but nothing is actually tracked, like when we click on an upgrade node from the UI we call TryPurchase upgrade in upgrademanager which then adds to unlocked upgrades
 
 
 
@@ -282,4 +282,40 @@ UIUpgradeNode: Holds upgradeNode, and simply displays the data it has.
 
 
 Nah I'm not doing that anymore
+
+
+
+Okay. Ability UPGRADES!!
+
+
+
+Basically will be totally prodecural. 
+
+Creates an upgrade object? It chooses one of the players unlocked abilities they got from the upgrade POOL. 
+
+&nbsp;	
+
+Them, it should look at that ability upgradable stats, and choose one, THEN, it checks which ratity this upgrade it should be, then its like boom, this is the upgrade, +0.4 damage to bouncing ball. Then this should obviously be a statmodifier, and then when we apply this, we use it as IExecutable and boom the ability simply adds it as an upgrade just like any other upgrade.
+
+
+
+No need for scriptable objects, data is simply generated from the abilitySO data upgradeable values list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
