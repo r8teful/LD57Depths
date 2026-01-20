@@ -9,11 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 595c9d83a9dc8454c839c628416a8130, type: 3}
-  m_Name: DropTable4Ruby
+  m_Script: {fileID: 11500000, guid: b53404020c6e33948ab9433323ecb9aa, type: 3}
+  m_Name: TileUpgradeCopper
   m_EditorClassIdentifier: 
-  drops:
-  - ItemData: {fileID: 11400000, guid: 4f9aa67e00b3bad44914e13578ec7f08, type: 2}
-    minAmount: 1
-    maxAmount: 1
-    dropChance: 1
+  Id: 600
+  tileToUpgrade: {fileID: 11400000, guid: 9389412dcdec5f743b8b4395d74529f2, type: 2}
+  dropIncrease: 2

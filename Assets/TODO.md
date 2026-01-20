@@ -1,19 +1,11 @@
+* Add ore drop upgrade
 * Make a luck stat, it effects ore drop amount, and item rarity 
+
+
+
+
+
 * Fix the submarine, decide if you still want the sub fixing entities
-
-
-
-* Add upgrades to the abilities, do this now!? Yes
-
-&nbsp;	- Make sure they all have PROPER base stat values
-
-&nbsp;	- 
-
-
-
-Shockwave - DONE 
-
-Boomerang - 
 
 
 

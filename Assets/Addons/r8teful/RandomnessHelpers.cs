@@ -50,7 +50,18 @@ namespace r8teful {
             }
             return n - 1;
         }
-        public static float LuckBonus(float luck) {
+
+        public static int GetDropScewed(int max, float luck) {
+            float luckBonus = LuckBonus(luck);
+            return Mathf.FloorToInt(Mathf.Lerp(1, max + 1, Skewed01(luckBonus)));
+        }
+
+        // Helpers 
+        private static float Skewed01(float luckBonus) {
+            float exponent = 1f / (1f + luckBonus);
+            return Mathf.Pow(UnityEngine.Random.value, exponent);
+        }
+        private static float LuckBonus(float luck) {
             return Mathf.Log(luck + 1f) * 1.2f;
         }
 

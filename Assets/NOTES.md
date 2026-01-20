@@ -305,6 +305,22 @@ No need for scriptable objects, data is simply generated from the abilitySO data
 
 
 
+Okay, where the fuck do ORE upgrades go? Do we have a separate script that holds that data? Right now the drops are in a "droptable" which is fucking useless because its a scriptable object and we can't change that during runtime. 
+
+
+
+You need to fucking define how you want these upgrades to work otherwise how will you know how to code it!??
+
+
+
+Should work like this: Each ore tile can be upgraded. Say copper node upgrade is "Chance for copper to yield more ores when broken" that's all you have to say. Then internally, you store that the copper tile level is now 1, or something, and that's it! Then in the chunk manager you say, what should I drop for this tile? And then that does it. This would be well fitted for an "Item drop" manager or something where the chunkmanager just says, "player broke this tile, what should I drop?" Then TileDropManager says, ah, this tile has an upgrade to it, and the player has 5 luck, that means you need to drop 3 copper, BOOM 
+
+
+
+
+
+
+
 
 
 

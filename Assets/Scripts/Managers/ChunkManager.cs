@@ -589,25 +589,23 @@ public class ChunkManager : NetworkBehaviour {
     // We might want to move this to WorldManager but eh
     private void SpawnDrops(TileSO sourceTile, Vector3 position) {
         if (!IsServerInitialized) return;
-        if (sourceTile.dropTable == null) return;
-
-        foreach (ItemDropInfo dropInfo in sourceTile.dropTable.drops) {
-            if (dropInfo.ItemData.droppedPrefab != null && Random.value <= dropInfo.dropChance) {
-                int amountToDrop = Random.Range(dropInfo.minAmount, dropInfo.maxAmount + 1);
-                for (int i = 0; i < amountToDrop; i++) {
-                    // Slightly randomize drop position
-                    Vector3 spawnPos = position + (Vector3)Random.insideUnitCircle * 0.3f;
-
-                    // Instantiate the PREFAB, then spawn the INSTANCE
-                    GameObject dropInstance = Instantiate(dropInfo.ItemData.droppedPrefab, spawnPos, Quaternion.identity);
-                    var worldItem = dropInstance.GetComponent<DroppedEntity>();
-                    if (worldItem != null) {
-                        var id = App.ResourceSystem.GetIDByItem(dropInfo.ItemData);
-                        worldItem.Init(id, 1); // we either drop 1, or just specify amountToDrop and don't loop
-                    } 
-                }
+        if (sourceTile.drop == null) return;
+        // Query dropmanager for drops
+        var dropData = TileDropManager.Instance.GetDropData(sourceTile);
+        foreach (var drop in dropData) {
+            for (int i = 0; i < drop.amount; i++) {
+                // Slightly randomize drop position
+                Vector3 spawnPos = position + (Vector3)Random.insideUnitCircle * 0.3f;
+                // Instantiate the PREFAB, then spawn the INSTANCE
+                GameObject dropInstance = Instantiate(drop.prefabToDrop, spawnPos, Quaternion.identity);
+                var worldItem = dropInstance.GetComponent<DroppedEntity>();
+                if (worldItem != null) {
+                    worldItem.Init(drop.itemID, 1); // we either drop 1, or just specify amountToDrop and don't loop
+                } 
             }
+        
         }
+        
     }
 
     // --- RPC to spawn visual effects (non-networked objects usually) ---
