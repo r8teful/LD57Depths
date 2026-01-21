@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using static PlayerMovement;
 
@@ -13,6 +14,9 @@ public class OxygenManager : MonoBehaviour, INetworkedPlayerModule {
     private bool _isInsideOxygenZone;
     private PlayerState _cachedState;
     private bool peepPlayed;
+    public GameObject OxygenWarning;
+    private bool _isFlashing;
+    private Coroutine _flashCoroutine;
 
     public static event Action<float, float> OnOxygenChanged;
     public int InitializationOrder => 92; // Don't think order matters here
@@ -57,7 +61,7 @@ public class OxygenManager : MonoBehaviour, INetworkedPlayerModule {
             } else {
                 return true;
             }
-        } else if (_cachedState == PlayerState.Grounded || _cachedState == PlayerState.ClimbingLadder) {
+        } else if (_cachedState == PlayerState.Grounded) {
             return false; // Replenish oxygen when grounded
         }
         return true;
@@ -105,7 +109,40 @@ public class OxygenManager : MonoBehaviour, INetworkedPlayerModule {
 
         //blackout.alpha = easedValue;
     }
-    
+    // Call this function to start or stop the flashing
+    public void SliderFlash(bool shouldFlash) {
+        if (OxygenWarning == null) {
+            Debug.LogWarning("SliderFlash: sliderToFlash GameObject is not assigned! Please assign it in the Inspector.");
+            return;
+        }
+
+        if (shouldFlash) {
+            if (!_isFlashing) // Don't start a new coroutine if already flashing
+            {
+                _isFlashing = true;
+                _flashCoroutine = StartCoroutine(FlashCoroutine());
+            }
+        } else {
+            if (_isFlashing) // Only stop if currently flashing
+            {
+                _isFlashing = false;
+                StopCoroutine(_flashCoroutine);
+                OxygenWarning.SetActive(false); // Ensure it's visible when stopping the flash
+            }
+        }
+    }
+
+    private IEnumerator FlashCoroutine() {
+        while (_isFlashing) {
+            // Toggle the active state of the GameObject
+            OxygenWarning.SetActive(!OxygenWarning.activeSelf);
+
+            // Wait for the flashSpeed duration
+            yield return new WaitForSeconds(0.2f);
+        }
+    }
+
+
     public void DEBUGSet0Oxygen() {
         CurrentOxygen = 0;
     }

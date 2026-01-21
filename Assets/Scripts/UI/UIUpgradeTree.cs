@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
@@ -12,6 +13,7 @@ public class UIUpgradeTree : MonoBehaviour {
     private Dictionary<ushort, List<UILineRenderer>> _lineMap = new Dictionary<ushort, List<UILineRenderer>>();
     private UIUpgradeScreen _uiParent;
     private UpgradeTreeDataSO _treeData;
+    public List<UIUpgradeNode> GetAllCurrentNodes => _nodeMap.Values.ToList();
     internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades, NetworkedPlayer player) {
         _nodeMap.Clear();
         _uiParent = uIUpgradeScreen;

@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -67,6 +68,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
                 treatHeaderAsStatText = true;
             }
             foreach (var stat in data.upgradeEffects) {
+                if (stat.IsEmpty) continue;
                 var statChange = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStatPopup"), _statsChangeContainer);
                 statChange.Init(stat, treatHeaderAsStatText); 
             }
@@ -97,5 +99,12 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
     }
     private void OnDestroy() {
         DOTween.KillAll();
+    }
+
+    public void ShowAnimate() {
+        transform.localScale = Vector2.one * 0.5f;
+        transform.DOScale(1,0.1f);
+        transform.DOShakeRotation(0.2f, 6f, 50);
+        
     }
 }

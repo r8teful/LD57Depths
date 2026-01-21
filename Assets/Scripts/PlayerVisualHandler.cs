@@ -80,24 +80,11 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
             case PlayerState.Grounded:
                 HandleGroundVisual(currentInput);
                 break;
-            case PlayerState.Cutscene:
-                HandleSwimVisual(currentInput);
-                break;
-            case PlayerState.ClimbingLadder:
-                HandleClimbingLadderVisual(currentInput);
-                break;
             default:
                 break;
         }
     }
 
-    private void HandleClimbingLadderVisual(Vector2 currentInput) { 
-        if (Mathf.Abs(currentInput.y) > 0.01f) {
-            ChangeAnimation("Climb");
-        } else {
-            ChangeAnimation("ClimbIdle"); // Or just stop animator speed for Climb animation
-        }
-    }
 
     private void HandleGroundVisual(Vector2 currentInput) {
         CheckFlipSprite(currentInput.x);
@@ -135,14 +122,6 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
                 SetLights(false);
                 SetBobHand(false);
                 _bobBackHandler.SetSpriteWalk();
-                break;
-            case PlayerState.Cutscene:
-                SetLights(false);
-                SetBobHand(false);
-                break;
-            case PlayerState.ClimbingLadder:
-                SetLights(false);
-                SetBobHand(false);
                 break;
             case PlayerState.None:
                 break;
@@ -186,10 +165,6 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
                 // Vertical
                 playerSwimCollider.enabled = false;
                 playerWalkCollider.enabled = true;
-                break;
-            case PlayerState.Cutscene:
-                break;
-            case PlayerState.ClimbingLadder:
                 break;
             default:
                 break;

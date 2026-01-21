@@ -32,7 +32,7 @@ public class UIUpgradeStat : MonoBehaviour {
         }
         _statNow.text = valueNow;
         _statLater.color = isBad ? Color.red : Color.green;
-        if (valueLater == String.Empty) {
+        if (valueLater == String.Empty || valueLater == null) {
             // Dissable
             _statLater.gameObject.SetActive(false);
             _arrowImage.SetActive(false);

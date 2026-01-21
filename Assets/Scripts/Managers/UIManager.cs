@@ -35,7 +35,7 @@ public class UIManager : Singleton<UIManager> {
         UpgradeScreen.Init(this,client);
         UIManagerInventory.Init(owningPlayer,client);
         PopupManager.Init(_localInventoryManager);
-        UIManagerStats.Init(client);
+        UIManagerStats.Init(client);;
 
     }
 
