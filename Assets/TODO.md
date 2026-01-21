@@ -1,19 +1,15 @@
-* Add ore drop upgrade
-* Make a luck stat, it effects ore drop amount, and item rarity 
+* Walking animation
+* Make bob walk faster
+* destroy popup when upgrade ui closes
+* Hide upgrade progress arrow when there is no stat difference to show
+* Add description to the upgrades?
+* Controller support?
 
 
 
 
 
-* Fix the submarine, decide if you still want the sub fixing entities
-
-
-
-
-
-Later:
-
-* Solo playtest the shit out of everything and make ALL values reasonable
+Solo playtest the shit out of everything and make ALL values reasonable
 
  	- Upgrade values
 

@@ -22,7 +22,7 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
         _player = playerParent;
         AddAbility(App.ResourceSystem.GetAbilityByID(0)); // Lazer is ID 0 
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BrimstoneBuffID)); // Lazer blast
-        //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BiomeBuffID)); // Biome buffs
+        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BiomeBuffID)); // Biome buffs
         //AddAbility(App.ResourceSystem.GetAbilityByID(101)); // cactus suit
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BlockOxygenID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.PlayerDashID));
@@ -30,7 +30,7 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BlackholeID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BoomerangID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BouncingBallID));
-        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.FishShooterID));
+        //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.FishShooterID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(69)); // Fish gun
     }
 

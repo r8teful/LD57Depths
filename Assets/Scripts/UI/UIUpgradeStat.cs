@@ -19,12 +19,17 @@ public class UIUpgradeStat : MonoBehaviour {
         // Change to "unselected" visual if matching
     }
 
-    internal void Init(StatChangeStatus status) {
+    internal void Init(StatChangeStatus status, bool removeStatName = false) {
         var stat = status.StatName;
         var valueNow = status.ValueNow;
         var valueLater = status.ValueNext;
         var isBad = status.IsBadChange;
-        _statName.text = stat;
+        if (removeStatName) {
+            _statName.text = "";
+            _statName.enabled = false;
+        } else {
+            _statName.text = stat;
+        }
         _statNow.text = valueNow;
         _statLater.color = isBad ? Color.red : Color.green;
         if (valueLater == String.Empty) {
