@@ -33,7 +33,6 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private InputAction _UItoggleInventoryAction; // Assign your toggle input action asset
     private InputAction _uiInteractAction;   // e.g., Left Mouse / Gamepad A
     private InputAction _uiAltInteractAction; // e.g., Right Mouse / Gamepad X
-    private InputAction _uiDropOneAction;     // e.g., Right Mouse (when holding) / Gamepad B
     private InputAction _uiNavigateAction;    // D-Pad / Arrow Keys
     private InputAction _uiPointAction;       // Mouse position
     private InputAction _cancelAction;       // Escape / Gamepad Start (to cancel holding)
@@ -55,6 +54,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private PlayerInteractionContext _currentContext;
     private Vector2 _mousePos;
     private bool _primaryInputToggle;
+    private Vector2 _uiNavigationVector;
 
     public int InitializationOrder => 101;
 
@@ -84,7 +84,6 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             _UItoggleInventoryAction = _playerInput.actions.FindAction("UI_Toggle",true); // I
             _uiInteractAction = _playerInput.actions.FindAction("UI_Interact",true); // LMB
             _uiAltInteractAction = _playerInput.actions.FindAction("UI_AltInteract",true); // RMB
-            _uiDropOneAction = _playerInput.actions.FindAction("UI_DropOne",true);
             _uiNavigateAction = _playerInput.actions.FindAction("UI_Navigate",true);
             _uiPointAction = _playerInput.actions.FindAction("UI_Point",true);
             _uiTabLeft = _playerInput.actions.FindAction("UI_TabLeft",true); // Opening containers
@@ -117,11 +116,11 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         _uiPointAction.performed += OnMousePosChange;
         _uiZoom.performed += OnZoom;
         _uiZoom.canceled += OnZoom;
+        _uiNavigateAction.performed += OnUINavigation;
+        _uiNavigateAction.canceled += OnUINavigation;
 
         _playerAbilityAction.performed+= OnAbilityPerformed;
     }
-
-   
 
     private void OnPanStop(InputAction.CallbackContext context) {
         _UIManager.UpgradeScreen.PanAndZoom.OnPanStop();
@@ -138,6 +137,13 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private void OnMousePosChange(InputAction.CallbackContext context) {
         _mousePos = context.ReadValue<Vector2>();
     }
+    private void OnUINavigation(InputAction.CallbackContext context) {
+        _uiNavigationVector = context.ReadValue<Vector2>();
+        if (context.canceled) {
+            _uiNavigationVector = Vector2.zero;
+        }
+    }
+
 
     private void UnsubscribeFromEvents() {
         if (_UItoggleInventoryAction != null)
@@ -158,6 +164,8 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         if (_uiInteractAction != null) {
             _uiInteractAction.performed -= OnPrimaryUIInteraction;
         }
+
+        _uiNavigateAction.performed -= OnUINavigation;
     }
     private void Update() {
         if (_inventoryUIManager == null) return;
@@ -323,6 +331,9 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             return rawAimInput; // Also raw?!
         }
     }
+    public Vector2 GetUINavigationInput() {
+        return _uiNavigationVector;
+    }
     public bool IsHoldingDownPrimaryInput() {
         // Could add some more checks here later idk
         return _primaryInputToggle;
@@ -397,6 +408,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     }
     private void OnPrimaryUIInteraction(InputAction.CallbackContext context) {
         // Just invoke an event? Right??
+        // BTW this is not MB1, its enter, for when handling ui with keyboard only
         OnUIInteraction.Invoke(context);
     }
 

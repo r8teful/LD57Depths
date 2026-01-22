@@ -214,21 +214,12 @@
                 },
                 {
                     "name": "UI_Navigate",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "31fbf3b3-f1a9-45d7-a432-afac021171cc",
-                    "expectedControlType": "",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "UI_DropOne",
-                    "type": "Button",
-                    "id": "924d32d2-92cd-4051-b7f2-1abcf7c61ac6",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "UI_Point",
@@ -1116,7 +1107,7 @@
                 {
                     "name": "",
                     "id": "44cbbd9d-217a-432d-8ba1-1844bbdae817",
-                    "path": "<Mouse>/leftButton",
+                    "path": "<Keyboard>/enter",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
@@ -1136,24 +1127,123 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "991bf5e5-2077-4e55-91d6-a6f06a3d9b2c",
-                    "path": "",
+                    "name": "WASD",
+                    "id": "258aa12e-e0a9-42c5-ab35-e251241f06a4",
+                    "path": "Dpad",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
+                    "action": "UI_Navigate",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "b1d3c651-2b7c-469f-8e68-67d38e9cfd1c",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "UI_Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "up",
+                    "id": "a1716176-a762-4602-a8e7-b4d0fb8d4d6d",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "UI_Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "b9370e12-f7f7-4859-8962-75fb87a71bb0",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "UI_Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "a254f120-6914-4a3b-bdcf-07a0e76d3a91",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "UI_Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "5c2f943e-0735-49fc-b520-1a019c5682b0",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "UI_Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "95d9aa56-9b11-4c75-878b-3f759a15852a",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "UI_Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "39c5c8f7-48e5-44cf-b387-eaaff8e77eaa",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "UI_Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "2a9ffa5e-ea7e-4b5f-8ae8-fe69c78f9332",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "UI_Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "ed655d89-75ce-44f8-b7d1-ed0336f8f644",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
                     "action": "UI_Navigate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "9695b540-7eb5-46b4-b46d-23b4b63e9cdc",
-                    "path": "<Mouse>/rightButton",
+                    "id": "ca5b0865-021b-487f-ba4b-43ce3f3d2374",
+                    "path": "<Joystick>/stick",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "UI_DropOne",
+                    "groups": "Joystick",
+                    "action": "UI_Navigate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

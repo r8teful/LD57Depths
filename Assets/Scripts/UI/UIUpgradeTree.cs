@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,7 +13,7 @@ public class UIUpgradeTree : MonoBehaviour {
     private UpgradeTreeDataSO _treeData;
     private NetworkedPlayer _player;
 
-    public List<UIUpgradeNode> GetAllCurrentNodes => _nodeMap.Values.ToList();
+    public Dictionary<ushort, UIUpgradeNode> GetNodeMap => _nodeMap;
     internal void Init(UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades, NetworkedPlayer player) {
         _nodeMap.Clear();
         _treeData = tree;
@@ -127,5 +128,9 @@ public class UIUpgradeTree : MonoBehaviour {
             }
             
         }
+    }
+
+    internal IEnumerator OnPanSelect(UIUpgradeNode uIUpgradeNode) {
+        yield return _player.UiManager.UpgradeScreen.PanAndZoom.FocusOnNode(uIUpgradeNode.Rect);
     }
 }

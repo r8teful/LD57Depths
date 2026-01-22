@@ -51,6 +51,9 @@ public class UIUpgradeScreen : MonoBehaviour {
         if (!_upgradePanel.activeSelf) {
             // closed, gets rid of popup
             OnPanelClosed?.Invoke();
+        } else {
+            // open
+            _upgradeTreeController.OnTreeOpen();
         }
     }
 

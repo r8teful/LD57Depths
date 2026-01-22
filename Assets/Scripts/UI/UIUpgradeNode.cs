@@ -1,6 +1,7 @@
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -18,6 +19,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Image _imageCurrent;
     private CanvasGroup _canvasGroup;
     private RectTransform _rectTransform;
+    public RectTransform Rect => _rectTransform;
     private UIUpgradeTree _treeParent;
     private UpgradeNodeVisualData _visualData;
     public UpgradeNodeState GetState => _visualData.State;
@@ -117,8 +119,18 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
         _iconImage = _buttonCurrent.transform.GetChild(1).GetComponent<Image>();// Even worse
     }
-    public void Select() {
+    public void Select(bool usingPointer) {
         if (_visualData.State == UpgradeNodeState.Locked) return;
+        if (usingPointer) {
+            // No coroutine movement, simply show the popup
+            PopupManager.Instance.ShowPopup(this, true);
+        } else {
+            StartCoroutine(SelectRoutine());
+        }
+    }
+    private IEnumerator SelectRoutine() {
+        // Simple solution, wait untill we've gotten to the target, and then we posision popup
+        yield return _treeParent.OnPanSelect(this);
         PopupManager.Instance.ShowPopup(this, true);
     }
     public void Deselect() {
@@ -127,13 +139,14 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        Select();
+        Select(usingPointer: true);
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         Deselect();
     }
     private void OnUpgradeButtonClicked() {
+        if (_visualData.Node.stages.Count == 0) return; // Some nodes have any stages and it will give null
         _treeParent.OnUpgradeButtonClicked(this,_visualData.Node); // This seems wrong but its where we store what actual node we are
     }
     

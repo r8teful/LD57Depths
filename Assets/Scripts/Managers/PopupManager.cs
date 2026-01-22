@@ -154,7 +154,6 @@ public class PopupManager : StaticInstance<PopupManager> {
     private void PositionPopup2(IPopupInfo infoProvider) {
         var mb = infoProvider as MonoBehaviour;
         if (mb == null) return;
-
         RectTransform itemRT = mb.GetComponent<RectTransform>();
         RectTransform popupRT = currentPopup.gameObject.GetComponent<RectTransform>();
         if (itemRT == null || popupRT == null) return;
@@ -166,12 +165,12 @@ public class PopupManager : StaticInstance<PopupManager> {
 
         // Ensure layout is updated so popupRT.rect is valid
         LayoutRebuilder.ForceRebuildLayoutImmediate(popupRT);
-
         // Get item bottom-center and top-center in screen space
         Vector3[] itemCorners = new Vector3[4];
         itemRT.GetWorldCorners(itemCorners);
         Vector2 itemBottomScreen = RectTransformUtility.WorldToScreenPoint(canvasCam, (itemCorners[0] + itemCorners[3]) * 0.5f);
         Vector2 itemTopScreen = RectTransformUtility.WorldToScreenPoint(canvasCam, (itemCorners[1] + itemCorners[2]) * 0.5f);
+        
 
         // Popup size in screen pixels (for ScreenSpaceOverlay this is reliable)
         float scaleFactor = (canvas != null) ? canvas.scaleFactor : 1f;

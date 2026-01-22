@@ -13,6 +13,9 @@ public class UISubUpgradeIcon : MonoBehaviour, IPopupInfo, IPointerEnterHandler,
     public enum SubUpgradeState { Available,Unavailable,Upgraded}
     public SubUpgradeState State;
     public SubRecipeSO RecipeData => _recipeData;
+
+    public Vector2 LookaheadPos => Vector2.zero;
+
     public void Init(UISubPanelOverview parent,SubUpgradeState state) {
         _parent = parent;
         State = state;

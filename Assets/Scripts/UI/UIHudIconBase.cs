@@ -7,6 +7,8 @@ public abstract class UIHudIconBase : MonoBehaviour, IPopupInfo {
     private string _descText;
     private string _headerText;
 
+    public Vector2 LookaheadPos => Vector2.zero;
+
     public event Action PopupDataChanged;
     public PopupData GetPopupData(InventoryManager inv) {
         return new PopupData(_headerText, _descText, null);

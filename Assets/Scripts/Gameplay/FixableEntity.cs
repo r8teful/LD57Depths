@@ -30,6 +30,8 @@ public class FixableEntity : NetworkBehaviour, IInteractable, IPopupInfo {
         }
     }
 
+    public Vector2 LookaheadPos => Vector2.zero;
+
     private void Start() {
         // Create a copy of the material
         _isFixed.OnChange += OnFixChange;

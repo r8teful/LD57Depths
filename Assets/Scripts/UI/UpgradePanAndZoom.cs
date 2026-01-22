@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -17,8 +18,6 @@ public class UpgradePanAndZoom : MonoBehaviour {
     private float zoomAmount;
     private Bounds treeLocalBounds;
 
-    [Header("Controller Focus Settings")]
-    [SerializeField] private float focusTime = 0.3f;
     private InputManager _inputManager;
     private RectTransform viewportRect;
 
@@ -34,7 +33,7 @@ public class UpgradePanAndZoom : MonoBehaviour {
         _inputManager = input;
         viewportRect = GetComponent<RectTransform>();
         CalculateTreeBounds();
-        // --- Key Change: Automatically find the tree container ---
+
         if (transform.childCount == 0) {
             Debug.LogError("UITreeNavigator requires a child object to act as the pannable tree container.", this);
             this.enabled = false;
@@ -52,12 +51,14 @@ public class UpgradePanAndZoom : MonoBehaviour {
         HandleZoom();
         if (_isDragging) {
             HandlePan();
-        } else {
-            // Apply elastic bounds when not dragging
-            //ApplyElasticBounds();
-            //EnforceBounds();
-            EnsureSomeOverlapWithParent(treeContainer, viewportRect);
+        } else if(!TryEnsureSomeOverlapWithParent(treeContainer, viewportRect)) {
+            // If we are not handling overlap, make sure current selection is in view
+            HandleSelection();
         }
+    }
+
+    private void HandleSelection() {
+
     }
 
     public void OnZoom(float zoom) {
@@ -182,16 +183,17 @@ public class UpgradePanAndZoom : MonoBehaviour {
     /// Public method to move the view to focus on a specific UI element (node).
     /// </summary>
     /// <param name="targetNode">The RectTransform of the node to center in the view.</param>
-    public void FocusOnNode(RectTransform targetNode) {
-        if (targetNode == null) return;
+    public IEnumerator FocusOnNode(RectTransform targetNode) {
+        if (targetNode == null) yield break;
 
         if (focusCoroutine != null) {
             StopCoroutine(focusCoroutine);
         }
-        focusCoroutine = StartCoroutine(FocusOnNodeRoutine(targetNode));
+        Vector3 target = GetFocusNodeTarget(targetNode);
+        yield return FocusOnNodeRoutine(target);
     }
 
-    private IEnumerator FocusOnNodeRoutine(RectTransform targetNode) {
+    private Vector3 GetFocusNodeTarget(RectTransform targetNode) {
         // Calculate the position required to center the target node.
         // The target's anchoredPosition is relative to the tree container's pivot.
         // We move the container in the opposite direction, scaled by the current zoom level.
@@ -200,19 +202,21 @@ public class UpgradePanAndZoom : MonoBehaviour {
         // Clamp the target position to make sure we don't focus outside the valid bounds
         Vector2 min = GetBoundsMin();
         Vector2 max = GetBoundsMax();
-        targetPosition.x = Mathf.Clamp(targetPosition.x, min.x, max.x);
-        targetPosition.y = Mathf.Clamp(targetPosition.y, min.y, max.y);
+        targetPosition.x = Mathf.Clamp(targetPosition.x, max.x, min.x); // inverted here because we negate targetpos
+        targetPosition.y = Mathf.Clamp(targetPosition.y, max.y, min.y);
+        return targetPosition;
+    }
 
+    private IEnumerator FocusOnNodeRoutine(Vector3 targetPosition) {
         Vector3 startPosition = treeContainer.anchoredPosition;
         float timer = 0f;
-
+        var focusTime = 0.1f;
         while (timer < focusTime) {
             timer += Time.deltaTime;
             float t = Mathf.SmoothStep(0.0f, 1.0f, timer / focusTime);
             treeContainer.anchoredPosition = Vector3.Lerp(startPosition, targetPosition, t);
             yield return null;
         }
-
         treeContainer.anchoredPosition = targetPosition;
         ApplyElasticBounds(true);
     }
@@ -234,23 +238,23 @@ public class UpgradePanAndZoom : MonoBehaviour {
     /// nudge the child so that it at least touches/overlaps the parent.
     /// If they already overlap (even partially), do nothing.
     /// </summary>
-    public void EnsureSomeOverlapWithParent(RectTransform child, RectTransform parent) {
-        if (child == null || parent == null) return;
+    public bool TryEnsureSomeOverlapWithParent(RectTransform child, RectTransform parent) {
+        if (child == null || parent == null) return false;
 
         // Bounds of child relative to parent's local space
         //Bounds childBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(parent, child);
         // Convert Bounds -> Rect (in parent's local space)
         //Rect childRect = new Rect(childBounds.min.x, childBounds.min.y, childBounds.size.x, childBounds.size.y);
-        
+
         // ^ ^ ^ ^ ^ Do the above if you want the children to determine the bounds  
-        
-        Rect childRect = GetChildRectInParentSpace(child,parent);
+
+        Rect childRect = GetChildRectInParentSpace(child, parent);
         // Parent rect in parent local space
         Rect parentRect = parent.rect;
 
         // If they overlap already (even partially), do nothing.
         if (childRect.Overlaps(parentRect)) {
-            return;
+            return false;
         }
 
         // Compute minimal offset (in parent's local space) to cause overlap/touch.
@@ -289,6 +293,7 @@ public class UpgradePanAndZoom : MonoBehaviour {
             }
             
         }
+        return true;
     }
     /// <summary>
     /// Get a Rect representing the child's axis-aligned bounding box in the parent's local space,
