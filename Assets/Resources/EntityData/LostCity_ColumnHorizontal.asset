@@ -321,7 +321,6 @@ MonoBehaviour:
   placementFrequency: 0.24
   placementThreshold: 0.891
   allowedAttachmentTypes: 01000000
-  requireSolidGround: 1
-  requireWaterAdjacent: 1
+  PlacementOffset: {x: 0, y: 0}
   randomYRotation: 0
   scaleVariation: {x: 1, y: 1}

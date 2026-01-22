@@ -314,14 +314,13 @@ MonoBehaviour:
   entityName: LostCity_StatueSolidEnd
   entityPrefab: {fileID: 401910264597585571, guid: b38dd76c52484814fb0101ec6e8c136a, type: 3}
   spawnConditions:
-    requiredBiomes: 0b
+    requiredBiomes: 0b00
     minY: -10000
     maxY: 2000
     specificSpawnTiles: []
   placementFrequency: 0.24
   placementThreshold: 0.891
   allowedAttachmentTypes: 01000000
-  requireSolidGround: 1
-  requireWaterAdjacent: 1
+  PlacementOffset: {x: 0, y: 0}
   randomYRotation: 0
   scaleVariation: {x: 1, y: 1}

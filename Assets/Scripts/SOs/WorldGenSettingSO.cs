@@ -57,11 +57,15 @@ public enum BiomeType : byte {
     Fungal = 8,
     Forest = 9,
     Surface = 2,
-    Cave = 3,
+    AncientCaves = 3,
     Algea = 4,
-    Coral = 5,
+    Reef = 5,
     Ocean = 6,
     Deadzone = 10,
     LostCity = 11,
+    Snow = 12,
+    Gems = 13,
+    ShipGraveyard = 14,
+    Volcanic = 15,
     None = 0
 }
