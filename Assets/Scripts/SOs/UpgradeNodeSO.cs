@@ -27,7 +27,7 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
     [VerticalGroup("Identification/Left/2")]
     [SerializeField] private ushort uniqueID;
     [VerticalGroup("Identification/Left/2")]
-    [SerializeField] private string description;
+    public string description;
     [VerticalGroup("Identification/Left/1")]
     [PreviewField(75), HideLabel,LabelWidth(0)]
     public Sprite icon;
@@ -68,11 +68,7 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
     /// <returns>The UpgradeStage to be purchased next, or null if the node is maxed out.</returns>
     public UpgradeRecipeSO GetUpgradeData(IReadOnlyCollection<ushort> unlockedUpgrades, UpgradeTreeDataSO tree) {
         
-        if (stages == null || unlockedUpgrades == null) return null;
-        if(stages.Count == 0) {
-            // Base node 
-
-        }
+        if (stages == null || unlockedUpgrades == null || stages.Count == 0) return null;
         var isMaxed = IsNodeMaxedOut(unlockedUpgrades);
         int currentLevel = GetCurrentLevel(unlockedUpgrades);
         // Determine which stage's info to show (the next one, or the last one if maxed)
@@ -92,7 +88,7 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
         return prerequisiteNodesAny.Any(p => p != null && p.IsNodeMaxedOut(unlockedUpgrades));
     }
 
-    internal UIUpgradeNode.UpgradeNodeState GetState(IReadOnlyCollection<ushort> unlockedUpgrades, bool canAfford) {
+    internal UpgradeNodeState GetState(IReadOnlyCollection<ushort> unlockedUpgrades) {
         int currentLevel = GetCurrentLevel(unlockedUpgrades);
         bool isMaxed = currentLevel >= MaxLevel;
         bool prereqsMet = ArePrerequisitesMet(unlockedUpgrades);

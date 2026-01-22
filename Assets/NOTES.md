@@ -289,11 +289,11 @@ Okay. Ability UPGRADES!!
 
 
 
-Basically will be totally prodecural. 
+Basically will be totally prodecural.
 
-Creates an upgrade object? It chooses one of the players unlocked abilities they got from the upgrade POOL. 
+Creates an upgrade object? It chooses one of the players unlocked abilities they got from the upgrade POOL.
 
-&nbsp;	
+ 
 
 Them, it should look at that ability upgradable stats, and choose one, THEN, it checks which ratity this upgrade it should be, then its like boom, this is the upgrade, +0.4 damage to bouncing ball. Then this should obviously be a statmodifier, and then when we apply this, we use it as IExecutable and boom the ability simply adds it as an upgrade just like any other upgrade.
 
@@ -305,7 +305,7 @@ No need for scriptable objects, data is simply generated from the abilitySO data
 
 
 
-Okay, where the fuck do ORE upgrades go? Do we have a separate script that holds that data? Right now the drops are in a "droptable" which is fucking useless because its a scriptable object and we can't change that during runtime. 
+Okay, where the fuck do ORE upgrades go? Do we have a separate script that holds that data? Right now the drops are in a "droptable" which is fucking useless because its a scriptable object and we can't change that during runtime.
 
 
 
@@ -313,19 +313,50 @@ You need to fucking define how you want these upgrades to work otherwise how wil
 
 
 
-Should work like this: Each ore tile can be upgraded. Say copper node upgrade is "Chance for copper to yield more ores when broken" that's all you have to say. Then internally, you store that the copper tile level is now 1, or something, and that's it! Then in the chunk manager you say, what should I drop for this tile? And then that does it. This would be well fitted for an "Item drop" manager or something where the chunkmanager just says, "player broke this tile, what should I drop?" Then TileDropManager says, ah, this tile has an upgrade to it, and the player has 5 luck, that means you need to drop 3 copper, BOOM 
+Should work like this: Each ore tile can be upgraded. Say copper node upgrade is "Chance for copper to yield more ores when broken" that's all you have to say. Then internally, you store that the copper tile level is now 1, or something, and that's it! Then in the chunk manager you say, what should I drop for this tile? And then that does it. This would be well fitted for an "Item drop" manager or something where the chunkmanager just says, "player broke this tile, what should I drop?" Then TileDropManager says, ah, this tile has an upgrade to it, and the player has 5 luck, that means you need to drop 3 copper, BOOM
 
 
 
 
 
+BRUh, what if a tile has two drops? Can we just assume now it wont have two drop, when will you ever need a tile that drops different things?
+
+
+
+Gamelength, how will we do it? From megabonk: Stage 1 and Stage 2 give you a timer to farm mobs, loot chests, and use shrines. You can call in the boss early, but most players prefer waiting until near the end to maximize XP and upgrades. Boss fights end the stage and move you to the next tier. By Tier 3, the game shifts. You can choose to fight the final boss to end your run, or keep farming enemies for leaderboard scores. If you keep going, enemy scaling continues indefinitely, and the final swarm becomes your test of survival.
+
+
+
+I like that there is an element of "how long can you survive!?" And if you are a hardcore player that is basically what your entire run is based on, to get the most powerfull as you can so you can survive even the most insane enemies. But with Resurface its different. How will you do it? Megabonks goal is "how long can you survive?", while resurface is "can you get to the surface?" Which doesn't really give you a final stretch. Sure, you can make the journey there more difficult with modifiers etc. But so can you with megabonk and that will still give you that ending thing that really tests how your current strength is. So is resurface just flawed? Can you not get that in resurface? How do you make the block breaking power matter? You can treat the blocks as the enemies, and maybe they are in your way? But still, you've resurfaced, but maybe it could just be like slay the spire, you've done it, you've beaten the game, and that's it, you should be proud of yourself for getting there. And then maybe the leaderboards are there which determine your score based on the SPEED. Or something, maybe a balance of speed and level reached or something idk
 
 
 
 
 
+I think we have to redo the entire fucking way we display the upgrade nodes because we are expecting a upgrade recipe data while we don't really have that when we show a basenode.
 
 
+
+This you can get purely from the SO
+
+* Icon
+* Title
+* Description
+
+This is depending on gamestate
+
+* Cost
+* ALL Effect result
+* State
+* Stage progress
+
+If we put ALL this in a class, then we can simply just say GetVisualData() and boom we get this all, and if its a base node, we can just fill it appropriately. Then the UI node just takes this data and displays it. We don't give a shit about anything else
+
+
+
+
+
+If we can afford it? This we could derive from the cost
 
 
 

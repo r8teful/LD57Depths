@@ -26,6 +26,10 @@ public class UIUpgradeLine : MonoBehaviour {
         _line = myLine;
         _line.material = new(_mat); // apply
         _line.material.SetFloat("_Tilt",GetTiltValue(from.transform.position, to.transform.position));
+        // Init with initial node states
+        _upgradeNodeStateFrom = from.GetState;
+        _upgradeNodeStateTo = to.GetState;
+        UpdateColor();
     }
     private void StateChangeTo(UpgradeNodeState state) {
         _upgradeNodeStateTo = state;

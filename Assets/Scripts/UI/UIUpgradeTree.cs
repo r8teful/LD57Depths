@@ -1,23 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
-using static UIUpgradeNode;
 
 public class UIUpgradeTree : MonoBehaviour {
 
     // String is the GUID
     private Dictionary<ushort, UIUpgradeNode> _nodeMap = new Dictionary<ushort, UIUpgradeNode>();
     private Dictionary<ushort, List<UILineRenderer>> _lineMap = new Dictionary<ushort, List<UILineRenderer>>();
-    private UIUpgradeScreen _uiParent;
     private UpgradeTreeDataSO _treeData;
+    private NetworkedPlayer _player;
+
     public List<UIUpgradeNode> GetAllCurrentNodes => _nodeMap.Values.ToList();
-    internal void Init(UIUpgradeScreen uIUpgradeScreen, UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades, NetworkedPlayer player) {
+    internal void Init(UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades, NetworkedPlayer player) {
         _nodeMap.Clear();
-        _uiParent = uIUpgradeScreen;
         _treeData = tree;
+        _player = player;
         var inv = player.GetInventory();
         // Instead of instantiating the nodes, we "link" the existing node prefab to the data, so that it displays the right
         // upgrade. This is how we have to do it if we want more complex trees, instead of just instantiating the nodes
@@ -43,33 +42,11 @@ public class UIUpgradeTree : MonoBehaviour {
             if (!dataToNodeLookup.TryGetValue(nodeData.ID, out UIUpgradeNode uiNode)) {
                 continue;
             }
-            // Now have the node that is an EXISTING child
-            // Calculate the node's current state from the player's progress.
-            int currentLevel = nodeData.GetCurrentLevel(existingUpgrades);
-
-            // Get the correct recipe data for display.
-            UpgradeRecipeSO preparedRecipe = nodeData.GetUpgradeData(existingUpgrades, tree);
-            bool canAfford = false;
-            if (preparedRecipe != null) {
-                canAfford = preparedRecipe.CanAfford(inv);
-            }
-            // Determine the node's visual status.
-            UpgradeNodeState status = nodeData.GetState(existingUpgrades, canAfford);
-            // Update the UI element with all the calculated information.
-            uiNode.Init(this, inv, nodeData, currentLevel, preparedRecipe, status);
+            uiNode.Init(this,_treeData,nodeData,inv,existingUpgrades);
             _nodeMap.Add(nodeData.ID, uiNode);
         }
-        UpdateConnectionLines(tree, existingUpgrades);
-        RefreshNodes(existingUpgrades); // This makes lines update their state, which needs to be done because we just created them
-
+        CreateConnectionLines(tree, existingUpgrades);
         UIUpgradeScreen.OnSelectedNodeChanged += SelectedChange;
-        player.UpgradeManager.OnUpgradePurchased += UpgradePurchased;
-    }
-
-    private void UpgradePurchased(UpgradeRecipeSO sO) {
-        // We could make it more performant by checking which nodes could have actually changed, but its not that performant heavy anyway.
-        var unlockedUpgrades = UpgradeManagerPlayer.LocalInstance.GetUnlockedUpgrades(); // Ugly but sometimes that is okay
-        RefreshNodes(unlockedUpgrades); 
     }
 
     private void SelectedChange(UpgradeNodeSO node) {
@@ -83,7 +60,7 @@ public class UIUpgradeTree : MonoBehaviour {
         
     }
 
-    private void UpdateConnectionLines(UpgradeTreeDataSO treeData, IReadOnlyCollection<ushort> unlockedUpgrades) {
+    private void CreateConnectionLines(UpgradeTreeDataSO treeData, IReadOnlyCollection<ushort> unlockedUpgrades) {
         foreach (var dataNode in treeData.nodes) {
             if (!_nodeMap.TryGetValue(dataNode.ID, out UIUpgradeNode childUiNode)) continue;
 
@@ -97,7 +74,6 @@ public class UIUpgradeTree : MonoBehaviour {
         }
     }
     private UILineRenderer AddLine(ushort sourceID, Transform from, Transform to) {
-        
         var lineRenderer = Instantiate(App.ResourceSystem.GetPrefab<UILineRenderer>("UILine"),transform);
         lineRenderer.transform.SetAsFirstSibling();
         lineRenderer.name = $"Line {sourceID}";
@@ -123,9 +99,7 @@ public class UIUpgradeTree : MonoBehaviour {
                                                 2 * (fromRT.anchoredPosition - toRT.anchoredPosition).normalized *
                                                 offsetFromNodes, (float)i / (linePointsCount - 1)));
         }
-
         //Debug.Log("From: " + fromPoint + " to: " + toPoint + " last point: " + list[list.Count - 1]);
-
         lineRenderer.Points = list.ToArray();
 
         if (_lineMap.ContainsKey(sourceID)) {
@@ -136,46 +110,22 @@ public class UIUpgradeTree : MonoBehaviour {
         }
             return lineRenderer;
     }
-   
-    // Helper function to easily find a UI node later.
-    //public UIUpgradeNode GetNodeForUpgrade(UpgradeRecipeSO upgrade) {
-    //    _nodeMap.TryGetValue(upgrade, out var uiNode);
-    //    return uiNode;
-    //}
 
     internal void OnUpgradeButtonClicked(UIUpgradeNode uIUpgradeNode, UpgradeNodeSO upgradeNode) {
-        //_uiParent.OnUpgradeNodeClicked(upgradeData); // We where doing in it the upgradeScreen script but why not just do it here?
-        //App.AudioController.PlaySound2D("ButtonClick");
-        if (UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(upgradeNode)) {
-            // Local code only
-
-            // Unlocked upgrades list has the just newly purchased upgrade in it now, BUT, this wont work for non client host, because that would not have arrived yet
-            var unlockedUpgrades = UpgradeManagerPlayer.LocalInstance.GetUnlockedUpgrades(); // Ugly but sometimes that is okay
-            if (!upgradeNode.IsNodeMaxedOut(unlockedUpgrades)) {
-                _nodeMap[upgradeNode.ID].DoPurchaseAnim(); // Purchase anim when not maxed, if we are maxed, setting to purchase state will play the animation
-            }
-            // Calculate the next upgrade cost for that node
-            uIUpgradeNode.SetNewPreparedUpgrade(upgradeNode.GetUpgradeData(unlockedUpgrades, _treeData));
-        }
-    }   
-    public void RefreshNodes(IReadOnlyCollection<ushort> unlockedUpgrades) {
-        foreach (var node in _treeData.nodes) {
-            var uiNode = _nodeMap[node.ID];
-            bool canAfford = false; // TODO
-            UpgradeNodeState status = node.GetState(unlockedUpgrades, canAfford);
-            if(status == UpgradeNodeState.Unlocked) {
-                // Need to fetch new data if we're now active
-                uiNode.SetNewPreparedUpgrade(node.GetUpgradeData(unlockedUpgrades, _treeData));
-
-            }
-            uiNode.UpdateVisual(status,node.GetCurrentLevel(unlockedUpgrades));
-        }
+      if (UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(upgradeNode)) {
+            var unlockedUpgrades = _player.UpgradeManager.GetUnlockedUpgrades();
+            uIUpgradeNode.OnUpgraded(unlockedUpgrades);
+        } 
     }
-    public UpgradeRecipeSO GetUpgrade() {
-        foreach(var node in _treeData.nodes) {
-            //UpgradeRecipeSO preparedRecipe = node.GetNextUpgradeForNode();
-            // todo 
+
+    internal void UpdateConnectedNodes(UpgradeNodeSO node) {
+        // Instead of refreshing all nodes, we find nodes that have this node as prereqasite and now update their state
+        foreach (var kvp in _nodeMap) {
+            // its either all that crap or App.ResourceSystem.GetNodeByID()
+            if(kvp.Value.GetVisualData.Node.prerequisiteNodesAny.Any(p => p.ID == node.ID)) {
+                kvp.Value.UpdateVisualData(_player.UpgradeManager.GetUnlockedUpgrades());
+            }
+            
         }
-        return null;
     }
 }

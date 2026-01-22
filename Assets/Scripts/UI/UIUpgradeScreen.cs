@@ -8,7 +8,7 @@ public class UIUpgradeScreen : MonoBehaviour {
     [SerializeField] private UpgradeTreeController _upgradeTreeController;
     public UpgradePanAndZoom PanAndZoom;
     private UIManager _UIManagerParent;
-    private UpgradeTreeDataSO _treeDataTool;
+    private UpgradeTreeDataSO _treeData;
     private UIUpgradeTree _upgradeTreeInstance;
     public bool IsOpen => _upgradePanel.activeSelf;
     
@@ -22,30 +22,15 @@ public class UIUpgradeScreen : MonoBehaviour {
     }
     internal void Init(UIManager UIManager, NetworkedPlayer client) {
         _UIManagerParent = UIManager;
-        _treeDataTool = App.ResourceSystem.GetTreeByName(GameSetupManager.Instance.GetUpgradeTreeName()); // This will obviously have to come from some sort of "game selection" manager
-        //_treeDataTool = App.ResourceSystem.GetTreeByName("Mining Lazer"); // This will obviously have to come from some sort of "game selection" manager
-        //_treeDataPlayer = App.ResourceSystem.GetTreeByName("Player"); // This will obviously have to come from some sort of "game selection" manager
+        _treeData = App.ResourceSystem.GetTreeByName(GameSetupManager.Instance.GetUpgradeTreeName()); // This will obviously have to come from some sort of "game selection" manager
        
         // We have to get the existing data from the UpgradeManager, for both the local player, and the communal from the server
         // I don't think we should do it here though, do it in the upgrade managers themselves, then they need to call the approriate things 
         var pUpgrades = UpgradeManagerPlayer.LocalInstance.GetUnlockedUpgrades();
 
-
-        // Idea first was to have an upgrade tree for each "stat", but for now we just have for player, and for the tool
-        //foreach (var tree in treeData) {
-        //    if(tree.prefab == null) {
-        //        Debug.LogWarning($"{tree.treeName} does not have a corresponding UI tree, skipping...");
-        //        continue;
-        //    }
-        //    var treeObj = Instantiate(tree.prefab, _upgradePanelTool.transform);
-        //    treeObj.Init(this, tree, pUpgrades);
-        //    treeObj.name = $"UpgradeTreePlayer_{tree.treeName}";
-        //}
-
-        _upgradeTreeInstance = InstantiateTree(_treeDataTool, _upgradePanelTree.transform, pUpgrades, client);
+        _upgradeTreeInstance = InstantiateTree(_treeData, _upgradePanelTree.transform, pUpgrades, client);
         PanAndZoom.Init(client.InputManager);
-        _upgradeTreeController.Init(client, _upgradeTreeInstance);
-        //InstantiateTree(_treeDataPlayer, _upgradePanelPlayer.transform, pUpgrades);
+        _upgradeTreeController.Init(client, _upgradeTreeInstance);    
     }
     private UIUpgradeTree InstantiateTree(UpgradeTreeDataSO treeData, Transform transformParent, HashSet<ushort> pUpgrades, NetworkedPlayer player) {
         if (treeData == null) {
@@ -57,7 +42,7 @@ public class UIUpgradeScreen : MonoBehaviour {
             return null;
         }
         var treeObj = Instantiate(treeData.prefab, transformParent);
-        treeObj.Init(this, treeData, pUpgrades, player);
+        treeObj.Init(treeData, pUpgrades, player);
         treeObj.name = $"UpgradeTree_{treeData.treeName}";
         return treeObj;
     }

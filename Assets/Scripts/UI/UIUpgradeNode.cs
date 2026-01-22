@@ -1,6 +1,7 @@
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,17 +17,15 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Button _buttonCurrent;
     private Image _imageCurrent;
     private CanvasGroup _canvasGroup;
-    private UpgradeRecipeSO _preparedRecipeForPurchase;
-    private InventoryManager _playerInventory;
     private RectTransform _rectTransform;
-    private UpgradeNodeSO _boundNode;
     private UIUpgradeTree _treeParent;
-
+    private UpgradeNodeVisualData _visualData;
+    public UpgradeNodeState GetState => _visualData.State;
+    public UpgradeNodeVisualData GetVisualData => _visualData;
     [OnValueChanged("InspectorBigChange")]
     public bool IsBig;
     public event Action PopupDataChanged;
     public event Action<UpgradeNodeState> OnStateChange;
-    public enum UpgradeNodeState {Purchased,Purchable,Unlocked,Locked }
 
     private static readonly string ICON_PURCHASED_HEX = "#FFAA67";    
     private static readonly string ICON_AVAILABLE_HEX = "#FFFFFF";    
@@ -44,8 +43,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Color _iconNotAvailableColor;
     private Color _iconPressedColor;
     private Color _particlePurchasedColor;
-    private UpgradeNodeState _cachedState;
-    private int _cachedLevel;
     private bool _isSelected;
 
     private void Awake() {
@@ -55,6 +52,10 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         ColorUtility.TryParseHtmlString(ICON_NOT_AVAILABLE_HEX, out _iconNotAvailableColor);
         ColorUtility.TryParseHtmlString(ICON_PRESSED_HEX, out _iconPressedColor);
         ColorUtility.TryParseHtmlString(PARTICLE_PURCHASED, out _particlePurchasedColor);
+
+        _rectTransform = GetComponent<RectTransform>();
+        _canvasGroup = GetComponent<CanvasGroup>();
+        _canvasGroup.alpha = 1;
     }
     public void InspectorBigChange() {
         if (IsBig) {
@@ -65,27 +66,17 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonSmall.gameObject.SetActive(true);
         }
     }
-    internal void Init(UIUpgradeTree parent, InventoryManager inv, UpgradeNodeSO boundNode, int currentLevel, UpgradeRecipeSO preparedUpgrade, UpgradeNodeState status) {
+    internal void Init(UIUpgradeTree parent,UpgradeTreeDataSO treeData,
+        UpgradeNodeSO data,InventoryManager inv, HashSet<ushort> existingUpgrades) {
+        _visualData = new(data,inv, treeData,existingUpgrades);
         _treeParent = parent;
-        _boundNode = boundNode;
-        _preparedRecipeForPurchase = preparedUpgrade;
-        _playerInventory = inv;
-        _rectTransform = GetComponent<RectTransform>();
-        _canvasGroup = GetComponent<CanvasGroup>();
-        _canvasGroup.alpha = 1;
         HandleButtonSize(); // Sets _buttonCurrent
-        _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
-        _iconImage = _buttonCurrent.transform.GetChild(1).GetComponent<Image>();// Even worse
         SetIcon();
-        UpdateVisual(status,currentLevel);
-        //UpdateVisualState();
-    }
-    public void SetNewPreparedUpgrade(UpgradeRecipeSO prep) {
-        _preparedRecipeForPurchase = prep;
+        UpdateVisual();
     }
 
     private void SetIcon() {
-        var icon = _boundNode.icon;
+        var icon = _visualData.Icon;
         if (icon != null) {
             _iconImage.sprite = icon;
             var c = _iconImage.color;
@@ -101,7 +92,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             rt.anchoredPosition = Vector2.zero;      // zero offset from anchor
             //_iconImage.rectTransform.sizeDelta = new Vector2(icon. texture.width, icon.texture.height);
         } else {
-            Debug.LogError($"Icon for upgrade type {_boundNode.name} not found!");
+            Debug.LogError($"Icon for upgrade type {_visualData.Title} not found!");
         }
     }
 
@@ -123,16 +114,15 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             //r.x = 65f;
             _rectTransform.sizeDelta = r;
         }
+        _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
+        _iconImage = _buttonCurrent.transform.GetChild(1).GetComponent<Image>();// Even worse
     }
     public void Select() {
-        if (_preparedRecipeForPurchase == null) return;
-        if (_cachedState == UpgradeNodeState.Locked) return;
+        if (_visualData.State == UpgradeNodeState.Locked) return;
         PopupManager.Instance.ShowPopup(this, true);
     }
     public void Deselect() {
-
-        if (_preparedRecipeForPurchase == null) return;
-        if (_cachedState == UpgradeNodeState.Locked) return;
+        if (_visualData.State == UpgradeNodeState.Locked) return;
         PopupManager.Instance.ShowPopup(this, false);
     }
 
@@ -144,26 +134,18 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         Deselect();
     }
     private void OnUpgradeButtonClicked() {
-        // UICraftingManager.Instance.AttemptCraft(upgradeData, null, null);
-        _treeParent.OnUpgradeButtonClicked(this,_boundNode);
+        _treeParent.OnUpgradeButtonClicked(this,_visualData.Node); // This seems wrong but its where we store what actual node we are
     }
     
-    public void UpdateVisual(UpgradeNodeState state, int currentLevel = -1) {
+    public void UpdateVisual() {
+        var state = _visualData.State;
         // Derive the old boolean flags so we can still cache them if other code expects them.
         bool isPurchased = state == UpgradeNodeState.Purchased;
         bool prerequisitesMet = state == UpgradeNodeState.Unlocked;
 
         // Determine variant string (Orange for purchased, otherwise Green (IsBig) or Blue).
         string variant = isPurchased ? "Orange" : (IsBig ? "Green" : "Blue");
-        _cachedLevel = currentLevel;
-        if(_cachedState != state) {
-            if (state == UpgradeNodeState.Purchased) {
-                OnPurchased(); // Call it only once 
-                OnPointerExit(null); // Closes popup, because we've purchased it we don't have anything to show!
-            }
-        }
-        _cachedState = state;
-        SetLevelText(currentLevel);
+        SetLevelText();
         // If this button is currently selected, show the manual Pressed sprite and early return.
         if (_isSelected) {
             // Manual pressed state (we don't use Button's Sprite Swap)
@@ -212,13 +194,12 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
                 OnStateChange?.Invoke(UpgradeNodeState.Locked);
                 break;
         }
-
-        PopupDataChanged?.Invoke(); //popup data could have changed
+    
     }
-    private void SetLevelText(int currentLevel) {
-        if(_preparedRecipeForPurchase == null || _boundNode.MaxLevel <= 1)
+    private void SetLevelText() {
+        if(_visualData.LevelMax<= 1)
             _stageText.gameObject.SetActive(false);
-        _stageText.text = $"{currentLevel}/{_boundNode.MaxLevel}";
+        _stageText.text = $"{_visualData.LevelCurrent}/{_visualData.LevelMax}";
     }
     private void ApplySprite(string variant, string state) {
         if (_imageCurrent == null) return;
@@ -239,29 +220,19 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         var vibrato = 5;
         var elasticity = 1;
         var scale = -0.1f;
+        transform.DOKill();
         transform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity);
         transform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-2f, 2f)), 0.2f, vibrato, elasticity);
     }
-    private void ConfigureColorBlockForState(Color pressedColor, Color disabledColor) {
-        if (_buttonCurrent == null) return;
 
-        var cb = _buttonCurrent.colors;
-        // keep the normal/highlight colors default but ensure pressed/disabled are set
-        cb.pressedColor = pressedColor;
-        cb.disabledColor = disabledColor;
-        cb.fadeDuration = 0;
-        _buttonCurrent.colors = cb;
-    }
     public PopupData GetPopupData(InventoryManager clientInv) {
-        // First get the upgrade we are displaying
-        UpgradeRecipeSO upgradeData = _preparedRecipeForPurchase;
-
         // Stat data
-        return new PopupData(_boundNode.nodeName, upgradeData.description, 
-            upgradeData.GetIngredientStatuses(clientInv),
+        _visualData.UpdateForPopup(clientInv);
+        return new PopupData(_visualData.Title, _visualData.Description, 
+            _visualData.IngredientStatuses, // We'll have to pull this everytime we want to show it because 
             // We need a new way to get the stat statuses, it will depend on the upgrade. 
-            statInfo: upgradeData.GetStatStatuses(), // This lagging behind, for some reason, rest is updating correctly
-            progressionInfo: new(_boundNode.MaxLevel, _cachedLevel));
+            statInfo: _visualData.StatChangeStatuses, // This lagging behind, for some reason, rest is updating correctly
+            progressionInfo: new(_visualData.LevelMax, _visualData.LevelCurrent));
     }
 
     internal void SetSelected() {
@@ -274,6 +245,26 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
     internal void OnPurchaseInput() {
         OnUpgradeButtonClicked();
-        // todo
+    }
+
+    internal void OnUpgraded(HashSet<ushort> unlockedUpgrades) {
+        // update visual data
+        _visualData.UpdateForUpgradePurchase(unlockedUpgrades);
+        OnPurchased();
+        // Close popup if we've reached max level
+        if (_visualData.IsMaxLevel()) {
+            OnPointerExit(null); // Closes popup, because we've purchased it we don't have anything to show!
+            // We need to tell whatever nodes have this one as requirement to update their state now
+            _treeParent.UpdateConnectedNodes(_visualData.Node);
+        } else {
+            PopupDataChanged.Invoke(); // This will tell the upgrade manager to fetch new upgrade data
+        }
+        UpdateVisual(); // Sets color, stage text etc...
+    }
+
+    // This is for when inderect nodes need to update their visualdata when a prerequaized 
+    internal void UpdateVisualData(HashSet<ushort> unlockedUpgrades) {
+        _visualData.UpdateForUpgradePurchase(unlockedUpgrades);
+        UpdateVisual(); 
     }
 }

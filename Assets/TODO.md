@@ -1,9 +1,9 @@
-* Walking animation
-* Make bob walk faster
 * destroy popup when upgrade ui closes
 * Hide upgrade progress arrow when there is no stat difference to show
 * Add description to the upgrades?
 * Controller support?
+
+&nbsp;	- Got to make every node selectable 
 
 
 
