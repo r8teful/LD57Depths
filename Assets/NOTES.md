@@ -345,8 +345,8 @@ This you can get purely from the SO
 
 This is depending on gamestate
 
-* Cost
-* ALL Effect result
+* Cost - Ingredient status !!
+* ALL Effect result - stat change status
 * State
 * Stage progress
 
@@ -357,12 +357,4 @@ If we put ALL this in a class, then we can simply just say GetVisualData() and b
 
 
 If we can afford it? This we could derive from the cost
-
-
-
-
-
-
-
-
 

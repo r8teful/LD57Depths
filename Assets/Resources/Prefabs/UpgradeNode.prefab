@@ -242,7 +242,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7616774759675933038
 RectTransform:
   m_ObjectHideFlags: 0
@@ -462,6 +462,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _buttonBig: {fileID: 5177747201771161023}
   _buttonSmall: {fileID: 3264301155089443214}
+  _unlockedSpriteSmall: {fileID: -169607546, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  _unlockedSpriteBig: {fileID: 550759883, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  _purchasableSpriteSmall: {fileID: 1328511984, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  _purchasableSpriteBig: {fileID: 1242008253, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  _purchasedSprite: {fileID: -882738324, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   _stageText: {fileID: 7634872727412232265}
   IDBoundNode: 65535
   IsBig: 0

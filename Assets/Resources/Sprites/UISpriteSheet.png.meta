@@ -3739,6 +3739,204 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: ButtonUpgradePurchasableB
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 583
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bd1d4bcf3513a1d48a9c91f79d0b87d1
+      internalID: 1242008253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonUpgradeUnlockedB
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 583
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a31a55c01dd7085458a3a200112ce6b7
+      internalID: 550759883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonUpgradePurchasableS
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 567
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d3e3fa1a5797eea44af1630b8867a424
+      internalID: 1328511984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISpriteSheet_3
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 309
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31ec2f5fee87f5e4a9e50c23a32c25cc
+      internalID: 1170321897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonUpgradePurchased
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 571
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ec46ccb924e93c43b7e8bea96b5eb8e
+      internalID: -882738324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISpriteSheet_5
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 309
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34555b6de66dd994b80b1ecc5c4d8787
+      internalID: -1732391133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISpriteSheet_6
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 309
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba1afa3f3c3958840917c09ec9bcdf54
+      internalID: -978120224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UISpriteSheet_7
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 309
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 860694ec6999fab41ba3644e8a4f3540
+      internalID: 1363531171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonUpgradeUnlockedS
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 567
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06cee8fb7ba8a1840962b93993a58bb5
+      internalID: -169607546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -3767,6 +3965,11 @@ TextureImporter:
       ButtonUpgradeOrangeActive: 434696062
       ButtonUpgradeOrangeInactive: 1131497666
       ButtonUpgradeOrangePressed: -1622521877
+      ButtonUpgradePurchasableB: 1242008253
+      ButtonUpgradePurchasableS: 1328511984
+      ButtonUpgradePurchased: -882738324
+      ButtonUpgradeUnlockedB: 550759883
+      ButtonUpgradeUnlockedS: -169607546
       DiscoveryGrid: 1687985993
       IconArrow: 588746496
       IconBluesky: 2113114063
@@ -3822,11 +4025,11 @@ TextureImporter:
       SubFixFin_0: -177491173
       SubFixFin_1: 546586542
       SubFixFin_2: 918829239
-      SubFixFin_3: 1825189606
-      SubFixHull_0: -1172732033
+      SubFixFin_3: 568947026
+      SubFixHull_0: 2062799655
       SubFixHull_1: 1096764976
-      SubFixHull_2: 601464545
-      SubFixHull_3: 519229451
+      SubFixHull_2: 430964337
+      SubFixHull_3: 422971709
       SubFixUICable: -988727820
       SubFixUICogg: 1983392162
       SubFixUIFin: 202132493
@@ -3855,22 +4058,27 @@ TextureImporter:
       UISimpleBoarder: 1878530721
       UISliderBall: 401562208
       UISpriteSheet_0: -1359263483
-      UISpriteSheet_22: 1049651342
-      UISpriteSheet_29: 1935044993
-      UISpriteSheet_30: 1091052041
-      UISpriteSheet_31: 2138624059
-      UISpriteSheet_32: -1616846809
-      UISpriteSheet_33: -222115176
-      UISpriteSheet_34: 1794458255
-      UISpriteSheet_39: -693778800
-      UISpriteSheet_41: 65268891
-      UISpriteSheet_42: -1088629753
-      UISpriteSheet_44: -485614385
-      UISpriteSheet_45: -1447379764
-      UISpriteSheet_46: -525040094
-      UISpriteSheet_47: -834952813
-      UISpriteSheet_54: -1439600899
-      UISpriteSheet_64: 1311666043
+      UISpriteSheet_22: 2050000292
+      UISpriteSheet_29: -905512474
+      UISpriteSheet_3: 1170321897
+      UISpriteSheet_30: -2052161335
+      UISpriteSheet_31: 360413268
+      UISpriteSheet_32: -392471050
+      UISpriteSheet_33: -26208167
+      UISpriteSheet_34: 1070987249
+      UISpriteSheet_39: -521630638
+      UISpriteSheet_41: 670867609
+      UISpriteSheet_42: -564985254
+      UISpriteSheet_44: 1691578049
+      UISpriteSheet_45: -727167604
+      UISpriteSheet_46: 1537070297
+      UISpriteSheet_47: -238216883
+      UISpriteSheet_5: -1732391133
+      UISpriteSheet_54: -533429258
+      UISpriteSheet_6: -978120224
+      UISpriteSheet_64: -1432685473
+      UISpriteSheet_7: 1363531171
+      UISpriteSheet_9: -2063990694
       UIXPBoarder: 1438147028
       UpgradeAccuracy: 1441869239
       UpgradeBar0: 1275372579
@@ -3906,7 +4114,7 @@ TextureImporter:
       UpgradeMiningRange1: 595226712
       UpgradeMiningRange2: -1646224493
       UpgradeMiningStrong: -765993463
-      UpgradeNodeBigPurchased: -177109098
+      UpgradeNodeBigPurchased: 1692903352
       UpgradeOxygenGillsUnlock: -1876437063
       UpgradeOxygenMax: -947507640
       UpgradeOxygenMax2: 494696768

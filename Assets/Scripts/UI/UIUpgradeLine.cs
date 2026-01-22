@@ -33,16 +33,10 @@ public class UIUpgradeLine : MonoBehaviour {
     }
     private void StateChangeTo(UpgradeNodeState state) {
         _upgradeNodeStateTo = state;
-        if(gameObject.name == "Line 1") {
-            Debug.Log("State To change to: " + state);
-        }
         UpdateColor();
     }
 
     private void StateChangeFrom(UpgradeNodeState state) {
-        if (gameObject.name == "Line 1") {
-            Debug.Log("State From change to: " + state);
-        }
         _upgradeNodeStateFrom = state;
         UpdateColor();
     }

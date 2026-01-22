@@ -78,6 +78,7 @@ public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable, IExecutabl
     public bool CanAfford(InventoryManager clientInventory) {
         if (clientInventory == null)
             return false;
+        if(requiredItems.Count == 0) return false;
         foreach (var req in requiredItems) {
             if (clientInventory.GetItemCount(req.item.ID) < req.quantity) {
                 return false;

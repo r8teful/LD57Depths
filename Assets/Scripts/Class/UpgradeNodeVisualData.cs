@@ -61,7 +61,8 @@ public class UpgradeNodeVisualData {
             return;
         }
         StatChangeStatuses = _currentRecipe.GetStatStatuses();
-        State = _node.GetState(existingUpgrades);
+        var canAfford = _currentRecipe.CanAfford(_inventory);
+        State = _node.GetState(existingUpgrades,canAfford);
         LevelMax = _node.MaxLevel;
         LevelCurrent = _node.GetCurrentLevel(existingUpgrades);
         UpdateForPopup(_inventory); // We're ontop of the upgrade when upgrading it so we should refresh the popup
@@ -83,4 +84,4 @@ public class UpgradeNodeVisualData {
     }
 }
 
-public enum UpgradeNodeState { Purchased, Purchable, Unlocked, Locked }
+public enum UpgradeNodeState { Purchased, Purchasable, Unlocked, Locked }

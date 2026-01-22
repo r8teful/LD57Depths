@@ -12,6 +12,13 @@ using Color = UnityEngine.Color;
 public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] private Button _buttonBig;
     [SerializeField] private Button _buttonSmall;
+
+    [SerializeField] private Sprite _unlockedSpriteSmall;
+    [SerializeField] private Sprite _unlockedSpriteBig;
+    [SerializeField] private Sprite _purchasableSpriteSmall;
+    [SerializeField] private Sprite _purchasableSpriteBig;
+    [SerializeField] private Sprite _purchasedSprite;
+
     [SerializeField] private TextMeshProUGUI _stageText;
     public ushort IDBoundNode = ResourceSystem.InvalidID; // Should match the NODE that its connected to 
     private Image _iconImage;
@@ -30,9 +37,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public event Action<UpgradeNodeState> OnStateChange;
 
     private static readonly string ICON_PURCHASED_HEX = "#FFAA67";    
-    private static readonly string ICON_AVAILABLE_HEX = "#FFFFFF";    
-    private static readonly string ICON_NOT_AVAILABLE_HEX = "#9FB3B7"; 
-    private static readonly string ICON_PRESSED_HEX = "#ECECEC";
+    private static readonly string ICON_UNLOCKED_HEX = "#FFFFFF"; // slighly gray?
+    private static readonly string ICON_PURCHASABLE_HEX = "#FFFFFF";
+
     private static readonly string PARTICLE_PURCHASED = "#C41F66";      
 
     // 0 = Blue | Green | Orange
@@ -41,19 +48,15 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
     // cached Colors parsed from hex
     private Color _iconPurchasedColor;
-    private Color _iconAvailableColor;
-    private Color _iconNotAvailableColor;
-    private Color _iconPressedColor;
-    private Color _particlePurchasedColor;
+    private Color _iconPurchasableColor;
+    private Color _iconUnlockedColor;
     private bool _isSelected;
 
     private void Awake() {
         // parse hex colors (falls back to white if parse fails)
         ColorUtility.TryParseHtmlString(ICON_PURCHASED_HEX, out _iconPurchasedColor);
-        ColorUtility.TryParseHtmlString(ICON_AVAILABLE_HEX, out _iconAvailableColor);
-        ColorUtility.TryParseHtmlString(ICON_NOT_AVAILABLE_HEX, out _iconNotAvailableColor);
-        ColorUtility.TryParseHtmlString(ICON_PRESSED_HEX, out _iconPressedColor);
-        ColorUtility.TryParseHtmlString(PARTICLE_PURCHASED, out _particlePurchasedColor);
+        ColorUtility.TryParseHtmlString(ICON_UNLOCKED_HEX, out _iconUnlockedColor);
+        ColorUtility.TryParseHtmlString(ICON_PURCHASABLE_HEX, out _iconPurchasableColor);
 
         _rectTransform = GetComponent<RectTransform>();
         _canvasGroup = GetComponent<CanvasGroup>();
@@ -152,78 +155,58 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     
     public void UpdateVisual() {
         var state = _visualData.State;
-        // Derive the old boolean flags so we can still cache them if other code expects them.
-        bool isPurchased = state == UpgradeNodeState.Purchased;
-        bool prerequisitesMet = state == UpgradeNodeState.Unlocked;
-
-        // Determine variant string (Orange for purchased, otherwise Green (IsBig) or Blue).
-        string variant = isPurchased ? "Orange" : (IsBig ? "Green" : "Blue");
+        Debug.Log($" node: {gameObject.name} is updating its state to: {state}");
         SetLevelText();
         // If this button is currently selected, show the manual Pressed sprite and early return.
         if (_isSelected) {
-            // Manual pressed state (we don't use Button's Sprite Swap)
-            ApplySprite(variant, "Pressed");
-
-            // Use pressed icon color (keeps previous logic)
-            _iconImage.color = _iconPressedColor;
-
-            // Interactable remains what the base state dictates (optional).
-            // For purchased -> not interactable; for active -> interactable; for inactive -> not.
-            _buttonCurrent.interactable = !isPurchased && prerequisitesMet;
-
-            // Still report the state change for listeners (selected pressed still represents underlying state).
-            OnStateChange?.Invoke(state);
-            return;
+            // Highlit it?? idk
         }
-
-        // Not selected -> show base (Purchased / Active / Inactive)
+        SetSprite(state);
         switch (state) {
             case UpgradeNodeState.Purchased:
-                ApplySprite("Orange", "Inactive"); // purchased shows Orange Inactive
-                                                   //SetLinesColour(_linePurchasedColor);
-                _canvasGroup.alpha = 1; 
+                _canvasGroup.alpha = 1;
                 _iconImage.color = _iconPurchasedColor;
                 _buttonCurrent.interactable = false;
-                OnStateChange?.Invoke(UpgradeNodeState.Purchased);
                 break;
-
             case UpgradeNodeState.Unlocked:
-                ApplySprite(variant, "Active");
-                //SetLinesColour(_lineAvailableColor);
-                _canvasGroup.alpha = 1; 
-                _iconImage.color = _iconAvailableColor;
+                _canvasGroup.alpha = 1;
+                _iconImage.color = _iconUnlockedColor;
                 _buttonCurrent.interactable = true;
-                OnStateChange?.Invoke(UpgradeNodeState.Unlocked);
-                //_treeParent.SetNodeAvailable(_upgradeData);
                 break;
-
+            case UpgradeNodeState.Purchasable:
+                _iconImage.color = _iconPurchasableColor;
+                _canvasGroup.alpha = 1;
+                break;
             case UpgradeNodeState.Locked:
-            default:
-                ApplySprite(variant, "Inactive"); 
-                _canvasGroup.alpha = 0; // Just hide it for now, 
-                //SetLinesColour(_lineNotAvailableColor);
-                _iconImage.color = _iconNotAvailableColor;
+                _imageCurrent.sprite = null;
+                _canvasGroup.alpha = 0;
                 _buttonCurrent.interactable = false;
-                OnStateChange?.Invoke(UpgradeNodeState.Locked);
+                break;
+            default:
+                
                 break;
         }
-    
+        OnStateChange?.Invoke(state);
+
     }
+
+    private void SetSprite(UpgradeNodeState state) {
+        _imageCurrent.sprite = state switch {
+            UpgradeNodeState.Purchased => _purchasedSprite,
+
+            UpgradeNodeState.Purchasable =>
+                IsBig ? _purchasableSpriteBig : _purchasableSpriteSmall,
+
+            UpgradeNodeState.Unlocked =>
+                IsBig ? _unlockedSpriteBig : _unlockedSpriteSmall,
+            _ => null
+        };
+    }
+
     private void SetLevelText() {
         if(_visualData.LevelMax<= 1)
             _stageText.gameObject.SetActive(false);
         _stageText.text = $"{_visualData.LevelCurrent}/{_visualData.LevelMax}";
-    }
-    private void ApplySprite(string variant, string state) {
-        if (_imageCurrent == null) return;
-
-        string spriteName = string.Format(SPRITE_PATTERN, variant, state);
-        var sprite = App.ResourceSystem.GetSprite(spriteName);
-        if (sprite == null) {
-            Debug.LogError("Could not find valid sprite!");
-            return;
-        }
-        _imageCurrent.sprite = sprite;
     }
     private void OnPurchased() {
         // Hide popup
@@ -267,11 +250,10 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // Close popup if we've reached max level
         if (_visualData.IsMaxLevel()) {
             OnPointerExit(null); // Closes popup, because we've purchased it we don't have anything to show!
-            // We need to tell whatever nodes have this one as requirement to update their state now
-            _treeParent.UpdateConnectedNodes(_visualData.Node);
         } else {
             PopupDataChanged.Invoke(); // This will tell the upgrade manager to fetch new upgrade data
         }
+        _treeParent.UpdateNodeVisualData();
         UpdateVisual(); // Sets color, stage text etc...
     }
 

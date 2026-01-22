@@ -1,9 +1,14 @@
-* destroy popup when upgrade ui closes
-* Hide upgrade progress arrow when there is no stat difference to show
 * Add description to the upgrades?
-* Controller support?
 
-&nbsp;	- Got to make every node selectable 
+
+
+
+
+* Need a visual of what node you can buy
+* Have one node that is disgustingly cheap
+* Have one node that is disgustingly expensive
+
+
 
 
 

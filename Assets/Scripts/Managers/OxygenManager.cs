@@ -5,8 +5,8 @@ using static PlayerMovement;
 
 public class OxygenManager : MonoBehaviour, INetworkedPlayerModule {
 
-    public float maxOxygen = 250f;
-    public float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
+    private float maxOxygen;
+    private float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
     private float currentOxygen;
     private float maxHealth = 15; // amount in seconds the player can survive with 0 oxygen 
     private float playerHealth;
@@ -17,9 +17,10 @@ public class OxygenManager : MonoBehaviour, INetworkedPlayerModule {
     public GameObject OxygenWarning;
     private bool _isFlashing;
     private Coroutine _flashCoroutine;
+    private bool _initialized;
 
     public static event Action<float, float> OnOxygenChanged;
-    public int InitializationOrder => 92; // Don't think order matters here
+    public int InitializationOrder => 92; // After playerstats
 
     public float CurrentOxygen { 
         get {
@@ -32,11 +33,13 @@ public class OxygenManager : MonoBehaviour, INetworkedPlayerModule {
         
 
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
+        maxOxygen= playerParent.PlayerStats.GetStat(StatType.PlayerOxygenMax);
         CurrentOxygen = maxOxygen;
         playerHealth = maxHealth;
         _player = playerParent;
         playerParent.PlayerStats.OnStatChanged += OnStatChanged;
-        playerParent.PlayerMovement.OnPlayerStateChanged += StateChanged;    
+        playerParent.PlayerMovement.OnPlayerStateChanged += StateChanged;
+        _initialized = true;
     }
 
     private void OnStatChanged() {
@@ -48,6 +51,7 @@ public class OxygenManager : MonoBehaviour, INetworkedPlayerModule {
     }
 
     private void Update() {
+        if (!_initialized) return;
         if (ShouldDepleteOxygen()) {
             DepleteOxygen();
         } else {

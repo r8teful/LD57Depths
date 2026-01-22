@@ -119,15 +119,12 @@ public class UIUpgradeTree : MonoBehaviour {
         } 
     }
 
-    internal void UpdateConnectedNodes(UpgradeNodeSO node) {
-        // Instead of refreshing all nodes, we find nodes that have this node as prereqasite and now update their state
+
+    internal void UpdateNodeVisualData() {
         foreach (var kvp in _nodeMap) {
-            // its either all that crap or App.ResourceSystem.GetNodeByID()
-            if(kvp.Value.GetVisualData.Node.prerequisiteNodesAny.Any(p => p.ID == node.ID)) {
-                kvp.Value.UpdateVisualData(_player.UpgradeManager.GetUnlockedUpgrades());
-            }
-            
+            kvp.Value.UpdateVisualData(_player.UpgradeManager.GetUnlockedUpgrades());
         }
+        Debug.Log($"Update: {_nodeMap.Count} nodes");
     }
 
     internal IEnumerator OnPanSelect(UIUpgradeNode uIUpgradeNode) {
