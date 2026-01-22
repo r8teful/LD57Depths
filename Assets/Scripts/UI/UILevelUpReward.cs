@@ -30,10 +30,15 @@ public class UILevelUpReward : MonoBehaviour {
                 var statChange = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStatPopup"), _statsChangeContainer);
                 statChange.Init(statData);
             }
-
-        } else {
+        } else if(reward is AbilityUpgradeEffect ue) {
+            // Create boarder for rarity
             _boarderImage.sprite = _images[2];
-            _rewardText.text = "TODO";
+            _rewardText.text = $"{ue.Ability.Data.displayName} Upgrade with rarity: {ue.Rarity}";
+            _descriptionText.text = "";
+            var statData = ue.GetChangeStatus(); // Just suporting one change status. Because upgrade upgrade one stat for now
+            var statChange = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStatPopup"), _statsChangeContainer);
+            statChange.Init(statData);
+            
         }
         _button.onClick.AddListener(ButtonClick);
     }

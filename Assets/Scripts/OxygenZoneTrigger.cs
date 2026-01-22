@@ -12,7 +12,7 @@ public class OxygenZoneTrigger : MonoBehaviour {
         if (collision.CompareTag("Player")) {
             PlayerMovement playerMovement = collision.GetComponent<PlayerMovement>();
             if (playerMovement != null) {
-                playerMovement.SetOxygenZone(true);
+                //playerMovement.SetOxygenZone(true);
             }
         }
     }
@@ -20,7 +20,7 @@ public class OxygenZoneTrigger : MonoBehaviour {
         if (collision.CompareTag("Player")) {
             PlayerMovement playerMovement = collision.GetComponent<PlayerMovement>();
             if (playerMovement != null) {
-                playerMovement.SetOxygenZone(false);
+                //playerMovement.SetOxygenZone(false);
             }
         }
     }

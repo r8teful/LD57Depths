@@ -135,10 +135,10 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
         _player.PlayerMovement.DEBUGToggleHitbox();
     }
 
-    //[ConsoleCommand("toggleGod")]
-    //private void debugToggleGOD() {
-    //    _player.PlayerMovement.DEBUGToggleGodMove();
-    //}
+    [ConsoleCommand("toggleGod")]
+    private void debugToggleGOD() {
+        _player.PlayerMovement.DEBUGToggleGodMove();
+    }
     //[ConsoleCommand("setSpeed")]
     //private void debugSetSpeed(float speed) {
     //    _player.PlayerMovement.DEBUGSetSpeed(speed);

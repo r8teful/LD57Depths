@@ -5,16 +5,17 @@ using UnityEngine;
 public class UIUpgradeScreen : MonoBehaviour {
     [SerializeField] private GameObject _upgradePanel;
     [SerializeField] private GameObject _upgradePanelTree;
+    [SerializeField] private UpgradeTreeController _upgradeTreeController;
     public UpgradePanAndZoom PanAndZoom;
     private UIManager _UIManagerParent;
     private UpgradeTreeDataSO _treeDataTool;
     private UIUpgradeTree _upgradeTreeInstance;
-
     public bool IsOpen => _upgradePanel.activeSelf;
-
+    
     public UIManager GetUIManager() => _UIManagerParent;
     public static event Action<UpgradeTreeDataSO> OnTabChanged; // Used to show correct stats 
     public static event Action<UpgradeNodeSO> OnSelectedNodeChanged; // Used to show correct stats 
+    public event Action OnPanelClosed; 
     private void Start() {
         _upgradePanel.SetActive(false); // Start with the panel being hidden
         _upgradePanelTree.SetActive(true);
@@ -43,6 +44,7 @@ public class UIUpgradeScreen : MonoBehaviour {
 
         _upgradeTreeInstance = InstantiateTree(_treeDataTool, _upgradePanelTree.transform, pUpgrades, client);
         PanAndZoom.Init(client.InputManager);
+        _upgradeTreeController.Init(client, _upgradeTreeInstance);
         //InstantiateTree(_treeDataPlayer, _upgradePanelPlayer.transform, pUpgrades);
     }
     private UIUpgradeTree InstantiateTree(UpgradeTreeDataSO treeData, Transform transformParent, HashSet<ushort> pUpgrades, NetworkedPlayer player) {
@@ -61,6 +63,10 @@ public class UIUpgradeScreen : MonoBehaviour {
     }
     public void PanelToggle() {
         _upgradePanel.SetActive(!_upgradePanel.activeSelf);
+        if (!_upgradePanel.activeSelf) {
+            // closed, gets rid of popup
+            OnPanelClosed?.Invoke();
+        }
     }
 
     internal void PanelHide() {

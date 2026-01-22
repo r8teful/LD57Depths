@@ -2819,10 +2819,10 @@ TextureImporter:
       name: SubFixUpgradeBar
       rect:
         serializedVersion: 2
-        x: 56
-        y: 458
-        width: 12
-        height: 5
+        x: 42
+        y: 456
+        width: 26
+        height: 8
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 1, y: 1, z: 1, w: 1}
@@ -3435,10 +3435,10 @@ TextureImporter:
       name: UpgradeBar0
       rect:
         serializedVersion: 2
-        x: 70
-        y: 458
-        width: 7
-        height: 5
+        x: 63
+        y: 444
+        width: 14
+        height: 10
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 1, y: 1, z: 1, w: 1}
@@ -3695,6 +3695,50 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UIArrow2
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 442
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53b38b2b11cecd24f959b23f1ac0bd66
+      internalID: -923879406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIDivider
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 448
+        width: 7
+        height: 3
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 1, z: 2, w: 1}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c07a08a137426d74fa81d6556f4eb4b8
+      internalID: 1399374186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -3796,6 +3840,7 @@ TextureImporter:
       TrenchProgression4: 1361359748
       TrenchWhole: 1359521255
       UIAbilityActiveBoarder: -1507697884
+      UIArrow2: -923879406
       UIBoarderBackground: 398889071
       UIBoarderBigBlue: 1025421921
       UIBoarderBigGreen: -702740983
@@ -3805,6 +3850,7 @@ TextureImporter:
       UIBrimstone1: -526431394
       UIBrimstone3: -1724539373
       UIButton: -1863908995
+      UIDivider: 1399374186
       UILine: 511341760
       UISimpleBoarder: 1878530721
       UISliderBall: 401562208

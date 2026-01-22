@@ -65,10 +65,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 60000
+  m_text: 23466
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 792992a251b115b45aec9bfafe76bbfc, type: 2}
-  m_sharedMaterial: {fileID: -8312759870252864142, guid: 792992a251b115b45aec9bfafe76bbfc, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1ca26a4b22864fd4eb4279fb8d06348d, type: 2}
+  m_sharedMaterial: {fileID: 3603001062434081762, guid: 1ca26a4b22864fd4eb4279fb8d06348d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -92,15 +92,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 25
+  m_fontSizeBase: 25
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -237,10 +237,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: speed while stoppedasdasdasd
+  m_text: Increase oxygen capacity by the following amount
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 792992a251b115b45aec9bfafe76bbfc, type: 2}
-  m_sharedMaterial: {fileID: -8312759870252864142, guid: 792992a251b115b45aec9bfafe76bbfc, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1ca26a4b22864fd4eb4279fb8d06348d, type: 2}
+  m_sharedMaterial: {fileID: 3603001062434081762, guid: 1ca26a4b22864fd4eb4279fb8d06348d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -264,14 +264,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 23
+  m_fontSizeBase: 23
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -375,8 +375,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 90
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 792992a251b115b45aec9bfafe76bbfc, type: 2}
-  m_sharedMaterial: {fileID: -8312759870252864142, guid: 792992a251b115b45aec9bfafe76bbfc, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1ca26a4b22864fd4eb4279fb8d06348d, type: 2}
+  m_sharedMaterial: {fileID: 3603001062434081762, guid: 1ca26a4b22864fd4eb4279fb8d06348d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -400,15 +400,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 25
+  m_fontSizeBase: 25
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -500,8 +500,8 @@ MonoBehaviour:
     m_Right: 0
     m_Top: -3
     m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 49.99
+  m_ChildAlignment: 1
+  m_Spacing: 33.7
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
@@ -581,7 +581,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 1
   m_Spacing: 6.8
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 0
@@ -615,17 +615,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8518330710677741491}
-  m_LocalRotation: {x: -0.0000002648197, y: 0.0000002648132, z: 0.70710605, w: -0.7071075}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 3, y: 3, z: 0.49999997}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 4171187116509820579}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 13, y: -3.9999695}
-  m_SizeDelta: {x: 7, y: 8}
+  m_AnchoredPosition: {x: -18.88, y: -23.71}
+  m_SizeDelta: {x: 8.75, y: 7.5}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &1160580476094195463
 CanvasRenderer:
@@ -655,7 +655,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 588746496, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  m_Sprite: {fileID: -923879406, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

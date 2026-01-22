@@ -13,7 +13,7 @@ public class TileSO : RuleTile, IIdentifiable {
     public bool IsSolid => maxDurability != -1;
     private const float INDEX_SCALE = 16.0f;
 
-    public DropTableSO dropTable;   // Assign the ScriptableObject defining drops
+    public ItemData drop;
     public GameObject breakEffectPrefab; // Optional: particle effect on break
     public GameObject hitEffectPrefab; // Optional: particle effect on hit
     public List<TileBase> breakVersions;

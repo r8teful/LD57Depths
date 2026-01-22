@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b53404020c6e33948ab9433323ecb9aa, type: 3}
+  m_Name: TileUpgradeCopper
+  m_EditorClassIdentifier: 
+  Id: 600
+  tileToUpgrade: {fileID: 11400000, guid: 9389412dcdec5f743b8b4395d74529f2, type: 2}
+  dropIncrease: 2

@@ -67,7 +67,12 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
     /// <param name="tree"> Needed to calculate the resource cost
     /// <returns>The UpgradeStage to be purchased next, or null if the node is maxed out.</returns>
     public UpgradeRecipeSO GetUpgradeData(IReadOnlyCollection<ushort> unlockedUpgrades, UpgradeTreeDataSO tree) {
-        if (stages == null || stages.Count == 0 || unlockedUpgrades == null) return null;
+        
+        if (stages == null || unlockedUpgrades == null) return null;
+        if(stages.Count == 0) {
+            // Base node 
+
+        }
         var isMaxed = IsNodeMaxedOut(unlockedUpgrades);
         int currentLevel = GetCurrentLevel(unlockedUpgrades);
         // Determine which stage's info to show (the next one, or the last one if maxed)

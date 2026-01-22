@@ -13,6 +13,7 @@ public struct StatChangeStatus {
     public string ValueNow { get; }
     public string ValueNext { get; }
     public bool IsBadChange { get; }
+    public bool IsEmpty => StatName is null && ValueNow is null && ValueNext is null && !IsBadChange;
 
     public StatChangeStatus(string statName, float valueNow, float valueNext, bool isBadChange) {
         StatName = statName;

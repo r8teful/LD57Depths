@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 public class BouncingBall : MonoBehaviour {
@@ -6,6 +7,7 @@ public class BouncingBall : MonoBehaviour {
     private int _bounceAmount;
     private int _maxBounces;
     private AbilityInstance _ability;
+    public Transform _visualTransform;
 
     private void Awake() {
         _rb = GetComponent<Rigidbody2D>();
@@ -29,5 +31,14 @@ public class BouncingBall : MonoBehaviour {
         if (_bounceAmount >= _maxBounces) {
             Destroy(gameObject);
         }
+        // animation
+        var squach = _rb.linearVelocity.normalized;
+        _visualTransform.DOKill();
+
+        Vector2 relVel = collision.relativeVelocity;
+        float speed = relVel.magnitude;
+        if (speed <= 0.01f) return;
+
+        _visualTransform.DOPunchScale(new(-0.2f,-0.2f), 0.2f);
     }
 }

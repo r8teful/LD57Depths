@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.DebugUI;
-
 public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
 
     private Rigidbody2D rb;
     private Camera MainCam;
     public Transform insideSubTransform;
-    public Transform groundCheck;
-    //public CanvasGroup blackout;
-    #region Movement Parameters
 
     [Header("Movement Parameters")]
     [Tooltip("Maximum speed the swimmer can reach.")]
@@ -21,33 +14,14 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     [Tooltip("Deceleration force applied when no input is given, simulating water resistance.")]
     public float decelerationForce = 15f;
 
-    [Tooltip("How quickly the swimmer can change direction.")]
-    [Range(0f, 1f)] public float directionalChangeSpeed = 0.5f;
-
-    public Vector2 ladderSensorSize;
-    public float groundCheckRadius;
-    public LayerMask ladderLayer;
-    public LayerMask ladderExitLayer;
-    public LayerMask groundLayer;
-
-    #endregion
-    public enum PlayerState {None, Swimming, Grounded, Cutscene, ClimbingLadder}
+    public enum PlayerState {None, Swimming, Grounded}
     private PlayerState _currentState;
     private PlayerStatsManager _playerStats;
     private InputManager _inputManager;
     private PlayerVisualHandler _visualHandler;
 
-    public GameObject OxygenWarning;
-    private bool _isFlashing;
-    private Coroutine _flashCoroutine;
-    private InputAction _playerMoveInput;
-    private Collider2D _currentLadder;
-    private bool _isOnLadder;
-    private bool _isGrounded;
     private Vector2 _currentInput;
     private bool _isDashing;
-    private Collider2D _topTrigger;
-    private bool _isInsideOxygenZone;
     private bool DEBUGIsGOD;
 
     List<ContactPoint2D> _contactsMostRecent = new List<ContactPoint2D>(); // Store the contacts we hit on collision enter
@@ -115,10 +89,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
                 HandleSwimmingUpdate();
                 break;
             case PlayerState.Grounded:
-                HandleGroundedUpdate();
-                break;
-            case PlayerState.ClimbingLadder:
-                HandleClimbingLadderUpdate();
                 break;
         }
         _visualHandler.HandleVisualUpdate(_currentState, _currentInput);
@@ -127,8 +97,8 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     void OnCollisionEnter2D(Collision2D col) {
         if (rb.linearVelocity.magnitude > _cachedSwimSpeed)
             rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, _cachedSwimSpeed);
-        ContactsMostRecent.Clear();
-        ContactsMostRecent.AddRange(col.contacts);
+        _contactsMostRecent.Clear();
+        _contactsMostRecent.AddRange(col.contacts);
     }
 
     void FixedUpdate() {
@@ -141,11 +111,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
                 break;
             case PlayerState.Grounded:
                 HandleGroundedPhysics();
-                CheckEnvironment(); // For ladder checks
-                break;
-            case PlayerState.ClimbingLadder:
-                HandleClimbingLadderPhysics();
-                CheckEnvironment(); // For ladder checks
                 break;
         }
     }
@@ -160,7 +125,12 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     private void HandleSwimmingPhysics() {
         var accelerationForce = _playerStats.GetStat(StatType.PlayerAcceleration);
         _cachedSwimSpeed = _playerStats.GetStat(StatType.PlayerSpeedMax);
-     
+#if UNITY_EDITOR
+        if (DEBUGIsGOD) {
+            _cachedSwimSpeed *= 5;
+            accelerationForce *= 5;
+        }
+#endif
         Vector2 moveDirection = _currentInput.normalized;
 
         if (moveDirection != Vector2.zero) {
@@ -184,98 +154,12 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     }
     #endregion
 
-    #region GROUNDED
-    private void HandleGroundedUpdate() {
-        if(_isOnLadder) {
-            if(_topTrigger != null && _currentInput.y < -0.01f) {
-                ChangeState(PlayerState.ClimbingLadder);
-                return;
-            } else if (_topTrigger == null && _currentInput.y > 0.01f) {
-                if (_currentState != PlayerState.ClimbingLadder) {
-                    ChangeState(PlayerState.ClimbingLadder);
-                    return; // Important: Exit after changing state
-                }
-
-            }
-        }
-    }
     private void HandleGroundedPhysics() {
         // Horizontal movement
         rb.linearVelocity = new Vector2(_currentInput.x * walkSpeed, rb.linearVelocity.y);
     }
-    #endregion
 
-    #region FALLING
-
-    #endregion
-
-    #region LADDER
-    private void HandleClimbingLadderUpdate() {
-        if(_currentLadder == null) 
-            return;
-        if (!_isOnLadder) {
-            // Exit ladder state
-            ChangeState(_isGrounded ? PlayerState.Grounded : PlayerState.Grounded); // Could add falling state later
-            return;
-        }
-        float feetY = groundCheck.position.y - groundCheckRadius;
-        float ladderTopY = _currentLadder.bounds.max.y;
-        float ladderBottomY = _currentLadder.bounds.min.y;
-        // Exit conditions
-        if (feetY > ladderTopY && _currentInput.y > 0) {
-            ChangeState(PlayerState.Grounded); // Assumes platform at top
-        } else if (feetY < ladderBottomY && _currentInput.y < 0) {
-            ChangeState(PlayerState.Grounded); // Or falling
-        }
-    }
-    private void HandleClimbingLadderPhysics() {
-        // Use the Y component of the "Move" action for climbing ladders
-        rb.linearVelocity = new Vector2(_currentInput.x, _currentInput.y) * climbSpeed;
-    }
-    private Collider2D[] LadderCheck() {
-        Vector2 detectionCenter = (Vector2)transform.position;
-        var ladders = Physics2D.OverlapBoxAll(detectionCenter, ladderSensorSize, 0, ladderLayer);
-        SubLadder ladderComponent = null;
-        if (ladders.Length > 0) {
-            // Try and find the subladder component in the hitbox
-            foreach (var collider in ladders) {
-                ladderComponent = collider.GetComponentInParent<SubLadder>();
-                if(ladderComponent != null) {
-                    break; // Found it!
-                }
-            }
-        }
-        if (ladderComponent != null) {
-            if(!ladderComponent.CanUse) 
-                return null;  // if the found one is broken, we can't climb the ladder, so just say we didn't find anything
-        }
-        return ladders; // Passed checks and just return the ladder hitboxes we found
-    }
-    #endregion
-
-    private void CheckEnvironment() {
-        _isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-        var ladderColliders = LadderCheck();
-        // Check if we got any colliders back
-        
-        if (ladderColliders == null || ladderColliders.Length == 0) {
-            _isOnLadder = false;
-            _topTrigger = null;
-            return;
-        }
-        // Loop through all colliders and assign appropriately
-        foreach (var collider in ladderColliders) {
-            if (collider != null) {
-                if (collider.name == "TopTrigger") {
-                    _topTrigger = collider;
-                } else if (collider.name == "MainTrigger") {
-                    _currentLadder = collider;
-                }
-            }
-        }
-        _isOnLadder = true;
-        //Debug.Log("_isOnLadder: " + _currentLadder);
-    }
+  
 
     // --- State Management ---
     public void ChangeState(PlayerState newState) {
@@ -304,115 +188,25 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
                 //MainCam.transform.localPosition = new Vector3(0, 0, -10);
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0); // Reset vertical velocity when entering from climb
                 break;
-            case PlayerState.ClimbingLadder:
-                rb.gravityScale = 0;
-                //rb.linearVelocity = Vector2.zero; // Stop movement when grabbing ladder
-                if(_topTrigger != null) {
-                    _topTrigger.GetComponentInParent<SubLadder>().SetPlatform(false);
-                }
-                if (_currentLadder != null) {
-                    _currentLadder.GetComponentInParent<SubLadder>().SetPlatform(false);
-                    // Align player with ladder if outside minXDistance
-                    float ladderX = _currentLadder.bounds.center.x;
-                    float playerX = transform.position.x;
-                    float distance = Mathf.Abs(playerX - ladderX);
-                    if (distance > _currentLadder.bounds.max.x) {
-                        Vector3 newPosition = transform.position;
-                        newPosition.x = ladderX;
-                        transform.position = newPosition;
-                    }
-                }
-                break;
         }
     }
 
 
     void OnStateExit(PlayerState state, PlayerState newState) {
-        // Clean up from the state we are leaving
-        switch (state) {
-            case PlayerState.ClimbingLadder:
-                _currentLadder.GetComponentInParent<SubLadder>().SetPlatform(true);
-                rb.gravityScale = 2; // Restore gravity when leaving ladder
-                if (newState == PlayerState.None || newState == PlayerState.Grounded) {
-                    // If we were at the top and are now grounded, make sure we don't "pop" up
-                    if (_isGrounded) {
-                        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
-                    }
-                }
-                _currentLadder = null; // de-reference
-                break;
-            case PlayerState.Swimming:
-               // rb.gravityScale = _originalGravityScale; // Restore gravity
-                break;
-                // No specific exit logic for Interior needed for now
-        }
+        
     }
-
-    // --- Gizmos for Debugging ---
-    void OnDrawGizmosSelected()
-    {
-        if (groundCheck != null)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
-        }
-
-        Gizmos.color = Color.yellow;
-        // For OverlapBox, Gizmos.DrawWireCube needs center and full size
-        Gizmos.DrawWireCube(transform.position, new Vector3(ladderSensorSize.x, ladderSensorSize.y, 0));
-    }
-    // --- Helper Functions ---
 
 
    
-    // Call this function to start or stop the flashing
-    public void SliderFlash(bool shouldFlash) {
-        if (OxygenWarning == null) {
-            Debug.LogWarning("SliderFlash: sliderToFlash GameObject is not assigned! Please assign it in the Inspector.");
-            return;
-        }
-
-        if (shouldFlash) {
-            if (!_isFlashing) // Don't start a new coroutine if already flashing
-            {
-                _isFlashing = true;
-                _flashCoroutine = StartCoroutine(FlashCoroutine());
-            }
-        } else {
-            if (_isFlashing) // Only stop if currently flashing
-            {
-                _isFlashing = false;
-                StopCoroutine(_flashCoroutine);
-                OxygenWarning.SetActive(false); // Ensure it's visible when stopping the flash
-            }
-        }
-    }
-
-    private IEnumerator FlashCoroutine() {
-        while (_isFlashing) {
-            // Toggle the active state of the GameObject
-            OxygenWarning.SetActive(!OxygenWarning.activeSelf);
-
-            // Wait for the flashSpeed duration
-            yield return new WaitForSeconds(0.2f);
-        }
-    }
-
+   
    
     internal void DEBUGToggleHitbox() {
         _visualHandler.DEBUGToggleHitbox(_currentState);
     }
 
-
-    internal void SetOxygenZone(bool v) {
-        _isInsideOxygenZone = v;
-    }
-    /*
     internal void DEBUGToggleGodMove() {
         if (!DEBUGIsGOD) {
             DEBUGIsGOD = true;
-            accelerationForce *= 10;
-            swimSpeed *= 10;
             DEBUGToggleHitbox();
         } else {
             DEBUGIsGOD = false;
@@ -420,13 +214,6 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
         }
     }
     private void DEBUGExitGodMove() {
-        accelerationForce *= 0.1f;
-        swimSpeed *= 0.1f;
         DEBUGToggleHitbox();
     }
-
-    internal void DEBUGSetSpeed(float speed) {
-        swimSpeed = speed;
-    }
-     */
 }

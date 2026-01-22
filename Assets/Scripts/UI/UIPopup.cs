@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,6 +10,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
     [SerializeField] private RectTransform rectTransform;
     [SerializeField] private GameObject _iconContainer;
     [SerializeField] private Image _iconImage;
+    [SerializeField] private Image _descriptionDivider;
     [SerializeField] private Transform _statsChangeContainer;
     [SerializeField] private Transform _ingredientContainer;
     [SerializeField] private UIPopupUpgradeBar _upgradeBar;
@@ -43,7 +45,9 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         // Name and description
         nameText.text = data.title;
         descriptionText.text = data.description;
-
+        if(data.description == string.Empty) {
+            _descriptionDivider.gameObject.SetActive(false);
+        }
         // Destroy old
         foreach (Transform child in _ingredientContainer) {
             Destroy(child.gameObject);
@@ -58,10 +62,15 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
             }
         }
         if(data.upgradeEffects != null &&  data.upgradeEffects.Count > 0) {
+            bool treatHeaderAsStatText = false;
+            if (data.upgradeEffects.Count == 1) {
+                // If only one stat, treat header as stat text
+                treatHeaderAsStatText = true;
+            }
             foreach (var stat in data.upgradeEffects) {
-                //Todo obviously
+                if (stat.IsEmpty) continue;
                 var statChange = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStatPopup"), _statsChangeContainer);
-                statChange.Init(stat); // TODO
+                statChange.Init(stat, treatHeaderAsStatText); 
             }
         }
 
@@ -90,5 +99,12 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
     }
     private void OnDestroy() {
         DOTween.KillAll();
+    }
+
+    public void ShowAnimate() {
+        transform.localScale = Vector2.one * 0.5f;
+        transform.DOScale(1,0.1f);
+        transform.DOShakeRotation(0.2f, 6f, 50);
+        
     }
 }

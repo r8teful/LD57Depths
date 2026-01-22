@@ -124,18 +124,24 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _rectTransform.sizeDelta = r;
         }
     }
+    public void Select() {
+        if (_preparedRecipeForPurchase == null) return;
+        if (_cachedState == UpgradeNodeState.Locked) return;
+        PopupManager.Instance.ShowPopup(this, true);
+    }
+    public void Deselect() {
 
+        if (_preparedRecipeForPurchase == null) return;
+        if (_cachedState == UpgradeNodeState.Locked) return;
+        PopupManager.Instance.ShowPopup(this, false);
+    }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        if (_preparedRecipeForPurchase == null) return;
-        if (_cachedState == UpgradeNodeState.Purchased) return;
-        PopupManager.Instance.ShowPopup(this, true);
+        Select();
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        if (_preparedRecipeForPurchase == null) return;
-        if (_cachedState == UpgradeNodeState.Purchased) return;
-        PopupManager.Instance.ShowPopup(this, false);
+        Deselect();
     }
     private void OnUpgradeButtonClicked() {
         // UICraftingManager.Instance.AttemptCraft(upgradeData, null, null);
@@ -264,5 +270,10 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
     internal void DoPurchaseAnim() {
         OnPurchased();
+    }
+
+    internal void OnPurchaseInput() {
+        OnUpgradeButtonClicked();
+        // todo
     }
 }

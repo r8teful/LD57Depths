@@ -1,5 +1,6 @@
 ﻿using FishNet.Object;
 using Sirenix.OdinInspector;
+using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -16,7 +17,7 @@ public enum PlayerInteractionContext {
 public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private PlayerInput _playerInput;
     private InputAction _interactAction;
-    private InputAction _playerClickAction;
+    private InputAction _playerShootAction;
     private InputAction _playerMoveAction;
     private InputAction _playerAbilityAction;
     private InputAction _playerAimAction;
@@ -56,6 +57,9 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private bool _primaryInputToggle;
 
     public int InitializationOrder => 101;
+
+    public bool IsUsingController { get; internal set; }
+    public event Action<InputAction.CallbackContext> OnUIInteraction;
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _UIManager = playerParent.UiManager;
         _inventoryUIManager = _UIManager.UIManagerInventory;
@@ -70,7 +74,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         _playerInput = GetComponent<PlayerInput>();
         if (_playerInput != null) {
             _interactAction = _playerInput.actions.FindAction("Interact",true); // E
-            _playerClickAction = _playerInput.actions.FindAction("Shoot",true);
+            _playerShootAction = _playerInput.actions.FindAction("Shoot",true);
             _playerMoveAction = _playerInput.actions.FindAction("Move",true);
             _playerAbilityAction = _playerInput.actions.FindAction("Ability",true);
             _playerAimAction = _playerInput.actions.FindAction("Aim",true);
@@ -99,8 +103,9 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         _UItoggleInventoryAction.performed += UIOnToggleInventory;
         _cancelAction.performed += UIHandleCloseAction;
         _cancelAction.performed += HandleCancelAction;
-        _playerClickAction.performed += OnPrimaryInteraction;
-        _playerClickAction.canceled += OnPrimaryInteraction;
+        _playerShootAction.performed += OnPrimaryInteraction;
+        _playerShootAction.canceled += OnPrimaryInteraction;
+        _uiInteractAction.performed += OnPrimaryUIInteraction;
         _playerDashAction.performed += OnDashPerformed;
         _playerDashAction.canceled += OnDashPerformed;
         _playerMoveAction.performed += OnMove;
@@ -115,6 +120,8 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
 
         _playerAbilityAction.performed+= OnAbilityPerformed;
     }
+
+   
 
     private void OnPanStop(InputAction.CallbackContext context) {
         _UIManager.UpgradeScreen.PanAndZoom.OnPanStop();
@@ -138,15 +145,18 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         if (_cancelAction != null)
             _cancelAction.performed -= UIHandleCloseAction;
             _cancelAction.performed -= HandleCancelAction;
-        if (_playerClickAction != null) {
-            _playerClickAction.performed -= OnPrimaryInteraction;
-            _playerClickAction.canceled -= OnPrimaryInteraction;
+        if (_playerShootAction != null) {
+            _playerShootAction.performed -= OnPrimaryInteraction;
+            _playerShootAction.canceled -= OnPrimaryInteraction;
         }
         if (_playerMoveAction != null) { 
             _playerMoveAction.performed -= OnMove;
         }
         if (_playerAimAction != null) {
             _playerAimAction.performed -= OnAim;
+        }
+        if (_uiInteractAction != null) {
+            _uiInteractAction.performed -= OnPrimaryUIInteraction;
         }
     }
     private void Update() {
@@ -310,7 +320,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
             return rawAimInput;
         } else // Controller
           {
-            return Vector2.zero; // Not supported atm
+            return rawAimInput; // Also raw?!
         }
     }
     public bool IsHoldingDownPrimaryInput() {
@@ -385,6 +395,12 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         //        }
         
     }
+    private void OnPrimaryUIInteraction(InputAction.CallbackContext context) {
+        // Just invoke an event? Right??
+        OnUIInteraction.Invoke(context);
+    }
+
+
     #region INVENTORY
 
     private void UIOnToggleInventory(InputAction.CallbackContext context) {

@@ -122,7 +122,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0
   m_GravityScale: 0
-  m_Material: {fileID: 6200000, guid: acbe479d5d7b7134dbc123428e32154d, type: 2}
+  m_Material: {fileID: 6200000, guid: 8cb2d0385eae0b54783f701d127c276a, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -460,23 +460,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   insideSubTransform: {fileID: 0}
-  groundCheck: {fileID: 5559968206278809909}
-  walkSpeed: 5
+  walkSpeed: 8
   climbSpeed: 4
   decelerationForce: 0.7
-  directionalChangeSpeed: 0.3
-  ladderSensorSize: {x: 0.29, y: 0.67}
-  groundCheckRadius: 0.51
-  ladderLayer:
-    serializedVersion: 2
-    m_Bits: 512
-  ladderExitLayer:
-    serializedVersion: 2
-    m_Bits: 512
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  OxygenWarning: {fileID: 0}
 --- !u!114 &-7626533647889685779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -604,6 +590,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxOxygen: 250
   oxygenDepletionRate: 1
+  OxygenWarning: {fileID: 0}
 --- !u!114 &7250565941071333612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1216,7 +1203,7 @@ Transform:
   m_GameObject: {fileID: 6167726201712857490}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.70710695, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 0.424, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1232,7 +1219,7 @@ CapsuleCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: acbe479d5d7b7134dbc123428e32154d, type: 2}
+  m_Material: {fileID: 6200000, guid: 8cb2d0385eae0b54783f701d127c276a, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1541,7 +1528,7 @@ CapsuleCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: acbe479d5d7b7134dbc123428e32154d, type: 2}
+  m_Material: {fileID: 6200000, guid: 8cb2d0385eae0b54783f701d127c276a, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

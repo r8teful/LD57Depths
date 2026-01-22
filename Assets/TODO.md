@@ -1,27 +1,15 @@
-* Make a luck stat, it effects ore drop amount, and item rarity 
-* Fix the submarine, decide if you still want the sub fixing entities
-
-
-
-* Add upgrades to the abilities, do this now!? Yes
-
-&nbsp;	- Make sure they all have PROPER base stat values
-
-&nbsp;	- 
-
-
-
-Shockwave - DONE 
-
-Boomerang - 
+* Walking animation
+* Make bob walk faster
+* destroy popup when upgrade ui closes
+* Hide upgrade progress arrow when there is no stat difference to show
+* Add description to the upgrades?
+* Controller support?
 
 
 
 
 
-Later:
-
-* Solo playtest the shit out of everything and make ALL values reasonable
+Solo playtest the shit out of everything and make ALL values reasonable
 
  	- Upgrade values
 

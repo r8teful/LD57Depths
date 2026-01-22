@@ -6,6 +6,7 @@ public class BlackHoleProjectile : MonoBehaviour {
     private Rigidbody2D _rb;
     private NetworkedPlayer _player;
     private AbilityInstance _ability;
+    private float _startMagnitude;
     private float aliveTime;
     private void Awake() {
         _rb = GetComponent<Rigidbody2D>();
@@ -13,20 +14,23 @@ public class BlackHoleProjectile : MonoBehaviour {
     internal void Init(Vector2 shootForce,NetworkedPlayer player, AbilityInstance abilityInstance) {
         _player = player;
         _ability = abilityInstance;
+        _startMagnitude = shootForce.magnitude;
         _rb.AddForce(shootForce, ForceMode2D.Impulse);
         StartCoroutine(DamageRoutine());
     }
     private IEnumerator DamageRoutine() {
-        var checkInterval = 0.1f;
+        var checkInterval = 0.025f;
         var size = _ability.GetEffectiveStat(StatType.Size);
-        var maxDamage = _ability.GetEffectiveStat(StatType.MiningDamage);
-        var baseDamage = maxDamage * 0.2f;
+        var baseDamage = _ability.GetEffectiveStat(StatType.MiningDamage);
+        var minDamage = baseDamage * 0.5f;
         var timeAlive = 3;
         while (aliveTime < timeAlive) {
             // Damage is smaller when moving
-            var damage = Mathf.Min(maxDamage, baseDamage / _rb.linearVelocity.magnitude);
+            var speed = _rb.linearVelocity.magnitude;
+            var damage = Mathf.Max(minDamage, baseDamage*(1- (0.05f * speed)));
+            var variableSize = Mathf.Max(size*0.2f, size * (1 - (0.05f * speed)));
             // Possibly make range smaller here so its like the trail of the blackhole is doing the damage
-            var tiles = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, transform.position, size);
+            var tiles = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, transform.position, variableSize);
             foreach (var tile in tiles) {
                 _player.CmdRequestDamageTile(tile.CellPos, damage);
             }

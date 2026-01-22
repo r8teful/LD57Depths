@@ -22,7 +22,7 @@ public class BoomerangProjectile : MonoBehaviour {
     }
 
     private IEnumerator DamageRoutine() {
-        var checkInterval = 0.1f;
+        var checkInterval = 0.05f;
         var size = _ability.GetEffectiveStat(StatType.Size);
         var damage = _ability.GetEffectiveStat(StatType.MiningDamage);
         while (true) {

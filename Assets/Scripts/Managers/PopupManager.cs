@@ -23,8 +23,16 @@ public class PopupManager : StaticInstance<PopupManager> {
     }
     private void Start() {
         GetComponent<UIManager>().UIManagerInventory.OnInventoryToggle += OnInventoryToggled;
+        GetComponent<UIManager>().UpgradeScreen.OnPanelClosed += TryHidePopup;
         //EventSystem.current.onSelectedGameObjectChanged.AddListener(OnSelectedGameObjectChanged);
     }
+
+    private void TryHidePopup() {
+        if (currentPopup != null) {
+            HidePopup();
+        }
+    }
+
     private void OnDestroy() {
         GetComponent<UIManager>().UIManagerInventory.OnInventoryToggle -= OnInventoryToggled;
     }
@@ -96,6 +104,7 @@ public class PopupManager : StaticInstance<PopupManager> {
         currentPopup.SetData(data);
         //LayoutRebuilder.ForceRebuildLayoutImmediate(currentPopup.GetComponent<RectTransform>());
         PositionPopup2(infoProvider);
+        currentPopup.ShowAnimate();
     }
 
     private void PopupDataChange() {
