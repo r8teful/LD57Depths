@@ -447,7 +447,7 @@ We're changing how going into the submarine works now. Don't ask my why, the gam
 
 * Dissable timelap collider \& outer submarine collider - done
 * Enable submarine colliders/ or simply teleport it there and then out the way - done
-* Stop mining things (disable tool \& abilities) 
+* Stop mining things (disable tool \& abilities)
 * For the camera, cull the following layers: Default, no player collisions, mining hit - done
 
 That's it. Now code it and get back to balancing!!!
@@ -473,6 +473,18 @@ Other things should happen in tiny scripts, listening to the event. That's it, t
 
 
 
+
+## USEFULL ENTITIES
+
+I'm thinking we could have three categories:
+
+1. Resource gaining: Treasure chests
+2. Character stat buff: "Blessing"? 
+3. Mystery!!: Event Cave 
+
+
+
+My explanation: The first two are simple, you know what your getting, its something positive, something comforting. You gain something good, they make exploring and swimming around more interesting. And they also encourage you to explore. The last one is for players that want to go a step further, they have a negative effect, you can go there if you want, but at your own risk. They could give you a greater reward than the other two. But also they could have negative effect, like removing some of your resources, or giving you a NEGATIVE buff for a period of time. But that's okay, because the player was ready for that.
 
 
 
