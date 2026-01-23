@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeName: Magnetism
   uniqueID: 207
+  description: 
   icon: {fileID: 1662966539, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
-  prerequisiteNodesAny:
-  - {fileID: 11400000, guid: 1e936e11309167b439be31fbe7723f08, type: 2}
+  prerequisiteNodesAny: []
+  UnlockedAtFirstPrereqStage: 0
   stages:
   - upgrade: {fileID: 11400000, guid: 12445ce3d25779041a7302c61aab3ed9, type: 2}
     costMultiplier: 1

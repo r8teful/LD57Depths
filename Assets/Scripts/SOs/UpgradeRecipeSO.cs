@@ -21,7 +21,7 @@ public class UpgradeRecipeSO : RecipeBaseSO {
     public override void PrepareRecipe(float value, List<ItemQuantity> resourcePool) {
         base.PrepareRecipe(value, resourcePool);
         requiredItems = CalculateItemQuantities(Mathf.RoundToInt(value), resourcePool,
-            new QuantityCalculationOptions{ RespectAvailability = false, MaxContributionPercentage = 0.75f });
+            new QuantityCalculationOptions{ RespectAvailability = false, MaxContributionPercentage = 0.50f });
     }
     
     public static List<ItemQuantity> CalculateItemQuantities(

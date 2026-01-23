@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 [CreateAssetMenu(fileName = "EffectTriggerBuffPlayer", menuName = "ScriptableObjects/AbilityEffects/Player")]
 
 public class AbilityTriggerBuffPlayer : ScriptableObject, IEffectActive, IEffectBuff {

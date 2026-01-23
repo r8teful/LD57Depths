@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeName: Dash Speed
   uniqueID: 206
+  description: 
   icon: {fileID: 868697242, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 052e893be143db04e8e7ba1f5b8320fb, type: 2}
+  UnlockedAtFirstPrereqStage: 1
   stages:
   - upgrade: {fileID: 11400000, guid: 4e3e8e462e01c7f4c901fccbf2c5b8d8, type: 2}
     costMultiplier: 1

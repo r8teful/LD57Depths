@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Boomerang : ShootableAbilityBase {
     [SerializeField] private BoomerangProjectile _boomerangPrefab;

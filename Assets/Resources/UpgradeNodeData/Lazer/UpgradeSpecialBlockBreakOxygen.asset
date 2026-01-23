@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeName: Block Oxygen
   uniqueID: 103
+  description: 
   icon: {fileID: 1698011165, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: 595fa79cf1f003e4686a19fb3724d614, type: 2}
+  - {fileID: 11400000, guid: 1c2a3b5e991a8dc4bafd8ed8e5a6ac78, type: 2}
+  UnlockedAtFirstPrereqStage: 1
   stages:
   - upgrade: {fileID: 11400000, guid: b65ff92fdd8b05e4b9b2960abc5d6485, type: 2}
     costMultiplier: 1

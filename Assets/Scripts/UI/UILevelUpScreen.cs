@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 public class UILevelUpScreen : MonoBehaviour {
 
     [SerializeField] private Transform _screenContainer;

@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 
@@ -48,6 +46,7 @@ public class UIUpgradeTree : MonoBehaviour {
         }
         CreateConnectionLines(tree, existingUpgrades);
         UIUpgradeScreen.OnSelectedNodeChanged += SelectedChange;
+        _player.UiManager.UpgradeScreen.OnPanelChanged += PanelChanged;
     }
 
     private void SelectedChange(UpgradeNodeSO node) {
@@ -119,6 +118,12 @@ public class UIUpgradeTree : MonoBehaviour {
         } 
     }
 
+
+    private void PanelChanged(bool isActive) {
+        if (isActive) {
+            UpdateNodeVisualData();
+        }
+    }
 
     internal void UpdateNodeVisualData() {
         foreach (var kvp in _nodeMap) {

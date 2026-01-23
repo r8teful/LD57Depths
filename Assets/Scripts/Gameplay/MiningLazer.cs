@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class MiningLazer : MiningBase {
 
-    [Tooltip("If you start firing again within this time, the lazer continues from its last angle.")]
-    [SerializeField] private float directionMemoryTime = 1.5f;
+    private float directionMemoryTime = 5f;
     public bool CanMine { get; set; } = true;
     public override ToolType ToolType => ToolType.Lazer; 
     public override BuffSO AbilityData => Ability;

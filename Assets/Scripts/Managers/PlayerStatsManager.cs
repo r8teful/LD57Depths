@@ -1,7 +1,4 @@
-﻿using FishNet.Connection;
-using FishNet.Object;
-using FishNet.Object.Synchronizing;
-using r8teful;
+﻿using r8teful;
 using System;
 using System.Collections.Generic;
 using System.Linq;

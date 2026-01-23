@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UIUpgradeNode;
 
 [Serializable]
 public class UpgradeStage {
@@ -34,7 +33,8 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
 
     [Tooltip("ANY of these prerequisite nodes must be fully unlocked before this one can be started.")]
     public List<UpgradeNodeSO> prerequisiteNodesAny;
-    public List<UpgradeStage> stages = new List<UpgradeStage>();
+    public bool UnlockedAtFirstPrereqStage;
+    public List<UpgradeStage> stages =   new List<UpgradeStage>();
     public int MaxLevel => stages.Count;
 
     public ushort ID => uniqueID;
@@ -85,7 +85,9 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
         if (prerequisiteNodesAny == null || prerequisiteNodesAny.Count == 0) {
             return true; // root nodes available by default
         }
-        return prerequisiteNodesAny.Any(p => p != null && p.IsNodeMaxedOut(unlockedUpgrades));
+        return UnlockedAtFirstPrereqStage ? 
+            prerequisiteNodesAny.Any(p => p != null && p.GetCurrentLevel(unlockedUpgrades) > 0) 
+        :  prerequisiteNodesAny.Any(p => p != null && p.IsNodeMaxedOut(unlockedUpgrades));
     }
 
     internal UpgradeNodeState GetState(IReadOnlyCollection<ushort> unlockedUpgrades,bool canAfford) {

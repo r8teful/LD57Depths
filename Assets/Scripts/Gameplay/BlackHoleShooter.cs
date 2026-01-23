@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BlackHoleShooter : ShootableAbilityBase {
     [SerializeField] private BlackHoleProjectile _prefab;

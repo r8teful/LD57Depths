@@ -34,7 +34,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     [OnValueChanged("InspectorBigChange")]
     public bool IsBig;
     public event Action PopupDataChanged;
-    public event Action<UpgradeNodeState> OnStateChange;
+    public event Action<UpgradeNodeState,bool> OnStateChange; // bool is if it has been purshed atleast ONCE
 
     private static readonly string ICON_PURCHASED_HEX = "#FFAA67";    
     private static readonly string ICON_UNLOCKED_HEX = "#FFFFFF"; // slighly gray?
@@ -175,6 +175,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
                 break;
             case UpgradeNodeState.Purchasable:
                 _iconImage.color = _iconPurchasableColor;
+                _buttonCurrent.interactable = true;
                 _canvasGroup.alpha = 1;
                 break;
             case UpgradeNodeState.Locked:
@@ -186,7 +187,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
                 
                 break;
         }
-        OnStateChange?.Invoke(state);
+        OnStateChange?.Invoke(state,_visualData.LevelCurrent>0);
 
     }
 

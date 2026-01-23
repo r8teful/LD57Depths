@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public interface IExecutable {
     public abstract void Execute(ExecutionContext context); // AGH context here is fucked

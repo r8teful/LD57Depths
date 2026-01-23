@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 public class BlackHoleProjectile : MonoBehaviour {
@@ -23,7 +22,7 @@ public class BlackHoleProjectile : MonoBehaviour {
         var size = _ability.GetEffectiveStat(StatType.Size);
         var baseDamage = _ability.GetEffectiveStat(StatType.MiningDamage);
         var minDamage = baseDamage * 0.5f;
-        var timeAlive = 3;
+        var timeAlive = 1.5f;
         while (aliveTime < timeAlive) {
             // Damage is smaller when moving
             var speed = _rb.linearVelocity.magnitude;

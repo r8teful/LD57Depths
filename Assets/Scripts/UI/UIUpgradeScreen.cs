@@ -15,7 +15,7 @@ public class UIUpgradeScreen : MonoBehaviour {
     public UIManager GetUIManager() => _UIManagerParent;
     public static event Action<UpgradeTreeDataSO> OnTabChanged; // Used to show correct stats 
     public static event Action<UpgradeNodeSO> OnSelectedNodeChanged; // Used to show correct stats 
-    public event Action OnPanelClosed; 
+    public event Action<bool> OnPanelChanged; 
     private void Start() {
         _upgradePanel.SetActive(false); // Start with the panel being hidden
         _upgradePanelTree.SetActive(true);
@@ -47,14 +47,13 @@ public class UIUpgradeScreen : MonoBehaviour {
         return treeObj;
     }
     public void PanelToggle() {
-        _upgradePanel.SetActive(!_upgradePanel.activeSelf);
-        if (!_upgradePanel.activeSelf) {
-            // closed, gets rid of popup
-            OnPanelClosed?.Invoke();
-        } else {
-            // open
+        var newState = !_upgradePanel.activeSelf;
+        _upgradePanel.SetActive(newState);
+        if (_upgradePanel.activeSelf) {
+            // we're now open
             _upgradeTreeController.OnTreeOpen();
         }
+        OnPanelChanged?.Invoke(newState);
     }
 
     internal void PanelHide() {

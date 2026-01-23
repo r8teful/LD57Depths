@@ -21,6 +21,6 @@ public class LevelData {
 
     public void CalculateNextLevelThreshold() {
         // Just linear for now
-        xpToNextLevel = currentLevel * 100;
+        xpToNextLevel = currentLevel * 150;
     }
 }

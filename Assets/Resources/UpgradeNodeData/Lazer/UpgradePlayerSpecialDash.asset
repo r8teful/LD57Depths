@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeName: Dash
   uniqueID: 203
+  description: 
   icon: {fileID: 118686583, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: 1e936e11309167b439be31fbe7723f08, type: 2}
+  - {fileID: 11400000, guid: cdf389641a0aeef4bb3b6416de14163c, type: 2}
+  UnlockedAtFirstPrereqStage: 1
   stages:
   - upgrade: {fileID: 11400000, guid: 2c191a6d645747f45bffc030b9c8b3b4, type: 2}
     costMultiplier: 1

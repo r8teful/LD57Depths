@@ -23,12 +23,12 @@ public class PopupManager : StaticInstance<PopupManager> {
     }
     private void Start() {
         GetComponent<UIManager>().UIManagerInventory.OnInventoryToggle += OnInventoryToggled;
-        GetComponent<UIManager>().UpgradeScreen.OnPanelClosed += TryHidePopup;
+        GetComponent<UIManager>().UpgradeScreen.OnPanelChanged += TryHidePopup;
         //EventSystem.current.onSelectedGameObjectChanged.AddListener(OnSelectedGameObjectChanged);
     }
 
-    private void TryHidePopup() {
-        if (currentPopup != null) {
+    private void TryHidePopup(bool isActive) {
+        if (!isActive && currentPopup != null) {
             HidePopup();
         }
     }

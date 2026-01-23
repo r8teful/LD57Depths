@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
-
-// This is basically just like an AbilityUnlockEffectSO but we can create it dynamically
+﻿// This is basically just like an AbilityUnlockEffectSO but we can create it dynamically
 
 public class AddAbilityEffect : IExecutable {
     private AbilitySO abilityToUnlock;

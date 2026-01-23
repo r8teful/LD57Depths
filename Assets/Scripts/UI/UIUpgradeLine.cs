@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI.Extensions;
-using static UIUpgradeNode;
 
 public class UIUpgradeLine : MonoBehaviour {
     private static readonly string LINE_PURCHASED_HEX = "#D58141";
@@ -10,6 +9,7 @@ public class UIUpgradeLine : MonoBehaviour {
     private Color _lineAvailableColor;
     private Color _lineNotAvailableColor;
     private UpgradeNodeState _upgradeNodeStateFrom;
+    private bool _isToPurchasedOnce;
     private UpgradeNodeState _upgradeNodeStateTo;
     private UILineRenderer _line;
     private Material _mat;
@@ -31,35 +31,36 @@ public class UIUpgradeLine : MonoBehaviour {
         _upgradeNodeStateTo = to.GetState;
         UpdateColor();
     }
-    private void StateChangeTo(UpgradeNodeState state) {
+    private void StateChangeTo(UpgradeNodeState state, bool isPurchasedOnce) {
         _upgradeNodeStateTo = state;
+        _isToPurchasedOnce = isPurchasedOnce;
         UpdateColor();
     }
 
-    private void StateChangeFrom(UpgradeNodeState state) {
+    private void StateChangeFrom(UpgradeNodeState state, bool isPurchasedOnce) {
         _upgradeNodeStateFrom = state;
         UpdateColor();
     }
     private void UpdateColor() {
-        if(_upgradeNodeStateFrom == UpgradeNodeState.Purchased && _upgradeNodeStateTo == UpgradeNodeState.Purchased) {
+        if (_upgradeNodeStateTo == UpgradeNodeState.Locked) {
+            var c = Color.red;
+            c.a = 0;
+            _line.color = c;
+            // No animation
+            _line.material.SetFloat("_Intensity", 0);
+        } else if (_upgradeNodeStateFrom == UpgradeNodeState.Purchased && _upgradeNodeStateTo == UpgradeNodeState.Purchased) {
             // Both purchased
             _line.color = _linePurchasedColor;
-
             // Animation pasive 
             _line.material.SetFloat("_Intensity", 0.3f);
-        } else if (_upgradeNodeStateFrom == UpgradeNodeState.Purchased && _upgradeNodeStateTo == UpgradeNodeState.Unlocked) {
-            // Just from purchased, next is available, make line blue
-            _line.color = _lineAvailableColor;
-            // animation prominent
-            _line.material.SetFloat("_Intensity", 3);
-        } else {
-            _line.color = _lineNotAvailableColor;
-            // No animation
-
-            // IDK WHY IT IS NOT SETTING THE F FLOAT 
-            _line.material.SetFloat("_Intensity", 0);
-            //_line.materialForRendering.SetFloat("_Intensity", 0);
-            //_line.defaultMaterial.SetFloat("_Intensity", 0);
+        } else if (_upgradeNodeStateFrom != UpgradeNodeState.Locked) {
+            if (_upgradeNodeStateTo == UpgradeNodeState.Purchasable || _isToPurchasedOnce) {
+                // next is available, or we've already purchsed it once make line blue
+                _line.color = _lineAvailableColor;
+                _line.material.SetFloat("_Intensity", 3);
+            } else if (_upgradeNodeStateTo == UpgradeNodeState.Unlocked) {
+                _line.color = _lineNotAvailableColor;
+            }
         }
     }
     private float GetTiltValue(Vector3 from, Vector3 to) {

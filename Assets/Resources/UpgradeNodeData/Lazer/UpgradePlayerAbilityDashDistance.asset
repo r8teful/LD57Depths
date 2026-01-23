@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeName: Dash Distance
   uniqueID: 204
+  description: 
   icon: {fileID: -902893201, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 052e893be143db04e8e7ba1f5b8320fb, type: 2}
+  UnlockedAtFirstPrereqStage: 1
   stages:
   - upgrade: {fileID: 11400000, guid: 750c554bd0200534c825bd30ba84065a, type: 2}
     costMultiplier: 1

@@ -10,13 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a852de6eae33514c97828c9ab96a0f1, type: 3}
-  m_Name: BaseStatsGOD
+  m_Name: BaseStatsGod
   m_EditorClassIdentifier: 
   BaseStats:
+  - Stat: 20
+    BaseValue: 8
+  - Stat: 21
+    BaseValue: 8
+  - Stat: 22
+    BaseValue: 0.1
+  - Stat: 24
+    BaseValue: 60
   - Stat: 0
     BaseValue: 4
   - Stat: 1
-    BaseValue: 2
+    BaseValue: 6
   - Stat: 2
     BaseValue: 180
   - Stat: 3
@@ -25,11 +33,19 @@ MonoBehaviour:
     BaseValue: 0
   - Stat: 5
     BaseValue: 2
-  - Stat: 6
+  - Stat: 1000
+    BaseValue: 3
+  - Stat: 1001
     BaseValue: 5
-  - Stat: 7
-    BaseValue: 60
-  - Stat: 8
-    BaseValue: 2
-  - Stat: 9
+  - Stat: 23
+    BaseValue: 1
+  - Stat: 1002
+    BaseValue: 3
+  - Stat: 1003
+    BaseValue: 1
+  - Stat: 1004
+    BaseValue: 5
+  - Stat: 1005
+    BaseValue: 3
+  - Stat: 1006
     BaseValue: 1

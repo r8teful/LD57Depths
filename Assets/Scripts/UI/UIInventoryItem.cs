@@ -56,10 +56,12 @@ public class UIInventoryItem : MonoBehaviour, IPointerClickHandler {
             //if (backgroundImage) backgroundImage.color = emptySlotColor; // Make slot visually 'empty'
         } else {
             // Slot has an item
-            itemIconImage.sprite = slotData.ItemData.icon; 
-            itemIconImage.enabled = true;
-            quantityText.enabled = slotData.quantity > 1;
-            if (quantityText.enabled) quantityText.text = slotData.quantity.ToString();
+            if(slotData.ItemData != null) {
+                itemIconImage.sprite = slotData.ItemData.icon; 
+                itemIconImage.enabled = true;
+                quantityText.enabled = slotData.quantity > 1;
+                if (quantityText.enabled) quantityText.text = slotData.quantity.ToString();
+            } 
           //  if (backgroundImage) backgroundImage.color = Color.white; // Reset slot background color
         }
 

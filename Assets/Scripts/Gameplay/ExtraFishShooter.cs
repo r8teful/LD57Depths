@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ExtraFishShooter : ShootableAbilityBase {
     [SerializeField] private FishProjectile _prefab;

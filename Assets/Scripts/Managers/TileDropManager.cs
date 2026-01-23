@@ -1,5 +1,4 @@
 ﻿using r8teful;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

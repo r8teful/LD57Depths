@@ -1,8 +1,5 @@
-﻿using NUnit.Framework;
-using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -24,7 +21,6 @@ public class UpgradeTreeController : MonoBehaviour {
         var nodes = upgradeTreeInstance.GetNodeMap;
         _allNodes = nodes.Values.ToList();
         nodes.TryGetValue(0, out var baseNode);
-        
         _inputManager = client.InputManager;
         _inputManager.OnUIInteraction += HandleActionInput;
         startingNode = baseNode;

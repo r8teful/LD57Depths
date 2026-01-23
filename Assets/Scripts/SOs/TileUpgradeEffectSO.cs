@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 [CreateAssetMenu(fileName = "TileUpgradeEffectSO", menuName = "ScriptableObjects/Upgrades/TileUpgradeEffectSO")]
 
 public class TileUpgradeEffectSO : UpgradeEffect {

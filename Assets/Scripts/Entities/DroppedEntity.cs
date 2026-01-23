@@ -1,5 +1,3 @@
-using FishNet.Object;
-using FishNet.Object.Synchronizing;
 using UnityEngine;
 
 public class DroppedEntity : MonoBehaviour {
