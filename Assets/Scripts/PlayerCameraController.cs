@@ -1,23 +1,24 @@
 ﻿using DG.Tweening;
+using System;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 // Handles camera related things
-public class PlayerCameraController : MonoBehaviour, INetworkedPlayerModule {
+public class PlayerCameraController : MonoBehaviour {
     // --- Client-Side References & Logic ---
-    private Camera _playerCamera;
+    private Camera _playerMainCamera;
+    [SerializeField] private Camera _playerCameraRest;
     private PixelPerfectCamera _playerCameraPixel;
     private Tweener _zoomTween;
     private Tweener _posTween;
-    public int InitializationOrder => 3;
 
-    public void InitializeOnOwner(NetworkedPlayer playerParent) {
-        _playerCamera = GetComponentInChildren<Camera>();
-        WorldVisibilityManager.OnLocalPlayerVisibilityChanged += OnPlayerVisibilityLayerChanged;
+    public void Awake() {
+        _playerMainCamera = GetComponent<Camera>();
+        PlayerLayerController.OnPlayerVisibilityChanged += OnPlayerVisibilityLayerChanged;
     }
     
     private void OnDisable() {
-        WorldVisibilityManager.OnLocalPlayerVisibilityChanged += OnPlayerVisibilityLayerChanged;
+        PlayerLayerController.OnPlayerVisibilityChanged += OnPlayerVisibilityLayerChanged;
     }
 
     private void OnPlayerVisibilityLayerChanged(VisibilityLayerType layerType) {
@@ -40,19 +41,26 @@ public class PlayerCameraController : MonoBehaviour, INetworkedPlayerModule {
         }
 
         time *= 0.8f;
+        SetCameraLayerMask(layerType);
         SetCameraZoom(size, time);
         SetCameraPos(pos,time);
     }
 
+    private void SetCameraLayerMask(VisibilityLayerType layerType) {
+        // This simply toggles so we got to hope it never does the same twice
+        int mask = LayerMask.GetMask("Default", "NoPlayerCollisions", "MiningHit");
+        _playerCameraRest.cullingMask ^= mask;
+    }
+
     private void SetCameraZoom(float size, float time) {
-        if (_playerCamera == null) {
-            _playerCamera = GetComponentInChildren<Camera>();
-            if (_playerCamera == null) {
+        if (_playerMainCamera == null) {
+            _playerMainCamera = GetComponentInChildren<Camera>();
+            if (_playerMainCamera == null) {
                 Debug.LogWarning("SetCameraZoom: camera is null.");
                 return;
             }
         }
-        if (!_playerCamera.orthographic) {
+        if (!_playerMainCamera.orthographic) {
             Debug.LogWarning("SetCameraZoom: camera is not orthographic — DOOrthoSize requires an orthographic camera.");
             return;
         }
@@ -62,24 +70,24 @@ public class PlayerCameraController : MonoBehaviour, INetworkedPlayerModule {
             // ChangeEndValue updates the existing tween without snapping.
             // Passing the new duration lets you adapt speed mid-tween.
             _zoomTween = _zoomTween.ChangeEndValue(size, time);
-            _zoomTween.SetEase(Ease.OutCubic).SetTarget(_playerCamera);
+            _zoomTween.SetEase(Ease.OutCubic).SetTarget(_playerMainCamera);
             return;
         }
 
         // Otherwise start a fresh tween from current size to target size
         _zoomTween?.Kill(); // ensure any dead/leftover tween is cleaned up
-        _zoomTween = _playerCamera.DOOrthoSize(size, time)
+        _zoomTween = _playerMainCamera.DOOrthoSize(size, time)
                              .SetEase(Ease.OutCubic)
-                             .SetTarget(_playerCamera);
+                             .SetTarget(_playerMainCamera);
     }
 
     private void SetCameraPos(Vector2 pos, float time) {
-        if (_playerCamera == null) {
+        if (_playerMainCamera == null) {
             Debug.LogWarning("SetCameraPos: camera is null.");
             return;
         }
 
-        Transform t = _playerCamera.transform;
+        Transform t = _playerMainCamera.transform;
         Vector3 targetPos = new Vector3(pos.x, pos.y, t.localPosition.z);
 
         // If we already have an active position tween, update its end value & duration

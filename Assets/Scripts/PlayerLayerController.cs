@@ -1,143 +1,39 @@
 using UnityEngine;
 using FishNet.Object;
-using FishNet.Object.Synchronizing;
 using FishNet.Connection;
+using System;
 
+public class PlayerLayerController : MonoBehaviour, INetworkedPlayerModule {
+    private VisibilityLayerType _currentLayer;
 
-public class PlayerLayerController : NetworkBehaviour, INetworkedPlayerModule {
-    private NetworkedPlayer _playerParent;
-
-    // --- State ---
-    // Synced variable to track the current layer across the network.
-    private readonly SyncVar<VisibilityLayerType> _currentLayer = 
-        new SyncVar<VisibilityLayerType>(VisibilityLayerType.Exterior,new SyncTypeSettings(ReadPermission.Observers));
-
-    private readonly SyncVar<string> _currentInteriorId = new SyncVar<string>("", new SyncTypeSettings(ReadPermission.Observers));
-    public SyncVar<VisibilityLayerType> CurrentLayer => _currentLayer;
-    public SyncVar<string> CurrentInteriorId => _currentInteriorId;
+    public VisibilityLayerType CurrentLayer => _currentLayer;
 
     public int InitializationOrder => 100;
 
+    public static event Action<VisibilityLayerType> OnPlayerVisibilityChanged;
 
-    private void OnEnable() {
-        _currentLayer.OnChange += OnLayerChanged;
-    }
-    private void OnDisable() {
-        _currentLayer.OnChange -= OnLayerChanged;
-    }
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
-        _playerParent = playerParent;
-        WorldVisibilityManager.Instance.InitLocal(this);
-        // Apply initial state visibility if this is the local player
-        HandleClientContextChange();    
+        //_playerParent = playerParent;  
     }
-    // --- Server-Side Transition Logic ---
-    [ServerRpc(RequireOwnership = true)] // Only owner should trigger transitions for themselves
-    public void RequestEnterInterior(string interiorId, NetworkConnection sender) // Removed entryPosition argument
-    {
-        Debug.Log("Enter request enter");
-        if (_currentLayer.Value == VisibilityLayerType.Interior || string.IsNullOrEmpty(interiorId)) return;
 
-        // Find the InteriorInstance server-side
-        var targetInterior = InteriorManager.Instance.GetInteriorById(interiorId);
-        if (targetInterior == null) {
-            Debug.LogError($"Server: Could not find InteriorInstance with ID: {interiorId}");
-            return;
-        }
-        if (targetInterior.ExteriorAnchor == null) {
-            Debug.LogError($"Server: InteriorInstance '{interiorId}' is missing its ExteriorAnchor!");
-            return;
-        }
-        // --- Server Authoritative State Change & Positioning ---
-        _currentInteriorId.Value = interiorId;
-        _currentLayer.Value = VisibilityLayerType.Interior;
 
-        // Calculate the world spawn position. Pretty much predicts that the interior will move, which could be VERY BAD
-        Vector3 worldSpawnPosition = targetInterior.ExteriorAnchor.transform.position + targetInterior.InteriorSpawnPoint.localPosition;
-        
-        // Teleport player physically on the server
+    public void PortalInteraction(SubPortal portal) {
+        // Invert
+        _currentLayer = _currentLayer == VisibilityLayerType.Exterior ? VisibilityLayerType.Interior : VisibilityLayerType.Exterior;
+        SubmarineManager.Instance.MoveInterior(_currentLayer);
+        if (_currentLayer == VisibilityLayerType.Exterior && portal.IsEntrance) {
+            // First move submarine there
+        } else if (_currentLayer == VisibilityLayerType.Interior && !portal.IsEntrance) {
+            // Move submarine out the way
+        }
+        MovePlayerToPortalDest(portal);
+        OnPlayerVisibilityChanged?.Invoke(_currentLayer);
+    }
+
+    private void MovePlayerToPortalDest(SubPortal portal) {
+        Vector3 worldSpawnPosition = portal.PortalDestination.position;
         this.transform.position = worldSpawnPosition;
-        SetPlayerClientPos(sender, worldSpawnPosition);
-        if (TryGetComponent<Rigidbody2D>(out var rb)) rb.linearVelocity = Vector2.zero;
-
-        //Debug.Log($"Server: Player {OwnerId} entering Interior '{interiorId}' at {worldSpawnPosition}");
-
-        // Optional: Notify other server systems if needed
-        // Observer broadcast of SyncVars handles client updates automatically.
-    }
-
-
-
-    [ServerRpc(RequireOwnership = true)]
-    public void RequestExitInterior(string interiorID, NetworkConnection sender) {
-        if (_currentLayer.Value == VisibilityLayerType.Exterior) return;
-        // --- Server Authoritative State Change ---
-        string previousInteriorId = _currentInteriorId.Value; // Store before clearing
-        _currentInteriorId.Value = "";
-        _currentLayer.Value = VisibilityLayerType.Exterior;
-        // Teleport player physically on the server
-
-        var targetInterior = InteriorManager.Instance.GetInteriorById(interiorID);
-        SetPlayerClientPos(sender, targetInterior.ExteriorSpawnPoint.position);
-
-        // Optional: Server logic after exiting (e.g., maybe tell InteriorManager the interior might be empty now)
-    }
-    [TargetRpc]
-    private void SetPlayerClientPos(NetworkConnection target, Vector3 newPos) {
-        transform.position = newPos;
         if (TryGetComponent<Rigidbody2D>(out var rb)) rb.linearVelocity = Vector2.zero;
     }
-    // --- SyncVar Callbacks (Triggered on Clients) ---
-    private void OnLayerChanged(VisibilityLayerType prev, VisibilityLayerType next, bool asServer) {
-        HandleClientContextChange();
-    }
 
-    public void InteractWithPortal(InteriorPortal portal) {
-        Debug.Log($"Interacting with portal: {portal.gameObject.name} - CurrentLayer={_currentLayer.Value}, AssociatedInteriorId={portal.AssociatedInteriorId}, IsEntrance={portal.IsEntrance}");
-        if (!base.IsOwner) return; // Only owner initiates
-        Debug.Log($"We are owner interacting with portal: {portal.gameObject.name} - CurrentLayer={_currentLayer.Value}, AssociatedInteriorId={portal.AssociatedInteriorId}, IsEntrance={portal.IsEntrance}");
-                                   
-        string portalInteriorId = portal.AssociatedInteriorId;
-        if (string.IsNullOrEmpty(portalInteriorId)) {
-            Debug.LogError($"Portal {portal.gameObject.name} has no AssociatedInteriorId set!");
-            return;
-        }
-
-        if (_currentLayer.Value == VisibilityLayerType.Exterior && portal.IsEntrance) {
-            Debug.Log($"Requesting Entry to {portalInteriorId}");
-            RequestEnterInterior(portalInteriorId,Owner); // Server calculates internal position
-        } else if (_currentLayer.Value == VisibilityLayerType.Interior && !portal.IsEntrance) {
-            // Check if the portal's associated ID matches the player's CURRENT interior ID
-            if (portalInteriorId == _currentInteriorId.Value) {
-                RequestExitInterior(portalInteriorId,Owner);
-            } else {
-                Debug.LogWarning($"Trying to use Exit portal associated with '{portalInteriorId}' but currently in '{_currentInteriorId}'. Interaction ignored.");
-            }
-        } else {
-            Debug.LogWarning($"Portal interaction logic issue: CurrentLayer={_currentLayer}, IsEntrance={portal.IsEntrance}");
-        }
-    }
-    // Consolidated handler called by BOTH OnChange callbacks
-    private void HandleClientContextChange() {
-        if (WorldVisibilityManager.Instance == null) return; // Safety check
-        if (base.IsOwner) {
-            // My context changed, update the entire world view
-            WorldVisibilityManager.Instance.LocalPlayerContextChanged();
-        } else {
-            // A remote player's context changed, just update *their* visibility relative to me
-            if(_playerParent == null) {
-                InitPlayerParent();
-            }
-            WorldVisibilityManager.Instance.UpdateRemotePlayerVisibility(_playerParent);
-        }
-    }
-
-    private void InitPlayerParent() {
-        if (NetworkedPlayersManager.Instance.TryGetPlayer(base.OwnerId, out NetworkedPlayer remoteClient)) {
-            _playerParent = remoteClient;
-        } else {
-            Debug.LogError("Could not find networkedPlayer on remote client!");
-            return;
-        }
-    }
 }

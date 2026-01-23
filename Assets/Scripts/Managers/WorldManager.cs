@@ -1,5 +1,6 @@
 using FishNet.Object;
 using Sirenix.OdinInspector;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,6 +64,18 @@ public class WorldManager : NetworkBehaviour {
         if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
         SpawnArtifacts();
         GameSetupManager.Instance.AddWorldGenSettings(WorldGenSettings);
+        PlayerLayerController.OnPlayerVisibilityChanged += PlayerLayerChange;
+    }
+
+    private void PlayerLayerChange(VisibilityLayerType type) {
+        if(type == VisibilityLayerType.Exterior) {
+            // enable tilemap collider this seems hacky but whatever
+            mainTilemap.GetComponent<TilemapCollider2D>().enabled = true;
+        } else {
+            // dissable tilemap collider 
+            mainTilemap.GetComponent<TilemapCollider2D>().enabled = false;
+
+        }
     }
 
     private void SpawnArtifacts() {

@@ -51,8 +51,8 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     }
     private void SubscribeToEvents() {
         // Subscribe to the event to recalculate stats when a NEW upgrade is bought
-        MiningLazer.OnPlayerKnockbackRequested += OnMiningKnockback;
-        WorldVisibilityManager.OnLocalPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
+        //MiningLazer.OnPlayerKnockbackRequested += OnMiningKnockback;
+        PlayerLayerController.OnPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
     }
 
     private void OnMiningKnockback(Vector2 force) {
@@ -74,7 +74,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     }
 
     private void OnDisable() {
-        WorldVisibilityManager.OnLocalPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
+        PlayerLayerController.OnPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
         //NetworkedPlayer.LocalInstance.PlayerStats.OnStatChanged -= OnStatChanged; // This will give null exception when a remote client disables the script
     }
 

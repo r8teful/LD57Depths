@@ -14,7 +14,7 @@ public class SubMovementManager : NetworkBehaviour {
     [Tooltip("If true, players who join during an active request become required participants. If false, they are not required.")]
     public bool includeNewJoinersAsRequired = false;
     private Transform _sub;
-
+    public Vector3 SubWorldPos => _sub.position;
     // Snapshot of who must respond
     private HashSet<int> _requiredClients = new HashSet<int>();
     // Only accepted clients tracked here

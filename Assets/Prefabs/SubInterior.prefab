@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3516139305508129994}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: COLLIDERS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44,7 +44,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 773103418837187615}
-  m_Layer: 7
+  m_Layer: 4
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77,7 +77,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2407976789628783057}
   - component: {fileID: 3842815038729424197}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: GameObject (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ GameObject:
   - component: {fileID: 472250313726377964}
   - component: {fileID: 4789616664416527114}
   - component: {fileID: 4330941383441159437}
-  m_Layer: 8
+  m_Layer: 4
   m_Name: Tilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -614,7 +614,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8118930784668713725}
   - component: {fileID: 7265222504619708557}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: GameObject (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -691,10 +691,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3131951575949892859}
-  - component: {fileID: 1471382166234036002}
   - component: {fileID: 5708721671159265541}
   - component: {fileID: 7823810334267488476}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: SubInterior
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -725,25 +724,6 @@ Transform:
   - {fileID: 7541921356875046420}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1471382166234036002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2309452565561122545}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6aabd4646b8490f41861ff10e1e3dbd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 7823810334267488476}
-  _networkObjectCache: {fileID: 0}
-  InteriorId: 1
-  <ExteriorAnchor>k__BackingField: {fileID: 0}
-  <InteriorSpawnPoint>k__BackingField: {fileID: 5362015592891457319}
-  InteriorRootObjects: []
 --- !u!114 &5708721671159265541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -821,7 +801,7 @@ GameObject:
   - component: {fileID: 7326667418714109573}
   - component: {fileID: 2520783844037517865}
   - component: {fileID: 2786614714939606462}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Propeller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -923,7 +903,7 @@ GameObject:
   m_Component:
   - component: {fileID: 41316885999128043}
   - component: {fileID: 2239076567727826100}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: SubDome
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1040,7 +1020,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4626099869727053461}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PopupPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1073,7 +1053,7 @@ GameObject:
   - component: {fileID: 2868970467540766261}
   - component: {fileID: 2390739261109990066}
   - component: {fileID: 6589777539715568063}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Gears
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1175,7 +1155,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2205103797372068221}
   - component: {fileID: 936258362687687040}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: LEDSmall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1436,7 +1416,7 @@ GameObject:
   m_Component:
   - component: {fileID: 686523510271103130}
   - component: {fileID: 6845955002950831498}
-  m_Layer: 7
+  m_Layer: 4
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1523,7 +1503,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7541921356875046420}
   - component: {fileID: 7766810472164749859}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Light 2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1607,7 +1587,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6375297933518441286}
   - component: {fileID: 2219102102928933018}
-  m_Layer: 7
+  m_Layer: 4
   m_Name: Mask
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1693,7 +1673,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2097224931230168015}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: VISUAL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1730,7 +1710,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4374403813592524069}
-  m_Layer: 7
+  m_Layer: 4
   m_Name: Ladder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1765,7 +1745,7 @@ GameObject:
   - component: {fileID: 7076563884630257002}
   - component: {fileID: 803225392002502846}
   - component: {fileID: 7432818559693972980}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: SubHull
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1867,7 +1847,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3379022999104046345}
   - component: {fileID: 3339755898021228236}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1946,7 +1926,7 @@ GameObject:
   - component: {fileID: 6725790826343862036}
   - component: {fileID: 6814813981172755549}
   - component: {fileID: 5662047845027561044}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Cables
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2191,7 +2171,7 @@ GameObject:
   m_Component:
   - component: {fileID: 366634799969973832}
   - component: {fileID: 1156041917046912033}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: GameObject (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2357,7 +2337,7 @@ GameObject:
   - component: {fileID: 7312877560748296762}
   - component: {fileID: 175707599405577027}
   - component: {fileID: 8638288216552852353}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: OverlaymapDamage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2515,7 +2495,7 @@ GameObject:
   m_Component:
   - component: {fileID: 910966279194829713}
   - component: {fileID: 6921237363423694428}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: InteriorGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2593,7 +2573,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5362015592891457319}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Spawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2662,7 +2642,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsEntrance: 0
-  AssociatedInteriorId: 1
+  PortalDestination: {fileID: 0}
 --- !u!114 &2330065156479936910
 MonoBehaviour:
   m_ObjectHideFlags: 0

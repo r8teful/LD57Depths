@@ -41,7 +41,7 @@ public class PlayerExperienceManager : MonoBehaviour, INetworkedPlayerModule {
         
         // Tell reward manager to create rewards
         _player.PlayerReward.GenerateRewards(levelToBecome);
-
+        Time.timeScale = 0; // Pause
         XPEvents.TriggerLevelUp(levelToBecome);
         // UI will then call CommitLevelUp when we are ready to actually increment the level and start new level progress
     }
@@ -63,6 +63,7 @@ public class PlayerExperienceManager : MonoBehaviour, INetworkedPlayerModule {
 
         XPEvents.TriggerXPGained(levelData.ProgressNormalized,levelData.currentXP);
         Debug.Log($"<color=green>LEVEL UP! Now Level {levelData.currentLevel}</color>");
+        Time.timeScale = 1; // Unpause 
         TryProcessLevelUp(); // Recursion check 
     }
     public void DEBUGAddXP() {

@@ -2,13 +2,27 @@
 
 
 
+* Visual for when going low on oxygen
+* Make 
+* Idea: remove all the shit world visibility stuff. Simply 
 
 
-* Need a visual of what node you can buy
-* Have one node that is disgustingly cheap
-* Have one node that is disgustingly expensive
+
+Things that are good:
 
 
+
+First upgrade with the player damage and upgrade fixing is nice. You can do it in one oxygen run, ak, 60 sec. This si
+
+
+
+
+
+
+
+
+
+Abilities notes:
 
 
 

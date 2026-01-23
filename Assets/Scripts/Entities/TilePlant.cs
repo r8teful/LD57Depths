@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using FishNet.Object;
 
-public class TilePlant : ExteriorObject, ITileChangeReactor {
+public class TilePlant : MonoBehaviour, ITileChangeReactor {
 
     [SerializeField] private float groundCheckDistance = 0.6f;
     [SerializeField] private LayerMask groundLayer;
@@ -14,13 +14,12 @@ public class TilePlant : ExteriorObject, ITileChangeReactor {
     public void OnTileChangedNearby(Vector3Int cellPosition, int newTileID) {
         if (newTileID == 0) {
             if(cellPosition == cellPos) {
-                Despawn();
+                Destroy(gameObject);
             }
         }
     }
 
-    public override void OnStartClient() {
-        base.OnStartClient();
+    public void Start() {
         rb = GetComponent<Rigidbody2D>();
         if (rb) rb.bodyType = RigidbodyType2D.Kinematic; // Start kinematic
         MovePos();

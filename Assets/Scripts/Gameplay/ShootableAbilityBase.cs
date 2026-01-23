@@ -16,7 +16,9 @@ public abstract class ShootableAbilityBase : MonoBehaviour, IInitializableAbilit
     private IEnumerator FireLoop() {
         while (true) {
             if (_abilityInstance == null) yield break;
+            yield return new WaitUntil(() => _player.PlayerMovement.CanUseTool());
             float wait = _abilityInstance.GetEffectiveStat(StatType.Cooldown); // this clamps 
+            
             Shoot();
             yield return new WaitForSeconds(wait);
         }

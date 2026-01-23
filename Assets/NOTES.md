@@ -358,3 +358,133 @@ If we put ALL this in a class, then we can simply just say GetVisualData() and b
 
 If we can afford it? This we could derive from the cost
 
+
+
+Okay let us think of the upgrades we want the players to have when. For example, what node that is disgustingly cheap, which one to have disgustingly expensive
+
+
+
+Tool:
+
+* Damage
+* Range
+* Mobility
+
+Tool special:
+
+* Range
+* Damage
+* Time
+
+
+
+Player speed:
+
+* Max speed
+* Acceleration
+* Dash
+
+
+
+Other:
+
+* Luck
+* Ore upgrading
+
+
+
+That's basically it. The golden rules we want with the upgrades are:
+
+* ALWAYS have something to upgrade when the player gets back to the submarine
+* ALWAYS make the upgrade give a meaningful change
+* ALWAYS keep layering gameplay mechanics. As soon as players feel like they're getting the hang of things, add another layer. Basically just flow
+
+ 	- This can happen in several ways. 1. Through upgrades. The player can unlock a new ability, maybe they get the lazer ability, or the dash. 2. Through location. Player can discover new biomes, upgrading the submarine to get to a new area of the trench needs to feel refreshing
+
+
+
+You can basically time it to perfection.
+
+
+
+First 5 minutes players get used to the tool, after this they can unlock the tool special.
+
+maybe 2-3 minutes after the tool special, they've used it about twice, they understand how the tool works. So they've been playing for 8 minutes now, they should have levelled up 3 times, that's about once ever 2.5 min, giving a nice little boost everytime, keeping them engaged.  Now after this they know what they're doing. they've got the ability, they've gotten some upgrades already. About this time is when they should be finding some biomes. Then after exploring one biome, probably want to go there again, the biome needs to be exiting enough to get back to. then when they've seen enough, you'll want them to head to the next zone.
+
+
+
+
+
+OH idea, we could have an unlock that teleports the player to the submarine just before they pass out, this could be such a good dopamine reaction, and a huge mindset change, we basically allow them to double the distance they can go and it will feel different compared to all the backtracking they are used to doing. We should have this available as soon as the backtracking becomes about 1/3 or so the time that they are exploring, maybe even less, basically, as soon as it becomes a problem.
+
+
+
+Upgrade tree has too many nodes, it is just too overwhelming, you need to drop feed the tree to them at the start you can't just show them all this its too much
+
+
+
+Biomes need to be EXCITING, you want to go back to them, because they are so good. BUT WHAT IS THAT?
+
+
+
+\-
+
+
+
+What could make something good in this game? S
+
+* Something that gives you loads of resources
+* Something that gives you a cool item or buff
+* Something that makes you stronger
+
+
+
+
+
+
+
+We're changing how going into the submarine works now. Don't ask my why, the game's broke. WHAT SHOULD HAPPEN:
+
+* Dissable timelap collider \& outer submarine collider - done
+* Enable submarine colliders/ or simply teleport it there and then out the way - done
+* Stop mining things (disable tool \& abilities) 
+* For the camera, cull the following layers: Default, no player collisions, mining hit - done
+
+That's it. Now code it and get back to balancing!!!
+
+
+
+Okay but what managers do we need? Its all so bloated atm, old shit code
+
+
+
+PlayerLayerController is the one executing the logic and handling state, its what evokes the event
+
+
+
+One subinterior script: It subscribes to when player goes into the sub, then it teleports there, if they go out the sub it teleports away. easy peasy.
+
+
+
+
+
+Other things should happen in tiny scripts, listening to the event. That's it, that is all you need
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -8,13 +8,11 @@ public class RPGProjectile : MonoBehaviour {
     [SerializeField] private float checkInterval = 0.1f; // How often to check for collisions
     [SerializeField] private GameObject explosionParticlePrefab;
 
-    private ToolController toolController; // Reference to ToolController
     private float checkTimer = 0f;
     private bool hasExploded = false;
 
-    public void Init(Vector2 force, ToolController tc) {
+    public void Init(Vector2 force) {
         _rb.AddForce(force, ForceMode2D.Impulse);
-        toolController = tc;
     }
 
 
@@ -48,7 +46,7 @@ public class RPGProjectile : MonoBehaviour {
             WorldManager.Instance.MainTileMap, transform.position, explosionRadius);
         foreach (var tile in tiles) {
             // todo set this to player also I don't know if the circle thing will work but eh
-            toolController.CmdRequestDamageTile(tile.CellPos, damageAmount * tile.DamageRatio);
+           // toolController.CmdRequestDamageTile(tile.CellPos, damageAmount * tile.DamageRatio);
         }
 
         Instantiate(explosionParticlePrefab, transform.position,Quaternion.identity);

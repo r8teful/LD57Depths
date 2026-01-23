@@ -52,7 +52,7 @@ public class WorldLightingManager : MonoBehaviour {
     }
     
     public void OnDestroy() {
-        WorldVisibilityManager.OnLocalPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
+        PlayerLayerController.OnPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
         _worldManager.BiomeManager.OnNewClientBiome -= SetNewBiomeLight;
     }
     void Initialize() {
@@ -68,7 +68,7 @@ public class WorldLightingManager : MonoBehaviour {
         _compositeCollider = _mainTilemap.GetComponent<CompositeCollider2D>();
 
         // Subscribe to change lighting when entering interiors
-        WorldVisibilityManager.OnLocalPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
+        PlayerLayerController.OnPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
         _worldManager.BiomeManager.OnNewClientBiome += SetNewBiomeLight;
         // Setup starting light
         _currentClientBiome = BiomeType.Trench; // Or biome we left off at

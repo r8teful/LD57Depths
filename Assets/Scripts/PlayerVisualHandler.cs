@@ -256,8 +256,8 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
             Debug.LogError("Need both local and remote reference to check if a non owner can set visuals properly!");
             return false;
         }
-        var localLayer = _localPlayer.PlayerLayerController.CurrentLayer.Value;
-        var remoteLayer = _remotePlayer.PlayerLayerController.CurrentLayer.Value;
+        var localLayer = _localPlayer.PlayerLayerController.CurrentLayer;
+        var remoteLayer = _remotePlayer.PlayerLayerController.CurrentLayer;
         // Todo also check layerID
         if (localLayer != remoteLayer) {
             return false;
@@ -271,7 +271,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
                 return; // we are a remote player and don't have vibility, don't do any visual updates 
             }
         }
-        if(_localPlayer.PlayerLayerController.CurrentLayer.Value == VisibilityLayerType.Interior) {
+        if(_localPlayer.PlayerLayerController.CurrentLayer == VisibilityLayerType.Interior) {
             return; // Don't enable the hand if we are in the interior
         }
         CheckBackVisualTool(false,false); // Update back visual for local player 

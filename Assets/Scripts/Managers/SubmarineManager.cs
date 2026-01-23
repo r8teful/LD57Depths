@@ -98,21 +98,6 @@ public class SubmarineManager : NetworkBehaviour {
         OnUpgradeDataChanged?.Invoke(key);
     }
 
-
-    // Fuck this we just enable the ladder from the start
-    private void InitLadder() {
-        // This is stupid but the ladder should not be interactable until we have fixed the control pannel 
-        Debug.Log("persistentSubEntities: " + persistentSubEntities);
-        var firstMatch = persistentSubEntities.Values.FirstOrDefault(entity => entity.entityID == ResourceSystem.LadderID); 
-        if (firstMatch != null) {
-            if (persistentIDToData.TryGetValue(firstMatch.persistentId, out var v)) {
-                v.go.GetComponent<IInteractable>().CanInteract = false;
-            }
-        } else {
-            Debug.LogError("Could not find ladder");
-        }
-    }
-
     private (List<InteriorEntityData>,List<SubEntity>) GetAllInteriorEntities() {
         List<InteriorEntityData> interiorData = new List<InteriorEntityData>();
         List<SubEntity> interiorEntities = new List<SubEntity>();
@@ -220,6 +205,17 @@ public class SubmarineManager : NetworkBehaviour {
 
     internal bool CanMoveTo(int currentShownIndex) {
         return GetUpgradeStage() >= currentShownIndex;
+    }
+
+    internal void MoveInterior(VisibilityLayerType currentLayer) {
+        if (currentLayer == VisibilityLayerType.Interior) {
+            // Move in
+            transform.position = SubMovementManager.Instance.SubWorldPos;
+        } else {
+            // Move out lol
+            Vector3 YEET = new(6000, 0);
+            transform.position = SubMovementManager.Instance.SubWorldPos + YEET;
+        }
     }
 }
 

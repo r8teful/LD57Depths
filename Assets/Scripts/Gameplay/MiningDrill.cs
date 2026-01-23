@@ -2,24 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MiningDrill : MiningBase {
+public class MiningDrill : MonoBehaviour {
 
     public float innerSpotAngle = 5f;
     public float outerSpotAngle = 30f;
     public bool CanMine { get; private set; }
-    public override ToolType ToolType => ToolType.Drill;
     public int RayCount { get; set; } // How many blocks can simultaneously be mined 
 
-    public override BuffSO AbilityData => Ability;
     private Vector2 _visualDirection;
-    public override object VisualData => _visualDirection;
-
+    float Range = 2f;//TODO
     public BuffSO Ability;
     public GameObject DrillAbilityParticles;
 
-    public override void CastRays(Vector2 pos, ToolController controller, bool isFlipped) {
+    public void CastRays(Vector2 pos, bool isFlipped) {
         //Debug.Log($"range:{Range} DMG: {DamagePerHit}");
-        Range = 2f;
+        var Range = 2f;
         for (int i = 0; i < 4; i++) {
             Vector2 objectPos2D = new Vector2(transform.position.x, transform.position.y);
             Vector2 directionToMouse = (pos - objectPos2D).normalized;
@@ -29,7 +26,7 @@ public class MiningDrill : MiningBase {
             if (hit.collider != null) {
                 // Just assuming here that we've hit a tile, but should be fine because of the mask
                 Vector2 nudgedPoint = hit.point - rayDirection * -0.1f;
-                controller.CmdRequestDamageTile(new Vector3(nudgedPoint.x, nudgedPoint.y, 0), (short)DamagePerHit);
+                //controller.CmdRequestDamageTile(new Vector3(nudgedPoint.x, nudgedPoint.y, 0), (short)DamagePerHit);
             }
         }
     }
@@ -45,7 +42,7 @@ public class MiningDrill : MiningBase {
         Quaternion rotation = Quaternion.AngleAxis(randomAngle, Vector3.forward);
         return rotation * baseDirection;
     }
-    private void CastRaysAbility(Vector2 pos, ToolController controller) {
+    private void CastRaysAbility(Vector2 pos) {
         HashSet<Vector3Int> processedCells = new HashSet<Vector3Int>();
 
         Vector2 origin = transform.position;
@@ -83,21 +80,24 @@ public class MiningDrill : MiningBase {
                 // Convert world position to the tilemap cell and process once
                 Vector3Int cellPosition = WorldManager.Instance.WorldToCell((Vector3)samplePoint);
                 if (processedCells.Add(cellPosition)) { // .Add returns true if the item was new
-                    controller.CmdRequestDamageTile(cellPosition, (short)DamagePerHit);
+                   // controller.CmdRequestDamageTile(cellPosition, (short)DamagePerHit);
                 }
             }
         }
     }
     
-    public override IEnumerator MiningRoutineAbility(ToolController controller) {
+    // We'll just have to move this to a new mining drill script in the new way we are doing thingsS
+    public IEnumerator MiningRoutineAbility() {
         while (true) {
             yield return new WaitForSeconds(1f);
             Debug.Log("SHOOOOT");
-            if (!_isMining) yield break;
-            var pos = _inputManager.GetAimWorldInput();
+            // if (!_isMining) yield break;
+            //var pos = _inputManager.GetAimWorldInput();
+            var pos = Vector2.zero; 
             //Debug.Log("MiningAbilityRoutine!");
-            var horizontalInput = _inputManager.GetMovementInput().x;
-            CastRaysAbility(pos, controller);
+            
+            //var horizontalInput = _inputManager.GetMovementInput().x;
+            //CastRaysAbility(pos, controller);
             // Here we would somehow need to trigger the visual?
 
             //Just doing it here now BAD, because visuals is run on remote aswell and doing it here the remote wont see the actual visual 
@@ -114,11 +114,5 @@ public class MiningDrill : MiningBase {
             AudioController.Instance.PlaySound2D("DrillAbility", 0.5f);
             //if (!_isUsingAbility) yield break;
         }
-    }
-
-  
-
-    public override void OwnerUpdate() {
-        _visualDirection = _inputManager.GetAimWorldInput(transform);
     }
 }

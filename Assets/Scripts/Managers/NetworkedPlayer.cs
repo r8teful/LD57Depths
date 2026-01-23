@@ -15,9 +15,7 @@ public class NetworkedPlayer : NetworkBehaviour {
     public UIManager UiManager => _uiSpawner.UiManager; // Expose UIManager from the PlayerUISpawner
     public PlayerVisualHandler PlayerVisuals { get; private set; }
     public PlayerLayerController PlayerLayerController { get; private set; }
-    public PlayerCameraController PlayerCamera { get; private set; }
     public PlayerMovement PlayerMovement { get; private set; }
-    public ToolController ToolController { get; private set; }
     public static NetworkedPlayer LocalInstance { get; private set; } // Singleton for local player
     public PlayerStatsManager PlayerStats { get; private set; } 
     public OxygenManager OxygenManager { get; private set; }
@@ -41,7 +39,6 @@ public class NetworkedPlayer : NetworkBehaviour {
         if (!base.IsOwner) {
             GetComponent<PlayerMovement>().enabled = false;
             PlayerVisuals.InitializeOnNotOwner(this);
-            ToolController.InitalizeNotOwner(this);
             return;
         }
         _worldManager = FindFirstObjectByType<WorldManager>();
@@ -67,7 +64,6 @@ public class NetworkedPlayer : NetworkBehaviour {
     private void CacheSharedComponents() {
         PlayerLayerController = GetComponent<PlayerLayerController>(); // To hide and unhide players when they enter submarine
         PlayerVisuals = GetComponent<PlayerVisualHandler>(); // Because of visuals lol
-        ToolController = GetComponent<ToolController>(); // Because of visuals related to the tool we are using
         PlayerStats = GetComponent<PlayerStatsManager>(); // Because of visuals related to stats
         UpgradeManager = GetComponent<UpgradeManagerPlayer>(); // Because of visuals related to specific upgrade purchases
     }
@@ -79,7 +75,6 @@ public class NetworkedPlayer : NetworkBehaviour {
         // Add local behaviours that are required for the player.
 
         CraftingComponent = gameObject.AddComponent<CraftingComponent>();
-        PlayerCamera = gameObject.AddComponent<PlayerCameraController>();
         InputManager = gameObject.AddComponent<InputManager>();
         // Discover all modules on this GameObject and sort based on initialization order.
         _modules = GetComponents<INetworkedPlayerModule>().ToList();
@@ -92,7 +87,6 @@ public class NetworkedPlayer : NetworkBehaviour {
         InventoryN = GetComponent<NetworkedPlayerInventory>();
         PlayerLayerController = GetComponent<PlayerLayerController>();
         PlayerVisuals = GetComponent<PlayerVisualHandler>();
-        ToolController = GetComponent<ToolController>();
         PlayerAbilities = GetComponent<PlayerAbilities>();
         OxygenManager = GetComponent<OxygenManager>();
         PlayerReward = GetComponent<PlayerRewardManager>();
