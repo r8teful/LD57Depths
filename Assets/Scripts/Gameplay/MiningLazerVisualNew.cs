@@ -119,7 +119,7 @@ public class MiningLazerVisualNew : MonoBehaviour {
     }
     void CreateLaserEffect(Vector3 start, Vector3 end, bool isAbility) {
         var dmg = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
-        var lineWidth = Mathf.Min(dmg * 0.02f, 1f);
+        var lineWidth = Mathf.Min(Mathf.Max(dmg * 0.05f,0.04f), 1f);
         lineRenderer.SetPosition(0, start);
         lineRenderer.SetPosition(1, end);
         lineRenderer.startWidth = lineWidth;

@@ -13,13 +13,10 @@ MonoBehaviour:
   m_Name: OreCopperSO
   m_EditorClassIdentifier: 
   oreTile: {fileID: 11400000, guid: 9389412dcdec5f743b8b4395d74529f2, type: 2}
-  replaceableTileID: 1
-  LayerStartSpawn: 0
-  LayerStopCommon: 2
-  LayerMostCommon: 0
-  minChance: 0.146
-  maxChance: 0.855
-  noiseScale: 0.14
+  CircleLayer: 0
+  maxChance: 1
+  widthPercent: 1
+  noiseScale: 0.2
   noiseThreshold: 0.52
   noiseOffset: {x: 2320, y: 2132}
   useRichness: 0

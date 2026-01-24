@@ -8,6 +8,7 @@ public class WorldGenSettingSO : ScriptableObject, IIdentifiable {
     public ushort id;
     public ushort ID => id;
 
+    public int oreCircles;
     public float trenchBaseWidth;
     public float trenchWidenFactor; 
     public float trenchEdgeNoiseFrequency;

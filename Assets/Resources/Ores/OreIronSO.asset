@@ -13,12 +13,9 @@ MonoBehaviour:
   m_Name: OreIronSO
   m_EditorClassIdentifier: 
   oreTile: {fileID: 11400000, guid: f4b09cb01edb0244da271b27ca802fa3, type: 2}
-  replaceableTileID: 1
-  LayerStartSpawn: 0
-  LayerStopCommon: 2
-  LayerMostCommon: 0
-  minChance: 0.179
-  maxChance: 1
+  CircleLayer: 0
+  maxChance: 0.8
+  widthPercent: 0.85
   noiseScale: 0.1
   noiseThreshold: 0.641
   noiseOffset: {x: 0, y: 0}

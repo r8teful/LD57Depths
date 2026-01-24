@@ -72,6 +72,36 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
         _settings = ResourceSystem.GetMainMap();
         _worldGenSettings = WorldGenSettings.FromSO(_settings); // This does most the heavy lifting for us
     }
+
+
+    public void OnDrawGizmos() {
+        if (_worldGenSettings == null)
+            return;
+
+        Gizmos.color = Color.white;
+
+        Vector2 center = new Vector2(0, _worldGenSettings.MaxDepth);
+
+        foreach (var radius in _worldGenSettings.OreRadii) {
+            DrawWireCircle(center, radius, 64);
+        }
+    }
+
+    private void DrawWireCircle(Vector2 center, float radius, int segments) {
+        float angleStep = 2f * Mathf.PI / segments;
+        Vector3 prevPoint = center + Vector2.right * radius;
+
+        for (int i = 1; i <= segments; i++) {
+            float angle = angleStep * i;
+            Vector3 nextPoint = center + new Vector2(
+                Mathf.Cos(angle),
+                Mathf.Sin(angle)
+            ) * radius;
+
+            Gizmos.DrawLine(prevPoint, nextPoint);
+            prevPoint = nextPoint;
+        }
+    }
 }
 
 [Serializable]
@@ -92,7 +122,6 @@ public class GameSettings {
         WorldSeed = worldGenData.seed;
         EnabledModifierIds = Array.Empty<ushort>();
     }
-
 }
 
 [Serializable]

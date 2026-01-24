@@ -13,12 +13,9 @@ MonoBehaviour:
   m_Name: OreGoldSO
   m_EditorClassIdentifier: 
   oreTile: {fileID: 11400000, guid: 7393cf54b8b2a6b49a410357454b9a56, type: 2}
-  replaceableTileID: 1
-  LayerStartSpawn: 3
-  LayerStopCommon: 5
-  LayerMostCommon: 5
-  minChance: 0.01
-  maxChance: 0.2
+  CircleLayer: 1
+  maxChance: 1
+  widthPercent: 0.493
   noiseScale: 0.15
   noiseThreshold: 0.6
   noiseOffset: {x: 234, y: 12312}

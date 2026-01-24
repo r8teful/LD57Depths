@@ -409,7 +409,7 @@ You can basically time it to perfection.
 
 First 5 minutes players get used to the tool, after this they can unlock the tool special.
 
-maybe 2-3 minutes after the tool special, they've used it about twice, they understand how the tool works. So they've been playing for 8 minutes now, they should have levelled up 3 times, that's about once ever 2.5 min, giving a nice little boost everytime, keeping them engaged.  Now after this they know what they're doing. they've got the ability, they've gotten some upgrades already. About this time is when they should be finding some biomes. Then after exploring one biome, probably want to go there again, the biome needs to be exiting enough to get back to. then when they've seen enough, you'll want them to head to the next zone.
+maybe 2-3 minutes after the tool special, they've used it about twice, they understand how the tool works. So they've been playing for 8 minutes now, they should have levelled up 3 times, that's about once ever 2.5 min, giving a nice little boost everytime, keeping them engaged.  Now after this they know what they're doing. they've got the ability, they've gotten some upgrades already. About this time is when they should be finding some biomes. Also maybe different ores should spawn when we get further away?? Then after exploring one biome, probably want to go there again, the biome needs to be exiting enough to get back to. then when they've seen enough, you'll want them to head to the next zone.
 
 
 

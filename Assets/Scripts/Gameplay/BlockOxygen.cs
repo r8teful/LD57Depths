@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using r8teful;
+using UnityEngine;
 
 public class BlockOxygen : MonoBehaviour, IInitializableAbility {
     private AbilityInstance _ability;
@@ -13,7 +14,10 @@ public class BlockOxygen : MonoBehaviour, IInitializableAbility {
     private void TileChanged(Vector3Int pos, ushort tileID) {
         if (tileID != ResourceSystem.AirID) return; // Only care for breaking
         // Todo check for interval, limits, etc?
-
+        var luck = _player.PlayerStats.GetStat(StatType.Luck);
+        float baseChance = 0.2f;
+        if (!RandomnessHelpers.GetBoolRoll(luck, baseChance))
+            return;
         // Spawn bubble and shoot it towards the player?
         Vector2 playerPos = _player.GetWorldPosition;
         Vector2 tilePos = new(pos.x, pos.y);

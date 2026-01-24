@@ -14,11 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   oreTile: {fileID: 11400000, guid: cc29cbaa13188af4bb1e52cc0d81ae33, type: 2}
   replaceableTileID: 1
-  LayerStartSpawn: 3
-  LayerStopCommon: 4
-  LayerMostCommon: 0
-  minChance: 0.01
+  CircleLayer: 2
   maxChance: 0.2
+  falloff: 0.05
   noiseScale: 0.1
   noiseThreshold: 0.6
   noiseOffset: {x: 239847, y: 2235}

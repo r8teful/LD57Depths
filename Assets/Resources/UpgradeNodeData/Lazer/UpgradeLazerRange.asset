@@ -21,7 +21,7 @@ MonoBehaviour:
   UnlockedAtFirstPrereqStage: 1
   stages:
   - upgrade: {fileID: 11400000, guid: 57030fc0bcd85884daf498d9a1bcd483, type: 2}
-    costMultiplier: 1
+    costMultiplier: 2
     tier: 0
   - upgrade: {fileID: 11400000, guid: eef621274c3621c4a9f1d9f7ee18a864, type: 2}
     costMultiplier: 1
@@ -29,24 +29,3 @@ MonoBehaviour:
   - upgrade: {fileID: 11400000, guid: b4f3274caac053940a001173a8060e80, type: 2}
     costMultiplier: 1.37
     tier: 1
-  - upgrade: {fileID: 11400000, guid: 75dcdc222c780ea448cc8c84c0942730, type: 2}
-    costMultiplier: 1
-    tier: 2
-  - upgrade: {fileID: 11400000, guid: 34d57937ad2f6af4a8a36cafcc318ff2, type: 2}
-    costMultiplier: 1.28
-    tier: 2
-  - upgrade: {fileID: 11400000, guid: 731b939f26a3b894cbc9e03b6967e8f6, type: 2}
-    costMultiplier: 1
-    tier: 3
-  - upgrade: {fileID: 11400000, guid: 9ab3d9d73d974d942bcc5880f6673f3a, type: 2}
-    costMultiplier: 1
-    tier: 4
-  - upgrade: {fileID: 11400000, guid: ce63b200af3bff849a3a83514a0ed1b2, type: 2}
-    costMultiplier: 1
-    tier: 5
-  - upgrade: {fileID: 11400000, guid: c97ba4695f62b12489cbc0c94dbd4114, type: 2}
-    costMultiplier: 1
-    tier: 5
-  - upgrade: {fileID: 11400000, guid: 0061125d5e8816d4d82e55949d4a8d1a, type: 2}
-    costMultiplier: 1
-    tier: 5

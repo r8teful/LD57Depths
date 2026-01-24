@@ -25,15 +25,14 @@ public struct DeterministicStructure {
 [System.Serializable]
 public struct OreDefinition {
     public ushort tileID;
-    public ushort replaceableTileID;
 
-    // Depth
-    public float startDepth;
-    public float stopDepth;
-    public float mostDepth;
-    public float minChance;
+    public int circleLayerIndex;
+    // The maximum spawn chance at the exact edge of the circle (0.0 to 1.0)
     public float maxChance;
-
+    // How quickly the chance drops as you move away from the radius.
+    // Small number (0.005) = slow falloff)
+    // Large number (0.1) = fast falloff
+    public float widthPercent;
     // Noise
     public float noiseScale;
     public float noiseThreshold;
@@ -47,6 +46,7 @@ public class WorldGen : MonoBehaviour {
     private ChunkManager chunkManager;
     private List<WorldSpawnEntitySO> worldSpawnEntities;
     private Camera _renderCamera; // Orthographic camera for rendering chunks
+    private WorldGenSettings _cachedSettings;
     private RenderTexture _renderTexture; // Target 96x96 RenderTexture
 
     public const int CHUNK_TILE_DIMENSION = 16; // Size of a chunk in tiles (e.g., 16x16)
@@ -80,6 +80,7 @@ public class WorldGen : MonoBehaviour {
         this.worldmanager = worldmanager;
         this.chunkManager = chunkManager;
         _renderCamera = renderCamera;
+        _cachedSettings = settings;
         InitializeNoise(settings.seed); 
         worldSpawnEntities = App.ResourceSystem.GetAllWorldSpawnEntities();
         //worldSpawnEntities = App.ResourceSystem.GetDebugEntity(); // For debug only!! 
@@ -299,14 +300,17 @@ public class WorldGen : MonoBehaviour {
                 }
             }
             var nativeOreDefinitions = GetOreDefinitions();
+            var layerrad = new NativeArray<float>(_cachedSettings.OreRadii, Allocator.TempJob);
             // --- Ore Generation Job ---
             var oreJob = new GenerateOresJob {
                 baseTileIDs = processingData.BaseTileIDs_NA, // GPU output
                 processedOreIDs = processingData.OreTileIDs_NA, // This will be modified
                 chunkCoord = kvp.Key,
                 chunkSize = CHUNK_TILE_DIMENSION,
+                worldCenter = new(0, _cachedSettings.MaxDepth), // We're spawning at maxDepth so its like the center
                 seed = worldSeed + (uint)kvp.Key.x, // Vary seed per chunk slightly or use chunkCoord for determinism
-                oreDefinitions = nativeOreDefinitions
+                oreDefinitions = nativeOreDefinitions,
+                layerRadii = layerrad
             };
             processingData.OreJobHandle = oreJob.Schedule();
             jobHandles.Add(processingData.OreJobHandle);
@@ -431,24 +435,18 @@ public class WorldGen : MonoBehaviour {
     }
 
     private NativeArray<OreDefinition> GetOreDefinitions() {
-        var oreTypes = App.ResourceSystem.GetAllOreData();
-        var nativeOreDefinitions = new NativeArray<OreDefinition>(oreTypes.Count, Allocator.TempJob);
-        for (int i = 0; i < oreTypes.Count; i++) {
-            WorldGenOreSO data = oreTypes[i];
+        int oreCount = _cachedSettings.worldOres.Count;
+        var nativeOreDefinitions = new NativeArray<OreDefinition>(oreCount, Allocator.TempJob);
+        for (int i = 0; i < oreCount; i++) {
+            WorldGenOreSO data = _cachedSettings.worldOres[i];
             //float yStart = worldmanager.GetWorldLayerYPos(data.LayerStartSpawn);
-            float yStart, yMost;
             // TODO for layerStartSpawn 0 it should be wherever the bedrock starts 
-            yStart = GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(data.LayerStartSpawn);
-            yMost = GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(data.LayerMostCommon);
-            float yStop = GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(data.LayerStopCommon);
+            //yStart = GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(data.CircleLayer);
             nativeOreDefinitions[i] = new OreDefinition {
                 tileID = data.oreTile.ID,
-                replaceableTileID = data.replaceableTileID,
-                startDepth = yStart,
-                mostDepth = yMost,
-                stopDepth = yStop,
-                minChance = data.minChance,
-                maxChance = data.maxChance,
+               maxChance = data.maxChance,
+                circleLayerIndex = data.CircleLayer,
+                widthPercent = data.widthPercent,
                 noiseScale = data.noiseScale,
                 noiseThreshold = data.noiseThreshold,
                 noiseOffset = new float2(data.noiseOffset.x, data.noiseOffset.y)

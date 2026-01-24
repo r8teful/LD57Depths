@@ -10,7 +10,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     private Vector2 _currentDirection;
     private Vector2 _lastKnownDirection;
     private float _timeToolStopped;
-    private float directionMemoryTime;
+    private float directionMemoryTime = 5;
     private bool _isShooting;
     private bool _wasShootingLastFrame;
     private MiningLazerVisualNew _visual;
@@ -51,6 +51,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
 
     private void OnEndShoot() {
         _visual.EndVisual();
+        _timeToolStopped = Time.time;
     }
 
     private void OnStartShoot() {
@@ -108,6 +109,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         var range = _abilityInstance.GetEffectiveStat(StatType.MiningRange);
         var falloff = _abilityInstance.GetEffectiveStat(StatType.MiningFalloff);
         var damage = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
+        _lastKnownDirection = _currentDirection;
         // Use the (potentially smoothed) _currentDirection for the raycast
         RaycastHit2D hit = Physics2D.Raycast(toolPosition, _currentDirection, range, LayerMask.GetMask("MiningHit"));
         //Debug.Log($"damage: {damage}");

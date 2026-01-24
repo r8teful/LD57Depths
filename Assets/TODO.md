@@ -2,7 +2,14 @@ Add description to the upgrades?
 
 
 
-Visual for when going low on oxygen
+* Visual for when going low on oxygen
+* Make lazer thicker
+* Make lazer handling stop remembinging pos
+* Remove icons with interactables
+
+
+
+* Need some kind of debug visual showing the rings of the ores because its imposable to tell we're theyre actually spawning and we need it to make the game good
 
 
 

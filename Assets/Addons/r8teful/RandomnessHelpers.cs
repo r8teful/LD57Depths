@@ -55,7 +55,10 @@ namespace r8teful {
             float luckBonus = LuckBonus(luck);
             return Mathf.FloorToInt(Mathf.Lerp(1, max + 1, Skewed01(luckBonus)));
         }
-
+        public static bool GetBoolRoll(float luck, float baseChance = 0.5f) {
+            float luckBonus = LuckBonus(luck);
+            return Skewed01(luckBonus) >=  (1 - baseChance); // if base chanse is 80% then we have to roll higher than 0.2
+        }
         // Helpers 
         private static float Skewed01(float luckBonus) {
             float exponent = 1f / (1f + luckBonus);

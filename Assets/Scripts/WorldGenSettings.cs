@@ -22,8 +22,19 @@ public class WorldGenSettings {
     public float caveOctavesRidge;
     public float cavewWarpamp;
     public float caveWorleyWeight;
-
-
+    private int _oreCircles;
+    public List<WorldGenOreSO> worldOres;
+    public float[] OreRadii {
+        get {
+            float[] radii = new float[_oreCircles];
+            var maxDepth = MaxDepth;
+            var steps = MathF.Abs(maxDepth / (_oreCircles+1)); // If we do +1 here the last one will not be exactly on the surface, which is a good thing
+            for (int i = 0; i < radii.Length; i++) {
+                radii[i] = maxDepth + steps * (i+1);
+            }
+            return radii;
+        } 
+    }
     public float MaxDepth { 
         get { 
             // 90% of the max theoretical depth, shader also uses 90%
@@ -74,6 +85,12 @@ public class WorldGenSettings {
             s.worldGenSquareSprite = new Material(so.associatedMaterial); // Don't want to change original 
             s.worldGenSquareSprite.name = "WorldRunInstanceMat";
         }
+
+        // We simply store the scriptable data as ores
+        // If we want to configure this later we'd have to make it an actual class
+        // maybe modifiers would let you change ore rarity??
+        s.worldOres = App.ResourceSystem.GetAllOreData();
+        s._oreCircles = so.oreCircles;
         return s;
     }
 

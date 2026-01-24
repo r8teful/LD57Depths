@@ -9,11 +9,12 @@ using UnityEngine;
 public struct GenerateOresJob : IJob {
     [ReadOnly] public NativeArray<ushort> baseTileIDs; // Input from GPU generation
     [ReadOnly] public NativeArray<OreDefinition> oreDefinitions;
+    [ReadOnly] public NativeArray<float> layerRadii;
     public NativeArray<ushort> processedOreIDs;       // Output: tile IDs with ores
     public Vector2Int chunkCoord;                      // For world-position-dependent logic
     public int chunkSize;
     public uint seed; // Seed for procedural generation
-
+    public float2 worldCenter;
     public void Execute() {
         var random = new Unity.Mathematics.Random(seed + (uint)(chunkCoord.x * 1000 + chunkCoord.y));
 
@@ -22,54 +23,58 @@ public struct GenerateOresJob : IJob {
                 int index = y * chunkSize + x;
                 ushort currentTile = baseTileIDs[index];
 
-                // Calculate world position once per tile
+                if (currentTile == 0) {
+                    continue;
+                } // todo possibly add more tiles we can't go onto
+
+                // Calculate world position
                 float worldX = chunkCoord.x * chunkSize + x;
                 float worldY = chunkCoord.y * chunkSize + y;
 
-                if (currentTile == 0) {
-                    continue; // This ore can't replace the current tile, try the next ore
-                }
+                // Calculate Distance from the World Center (Bottom-Middle)
+                // This is the core of the semi-circle logic.
+                float distToCenter = math.distance(new float2(worldX, worldY), worldCenter);
 
-                // Loop through all possible ores for this tile
+                // Loop through all possible ores
                 for (int i = 0; i < oreDefinitions.Length; i++) {
                     OreDefinition ore = oreDefinitions[i];
 
-                    // !! Removing specific tile replacements now, ores can just spawn anyware if its not a air or special other block, I guess..
-                    // 1. Check if we can even place this ore here
-                    //if (currentTile != ore.replaceableTileID) {
-                    //    continue; // This ore can't replace the current tile, try the next ore
-                    //}
-                    // 1. Quick check: Are we even within this ore's vertical band?
-                    // (Remember, deeper means smaller Y values)
-                    //Debug.Log("ORE: " + ore.tileID  + " worldY: " + worldY + " startDepth: " + ore.startDepth + " stopDepth: " + ore.stopDepth);
-                    if (worldY <= ore.startDepth || worldY >= ore.stopDepth) {
+                    // Get the Target Radius for this ore's layer
+                    if (ore.circleLayerIndex >= layerRadii.Length) continue;
+
+                    float targetRadius = layerRadii[ore.circleLayerIndex];
+                    // This will make ores with bigger circles appear mear wide
+                    // Instead we could simply look at maxdepth and take a percentage of that and have that be the bandwidth 
+                    float bandWidth = (targetRadius * ore.widthPercent);
+                    
+                    // "t" represents how far we are relative to the band width.
+                    // If t is 0, we are exactly on the ring. 
+                    // If t is 1 or -1, we are at the edge of the 'widthPercentage'.
+                    float distDiff = distToCenter - targetRadius;
+
+                    float t = distDiff / bandWidth;
+
+                    float locationFactor = math.exp(-t * t);
+
+                    // If the chance is effectitvely 0, skip the random logic
+                    if (locationFactor < 0.001f) {
                         continue;
                     }
-                    float currentChance;
-                    // 2. Determine if we are in the 'ramp-up' or 'ramp-down' section of the band.
-                    if (worldY <= ore.mostDepth) {
-                        // rising edge from min → max
-                        float t = math.unlerp(ore.startDepth, ore.mostDepth, worldY);
-                        currentChance = math.lerp(ore.minChance, ore.maxChance, t);
-                    } else {
-                        // falling edge from max → min
-                        float t = math.unlerp(ore.mostDepth, ore.stopDepth, worldY);
-                        currentChance = math.lerp(ore.maxChance, ore.minChance, t);
-                    }
 
-                    // 3. Quick check: if random chance fails, don't bother with expensive noise calculation
+                    // Calculate final probability
+                    float currentChance = ore.maxChance * locationFactor;
+
+                    // 5. Random Roll
                     if (random.NextFloat() >= currentChance) {
-                        continue; // Failed random roll, try next ore
+                        continue;
                     }
 
-                    // 4. Check against Perlin noise for vein clustering
+                    // 6. Noise Check (Cluster generation)
                     float noiseValue = noise.snoise(new float2(worldX * ore.noiseScale, worldY * ore.noiseScale) + ore.noiseOffset);
-                    if (noiseValue > ore.noiseThreshold) {
-                        // Success! Place the ore.
-                        processedOreIDs[index] = ore.tileID;
 
-                        // IMPORTANT: Break the inner loop to stop checking for other ores on this tile.
-                        break;
+                    if (noiseValue > ore.noiseThreshold) {
+                        processedOreIDs[index] = ore.tileID;
+                        break; // Stop looking for other ores on this tile
                     }
                 }
             }
