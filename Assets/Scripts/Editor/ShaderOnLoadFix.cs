@@ -1,14 +1,15 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+
 [InitializeOnLoad]
 public class ShaderOnLoadFix {
     public static int NUM_BIOMES = 6; // MUST match shader's NUM_BIOMES
 
     public static WorldGenSettingSO WorldGenSettingEDITOR { get => ResourceSystem.GetMainMap(); }
     static ShaderOnLoadFix() {
-        Debug.Log("ONSHADERLOADFIX");
         if (Application.isPlaying) return;
+        Debug.Log("ONSHADERLOADFIX");
         WorldGenSettingEDITOR.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterialEditor; });
         //EditorApplication.delayCall += Update;
     }
@@ -98,3 +99,5 @@ public class ShaderOnLoadFix {
     //    //BiomeMaterialUploader.PushBiomesToMaterial();
     //}
 }
+
+ 

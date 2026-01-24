@@ -1,29 +1,32 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-[ExecuteAlways] // This is so cool it lets us call PushBiomesToMaterial when changing the asset
+//[ExecuteAlways] // This is so cool it lets us call PushBiomesToMaterial when changing the asset
 public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
     public static int NUM_BIOMES = 6; // MUST match shader's NUM_BIOMES
     public float uvScale = 100.0f; // tune to match the transform in shader (if using the example uv transform)
-    [OnValueChanged("PushBiomesToMaterial")]
-    public float DebugupdateMaterial = 10f;
+   // [OnValueChanged("DebugUpdate")]
+   // public float DebugupdateMaterial = 10f;
     [SerializeField] SpriteRenderer worldSpriteRenderer;
-    public static WorldGenSettings WorldGenSetting { get => WorldGenSettingsManager.Instance.WorldGenSettings; }
-    //void Awake() {
-    //    PushBiomesToMaterial();
-    //}
-    private void OnEnable() {
+    [Button]
+    public void DebugUpdate() {
+        // this obviously doesn't work in edit mode because we don't have the instance
+        PushBiomesToMaterial(GameSetupManager.Instance.WorldGenSettings);
     }
-    // Call this whenever you change biome descriptors
+    protected override void Awake() {
+        base.Awake();
 
-    public void PushBiomesToMaterial() {
+    }
+    public void PushBiomesToMaterial(WorldGenSettings settings) {
         Debug.Log("Pushing..,");
-        var targetMaterial = WorldGenSetting.worldGenSquareSprite;
+
+        
+        var targetMaterial = settings.worldGenSquareSprite;
         if (targetMaterial == null) {
             Debug.LogWarning("No target material assigned.");
             return;
         }
-
+       
         // init arrays of exact size
         var edgeNoiseScale = new float[NUM_BIOMES];
         var edgeNoiseAmp = new float[NUM_BIOMES];
@@ -44,8 +47,8 @@ public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
         var airColors = new Vector4[NUM_BIOMES];
 
         for (int i = 0; i < NUM_BIOMES; ++i) {
-            if (i < WorldGenSetting.biomes.Count) {
-                var b = WorldGenSetting.biomes[i];
+            if (i < settings.biomes.Count) {
+                var b = settings.biomes[i];
                 edgeNoiseScale[i] = b.EdgeNoiseScale;
                 edgeNoiseAmp[i] = b.EdgeNoiseAmp;
                 blockNoiseScale[i] = b.BlockNoiseScale;
@@ -96,11 +99,9 @@ public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
         targetMaterial.SetVectorArray("_tileColor", tileColors);
         targetMaterial.SetVectorArray("_airColor", airColors);
         // global floats
-        targetMaterial.SetFloat("_GlobalSeed", WorldGenSetting.seed);
+        targetMaterial.SetFloat("_GlobalSeed", settings.seed);
 
         // Finally we set the material to the target, we have to do this because when we create the runtime instance of the worldGenSettings we copy the original 
         worldSpriteRenderer.material = targetMaterial;
     }
-
-   
 }

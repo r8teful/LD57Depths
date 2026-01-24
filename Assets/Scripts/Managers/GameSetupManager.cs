@@ -1,23 +1,77 @@
-﻿using System;
+﻿using Sirenix.OdinInspector;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 [DefaultExecutionOrder(-100)]
 public class GameSetupManager : PersistentSingleton<GameSetupManager> {
-    public GameSettings CurrentGameSettings;
-
+    private GameSettings _currentGameSettings;
+    [ShowInInspector]
+    private WorldGenSettings _worldGenSettings;
+    public WorldGenSettings WorldGenSettings => _worldGenSettings;
+    public GameSettings CurrentGameSettings => _currentGameSettings;
+    private WorldGenSettingSO _settings;
     // TODO remove this
     private string _upgradeTreeName = "DefaultTree"; // Would depend on what the player chooses for tools etc
+
+    // Todo get this in a proper way
+    private string gameplaySceneName = "PlayScene";
     public string GetUpgradeTreeName() => _upgradeTreeName;
     
-    public void AddWorldGenSettings(WorldGenSettingSO settings) {
-        CurrentGameSettings.WorldSeed = settings.seed;
-        // todo add other data???
+    private void OnEnable() {
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
-   
+    private void OnDisable() {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
 
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+        // Check if we just loaded the Gameplay Scene
+        if (scene.name == gameplaySceneName) {
+            StartCoroutine(BootSequence());
+        }
+        // Actually this is fine if we set App.Backdrop.Require before we get here
+    }
+    private IEnumerator BootSequence() {
+        Debug.Log("boot seq start");
+
+        SetupSettings();
+
+        yield return null;
+
+        // Apparently this is fine? They're singletons anyway and we're on a loading screen so I feel like no one will notice
+        WorldManager w = FindFirstObjectByType<WorldManager>();
+        if (w == null) 
+            LogError(w);
+        w.Init(this);
+        yield return null;
+        
+        var bm = FindFirstObjectByType<BiomeMaterialUploader>();
+        if (bm == null)
+            LogError(bm);
+        bm.PushBiomesToMaterial(WorldGenSettings);
+        yield return null;
+        
+        var bw = FindFirstObjectByType<BackgroundWorldTexturesHandler>();
+        if (bw == null)
+            LogError(bw);
+        bw.PushBiomesToMaterials(WorldGenSettings);
+    
+        yield return null;// App.Backdrop.Release();
+    }
+
+    private void LogError(object script) {
+        Debug.LogError($"Coudn't find script {script}!!");
+    }
+
+    private void SetupSettings() {
+        _settings = ResourceSystem.GetMainMap();
+        _worldGenSettings = WorldGenSettings.FromSO(_settings); // This does most the heavy lifting for us
+    }
 }
 
 [Serializable]

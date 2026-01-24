@@ -2,8 +2,6 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections;
 using System.Collections.Generic;
-using FishNet.Object;
-using FishNet.Connection;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using System;
@@ -91,7 +89,7 @@ public struct ChunkPayload {
     }
 }
 
-public class ChunkManager : NetworkBehaviour {
+public class ChunkManager : MonoBehaviour {
     [SerializeField] private bool useSave = false;
 
     // Add more TileBase fields for other tile types
@@ -142,8 +140,7 @@ public class ChunkManager : NetworkBehaviour {
         }
     }
 
-    public override void OnStartClient() {
-        base.OnStartClient();
+    public void Start() {
         _worldManager = FindFirstObjectByType<WorldManager>();
         if(_worldManager != null) {
             _worldManager.SetChunkManager(this);
@@ -155,18 +152,6 @@ public class ChunkManager : NetworkBehaviour {
         _didOnStart = true;
         StartCoroutine(ClientChunkLoadingRoutine());
     }
-    IEnumerator ServerChunkManagementRoutine() {
-        // Ensure this only runs on the server
-        if (!_worldManager.IsServerInitialized) yield break;
-
-        // Need to track *all* player positions on the server
-        while (true) {
-            // We aren't doing anything here right now because when a player goes into a zone with no chunk it will request it to the server
-            // This is more efficient as it saves us checking for player positions all the time
-            yield return new WaitForSeconds(checkInterval * 2); // Can check less often server-side maybe
-            // Potentially pre-generate chunks around players proactively here if needed
-        }
-    }
     // --- Client-Side Chunk VISUAL Loading ---
     // This routine runs on each client (including host) to manage visuals
     private IEnumerator ClientChunkLoadingRoutine() {
@@ -177,7 +162,7 @@ public class ChunkManager : NetworkBehaviour {
         // Wait until the player object owned by this client is spawned and available
         // This assumes your player spawn logic is handled correctly by FishNet
         //yield return new WaitUntil(() => base.Owner != null && base.Owner.IsActive && base.Owner.IsLocalClient && PlayerController.LocalInstance != null); // Assumes a static LocalInstance on your PlayerControll
-        yield return new WaitUntil(() => base.Owner != null && NetworkedPlayer.LocalInstance != null); // Assumes a static LocalInstance on your PlayerController
+        yield return new WaitUntil(() => NetworkedPlayer.LocalInstance != null); // Assumes a static LocalInstance on your PlayerController
 
         Transform localPlayerTransform = NetworkedPlayer.LocalInstance.transform; // Get the locally controlled player
         // Temporary list for batching requests
@@ -225,10 +210,8 @@ public class ChunkManager : NetworkBehaviour {
         }
     }
   
-    [ServerRpc(RequireOwnership = false)]
-    private void ServerRequestChunkDataBatch(List<Vector2Int> chunksToRequestBatch, Vector2Int newClientChunkCoor, NetworkConnection requester = null) {
-        if (!IsServerInitialized)
-            return;
+    private void ServerRequestChunkDataBatch(List<Vector2Int> chunksToRequestBatch, Vector2Int newClientChunkCoor) {
+        
         // 1. Check if data exists on server
         List<Vector2Int> chunksNotAvailable = new List<Vector2Int>();
         Dictionary<Vector2Int,ChunkData> chunksExist = new Dictionary<Vector2Int, ChunkData>();
@@ -241,7 +224,7 @@ public class ChunkManager : NetworkBehaviour {
             }
         }
         // Data not instant so request and wait for it, when its done send it to client
-        StartCoroutine(_worldManager.WorldGen.GenerateChunkAsync(chunksNotAvailable, newClientChunkCoor, requester, OnChunkGenerationComplete));
+        StartCoroutine(_worldManager.WorldGen.GenerateChunkAsync(chunksNotAvailable, newClientChunkCoor, OnChunkGenerationComplete));
 
         // Serialize existing data second
         List<ChunkPayload> dataToSend = new List<ChunkPayload>();
@@ -264,11 +247,11 @@ public class ChunkManager : NetworkBehaviour {
         }
         if(dataToSend.Count > 0) {
             // Only actually send if we added existing data to the list
-            TargetReceiveChunkDataMultiple(requester, dataToSend);
+            ReceiveChunkDataMultiple(dataToSend);
         }
     }
 
-    private void OnChunkGenerationComplete(List<ChunkPayload> payloadData, Dictionary<Vector2Int, ChunkData> severData, Dictionary<Vector2Int,List<EntitySpawnInfo>> entities, NetworkConnection requester) {
+    private void OnChunkGenerationComplete(List<ChunkPayload> payloadData, Dictionary<Vector2Int, ChunkData> severData, Dictionary<Vector2Int,List<EntitySpawnInfo>> entities) {
         // Store data on server
         foreach (var data in severData) {
             data.Value.hasBeenGenerated = true;
@@ -285,11 +268,10 @@ public class ChunkManager : NetworkBehaviour {
         //}
         // FINALLY, we add persistant to the chunkPayLoad and send final result to client
 
-        TargetReceiveChunkDataMultiple(requester, payloadData); // send it to requesting client
+        ReceiveChunkDataMultiple(payloadData); // send it to requesting client
     }
     // --- Target RPC to send chunk data to a specific client ---
-    [TargetRpc]
-    public void TargetReceiveChunkData(NetworkConnection conn, Vector2Int chunkCoord, List<ushort> tileIds, List<ushort> OreIDs, List<float> durabilities, List<ulong> entityIds) {
+    public void TargetReceiveChunkData(Vector2Int chunkCoord, List<ushort> tileIds, List<ushort> OreIDs, List<float> durabilities, List<ulong> entityIds) {
         // Executed ONLY on the client specified by 'conn'
         if (tileIds == null || tileIds.Count != CHUNK_SIZE * CHUNK_SIZE) {
             Debug.LogWarning($"Received invalid tile data for chunk {chunkCoord} from server.");
@@ -325,8 +307,7 @@ public class ChunkManager : NetworkBehaviour {
         }
         // Debug.Log($"Client received and visually loaded chunk {chunkCoord}");
     }
-    [TargetRpc]
-    public void TargetReceiveChunkDataMultiple(NetworkConnection conn, List<ChunkPayload> chunks) {
+    public void ReceiveChunkDataMultiple(List<ChunkPayload> chunks) {
         // Executed ONLY on the client specified by 'conn'
 
         // --- Fallback to SetTiles per chunk if optimization wasn't possible ---
@@ -453,7 +434,6 @@ public class ChunkManager : NetworkBehaviour {
     // This is the entry point called by the PlayerController's ServerRpc, this is usually after all checks have been done already
     public void ServerRequestModifyTile(Vector3Int cellPos, ushort newTileId) {
         // Must run on server
-        if (!IsServerInitialized) return;
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
 
         // Get the chunk data on the server
@@ -482,8 +462,8 @@ public class ChunkManager : NetworkBehaviour {
                 // --- Update Server's OWN visuals (optional but good for host) ---
                 _worldManager.SetTile(cellPos, newTileId);
                 // --- BROADCAST change to ALL clients ---
-                ObserversUpdateTileDurability(cellPos, -1);
-                _worldManager.ObserversUpdateTile(cellPos, newTileId); // TODO check if this works it might break because we call it in the parent
+                UpdateTileDurability(cellPos, -1);
+                _worldManager.UpdateTile(cellPos, newTileId); // TODO check if this works it might break because we call it in the parent
 
                 // Entity behaviour might change state, notify entitymanager
                 _entitySpawner.NotifyTileChanged(cellPos, chunkCoord, newTileId);
@@ -496,9 +476,7 @@ public class ChunkManager : NetworkBehaviour {
         }
     }
 
-    // --- RPC to inform clients of durability change ---
-    [ObserversRpc]
-    private void ObserversUpdateTileDurability(Vector3Int cellPos, float newDurability) {
+    private void UpdateTileDurability(Vector3Int cellPos, float newDurability) {
         // Runs on all clients
         if(newDurability == -1) {
             _lightManager.RequestLightUpdate(); // Tile broke so update lights
@@ -518,8 +496,7 @@ public class ChunkManager : NetworkBehaviour {
         }
     }
     // New method on server to handle receiving damage requests
-    public void ServerProcessDamageTile(Vector3Int cellPos, float damageAmount, NetworkConnection sourceConnection = null) {
-        if (!IsServerInitialized) return;
+    public void ProcessDamageTile(Vector3Int cellPos, float damageAmount) {
         Vector2Int chunkCoord = CellToChunkCoord(cellPos);
         // Ensure chunk data exists (generate if necessary)
         if (!worldChunks.TryGetValue(chunkCoord, out ChunkData chunk)) {
@@ -572,14 +549,14 @@ public class ChunkManager : NetworkBehaviour {
 
                 // Spawn Break Effect (Broadcast to clients)
                 if (targetTile.breakEffectPrefab != null)
-                    ObserversSpawnEffect(targetTile.breakEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Pass prefab path or ID if effects aren't NetworkObjects
+                    SpawnEffect(targetTile.breakEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Pass prefab path or ID if effects aren't NetworkObjects
             } else {
                 // Tile Damaged, Not Destroyed: Broadcast new durability
-                ObserversUpdateTileDurability(cellPos, newDurability);
+                UpdateTileDurability(cellPos, newDurability);
 
                 // Spawn Hit Effect (Broadcast to clients)
                 if (targetTile.hitEffectPrefab != null)
-                    ObserversSpawnEffect(targetTile.hitEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0));
+                    SpawnEffect(targetTile.hitEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0));
             }
         } else {
             Debug.LogError("ResourceSystem returned NULL tile");
@@ -588,7 +565,6 @@ public class ChunkManager : NetworkBehaviour {
     // --- Server-side method to handle spawning drops ---
     // We might want to move this to WorldManager but eh
     private void SpawnDrops(TileSO sourceTile, Vector3 position) {
-        if (!IsServerInitialized) return;
         if (sourceTile.drop == null) return;
         // Query dropmanager for drops
         var dropData = TileDropManager.Instance.GetDropData(sourceTile);
@@ -608,9 +584,7 @@ public class ChunkManager : NetworkBehaviour {
         
     }
 
-    // --- RPC to spawn visual effects (non-networked objects usually) ---
-    [ObserversRpc(RunLocally = true)] // RunLocally = true ensures host sees it too without delay
-    private void ObserversSpawnEffect(GameObject effectPrefab, Vector3 position) {
+    private void SpawnEffect(GameObject effectPrefab, Vector3 position) {
         // Runs on all clients (and host if RunLocally = true)
         if (effectPrefab != null) {
             // Consider using an object pool for effects

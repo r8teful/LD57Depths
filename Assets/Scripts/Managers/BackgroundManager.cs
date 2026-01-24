@@ -21,7 +21,7 @@ public class BackgroundManager : MonoBehaviour {
     private Dictionary<BackgroundObjectSO, List<GameObject>> spawnedObjects = new Dictionary<BackgroundObjectSO, List<GameObject>>();
     private BiomeManager biomeManager;
     private int[] objectsPerLayer;
-    internal void Init(WorldGenSettingSO worldGenSettings, BiomeManager bio) {
+    internal void Init(BiomeManager bio) {
         var parallaxCount = parallaxObjectsContainer.transform.childCount;
         _parallaxLayers = new Transform[parallaxCount];
         objectsPerLayer = new int[_parallaxLayers.Length];

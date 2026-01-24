@@ -48,7 +48,7 @@ public class WorldLightingManager : MonoBehaviour {
 
     public void Awake() {
         Initialize();
-        Backgroundmanager.Init(_worldManager.WorldGenSettings,_worldManager.BiomeManager);
+        Backgroundmanager.Init(_worldManager.BiomeManager);
     }
     
     public void OnDestroy() {

@@ -24,7 +24,20 @@ public class WorldGenSettings {
     public float caveWorleyWeight;
 
 
-    // Deep-copy of biomes (create a serializable struct/class)
+    public float MaxDepth { 
+        get { 
+            // 90% of the max theoretical depth, shader also uses 90%
+            var maxD = -trenchBaseWidth / trenchWidenFactor;
+            return -Mathf.Abs(maxD) * 0.90f; 
+        } 
+    }
+
+    public float GetWorldLayerYPos(int number) {
+        int totalLayers = 5; // We'll have to check how many this will be later 
+        return MaxDepth * ((float)Mathf.Abs(number - totalLayers) / totalLayers);
+    }
+
+
     public List<WorldGenBiomeData> biomes = new List<WorldGenBiomeData>();
 
     // Runtime-only:
@@ -55,19 +68,24 @@ public class WorldGenSettings {
         foreach (var bSO in so.biomes)
             s.biomes.Add(WorldGenBiomeData.FromSO(bSO));
         // Each biome has set their size, so now we need to place them properly
-        PlaceBiomes(s.biomes);
+        PlaceBiomes(s);
+
+        if (so.associatedMaterial != null) {
+            s.worldGenSquareSprite = new Material(so.associatedMaterial); // Don't want to change original 
+            s.worldGenSquareSprite.name = "WorldRunInstanceMat";
+        }
         return s;
     }
 
-    private static void PlaceBiomes(List<WorldGenBiomeData> biomes) {
+    private static void PlaceBiomes(WorldGenSettings settings) {
         // Start from the bottom, using the pool (or weighted chance based) of that layer, (if we are having that some biomes appear at the top)
         //var placedBiomes = new List<WorldGenBiomeData>();
         // Just use random placement for now
         System.Random rng = new System.Random();
-        biomes = biomes.OrderBy(e => rng.Next()).ToList(); // Randomize list
+        settings.biomes = settings.biomes.OrderBy(e => rng.Next()).ToList(); // Randomize list
         var currentLayer = 0;
         var amountPlaced = 0;
-        foreach (var biome in biomes) {
+        foreach (var biome in settings.biomes) {
             // Place biomes one by one, selecting either left or right side of trench
 
             /* Old place code 
@@ -85,12 +103,12 @@ public class WorldGenSettings {
             bool firstLayerPlacement = amountPlaced % 2 == 0;
             // X placement
             var edgePos = firstLayerPlacement ? -biome.HorSize : biome.HorSize; // Place it on the very edge
-            var OFFSET_TO_TRENCH = UnityEngine.Random.Range(50,90); // a min 100 seems fine for now but it would ofcourse depend on world size 
+            var OFFSET_TO_TRENCH = Random.Range(50,90); // a min 100 seems fine for now but it would ofcourse depend on world size 
             biome.XOffset = firstLayerPlacement ? edgePos - OFFSET_TO_TRENCH : edgePos + OFFSET_TO_TRENCH; // Shift it by offsetToTrench
             
             // y placement
-            var yPos = WorldManager.Instance.GetWorldLayerYPos(currentLayer);
-            biome.YStart = UnityEngine.Random.Range(yPos*0.95f, yPos* 1.05f);
+            var yPos = settings.GetWorldLayerYPos(currentLayer);
+            biome.YStart = Random.Range(yPos*0.95f, yPos* 1.05f);
             amountPlaced++;
             if (!firstLayerPlacement) currentLayer++; // increment only when not first placed, that would be every other because that would put two on each layer
             biome.placed = true;

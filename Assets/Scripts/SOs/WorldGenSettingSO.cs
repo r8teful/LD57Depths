@@ -35,20 +35,6 @@ public class WorldGenSettingSO : ScriptableObject, IIdentifiable {
     [InlineEditor]
     public List<WorldGenBiomeSO> biomes = new List<WorldGenBiomeSO>();
 
-
-    /*
-     * Don't do this it's bad because it wont actually work in multiplayer
-    public void InitWorldSettings(float width, float widen, float edgeFreq, float edgeAmp, float caveNoiseScale,float caveAmp, float caveCutoff,float worldSeed) {
-        trenchBaseWidth = width;
-        trenchWidenFactor = widen;
-        trenchEdgeNoiseFrequency = edgeFreq;
-        trenchEdgeNoiseAmplitude = edgeAmp;
-        this.caveNoiseScale = caveNoiseScale;
-        this.caveAmp = caveAmp;
-        this.caveCutoff = caveCutoff;
-        seed = Mathf.RoundToInt(worldSeed);
-    }
-    */
 }
 public enum BiomeType : byte {
     // Note that numbering here doesn't matter, just make sure not to change becuase any existing numbers because entities are tied to it

@@ -37,7 +37,7 @@ public class SubMovementManager : NetworkBehaviour {
     // Then the pos will just sync for everyone because the subexterior has a networktransform
     public void MoveSub(int index) {
         Debug.Log("Moving submarine to index: " + index);
-        _sub.position = new(0,WorldManager.Instance.GetWorldLayerYPos(index));
+        _sub.position = new(0,GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(index));
         SubmarineManager.Instance.SetSubPosIndex(index);
     }
 

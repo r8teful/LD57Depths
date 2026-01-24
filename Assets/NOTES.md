@@ -479,14 +479,47 @@ Other things should happen in tiny scripts, listening to the event. That's it, t
 I'm thinking we could have three categories:
 
 1. Resource gaining: Treasure chests
-2. Character stat buff: "Blessing"? 
-3. Mystery!!: Event Cave 
+2. Character stat buff: "Blessing"?
+3. Mystery!!: Event Cave, mix of above two + extras, but could be negatives
 
 
 
 My explanation: The first two are simple, you know what your getting, its something positive, something comforting. You gain something good, they make exploring and swimming around more interesting. And they also encourage you to explore. The last one is for players that want to go a step further, they have a negative effect, you can go there if you want, but at your own risk. They could give you a greater reward than the other two. But also they could have negative effect, like removing some of your resources, or giving you a NEGATIVE buff for a period of time. But that's okay, because the player was ready for that.
 
 
+
+
+
+Okay what can you do, like, right NOW? Polish something, something easy and something that doesn't require much thought Maybe some screenshake? Make the ui nicer to navigate? Make a pause screen. I thought maybe removing more old shit code we wont need. Yes thats a good thing we
+
+
+
+
+
+We need proper world gen order because we are doing everything in one go and its messy and not working. General order:
+
+
+
+Idk I'm too tired for this shit wtf. We need to actually look deep into what this order does and how we get it right every time
+
+
+
+OKAY GOOD MORNING IM CHARGED UP AGAIN
+
+
+
+What we need to happen:
+
+1. We create runtime instances of the SETTINGS that we have chosen
+2. We then send these values to the shaders, basically, we want the shaders to read these values
+
+
+
+Things we have to think about with world init order
+
+* We need to wait for world gen to finish generating the initial state before putting player in control. This will require the following:
+* EntityManager needs to be setup because WorldGen needs to send the entities to them
+* 
 
 
 

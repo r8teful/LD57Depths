@@ -1,22 +1,18 @@
-* Add description to the upgrades?
+Add description to the upgrades?
 
 
 
-* Visual for when going low on oxygen
-* Make 
-* Idea: remove all the shit world visibility stuff. Simply 
+Visual for when going low on oxygen
 
 
 
 Things that are good:
 
-
-
 First upgrade with the player damage and upgrade fixing is nice. You can do it in one oxygen run, ak, 60 sec. This si
 
 
 
-
+Consider the fact that players could be going down, have some kind of bedrock layer. Edit world ore spawns in GetOreDefinitions to start from bedrock etc....
 
 
 

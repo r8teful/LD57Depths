@@ -1,4 +1,3 @@
-using FishNet.Object;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections;
@@ -7,22 +6,19 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 // Handles visual display of the world, also acts as a central part for references 
-public class WorldManager : NetworkBehaviour {
-    public static WorldManager Instance { get; private set; }
+public class WorldManager : StaticInstance<WorldManager> {
+
     public static ushort WORLD_MAP_ID = 1;
     // --- Managers ---
     public WorldDataManager WorldDataManager;
     public WorldGen WorldGen;
     public ChunkManager ChunkManager;
     public BiomeManager BiomeManager;
-    public WorldGenSettings WorldSettings;
     public StructureManager StructureManager;
     [SerializeField] private RenderTexture worldRenderTexture;
     [SerializeField] private Transform _sub;
     [SerializeField] private Transform _worldRoot; // All world entities have this as their parent, used for hiding when entering sub or other interiors
     [SerializeField] private Camera _worldGenCamera;
-    [InlineEditor]
-    public WorldGenSettingSO WorldGenSettings;
     public int GetChunkSize() => ChunkManager.GetChunkSize();
     public Transform GetWorldRoot() => _worldRoot;
     public GameObject GetMainTileMapObject() => mainTilemap.gameObject;
@@ -40,30 +36,26 @@ public class WorldManager : NetworkBehaviour {
 
     [Button("NewWorld")]
     private void DEBUGNEWGEN() {
-        ChunkManager.DEBUGNewGen();
-        WorldGen.Init(worldRenderTexture, WorldGenSettings, this, ChunkManager,_worldGenCamera);
-        WorldGen.InitializeNoise();
+        //ChunkManager.DEBUGNewGen();
+        //WorldGen.Init(worldRenderTexture, WorldGenSettings, this, ChunkManager,_worldGenCamera);
+        //WorldGen.InitializeNoise();
     }
     [SerializeField] private bool DEBUGConstantNewGen;
+    private GameSetupManager _gameSetupManager;
+
     private void Update() {
         if (DEBUGConstantNewGen && Time.frameCount % Mathf.RoundToInt(1f / (Time.deltaTime * 2)) == 0)
             DEBUGNEWGEN();
     }
-    private void Awake() {
-        if (Instance != null && Instance != this) Destroy(gameObject);
-        else Instance = this;
-    }
-    public override void OnStartServer() {
-        base.OnStartServer();
-        // Server-only initialization
-        WorldGen.Init(worldRenderTexture, WorldGenSettings, this, ChunkManager, _worldGenCamera);
-        WorldGenSettingsManager.Instance.Init();// Oh my god we have to have some kind of init order for this because its getting messy, we need this because we need to have maxDepth set
+    public void Init(GameSetupManager setupManager) {
+        _gameSetupManager = setupManager;
+        WorldGen.Init(worldRenderTexture, setupManager.WorldGenSettings, this, ChunkManager, _worldGenCamera);
         BiomeManager.Init(this);
         SetSubAndPlayerSpawn();
+        mainTilemap.ClearAllTiles(); // Start with a clear visual map
         StructureManager = new StructureManager();
-        if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
+        //if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
         SpawnArtifacts();
-        GameSetupManager.Instance.AddWorldGenSettings(WorldGenSettings);
         PlayerLayerController.OnPlayerVisibilityChanged += PlayerLayerChange;
     }
 
@@ -79,7 +71,7 @@ public class WorldManager : NetworkBehaviour {
     }
 
     private void SpawnArtifacts() {
-        var settings = WorldGenSettingsManager.Instance.WorldGenSettings;
+        var settings = GameSetupManager.Instance.WorldGenSettings;
         foreach(var biome in settings.biomes) {
             var data = StructureManager.GenerateArtifact(biome);
             // Now after this is done, we can access the position within worldgen
@@ -89,19 +81,9 @@ public class WorldManager : NetworkBehaviour {
 
     private void SetSubAndPlayerSpawn() {
         var offset = GetVisualTilemapGridSize() * 6;
-        playerSpawn.transform.position = new Vector3(0, -WorldGen.GetDepth() * GetVisualTilemapGridSize() + offset); // Depths is in blocks, so times it with grid size to get world space pos
-        _sub.transform.position = new Vector3(0, -WorldGen.GetDepth() * GetVisualTilemapGridSize() + offset / 4);
-    }
-
-    public override void OnStartClient() {
-        base.OnStartClient();
-        Debug.Log("Start client");
-        mainTilemap.ClearAllTiles(); // Start with a clear visual map
-    }
-
-    public float GetWorldLayerYPos(int number) {
-        int totalLayers = 5; // We'll have to check how many this will be later 
-        return -WorldGen.GetDepth() * ((float)Mathf.Abs(number-totalLayers)/totalLayers); 
+        var maxDepth = _gameSetupManager.WorldGenSettings.MaxDepth;
+        playerSpawn.transform.position = new Vector3(0, maxDepth * GetVisualTilemapGridSize() + offset); // Depths is in blocks, so times it with grid size to get world space pos
+        _sub.transform.position = new Vector3(0, maxDepth * GetVisualTilemapGridSize() + offset / 4);
     }
 
     public void MoveCamToChunkCoord(Vector2Int chunkCoord) {
@@ -109,10 +91,7 @@ public class WorldManager : NetworkBehaviour {
         var cell = ChunkManager.ChunkCoordToCellOrigin(chunkCoord);
         _worldGenCamera.transform.position = GetCellCenterWorld(new(cell.x + size, cell.y + size));
     }
-
-    // --- RPC to tell all clients about a tile change ---
-    [ObserversRpc(BufferLast = false)] // Don't buffer, could spam late joiners. Consider buffering important static tiles.
-    public void ObserversUpdateTile(Vector3Int cellPos, ushort newTileId) {
+    public void UpdateTile(Vector3Int cellPos, ushort newTileId) {
         // This runs on ALL clients (including the host)
         TileSO tileToSet = App.ResourceSystem.GetTileByID(newTileId);
         mainTilemap.SetTile(cellPos, tileToSet); // Update local visuals
@@ -208,11 +187,11 @@ public class WorldManager : NetworkBehaviour {
     public void RequestDamageTile(Vector3 worldPosition,float dmg) {
         var cell = WorldToCell(worldPosition);
         //Debug.Log($"Requesting processdamage of:{cell} with {dmg}");
-        ChunkManager.ServerProcessDamageTile(cell, dmg);
+        ChunkManager.ProcessDamageTile(cell, dmg);
     }
     public void RequestDamageTile(Vector3Int cellPos, float dmg) {
         //Debug.Log($"Requesting processdamage of:{cell} with {dmg}");
-        ChunkManager.ServerProcessDamageTile(cellPos, dmg);
+        ChunkManager.ProcessDamageTile(cellPos, dmg);
     }
     public void RequestDamageNearestSolidTile(Vector3 worldPosition, float dmg, int searchRadius = 3) {
         // Use your tilemap conversion
@@ -245,7 +224,7 @@ public class WorldManager : NetworkBehaviour {
         }
 
         if (found) {
-            ChunkManager.ServerProcessDamageTile(bestCell, dmg);
+            ChunkManager.ProcessDamageTile(bestCell, dmg);
         } else {
             Debug.Log($"No solid tile found near {worldPosition} (radius {searchRadius})");
         }

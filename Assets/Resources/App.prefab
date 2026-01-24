@@ -112,6 +112,7 @@ GameObject:
   - component: {fileID: 3924620653123742086}
   - component: {fileID: 5719455961929976659}
   - component: {fileID: 8774985166709047843}
+  - component: {fileID: 4564868245224107430}
   m_Layer: 0
   m_Name: App
   m_TagString: Untagged
@@ -161,3 +162,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loopSources: []
   SFXMixer: {fileID: 0}
+--- !u!114 &4564868245224107430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9006661589842215164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3780eacc08a53b9448f26f1b4934c90d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentGameSettings:
+    WorldSeed: 0
+    WorldGenID: 0
+    EnabledModifierIds: 
+    AvailableAbilities: []

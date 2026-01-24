@@ -43,11 +43,8 @@ public class WorldGen : MonoBehaviour {
     private Unity.Mathematics.Random noiseRandomGen;
     private float seedOffsetX;
     private float seedOffsetY;
-    private WorldGenSettingSO _settings;
-    private float maxDepth;
     private WorldManager worldmanager;
     private ChunkManager chunkManager;
-    private EntityManager _entityManager;
     private List<WorldSpawnEntitySO> worldSpawnEntities;
     private Camera _renderCamera; // Orthographic camera for rendering chunks
     private RenderTexture _renderTexture; // Target 96x96 RenderTexture
@@ -64,8 +61,7 @@ public class WorldGen : MonoBehaviour {
     private struct ReadbackContext {
         public List<Vector2Int> ChunksToRequestBatch;
         public Vector2Int RenderAreaOriginChunkCoord; // Bottom-left chunk coord of the 6x6 render area
-        public NetworkConnection req;
-        public System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>, Dictionary<Vector2Int, List<EntitySpawnInfo>>, NetworkConnection> OnCompleteCallback;
+        public System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>, Dictionary<Vector2Int, List<EntitySpawnInfo>>> OnCompleteCallback;
     }
     private struct ChunkProcessingJobData {
         public Vector2Int ChunkCoord;
@@ -78,38 +74,25 @@ public class WorldGen : MonoBehaviour {
         public JobHandle EntityJobHandle;
         public JobHandle CombinedHandle; // To depend on previous jobs
     }
-    public float GetDepth() => maxDepth;
 
-    public void Init(RenderTexture renderTexture, WorldGenSettingSO settings, WorldManager worldmanager, ChunkManager chunkManager,Camera renderCamera) {
+    public void Init(RenderTexture renderTexture, WorldGenSettings settings, WorldManager worldmanager, ChunkManager chunkManager,Camera renderCamera) {
         _renderTexture = renderTexture;
-        _settings = settings;
-        Material worldGenMat = _settings.associatedMaterial;
-        // Do this in editor instead, not runtime, it makes bad bugs
-        //_settings.InitWorldSettings(worldGenMat.GetFloat("_TrenchBaseWidth"), worldGenMat.GetFloat("_TrenchBaseWiden"), 
-        //    worldGenMat.GetFloat("_TrenchNoiseScale"), worldGenMat.GetFloat("_TrenchEdgeAmp"),worldGenMat.GetFloat("_CaveNoiseScale"), 
-        //    worldGenMat.GetFloat("_CaveAmp"), worldGenMat.GetFloat("_CaveCutoff"),worldGenMat.GetFloat("_GlobalSeed"));
         this.worldmanager = worldmanager;
         this.chunkManager = chunkManager;
         _renderCamera = renderCamera;
-        _entityManager = EntityManager.Instance;
-        // This should be in the constructor but I think this works like so?
-        InitializeNoise();
-        
+        InitializeNoise(settings.seed); 
         worldSpawnEntities = App.ResourceSystem.GetAllWorldSpawnEntities();
-        //worldSpawnEntities = App.ResourceSystem.GetDebugEntity(); // For debug only!!
-        var maxD = -_settings.trenchBaseWidth / _settings.trenchWidenFactor;
-        maxDepth = Mathf.Abs(maxD) * 0.90f; // 90% of the max theoretical depth, shader also uses 90%
-       
+        //worldSpawnEntities = App.ResourceSystem.GetDebugEntity(); // For debug only!! 
     }
 
     // Call this if you change the seed at runtime
-    public void InitializeNoise() {
+    public void InitializeNoise(int seed) {
         // Use the seed to initialize the random generator for noise offsets
-        noiseRandomGen = new Unity.Mathematics.Random((uint)_settings.seed);
+        noiseRandomGen = new Unity.Mathematics.Random((uint)seed);
         // Generate large offsets based on the seed to shift noise patterns
         seedOffsetX = noiseRandomGen.NextFloat(-10000f, 10000f);
         seedOffsetY = noiseRandomGen.NextFloat(-10000f, 10000f);
-        App.ResourceSystem.InitializeWorldEntities(_settings.seed, new(seedOffsetX, seedOffsetY));
+        App.ResourceSystem.InitializeWorldEntities(seed, new(seedOffsetX, seedOffsetY));
         // Note: Unity.Mathematics.noise doesn't *directly* use this Random object for per-call randomness,
         // but we use it here to get deterministic offsets for the noise input coordinates.
     }
@@ -121,12 +104,12 @@ public class WorldGen : MonoBehaviour {
     /// <param name="newClientChunkCoord">The chunk coordinate the player/client is currently in or moving to. This will be the center of the 6x6 render area.</param>
     /// <param name="onGenerationComplete">Callback action that receives the list of generated ChunkData.</param>
     public IEnumerator GenerateChunkAsync(List<Vector2Int> chunksToRequestBatch, Vector2Int newClientChunkCoord, 
-        NetworkConnection requester, System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>,
-            Dictionary<Vector2Int, List<EntitySpawnInfo>>, NetworkConnection> onGenerationComplete) {
+            System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>,
+            Dictionary<Vector2Int, List<EntitySpawnInfo>>> onGenerationComplete) {
 
         if (_isProcessingChunks) {
             Debug.LogWarning("Chunk generation already in progress. Request ignored.");
-            onGenerationComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>(),new Dictionary<Vector2Int, List<EntitySpawnInfo>>(), requester); // Return empty list
+            onGenerationComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>(),new Dictionary<Vector2Int, List<EntitySpawnInfo>>()); // Return empty list
             yield break;
         }
         _isProcessingChunks = true;
@@ -168,8 +151,7 @@ public class WorldGen : MonoBehaviour {
         var context = new ReadbackContext {
             ChunksToRequestBatch = new List<Vector2Int>(chunksToRequestBatch), // Copy list
             RenderAreaOriginChunkCoord = renderAreaOriginChunk,
-            OnCompleteCallback = onGenerationComplete,
-            req = requester
+            OnCompleteCallback = onGenerationComplete
         };
 
         // Request readback. The callback 'OnReadbackCompleted' will be invoked when data is ready.
@@ -265,20 +247,15 @@ public class WorldGen : MonoBehaviour {
 
         // Invoke the callback with the generated chunk data
         
-        // Continue with generation...
-            
-        NetworkConnection requester = context.req; 
-        StartCoroutine(ProcessChunksWithJobs(generatedChunks, requester, (processedPayloads,processedChunks,entities) => {
+        StartCoroutine(ProcessChunksWithJobs(generatedChunks, (processedPayloads,processedChunks,entities) => {
             // World gen complete, send them over the network.
             _isProcessingChunks = false; // Allow next request
-            if (processedPayloads.Count > 0 && requester != null && requester.IsValid) {
+            if (processedPayloads.Count > 0) {
                 // TODO
-                context.OnCompleteCallback?.Invoke(processedPayloads, processedChunks, entities, context.req);
+                context.OnCompleteCallback?.Invoke(processedPayloads, processedChunks, entities);
                 //TargetReceiveChunkDataMultiple(requester, processedPayloads);
-                Debug.Log($"Sent {processedPayloads.Count} processed chunks to client {requester.ClientId}");
-            } else if (requester == null || !requester.IsValid) {
-                Debug.LogWarning("Requester is null or invalid, cannot send processed chunks.");
-            }
+                Debug.Log($"Sent {processedPayloads.Count} processed chunks to player");
+            } 
         }));
     }
 
@@ -286,7 +263,6 @@ public class WorldGen : MonoBehaviour {
     // We can always extend this later if there is a bottleneck somewhere
     private IEnumerator ProcessChunksWithJobs(
         Dictionary<Vector2Int,ChunkData> initialChunks, // Chunk inputs that might get modified
-        NetworkConnection requester,  // T
         System.Action<
             List<ChunkPayload>, // Callback action with the data that the worldgen generated
             Dictionary<Vector2Int,ChunkData>,  // Chunkcoord to chunkdata, containing the generated chunks 
@@ -444,7 +420,7 @@ public class WorldGen : MonoBehaviour {
             entitySpawnInfos.Add(chunks.Key, entityInChunk);
             yield return null; // Wait a frame
             // Now we have the enemy info, get the persistant IDs from EntityManager
-            entityIdsDict.Add(chunks.Key, _entityManager.AddGeneratedEntityData(chunks.Key, entityInChunk));
+            entityIdsDict.Add(chunks.Key, EntityManager.Instance.AddGeneratedEntityData(chunks.Key, entityInChunk));
         }
         foreach(var data in payloadsToSend) {
             var entityList = entityIdsDict.TryGetValue(data.Key, out var entities);
@@ -462,9 +438,9 @@ public class WorldGen : MonoBehaviour {
             //float yStart = worldmanager.GetWorldLayerYPos(data.LayerStartSpawn);
             float yStart, yMost;
             // TODO for layerStartSpawn 0 it should be wherever the bedrock starts 
-            yStart = worldmanager.GetWorldLayerYPos(data.LayerStartSpawn);
-            yMost = worldmanager.GetWorldLayerYPos(data.LayerMostCommon);
-            float yStop = worldmanager.GetWorldLayerYPos(data.LayerStopCommon);
+            yStart = GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(data.LayerStartSpawn);
+            yMost = GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(data.LayerMostCommon);
+            float yStop = GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(data.LayerStopCommon);
             nativeOreDefinitions[i] = new OreDefinition {
                 tileID = data.oreTile.ID,
                 replaceableTileID = data.replaceableTileID,
@@ -894,15 +870,7 @@ public class WorldGen : MonoBehaviour {
         // noise.snoise returns [-1,1]
         return (noise.snoise(new float2(sampleX, sampleY)) + 1f) * 0.5f;
     }
-    // Helper for deterministic hashing (useful for structure placement)
-    private float GetHash(int x, int y) {
-        // Simple hash combining seed, x, y. Replace with a better one if needed.
-        uint hash = (uint)_settings.seed;
-        hash ^= (uint)x * 73856093;
-        hash ^= (uint)y * 19349663;
-        hash ^= (uint)(x * y) * 83492791;
-        return (hash & 0x0FFFFFFF) / (float)0x0FFFFFFF; // Convert to [0, 1] float
-    }
+   
     // Simple Fisher-Yates shuffle method
     void Shuffle<T>(List<T> list) {
         int n = list.Count;
