@@ -19,7 +19,6 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
     [SerializeField] private Transform containerSlotContainer; // Parent for container slot prefabs
     [SerializeField] private TextMeshProUGUI containerTitleText; // Optional: To show container name/type
     // Use the SAME slotPrefab
-    private SharedContainer currentViewedContainer = null;
     private InventoryManager _localInventoryManager;
     // --- Runtime ---
     private GameObject _playerGameObject; // player that own this UI
@@ -74,17 +73,11 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
             _localInventoryManager.OnSlotChanged += UpdateSlotUI;
         // If player syncer is on the same player object, find it for container events
         NetworkedPlayerInventory playerSyncer = _playerGameObject.GetComponent<NetworkedPlayerInventory>();
-        if (playerSyncer != null) {
-            playerSyncer.OnContainerOpened += HandleContainerOpen;
-            playerSyncer.OnContainerClosed += HandleContainerClose;
-        } else { Debug.LogError("PlayerInventorySyncer not found on owning player for container events!"); }
-
+      
     }
     private void UnsubscribeToEvents() {
         if (_localInventoryManager != null)
             _localInventoryManager.OnSlotChanged -= UpdateSlotUI;
-        if (currentViewedContainer != null)
-            currentViewedContainer.OnContainerInventoryChanged -= RefreshUIContents;
     }
   
   
@@ -103,74 +96,6 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
         OnInventoryToggle?.Invoke(false);
     }
 
-    // --- Container UI Handling ---
-    private void HandleContainerOpen(SharedContainer containerToView) {
-        if (!containerPanel || !containerSlotContainer) return; // Container UI not setup
-        TryCloseInventory();
-        if (currentViewedContainer != null && currentViewedContainer != containerToView) {
-            HandleContainerClose(); // Close UI current viewed container
-        }
-        Debug.Log($"[UI] Opening Container View: {containerToView.name}");
-
-        currentViewedContainer = containerToView;
-        currentViewedContainer.OnContainerInventoryChanged += RefreshUIContents;
-        currentViewedContainer.OnLocalPlayerInteractionStateChanged += HandleInteractionStateChanged;
-
-        // Request server to open. Server will respond, and OnLocalPlayerInteractionStateChanged will show UI.
-        currentViewedContainer.CmdRequestOpenContainer();
-        // --- Setup Container UI ---
-        // Clear old slots
-        foreach (Transform child in containerSlotContainer) { Destroy(child.gameObject); }
-        //containerSlotUIs.Clear();
-
-        // Set Title (Optional)
-        if (containerTitleText) containerTitleText.text = containerToView.name; // Or a generic title
-
-        // Update visuals immediately based on current container state
-        RefreshUIContents();
-
-
-        // Make the container panel visible
-        containerPanel.SetActive(true);
-
-        // Ensure playermenu is CLOSED when container is open
-        if (!playerUIPanel.activeSelf) {
-            playerUIPanel.SetActive(false);
-        }
-    }
-
-   
-
-    private void HandleInteractionStateChanged(bool isOpenForThisPlayer, List<InventorySlot> initialSlots) {
-        if (isOpenForThisPlayer) {
-            if (containerPanel == null)
-                return;
-            containerPanel.SetActive(true);
-            PopulateContainerSlots(initialSlots ?? new List<InventorySlot>(currentViewedContainer.ContainerSlots)); // Use initial if provided
-        } else {
-            HandleContainerClose(false); // Don't send close command again if server initiated closure
-        }
-    }
-    private void PopulateContainerSlots(List<InventorySlot> slotsToDisplay) {
-       // todo
-    }
-
-    public void RefreshUIContents() {
-        if (currentViewedContainer == null || containerPanel == null || !containerPanel.activeSelf)
-            return;
-
-        // This ensures the UI matches the SyncList from the container
-        // If counts mismatch, repopulate. This can happen if containerSize changes dynamically (rare).
-        
-        //if (containerSlotUIs.Count != currentViewedContainer.ContainerSlots.Count) {
-        //    PopulateContainerSlots(new List<InventorySlot>(currentViewedContainer.ContainerSlots));
-        //} else {
-        //    for (int i = 0; i < currentViewedContainer.ContainerSlots.Count; i++) {
-        //        if (i < containerSlotUIs.Count)
-        //            containerSlotUIs[i].UpdateSlot(currentViewedContainer.ContainerSlots[i]);
-        //    }
-        //}
-    }
     void CreateSlotUIs() {
         foreach (Transform child in slotInvContainer) {
             Destroy(child.gameObject);
@@ -230,20 +155,7 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
             HandleToggleInventory(); // Pass dummy context
         }
     }
-    public void HandleContainerClose(bool sendServerCommand = true) {
-        if (containerPanel != null)
-            containerPanel.SetActive(false);
-        if (currentViewedContainer != null) {
-            if (_playerInventory != null && _playerInventory.IsOwner && currentViewedContainer.InteractingClient.Value == _playerInventory.OwnerId) {
-                currentViewedContainer.CmdRequestCloseContainer();
-            }
-            currentViewedContainer.OnContainerInventoryChanged -= RefreshUIContents;
-            currentViewedContainer.OnLocalPlayerInteractionStateChanged -= HandleInteractionStateChanged;
-            currentViewedContainer = null;
-        }
-        foreach (Transform child in containerSlotContainer) { Destroy(child.gameObject); }
-        //containerSlotUIs.Clear(); // Clean up UI elements if needed, or just hide parent
-    }
+  
     public bool IsCurrentlyDragging() => isDragging;
 
     internal void HandleToggleInventory() {
@@ -264,6 +176,5 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
             // If inventory is open and nothing held, maybe toggle it closed
             HandleToggleInventory();
         }
-        _playerInventory.CloseContainer();
     }
 }

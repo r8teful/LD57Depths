@@ -29,8 +29,8 @@ public class SubPortal : MonoBehaviour {
            
         }
     }
-    private void HandleInteraction(NetworkObject player) {
-        PlayerLayerController playerController = player.GetComponent<PlayerLayerController>();
+    private void HandleInteraction(NetworkedPlayer player) {
+        PlayerLayerController playerController = player.PlayerLayerController;
         if (playerController != null) {
             playerController.PortalInteraction(this);
         }

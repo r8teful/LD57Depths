@@ -28,7 +28,7 @@ public class MachineControlPanel : MonoBehaviour {
         }
     }
 
-    private void HandleInteraction(NetworkObject interactor) {
+    private void HandleInteraction(NetworkedPlayer interactor) {
         if (fixableEntity != null && !fixableEntity.IsFixed) {
             Debug.Log("Machine is broken, cannot open control panel.");
             return;

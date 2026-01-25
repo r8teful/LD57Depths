@@ -26,7 +26,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private InputAction _hotbarSelection;
     private UIManagerInventory _inventoryUIManager;
     private UIManager _UIManager;
-    private NetworkObject _clientObject;
+    private NetworkedPlayer _player;
     private PlayerAbilities _playerAbilities;
     private InputDevice lastUsedDevice;
     // UI
@@ -63,7 +63,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     public void InitializeOnOwner(NetworkedPlayer playerParent) {
         _UIManager = playerParent.UiManager;
         _inventoryUIManager = _UIManager.UIManagerInventory;
-        _clientObject = playerParent.PlayerNetworkedObject;
+        _player = playerParent;
         _playerAbilities = playerParent.PlayerAbilities;
         _playerMovement = playerParent.PlayerMovement;
         _interactableLayerMask = 1 << LayerMask.NameToLayer("Interactables"); // Don't ask me why, its in the unity documentation
@@ -174,7 +174,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         //UpdatePlayerFeedback();
         // Handle interaction input
         if (_currentInteractable != null && _interactAction.WasPerformedThisFrame()) {
-            _currentInteractable.Interact(_clientObject);
+            _currentInteractable.Interact(_player);
         }
     }
 
