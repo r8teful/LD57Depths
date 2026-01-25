@@ -9,7 +9,6 @@ using UnityEngine;
 public struct GenerateOresJob : IJob {
     [ReadOnly] public NativeArray<ushort> baseTileIDs; // Input from GPU generation
     [ReadOnly] public NativeArray<OreDefinition> oreDefinitions;
-    [ReadOnly] public NativeArray<float> layerRadii;
     public NativeArray<ushort> processedOreIDs;       // Output: tile IDs with ores
     public Vector2Int chunkCoord;                      // For world-position-dependent logic
     public int chunkSize;
@@ -32,17 +31,14 @@ public struct GenerateOresJob : IJob {
                 float worldY = chunkCoord.y * chunkSize + y;
 
                 // Calculate Distance from the World Center (Bottom-Middle)
-                // This is the core of the semi-circle logic.
                 float distToCenter = math.distance(new float2(worldX, worldY), worldCenter);
 
                 // Loop through all possible ores
                 for (int i = 0; i < oreDefinitions.Length; i++) {
                     OreDefinition ore = oreDefinitions[i];
-
-                    // Get the Target Radius for this ore's layer
-                    if (ore.circleLayerIndex >= layerRadii.Length) continue;
-
-                    float targetRadius = layerRadii[ore.circleLayerIndex];
+                    
+                    // This is so smart I love this
+                    float targetRadius =  ore.worldDepthProcent * math.abs(worldCenter.y);
                     // This will make ores with bigger circles appear mear wide
                     // Instead we could simply look at maxdepth and take a percentage of that and have that be the bandwidth 
                     float bandWidth = (targetRadius * ore.widthPercent);

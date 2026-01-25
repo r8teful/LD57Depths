@@ -131,7 +131,7 @@ Shader "Custom/WorldGenSprite"
                 float edgeNoise = (EdgeNoise_Smooth(uv, _GlobalSeed,0,noiseFreq) - 0.5) * 2.0;
                 float noisyHalfWidth = max(0.0, halfTrenchWidth + edgeNoise * edgeAmp);
 
-                float maxDepth = abs(-1 * baseWidth / baseWiden) * 0.9 * (1 + parallax);
+                float maxDepth = abs(-1 * baseWidth / baseWiden) * 0.7 * (1 + parallax);
                 // Todo the edge noise freq needs to be set manually here, make a nice number, just 4 for now
                 float surfaceNoise = (EdgeNoise_Smooth(uv, _GlobalSeed,2,4) - 0.5) * 2.0;
                 if (uv.y > surfaceNoise)

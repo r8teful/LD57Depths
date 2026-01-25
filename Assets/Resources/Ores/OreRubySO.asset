@@ -13,13 +13,12 @@ MonoBehaviour:
   m_Name: OreRubySO
   m_EditorClassIdentifier: 
   oreTile: {fileID: 11400000, guid: 962f676e003a8d94d92f440b21638820, type: 2}
-  replaceableTileID: 1
-  CircleLayer: 1
+  WorldDepthBandProcent: 0.8
   maxChance: 0.2
-  falloff: 0.05
+  widthPercent: 0.2
   noiseScale: 0.3
   noiseThreshold: 0.6
-  noiseOffset: {x: 234, y: 12312}
+  noiseOffset: {x: 353254, y: 1925}
   useRichness: 0
   richnessNoiseScale: 0
   minRichnessMultiplier: 0

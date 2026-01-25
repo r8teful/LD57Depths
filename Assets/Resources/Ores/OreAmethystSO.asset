@@ -13,17 +13,9 @@ MonoBehaviour:
   m_Name: OreAmethystSO
   m_EditorClassIdentifier: 
   oreTile: {fileID: 11400000, guid: cc29cbaa13188af4bb1e52cc0d81ae33, type: 2}
-  replaceableTileID: 1
-  CircleLayer: 2
+  WorldDepthBandProcent: 0.6
   maxChance: 0.2
-  falloff: 0.05
+  widthPercent: 0.2
   noiseScale: 0.1
   noiseThreshold: 0.6
   noiseOffset: {x: 239847, y: 2235}
-  useRichness: 0
-  richnessNoiseScale: 0
-  minRichnessMultiplier: 0
-  maxRichnessMultiplier: 0
-  useDomainWarp: 0
-  warpNoiseScale: 0
-  warpStrength: 0

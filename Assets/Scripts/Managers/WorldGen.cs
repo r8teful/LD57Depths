@@ -26,7 +26,7 @@ public struct DeterministicStructure {
 public struct OreDefinition {
     public ushort tileID;
 
-    public int circleLayerIndex;
+    public float worldDepthProcent;
     // The maximum spawn chance at the exact edge of the circle (0.0 to 1.0)
     public float maxChance;
     // How quickly the chance drops as you move away from the radius.
@@ -300,7 +300,6 @@ public class WorldGen : MonoBehaviour {
                 }
             }
             var nativeOreDefinitions = GetOreDefinitions();
-            var layerrad = new NativeArray<float>(_cachedSettings.OreRadii, Allocator.TempJob);
             // --- Ore Generation Job ---
             var oreJob = new GenerateOresJob {
                 baseTileIDs = processingData.BaseTileIDs_NA, // GPU output
@@ -309,8 +308,7 @@ public class WorldGen : MonoBehaviour {
                 chunkSize = CHUNK_TILE_DIMENSION,
                 worldCenter = new(0, _cachedSettings.MaxDepth), // We're spawning at maxDepth so its like the center
                 seed = worldSeed + (uint)kvp.Key.x, // Vary seed per chunk slightly or use chunkCoord for determinism
-                oreDefinitions = nativeOreDefinitions,
-                layerRadii = layerrad
+                oreDefinitions = nativeOreDefinitions
             };
             processingData.OreJobHandle = oreJob.Schedule();
             jobHandles.Add(processingData.OreJobHandle);
@@ -445,7 +443,7 @@ public class WorldGen : MonoBehaviour {
             nativeOreDefinitions[i] = new OreDefinition {
                 tileID = data.oreTile.ID,
                maxChance = data.maxChance,
-                circleLayerIndex = data.CircleLayer,
+                worldDepthProcent = data.WorldDepthBandProcent,
                 widthPercent = data.widthPercent,
                 noiseScale = data.noiseScale,
                 noiseThreshold = data.noiseThreshold,

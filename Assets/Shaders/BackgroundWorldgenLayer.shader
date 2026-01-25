@@ -232,7 +232,6 @@ Shader "Custom/BackgroundWorldGenLayer"
             }
 
             // trench: signed distance-ish: s = abs(uv.x) - noisyHalfWidth
-            // Also respects surfaceNoise and maxDepth like your original function.
             // Positive s -> outside trench (filled). Negative s -> inside trench (hole).
             float SampleTrenchSigned(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float parallax, float seed)
             {
@@ -261,7 +260,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                 // --- 4. Apply the maximum depth floor (Intersection) ---
                 // This acts as a hard floor. The world is solid below this depth.
                 // Note: Assuming uv.y is negative for depth.
-                float maxDepth = abs(-1 * baseWidth / baseWiden) * 0.9 * (1 + parallax);
+                float maxDepth = abs(-1 * baseWidth / baseWiden) * 0.7 * (1 + parallax);
 
                 // SDF for the floor. We want the area *above* y = -maxDepth.
                 // This is negative above the floor and positive below it.

@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: OreGoldSO
   m_EditorClassIdentifier: 
   oreTile: {fileID: 11400000, guid: 7393cf54b8b2a6b49a410357454b9a56, type: 2}
-  CircleLayer: 1
+  WorldDepthBandProcent: 0.3
   maxChance: 1
-  widthPercent: 0.493
+  widthPercent: 0.382
   noiseScale: 0.15
   noiseThreshold: 0.6
-  noiseOffset: {x: 234, y: 12312}
+  noiseOffset: {x: 745, y: 234}
   useRichness: 0
   richnessNoiseScale: 0
   minRichnessMultiplier: 0

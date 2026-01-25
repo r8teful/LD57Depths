@@ -82,8 +82,8 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
 
         Vector2 center = new Vector2(0, _worldGenSettings.MaxDepth);
 
-        foreach (var radius in _worldGenSettings.OreRadii) {
-            DrawWireCircle(center, radius, 64);
+        foreach (var ore in _worldGenSettings.worldOres) {
+            DrawWireCircle(center, ore.WorldDepthBandProcent * _worldGenSettings.MaxDepth, 64);
         }
     }
 
