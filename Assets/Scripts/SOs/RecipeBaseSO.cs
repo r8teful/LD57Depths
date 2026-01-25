@@ -68,7 +68,7 @@ public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable, IExecutabl
 
     public abstract void Execute(ExecutionContext context);
    
-    public virtual void PrepareRecipe(float value, List<ItemQuantity> resourcePool) {
+    public virtual void PrepareRecipe(float value, List<ItemData> resourcePool) {
 
     }
     /// <summary>

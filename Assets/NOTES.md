@@ -519,7 +519,88 @@ Things we have to think about with world init order
 
 * We need to wait for world gen to finish generating the initial state before putting player in control. This will require the following:
 * EntityManager needs to be setup because WorldGen needs to send the entities to them
-* 
+
+
+
+
+
+
+
+
+
+BRUH. 
+
+X = distance to center 
+
+Y = chance 
+
+t = ratio: 0 - 1 depending on distance
+
+r = target radius
+
+d = maxDepth
+
+n = depthRATIO
+
+b = bandwidth
+
+p = widthPrecent -> Basically determines how flat the curve is 
+
+
+
+
+
+
+
+Resource pacing:
+
+OK 1.63 mine damage breaks 120 blocks a minute. At IDEAL speed, in practice that would be 80. So 1/3 is error
+
+
+
+Start - Get used to controls \& concepts
+
+2min -> Understands Tool 
+
+**\*recipes require silver \& gold\***
+
+3Min -> Understands Ability
+
+4Min -> Understands Biomes \& movement
+
+10min -> Completed first stage
+
+
+
+
+
+Start - Get used to controls \& concepts
+
+2min -> 120 blocks
+
+3Min -> 180 blocks
+
+4Min -> 240 blocks
+
+10min -> 1200 blocks
+
+
+
+2min -> 2 upgrades
+
+3Min -> 3 upgrades
+
+4Min -> 4 upgrades
+
+10min -> 10 upgrades + submarine
+
+
+
+
+
+
+
+First minute of oxygen I can get 17 stone 12 copper. First minute should be maybe even shorter, maybe 30 seconds? And then you would get half that so 7 stone and 6 copper. Then you want to be able to fix the upgrade machine, 2 stone for first upgrade, that would have to increase linearly first, and then exponentially!! woo exiting
 
 
 

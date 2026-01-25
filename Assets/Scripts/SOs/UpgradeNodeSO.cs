@@ -14,7 +14,8 @@ public class UpgradeStage {
     [Range(0.1f, 5f)]
     public float costMultiplier = 1.0f;
 
-    public int tier;
+    public int costTier;
+    public UpgradeTierSO upgradeItemPool;
 }
 
 [CreateAssetMenu(fileName = "UpgradeNodeSO", menuName = "ScriptableObjects/Upgrades/UpgradeNodeSO")]

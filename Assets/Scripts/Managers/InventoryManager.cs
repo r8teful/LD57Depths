@@ -184,4 +184,10 @@ public class InventoryManager {
         AddItem(1, 1);
         
     }
+
+    internal void RemoveAllItems() {
+        foreach (var item in Slots) {
+            item.quantity = 0;
+        }
+    }
 }

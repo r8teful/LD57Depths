@@ -110,6 +110,11 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     private void debugGiveAll() {
         GiveAll();
     }
+
+    [ConsoleCommand("clearAll")]
+    private void debugClearInventory() {
+        _player.InventoryN.RemoveAll();
+    }
     [ConsoleCommand("showcontrol")]
     private void debugShowSubControlScreen() {
         machineControlPanel.DEBUGToggle();

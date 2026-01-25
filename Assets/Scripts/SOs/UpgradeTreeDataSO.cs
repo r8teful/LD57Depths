@@ -21,19 +21,6 @@ public class UpgradeTreeDataSO : ScriptableObject {
     public string treeName; 
     public List<UpgradeNodeSO> nodes = new List<UpgradeNodeSO>();
     public UIUpgradeTree prefab; // The visual representation of this tree in a prefab with the approriate nodes already created
-   
-    private List<ItemQuantity> GetItemPoolForTier(int tier) {
-        var itemPool = new List<ItemQuantity>();
-        foreach (var treeTier in tiers) {
-            if(treeTier.Tier != tier) continue; // Only care about the their we are checking for
-            foreach (var tierItem in treeTier.ItemsInTier) {
-                itemPool.Add(new ItemQuantity(tierItem, 999)); // Assuming a large or "infinite" quantity for calculation
-            }
-        }
-        if (itemPool.Count == 0)
-            Debug.LogError("Tree does not have a definition for tier: " + tier);
-        return itemPool;
-    }
 
     
     /// <summary>
@@ -42,10 +29,11 @@ public class UpgradeTreeDataSO : ScriptableObject {
     /// <param name="stage">The stage whose cost we want.</param>
     /// <returns>The final prepared recipe with calculated costs.</returns>
     public UpgradeRecipeSO GetPreparedRecipeForStage(UpgradeStage stage) {
-        int currentStageLevel = stage.tier;
+        int currentStageLevel = stage.costTier;
         float baseCost = UpgradeCalculator.CalculateCostForLevel(currentStageLevel, costsValues.baseValue, costsValues.linearIncrease, costsValues.expIncrease);
         float finalCost = baseCost * stage.costMultiplier;
-        List<ItemQuantity> itemPool = GetItemPoolForTier(currentStageLevel);
+        if (stage.upgradeItemPool == null) return null;
+        List<ItemData> itemPool = stage.upgradeItemPool.Items;
 
         UpgradeRecipeSO recipeInstance = Instantiate(stage.upgrade);
         recipeInstance.name = $"{stage.upgrade.name}_Preview"; // Use a temporary name

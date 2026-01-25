@@ -44,10 +44,14 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
     internal void RemoveItem(ushort itemId, int quantityTransferred) {
         inventoryManager.RemoveItem(itemId, quantityTransferred);
     }
+    internal void RemoveAll() {
+        inventoryManager.RemoveAllItems();
+    }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public void DEBUGGIVE(int ID, int amount) {
         inventoryManager.AddItem((ushort)ID, amount);
     }
+
 #endif
 }

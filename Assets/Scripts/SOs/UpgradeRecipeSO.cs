@@ -18,15 +18,15 @@ public class UpgradeRecipeSO : RecipeBaseSO {
             effect.Execute(context);
         }
     }
-    public override void PrepareRecipe(float value, List<ItemQuantity> resourcePool) {
+    public override void PrepareRecipe(float value, List<ItemData> resourcePool) {
         base.PrepareRecipe(value, resourcePool);
         requiredItems = CalculateItemQuantities(Mathf.RoundToInt(value), resourcePool,
-            new QuantityCalculationOptions{ RespectAvailability = false, MaxContributionPercentage = 0.50f });
+            new QuantityCalculationOptions{MaxContributionPercentage = 0.50f });
     }
     
     public static List<ItemQuantity> CalculateItemQuantities(
         int targetValue,
-        List<ItemQuantity> resourcePool,
+        List<ItemData> resourcePool,
         QuantityCalculationOptions options = null
     ) {
         if (options == null)
@@ -37,36 +37,37 @@ public class UpgradeRecipeSO : RecipeBaseSO {
 
         // Sort by descending itemValue
         var sorted = resourcePool
-            .Where(iq => iq.item.itemValue > 0f)
-            .OrderByDescending(iq => iq.item.itemValue);
+            .Where(item => item.itemValue > 0f)
+            .OrderByDescending(item => item.itemValue);
 
-        foreach (var iq in sorted) {
+        foreach (var item in sorted) {
             if (remaining <= 0f)
                 break;
 
-            float valuePerItem = iq.item.itemValue;
-            // Determine how many are "available" by option
-            int availableLimit = options.RespectAvailability ? iq.quantity : int.MaxValue;
-
+            float valuePerItem = item.itemValue;
             // Maximum needed purely by remaining points
             int maxNeeded = Mathf.FloorToInt(remaining / valuePerItem);
 
-            // Maximum allowed by percentage cap
-            int maxByPercentage = Mathf.FloorToInt((targetValue * options.MaxContributionPercentage) / valuePerItem);
+            int maxByPercentage;
+            if(resourcePool.Count == 1) {
+                maxByPercentage = Mathf.FloorToInt(targetValue / valuePerItem);
+
+            } else {
+                // Maximum allowed by percentage cap
+                maxByPercentage = Mathf.FloorToInt((targetValue * options.MaxContributionPercentage) / valuePerItem);
+            }
 
             // Final count is min of need, availability, and percentage cap
-            int take = Mathf.Min(maxNeeded, availableLimit, maxByPercentage);
+            int take = Mathf.Min(maxNeeded, maxByPercentage);
 
             if (take > 0) {
                 result.Add(new ItemQuantity {
-                    item = iq.item,
+                    item = item,
                     quantity = take
                 });
                 remaining -= take * valuePerItem;
             }
         }
-
-        // TODO: handle leftover if remaining > 0, if desired
         return result;
     }
 
@@ -79,12 +80,6 @@ public class UpgradeRecipeSO : RecipeBaseSO {
     }
 }
 public class QuantityCalculationOptions {
-    /// <summary>
-    /// If true, will cap usage of each item by its available quantity in the pool.
-    /// If false, ignores availability and assumes infinite supply.
-    /// </summary>
-    public bool RespectAvailability { get; set; } = true;
-
     /// <summary>
     /// Maximum fraction (0 to 1) of the targetValue that any single item may contribute.
     /// For example, 0.5 means an item cannot cover more than 50% of the total points.
