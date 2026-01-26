@@ -11,12 +11,4 @@ public class TrashParticleSystem : MonoBehaviour {
     private void OnEnable() {
     }
 
-    private void OnTerraformChange(TerraformType type, float value) {
-        if (type != TerraformType.Polution) return;
-        if (value == 0) return;
-        // Get total cleaned amount
-        float particlesToSpawn = 1 - (maxToRemoveAll / value);
-        var e = _particles.emission;
-        e.rateOverTime = particlesToSpawn;
-    }
 }
