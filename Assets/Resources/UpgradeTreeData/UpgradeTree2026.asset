@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   costsValues:
     baseValue: 4
-    linearIncrease: 55
+    linearIncrease: 22
     expIncrease: 1.7
   tiers:
   - {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
@@ -46,4 +46,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f10ee396c06fd4446b2ebc359bb7404a, type: 2}
   - {fileID: 11400000, guid: af3857e552e5f2e4495f4d7db9907b4e, type: 2}
   - {fileID: 11400000, guid: 686f5a764242b2c41915e9f9955f1ace, type: 2}
+  - {fileID: 11400000, guid: 7df2eb582e9fdb64aa47295b0b9300cc, type: 2}
   prefab: {fileID: 4102176661086873485, guid: c93e4d609b751e846a139bb3a64d1f21, type: 3}

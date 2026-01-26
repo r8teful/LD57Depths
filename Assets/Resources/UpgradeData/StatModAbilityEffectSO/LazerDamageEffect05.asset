@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c68dc6e67c048b344aa9b1b86f2093c3, type: 3}
-  m_Name: BasicTier6
+  m_Script: {fileID: 11500000, guid: cb3d0041ed540d04d9d938a5f700a60c, type: 3}
+  m_Name: LazerDamageEffect05
   m_EditorClassIdentifier: 
-  Tier: 6
-  TierType: 0
-  ItemsInTier:
-  - {fileID: 11400000, guid: 9d1117d8bc8ca42498829667bd205792, type: 2}
+  upgradeType: 1
+  increaseType: 0
+  modificationValue: 0.5
+  targetAbility: {fileID: 11400000, guid: bfa7ecccf4ae75f439325ee1ebc3c688, type: 2}

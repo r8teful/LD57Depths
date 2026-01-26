@@ -3,8 +3,7 @@
 public class PlayerPickupManager : MonoBehaviour, INetworkedPlayerModule {
 
     private float _pickupTimer;
-    private float pickupRadius = 0.5f;
-    private float magnetRadius = 3f;
+    private float pickupRadius = 1f;
     [SerializeField] private LayerMask pickupLayerMask; // Set this to the layer your WorldItem prefabs are on
     private NetworkedPlayer _player;
     private float _cachedMagnetism;

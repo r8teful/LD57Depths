@@ -9,11 +9,10 @@ using UnityEngine.SceneManagement;
 
 [DefaultExecutionOrder(-100)]
 public class GameSetupManager : PersistentSingleton<GameSetupManager> {
-    private GameSettings _currentGameSettings;
     [ShowInInspector]
     private WorldGenSettings _worldGenSettings;
     public WorldGenSettings WorldGenSettings => _worldGenSettings;
-    public GameSettings CurrentGameSettings => _currentGameSettings;
+    public GameSettings CurrentGameSettings;
     private WorldGenSettingSO _settings;
     // TODO remove this
     private string _upgradeTreeName = "DefaultTree"; // Would depend on what the player chooses for tools etc
@@ -77,17 +76,27 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
     public void OnDrawGizmos() {
         if (_worldGenSettings == null)
             return;
-
-        Gizmos.color = Color.white;
-
         Vector2 center = new Vector2(0, _worldGenSettings.MaxDepth);
-
         foreach (var ore in _worldGenSettings.worldOres) {
-            DrawWireCircle(center, ore.WorldDepthBandProcent * _worldGenSettings.MaxDepth, 64);
+            var color = ore.DebugColor;
+            var targetR = ore.WorldDepthBandProcent * Mathf.Abs(_worldGenSettings.MaxDepth);
+            float bandWidth = targetR * ore.widthPercent; 
+            DrawWireCircle(center, targetR, color);
+
+            // How to include bandwidth so that we show these circles when the falloff is practicly 0??
+            float tLimit = Mathf.Sqrt(-Mathf.Log(0.1f));
+            float delta = bandWidth * tLimit;
+            float outer = targetR + delta;
+            float inner = Mathf.Max(0f, targetR - delta); // clamp so radius doesn't go negative
+
+            Color faded = color; faded.a = 0.15f;
+            DrawWireCircle(center, outer, faded);
+            DrawWireCircle(center, inner, faded);
         }
     }
 
-    private void DrawWireCircle(Vector2 center, float radius, int segments) {
+    private void DrawWireCircle(Vector2 center, float radius, Color color) {
+        var segments = 64;
         float angleStep = 2f * Mathf.PI / segments;
         Vector3 prevPoint = center + Vector2.right * radius;
 
@@ -97,7 +106,7 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
                 Mathf.Cos(angle),
                 Mathf.Sin(angle)
             ) * radius;
-
+            Gizmos.color = color;
             Gizmos.DrawLine(prevPoint, nextPoint);
             prevPoint = nextPoint;
         }

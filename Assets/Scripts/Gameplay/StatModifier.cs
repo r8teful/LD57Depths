@@ -8,7 +8,6 @@ public class StatModifier {
 
     // The "Source" is a unique identifier for who/what applied this modifier.
     // Used for removing it later when the stat is done. Also, if we apply FROM the same source, we should replace the buff
-
     public readonly object Source;
     public StatModifier(float value, StatType stat, StatModifyType type, object source) {
         Value = value;

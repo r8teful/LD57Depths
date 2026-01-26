@@ -21,4 +21,5 @@ public class WorldGenOreSO : ScriptableObject {
 
     // A unique offset for this ore's noise to prevent all ores from spawning in the same spots.
     public Vector2 noiseOffset;
+    public Color DebugColor = Color.white;
 }

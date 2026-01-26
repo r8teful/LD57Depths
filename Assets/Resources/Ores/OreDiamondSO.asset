@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: OreDiamondSO
   m_EditorClassIdentifier: 
   oreTile: {fileID: 11400000, guid: 0322c791f95f7bf48b5c7ea816f8f9af, type: 2}
-  WorldDepthBandProcent: 0.8
+  WorldDepthBandProcent: 0.87
   maxChance: 1
-  widthPercent: 0.2
+  widthPercent: 0.25
   noiseScale: 0.1
   noiseThreshold: 0.6
   noiseOffset: {x: 1231, y: 123627}
+  DebugColor: {r: 0.3883018, g: 0.780384, b: 0.84, a: 1}

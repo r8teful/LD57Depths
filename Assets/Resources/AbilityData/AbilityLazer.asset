@@ -15,6 +15,7 @@ MonoBehaviour:
   id: 0
   icon: {fileID: 0}
   displayName: Lazer
+  description: 
   type: 0
   cooldown: 0
   isTimed: 0
@@ -25,6 +26,7 @@ MonoBehaviour:
     BaseValue: 1
   - Stat: 2
     BaseValue: 1
+  UpgradeValues: []
   effects:
   - {fileID: 11400000, guid: a3fd00cf526c9ce44a2ee8416517e97b, type: 2}
   costumes: []

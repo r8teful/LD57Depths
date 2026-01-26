@@ -14,7 +14,6 @@ public class BuffInstance {
     internal float expiresAt;
     public List<StatModifier> Modifiers { get; private set; } = new();
     public BuffSO GetBuffData() => App.ResourceSystem.GetBuffByID(buffID);
-    public bool IsExpired => Time.time >= expiresAt;
     public BuffInstance() { }
 
     // Factory: create a BuffInstance from a BuffSO

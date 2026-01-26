@@ -14,16 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeName: Blast Range
   uniqueID: 9
+  description: 
   icon: {fileID: -902893201, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 87bdf022cae5b9e40aaf9a007cdd5f3c, type: 2}
+  UnlockedAtFirstPrereqStage: 1
   stages:
   - upgrade: {fileID: 11400000, guid: c7eea03527a96244ead476c5d5c45cc6, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 5
+    upgradeItemPool: {fileID: 11400000, guid: 29f367e82be84e84aa1af9c8dd6f8436, type: 2}
   - upgrade: {fileID: 11400000, guid: 39388db057a8a42429e1d64e92d331a3, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 5
+    upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}
   - upgrade: {fileID: 11400000, guid: 19cbebfec623dfa47babc6b46d7faa32, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 6
+    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}

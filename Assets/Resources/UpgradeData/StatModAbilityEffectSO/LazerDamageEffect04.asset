@@ -10,10 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb3d0041ed540d04d9d938a5f700a60c, type: 3}
-  m_Name: LazerDamageEffect
+  m_Name: LazerDamageEffect04
   m_EditorClassIdentifier: 
-  Id: 502
   upgradeType: 1
   increaseType: 0
-  modificationValue: 0.333
+  modificationValue: 0.4
   targetAbility: {fileID: 11400000, guid: bfa7ecccf4ae75f439325ee1ebc3c688, type: 2}

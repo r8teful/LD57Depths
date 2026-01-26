@@ -178,4 +178,9 @@ MonoBehaviour:
     WorldSeed: 0
     WorldGenID: 0
     EnabledModifierIds: 
-    AvailableAbilities: []
+    AvailableAbilities:
+    - {fileID: 11400000, guid: e9befdab8625c3a438c015a4cae76e3d, type: 2}
+    - {fileID: 11400000, guid: 0e621cfbd16e0d14a9bcc5b584f383ca, type: 2}
+    - {fileID: 11400000, guid: e55b0353d027f6a4d97b63126a073fd3, type: 2}
+    - {fileID: 11400000, guid: ce92d135c11653140b6fee0b1ef8e5f9, type: 2}
+    - {fileID: 11400000, guid: ddcffc22d5a6c1843b12b12a21c04d49, type: 2}

@@ -22,31 +22,13 @@ MonoBehaviour:
   stages:
   - upgrade: {fileID: 11400000, guid: 67523ad06ae4dc74b8b8c1ec12e6eafd, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 7
+    upgradeItemPool: {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
   - upgrade: {fileID: 11400000, guid: 3bba1ffb78da78e4193c935a5e1007fa, type: 2}
     costMultiplier: 1
-    tier: 1
+    costTier: 8
+    upgradeItemPool: {fileID: 11400000, guid: c62c0885783485c439bdc01783a4c337, type: 2}
   - upgrade: {fileID: 11400000, guid: 5dfc73a71a678d14687d18652bb425e5, type: 2}
     costMultiplier: 1
-    tier: 2
-  - upgrade: {fileID: 11400000, guid: c537458a1fe1d764d9c67c879f5af674, type: 2}
-    costMultiplier: 1
-    tier: 3
-  - upgrade: {fileID: 11400000, guid: 29db93a8afc8bdb479fb38242584d2f8, type: 2}
-    costMultiplier: 1
-    tier: 4
-  - upgrade: {fileID: 11400000, guid: 1e766b95556b2c34b839da1993110d83, type: 2}
-    costMultiplier: 1
-    tier: 5
-  - upgrade: {fileID: 11400000, guid: 6201572a855f2484ab5b0fd642da40dc, type: 2}
-    costMultiplier: 1
-    tier: 6
-  - upgrade: {fileID: 11400000, guid: 6abcc07ef355ede478daafe6e0ab1525, type: 2}
-    costMultiplier: 1.66
-    tier: 6
-  - upgrade: {fileID: 11400000, guid: 026beb3b7849fbb4b94aa468e3f1032f, type: 2}
-    costMultiplier: 2.13
-    tier: 6
-  - upgrade: {fileID: 11400000, guid: 4c08e2a148ef50141b7baab2f6fa2333, type: 2}
-    costMultiplier: 2.77
-    tier: 6
+    costTier: 9
+    upgradeItemPool: {fileID: 11400000, guid: 29f367e82be84e84aa1af9c8dd6f8436, type: 2}

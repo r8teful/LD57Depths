@@ -19,10 +19,4 @@ MonoBehaviour:
   noiseScale: 0.3
   noiseThreshold: 0.6
   noiseOffset: {x: 353254, y: 1925}
-  useRichness: 0
-  richnessNoiseScale: 0
-  minRichnessMultiplier: 0
-  maxRichnessMultiplier: 0
-  useDomainWarp: 0
-  warpNoiseScale: 0
-  warpStrength: 0
+  DebugColor: {r: 0.9056604, g: 0.1851192, b: 0.1851192, a: 1}
