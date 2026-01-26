@@ -8,24 +8,6 @@ public class UISubMovePopup : MonoBehaviour {
     [SerializeField] private Button _buttonConfirm;
     [SerializeField] private Button _buttonDeny;
     [SerializeField] private UISubMap _mapScript;
-    private void Awake() {
-        _buttonConfirm.onClick.AddListener(OnConfirmClicked);
-        _buttonDeny.onClick.AddListener(OnDenyClicked);
-    }
-    private void OnDestroy() {
-        _buttonConfirm.onClick.RemoveListener(OnConfirmClicked);
-        _buttonDeny.onClick.RemoveListener(OnDenyClicked);
-    }
-
-    private void OnDenyClicked() {
-        SubMovementManager.Instance.RespondToRequest(false, NetworkedPlayer.LocalInstance.LocalConnection);
-        Destroy(gameObject);
-    }
-
-    private void OnConfirmClicked() {
-        SubMovementManager.Instance.RespondToRequest(true, NetworkedPlayer.LocalInstance.LocalConnection);
-        Destroy(gameObject);
-    }
 
     public void Init(int zoneId) {
         ZoneSO zone = App.ResourceSystem.GetZoneByIndex(zoneId);

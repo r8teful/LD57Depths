@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 public enum PlayerInteractionContext {
     None,                 // Default state, no specific interaction available
-    Building,             // Player is trying to build an entity
     InteractingWithUI,    // Mouse is over any UI element
     DraggingItem,         // Player is dragging an item from inventory
     WorldInteractable,    // Player is near an object they can interact with (e.g., "Press E to open")
@@ -189,14 +188,6 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     }
 
     private void UpdateInteractionContext() {
-        // We want to prioritize user initiated states
-        if (BuildingManager.Instance != null) {
-            if (BuildingManager.Instance.IsBuilding) {
-                _currentContext = PlayerInteractionContext.Building;
-                //Debug.Log("we are building!");
-                return;
-            }
-        }
         // Check for UI interaction
        // if (EventSystem.current.IsPointerOverGameObject() || _inventoryUIManager.IsOpen) {
         if (_UIManager.IsAnyUIOpen()) { // Removed IsPointerOverGameObject because it also does it in world popups which is annyoing
@@ -427,8 +418,6 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
         ClearInteractable(); // Also clear interactable
     }
     private void HandleCancelAction(InputAction.CallbackContext context) {
-        if(_currentContext == PlayerInteractionContext.Building)
-            BuildingManager.Instance.HandlePlaceFailOrCancel();
     }
     #endregion
     public static string FormatBindingDisplayString(string input) {

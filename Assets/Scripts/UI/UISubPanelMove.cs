@@ -10,12 +10,10 @@ public class UISubPanelMove : MonoBehaviour {
     [SerializeField] private Button _buttonMove;
     [SerializeField] private TextMeshProUGUI _buttonMoveText;
 
-    [SerializeField] private Button _buttonCancelMove;
     [SerializeField] private UISubMap _mapScript;
     private int _currentShownIndex;
     private void Awake() {
         _buttonMove.onClick.AddListener(OnMoveClicked);
-        _buttonCancelMove.onClick.AddListener(OnCancelMoveClicked);
         _mapScript.Init(this);
         _waitingContainer.SetActive(false);
         SubmarineManager.Instance.OnSubMoved += SubMoved;
@@ -74,13 +72,7 @@ public class UISubPanelMove : MonoBehaviour {
 
     private void OnMoveClicked() {
         // Server handles most logic, will call OnMoveEnter if succefull 
-        SubMovementManager.Instance.RequestMovement(NetworkedPlayer.LocalInstance.LocalConnection, _currentShownIndex);
-    }
-    private void OnCancelMoveClicked() {
-        Debug.Log("Initiated client has canceled move req!");
-        SubMovementManager.Instance.CancelRequest(NetworkedPlayer.LocalInstance.LocalConnection);
-
-        OnMoveExit();
+        SubmarineManager.Instance.MoveSub(_currentShownIndex);
     }
     private void SubMoved() {
         // Update to new zone
@@ -91,48 +83,5 @@ public class UISubPanelMove : MonoBehaviour {
         //_buttonMove.gameObject.SetActive(true);
         _waitingContainer.SetActive(false);
         _mapScript.EnableMapInteractions();
-    }
-
-    public void OnMoveEnter() {
-        _mapScript.DissableMapInteractions();
-        // Delete existing status things    
-        for (int i = 0; i < _playerStatusContainer.childCount; i++) {
-            Destroy(_playerStatusContainer.GetChild(i).gameObject);
-        }
-        _waitingContainer.SetActive(true);
-        _buttonMove.gameObject.SetActive(false);
-
-        // We can safely assume all players status is pending
-        NetworkedPlayersManager.Instance.GetAllPlayers().ForEach(p => {
-            var status = Instantiate(App.ResourceSystem.GetPrefab<PlayerSubMovementStatus>("UIPlayerSubMovementStatus"), _playerStatusContainer);
-            status.Init(p.GetPlayerName(), p.OwnerId == NetworkedPlayer.LocalInstance.OwnerId); // set ourselves as ready
-        });
-    }
-
-    internal void UpdatePlayerStatus(int[] acceptedIds, int[] pendingIds) {
-        // Destroy all old ones first
-        for (int i = 0; i < _playerStatusContainer.childCount; i++) {
-            Destroy(_playerStatusContainer.GetChild(i).gameObject);
-        }
-        // Now make new ones
-        foreach (int id in acceptedIds) {
-            NetworkedPlayersManager.Instance.TryGetPlayer(id, out var player);
-            if (player != null) {
-                var status = Instantiate(App.ResourceSystem.GetPrefab<PlayerSubMovementStatus>("UIPlayerSubMovementStatus"), _playerStatusContainer);
-                status.Init(player.GetPlayerName(),true);
-            }
-        }
-        foreach (int id in pendingIds) {
-            NetworkedPlayersManager.Instance.TryGetPlayer(id, out var player);
-            if (player != null) {
-                var status = Instantiate(App.ResourceSystem.GetPrefab<PlayerSubMovementStatus>("UIPlayerSubMovementStatus"), _playerStatusContainer);
-                status.Init(player.GetPlayerName(), false);
-            }
-        }
-    }
-
-    internal void RequestRejected() {
-        // Some kind of Error?
-        Debug.LogWarning("Failed to enter move request!");
     }
 }

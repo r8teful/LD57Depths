@@ -16,14 +16,12 @@ public class WorldManager : StaticInstance<WorldManager> {
     public BiomeManager BiomeManager;
     public StructureManager StructureManager;
     [SerializeField] private RenderTexture worldRenderTexture;
-    [SerializeField] private Transform _sub;
     [SerializeField] private Transform _worldRoot; // All world entities have this as their parent, used for hiding when entering sub or other interiors
     [SerializeField] private Camera _worldGenCamera;
     public int GetChunkSize() => ChunkManager.GetChunkSize();
     public Transform GetWorldRoot() => _worldRoot;
     public GameObject GetMainTileMapObject() => mainTilemap.gameObject;
     public Tilemap MainTileMap => mainTilemap;
-    public Transform GetSubTransform() => _sub;
     
     [SerializeField] private Tilemap mainTilemap; // Main visual grid component for the game
     [SerializeField] private Tilemap overlayTilemapOre; // Ores are overlayed ontop of the main tilemap, when we break a tile, we first check if there is an ore there and use that as drop
@@ -82,8 +80,8 @@ public class WorldManager : StaticInstance<WorldManager> {
     private void SetSubAndPlayerSpawn() {
         var offset = GetVisualTilemapGridSize() * 6;
         var maxDepth = _gameSetupManager.WorldGenSettings.MaxDepth;
-        playerSpawn.transform.position = new Vector3(0, maxDepth * GetVisualTilemapGridSize() + offset); // Depths is in blocks, so times it with grid size to get world space pos
-        _sub.transform.position = new Vector3(0, maxDepth * GetVisualTilemapGridSize() + offset / 4);
+        // Depths is in blocks, so times it with grid size to get world space pos
+        playerSpawn.transform.position = new Vector3(0, maxDepth + offset);
     }
 
     public void MoveCamToChunkCoord(Vector2Int chunkCoord) {

@@ -237,40 +237,12 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     on the same layer and internal ID
     */ 
     public void OnStartDrilling() {
-        if (!base.IsOwner) {
-            if (!HasVisibility()) {
-                return; // we are a remote player and don't have vibility, don't do any visual updates 
-            }
-        }
         CheckBackVisualTool(true,false); // Update back visual for local player 
         SetBobHand(false);
     }
 
-    private bool HasVisibility() {
-        if (_localPlayer == null) {
-            if (NetworkedPlayersManager.Instance.TryGetPlayer(base.LocalConnection.ClientId, out var localPlayer)) {
-                _localPlayer = localPlayer;
-            }
-        }
-        if (_localPlayer == null || _remotePlayer == null) {
-            Debug.LogError("Need both local and remote reference to check if a non owner can set visuals properly!");
-            return false;
-        }
-        var localLayer = _localPlayer.PlayerLayerController.CurrentLayer;
-        var remoteLayer = _remotePlayer.PlayerLayerController.CurrentLayer;
-        // Todo also check layerID
-        if (localLayer != remoteLayer) {
-            return false;
-        }
-        return true;
-    }
 
     public void OnStopDrilling() {
-        if (!base.IsOwner) {
-            if (!HasVisibility()) {
-                return; // we are a remote player and don't have vibility, don't do any visual updates 
-            }
-        }
         if(_localPlayer.PlayerLayerController.CurrentLayer == VisibilityLayerType.Interior) {
             return; // Don't enable the hand if we are in the interior
         }

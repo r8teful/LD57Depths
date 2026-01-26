@@ -125,7 +125,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     }
     [ConsoleCommand("setSubIndex")]
     private void debugSetSubIndex(int v) {
-        SubMovementManager.Instance.MoveSub(v);
+        SubmarineManager.Instance.MoveSub(v);
     }
     [ConsoleCommand("setMineDamage")]
     private void debugSetDamage(float v) {

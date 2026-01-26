@@ -104,47 +104,4 @@ public class UISubControlPanel : MonoBehaviour {
             OnTabButtonClicked(newIndex); // Handle it as a click
         }
     }
-    internal void OnMovementRequestStart(bool isRequester, int zoneId, string message) {
-        // Spawn popup if popup has not already been spawned, and we're not the requester
-
-        Debug.Log($"MoveRequest started! isRequester: {isRequester}. ZoneID: {zoneId}");
-        if (_movePopup == null && !isRequester) {
-            _movePopup = Instantiate(App.ResourceSystem.GetPrefab<UISubMovePopup>("UIMovePopup"), _panelMain.transform);
-            _movePopup.Init(zoneId);
-        }
-        // Enter the "move waiting" state in the movePanel for everyone
-        _panelMoveScript.OnMoveEnter();
-    }
-    internal void OnMovementRequestUpdated(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds, string message) {
-        // update the player statuses with the recieved Ids and stuff
-        _panelMoveScript.UpdatePlayerStatus(acceptedIds, pendingIds);
-    }
-
-    internal void OnMovementRequestFailed(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds, string message) {
-        // TODO!
-        // Remove popup it its there
-        if (_movePopup != null) {
-            Destroy(_movePopup.gameObject); // Todo we'd probably want to say who denied
-        }
-        // Hide player status
-        _panelMoveScript.OnMoveExit();
-        Debug.LogWarning("Request failed!");
-    }
-
-    internal void OnMovementStarted(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds, string message) {
-        // TODO some kind of screen shake + sound effect
-
-        // Tell move panel to stop displaying status
-        _panelMoveScript.OnMoveExit();
-    }
-
-    internal void OnNotifyActiveRequest(int requesterId, string requesterName, int[] acceptedIds, int[] pendingIds) {
-        throw new NotImplementedException();
-    }
-
-    internal void OnRequestActionRejected(string message) {
-        _panelMoveScript.RequestRejected();
-    }
-
-    
 }

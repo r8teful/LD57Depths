@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Should hold server side data about the state of the different upgrades
+// This is on the interior instance
 public class SubmarineManager : StaticInstance<SubmarineManager> {
-    public Grid SubGrid;
     // Current recipe we are working on, could derive this from _upgradeData but easier to store it like this
     private ushort _currentRecipe;
     private int _currentZoneIndex;
@@ -16,7 +15,11 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     public event Action<ushort> OnUpgradeDataChanged; // Passes the RecipeID that changed
     public event Action<ushort> OnCurRecipeChanged; // Passes the new RecipeID 
     public event Action OnSubMoved; // Used by map UI 
-
+    public GameObject submarineExterior;
+    public void MoveSub(int index) {
+        submarineExterior.transform.position = new(0, GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(index));
+        SetSubPosIndex(index);
+    }
     internal void SetSubPosIndex(int index) {
         _currentZoneIndex = index;
         OnSubMoved?.Invoke();
@@ -24,6 +27,8 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
 
     public void Start() {
         InitializeUpgradeData();
+        var y = GameSetupManager.Instance.WorldGenSettings.MaxDepth;
+        submarineExterior.transform.position = new Vector3(0, y);
     }
     
     private void InitializeUpgradeData() {
@@ -137,11 +142,11 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     internal void MoveInterior(VisibilityLayerType currentLayer) {
         if (currentLayer == VisibilityLayerType.Interior) {
             // Move in
-            transform.position = SubMovementManager.Instance.SubWorldPos;
+            transform.position = submarineExterior.transform.position;
         } else {
             // Move out lol
             Vector3 YEET = new(6000, 0);
-            transform.position = SubMovementManager.Instance.SubWorldPos + YEET;
+            transform.position = submarineExterior.transform.position + YEET;
         }
     }
 }

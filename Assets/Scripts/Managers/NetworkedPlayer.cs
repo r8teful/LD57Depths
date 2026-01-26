@@ -44,7 +44,6 @@ public class NetworkedPlayer : NetworkBehaviour {
         _worldManager = FindFirstObjectByType<WorldManager>();
         LocalInstance = this;
         InitializePlayer();
-        CmdNotifyServerOfInitialization();
         _isInitialized = true;
         // Subscribe to other clients joining so we can properly initialize our local version of them
 
@@ -58,7 +57,6 @@ public class NetworkedPlayer : NetworkBehaviour {
             Destroy(UiManager);
         }
         LocalInstance = null;
-        NetworkedPlayersManager.OnPlayersListChanged -= OnPlayersChanged;
     }
     // All clients have access to this
     private void CacheSharedComponents() {
@@ -104,31 +102,7 @@ public class NetworkedPlayer : NetworkBehaviour {
         Debug.Log($"Player Initialization Complete! Initialized {_modules.Count} modules");
     }
    
-    private void OnPlayersChanged(SyncDictionaryOperation operation, int clientID, NetworkedPlayer clientObject, bool isServer) {
-        if (base.IsOwner)
-            return;
-        switch (operation) {
-            case SyncDictionaryOperation.Add:
-                break;
-            case SyncDictionaryOperation.Clear:
-                break;
-            case SyncDictionaryOperation.Remove:
-                break;
-            case SyncDictionaryOperation.Set:
-                break;
-            case SyncDictionaryOperation.Complete:
-                break;
-            default:
-                break;
-        }
-    }
 
-    [ServerRpc(RequireOwnership = true)]
-    private void CmdNotifyServerOfInitialization() {
-        NetworkedPlayersManager.Instance.Server_RegisterPlayer(base.Owner, this);
-        // This is also a great place to trigger any "local player is ready" logic
-
-    }
     public string GetPlayerName() {
         return $"Player: {OwnerId}"; // TODO, get steam name or user defined name etc..
     }
