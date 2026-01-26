@@ -62,18 +62,26 @@ namespace r8teful {
 
             var flat = GetTotalFlatModifier(extraMod);
             var percentAdd = GetTotalPercentModifier(extraMod); // Multiplier value we want to use if its a buf
-            //var finalValue = (baseValue + flat) * (1+percentAdd); 
-            var finalValue = (baseValue + flat) * Mathf.Max(1,percentAdd);
-            /*
-             * Maybe this later?
-            // Apply Multiplicative Percentages 
-            for (int i = 0; i < _modifiers.Count; i++) {
-                if (_modifiers[i].Type == StatModType.PercentMult)
-                    finalValue *= _modifiers[i].Value;
+            //var finalValue = (baseValue + flat) * (1+percentAdd);
+            var finalValue = 1f;
+
+            // Not sure if this is the right way to do this but if we have no procent to add ( meaning no mult modifiers) we should simply
+            // not multiply with it because we'd get 0 as final value
+            if(percentAdd > 0) {
+                finalValue = (baseValue + flat) * percentAdd;
+            } else {
+                finalValue = (baseValue + flat);
             }
-                */
-    
-            return finalValue; // Math.Max(0, finalValue) if you want no negatives
+                /*
+                 * Maybe this later?
+                // Apply Multiplicative Percentages 
+                for (int i = 0; i < _modifiers.Count; i++) {
+                    if (_modifiers[i].Type == StatModType.PercentMult)
+                        finalValue *= _modifiers[i].Value;
+                }
+                    */
+
+                return finalValue; // Math.Max(0, finalValue) if you want no negatives
         }
     }
 }

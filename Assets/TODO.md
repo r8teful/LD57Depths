@@ -3,17 +3,25 @@ Add description to the upgrades?
 
 
 * Visual for when going low on oxygen
-* Make lazer thicker
+* Make ores (alot) more harder to mine
+* Need some kind of tutorial / reminder of using the brimstone ability
+
+
+
+* Add exploration entities
+* Add biome essence
+
+
 
 
 
 Things that are good:
 
-First upgrade with the player damage and upgrade fixing is nice. You can do it in one oxygen run, ak, 60 sec. This si
+First upgrade with the player damage and upgrade fixing is nice. You can do it in one oxygen run. Okay the first 10 minutes or so is good now. Up until the lazer blast and oxygen length. Now next would be to think about how we can go from here...
 
+ 
 
-
-Consider the fact that players could be going down, have some kind of bedrock layer. Edit world ore spawns in GetOreDefinitions to start from bedrock etc....
+consider the fact that players could be going down, have some kind of bedrock layer. Edit world ore spawns in GetOreDefinitions to start from bedrock etc....
 
 
 

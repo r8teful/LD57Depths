@@ -51,7 +51,9 @@ public class UpgradeTreeDataSO : ScriptableObject {
             if (node.IsNodeMaxedOut(u)) continue;
             // Note that there are two IDs, upgrade NODES, and upgrade RECIPES, we have to check RECIPES ( we could check nodes, it would probably be better, but slighlt more complicated to check for maybe?!?)
             UpgradeRecipeSO recipe = node.GetUpgradeData(u,this);
-            if (pickedIDs.Contains(recipe.ID)) continue; // Don't choose upgrades we already have picked before 
+            if(pickedIDs != null) {
+                if (pickedIDs.Contains(recipe.ID)) continue; // Don't choose upgrades we already have picked before 
+            }
             if (recipe == null) continue;
             var valDiff = Mathf.Abs(recipe.GetRecipeValue() - value);
             if (valDiff < bestValueDiff) {

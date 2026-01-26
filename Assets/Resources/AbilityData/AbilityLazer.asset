@@ -18,13 +18,14 @@ MonoBehaviour:
   description: 
   type: 0
   cooldown: 0
-  isTimed: 0
   StatTypes:
   - Stat: 0
     BaseValue: 1
   - Stat: 1
     BaseValue: 1
   - Stat: 2
+    BaseValue: 1
+  - Stat: 3
     BaseValue: 1
   UpgradeValues: []
   effects:

@@ -55,7 +55,8 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
         PlayerLayerController.OnPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
     }
 
-    private void OnMiningKnockback(Vector2 force) {
+    // Called every frame from lazer
+    public void ApplyMiningKnockback(Vector2 force) {
         rb.AddForce(force);
     }
 

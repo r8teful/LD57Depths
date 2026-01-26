@@ -528,11 +528,11 @@ Things we have to think about with world init order
 
 
 
-BRUH. 
+BRUH.
 
-X = distance to center 
+X = distance to center
 
-Y = chance 
+Y = chance
 
 t = ratio: 0 - 1 depending on distance
 
@@ -544,7 +544,7 @@ n = depthRATIO
 
 b = bandwidth
 
-p = widthPrecent -> Basically determines how flat the curve is 
+p = widthPrecent -> Basically determines how flat the curve is
 
 
 
@@ -560,7 +560,7 @@ OK 1.63 mine damage breaks 120 blocks a minute. At IDEAL speed, in practice that
 
 Start - Get used to controls \& concepts
 
-2min -> Understands Tool 
+2min -> Understands Tool
 
 **\*recipes require silver \& gold\***
 
@@ -604,6 +604,33 @@ First minute of oxygen I can get 17 stone 12 copper. First minute should be mayb
 
 
 
+We need these different overlapping goals. I feel like you should design it around going out of the submarine and then coming back. Each time, you have a goal on your mind, you'll get stone, you'll get iron, or you'll go to that biome, all because you want to achieve a certain task, maybe you want to buy that one upgrade, or fix you submarine. etc.
+
+
+
+The amount of time you are out of the submarine should increase linearly, but maybe fall off at a certain time. That is kind of what we should aim for.
+
+
+
+
+
+PROBLEM NOW:
+
+
+
+Early game is good, First four upgrades are nice, quick and easy to get. But then there is the probem with iron, I'm getting it but its not really meaningfull I need to much iron right now. I don't know where to go from here I can't seem to upgrade anything interesting anymore.
+
+
+
+Maybe because the damage is the most important we either split it into more stages, maybe one or two more so we get 5 total upgrades, and then we unlock the lazer blast
+
+
+
+There's a bit too much copper right now,
+
+
+
+How do we want this lazer blast to give the buff but ONLY when we fire it? I feel like the easiest solution is that within the abilityInstance Tick, if there's a flag on the buff itself saying that we should only tick it when a certain bool is true, that wold mean the duration would only go down when we've actually pressed the shoot button. But the problem is that we check b.expiresAt. We don't reduce a counter or timer at all. So the solution would be to have expiresAt be -1 while this bool is false, and as soon as we start shooting, we set expires at to the Time.Time + dur. So the buff so has to have a flag saying "only
 
 
 
@@ -611,6 +638,5 @@ First minute of oxygen I can get 17 stone 12 copper. First minute should be mayb
 
 
 
-
-
+Just played through it and it actually was really good. until the lazer blast, only things I would change is making the oxygen a bit less copper, and possibly making the range either a bit harder to get or less long, also iron isn't working properly when you pick it up. The ability is also at a good spot it isn't too powerfull but just gives you that extra novelty of something helping you
 

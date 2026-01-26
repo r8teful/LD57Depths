@@ -155,7 +155,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     
     public void UpdateVisual() {
         var state = _visualData.State;
-        Debug.Log($" node: {gameObject.name} is updating its state to: {state}");
+        //Debug.Log($" node: {gameObject.name} is updating its state to: {state}");
         SetLevelText();
         // If this button is currently selected, show the manual Pressed sprite and early return.
         if (_isSelected) {

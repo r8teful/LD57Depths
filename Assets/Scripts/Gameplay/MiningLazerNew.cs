@@ -24,7 +24,6 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     }
     private void Update() {
         UpdateCurDir();
-        ApplyKnockback();
         HandleShootStateTransition();
         _isShooting = _player.InputManager.IsShooting();
         if (!_isShooting) return;
@@ -93,14 +92,11 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     }
 
     private void ApplyKnockback() {
-        if (_abilityInstance.GetEffectiveStat(StatType.Knockback) > 0) {
+        float knockback = _abilityInstance.GetEffectiveStat(StatType.Knockback);
+        if (knockback > 0) {
             // Apply knockback in the opposite direction of the lazer
-            Vector2 knockbackForce = -_currentDirection.normalized * _abilityInstance.GetEffectiveStat(StatType.Knockback) * Time.deltaTime;
-
-            // Invoke the event, sending the force vector. Any listeners will react.
-            
-            //TODO
-            //OnPlayerKnockbackRequested?.Invoke(knockbackForce);
+            Vector2 knockbackForce = -_currentDirection.normalized * knockback * Time.deltaTime;
+            _player.PlayerMovement.ApplyMiningKnockback(knockbackForce);
         }
     }
 
@@ -127,7 +123,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     }
     public void MineAbility() {
         HashSet<Vector3Int> processedCells = new HashSet<Vector3Int>(); // To avoid duplicate tiles
-
+        ApplyKnockback();
         var range = _abilityInstance.GetEffectiveStat(StatType.MiningRange);
         var falloff = _abilityInstance.GetEffectiveStat(StatType.MiningFalloff);
         var damage = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
