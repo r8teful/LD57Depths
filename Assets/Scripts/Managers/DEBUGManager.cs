@@ -119,10 +119,6 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     private void debugShowSubControlScreen() {
         machineControlPanel.DEBUGToggle();
     }
-    [ConsoleCommand("setTerraform")]
-    private void debugShowUpgradeScreen(float v) {
-        TerraformingManager.Instance.DEBUGSetValue(v);
-    }
     [ConsoleCommand("setSubIndex")]
     private void debugSetSubIndex(int v) {
         SubmarineManager.Instance.MoveSub(v);

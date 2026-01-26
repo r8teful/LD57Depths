@@ -9,7 +9,6 @@ public class TrashParticleSystem : MonoBehaviour {
         _particleRateOverTime = _particles.emission.rateOverTime.constant;
     }
     private void OnEnable() {
-        TerraformingManager.Instance.OnTotalChanged += OnTerraformChange;
     }
 
     private void OnTerraformChange(TerraformType type, float value) {
