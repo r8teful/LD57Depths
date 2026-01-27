@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,16 @@ public class UIUpgradeScreen : MonoBehaviour {
     private void Start() {
         _upgradePanel.SetActive(false); // Start with the panel being hidden
         _upgradePanelTree.SetActive(true);
+        UIUpgradeTree.OnUpgradeButtonPurchased += OnUpgradePurchasedThroughTree;
+
+    }
+    // todo make this good the shake is fucked it doesn't go back to where it started
+    private void OnUpgradePurchasedThroughTree() {
+        Debug.Log("PURSHASETREE");
+        var rect = _upgradePanel.GetComponent<RectTransform>();
+        rect.DOShakeAnchorPos(0.2f,60,2,180,randomnessMode:ShakeRandomnessMode.Harmonic);
+       // rect.DOShakeRotation(0.4f,60,2,180,randomnessMode:ShakeRandomnessMode.Harmonic);
+        //rect.DOComplete();
     }
     internal void Init(UIManager UIManager, NetworkedPlayer client) {
         _UIManagerParent = UIManager;

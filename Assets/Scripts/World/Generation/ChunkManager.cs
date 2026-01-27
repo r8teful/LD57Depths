@@ -424,9 +424,7 @@ public class ChunkManager : MonoBehaviour {
         TileBase[] clearTiles = new TileBase[CHUNK_SIZE * CHUNK_SIZE]; // Array of nulls
         _worldManager.SetTiles(chunkBounds, clearTiles);
         _worldManager.SetOres(chunkBounds, clearTiles);
-        //Debug.Log($"Client visually deactivated chunk {chunkCoord}");
         activeChunks.Remove(chunkCoord);
-        // Entities, note this will not work in multiplayer now, 
         _entitySpawner.RemoveEntitieAtChunk(chunkCoord);
         
     }

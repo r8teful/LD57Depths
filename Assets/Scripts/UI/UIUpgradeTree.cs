@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,7 +11,7 @@ public class UIUpgradeTree : MonoBehaviour {
     private Dictionary<ushort, List<UILineRenderer>> _lineMap = new Dictionary<ushort, List<UILineRenderer>>();
     private UpgradeTreeDataSO _treeData;
     private NetworkedPlayer _player;
-
+    public static event Action OnUpgradeButtonPurchased; // this would break if we have several trees
     public Dictionary<ushort, UIUpgradeNode> GetNodeMap => _nodeMap;
     internal void Init(UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades, NetworkedPlayer player) {
         _nodeMap.Clear();
@@ -115,6 +116,7 @@ public class UIUpgradeTree : MonoBehaviour {
       if (UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(upgradeNode)) {
             var unlockedUpgrades = _player.UpgradeManager.GetUnlockedUpgrades();
             uIUpgradeNode.OnUpgraded(unlockedUpgrades);
+            OnUpgradeButtonPurchased.Invoke();
         } 
     }
 

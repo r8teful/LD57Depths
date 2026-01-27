@@ -15,8 +15,8 @@ public class PlayerCameraController : MonoBehaviour {
     public void Awake() {
         _playerMainCamera = GetComponent<Camera>();
         PlayerLayerController.OnPlayerVisibilityChanged += OnPlayerVisibilityLayerChanged;
-    }
-    
+     }
+
     private void OnDisable() {
         PlayerLayerController.OnPlayerVisibilityChanged += OnPlayerVisibilityLayerChanged;
     }

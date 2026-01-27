@@ -5,6 +5,7 @@ Add description to the upgrades?
 * Visual for when going low on oxygen
 * Make ores (alot) more harder to mine
 * Need some kind of tutorial / reminder of using the brimstone ability
+* vfx juice for upgrade ui fix here: https://github.com/Demigiant/dotween/issues/427
 
 
 

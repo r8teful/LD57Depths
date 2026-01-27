@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 3631266698305096648}
   - component: {fileID: 3783026738432107383}
   - component: {fileID: 7796311416513063336}
+  - component: {fileID: -2173916335892788931}
   m_Layer: 12
   m_Name: WasteMedium0
   m_TagString: Waste
@@ -84,7 +85,7 @@ MonoBehaviour:
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
-  - {fileID: 3783026738432107383}
+  - {fileID: -2173916335892788931}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -109,7 +110,7 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 11
+  <PrefabId>k__BackingField: 77
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 16653802337783660846
   <SceneId>k__BackingField: 0
@@ -130,9 +131,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a11f4c85337a51541b66f6a3dcaeb729, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 3631266698305096648}
-  _networkObjectCache: {fileID: 3631266698305096648}
   IsDestroyedPermanently: 1
 --- !u!50 &7796311416513063336
 Rigidbody2D:
@@ -161,6 +159,21 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &-2173916335892788931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4634148657024835983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a6a39c46bf52104ba8efe3100bce3f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 3631266698305096648}
+  _networkObjectCache: {fileID: 3631266698305096648}
 --- !u!1 &5589407447438409348
 GameObject:
   m_ObjectHideFlags: 0

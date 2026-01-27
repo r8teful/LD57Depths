@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6917722311285614130}
   - component: {fileID: 118677745697707459}
   - component: {fileID: 2569735854207979515}
-  - component: {fileID: -5283526655762208488}
   - component: {fileID: 6962948237969374493}
   - component: {fileID: 1329228130332512456}
   - component: {fileID: 147320980772328580}
@@ -327,49 +326,6 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &-5283526655762208488
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1228294681075539138}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 2
-  _addedNetworkObject: {fileID: 6962948237969374493}
-  _networkObjectCache: {fileID: 6962948237969374493}
-  _componentConfiguration: 3
-  _synchronizeParent: 0
-  _packing:
-    Position: 1
-    Rotation: 1
-    Scale: 0
-  _interpolation: 2
-  _extrapolation: 2
-  _enableTeleport: 0
-  _teleportThreshold: 1
-  _clientAuthoritative: 1
-  _sendToOwner: 1
-  _interval: 1
-  _synchronizePosition: 1
-  _positionSnapping:
-    X: 0
-    Y: 0
-    Z: 0
-  _synchronizeRotation: 0
-  _rotationSnapping:
-    X: 0
-    Y: 0
-    Z: 0
-  _synchronizeScale: 0
-  _scaleSnapping:
-    X: 0
-    Y: 0
-    Z: 0
 --- !u!114 &6962948237969374493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,8 +345,8 @@ MonoBehaviour:
   NetworkBehaviours:
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: -5283526655762208488}
-  - {fileID: -7626533647889685779}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 8161649982983680990}
   - {fileID: 0}
   - {fileID: 0}
@@ -471,9 +427,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62e6e5541640c1a44881035a21ac43df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 3
-  _addedNetworkObject: {fileID: 6962948237969374493}
-  _networkObjectCache: {fileID: 6962948237969374493}
 --- !u!114 &8161649982983680990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -489,9 +442,6 @@ MonoBehaviour:
   _componentIndexCache: 4
   _addedNetworkObject: {fileID: 6962948237969374493}
   _networkObjectCache: {fileID: 6962948237969374493}
-  containerLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
 --- !u!114 &3312860346397150876
 MonoBehaviour:
   m_ObjectHideFlags: 0

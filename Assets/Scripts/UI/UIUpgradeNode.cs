@@ -217,9 +217,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         var vibrato = 5;
         var elasticity = 1;
         var scale = -0.1f;
-        transform.DOKill();
-        transform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity);
-        transform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-2f, 2f)), 0.2f, vibrato, elasticity);
+        _rectTransform.DOKill();
+        _rectTransform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity);
+        _rectTransform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-2f, 2f)), 0.2f, vibrato, elasticity);
     }
 
     public PopupData GetPopupData(InventoryManager clientInv) {

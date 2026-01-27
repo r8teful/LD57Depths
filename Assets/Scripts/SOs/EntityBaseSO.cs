@@ -63,9 +63,9 @@ public class PersistentEntityData {
     [JsonProperty(TypeNameHandling = TypeNameHandling.Auto)]
     public EntitySpecificData specificData; // Polymorphic field for specific data
 
-    // --- Runtime Link (Server Only, Not Saved) ---
+    // --- Runtime Link (Not Saved) ---
     [System.NonSerialized] 
-    public NetworkObject activeInstance = null; // Link to the live NetworkObject when active
+    public GameObject activeInstance = null; // Link to the live Gameobject when active
 
     public PersistentEntityData(ulong persistentId, ushort entityID, Vector3Int cellPos, Quaternion rotation) {
         this.persistentId = persistentId;
