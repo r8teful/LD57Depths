@@ -1,5 +1,4 @@
-﻿using FishNet.Object;
-using Sirenix.OdinInspector;
+﻿using Sirenix.OdinInspector;
 using System;
 using System.Linq;
 using UnityEngine;

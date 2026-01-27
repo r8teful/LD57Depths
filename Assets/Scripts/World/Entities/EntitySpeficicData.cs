@@ -25,6 +25,7 @@ public class GrowthEntityData : EntitySpecificData {
         GrowthStage = stage;
     }
     public override void ApplyTo(GameObject go) {
-        go.GetComponent<GrowableEntity>().SetGrowthStage(GrowthStage);
+       // todo
+        // go.GetComponent<GrowableEntity>().SetGrowthStage(GrowthStage);
     }
 }

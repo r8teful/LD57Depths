@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using FishNet.Object;
 
 public class TilePlant : MonoBehaviour, ITileChangeReactor {
 
@@ -45,7 +44,6 @@ public class TilePlant : MonoBehaviour, ITileChangeReactor {
         var angles = transform.localEulerAngles;
         offset.localPosition = new Vector3(0f, 0.5f, 0f);
     }
-    [Server]
     private void CheckGroundedState() {
         // Raycast down slightly further than foot position
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);

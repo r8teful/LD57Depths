@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Tilemaps;
-using FishNet.Object;
 using Sirenix.OdinInspector;
 using System;
 using Newtonsoft.Json;

@@ -77,11 +77,6 @@ public class PopupManager : StaticInstance<PopupManager> {
         }
     }
     
-    public void TryShowWorldPopup(IPopupInfo popupInfo, FishNet.Object.NetworkObject client) {
-        if (true) {
-            ShowPopup(popupInfo);
-        }
-    }
     private void OnSelectedGameObjectChanged(GameObject selected) {
         IPopupInfo newInfoProvider = selected?.GetComponent<IPopupInfo>();
         if (newInfoProvider != currentSelectedInfoProvider) {

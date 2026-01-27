@@ -1,5 +1,4 @@
 using UnityEngine;
-using FishNet.Object;
 using System.Collections.Generic;
 
 // Interface for components reacting to nearby tile changes
@@ -8,15 +7,9 @@ public interface ITileChangeReactor {
     void OnTileChangedNearby(Vector3Int cellPosition, int newTileID);
 }
 
-// Interface for components that need info about nearby players
-public interface IPlayerAwareness {
-    // Called SERVER-SIDE periodically or on demand to update player info
-    void UpdateNearbyPlayers(List<NetworkObject> nearbyPlayerNobs);
-}
-
 // Interface for components needing info about nearby entities
 public interface IEntityAwareness {
     // Called SERVER-SIDE periodically or on demand
-    void UpdateNearbyEntities(List<NetworkObject> nearbyEntityNobs);
+    void UpdateNearbyEntities(List<GameObject> nearbyEntityNobs);
 }
 // Maybe a WorldState awareness? (water oxygen, biome, cleannes)

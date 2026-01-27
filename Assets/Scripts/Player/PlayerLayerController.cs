@@ -1,7 +1,9 @@
 using UnityEngine;
-using FishNet.Object;
-using FishNet.Connection;
 using System;
+public enum VisibilityLayerType {
+    Exterior, // Visible only when the local player is in the Exterior layer
+    Interior  // Visible only when the local player is in a matching Interior layer
+}
 
 public class PlayerLayerController : MonoBehaviour, IPlayerModule {
     private VisibilityLayerType _currentLayer;

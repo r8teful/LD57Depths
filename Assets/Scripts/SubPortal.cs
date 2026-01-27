@@ -1,5 +1,4 @@
-﻿using FishNet.Object;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Interactable))]

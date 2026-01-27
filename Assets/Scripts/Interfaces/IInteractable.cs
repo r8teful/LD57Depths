@@ -1,5 +1,4 @@
-﻿using FishNet.Object;
-using UnityEngine;
+﻿using UnityEngine;
 
 public interface IInteractable {
     void Interact(PlayerManager player); // What happens when interacted with

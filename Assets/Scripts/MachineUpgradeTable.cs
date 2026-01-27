@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using FishNet.Object;
 
 [RequireComponent(typeof(Interactable))]
 public class MachineUpgradeTable : MonoBehaviour {

@@ -1,11 +1,9 @@
-﻿using FishNet.Object;
-using FishNet.Object.Synchronizing;
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using static PlayerMovement;
 // Handles how the player looks visualy, and also make sure the hitboxes are correct
-public class PlayerVisualHandler : NetworkBehaviour, IPlayerModule {
+public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
     // We need to rework this to make it easier for us to add costumes and stuff, needs to work with animations, and going into
     // submarine
     [SerializeField] private SpriteRenderer sprite; 
@@ -25,7 +23,7 @@ public class PlayerVisualHandler : NetworkBehaviour, IPlayerModule {
     public PlayerManager _remotePlayer;
     public PlayerManager _localPlayer;
     private float lightIntensityOn;
-    private readonly SyncVar<bool> _isFlipped = new SyncVar<bool>(false);
+    private bool _isFlipped = false;
     public event Action<bool> OnFlipChange;
     public int InitializationOrder => 2;
     private bool hasInitializedNonOwner; // Sometimes the init function gets called twice so this is just for that
@@ -47,9 +45,6 @@ public class PlayerVisualHandler : NetworkBehaviour, IPlayerModule {
         _bobBackHandler.HandleUpgradeBought(upgrade);   
     }
 
-    private void OnEnable() {
-        _isFlipped.OnChange += OnFlipChanged;
-    }
     private void InitCommon() {
         lightIntensityOn = lightSpot.intensity;
         _bobBackHandler.SetVisualNone();
@@ -171,21 +166,23 @@ public class PlayerVisualHandler : NetworkBehaviour, IPlayerModule {
         }
     }
 
-    // Run on the server, but called by the client
-    [ServerRpc(RequireOwnership = true)]
     public void CheckFlipSprite(float horizontalInput) {
+        var flippNow = _isFlipped;
         if (horizontalInput > 0.01f) {
-            _isFlipped.Value = false; // Flip to right
+            _isFlipped = false; // Flip to right
         } else if (horizontalInput < -0.01f) {
-            _isFlipped.Value = true; // Flip to left
+            _isFlipped = true; // Flip to left
         }
+        if (flippNow != _isFlipped) {
+            OnFlipChanged(_isFlipped);
+        }
+
     }
-    private void OnFlipChanged(bool prev, bool next, bool asServer) {
+    private void OnFlipChanged(bool next) {
         if (sprite == null)
             return;
         FlipPlayer(next);
-        //if (IsOwner)
-            OnFlipChange?.Invoke(next); // 
+        OnFlipChange?.Invoke(next);  
     }
     private void FlipPlayer(bool shouldFlip) {
         if (shouldFlip) {

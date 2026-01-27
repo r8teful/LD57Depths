@@ -1,13 +1,11 @@
 ﻿using DG.Tweening;
-using FishNet;
-using FishNet.Object;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
-public class FishEntity : NetworkBehaviour, IPlayerAwareness {
+public class FishEntity : MonoBehaviour {
     private enum FishState {
         Idle,
         Roaming,
@@ -56,12 +54,9 @@ public class FishEntity : NetworkBehaviour, IPlayerAwareness {
     [Header("Components")]
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
-    private List<NetworkObject> _nearbyPlayers;
-
+    private GameObject _nearbyPlayer;
     private Vector2 _finalMoveDir;
-    public override void OnStartServer() {
-        base.OnStartServer();
-        _nearbyPlayers = new List<NetworkObject>();
+    public void Start() {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>(); // Assumes sprite is a child or on the same object
 
@@ -70,46 +65,10 @@ public class FishEntity : NetworkBehaviour, IPlayerAwareness {
     }
 
     private void FixedUpdate() {
-        // AI logic should only run on the server. FishNet handles synchronization.
-        if (!IsServerInitialized)
-            return;
-
-        UpdateClosestClient();
         UpdateState();
         PerformStateAction();
     }
-    private void Start() {
-        //StartCoroutine(FishWiggle());
-    }
 
-    // --- Core AI Logic ---
-    /// <summary>
-    /// Finds the closest active player from the PlayerManager list.
-    /// </summary>
-    private void UpdateClosestClient() {
-        closestClient = null;
-        float minDistance = float.MaxValue;
-        _nearbyPlayers.Clear();
-        // Filter out any null or inactive clients before checking distances
-        foreach (var conn in InstanceFinder.ServerManager.Clients.Values) {
-            if (conn.FirstObject == null)
-                continue; // Player object not spawned/found?
-            _nearbyPlayers.Add(conn.FirstObject);
-        }
-        var activePlayers = _nearbyPlayers;
-        if (activePlayers == null)
-            return;
-        if (!activePlayers.Any())
-            return;
-
-        foreach (var player in activePlayers) {
-            float distance = Vector2.Distance(transform.position, player.transform.position);
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestClient = player.transform;
-            }
-        }
-    }
 
     /// <summary>
     /// Determines the fish's state based on the distance to the closest client.
@@ -322,8 +281,5 @@ public class FishEntity : NetworkBehaviour, IPlayerAwareness {
         moveSeq.Append(transform.DOScaleX(1, 0.2f).SetEase(Ease.OutBounce));
         moveSeq.Join(transform.DOScaleY(1, 0.2f).SetEase(Ease.OutBounce));
         return moveSeq;
-    }
-    public void UpdateNearbyPlayers(List<NetworkObject> nearbyPlayerNobs) {
-        _nearbyPlayers = nearbyPlayerNobs;
     }
 }

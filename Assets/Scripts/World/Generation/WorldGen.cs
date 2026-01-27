@@ -1,4 +1,3 @@
-using FishNet.Connection;
 using Sirenix.Utilities;
 using System;
 using System.Collections;
