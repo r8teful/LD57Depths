@@ -16,6 +16,8 @@ Add description to the upgrades?
 
 
 
+
+
 Things that are good:
 
 First upgrade with the player damage and upgrade fixing is nice. You can do it in one oxygen run. Okay the first 10 minutes or so is good now. Up until the lazer blast and oxygen length. Now next would be to think about how we can go from here...
@@ -46,3 +48,13 @@ Solo playtest the shit out of everything and make ALL values reasonable
 
 After this you may do internal playtest with Lucy
 
+
+
+
+
+Steamdeck notes:
+
+* Icons not updating correctly for controller
+* Can't go into submarine
+* When I went into the sub it didn't cull any world things and didn't go into walk state
+* Should a start menu with settings to change full screen mode etc...

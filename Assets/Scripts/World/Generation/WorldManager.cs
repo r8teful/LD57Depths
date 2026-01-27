@@ -6,8 +6,6 @@ using UnityEngine.Tilemaps;
 
 // Handles visual display of the world, also acts as a central part for references 
 public class WorldManager : StaticInstance<WorldManager> {
-
-    public static ushort WORLD_MAP_ID = 1;
     // --- Managers ---
     public WorldDataManager WorldDataManager;
     public WorldGen WorldGen;

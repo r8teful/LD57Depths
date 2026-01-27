@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour {
@@ -25,7 +26,7 @@ public class MainMenu : MonoBehaviour {
 
     // Starting new hosting game
     public void OnHostClicked() {
-        //SceneManager.LoadScene(1);
+        SceneManager.LoadScene(1);
     }
     public void OnJoinClicked() {
         //SceneManager.LoadScene(1);

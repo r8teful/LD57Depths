@@ -72,7 +72,8 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
     }
 
     private void SetupSettings() {
-        _settings = ResourceSystem.GetMainMap();
+        _settings = ResourceSystem.GetMainMap(); // We'll have to properly set this up later with nice menu icons etc..
+
         _worldGenSettings = WorldGenSettings.FromSO(_settings); // This does most the heavy lifting for us
     }
 

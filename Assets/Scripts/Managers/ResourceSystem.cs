@@ -42,6 +42,9 @@ public class ResourceSystem {
     public const ushort LadderID = 501; // Ladder is always 501, used in SubInterior.cs
     public const ushort ControlPanellRecipeID = 101; // FixRecipe.cs
 
+    // World stuff?
+    public static ushort WORLD_MAP_ID = 1;
+
     public const ushort BrimstoneBuffID = 1; // There must be a better way
     public const ushort BiomeBuffID = 99; // There must be a better way
     public const ushort LazerEffectID = 0; // There must be a better way
@@ -368,7 +371,6 @@ public class ResourceSystem {
         };
     }
     public static WorldGenSettingSO GetMapByID(ushort id) {
-#if UNITY_EDITOR
         var allAssets = Resources.LoadAll<WorldGenSettingSO>("WorldGenData").ToList();
         //var guids = AssetDatabase.FindAssets("t:WorldGenSettingSO");
         foreach (var world in allAssets) {
@@ -377,11 +379,10 @@ public class ResourceSystem {
             if (world != null && world.ID == id)
                 return world;
         }
-#endif
         return null;
     }
     public static WorldGenSettingSO GetMainMap() {
-        return GetMapByID(WorldManager.WORLD_MAP_ID);
+        return GetMapByID(WORLD_MAP_ID);
     }
 }
 

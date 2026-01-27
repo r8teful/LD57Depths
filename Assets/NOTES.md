@@ -640,3 +640,29 @@ How do we want this lazer blast to give the buff but ONLY when we fire it? I fee
 
 Just played through it and it actually was really good. until the lazer blast, only things I would change is making the oxygen a bit less copper, and possibly making the range either a bit harder to get or less long, also iron isn't working properly when you pick it up. The ability is also at a good spot it isn't too powerfull but just gives you that extra novelty of something helping you
 
+
+
+
+
+
+
+Ok you little dummy, what do you want the entity manager to actually do??
+
+
+
+EntityManager should ultimately be a pool, when we generate them, we keep their position which is in the dictionary that maps persistantID to PersistantEntityData. This dictionary is never destroyed or reset, only until we exit the current run. This data is saved exiting. When we enter the biome at a later point, we check a different dictionary, cachedEntityIdsByChunk, which simply "activates" these entities, this should be then taken from the pool, and when we leave the chunk, we just move, or remove them, whatever
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
