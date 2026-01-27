@@ -83,8 +83,8 @@ public class BiomeManager : StaticInstance<BiomeManager>
         // Wait until the player object owned by this client is spawned and available
         //Debug.Log("starting biome moving routine...");
         //yield return new WaitUntil(() => base.Owner != null && NetworkedPlayer.LocalInstance != null); 
-        yield return new WaitUntil(() => NetworkedPlayer.LocalInstance != null); 
-        Transform localPlayerTransform = NetworkedPlayer.LocalInstance.transform;
+        yield return new WaitUntil(() => PlayerManager.LocalInstance != null); 
+        Transform localPlayerTransform = PlayerManager.LocalInstance.transform;
         while (true) {
             if (localPlayerTransform == null) { // Safety check if player despawns
                 yield return new WaitForSeconds(checkInterval);

@@ -9,10 +9,10 @@ public class BoomerangProjectile : MonoBehaviour {
     [SerializeField] private float curveAmount = 2f;
 
     private Transform playerTransform;
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     private AbilityInstance _ability;
 
-    public void Init(NetworkedPlayer player, AbilityInstance abilityInstance) {
+    public void Init(PlayerManager player, AbilityInstance abilityInstance) {
         playerTransform = player.transform;
         _player = player;
         _ability = abilityInstance;
@@ -27,7 +27,7 @@ public class BoomerangProjectile : MonoBehaviour {
         while (true) {
             var tiles = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, transform.position, size);
             foreach (var tile in tiles) {
-                _player.CmdRequestDamageTile(tile.CellPos, damage);
+                _player.RequestDamageTile(tile.CellPos, damage);
             }
             yield return new WaitForSeconds(checkInterval);
         }

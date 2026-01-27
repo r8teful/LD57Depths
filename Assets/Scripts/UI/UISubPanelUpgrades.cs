@@ -49,7 +49,7 @@ public class UISubPanelUpgrades : MonoBehaviour {
             // RequiredAmount is how much is contributed when pressing the button
             int requiredAmount = Mathf.CeilToInt((float)reqItem.quantity / 10); // Maybe later this wont be 8, also idealy this would need to be divisable by 8 
             var ingredientStatus = new IngredientStatus(reqItem.item, requiredAmount,
-                NetworkedPlayer.LocalInstance.GetInventory().GetItemCount(reqItem.item.ID));
+                PlayerManager.LocalInstance.GetInventory().GetItemCount(reqItem.item.ID));
             var contributed = SubmarineManager.Instance.GetContributedAmount(_curRecipeData.ID, reqItem.item.ID);
             var bar = Instantiate(App.ResourceSystem.GetPrefab<UISubUpgradeBar>("UISubUpgradeBar"), _upgradeBarContainer);
             bar.Init(this,_curRecipeData, ingredientStatus, contributed, reqItem.quantity);
@@ -107,7 +107,7 @@ public class UISubPanelUpgrades : MonoBehaviour {
         foreach (var reqItem in _curRecipeData.requiredItems) {
             int requiredAmount = Mathf.CeilToInt((float)reqItem.quantity / 10); // Have to find a better way to get this
             var ingredientStatus = new IngredientStatus(reqItem.item, requiredAmount,
-            NetworkedPlayer.LocalInstance.GetInventory().GetItemCount(reqItem.item.ID));
+            PlayerManager.LocalInstance.GetInventory().GetItemCount(reqItem.item.ID));
             var contributed = SubmarineManager.Instance.GetContributedAmount(_curRecipeData.ID, reqItem.item.ID);
             _upgradeBars[reqItem.item.ID].SetNewData(ingredientStatus, contributed); // Easy lookup now that we've mapped the item ID to each bar
         }

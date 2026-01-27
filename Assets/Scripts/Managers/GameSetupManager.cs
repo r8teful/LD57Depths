@@ -14,6 +14,7 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
     public WorldGenSettings WorldGenSettings => _worldGenSettings;
     public GameSettings CurrentGameSettings;
     private WorldGenSettingSO _settings;
+    [SerializeField] private PlayerManager _playerPrefab;
     // TODO remove this
     private string _upgradeTreeName = "DefaultTree"; // Would depend on what the player chooses for tools etc
 
@@ -59,7 +60,10 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
         if (bw == null)
             LogError(bw);
         bw.PushBiomesToMaterials(WorldGenSettings);
-    
+
+        // Spawn player
+        Instantiate(_playerPrefab, w.PlayerSpawn,Quaternion.identity);
+
         yield return null;// App.Backdrop.Release();
     }
 

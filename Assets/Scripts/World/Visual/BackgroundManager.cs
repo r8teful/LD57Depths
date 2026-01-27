@@ -121,10 +121,10 @@ public class BackgroundManager : MonoBehaviour {
     }
     private IEnumerator SpawnCoroutine() {
         // Wait until player is not null
-        while (NetworkedPlayer.LocalInstance  == null) {
+        while (PlayerManager.LocalInstance  == null) {
             yield return null; // Wait for the next frame
         }
-        player = NetworkedPlayer.LocalInstance.transform;
+        player = PlayerManager.LocalInstance.transform;
 
         // Continue spawning at intervals
         while (true) {

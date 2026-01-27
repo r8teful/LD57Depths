@@ -24,7 +24,7 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
     public (Sprite, Sprite) BackSprites => (null,null);
 
     // All clients run this
-    public void Init(bool isOwner, NetworkedPlayer player) {
+    public void Init(bool isOwner, PlayerManager player) {
         _localPlayerStats = player.PlayerStats;
         _isOwner = isOwner;
         if (_localPlayerStats.IsInitialized) {

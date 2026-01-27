@@ -50,7 +50,7 @@ public class TileDropManager : StaticInstance<TileDropManager> {
             return dropData;
         }
         // Get the random drop amount based on luck
-        var luck = NetworkedPlayer.LocalInstance.PlayerStats.GetStat(StatType.Luck);
+        var luck = PlayerManager.LocalInstance.PlayerStats.GetStat(StatType.Luck);
         var dropAmount = RandomnessHelpers.GetDropScewed(maxDropAmount, luck);
         dropData.Add(new(prefab, dropAmount, tile.drop.ID));
         return dropData;

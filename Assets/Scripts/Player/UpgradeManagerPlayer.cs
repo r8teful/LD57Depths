@@ -1,60 +1,35 @@
-﻿using FishNet.Object;
-using FishNet.Object.Synchronizing;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Has to hold upgrade info! Specific to THIS player 
-public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
+// Has to hold upgrade info! 
+public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
 
-    //private Dictionary<ushort,UpgradeRecipeSO> unlockedUpgrades = new Dictionary<ushort, UpgradeRecipeSO>();
-    private readonly SyncHashSet<ushort> unlockedUpgrades = new();
+    private HashSet<ushort> unlockedUpgrades = new();
     public event Action<UpgradeRecipeSO> OnUpgradePurchased;
     private CraftingComponent _crafting;
-    private NetworkedPlayer _localNetworkedPlayer;
+    private PlayerManager _localNetworkedPlayer;
 
     public static UpgradeManagerPlayer LocalInstance { get; private set; }
 
-    public HashSet<ushort> GetUnlockedUpgrades() {
-        //HashSet<ushort> output = new HashSet<ushort>();
-        //foreach (var key in unlockedUpgrades.GetCollection(false)) {
-        //    output.Add(key);
-        //}
-        //return output;
-        return unlockedUpgrades.GetCollection(false);
-    }
-    public override void OnStartClient() {
-        base.OnStartClient();
-        unlockedUpgrades.OnChange += OnUpgradeChange;
-    }
+    public HashSet<ushort> GetUnlockedUpgrades() => unlockedUpgrades;
 
-    private void OnUpgradeChange(SyncHashSetOperation op, ushort item, bool asServer) {
-        if (asServer)
-            return; 
-        if (op == SyncHashSetOperation.Add) {
-            // Now we fire the event to notify listeners, this will work for multiplayer now
-            var recipe = App.ResourceSystem.GetRecipeUpgradeByID(item);
-            Debug.Log($"Successfully purchased upgrade: {recipe.name}");
-            OnUpgradePurchased?.Invoke(recipe);
-        }
+    private void OnUpgradePurchase(UpgradeRecipeSO recipe) {
+        Debug.Log($"Successfully purchased upgrade: {recipe.name}");
+        OnUpgradePurchased?.Invoke(recipe);
     }
 
     public int InitializationOrder => 10;
 
-    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(PlayerManager playerParent) {
         LocalInstance = this;
         _crafting = playerParent.CraftingComponent;
         _localNetworkedPlayer = playerParent;
     }
-    public override void OnStopClient() {
-        base.OnStopClient();
-        LocalInstance = null;
-    }
   
-    // this is bad to do because the UpgradePurchased event will only be called on the local clients
     public bool TryPurchaseUpgrade(UpgradeNodeSO node) {
         var tree = App.ResourceSystem.GetTreeByName(GameSetupManager.Instance.GetUpgradeTreeName());
-        UpgradeRecipeSO recipe = node.GetUpgradeData(unlockedUpgrades.Collection, tree);
+        UpgradeRecipeSO recipe = node.GetUpgradeData(unlockedUpgrades, tree);
         // 1. Check if already purchased
         if (unlockedUpgrades.Contains(recipe.ID)) {
             Debug.LogWarning($"Attempted to purchase an already owned upgrade: {recipe.name}");
@@ -62,7 +37,7 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
         }
 
         // 2. Check prerequisites
-        if (!node.ArePrerequisitesMet(unlockedUpgrades.Collection)) {
+        if (!node.ArePrerequisitesMet(unlockedUpgrades)) {
             return false;
         }
         ExecutionContext context = new(_localNetworkedPlayer);
@@ -74,12 +49,15 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
 
         // 4. Add upgrade to player's data
         unlockedUpgrades.Add(recipe.ID); // Will fire the OnChange event
+        OnUpgradePurchase(recipe);
         return true;
     }
 
     // Rewards are unlocked without "trying" need this to track it so we know we have it unlocked
     public void AddUnlockedUpgrade(ushort ID) {
         unlockedUpgrades.Add(ID);
+        var recipe = App.ResourceSystem.GetRecipeUpgradeByID(ID);
+        OnUpgradePurchase(recipe);
     }
   
 
@@ -99,9 +77,7 @@ public class UpgradeManagerPlayer : NetworkBehaviour, INetworkedPlayerModule {
                 var recipeData = App.ResourceSystem.GetRecipeUpgradeByID(recipe);
                 recipeData.Execute(null); // BRUH how are we going to do this?
                 // We can have the order depening on the ID, then the multiplication and addition will be done in the right order
-
             }
-            
         }
     }
 }

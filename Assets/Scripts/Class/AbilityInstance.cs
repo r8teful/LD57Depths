@@ -12,7 +12,7 @@ public class AbilityInstance {
     public AbilitySO Data { get; }
     // For getting script reference if we had spawned the effect
     public GameObject Object { get; private set; }
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     [ShowInInspector]
     private Dictionary<StatType, Stat> _stats = new();
     public Dictionary<StatType, Stat> Stats => _stats;
@@ -49,7 +49,7 @@ public class AbilityInstance {
     // the effective value of the buff target. Meaning, if base is 10, lazer is 20 damage, and brimstone is 1.5 well get 30 output and not 15, because brimstone depends on lazer 
     // Basically we need a bool like this to know if when we get the effective value we use multiply by the base stat or the target ability stat
   
-    public AbilityInstance(AbilitySO data, NetworkedPlayer player, GameObject @object = null) {
+    public AbilityInstance(AbilitySO data, PlayerManager player, GameObject @object = null) {
         Data = data;
         _player = player;
         _cooldownRemaining = 0f;

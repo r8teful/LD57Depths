@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class CactusProjectile : MonoBehaviour {
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     Vector2 direction;
     float speed;
     float lifetime;
@@ -14,7 +14,7 @@ public class CactusProjectile : MonoBehaviour {
     /// <summary>
     /// Call this to initialize/reuse the bullet.
     /// </summary>
-    public void Init(NetworkedPlayer player, Vector2 dir, float speed, float lifetime) {
+    public void Init(PlayerManager player, Vector2 dir, float speed, float lifetime) {
         _player = player;
         this.direction = dir.normalized;
         this.speed = speed;
@@ -65,7 +65,7 @@ public class CactusProjectile : MonoBehaviour {
     private void TriggerHit() {
         if (hasExploded) return;
         hasExploded = true;
-        _player.CmdRequestDamageNearestSolidTile(transform.position, 2);
+        _player.RequestDamageNearestSolidTile(transform.position, 2);
         Recycle();
     }
     private void OnDrawGizmosSelected() {

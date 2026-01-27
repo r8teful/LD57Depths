@@ -40,7 +40,7 @@ public class Artifact : MonoBehaviour {
 
     private void RemoveTempBiomeEffects() {
         // Tell BiomeBuffSpawner to remove temp effects for biome
-        var biomeBuffAbility = NetworkedPlayer.LocalInstance.PlayerAbilities.GetAbilityInstance(ResourceSystem.BiomeBuffID);
+        var biomeBuffAbility = PlayerManager.LocalInstance.PlayerAbilities.GetAbilityInstance(ResourceSystem.BiomeBuffID);
         if(biomeBuffAbility.Object.TryGetComponent<BiomeBuffSpawner>(out var buffSpawner)){
             buffSpawner.RemoveCurrentBiomeEffects(); // Seems messy, its either this or an event
         }
@@ -60,10 +60,10 @@ public class Artifact : MonoBehaviour {
         var ability = data.BiomePermanentAbility;
         var buff = data.BiomePermanentBuff;
         if (ability != null) {
-            NetworkedPlayer.LocalInstance.PlayerAbilities.AddAbility(ability);
+            PlayerManager.LocalInstance.PlayerAbilities.AddAbility(ability);
         }
         if (buff != null) {
-            NetworkedPlayer.LocalInstance.PlayerStats.TriggerBuff(buff);
+            PlayerManager.LocalInstance.PlayerStats.TriggerBuff(buff);
         }
     }
 }

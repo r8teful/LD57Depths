@@ -21,9 +21,9 @@ public class IceBounce : MonoBehaviour {
     // internal
     Queue<Vector2> _history;
     int _cooldownCounter;
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
 
-    public void Init(AbilityInstance instance, NetworkedPlayer player) {
+    public void Init(AbilityInstance instance, PlayerManager player) {
         Debug.Log("Ice bounce equiped!");
         _history = new Queue<Vector2>(lookBackFrames + 1);
         _cooldownCounter = 0;
@@ -31,7 +31,7 @@ public class IceBounce : MonoBehaviour {
     }
     private void Start() {
         // Playermovement is not initialized in our init functoin, so wait until start to get the reference
-        if (rb == null) rb = NetworkedPlayer.LocalInstance.PlayerMovement.GetRigidbody();
+        if (rb == null) rb = PlayerManager.LocalInstance.PlayerMovement.GetRigidbody();
     }
     private void OnDestroy() {
         Debug.Log("Ice bounce GONE!");
@@ -99,7 +99,7 @@ public class IceBounce : MonoBehaviour {
         var dmg = GetContactDamage(preImpactMagnitudeAbs);
         var contacts = _player.PlayerMovement.ContactsMostRecent;
         foreach (var contact in contacts) {
-            _player.CmdRequestDamageTile(contact.point, dmg);
+            _player.RequestDamageTile(contact.point, dmg);
         }
         // start cooldown to avoid repeated triggers for the same collision
         _cooldownCounter = cooldownFrames;

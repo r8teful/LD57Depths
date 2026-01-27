@@ -14,7 +14,7 @@ public interface IToolVisual {
      * With this information, we can then succesfully simulate the visual of the tool locally on the client without it actually
      * effecting any gameplay, but still visually syncing with what the other player is doing.
      */
-    public void Init(bool isOwner, NetworkedPlayer visuaHandler);
+    public void Init(bool isOwner, PlayerManager visuaHandler);
     void UpdateVisual(object data, InputManager inputManager = null); // Tool handles its own way to get input
     void StartVisual();
     void StopVisual();

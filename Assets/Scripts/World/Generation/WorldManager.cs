@@ -30,7 +30,7 @@ public class WorldManager : StaticInstance<WorldManager> {
     [SerializeField] private TileSO _shadeTile; // We can set this with the resource system but just doing this now
     public float GetVisualTilemapGridSize() => mainTilemap.transform.parent.GetComponent<Grid>().cellSize.x; // Cell size SHOULD be square
     public bool useSave; 
-    [SerializeField] Transform playerSpawn;
+    public Vector3 PlayerSpawn { get; private set; }
 
     [Button("NewWorld")]
     private void DEBUGNEWGEN() {
@@ -81,7 +81,7 @@ public class WorldManager : StaticInstance<WorldManager> {
         var offset = GetVisualTilemapGridSize() * 6;
         var maxDepth = _gameSetupManager.WorldGenSettings.MaxDepth;
         // Depths is in blocks, so times it with grid size to get world space pos
-        playerSpawn.transform.position = new Vector3(0, maxDepth + offset);
+        PlayerSpawn = new Vector3(0, maxDepth + offset);
     }
 
     public void MoveCamToChunkCoord(Vector2Int chunkCoord) {

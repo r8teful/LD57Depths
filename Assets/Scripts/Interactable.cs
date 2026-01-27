@@ -14,7 +14,7 @@ public class Interactable : MonoBehaviour, IInteractable {
     [ReadOnly]private bool isInteractionEnabled = true;
 
     [Tooltip("Action to execute when the player interacts with this object.")]
-    public event Action<NetworkedPlayer> OnInteract;
+    public event Action<PlayerManager> OnInteract;
 
     [Tooltip("Action to execute when this object is no longer the closest interactable (e.g., to close an associated UI).")]
     public event Action OnCeaseInteractable;
@@ -64,7 +64,7 @@ public class Interactable : MonoBehaviour, IInteractable {
     /// <summary>
     /// Called by the external manager when the interact button is pressed.
     /// </summary>
-    public void Interact(NetworkedPlayer player) {
+    public void Interact(PlayerManager player) {
         if (!CanInteract)
             return;
         // Invoke the main interaction event, passing along the client who interacted.

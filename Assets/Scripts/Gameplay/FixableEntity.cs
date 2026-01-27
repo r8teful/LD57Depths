@@ -68,7 +68,7 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
     }
 
     // The best would be to use the already existing popup manager to setup the thing but I don't know what the real benefits are atm, this works for now
-    public void Interact(NetworkedPlayer player) {
+    public void Interact(PlayerManager player) {
         if(instantatiatedCanvas != null && instantatiatedPopup == null) {
             if (_isFixed) {
                 // Open the UI for this object?

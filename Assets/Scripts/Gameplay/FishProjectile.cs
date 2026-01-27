@@ -8,11 +8,11 @@ public class FishProjectile : MonoBehaviour {
 
     private Rigidbody2D _rb;
     private float _mineTimer;
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     private AbilityInstance _ability;
     [SerializeField] private Transform _mouthPos;
 
-    public void Init(NetworkedPlayer player, AbilityInstance abilityInstance, Vector2 dir) {
+    public void Init(PlayerManager player, AbilityInstance abilityInstance, Vector2 dir) {
         _player = player;
         _ability = abilityInstance;
         var speedMult = _ability.GetEffectiveStat(StatType.ProjectileSpeed);
@@ -42,7 +42,7 @@ public class FishProjectile : MonoBehaviour {
         float damage  = _ability.GetEffectiveStat(StatType.MiningDamage);
         var hits = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, _mouthPos.position, mouthradius);
         foreach (var hit in hits) {
-            _player.CmdRequestDamageTile(hit.CellPos,damage);
+            _player.RequestDamageTile(hit.CellPos,damage);
             
         }
         

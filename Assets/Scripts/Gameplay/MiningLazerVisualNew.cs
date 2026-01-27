@@ -6,7 +6,7 @@ public class MiningLazerVisualNew : MonoBehaviour {
     public ParticleSystem ParticlesPrefabHit;
     public ParticleSystem _lineLazerParticleSystem;
     private ParticleSystem _hitParticleSystem;
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     private AbilityInstance _abilityInstance;
     private MiningLazerNew _lazerLogic;
     private AudioSource lazerSound;
@@ -15,7 +15,7 @@ public class MiningLazerVisualNew : MonoBehaviour {
     private void Awake() {
         SetupParticlesVisual();
     }
-    public void Init(NetworkedPlayer player, AbilityInstance ability, MiningLazerNew miningLazerNew) {
+    public void Init(PlayerManager player, AbilityInstance ability, MiningLazerNew miningLazerNew) {
         _player = player;
         _abilityInstance = ability; // Need this for lazer length 
         _lazerLogic = miningLazerNew;

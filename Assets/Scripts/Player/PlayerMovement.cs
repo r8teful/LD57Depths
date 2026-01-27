@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
+public class PlayerMovement : MonoBehaviour, IPlayerModule {
 
     private Rigidbody2D rb;
     private Camera MainCam;
@@ -37,7 +37,7 @@ public class PlayerMovement : MonoBehaviour, INetworkedPlayerModule {
     public event Action<PlayerState> OnPlayerStateChanged;
     public Rigidbody2D GetRigidbody() => rb;
 
-    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(PlayerManager playerParent) {
         MainCam = Camera.main;
         MainCam.transform.SetParent(transform);
         MainCam.transform.localPosition = new Vector3(0, 0, -10);

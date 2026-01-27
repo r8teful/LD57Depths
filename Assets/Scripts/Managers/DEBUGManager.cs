@@ -25,10 +25,10 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     [SerializeField] PlayerMovement player;
     [OnValueChanged("PlayerSpeed")]
     public float playerSpeed;
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
 
 
-    public void RegisterOwningPlayer(NetworkedPlayer player) {
+    public void RegisterOwningPlayer(PlayerManager player) {
         _player = player;
     }
     private void GiveAll() {
@@ -125,11 +125,11 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     }
     [ConsoleCommand("setMineDamage")]
     private void debugSetDamage(float v) {
-        NetworkedPlayer.LocalInstance.PlayerStats.DEBUGSetStat(StatType.MiningDamage,v);
+        PlayerManager.LocalInstance.PlayerStats.DEBUGSetStat(StatType.MiningDamage,v);
     }
     [ConsoleCommand("setMineRange")]
     private void debugSetRange(float v) {
-        NetworkedPlayer.LocalInstance.PlayerStats.DEBUGSetStat(StatType.MiningRange, v);
+        PlayerManager.LocalInstance.PlayerStats.DEBUGSetStat(StatType.MiningRange, v);
     }
     [ConsoleCommand("toggleHitbox")]
     private void debugToggleHitbox() {

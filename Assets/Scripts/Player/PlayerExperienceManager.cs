@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 
-public class PlayerExperienceManager : MonoBehaviour, INetworkedPlayerModule {
+public class PlayerExperienceManager : MonoBehaviour, IPlayerModule {
     [Header("Player Stats")]
     private LevelData levelData;
     private bool isLevelUpSequenceActive;
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
 
     public int InitializationOrder => 99;
 
-    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(PlayerManager playerParent) {
         levelData ??= new LevelData();
         _player = playerParent;
         // Ensure the required XP is calculated correctly on start

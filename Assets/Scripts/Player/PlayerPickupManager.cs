@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 
-public class PlayerPickupManager : MonoBehaviour, INetworkedPlayerModule {
+public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
 
     private float _pickupTimer;
     private float pickupRadius = 1f;
     [SerializeField] private LayerMask pickupLayerMask; // Set this to the layer your WorldItem prefabs are on
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     private float _cachedMagnetism;
     private float MagnetRange => _cachedMagnetism * 2; // idk?
     private float MagnetStrength => _cachedMagnetism * 0.2f; // idk?
  
     public int InitializationOrder => 42;// Again no clue if this matters
-    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(PlayerManager playerParent) {
         _player = playerParent;
         _player.PlayerStats.OnStatChanged += OnStatChange;
         _cachedMagnetism = _player.PlayerStats.GetStat(StatType.PlayerMagnetism);

@@ -20,7 +20,7 @@ public class UIManager : Singleton<UIManager> {
         return false;
 
     }
-    public void Init(NetworkedPlayer client, GameObject owningPlayer) {
+    public void Init(PlayerManager client, GameObject owningPlayer) {
         _localInventoryManager = client.InventoryN.GetInventoryManager();
         PopupManager = GetComponent<PopupManager>();
         _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage

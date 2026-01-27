@@ -3,7 +3,7 @@ using FishNet.Object;
 using FishNet.Connection;
 using System;
 
-public class PlayerLayerController : MonoBehaviour, INetworkedPlayerModule {
+public class PlayerLayerController : MonoBehaviour, IPlayerModule {
     private VisibilityLayerType _currentLayer;
 
     public VisibilityLayerType CurrentLayer => _currentLayer;
@@ -12,7 +12,7 @@ public class PlayerLayerController : MonoBehaviour, INetworkedPlayerModule {
 
     public static event Action<VisibilityLayerType> OnPlayerVisibilityChanged;
 
-    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(PlayerManager playerParent) {
         //_playerParent = playerParent;  
     }
 

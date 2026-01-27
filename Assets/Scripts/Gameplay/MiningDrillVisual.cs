@@ -58,7 +58,7 @@ public class MiningDrillVisual : MonoBehaviour, IToolVisual {
         transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
-    public void Init(bool isOwner, NetworkedPlayer parent) {
+    public void Init(bool isOwner, PlayerManager parent) {
         _isOwner = isOwner;
         _cachedVisualHandler = parent.PlayerVisuals;
         //parent.PlayerVisuals.OnToolInitBack(this); // Removes whatever backvisual we've got

@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
+public class PlayerAbilities : MonoBehaviour, IPlayerModule {
     // runtime map from id -> instance
     [ShowInInspector]
     private Dictionary<ushort, AbilityInstance> _abilities = new();
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     [SerializeField] private Transform _abilitySlotTransform;
     public Transform AbilitySlot => _abilitySlotTransform;
     public int InitializationOrder => 999; // Has to be after player movement because some abilities need it
@@ -18,7 +18,7 @@ public class PlayerAbilities : MonoBehaviour, INetworkedPlayerModule {
     public bool HasAbility(ushort abilityID) => _abilities.ContainsKey(abilityID);
     public HashSet<ushort> OwnedAbilitiesIDs => _abilities.Keys.ToHashSet();
 
-    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(PlayerManager playerParent) {
         _player = playerParent;
         AddAbility(App.ResourceSystem.GetAbilityByID(0)); // Lazer is ID 0 
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BrimstoneBuffID)); // Lazer blast

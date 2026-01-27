@@ -3,14 +3,14 @@ using System.Collections;
 using UnityEngine;
 using static PlayerMovement;
 
-public class OxygenManager : MonoBehaviour, INetworkedPlayerModule {
+public class OxygenManager : MonoBehaviour, IPlayerModule {
 
     private float maxOxygen;
     private float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
     private float currentOxygen;
     private float maxHealth = 15; // amount in seconds the player can survive with 0 oxygen 
     private float playerHealth;
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     private bool _isInsideOxygenZone;
     private PlayerState _cachedState;
     private bool peepPlayed;
@@ -32,7 +32,7 @@ public class OxygenManager : MonoBehaviour, INetworkedPlayerModule {
     }
         
 
-    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(PlayerManager playerParent) {
         maxOxygen= playerParent.PlayerStats.GetStat(StatType.PlayerOxygenMax);
         CurrentOxygen = maxOxygen;
         playerHealth = maxHealth;

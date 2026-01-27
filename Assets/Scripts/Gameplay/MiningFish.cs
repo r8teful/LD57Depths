@@ -2,7 +2,7 @@
 
 public class MiningFish : MonoBehaviour,IInitializableAbility {
     private AbilityInstance _abilityInstance;
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     private bool _isShooting;
     private bool _wasShootingLastFrame;
     private float _cooldownRemaining;
@@ -10,7 +10,7 @@ public class MiningFish : MonoBehaviour,IInitializableAbility {
     [SerializeField] private Transform  _spawnPos;
     [SerializeField] private float FishCooldown;
 
-    public void Init(AbilityInstance instance, NetworkedPlayer player) {
+    public void Init(AbilityInstance instance, PlayerManager player) {
         _abilityInstance = instance;
         _player = player;
         _visual = GetComponent<MiningFishVisual>();

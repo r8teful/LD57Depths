@@ -4,15 +4,15 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerRewardManager : MonoBehaviour, INetworkedPlayerModule {
+public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
     public int InitializationOrder => 99;
     private IExecutable[] _upgradeEffects = new IExecutable[3];
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     private HashSet<ushort> pickedAbilityIDs =         new();
     private HashSet<ushort> pickedAbilityUpgradeIDs =  new();
     private HashSet<ushort> pickedUpgradeNodeIDs =     new();
     public IExecutable[] UpgradeEffects => _upgradeEffects;
-    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(PlayerManager playerParent) {
         _upgradeEffects = new IExecutable[3];
         _player = playerParent;
     }

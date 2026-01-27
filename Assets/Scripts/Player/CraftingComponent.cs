@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 
 // Just on the player for now because fuck it
-public class CraftingComponent : MonoBehaviour, INetworkedPlayerModule {
+public class CraftingComponent : MonoBehaviour, IPlayerModule {
     private InventoryManager _clientInventory; // Your existing client inventory manager
 
     public int InitializationOrder => 1;
 
-    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(PlayerManager playerParent) {
         _clientInventory = playerParent.InventoryN.GetInventoryManager();
     }
     // Not that SubmarineManager handles the subupgrading stuff

@@ -13,7 +13,7 @@ public enum PlayerInteractionContext {
 }
 // UI input handling is in inventoryUIManager
 // This script sits on the player client
-public class InputManager : MonoBehaviour, INetworkedPlayerModule {
+public class InputManager : MonoBehaviour, IPlayerModule {
     private PlayerInput _playerInput;
     private InputAction _interactAction;
     private InputAction _playerShootAction;
@@ -25,7 +25,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
     private InputAction _hotbarSelection;
     private UIManagerInventory _inventoryUIManager;
     private UIManager _UIManager;
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     private PlayerAbilities _playerAbilities;
     private InputDevice lastUsedDevice;
     // UI
@@ -59,7 +59,7 @@ public class InputManager : MonoBehaviour, INetworkedPlayerModule {
 
     public bool IsUsingController { get; internal set; }
     public event Action<InputAction.CallbackContext> OnUIInteraction;
-    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(PlayerManager playerParent) {
         _UIManager = playerParent.UiManager;
         _inventoryUIManager = _UIManager.UIManagerInventory;
         _player = playerParent;

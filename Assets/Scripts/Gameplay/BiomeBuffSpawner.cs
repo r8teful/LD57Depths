@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 public class BiomeBuffSpawner : MonoBehaviour, IInitializableAbility {
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     private AbilityInstance _instance;
 
     private AbilitySO _currentAbility;        
     private BuffHandle _currentBiomeBuff;
 
-    public void Init(AbilityInstance instance, NetworkedPlayer player) {
+    public void Init(AbilityInstance instance, PlayerManager player) {
         _player = player;
         _instance = instance;
         BiomeManager.Instance.OnNewClientBiome += NewClientBiome;

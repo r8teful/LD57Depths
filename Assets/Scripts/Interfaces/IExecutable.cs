@@ -11,14 +11,14 @@ public interface IExecutable {
 }
 public class ExecutionContext {
 
-    public readonly NetworkedPlayer Player;
+    public readonly PlayerManager Player;
     public readonly GameObject Source; // The originating object 
 
-    public ExecutionContext(NetworkedPlayer player, GameObject source = null) {
+    public ExecutionContext(PlayerManager player, GameObject source = null) {
         Player = player;
         Source = source;
     }
-    public static ExecutionContext FromPlayer(NetworkedPlayer player) {
+    public static ExecutionContext FromPlayer(PlayerManager player) {
         return new ExecutionContext(player);
     }
     public static ExecutionContext FromObject(GameObject obj) {

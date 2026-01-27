@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MiningFishVisual : MonoBehaviour
 {
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
 
     internal void HandleVisualUpdate() {
         Vector2 toolPosition = transform.position;
@@ -24,7 +24,7 @@ public class MiningFishVisual : MonoBehaviour
         transform.localScale = scale;
     }
 
-    internal void Init(NetworkedPlayer player) {
+    internal void Init(PlayerManager player) {
         _player = player;
     }
 }

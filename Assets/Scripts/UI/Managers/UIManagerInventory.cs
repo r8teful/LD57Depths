@@ -33,7 +33,7 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
     // --- Properties ---
     public bool IsOpen => playerUIPanel != null && _isOpen;
     public event Action<bool> OnInventoryToggle;
-    public void Init(GameObject owningPlayer, NetworkedPlayer client) {
+    public void Init(GameObject owningPlayer, PlayerManager client) {
         _localInventoryManager = client.InventoryN.GetInventoryManager();
         _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage
         _playerInventory = _playerGameObject.GetComponent<NetworkedPlayerInventory>();

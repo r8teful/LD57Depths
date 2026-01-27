@@ -17,7 +17,7 @@ public class UpgradeTreeController : MonoBehaviour {
     private float _lastInputTime;
     private UIUpgradeNode startingNode;
 
-    public void Init(NetworkedPlayer client, UIUpgradeTree upgradeTreeInstance) {
+    public void Init(PlayerManager client, UIUpgradeTree upgradeTreeInstance) {
         var nodes = upgradeTreeInstance.GetNodeMap;
         _allNodes = nodes.Values.ToList();
         nodes.TryGetValue(0, out var baseNode);

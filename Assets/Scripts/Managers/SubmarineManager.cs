@@ -47,7 +47,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
 
     public void AttemptContribute(ushort recipeId, ushort itemId, int quantity) {
         // Handle the removing locally because server can't acces a remote player inventory
-        var _clientInventory = NetworkedPlayer.LocalInstance.GetInventory();
+        var _clientInventory = PlayerManager.LocalInstance.GetInventory();
         if (!_clientInventory.HasItemCount(itemId, quantity)) {
             Debug.LogWarning("Client doesn't have requested amount in inventory!");
             return;

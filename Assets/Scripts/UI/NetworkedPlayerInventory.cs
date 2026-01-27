@@ -1,9 +1,8 @@
-﻿using FishNet.Object;
-using Sirenix.OdinInspector;
+﻿using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
 
-public class NetworkedPlayerInventory : NetworkBehaviour {
+public class NetworkedPlayerInventory : MonoBehaviour {
     // Local event that gets called when we pickup an item
     public static event Action<ushort,int> OnItemPickup;       
     [ShowInInspector]
@@ -13,12 +12,6 @@ public class NetworkedPlayerInventory : NetworkBehaviour {
     public void Initialize() {
 
         InitializeInventory();
-    }
-    public override void OnStartClient() {
-        base.OnStartClient();
-        if (!base.IsOwner) {
-            base.enabled = false;
-        }
     }
 
     private void InitializeInventory() {

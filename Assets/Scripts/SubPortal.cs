@@ -29,7 +29,7 @@ public class SubPortal : MonoBehaviour {
            
         }
     }
-    private void HandleInteraction(NetworkedPlayer player) {
+    private void HandleInteraction(PlayerManager player) {
         PlayerLayerController playerController = player.PlayerLayerController;
         if (playerController != null) {
             playerController.PortalInteraction(this);

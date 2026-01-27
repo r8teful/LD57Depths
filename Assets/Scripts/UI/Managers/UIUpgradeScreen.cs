@@ -31,7 +31,7 @@ public class UIUpgradeScreen : MonoBehaviour {
        // rect.DOShakeRotation(0.4f,60,2,180,randomnessMode:ShakeRandomnessMode.Harmonic);
         //rect.DOComplete();
     }
-    internal void Init(UIManager UIManager, NetworkedPlayer client) {
+    internal void Init(UIManager UIManager, PlayerManager client) {
         _UIManagerParent = UIManager;
         _treeData = App.ResourceSystem.GetTreeByName(GameSetupManager.Instance.GetUpgradeTreeName()); // This will obviously have to come from some sort of "game selection" manager
        
@@ -43,7 +43,7 @@ public class UIUpgradeScreen : MonoBehaviour {
         PanAndZoom.Init(client.InputManager);
         _upgradeTreeController.Init(client, _upgradeTreeInstance);    
     }
-    private UIUpgradeTree InstantiateTree(UpgradeTreeDataSO treeData, Transform transformParent, HashSet<ushort> pUpgrades, NetworkedPlayer player) {
+    private UIUpgradeTree InstantiateTree(UpgradeTreeDataSO treeData, Transform transformParent, HashSet<ushort> pUpgrades, PlayerManager player) {
         if (treeData == null) {
             Debug.LogError("Could not find tree!");
             return null;

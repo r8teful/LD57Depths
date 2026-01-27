@@ -4,7 +4,7 @@ using UnityEngine;
 // Making a totally clean and new class because I don't want to mess up the other stuff, we'll just delete that old code afterwards
 public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     private AbilityInstance _abilityInstance;
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     private const float MINING_COOLDOWN = 0.02f;
     private float _cooldownRemaining;
     private Vector2 _currentDirection;
@@ -16,7 +16,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     private MiningLazerVisualNew _visual;
     private bool _firstShot;
     public Vector2 CurrentDir => _currentDirection;
-    public void Init(AbilityInstance instance, NetworkedPlayer player) {
+    public void Init(AbilityInstance instance, PlayerManager player) {
         _abilityInstance = instance;
         _player = player;
         _visual = GetComponent<MiningLazerVisualNew>();
@@ -118,7 +118,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
             float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloff);
             float finalDamage = damage * falloffFactor;
             
-            _player.CmdRequestDamageTile(new Vector3(nudgedPoint.x, nudgedPoint.y, 0), finalDamage);
+            _player.RequestDamageTile(new Vector3(nudgedPoint.x, nudgedPoint.y, 0), finalDamage);
         }
     }
     public void MineAbility() {
@@ -151,7 +151,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
                 Vector3Int cellPosition = WorldManager.Instance.WorldToCell((Vector3)samplePoint);
                 if (!processedCells.Contains(cellPosition)) {
                     processedCells.Add(cellPosition);
-                    _player.CmdRequestDamageTile(cellPosition, damage);
+                    _player.RequestDamageTile(cellPosition, damage);
                 }
             }
         }

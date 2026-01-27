@@ -5,8 +5,8 @@ using System.Linq;
 using UnityEngine;
 
 
-[RequireComponent(typeof(NetworkedPlayer))]
-public class PlayerStatsManager : MonoBehaviour, INetworkedPlayerModule {
+[RequireComponent(typeof(PlayerManager))]
+public class PlayerStatsManager : MonoBehaviour, IPlayerModule {
     [SerializeField] private PlayerBaseStatsSO _baseStats;
 
     private Dictionary<StatType, Stat> _stats = new(); 
@@ -29,7 +29,7 @@ public class PlayerStatsManager : MonoBehaviour, INetworkedPlayerModule {
     public event Action OnBuffListChanged;  // add/remove
     public event Action OnBuffsUpdated;     // periodic tick
 
-    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(PlayerManager playerParent) {
         StatType[] statTypes = _baseStats.BaseStats.Select(s => s.Stat).ToArray();
         float[] baseValues = _baseStats.BaseStats.Select(s => s.BaseValue).ToArray();
 

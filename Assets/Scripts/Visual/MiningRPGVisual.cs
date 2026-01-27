@@ -47,7 +47,7 @@ public class MiningRPGVisual : MonoBehaviour, IToolVisual {
         transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
-    public void Init(bool isOwner, NetworkedPlayer networkedPlayer) {
+    public void Init(bool isOwner, PlayerManager networkedPlayer) {
         _isOwner = isOwner;
         // Cache visual handler
         _cachedVisualHandler = networkedPlayer.PlayerVisuals;

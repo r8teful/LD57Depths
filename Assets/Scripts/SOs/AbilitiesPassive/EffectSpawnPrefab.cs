@@ -5,7 +5,7 @@ public class EffectSpawnPrefab : ScriptableObject, IEffectPassive, IExecutable {
     [SerializeField] GameObject prefabToSpawn;
     private GameObject _instantiatedEffect;
 
-    public void Apply(AbilityInstance instance, NetworkedPlayer player) {
+    public void Apply(AbilityInstance instance, PlayerManager player) {
         _instantiatedEffect = Instantiate(prefabToSpawn, player.PlayerAbilities.AbilitySlot);
         if (_instantiatedEffect.TryGetComponent<IInitializableAbility>(out var initComp)) {
             initComp.Init(instance, player);
@@ -21,7 +21,7 @@ public class EffectSpawnPrefab : ScriptableObject, IEffectPassive, IExecutable {
 
     }
 
-    public void Remove(AbilityInstance instance, NetworkedPlayer player) {
+    public void Remove(AbilityInstance instance, PlayerManager player) {
         if (_instantiatedEffect != null) {
             Destroy(_instantiatedEffect);
             _instantiatedEffect = null;

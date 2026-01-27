@@ -5,15 +5,15 @@ public class AbilityTriggerBuffPlayer : ScriptableObject, IEffectActive, IEffect
     [SerializeField] private BuffSO _buff;
     public BuffSO Buff => _buff;
 
-    public void Execute(AbilityInstance source, NetworkedPlayer player) {
+    public void Execute(AbilityInstance source, PlayerManager player) {
         var buffinst = BuffInstance.CreateFromSO(_buff);
 
         buffinst.IncreaseBuffPower(source);
 
-        NetworkedPlayer.LocalInstance.PlayerStats.TriggerBuff(buffinst);
+        PlayerManager.LocalInstance.PlayerStats.TriggerBuff(buffinst);
     }
 
     public float GetEffectiveStat(StatType stat, StatModifier tempMod = null) {
-        return NetworkedPlayer.LocalInstance.PlayerStats.GetStat(stat);
+        return PlayerManager.LocalInstance.PlayerStats.GetStat(stat);
     }
 }

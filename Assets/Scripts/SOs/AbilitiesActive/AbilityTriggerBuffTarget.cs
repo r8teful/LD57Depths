@@ -6,7 +6,7 @@ public class AbilityTriggerBuffTarget : ScriptableObject, IEffectActive, IEffect
 
     public BuffSO Buff => _buff;
 
-    public void Execute(AbilityInstance source, NetworkedPlayer player) {
+    public void Execute(AbilityInstance source, PlayerManager player) {
         // This ability should add multiplier buffs to the lazer passive
         Debug.Log("Triggering brimstone buff!");
         var targetInst = player.PlayerAbilities.GetAbilityInstance(_targetAbility.ID);
@@ -24,7 +24,7 @@ public class AbilityTriggerBuffTarget : ScriptableObject, IEffectActive, IEffect
 
     public float GetEffectiveStat(StatType stat, StatModifier tempMod = null) {
         var id = _targetAbility.ID;
-        var ab = NetworkedPlayer.LocalInstance.PlayerAbilities.GetAbilityInstance(id);
+        var ab = PlayerManager.LocalInstance.PlayerAbilities.GetAbilityInstance(id);
         return ab.GetEffectiveStat(stat, tempMod);
     }
 }

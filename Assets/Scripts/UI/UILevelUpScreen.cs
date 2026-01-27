@@ -13,7 +13,7 @@ public class UILevelUpScreen : MonoBehaviour {
 
     private void ShowScreen(int level) {
         // Get rewards 
-        var rewards = NetworkedPlayer.LocalInstance.PlayerReward.UpgradeEffects;
+        var rewards = PlayerManager.LocalInstance.PlayerReward.UpgradeEffects;
         SpawnRewardVisuals(rewards);
         _screenContainer.gameObject.SetActive(true);
     }

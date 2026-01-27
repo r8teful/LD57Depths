@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using static PlayerMovement;
 // Handles how the player looks visualy, and also make sure the hitboxes are correct
-public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
+public class PlayerVisualHandler : NetworkBehaviour, IPlayerModule {
     // We need to rework this to make it easier for us to add costumes and stuff, needs to work with animations, and going into
     // submarine
     [SerializeField] private SpriteRenderer sprite; 
@@ -22,8 +22,8 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     public Light2D lightSpot;
     // There could every only be two references for a player here, we are either owner, which would be the localPlayer reference
     // Or we are not the owner, in which case it would be a remote.
-    public NetworkedPlayer _remotePlayer;
-    public NetworkedPlayer _localPlayer;
+    public PlayerManager _remotePlayer;
+    public PlayerManager _localPlayer;
     private float lightIntensityOn;
     private readonly SyncVar<bool> _isFlipped = new SyncVar<bool>(false);
     public event Action<bool> OnFlipChange;
@@ -31,7 +31,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
     private bool hasInitializedNonOwner; // Sometimes the init function gets called twice so this is just for that
 
     private bool HasCactus => _localPlayer.PlayerAbilities.HasAbility(ResourceSystem.CactusAbilityID);
-    public void InitializeOnOwner(NetworkedPlayer playerParent) {
+    public void InitializeOnOwner(PlayerManager playerParent) {
         InitCommon();
         _localPlayer = playerParent;
         playerParent.UpgradeManager.OnUpgradePurchased += OnPlayerUpgradePurchased;
@@ -58,7 +58,7 @@ public class PlayerVisualHandler : NetworkBehaviour, INetworkedPlayerModule {
         // 1. Player visual on MY system needs to recognise it so that it can add the flippers
         // 2. Player visual on all REMOTE systems need to recognise it and add flippers to my character
     }
-    public void InitializeOnNotOwner(NetworkedPlayer remoteClient) {
+    public void InitializeOnNotOwner(PlayerManager remoteClient) {
         if (hasInitializedNonOwner)
             return;
         InitCommon();

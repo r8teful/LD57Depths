@@ -132,7 +132,7 @@ public class EntityManager : StaticInstance<EntityManager> {
             if (nob.TryGetComponent<DestroyEntityCallback>(out var entityDestroyCallback)) {
                 entityDestroyCallback.OnDestroyed -= HandleEntityDestroyed;
             }
-            Destroy(nob.gameObject); // This could also return it to the object pool or something
+            Destroy(nob); // This could also return it to the object pool or something
         }
         // Clear link in persistent data regardless
         data.activeInstance = null;
@@ -157,28 +157,6 @@ public class EntityManager : StaticInstance<EntityManager> {
                 ulong persistentId = FindIdForInstance(nob);
                 ServerRemovePersistentEntity(persistentId);
             }
-        }
-    }
-    // --- Deactivate (Despawn NetworkObject) ---
-    private void DeactivateEntity(ulong persistentId) {
-        if (persistentEntityDatabase.TryGetValue(persistentId, out PersistentEntityData data)) {
-            if (data.activeInstance != null) {
-                // --- IMPORTANT: Update persistent data BEFORE despawning ---
-                // Capture final state (position, health, etc.) from the instance
-                UpdateDataFromInstance(data.activeInstance, data);
-                // Remove the unexpected despawn listener FIRST to avoid issues
-                if (data.activeInstance.TryGetComponent<DestroyEntityCallback>(out var entityDestroyCallback)) {
-                    entityDestroyCallback.OnDestroyed -= HandleEntityDestroyed;
-                }
-                Destroy(data.activeInstance);
-            } else {
-                // Instance was already null or despawned, ensure data ref is null
-                data.activeInstance = null;
-            }
-            data.activeInstance = null; // Clear the link
-            Debug.Log($"Deactivated entity {persistentId}");
-        } else {
-            Debug.LogWarning($"Cannot deactivate entity {persistentId}: Data not found");
         }
     }
 

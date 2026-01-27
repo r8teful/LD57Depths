@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class Transparancy : MonoBehaviour, IInitializableAbility {
-    public void Init(AbilityInstance instance, NetworkedPlayer player) {
+    public void Init(AbilityInstance instance, PlayerManager player) {
         Debug.Log("Transparancy suit equiped!");
     }
     private void OnDestroy() {

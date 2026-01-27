@@ -3,11 +3,11 @@ using UnityEngine;
 
 // Inheritance is nice when it works 
 public abstract class ShootableAbilityBase : MonoBehaviour, IInitializableAbility {
-    protected NetworkedPlayer _player;
+    protected PlayerManager _player;
     protected AbilityInstance _abilityInstance;
     private Coroutine _loop;
 
-    public virtual void Init(AbilityInstance instance, NetworkedPlayer player) {
+    public virtual void Init(AbilityInstance instance, PlayerManager player) {
         _player = player;
         _abilityInstance = instance;
         _loop = StartCoroutine(FireLoop());

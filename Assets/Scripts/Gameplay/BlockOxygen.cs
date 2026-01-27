@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class BlockOxygen : MonoBehaviour, IInitializableAbility {
     private AbilityInstance _ability;
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     [SerializeField] private OxygenBubble _bubblePrefab;
-    public void Init(AbilityInstance instance, NetworkedPlayer player) {
+    public void Init(AbilityInstance instance, PlayerManager player) {
         _ability = instance;
         _player = player;
         ChunkManager.OnTileChanged += TileChanged;

@@ -15,7 +15,7 @@ public class UIManagerStats : MonoBehaviour {
     [SerializeField] Transform _statDisplayElements;
     [SerializeField] Transform _abilityDisplayElements;
 
-    internal void Init(NetworkedPlayer client) {
+    internal void Init(PlayerManager client) {
         _playerStats = client.PlayerStats;
         _playerStats.OnBuffListChanged += BuffListChange;
         _playerStats.OnBuffsUpdated += RefreshTimes;

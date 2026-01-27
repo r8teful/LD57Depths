@@ -3,14 +3,14 @@ using UnityEngine;
 
 public class BlackHoleProjectile : MonoBehaviour {
     private Rigidbody2D _rb;
-    private NetworkedPlayer _player;
+    private PlayerManager _player;
     private AbilityInstance _ability;
     private float _startMagnitude;
     private float aliveTime;
     private void Awake() {
         _rb = GetComponent<Rigidbody2D>();
     }
-    internal void Init(Vector2 shootForce,NetworkedPlayer player, AbilityInstance abilityInstance) {
+    internal void Init(Vector2 shootForce,PlayerManager player, AbilityInstance abilityInstance) {
         _player = player;
         _ability = abilityInstance;
         _startMagnitude = shootForce.magnitude;
@@ -31,7 +31,7 @@ public class BlackHoleProjectile : MonoBehaviour {
             // Possibly make range smaller here so its like the trail of the blackhole is doing the damage
             var tiles = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, transform.position, variableSize);
             foreach (var tile in tiles) {
-                _player.CmdRequestDamageTile(tile.CellPos, damage);
+                _player.RequestDamageTile(tile.CellPos, damage);
             }
             aliveTime += checkInterval;
             yield return new WaitForSeconds(checkInterval);

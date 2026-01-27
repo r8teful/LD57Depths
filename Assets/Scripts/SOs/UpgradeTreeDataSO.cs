@@ -43,7 +43,7 @@ public class UpgradeTreeDataSO : ScriptableObject {
     }
     public UpgradeRecipeSO GetUpgradeWithValue(int value, HashSet<ushort> pickedIDs) {
         // I hate this but we never store any actual upgrade data so we have to make it every time
-        var u = NetworkedPlayer.LocalInstance.UpgradeManager.GetUnlockedUpgrades();
+        var u = PlayerManager.LocalInstance.UpgradeManager.GetUnlockedUpgrades();
         int bestValueDiff = 99999;
         UpgradeRecipeSO bestMatch = null;
         foreach(var node in nodes) {
@@ -65,7 +65,7 @@ public class UpgradeTreeDataSO : ScriptableObject {
     }
     public UpgradeRecipeSO GetRandomUpgrade() {
         // I hate this but we never store any actual upgrade data so we have to make it every time
-        var u = NetworkedPlayer.LocalInstance.UpgradeManager.GetUnlockedUpgrades();
+        var u = PlayerManager.LocalInstance.UpgradeManager.GetUnlockedUpgrades();
         System.Random rng = new System.Random();
         var randomNodes = nodes.OrderBy(s => rng.Next());
         foreach (var node in randomNodes) {

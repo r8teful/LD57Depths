@@ -27,7 +27,7 @@ public class MachineUpgradeTable : MonoBehaviour {
         }
     }
 
-    private void HandleInteraction(NetworkedPlayer interactor) {
+    private void HandleInteraction(PlayerManager interactor) {
         if (fixableEntity != null && !fixableEntity.IsFixed) {
             Debug.Log("Machine is broken, cannot open control panel.");
             return;

@@ -13,7 +13,7 @@ public class Shockwave : ShootableAbilityBase {
         var tiles = MineHelper.GetCircle(
             WorldManager.Instance.MainTileMap, transform.position, size, true);
         foreach (var tile in tiles) {
-            _player.CmdRequestDamageTile(tile.CellPos, tile.DamageRatio * damage);
+            _player.RequestDamageTile(tile.CellPos, tile.DamageRatio * damage);
         }
     }
     private IEnumerator ShootRoutine(float radius, float damage) {

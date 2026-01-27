@@ -130,7 +130,7 @@ public class ChunkManager : MonoBehaviour {
         DebugForceChunkLoad();
     }
     private void DebugForceChunkLoad() {
-        Vector2Int newClientChunkCoord = WorldToChunkCoord(NetworkedPlayer.LocalInstance.transform.position);
+        Vector2Int newClientChunkCoord = WorldToChunkCoord(PlayerManager.LocalInstance.transform.position);
         for (int xOffset = -loadDistance; xOffset <= loadDistance; xOffset++) {
             for (int yOffset = -loadDistance; yOffset <= loadDistance; yOffset++) {
                 Vector2Int chunkCoord = new Vector2Int(newClientChunkCoord.x + xOffset, newClientChunkCoord.y + yOffset);
@@ -162,9 +162,9 @@ public class ChunkManager : MonoBehaviour {
         // Wait until the player object owned by this client is spawned and available
         // This assumes your player spawn logic is handled correctly by FishNet
         //yield return new WaitUntil(() => base.Owner != null && base.Owner.IsActive && base.Owner.IsLocalClient && PlayerController.LocalInstance != null); // Assumes a static LocalInstance on your PlayerControll
-        yield return new WaitUntil(() => NetworkedPlayer.LocalInstance != null); // Assumes a static LocalInstance on your PlayerController
+        yield return new WaitUntil(() => PlayerManager.LocalInstance != null); // Assumes a static LocalInstance on your PlayerController
 
-        Transform localPlayerTransform = NetworkedPlayer.LocalInstance.transform; // Get the locally controlled player
+        Transform localPlayerTransform = PlayerManager.LocalInstance.transform; // Get the locally controlled player
         // Temporary list for batching requests
         List<Vector2Int> chunksToRequestBatch = new List<Vector2Int>();
         while (true) {
