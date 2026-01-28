@@ -286,6 +286,7 @@ public class UpgradePanAndZoom : MonoBehaviour {
                 child.localPosition += localOffsetForChild;
                 Vector3 targetLocalPos = child.localPosition + localOffsetForChild;
                 child.DOKill();
+                Debug.Log("dokill!!");
                 child.DOLocalMove(targetLocalPos, tweenTime);
             } else {
                 child.localPosition += worldOffset;

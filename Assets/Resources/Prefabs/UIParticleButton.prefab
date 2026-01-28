@@ -698,7 +698,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    gravitySource: 0
+    gravitySource: 1
     maxNumParticles: 1000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
@@ -759,7 +759,7 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 6
     enabled: 1
-    type: 16
+    type: 0
     angle: 25
     length: 5
     boxThickness: {x: 0.09, y: 0.73, z: 0.43}
@@ -767,7 +767,7 @@ ParticleSystem:
     donutRadius: 19.7
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0}
-    m_Scale: {x: 1, y: 100.1, z: 45}
+    m_Scale: {x: 1, y: 1, z: 1}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -2851,7 +2851,7 @@ ParticleSystem:
     strength:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 73.77
+      scalar: 13.2
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -3008,7 +3008,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     separateAxes: 0
-    frequency: 1
+    frequency: 0.75
     damping: 1
     octaves: 1
     octaveMultiplier: 0.5
@@ -4152,7 +4152,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    minVertexDistance: 15
+    minVertexDistance: 0.7
     textureMode: 0
     textureScale: {x: 1, y: 1}
     ribbonCount: 2
@@ -4942,7 +4942,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: fdc55c9b027a85e4e9393e46ea2f9901, type: 2}
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0

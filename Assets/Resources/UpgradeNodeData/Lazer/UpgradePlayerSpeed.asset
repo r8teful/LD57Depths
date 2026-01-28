@@ -27,8 +27,8 @@ MonoBehaviour:
   - upgrade: {fileID: 11400000, guid: 6191a7dac0b9db24f947c40f55d7cb29, type: 2}
     costMultiplier: 1.51
     costTier: 7
-    upgradeItemPool: {fileID: 0}
+    upgradeItemPool: {fileID: 11400000, guid: 29f367e82be84e84aa1af9c8dd6f8436, type: 2}
   - upgrade: {fileID: 11400000, guid: b41700fa93bc8ac4ea71a7dc99002665, type: 2}
     costMultiplier: 1
     costTier: 8
-    upgradeItemPool: {fileID: 0}
+    upgradeItemPool: {fileID: 11400000, guid: c8505d26704f39c49ad4623ac0fd7558, type: 2}

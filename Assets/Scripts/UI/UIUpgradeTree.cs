@@ -11,6 +11,8 @@ public class UIUpgradeTree : MonoBehaviour {
     private Dictionary<ushort, List<UILineRenderer>> _lineMap = new Dictionary<ushort, List<UILineRenderer>>();
     private UpgradeTreeDataSO _treeData;
     private PlayerManager _player;
+    private Dictionary<ushort, List<ushort>> _adjacencyDict;
+
     public static event Action OnUpgradeButtonPurchased; // this would break if we have several trees
     public Dictionary<ushort, UIUpgradeNode> GetNodeMap => _nodeMap;
     internal void Init(UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades, PlayerManager player) {
@@ -46,8 +48,10 @@ public class UIUpgradeTree : MonoBehaviour {
             _nodeMap.Add(nodeData.ID, uiNode);
         }
         CreateConnectionLines(tree, existingUpgrades);
+        _adjacencyDict = BuildUndirectedAdjacency(tree.nodes);
         UIUpgradeScreen.OnSelectedNodeChanged += SelectedChange;
         _player.UiManager.UpgradeScreen.OnPanelChanged += PanelChanged;
+
     }
 
     private void SelectedChange(UpgradeNodeSO node) {
@@ -111,12 +115,36 @@ public class UIUpgradeTree : MonoBehaviour {
         }
             return lineRenderer;
     }
+    public static Dictionary<ushort, List<ushort>> BuildUndirectedAdjacency(IEnumerable<UpgradeNodeSO> nodes) {
+        var adj = new Dictionary<ushort, List<ushort>>();
 
+        // first add all nodes (so adjacency contains an entry for each node id)
+        foreach (var n in nodes) {
+            if (!adj.ContainsKey(n.ID)) adj[n.ID] = new List<ushort>();
+        }
+
+        // add edges for prerequisites
+        foreach (var n in nodes) {
+            if (n.prerequisiteNodesAny == null) continue;
+            foreach (var p in n.prerequisiteNodesAny) {
+                // ensure both endpoints exist
+                if (!adj.ContainsKey(p.ID)) adj[p.ID] = new List<ushort>();
+
+                // add edge both ways if not present
+                if (!adj[n.ID].Contains(p.ID)) adj[n.ID].Add(p.ID);
+                if (!adj[p.ID].Contains(n.ID)) adj[p.ID].Add(n.ID);
+            }
+        }
+
+        return adj;
+    }
     internal void OnUpgradeButtonClicked(UIUpgradeNode uIUpgradeNode, UpgradeNodeSO upgradeNode) {
       if (UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(upgradeNode)) {
+            // Purchased succefully!
             var unlockedUpgrades = _player.UpgradeManager.GetUnlockedUpgrades();
             uIUpgradeNode.OnUpgraded(unlockedUpgrades);
             OnUpgradeButtonPurchased.Invoke();
+            StartSimpleRipple(upgradeNode.ID, _adjacencyDict, _nodeMap);
         } 
     }
 
@@ -127,7 +155,7 @@ public class UIUpgradeTree : MonoBehaviour {
         }
     }
 
-    internal void UpdateNodeVisualData() {
+    public void UpdateNodeVisualData() {
         foreach (var kvp in _nodeMap) {
             kvp.Value.UpdateVisualData(_player.UpgradeManager.GetUnlockedUpgrades());
         }
@@ -136,5 +164,79 @@ public class UIUpgradeTree : MonoBehaviour {
 
     internal IEnumerator OnPanSelect(UIUpgradeNode uIUpgradeNode) {
         yield return _player.UiManager.UpgradeScreen.PanAndZoom.FocusOnNode(uIUpgradeNode.Rect);
+    }
+
+    // Starts the simple serial ripple and returns the coroutine handle so caller can stop it.
+    public Coroutine StartSimpleRipple(ushort startId,
+                                      Dictionary<ushort, List<ushort>> adjacency,
+                                      Dictionary<ushort, UIUpgradeNode> uiNodes,
+                                      int maxDepth = int.MaxValue) {
+        return StartCoroutine(NodeRipple(startId, adjacency, uiNodes, maxDepth));
+    }
+ 
+    private IEnumerator NodeRipple(ushort startId,
+                                       Dictionary<ushort, List<ushort>> adjacency,
+                                       Dictionary<ushort, UIUpgradeNode> uiNodes,
+                                       int maxDepth) {
+        if (adjacency == null) yield break;
+        if (!adjacency.ContainsKey(startId)) {
+            Debug.LogWarning($"Start id {startId} not found in adjacency map.");
+            yield break;
+        }
+
+        // BFS to compute levels (distance) from startId
+        var queue = new Queue<ushort>();
+        var level = new Dictionary<ushort, int>(); // id -> distance
+        queue.Enqueue(startId);
+        level[startId] = 0;
+
+        while (queue.Count > 0) {
+            var id = queue.Dequeue();
+            int currentLevel = level[id];
+            if (currentLevel >= maxDepth) continue;
+
+            if (!adjacency.TryGetValue(id, out var neighbors)) continue;
+            foreach (var nb in neighbors) {
+                if (level.ContainsKey(nb)) continue;
+                level[nb] = currentLevel + 1;
+                queue.Enqueue(nb);
+            }
+        }
+
+        // Group by level so we can apply a consistent delay per level
+        var levels = new SortedDictionary<int, List<ushort>>();
+        foreach (var kv in level) {
+            int lv = kv.Value;
+            if (!levels.ContainsKey(lv)) levels[lv] = new List<ushort>();
+            levels[lv].Add(kv.Key);
+        }
+
+        // For each level in order, trigger pulses. Within a level we optionally stagger each node a bit.
+        foreach (var kv in levels) {
+            int lv = kv.Key;
+            var idsAtLevel = kv.Value;
+
+            // Compute base delay for this level
+            float baseDelay;
+            if(lv == 0) {
+                baseDelay = 0;
+            } else {
+                baseDelay = (lv-1) * 0.09f;
+            }
+            for (int i = 0; i < idsAtLevel.Count; i++) {
+                ushort nodeId = idsAtLevel[i];
+                StartCoroutine(InvokePulseAfterDelay(nodeId, baseDelay, uiNodes, lv));
+            }
+        }
+    }
+    private IEnumerator InvokePulseAfterDelay(ushort nodeId,
+                                             float delay,
+                                             Dictionary<ushort, UIUpgradeNode> uiNodes,
+                                             int level) {
+        if (delay > 0f) yield return new WaitForSeconds(delay);
+
+        if (uiNodes != null && uiNodes.TryGetValue(nodeId, out var uiNode) && uiNode != null) {
+            uiNode.DoPulseAnim(level);
+        } 
     }
 }

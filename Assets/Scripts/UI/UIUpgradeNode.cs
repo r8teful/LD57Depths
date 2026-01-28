@@ -40,7 +40,10 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private static readonly string ICON_UNLOCKED_HEX = "#FFFFFF"; // slighly gray?
     private static readonly string ICON_PURCHASABLE_HEX = "#FFFFFF";
 
-    private static readonly string PARTICLE_PURCHASED = "#C41F66";      
+    private static readonly string PARTICLE_ORANGE = "#D58141";      
+    private static readonly string PARTICLE_PURPLE = "#FF2986";      
+    private static readonly string PARTICLE_PURPLELIGHT = "#860F75";      
+    private static readonly string PARTICLE_PURPLEMEDIUM = "#C31F66";      
 
     // 0 = Blue | Green | Orange
     // 1 = Active | Inactive | Pressed
@@ -51,6 +54,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Color _iconPurchasableColor;
     private Color _iconUnlockedColor;
     private bool _isSelected;
+    private Vector2 _preferedSize;
 
     private void Awake() {
         // parse hex colors (falls back to white if parse fails)
@@ -110,6 +114,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             var r = _rectTransform.sizeDelta;
             //r.x = 120f;
             _rectTransform.sizeDelta = r;
+            _preferedSize = r;
         } else if (!IsBig && _buttonSmall != null) {
             _buttonSmall.onClick.RemoveAllListeners();
             _buttonSmall.onClick.AddListener(OnUpgradeButtonClicked);
@@ -213,13 +218,25 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // Hide popup
         App.AudioController.PlaySound2D("UpgradeBought");
         var p = App.ResourceSystem.GetPrefab("UIParticleUpgradePurchase");
-        Instantiate(p, transform.position, Quaternion.identity, transform);
+        var m =p.GetComponentInChildren<ParticleSystem>().main;
+        Color c;
+        if (_visualData.IsMaxLevel()) {
+            ColorUtility.TryParseHtmlString(PARTICLE_ORANGE, out c);
+        } else {
+            ColorUtility.TryParseHtmlString(PARTICLE_PURPLEMEDIUM, out c);
+        }
+        m.startColor = c;
+        Instantiate(p, transform.position, Quaternion.identity, transform).transform.SetAsLastSibling();
         var vibrato = 5;
         var elasticity = 1;
         var scale = -0.1f;
+        float rotation = 5;
         _rectTransform.DOKill();
+        _rectTransform.localScale = Vector3.one;
+        _rectTransform.rotation = Quaternion.identity;
+
         _rectTransform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity);
-        _rectTransform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-2f, 2f)), 0.2f, vibrato, elasticity);
+        _rectTransform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-rotation, rotation)), 0.2f, vibrato, elasticity);
     }
 
     public PopupData GetPopupData(InventoryManager clientInv) {
@@ -248,12 +265,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // update visual data
         _visualData.UpdateForUpgradePurchase(unlockedUpgrades);
         OnPurchased();
-        // Close popup if we've reached max level
-        if (_visualData.IsMaxLevel()) {
-            OnPointerExit(null); // Closes popup, because we've purchased it we don't have anything to show!
-        } else {
-            PopupDataChanged.Invoke(); // This will tell the upgrade manager to fetch new upgrade data
-        }
+        PopupDataChanged.Invoke(); // This will tell the upgrade manager to fetch new upgrade data
         _treeParent.UpdateNodeVisualData();
         UpdateVisual(); // Sets color, stage text etc...
     }
@@ -262,5 +274,21 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     internal void UpdateVisualData(HashSet<ushort> unlockedUpgrades) {
         _visualData.UpdateForUpgradePurchase(unlockedUpgrades);
         UpdateVisual(); 
+    }
+
+    internal void DoPulseAnim(int depth) {
+        float maxDepth = 6;
+        var depthProgress = Mathf.Clamp01( depth / maxDepth);
+        // sine ease (from easings.net
+        //float depthRatio = (float)((float)1 - ((1 - Math.Cos(depthProgress * Math.PI)) / 2));
+        float depthRatio = Mathf.Pow(1-depthProgress,3);
+        Debug.Log($"depth: {depth} gives progress: {depthProgress} gives ratio {depthRatio}");
+        int vibrato = (int)(5 * depthRatio);
+        float elasticity = 1 * depthRatio;
+        float scale = -0.2f *depthRatio;
+        float rotation = 5;
+        _rectTransform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity);
+        _rectTransform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-rotation, rotation)), 0.2f, vibrato, elasticity);
+
     }
 }

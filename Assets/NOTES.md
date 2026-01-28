@@ -654,7 +654,7 @@ EntityManager should ultimately be a pool, when we generate them, we keep their 
 
 
 
-
+Need to have biome slightly closer
 
 
 

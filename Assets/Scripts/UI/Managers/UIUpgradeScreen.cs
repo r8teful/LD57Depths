@@ -5,29 +5,32 @@ using UnityEngine;
 
 public class UIUpgradeScreen : MonoBehaviour {
     [SerializeField] private GameObject _upgradePanel;
+    private RectTransform _upgradePanelRect;
     [SerializeField] private GameObject _upgradePanelTree;
     [SerializeField] private UpgradeTreeController _upgradeTreeController;
     public UpgradePanAndZoom PanAndZoom;
     private UIManager _UIManagerParent;
     private UpgradeTreeDataSO _treeData;
-    private UIUpgradeTree _upgradeTreeInstance;
+    public UIUpgradeTree UpgradeTreeInstance { get; private set; }
     public bool IsOpen => _upgradePanel.activeSelf;
     
     public UIManager GetUIManager() => _UIManagerParent;
     public static event Action<UpgradeTreeDataSO> OnTabChanged; // Used to show correct stats 
     public static event Action<UpgradeNodeSO> OnSelectedNodeChanged; // Used to show correct stats 
-    public event Action<bool> OnPanelChanged; 
+    public event Action<bool> OnPanelChanged;
+    private void Awake() {
+        _upgradePanelRect = _upgradePanel.GetComponent<RectTransform>();
+    }        
     private void Start() {
         _upgradePanel.SetActive(false); // Start with the panel being hidden
         _upgradePanelTree.SetActive(true);
         UIUpgradeTree.OnUpgradeButtonPurchased += OnUpgradePurchasedThroughTree;
-
     }
     // todo make this good the shake is fucked it doesn't go back to where it started
     private void OnUpgradePurchasedThroughTree() {
         Debug.Log("PURSHASETREE");
         var rect = _upgradePanel.GetComponent<RectTransform>();
-        rect.DOShakeAnchorPos(0.2f,60,2,180,randomnessMode:ShakeRandomnessMode.Harmonic);
+       // rect.DOShakeAnchorPos(0.2f,60,2,180,randomnessMode:ShakeRandomnessMode.Harmonic);
        // rect.DOShakeRotation(0.4f,60,2,180,randomnessMode:ShakeRandomnessMode.Harmonic);
         //rect.DOComplete();
     }
@@ -39,9 +42,9 @@ public class UIUpgradeScreen : MonoBehaviour {
         // I don't think we should do it here though, do it in the upgrade managers themselves, then they need to call the approriate things 
         var pUpgrades = UpgradeManagerPlayer.LocalInstance.GetUnlockedUpgrades();
 
-        _upgradeTreeInstance = InstantiateTree(_treeData, _upgradePanelTree.transform, pUpgrades, client);
+        UpgradeTreeInstance = InstantiateTree(_treeData, _upgradePanelTree.transform, pUpgrades, client);
         PanAndZoom.Init(client.InputManager);
-        _upgradeTreeController.Init(client, _upgradeTreeInstance);    
+        _upgradeTreeController.Init(client, UpgradeTreeInstance);    
     }
     private UIUpgradeTree InstantiateTree(UpgradeTreeDataSO treeData, Transform transformParent, HashSet<ushort> pUpgrades, PlayerManager player) {
         if (treeData == null) {
@@ -58,13 +61,21 @@ public class UIUpgradeScreen : MonoBehaviour {
         return treeObj;
     }
     public void PanelToggle() {
-        var newState = !_upgradePanel.activeSelf;
-        _upgradePanel.SetActive(newState);
-        if (_upgradePanel.activeSelf) {
+        var isActive = !_upgradePanel.activeSelf;
+        if (isActive) {
+            _upgradePanel.SetActive(true);
             // we're now open
+            _upgradePanelRect.localScale = new(1,0.2f,1);
+           // _upgradePanelRect.DOScaleY(1, 0.6f).SetEase(Ease.OutElastic);
+            _upgradePanelRect.DOScaleY(1, 0.2f).SetEase(Ease.OutBack);
             _upgradeTreeController.OnTreeOpen();
+        } else {
+            _upgradePanelRect.localScale = Vector3.one;
+            _upgradePanelRect.DOScaleY(0.2f, 0.05f).SetEase(Ease.OutCubic).
+                OnComplete(() => _upgradePanel.SetActive(false));
+            // close
         }
-        OnPanelChanged?.Invoke(newState);
+            OnPanelChanged?.Invoke(isActive);
     }
 
     internal void PanelHide() {

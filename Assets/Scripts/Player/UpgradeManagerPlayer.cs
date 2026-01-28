@@ -80,4 +80,9 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
             }
         }
     }
+
+    internal void RemoveAllUpgrades() {
+        unlockedUpgrades.Clear();
+        _localNetworkedPlayer.UiManager.UpgradeScreen.UpgradeTreeInstance.UpdateNodeVisualData();
+    }
 }

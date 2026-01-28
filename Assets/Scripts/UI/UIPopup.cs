@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
+using Image = UnityEngine.UI.Image;
 
 // Should be generic enough to display any kind of data that popups up on the screen, either in world space, or on the canvas, for example next to the cursor 
 public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
@@ -18,6 +18,23 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
     public UIIngredientVisual ingredientPrefab;
     public ItemData itemData;
     private bool _isWorldPopup; // Is this popup on a world space canvas?
+    private void Awake() {
+        UIUpgradeTree.OnUpgradeButtonPurchased += UpgradePurchased;
+    }
+
+    private void UpgradePurchased() {
+        int vibrato = 6;
+        var elasticity = 2;
+        var scale = 0.2f;
+        float rotation =20;
+        float strength = 10f;
+        rectTransform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity).SetEase(Ease.OutBack);
+        //rectTransform.DOPunchRotation(new(0, 0, Random.Range(-rotation, rotation)), 0.2f, vibrato, elasticity)
+        //    .SetEase(Ease.OutBack);
+        //rectTransform.DOPunchRotation(new(0, 0, Random.value > 0.5 ? -rotation :  rotation), 0.2f)
+        //  .SetEase(Ease.OutElastic);
+    }
+
     private void Start() {
         // Try and find the canvas lol
         Canvas c0 = null;
@@ -97,7 +114,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         }
     }
     private void OnDestroy() {
-        DOTween.KillAll();
+        transform.DOKill();
     }
 
     public void ShowAnimate() {

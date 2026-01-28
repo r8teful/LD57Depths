@@ -110,7 +110,7 @@ public class PopupManager : StaticInstance<PopupManager> {
     private void HidePopup() {
         if (currentPopup != null) {
             currentInfoProvider.PopupDataChanged -= PopupDataChange;
-            Destroy(currentPopup.gameObject);
+            Destroy(currentPopup.gameObject); // This is breaking the UINODETWEEN!?!?
             currentPopup = null;
             currentInfoProvider = null;
         }

@@ -115,6 +115,10 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     private void debugClearInventory() {
         _player.InventoryN.RemoveAll();
     }
+    [ConsoleCommand("clearAllUpgrade")]
+    private void debugClearUpgrades() {
+        _player.UpgradeManager.RemoveAllUpgrades();
+    }
     [ConsoleCommand("showcontrol")]
     private void debugShowSubControlScreen() {
         machineControlPanel.DEBUGToggle();
