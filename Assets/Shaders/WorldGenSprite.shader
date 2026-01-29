@@ -19,7 +19,10 @@ Shader "Custom/WorldGenSprite"
         _TrenchBaseWidth ("Trench Base Width", Float) = 12.0
         _TrenchNoiseScale ("Trench Noise Scale", Float) = 1.0
         _TrenchEdgeAmp ("Trench Edge Amp", Float) = 1.0
+        _WorldLayerNoiseScale ("World Noise Scale", Float) = 1.0
+        _WorldLayerEdgeAmp ("World Edge Amp", Float) = 1.0
         _WorldUVScale ("World UV Scale", Float) = 0.1
+        _TotalLayers ("World Layers", Float) = 5
         
     }
 
@@ -44,6 +47,7 @@ Shader "Custom/WorldGenSprite"
 
             // ---- CONFIG ----
             #define NUM_BIOMES 5
+            #define MAX_LAYERS 6
             // ------------------
 
             sampler2D _MainTex;
@@ -62,7 +66,11 @@ Shader "Custom/WorldGenSprite"
             float _TrenchBaseWidth;
             float _TrenchNoiseScale;
             float _TrenchEdgeAmp;
+
             float _WorldUVScale;
+            float _TotalLayers;
+            float _WorldLayerNoiseScale;
+            float _WorldLayerEdgeAmp;
 
             // Generation details
             float _edgeNoiseScale[NUM_BIOMES];
@@ -76,6 +84,8 @@ Shader "Custom/WorldGenSprite"
             float _worldeyWeight[NUM_BIOMES];
             float _caveType[NUM_BIOMES];
             
+            float4 _LayerColors[6]; // Don't think we'll ever have more than six
+
             // Pos
             float _YStart[NUM_BIOMES];
             float _YHeight[NUM_BIOMES];
@@ -124,7 +134,7 @@ Shader "Custom/WorldGenSprite"
                 }
                 return -1;  // Default or fallback biome index if none found (e.g., void or background)
             }
-            // Trench logic (kept similar to original)
+            // Trench logic
             float GenerateTrenchAndSurface(float2 uv, float baseWiden, float baseWidth, float noiseFreq, float edgeAmp, float parallax ,bool useEdge, float seed)
             {
                 float halfTrenchWidth = (baseWidth + abs(uv.y) * baseWiden) / 2.0;
@@ -132,8 +142,8 @@ Shader "Custom/WorldGenSprite"
                 float noisyHalfWidth = max(0.0, halfTrenchWidth + edgeNoise * edgeAmp);
 
                 float maxDepth = abs(-1 * baseWidth / baseWiden) * 0.7 * (1 + parallax);
-                // Todo the edge noise freq needs to be set manually here, make a nice number, just 4 for now
-                float surfaceNoise = (EdgeNoise_Smooth(uv, _GlobalSeed,2,4) - 0.5) * 2.0;
+                // Todo the edge noise freq needs to be set manually here, make a nice number, just 1 for now
+                float surfaceNoise = (EdgeNoise_Smooth(uv, _GlobalSeed,2,1) - 0.5) * 2.0;
                 if (uv.y > surfaceNoise)
                     return 0;
                 if (abs(uv.y) > maxDepth)
@@ -147,25 +157,45 @@ Shader "Custom/WorldGenSprite"
                 bool mask = distanceToEdge < 0.1;
                 return mask ? 1.0 : 0.0;
             }
+            float4 WorldLayerColor(float2 uv, float maxDepth) {
+                float4 fallback = float4(3, 1, 0, 255) / 255.0; // very tough rock
+                int layers = max(1, min(_TotalLayers, MAX_LAYERS));
+                float borderPos[MAX_LAYERS + 1];
+                // compute each border once and apply a single noise offset per border
+                for (int b = 0; b <= layers; ++b) {
+                    float pos = maxDepth * (abs((float)b - (float)layers) / (float)layers);
+                    float n = EdgeNoise_Smooth(uv, _GlobalSeed, b, _WorldLayerNoiseScale);
+                    float offset = (n - 0.5) * 2.0 * _WorldLayerEdgeAmp;
+                    borderPos[b] = pos + offset;
+                }
+
+                // now find which layer uv.y lies in using the shared borders
+                for (int i = 0; i < layers; ++i) {
+                    float b0 = borderPos[i];
+                    float b1 = borderPos[i + 1];
+                    // ensure correct ordering (just in case noise flips order)
+                    float bandLow  = min(b0, b1);
+                    float bandHigh = max(b0, b1);
+                    bool inLayer = (uv.y >= bandLow && (i < layers - 1 ? uv.y < bandHigh : uv.y <= bandHigh));
+                    if (inLayer) {
+                        // color array must have at least 'layers' entries
+                        return _LayerColors[i];
+                    }
+                }
+                return fallback;
+            }
 
             float4 WorldGenFull(float2 uv)
             {
+                //float4 Color = float4(1, 1, 0, 255) / 255.0;
                 // Start the world as solid
-                float4 Color = float4(1, 1, 0, 255) / 255.0;
-                // CAVES - use global seed so caves change with seed
-                
+                float maxDepth = -1 * abs(_TrenchBaseWidth / _TrenchBaseWiden) * 0.7;
+                float4 Color = WorldLayerColor(uv,maxDepth);
                 // ---------- 2D normalized-distance biome pick (cheap) ----------
                 //float caveNoise = fbm(float2(uv.x * _CaveNoiseScale + _GlobalSeed * 2.79, uv.y * _CaveNoiseScale + _GlobalSeed * 8.69)) * _CaveAmp;
                 // Best one:
-                float caveNoise = CaveDensity_Combined(uv,_GlobalSeed,0,_CaveNoiseScale,_BaseOctaves, _RidgeOctaves,_WarpAmp,_WorleyWeight)* _CaveAmp;
-                //float caveNoise = CaveDensity_Tunnels(uv,_GlobalSeed,biomeIndex,_CaveNoiseScale,_BaseOctaves,_WarpAmp);
-                int biomeIndex = PickBiome2D(uv);
-                if (caveNoise <_CaveCutoff) {
-                    // Cave
-                    Color = float4(0, 1, 1, 1);
-                }
-                
-                
+         
+                 int biomeIndex = PickBiome2D(uv);
                 // fetch biome parameters from arrays
                 float b_edgeScale  = _edgeNoiseScale[biomeIndex];
                 float b_edgeAmp    = _edgeNoiseAmp[biomeIndex];
@@ -208,9 +238,13 @@ Shader "Custom/WorldGenSprite"
                 }
                 else
                 {
-                    // fallback (not in any biome) - keep the base Color
-                    // Could be replaced with a global surface palette
-                    
+                    // Not in any biome - Check for caves
+                    float caveNoise = CaveDensity_Combined(uv,_GlobalSeed,0,_CaveNoiseScale,_BaseOctaves, _RidgeOctaves,_WarpAmp,_WorleyWeight)* _CaveAmp;
+                    //float caveNoise = CaveDensity_Tunnels(uv,_GlobalSeed,biomeIndex,_CaveNoiseScale,_BaseOctaves,_WarpAmp);
+                    if (caveNoise <_CaveCutoff) {
+                    // Cave
+                        Color = float4(0, 1, 1, 1);
+                    }                    
                 }
                 
                 float trenchMask = GenerateTrenchAndSurface(uv, _TrenchBaseWiden, _TrenchBaseWidth, _TrenchNoiseScale, _TrenchEdgeAmp, 0.0, false, _GlobalSeed);
@@ -250,12 +284,6 @@ Shader "Custom/WorldGenSprite"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                // read UV. World space mapping or local UV mapping depends on how you feed uv to shader.
-                // Here we assume uv.xy is the sprite UV, but WorldGenFull expects world-like coords.
-                // If your world coordinates differ, multiply/offset uv appropriately from shader inputs.
-                //float2 uv = i.uv * 100.0 - float2(50.0, 50.0); // example transform -> adjust to your coordinate system
-                // NOTE: the line above is an example scaling so the procedural world fits in UV space.
-                // In practice you should pass true world coords (or a conversion) from C# via material properties.
                 float2 worldUV = i.worldPos.xy * _WorldUVScale;
                 
                 float4 worldColor = WorldGenFull(worldUV);

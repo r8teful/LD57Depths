@@ -207,15 +207,19 @@ public class WorldGen : MonoBehaviour {
                         float4 color = pixelData[pixelIndex];
                         Vector3Int IDData = new (Mathf.RoundToInt(color.x * 255.0f), Mathf.RoundToInt(color.y * 255.0f), 
                                            Mathf.RoundToInt(color.z * 255.0f));
-                        // --- Convert color to tile ID ---
-                        // Simplest assumption: tile ID is stored in the R channel (0-255).
+                        
+                        // Tile ID is stored in the R channel (0-255).
                         ushort tileID = 0;
                         byte biomeID = 0;
                         // Tile first
-                        if (IDData.x == 1) { // Can't have 1 here because it rounds to 0 for some reason 
-                            tileID = 1; // BASIC TILE
+                        if (IDData.x == 1) { 
+                            tileID = ResourceSystem.StoneID; 
                         } else if (IDData.x == 0 || IDData.x==255) {
-                            tileID = 0;  // AIR
+                            tileID = ResourceSystem.AirID;
+                        } else if (IDData.x == 2) {
+                            tileID = ResourceSystem.StoneToughID;
+                        } else if (IDData.x == 3) {
+                            tileID = ResourceSystem.StoneVeryToughID;
                         } else if (IDData.x == 90) {
                             tileID =  ResourceSystem.GetTileFromBiome(BiomeType.Bioluminescent); 
                         } else if (IDData.x == 95) {

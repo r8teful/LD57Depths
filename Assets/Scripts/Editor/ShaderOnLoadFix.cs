@@ -9,12 +9,12 @@ public class ShaderOnLoadFix {
     public static WorldGenSettingSO WorldGenSettingEDITOR { get => ResourceSystem.GetMainMap(); }
     static ShaderOnLoadFix() {
         if (Application.isPlaying) return;
-        Debug.Log("ONSHADERLOADFIX");
         WorldGenSettingEDITOR.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterialEditor; });
         //EditorApplication.delayCall += Update;
     }
 
     private static void PushBiomesToMaterialEditor() {
+        Debug.Log("ONSHADERLOADFIX");
         var targetMaterial = WorldGenSettingEDITOR.associatedMaterial;
         if (targetMaterial == null) {
             Debug.LogWarning("No target material assigned.");
@@ -73,6 +73,16 @@ public class ShaderOnLoadFix {
                 airColors[i] = new Vector4(1, 1, 1, 1);
             }
         }
+        // Purelly visual
+        var worldLayerColors = new Vector4[6] {
+            Color.gray9,
+            Color.gray8,
+            Color.gray7,
+            Color.gray6,
+            Color.gray5,
+            Color.gray4
+        };
+        targetMaterial.SetVectorArray("_LayerColors", worldLayerColors);
 
         targetMaterial.SetFloatArray("_edgeNoiseScale", edgeNoiseScale);
         targetMaterial.SetFloatArray("_edgeNoiseAmp", edgeNoiseAmp);

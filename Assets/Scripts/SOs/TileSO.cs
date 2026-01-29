@@ -40,6 +40,8 @@ public class TileSO : RuleTile, IIdentifiable {
 
         return breakVersions[index];
     }
+
+    // Shader uses BiomeBackgrounds to index with textureIndex to set the right textue!
     public override void GetTileData(Vector3Int position, ITilemap tilemap, ref TileData tileData) {
         base.GetTileData(position, tilemap, ref tileData);
         if (textureIndex == -1) return;

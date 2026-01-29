@@ -3,11 +3,10 @@ Add description to the upgrades?
 
 
 * Visual for when going low on oxygen
-* Make ores more harder to mine
 * Need some kind of tutorial / reminder of using the brimstone ability
-* vfx juice for upgrade ui fix here: https://github.com/Demigiant/dotween/issues/427
-* fix buttons not tweening back when purchased completely 
 * Test how the game feels with block break sounds
+
+
 
 
 

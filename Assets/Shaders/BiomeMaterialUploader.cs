@@ -46,6 +46,18 @@ public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
         var tileColors = new Vector4[NUM_BIOMES];
         var airColors = new Vector4[NUM_BIOMES];
 
+        float biome = 1f / 255f;
+        // Rememver that colors are from 0 - 1
+        var worldLayerColors = new Vector4[6] {
+            new(1f/255f,biome,0f,1f), // BASIC 
+            new(2f/255f,biome,0f,1f), // Harder
+            new(3f/255f,biome,0f,1f), // Harder!
+            new(4f/255f,biome,0f,1f),// harderr!!
+            Color.magenta,
+            Color.magenta
+        }; 
+
+
         for (int i = 0; i < NUM_BIOMES; ++i) {
             if (i < settings.biomes.Count) {
                 var b = settings.biomes[i];
@@ -98,6 +110,7 @@ public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
         targetMaterial.SetFloatArray("_XOffset", xOffset);
         targetMaterial.SetVectorArray("_tileColor", tileColors);
         targetMaterial.SetVectorArray("_airColor", airColors);
+        targetMaterial.SetVectorArray("_LayerColors", worldLayerColors);
         // global floats
         targetMaterial.SetFloat("_GlobalSeed", settings.seed);
 
