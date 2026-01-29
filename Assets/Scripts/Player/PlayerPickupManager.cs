@@ -92,13 +92,14 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
         }
         foreach (Collider2D hit in hits) {
             var item = hit.GetComponent<DropPooled>();
-            if (item != null) {
+            if (item != null && !item.IsPicked) {
                 PickupItem(item);
             }
         }
     }
 
     private void PickupItem(DropPooled item) {
+        item.IsPicked = true;
         ushort itemID = item.ItemID;
         AudioController.Instance.PlaySound2D("popPickup", 0.1f, pitch: new AudioParams.Pitch(AudioParams.Pitch.Variation.Small));
         _player.InventoryN.AwardItem(itemID,item.Amount);

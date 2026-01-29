@@ -20,7 +20,7 @@ public class PlayerExperienceManager : MonoBehaviour, IPlayerModule {
     private void AddExperience(int amount) {
         levelData.currentXP += amount;
         XPEvents.TriggerXPGained(levelData.ProgressNormalized, levelData.currentXP);
-        Debug.Log($"Gained {amount} XP. Total: {levelData.currentXP}/{levelData.xpToNextLevel}");
+        //Debug.Log($"Gained {amount} XP. Total: {levelData.currentXP}/{levelData.xpToNextLevel}");
         TryProcessLevelUp();
     }
     

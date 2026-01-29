@@ -8,21 +8,27 @@ public class TilePlant : MonoBehaviour, ITileChangeReactor {
     private bool isGrounded = true; // Server state
     private Rigidbody2D rb;
     private Vector3Int cellPos;
+    private GameObject spriteGameobject;
 
     
     public void OnTileChangedNearby(Vector3Int cellPosition, int newTileID) {
         if (newTileID == 0) {
             if(cellPosition == cellPos) {
-                Destroy(gameObject);
+                Debug.Log("on tile!!");
+                Destroy(gameObject); // This might need to be a pool aswell later
+                var item = App.ResourceSystem.GetItemByID(ResourceSystem.BiomeEssenceID);
+                WorldDropManager.Instance.SpawnDrop(spriteGameobject.transform.position, 1, item);
             }
         }
     }
-
-    public void Start() {
+    private void Awake() {
         rb = GetComponent<Rigidbody2D>();
         if (rb) rb.bodyType = RigidbodyType2D.Kinematic; // Start kinematic
         MovePos();
         cellPos = new Vector3Int(Mathf.RoundToInt(transform.position.x - 0.5f), Mathf.RoundToInt(transform.position.y - 0.5f));
+        spriteGameobject = GetComponentInChildren<SpriteRenderer>().gameObject;
+    }
+    public void Start() {
        // CheckGroundedState(); // Initial check
     }
     /*

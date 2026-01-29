@@ -21,7 +21,7 @@ public class NetworkedPlayerInventory : MonoBehaviour {
     public void AwardItem(ushort itemID, int amount = 1) {
         bool added = inventoryManager.AddItem(itemID, amount); 
         if (added) {
-            OnItemPickup?.Invoke(itemID, 1);
+            OnItemPickup?.Invoke(itemID, amount);
             XPEvents.TriggerGainXP(XPCalculation.
                 CalculateXP(App.ResourceSystem.GetItemByID(itemID),amount));
             DiscoveryManager.Instance.ServerDiscoverResource(itemID);
