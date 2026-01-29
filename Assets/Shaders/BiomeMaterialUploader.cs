@@ -46,13 +46,12 @@ public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
         var tileColors = new Vector4[NUM_BIOMES];
         var airColors = new Vector4[NUM_BIOMES];
 
-        float biome = 1f / 255f;
         // Rememver that colors are from 0 - 1
         var worldLayerColors = new Vector4[6] {
-            new(1f/255f,biome,0f,1f), // BASIC 
-            new(2f/255f,biome,0f,1f), // Harder
-            new(3f/255f,biome,0f,1f), // Harder!
-            new(4f/255f,biome,0f,1f),// harderr!!
+            new(1f/255f, 1f / 255f,0f,1f), // BASIC 
+            new(2f/255f, 2f / 255f,0f,1f), // Harder
+            new(3f/255f, 3f / 255f,0f,1f), // Harder!
+            new(4f/255f, 4f / 255f,0f,1f),// harderr!!
             Color.magenta,
             Color.magenta
         }; 

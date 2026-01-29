@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class TileSO : RuleTile, IIdentifiable {
     [Header("Game Properties")]
     public short maxDurability = 10; // How many "hits" it takes to break. -1 means non solid.
-
+    [HideInInspector]  // We now set it dynamically based on biome ( so Y color value in the shader )
     public int textureIndex = -1; // Used in the shader to know what the texture should be, set as -1 only if not used by shader
     ushort IIdentifiable.ID => ID;
     public ushort ID; 
@@ -44,7 +44,8 @@ public class TileSO : RuleTile, IIdentifiable {
     // Shader uses BiomeBackgrounds to index with textureIndex to set the right textue!
     public override void GetTileData(Vector3Int position, ITilemap tilemap, ref TileData tileData) {
         base.GetTileData(position, tilemap, ref tileData);
-        if (textureIndex == -1) return;
+        if (textureIndex == -1 || textureIndex == ResourceSystem.InvalidID) return;
+        // Is it possible to set this tectureIndex at runtime? 
         float encodedIndex = (float)textureIndex / INDEX_SCALE;
         tileData.color = new Color(encodedIndex, 0f, 0f, 1f).gamma;
     }

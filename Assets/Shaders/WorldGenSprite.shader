@@ -190,7 +190,7 @@ Shader "Custom/WorldGenSprite"
                 //float4 Color = float4(1, 1, 0, 255) / 255.0;
                 // Start the world as solid
                 float maxDepth = -1 * abs(_TrenchBaseWidth / _TrenchBaseWiden) * 0.7;
-                float4 Color = WorldLayerColor(uv,maxDepth);
+                float4 resultColor = WorldLayerColor(uv,maxDepth);
                 // ---------- 2D normalized-distance biome pick (cheap) ----------
                 //float caveNoise = fbm(float2(uv.x * _CaveNoiseScale + _GlobalSeed * 2.79, uv.y * _CaveNoiseScale + _GlobalSeed * 8.69)) * _CaveAmp;
                 // Best one:
@@ -232,9 +232,15 @@ Shader "Custom/WorldGenSprite"
                     float blockVal = PerBiomeNoise(uv,_GlobalSeed, biomeIndex, b_blockScale,b_caveType,
                         b_baseOctaves,b_ridgeOctaves,b_warpAmp,b_worldeyWeight) * b_blockAmp;
                     if (blockVal < b_blockCut)
-                        Color = b_tileColor;
+                        // keeping r value because that determines drops  
+                        resultColor = float4(
+                            resultColor.r,
+                            b_tileColor.g,
+                            b_tileColor.b,
+                            b_tileColor.a
+                        );
                     else
-                        Color = b_airColor;
+                        resultColor = b_airColor;
                 }
                 else
                 {
@@ -243,7 +249,7 @@ Shader "Custom/WorldGenSprite"
                     //float caveNoise = CaveDensity_Tunnels(uv,_GlobalSeed,biomeIndex,_CaveNoiseScale,_BaseOctaves,_WarpAmp);
                     if (caveNoise <_CaveCutoff) {
                     // Cave
-                        Color = float4(0, 1, 1, 1);
+                        resultColor = float4(0, 1, 1, 1); // air with trench biome 
                     }                    
                 }
                 
@@ -251,10 +257,10 @@ Shader "Custom/WorldGenSprite"
                 // //  if (trenchMask < 0.5 && uv.y < b_YStart)
                 if (trenchMask < 0.5)
                 {
-                Color = float4(255, 254.0, 255, 255) / 255.0;
+                resultColor = float4(255, 254.0, 255, 255) / 255.0;
                 }
 
-                return Color;
+                return resultColor;
             }
 
             struct appdata_t

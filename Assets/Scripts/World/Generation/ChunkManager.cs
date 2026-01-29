@@ -1,10 +1,11 @@
-using UnityEngine;
-using UnityEngine.Tilemaps;
+using Sirenix.OdinInspector;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEditor;
-using System;
+using UnityEngine;
+using UnityEngine.Tilemaps;
+using static UnityEngine.GridBrushBase;
 using Random = UnityEngine.Random;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
@@ -88,6 +89,13 @@ public struct ChunkPayload {
         EntityPersistantIds = entityIds;
     }
 }
+// tileID is tied to the data like durability and drops, while textureIndex determines how it looks like
+// This is perfect for us because we have biomes 
+struct TileKey {
+    public ushort tileID;
+    public byte textureIndex;
+    public TileKey(ushort t, byte tex) { tileID = t; textureIndex = tex; }
+}
 
 public class ChunkManager : MonoBehaviour {
     [SerializeField] private bool useSave = false;
@@ -108,6 +116,9 @@ public class ChunkManager : MonoBehaviour {
     public bool DidOnStart() => _didOnStart;
     private bool _didOnStart;
     public Dictionary<Vector2Int, ChunkData> GetWorldChunks() => worldChunks; // Used by save manager
+
+    // Instead of creating 30 diffierent combinations of tile visual and tile data we create them as we need and put them in here
+    Dictionary<TileKey, TileSO> runInstanceTilePool = new Dictionary<TileKey, TileSO>();
     public bool IsChunkActive(Vector2Int c) => activeChunks.Contains(c);
     // --- Chunk Data ---
     [ShowInInspector]
@@ -158,13 +169,9 @@ public class ChunkManager : MonoBehaviour {
         //Debug.Log("Chunk loading");
         HashSet<Vector2Int> clientActiveVisualChunks = new HashSet<Vector2Int>();
         Vector2Int clientCurrentChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
-
-        // Wait until the player object owned by this client is spawned and available
-        // This assumes your player spawn logic is handled correctly by FishNet
-        //yield return new WaitUntil(() => base.Owner != null && base.Owner.IsActive && base.Owner.IsLocalClient && PlayerController.LocalInstance != null); // Assumes a static LocalInstance on your PlayerControll
-        yield return new WaitUntil(() => PlayerManager.LocalInstance != null); // Assumes a static LocalInstance on your PlayerController
-
-        Transform localPlayerTransform = PlayerManager.LocalInstance.transform; // Get the locally controlled player
+        
+        yield return new WaitUntil(() => PlayerManager.LocalInstance != null); 
+        Transform localPlayerTransform = PlayerManager.LocalInstance.transform;
         // Temporary list for batching requests
         List<Vector2Int> chunksToRequestBatch = new List<Vector2Int>();
         while (true) {
@@ -326,8 +333,16 @@ public class ChunkManager : MonoBehaviour {
                 for (int x = 0; x < CHUNK_SIZE; x++) {
                     ushort tileID = chunkPayload.TileIds[tileIndex];
                     ushort oreID = chunkPayload.OreIds[tileIndex];
-                    //durabilities.Add(chunkPayload.Durabilities[tileIndex]);
-                    tilesToSet[tileIndex] = App.ResourceSystem.GetTileByID(tileID);
+
+                    var t = App.ResourceSystem.GetTileByID(tileID); // Magic is here, we're using t as the base, and then creating an instance that matches our biomeID
+                    TileSO tileinstance; 
+                    if(tileID == ResourceSystem.AirID) {
+                        tileinstance = t; // simply use air lol?
+                    } else {
+                       tileinstance = GetOrCreateTileInstance(t, tileID, worldChunks[chunkPayload.ChunkCoord].biomeID[x, y]); // idk if getting biome data like this is correct
+
+                    }
+                    tilesToSet[tileIndex] = tileinstance;
                     oresToSet[tileIndex] = App.ResourceSystem.GetTileByID(oreID);
                     tilesShadingToSet[tileIndex] = tileID != 0 ? App.ResourceSystem.GetTileByID(9999) : null;
                     tileIndex++;
@@ -403,18 +418,6 @@ public class ChunkManager : MonoBehaviour {
         }
         // We might want to remove entries from this cache when chunks are visually unloaded
         // in ClientChunkLoadingRoutine to save client memory.
-    }
-
-    public float GetClientCachedDurability(Vector3Int cellPos) {
-        Vector2Int chunkCoord = CellToChunkCoord(cellPos);
-        if (clientDurabilityCache.TryGetValue(chunkCoord, out float[,] chunkDurability)) {
-            int localX = cellPos.x - chunkCoord.x * CHUNK_SIZE;
-            int localY = cellPos.y - chunkCoord.y * CHUNK_SIZE;
-            if (localX >= 0 && localX < CHUNK_SIZE && localY >= 0 && localY < CHUNK_SIZE) {
-                return chunkDurability[localX, localY];
-            }
-        }
-        return -1; // Default or error state
     }
 
     // --- Visually Deactivate Chunk (Client Side) ---
@@ -515,34 +518,29 @@ public class ChunkManager : MonoBehaviour {
         var ore = App.ResourceSystem.GetTileByID(chunk.oreID[localX, localY]);
         // if ore use Ore tilebase, not stone
         if (targetTile != null) {
-            if (ore != null) targetTile = ore;
             if (targetTile.maxDurability <= 0) return; // Indestructible tile
 
             // --- Apply Damage ---
             float currentDurability = chunk.tileDurability[localX, localY];
-            if (currentDurability < 0) // Was at full health (-1 sentinel)
-            {
-                currentDurability = targetTile.maxDurability;
+            if (currentDurability < 0) { // Was at full health (-1 sentinel)
+                short extraDurability = 0;
+                if (ore != null) extraDurability = ore.maxDurability;// or adds to the durability which should make sense
+                currentDurability = targetTile.maxDurability + extraDurability; 
             }
-
             float newDurability = currentDurability - damageAmount;
-
             // Mark as modified ONLY if durability actually changed
             if (newDurability != chunk.tileDurability[localX, localY]) {
                 chunk.isModified = true;
             }
             chunk.tileDurability[localX, localY] = newDurability;
 
-
             // --- Check for Destruction ---
             if (newDurability <= 0) {
                 // Destroy Tile: Set to Air (will broadcast visual change via existing RPC)
                 // Setting durability back to -1 for the (now air) tile in the data is good practice
                 chunk.tileDurability[localX, localY] = -1;
-                // TODO air tile type should be of the dominant biome of the chunk
-                ServerRequestModifyTile(cellPos, 0); // Tile ID 0 = Air/Null
-
-                // Spawn Drops (Server-side)
+                // TODO air tile type should be of the dominant biome of the chunk 
+                ServerRequestModifyTile(cellPos, ResourceSystem.AirID); 
                 SpawnDrops(targetTile, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Drop at cell center
 
                 // Spawn Break Effect (Broadcast to clients)
@@ -641,6 +639,15 @@ public class ChunkManager : MonoBehaviour {
 
     public void AddChunkData(Vector2Int chunkCoord, ChunkData data) {
         worldChunks.Add(chunkCoord, data);
+    }
+    TileSO GetOrCreateTileInstance(TileSO baseAsset, ushort tileID, byte textureIndex) {
+        TileKey key = new TileKey(tileID,textureIndex);
+        if (runInstanceTilePool.TryGetValue(key, out var inst)) return inst;
+        inst = ScriptableObject.Instantiate(baseAsset);
+        int t = ResourceSystem.GetTextureIndexFromBiome((BiomeType)textureIndex);
+        inst.textureIndex = t; // This is all we want, I hate unity
+        runInstanceTilePool[key] = inst;
+        return inst;
     }
 
     // =============================================

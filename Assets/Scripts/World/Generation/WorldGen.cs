@@ -155,8 +155,6 @@ public class WorldGen : MonoBehaviour {
         };
 
         // Request readback. The callback 'OnReadbackCompleted' will be invoked when data is ready.
-        // Using RGBA32 as it's a common, flexible format. Shader should output accordingly.
-         // 8 to 32
         AsyncGPUReadback.Request(_renderTexture, 0, TextureFormat.RGBAFloat, request => OnGPUReadbackCompleted(request, context));
     }
     
@@ -211,7 +209,7 @@ public class WorldGen : MonoBehaviour {
                         // Tile ID is stored in the R channel (0-255).
                         ushort tileID = 0;
                         byte biomeID = 0;
-                        // Tile first
+                        // tileID determines durability and drops
                         if (IDData.x == 1) { 
                             tileID = ResourceSystem.StoneID; 
                         } else if (IDData.x == 0 || IDData.x==255) {
@@ -220,26 +218,24 @@ public class WorldGen : MonoBehaviour {
                             tileID = ResourceSystem.StoneToughID;
                         } else if (IDData.x == 3) {
                             tileID = ResourceSystem.StoneVeryToughID;
-                        } else if (IDData.x == 90) {
-                            tileID =  ResourceSystem.GetTileFromBiome(BiomeType.Bioluminescent); 
-                        } else if (IDData.x == 95) {
-                            tileID = ResourceSystem.GetTileFromBiome(BiomeType.Fungal);
-                        } else if (IDData.x == 100) {
-                            tileID = ResourceSystem.GetTileFromBiome(BiomeType.Forest);
-                        } else if (IDData.x == 245) {
-                            tileID = ResourceSystem.GetTileFromBiome(BiomeType.Deadzone);
                         }
-                        // Biome    
+                        // Biome determines visual and biome info for entities and bio buffs etc
                         if (IDData.y == 1) {
                             biomeID = 1; // Trench
+                        } else if (IDData.y == 2) {
+                            biomeID = (byte)BiomeType.Trench1; 
+                        } else if (IDData.y == 3) {
+                            biomeID = (byte)BiomeType.Trench2;
+                        } else if (IDData.y == 4) {
+                            biomeID = (byte)BiomeType.Trench3;
                         } else if(IDData.y == 253) {
-                            biomeID = 7; // Bioluminence
+                            biomeID = (byte)BiomeType.Bioluminescent;
                         } else if (IDData.y == 133) {
-                            biomeID = 8; // Fungal
+                            biomeID = (byte)BiomeType.Fungal;
                         } else if (IDData.y == 175) {
-                            biomeID = 9; // Forest
+                            biomeID = (byte)BiomeType.Forest;
                         } else if (IDData.y == 220) {
-                            biomeID = 10; // Desert
+                            biomeID = (byte)BiomeType.Deadzone;
                         }
                         currentChunkData.tiles[xTileInChunk, yTileInChunk] = tileID;
                         currentChunkData.biomeID[xTileInChunk, yTileInChunk] = biomeID;

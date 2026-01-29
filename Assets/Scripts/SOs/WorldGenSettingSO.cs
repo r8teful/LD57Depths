@@ -53,5 +53,10 @@ public enum BiomeType : byte {
     Gems = 13,
     ShipGraveyard = 14,
     Volcanic = 15,
+    // The further we go up the harder tiles will get
+    // also tiles look different, this is considered a new biome
+    Trench1 = 16, 
+    Trench2 = 17,  
+    Trench3 = 18,  
     None = 0
 }

@@ -387,6 +387,33 @@ public class ResourceSystem {
     public static WorldGenSettingSO GetMainMap() {
         return GetMapByID(WORLD_MAP_ID);
     }
+
+    // So we have a texture array that the shaders use. This simply takes the biomeEnum and turns it 
+    // into the texture index that is used by that biome
+    internal static int GetTextureIndexFromBiome(BiomeType b) {
+        return b switch {
+            BiomeType.Trench => 0,
+            BiomeType.Bioluminescent => 1,
+            BiomeType.Fungal => 2,
+            BiomeType.Forest => 3,
+            BiomeType.Deadzone => 4,
+            BiomeType.Surface => InvalidID,
+            BiomeType.AncientCaves => InvalidID,
+            BiomeType.Algea => InvalidID,
+            BiomeType.Reef => InvalidID,
+            BiomeType.Ocean => InvalidID,
+            BiomeType.LostCity => InvalidID,
+            BiomeType.None => AirID,
+            BiomeType.Snow => InvalidID,
+            BiomeType.Gems => InvalidID,
+            BiomeType.ShipGraveyard => InvalidID,
+            BiomeType.Volcanic => InvalidID,
+            BiomeType.Trench1 => 7,
+            BiomeType.Trench2 => 9,
+            BiomeType.Trench3 => 10,
+            _ => 0,
+        };
+    }
 }
 
 [System.Serializable]
