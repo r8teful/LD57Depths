@@ -18,12 +18,12 @@ public class NetworkedPlayerInventory : MonoBehaviour {
         inventoryManager = new InventoryManager(App.ResourceSystem.GetAllItems()); 
     }
  
-    public void AwardItem(ushort itemID) {
-        bool added = inventoryManager.AddItem(itemID, 1); 
+    public void AwardItem(ushort itemID, int amount = 1) {
+        bool added = inventoryManager.AddItem(itemID, amount); 
         if (added) {
             OnItemPickup?.Invoke(itemID, 1);
             XPEvents.TriggerGainXP(XPCalculation.
-                CalculateXP(App.ResourceSystem.GetItemByID(itemID),1));
+                CalculateXP(App.ResourceSystem.GetItemByID(itemID),amount));
             DiscoveryManager.Instance.ServerDiscoverResource(itemID);
         } else {
             Debug.LogWarning($"Client: Could not add item {itemID} to inventory (full?).");

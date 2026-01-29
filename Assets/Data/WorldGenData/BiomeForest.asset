@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: BiomeForest
   m_EditorClassIdentifier: 
   biomeType: 9
-  EdgeNoiseScale: 0.2
-  EdgeNoiseAmp: 29.1
+  EdgeNoiseScale: 0.1
+  EdgeNoiseAmp: 16.37
   BlockNoiseScale: 0.03
   BlockNoiseAmp: 0.05
   BlockCutoff: 0.004
@@ -23,8 +23,8 @@ MonoBehaviour:
   WarpAmp: 0.32
   WorleyWeight: 1.51
   CaveType: 1
-  HorSize: 85.1
-  YHeight: 102.3
+  HorSize: 80.6
+  YHeight: 60.1
   TileColor: {r: 0.39215687, g: 0.6862745, b: 0, a: 1}
   AirColor: {r: 1, g: 0.6862745, b: 0.62352943, a: 1}
   YStart: -209.6

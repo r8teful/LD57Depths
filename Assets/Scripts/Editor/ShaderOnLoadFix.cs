@@ -75,12 +75,12 @@ public class ShaderOnLoadFix {
         }
         // Purelly visual
         var worldLayerColors = new Vector4[6] {
-            Color.gray9,
-            Color.gray8,
-            Color.gray7,
             Color.gray6,
-            Color.gray5,
-            Color.gray4
+            Color.gray4,
+            Color.gray2,
+            Color.gray1,
+            Color.gray,
+            Color.gray
         };
         targetMaterial.SetVectorArray("_LayerColors", worldLayerColors);
 

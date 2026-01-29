@@ -338,7 +338,7 @@ TextureImporter:
         width: 12
         height: 12
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -360,7 +360,7 @@ TextureImporter:
         width: 12
         height: 12
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -382,7 +382,7 @@ TextureImporter:
         width: 12
         height: 12
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -404,7 +404,7 @@ TextureImporter:
         width: 12
         height: 12
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -426,7 +426,7 @@ TextureImporter:
         width: 12
         height: 12
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -435,6 +435,50 @@ TextureImporter:
       bones: []
       spriteID: 42d4258162e0e664592b664324123c5f
       internalID: 1907617169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ItemBiome
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 96
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 698b9cefbe23e68409729a30751e0be9
+      internalID: -2069875270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: biomeDrop
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 88
+        width: 3
+        height: 3
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba2c2be2408b03a4c991d7d166904210
+      internalID: -2089849231
       vertices: []
       indices: 
       edges: []
@@ -455,6 +499,7 @@ TextureImporter:
     nameFileIdTable:
       Emerald: 322230836
       ItemAmethyst: 2113536527
+      ItemBiome: -2069875270
       ItemCopper: -487167182
       ItemDiamond: -846032571
       ItemGold: 1965301794
@@ -469,6 +514,7 @@ TextureImporter:
       Stone: 569354257
       StoneBrick: 1256492919
       StoneDrop: -1511702172
+      biomeDrop: -2089849231
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

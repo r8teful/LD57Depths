@@ -108,7 +108,7 @@ public class WorldGenSettings {
             bool firstLayerPlacement = amountPlaced % 2 == 0;
             // X placement
             var edgePos = firstLayerPlacement ? -biome.HorSize : biome.HorSize; // Place it on the very edge
-            var OFFSET_TO_TRENCH = Random.Range(50,90); // a min 100 seems fine for now but it would ofcourse depend on world size 
+            var OFFSET_TO_TRENCH = Random.Range(30,60); // a min 100 seems fine for now but it would ofcourse depend on world size 
             biome.XOffset = firstLayerPlacement ? edgePos - OFFSET_TO_TRENCH : edgePos + OFFSET_TO_TRENCH; // Shift it by offsetToTrench
             
             // y placement

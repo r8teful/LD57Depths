@@ -17,29 +17,19 @@ public class ItemData : ScriptableObject, IIdentifiable {
     [PreviewField(75), HideLabel, LabelWidth(0)]
     public Sprite icon = null;
 
-
-    [Header("World Representation")]
-    public GameObject droppedPrefab = null; // Prefab instantiated when dropped
-
-    [VerticalGroup("Gamepaly/1")]
-    public bool isUsable = false;
-    [VerticalGroup("Gamepaly/1")]
-    public bool isConsumable = true; // Is it used up after one use?
-    [VerticalGroup("Gamepaly/1")]
-    public int usageCooldown = 0;
-    [VerticalGroup("Gamepaly/1")]
+    //[VerticalGroup("Gamepaly")]
+    [BoxGroup("Gameplay")]
+    [HorizontalGroup("Gameplay/Left")]
+    [VerticalGroup("Gameplay/Left/1")]
+    public float droppGravityScale = 0;
+    [VerticalGroup("Gameplay/Left/1")]
+    public float linearDamping = 0.1f;
+    [VerticalGroup("Gameplay/Left/1")]
     public int itemValue = 0; // Used for upgrade calculations
-    
+
+    [VerticalGroup("Gameplay/Left/2")]
+    [PreviewField(75), HideLabel, LabelWidth(0)]
+    public Sprite droppSprite = null;
     ushort IIdentifiable.ID => ID;
 
-    public virtual bool Use(GameObject user) {
-        if (isUsable) {
-            Debug.LogWarning($"Using {itemName} - Base Use() called. Override in derived class for specific effect!");
-            // Base implementation does nothing but indicates it *could* be used.
-            // Derived classes will implement actual effects (healing, equipping, etc.)
-            return true; // Return true indicate it *was* "used", even if base effect is nothing.
-        }
-        Debug.LogWarning($"{itemName} is not usable.");
-        return false;
-    }
 }

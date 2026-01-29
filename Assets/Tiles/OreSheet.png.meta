@@ -338,7 +338,7 @@ TextureImporter:
         width: 8
         height: 8
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -347,6 +347,160 @@ TextureImporter:
       bones: []
       spriteID: aabccbec70ed0c34890bdaa2d1ce01d2
       internalID: 1616890552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DropAmethyst
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 6
+        width: 1
+        height: 1
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c2290c7aae14c36449c7381c243deb88
+      internalID: -1742073984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DropJasper
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 12
+        width: 1
+        height: 1
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b9f0c74eb73c494b8ed2f22bdabe05a
+      internalID: -1249776653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DropSilver
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 6
+        width: 1
+        height: 1
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed7d3eba52b2bc34490338812bad5d34
+      internalID: -489463611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DropCopper
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 6
+        width: 1
+        height: 1
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e0c64e1ae9252734eb3d7b9121a7d9bf
+      internalID: -807312852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DropGold
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 6
+        width: 1
+        height: 1
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88c226a99b0ad4c458e892f4b43cbe96
+      internalID: 1861754227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DropRuby
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 6
+        width: 1
+        height: 1
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 13d94157452f38c43bb125343d07db78
+      internalID: -352213827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DropDiamond
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 6
+        width: 1
+        height: 1
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21c62929da19bb447a372747670e73cf
+      internalID: -974076166
       vertices: []
       indices: 
       edges: []
@@ -367,6 +521,13 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":8.0,"y":8.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
+      DropAmethyst: -1742073984
+      DropCopper: -807312852
+      DropDiamond: -974076166
+      DropGold: 1861754227
+      DropJasper: -1249776653
+      DropRuby: -352213827
+      DropSilver: -489463611
       Ore_0Iron: -451602843
       Ore_1Copper: -353166944
       Ore_2Gold: -102183964

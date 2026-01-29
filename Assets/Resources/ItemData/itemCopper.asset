@@ -16,8 +16,7 @@ MonoBehaviour:
   ID: 1
   description: its silver and looks cool
   icon: {fileID: -487167182, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
-  droppedPrefab: {fileID: 6402200259883455465, guid: 631a0f79fd11c0943b5bc7c047bd47e7, type: 3}
-  isUsable: 0
-  isConsumable: 0
-  usageCooldown: 0
+  droppGravityScale: 0.1
+  linearDamping: 0
   itemValue: 3
+  droppSprite: {fileID: -807312852, guid: 2239f7c87c9d95046ae3e15310442a9d, type: 3}

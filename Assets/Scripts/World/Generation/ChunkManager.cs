@@ -565,19 +565,12 @@ public class ChunkManager : MonoBehaviour {
     private void SpawnDrops(TileSO sourceTile, Vector3 position) {
         if (sourceTile.drop == null) return;
         // Query dropmanager for drops
-        var dropData = TileDropManager.Instance.GetDropData(sourceTile);
+        var dropData = WorldDropManager.Instance.GetDropData(sourceTile);
         foreach (var drop in dropData) {
-            for (int i = 0; i < drop.amount; i++) {
-                // Slightly randomize drop position
-                Vector3 spawnPos = position + (Vector3)Random.insideUnitCircle * 0.3f;
-                // Instantiate the PREFAB, then spawn the INSTANCE
-                GameObject dropInstance = Instantiate(drop.prefabToDrop, spawnPos, Quaternion.identity);
-                var worldItem = dropInstance.GetComponent<DroppedEntity>();
-                if (worldItem != null) {
-                    worldItem.Init(drop.itemID, 1); // we either drop 1, or just specify amountToDrop and don't loop
-                } 
-            }
-        
+            // Slightly randomize drop position
+            Vector3 spawnPos = position + (Vector3)Random.insideUnitCircle * 0.3f;
+            // WorldDropManager handles drop gameobjects
+            WorldDropManager.Instance.SpawnDrop(spawnPos, drop.Amount, drop.ItemData);
         }
         
     }

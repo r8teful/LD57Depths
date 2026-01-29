@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0875b8093cac994284fe8213a256f45, type: 3}
-  m_Name: ItemDiamond
+  m_Name: itemBiome
   m_EditorClassIdentifier: 
-  itemName: 
-  ID: 6
-  description: 
-  icon: {fileID: -846032571, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
-  droppGravityScale: 0.1
-  linearDamping: 0
-  itemValue: 15
-  droppSprite: {fileID: 0}
+  itemName: BiomeEssence
+  ID: 11
+  description: Its wierd
+  icon: {fileID: -2069875270, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}
+  droppGravityScale: 0.01
+  linearDamping: 0.04
+  itemValue: 3
+  droppSprite: {fileID: -2089849231, guid: 69ef2118beaef2a4c83b81159fb8e155, type: 3}

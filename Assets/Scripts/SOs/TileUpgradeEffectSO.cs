@@ -6,7 +6,7 @@ public class TileUpgradeEffectSO : UpgradeEffect {
     [SerializeField] private int dropIncrease; // Again, here we could add more upgradable things
     public override void Execute(ExecutionContext context) {
         // I don't care just call the manager directly what could go wrong!?
-        TileDropManager.Instance.NewTileUpgrade(tileToUpgrade.ID, dropIncrease);
+        WorldDropManager.Instance.NewTileUpgrade(tileToUpgrade.ID, dropIncrease);
     }
 
     public override StatChangeStatus GetChangeStatus() {
