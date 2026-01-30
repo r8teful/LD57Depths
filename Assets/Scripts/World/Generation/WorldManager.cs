@@ -48,9 +48,9 @@ public class WorldManager : StaticInstance<WorldManager> {
         BiomeManager.Init(this);
         SetSubAndPlayerSpawn();
         mainTilemap.ClearAllTiles(); // Start with a clear visual map
-        StructureManager = new StructureManager();
+        StructureManager = gameObject.AddComponent<StructureManager>();
         //if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
-        SpawnArtifacts();
+        SpawnStructures();
         PlayerLayerController.OnPlayerVisibilityChanged += PlayerLayerChange;
     }
 
@@ -65,13 +65,12 @@ public class WorldManager : StaticInstance<WorldManager> {
         }
     }
 
-    private void SpawnArtifacts() {
+    private void SpawnStructures() {
         var settings = GameSetupManager.Instance.WorldGenSettings;
         foreach(var biome in settings.biomes) {
-            var data = StructureManager.GenerateArtifact(biome);
-            // Now after this is done, we can access the position within worldgen
-            Instantiate(App.ResourceSystem.GetPrefab<Artifact>("Artifact")).Init(data);
+            StructureManager.GenerateArtifact(biome);
         }
+        StructureManager.GenerateExplorationEntities(settings);
     }
 
     private void SetSubAndPlayerSpawn() {

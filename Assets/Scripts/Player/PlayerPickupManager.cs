@@ -93,6 +93,7 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
         foreach (Collider2D hit in hits) {
             var item = hit.GetComponent<DropPooled>();
             if (item != null && !item.IsPicked) {
+                Debug.Log("pickup!");
                 PickupItem(item);
             }
         }

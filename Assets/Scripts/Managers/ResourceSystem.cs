@@ -47,7 +47,8 @@ public class ResourceSystem {
     public const ushort LadderID = 501; // Ladder is always 501, used in SubInterior.cs
     public const ushort ControlPanellRecipeID = 101; // FixRecipe.cs
     public const ushort BiomeEssenceID = 11; 
-    public const ushort ArtifactStructureID = 1; // idk 
+    public const ushort StructureArtifactID = 1; 
+    public const ushort StructureChestID = 2; 
 
     // World stuff?
     public static ushort WORLD_MAP_ID = 1;

@@ -9,12 +9,12 @@ public class Artifact : MonoBehaviour {
     private int _breakCount;
     private int _breakReq;
     private bool _revealed;
-    internal void Init(StructurePlacementResult data) {
+    internal void Init(StructurePlacementResult data, BiomeType biome) {
         transform.position = new(data.bottomLeftAnchor.x, data.bottomLeftAnchor.y,0);
         _footprintRect = new RectInt(data.bottomLeftAnchor, Vector2Int.one * 3);
         _breakCount = 0;
         _breakReq = _footprintRect.width * _footprintRect.height; // TODO this will not work if some areas are air
-        biomeData = App.ResourceSystem.GetBiomeData((ushort)data.biome);
+        biomeData = App.ResourceSystem.GetBiomeData((ushort)biome);
         ChunkManager.OnTileChanged += TileChanged;
     }
     private void OnDisable() {

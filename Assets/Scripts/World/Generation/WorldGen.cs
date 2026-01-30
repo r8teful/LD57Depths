@@ -549,8 +549,7 @@ public class WorldGen : MonoBehaviour {
 
         var chunkRect = ChunkCoordToRect(chunkCoord);
 
-        foreach (var entry in structures) {
-            StructurePlacementResult placement = entry.Value;
+        foreach (var placement in structures) {
             if (placement.fullyStamped) continue;
 
             StructureSO structure = App.ResourceSystem.GetStructureByID(placement.ID);
@@ -594,6 +593,11 @@ public class WorldGen : MonoBehaviour {
                         chunkData.oreID[chunkLocalX, chunkLocalY] = tile.ID;
                         chunkPayload.OreIds[payloadIndex] = tile.ID;
                     } else {
+                        if(tile.ID == ResourceSystem.AirID) {
+                            // Clear the ore because those got spawned before structures
+                            chunkData.oreID[chunkLocalX, chunkLocalY] = ResourceSystem.InvalidID;
+                            chunkPayload.OreIds[payloadIndex] = ResourceSystem.InvalidID;
+                        }
                         baseTileID = tile.ID; // structure tile
                     }
                     chunkData.tiles[chunkLocalX, chunkLocalY] = baseTileID;
