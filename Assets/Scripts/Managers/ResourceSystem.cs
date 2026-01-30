@@ -33,7 +33,10 @@ public class ResourceSystem {
     private Dictionary<ushort, BuffSO> _buffLookupByID;
     
     private Dictionary<ushort, AbilitySO> _abilityLookupByID;
+
     private Dictionary<ushort, BiomeDataSO> _biomeLookupByID;
+
+    private Dictionary<ushort, StructureSO> _structureLookupByID;
 
 
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
@@ -44,6 +47,7 @@ public class ResourceSystem {
     public const ushort LadderID = 501; // Ladder is always 501, used in SubInterior.cs
     public const ushort ControlPanellRecipeID = 101; // FixRecipe.cs
     public const ushort BiomeEssenceID = 11; 
+    public const ushort ArtifactStructureID = 1; // idk 
 
     // World stuff?
     public static ushort WORLD_MAP_ID = 1;
@@ -94,6 +98,7 @@ public class ResourceSystem {
         InitializeLookup("WorldGenData", out _worldGenLookupByID, out _);
         InitializeLookup("BuffData", out _buffLookupByID, out _);
         InitializeLookup("AbilityData", out _abilityLookupByID, out _);
+        InitializeLookup("StructureData", out _structureLookupByID, out _);
         InitializeLookup("BiomeData", out _biomeLookupByID, out _);
 
         InitializeLookup<UpgradeRecipeSO>("", out _recipeUpgradeLookupByID, out _);
@@ -209,6 +214,13 @@ public class ResourceSystem {
             return null;
         }
         return ability;
+    }
+    internal StructureSO GetStructureByID(ushort id) {
+        if (id == InvalidID || !_structureLookupByID.TryGetValue(id, out StructureSO structure)) {
+            Debug.LogWarning($"structure ID {id} not found in database.");
+            return null;
+        }
+        return structure;
     }
     public AbilitySO GetRandomAvailableAbility(HashSet<ushort> exluded) {
         var rnd = new System.Random();
@@ -347,23 +359,7 @@ public class ResourceSystem {
             _ => "NULL",
         };
     }
-    public static ushort GetTileFromBiome(BiomeType b) {
-        return b switch {
-            BiomeType.Trench => 1,
-            BiomeType.Bioluminescent => 5,
-            BiomeType.Fungal => 6,
-            BiomeType.Forest => 7,
-            BiomeType.Deadzone => 8,
-            BiomeType.Surface => InvalidID,
-            BiomeType.AncientCaves => InvalidID,
-            BiomeType.Algea => InvalidID,
-            BiomeType.Reef => InvalidID,
-            BiomeType.Ocean => InvalidID,
-            BiomeType.LostCity => InvalidID,
-            BiomeType.None => AirID,
-                _ => 0,
-        };
-    }
+ 
     public static float GetIncreaseByRarity(RarityType t) {
         return t switch {
             RarityType.Common => 1f,
@@ -414,6 +410,7 @@ public class ResourceSystem {
             _ => 0,
         };
     }
+
 }
 
 [System.Serializable]

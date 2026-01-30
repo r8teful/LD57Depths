@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using static UnityEngine.GridBrushBase;
 using Random = UnityEngine.Random;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
@@ -125,9 +124,7 @@ public class ChunkManager : MonoBehaviour {
     private Dictionary<Vector2Int, ChunkData> worldChunks = new Dictionary<Vector2Int, ChunkData>(); // Main world data
     [ShowInInspector]
     private HashSet<Vector2Int> activeChunks = new HashSet<Vector2Int>();
-    private Vector2Int currentPlayerChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
-    private Dictionary<Vector2Int, float[,]> clientDurabilityCache = new Dictionary<Vector2Int, float[,]>();
-
+   
     private WorldManager _worldManager;
     private EntityManager _entitySpawner;
     private WorldLightingManager _lightManager;
@@ -137,7 +134,6 @@ public class ChunkManager : MonoBehaviour {
     public void DEBUGNewGen() {
         worldChunks.Clear();
         activeChunks.Clear();
-        currentPlayerChunkCoord = default;
         DebugForceChunkLoad();
     }
     private void DebugForceChunkLoad() {
@@ -284,8 +280,6 @@ public class ChunkManager : MonoBehaviour {
             Debug.LogWarning($"Received invalid tile data for chunk {chunkCoord} from server.");
             //return;
         }
-        // Store durability locally for effects 
-        ClientCacheChunkDurability(chunkCoord, durabilities);
         // New active local chunk
         activeChunks.Add(chunkCoord);
         // Apply the received tiles visually
@@ -339,6 +333,8 @@ public class ChunkManager : MonoBehaviour {
                     if(tileID == ResourceSystem.AirID) {
                         tileinstance = t; // simply use air lol?
                     } else {
+                        if (t == null)
+                            continue;
                        tileinstance = GetOrCreateTileInstance(t, tileID, worldChunks[chunkPayload.ChunkCoord].biomeID[x, y]); // idk if getting biome data like this is correct
 
                     }
@@ -352,7 +348,6 @@ public class ChunkManager : MonoBehaviour {
             tiles.Add(chunkBounds, tilesToSet);
             ores.Add(chunkBounds, oresToSet);
             tilesShading.Add(chunkBounds, tilesShadingToSet);
-            ClientCacheChunkDurability(chunkPayload.ChunkCoord, chunkPayload.Durabilities);
             // Entities!!
             if (chunkPayload.EntityPersistantIds != null) {
                 _entitySpawner.ProcessReceivedEntityIds(chunkPayload.ChunkCoord, chunkPayload.EntityPersistantIds);
@@ -404,21 +399,7 @@ public class ChunkManager : MonoBehaviour {
         _worldManager.SetTiles(chunkBounds, tilesToSet);
     }
  
-    private void ClientCacheChunkDurability(Vector2Int chunkCoord, List<float> durabilityList) {
-        if (!clientDurabilityCache.ContainsKey(chunkCoord)) {
-            clientDurabilityCache[chunkCoord] = new float[CHUNK_SIZE, CHUNK_SIZE];
-        }
-
-        float[,] chunkDurability = clientDurabilityCache[chunkCoord];
-        int index = 0;
-        for (int y = 0; y < CHUNK_SIZE; y++) {
-            for (int x = 0; x < CHUNK_SIZE; x++) {
-                chunkDurability[x, y] = durabilityList[index++];
-            }
-        }
-        // We might want to remove entries from this cache when chunks are visually unloaded
-        // in ClientChunkLoadingRoutine to save client memory.
-    }
+   
 
     // --- Visually Deactivate Chunk (Client Side) ---
     private void ClientDeactivateVisualChunk(Vector2Int chunkCoord) {
@@ -458,14 +439,10 @@ public class ChunkManager : MonoBehaviour {
                 chunk.tiles[localX, localY] = newTileId;
                 chunk.isModified = true; // Mark chunk as modified for saving
                 chunk.tileDurability[localX, localY] = -1; // Reset to default state
-                if (newTileId == 0) // Check if destroyed, then we get rid of the ore
+                if (newTileId == ResourceSystem.AirID) // Check if destroyed, then we get rid of the ore
                     chunk.oreID[localX, localY] = 0;
-                // --- Update Server's OWN visuals (optional but good for host) ---
                 _worldManager.SetTile(cellPos, newTileId);
-                // --- BROADCAST change to ALL clients ---
-                UpdateTileDurability(cellPos, -1);
-                _worldManager.UpdateTile(cellPos, newTileId); // TODO check if this works it might break because we call it in the parent
-
+                _worldManager.UpdateTile(cellPos, newTileId); 
                 // Entity behaviour might change state, notify entitymanager
                 _entitySpawner.NotifyTileChanged(cellPos, chunkCoord, newTileId);
 
@@ -474,26 +451,6 @@ public class ChunkManager : MonoBehaviour {
             }
         } else {
             Debug.LogWarning($"Server: Invalid local coordinates for modification at {cellPos}");
-        }
-    }
-
-    private void UpdateTileDurability(Vector3Int cellPos, float newDurability) {
-        // Runs on all clients
-        if(newDurability == -1) {
-            _lightManager.RequestLightUpdate(); // Tile broke so update lights
-        }
-                                                // Update local cache if you have one
-        Vector2Int chunkCoord = CellToChunkCoord(cellPos);
-        if (clientDurabilityCache.TryGetValue(chunkCoord, out float[,] chunkDurability)) {
-            int localX = cellPos.x - chunkCoord.x * CHUNK_SIZE;
-            int localY = cellPos.y - chunkCoord.y * CHUNK_SIZE;
-            if (localX >= 0 && localX < CHUNK_SIZE && localY >= 0 && localY < CHUNK_SIZE) {
-                chunkDurability[localX, localY] = newDurability;
-                //Debug.Log($"new dur: {newDurability}");
-                UpdateTileVisuals(cellPos, newDurability);
-            }
-        } else {
-            Debug.Log("BRO WHAT THE FUCK");
         }
     }
     // New method on server to handle receiving damage requests
@@ -514,42 +471,40 @@ public class ChunkManager : MonoBehaviour {
 
 
         // --- Get Tile Type & Properties ---
-        TileSO targetTile = App.ResourceSystem.GetTileByID(chunk.tiles[localX, localY]);
-        var ore = App.ResourceSystem.GetTileByID(chunk.oreID[localX, localY]);
+        TileSO baseTile = App.ResourceSystem.GetTileByID(chunk.tiles[localX, localY]);
+        TileSO oreTile = App.ResourceSystem.GetTileByID(chunk.oreID[localX, localY]);
         // if ore use Ore tilebase, not stone
-        if (targetTile != null) {
-            if (targetTile.maxDurability <= 0) return; // Indestructible tile
+        if (baseTile != null) {
+            if (baseTile.maxDurability <= 0) return; // Indestructible tile
 
             // --- Apply Damage ---
-            float currentDurability = chunk.tileDurability[localX, localY];
-            if (currentDurability < 0) { // Was at full health (-1 sentinel)
-                short extraDurability = 0;
-                if (ore != null) extraDurability = ore.maxDurability;// or adds to the durability which should make sense
-                currentDurability = targetTile.maxDurability + extraDurability; 
+            float curDur = chunk.tileDurability[localX, localY];
+            short extraDurability = (short)(oreTile != null ? oreTile.maxDurability : 0);
+            if (curDur < 0) { // Was at full health (-1 sentinel)
+                curDur = baseTile.maxDurability + extraDurability; 
             }
-            float newDurability = currentDurability - damageAmount;
+            float newDurability = curDur - damageAmount;
             // Mark as modified ONLY if durability actually changed
             if (newDurability != chunk.tileDurability[localX, localY]) {
                 chunk.isModified = true;
             }
             chunk.tileDurability[localX, localY] = newDurability;
 
+            TileSO targetTile = oreTile != null ? oreTile : baseTile;
             // --- Check for Destruction ---
             if (newDurability <= 0) {
-                // Destroy Tile: Set to Air (will broadcast visual change via existing RPC)
-                // Setting durability back to -1 for the (now air) tile in the data is good practice
                 chunk.tileDurability[localX, localY] = -1;
                 // TODO air tile type should be of the dominant biome of the chunk 
-                ServerRequestModifyTile(cellPos, ResourceSystem.AirID); 
+                ServerRequestModifyTile(cellPos, ResourceSystem.AirID);
                 SpawnDrops(targetTile, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Drop at cell center
 
-                // Spawn Break Effect (Broadcast to clients)
+                _lightManager.RequestLightUpdate();
                 if (targetTile.breakEffectPrefab != null)
                     SpawnEffect(targetTile.breakEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Pass prefab path or ID if effects aren't NetworkObjects
             } else {
-                // Tile Damaged, Not Destroyed: Broadcast new durability
-                UpdateTileDurability(cellPos, newDurability);
-
+                // Tile Damaged, not destroyed
+                float maxDur = baseTile.maxDurability +  extraDurability; 
+                UpdateTileVisuals(cellPos, newDurability, maxDur);
                 // Spawn Hit Effect (Broadcast to clients)
                 if (targetTile.hitEffectPrefab != null)
                     SpawnEffect(targetTile.hitEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0));
@@ -583,10 +538,8 @@ public class ChunkManager : MonoBehaviour {
     }
 
     // Placeholder for client-side visual updates (e.g., crack overlays)
-    private void UpdateTileVisuals(Vector3Int cellPos, float currentDurability) {
-
-        TileBase crackTile = GetCrackTileForDurability(cellPos, currentDurability); // Find appropriate crack sprite
-
+    private void UpdateTileVisuals(Vector3Int cellPos, float currentDur, float maxDur) {
+        TileBase crackTile = GetCrackTileForDurability(cellPos, currentDur,maxDur); // Find appropriate crack sprite
         _worldManager.SetOverlayTile(cellPos, crackTile);
     }
     // Activates a chunk (makes it visible), pulling data from ChunkData, this might be usefull later if we want to see the chunk
@@ -614,12 +567,12 @@ public class ChunkManager : MonoBehaviour {
         // (No else needed, if already active, do nothing visually)
     }
 
-    private TileBase GetCrackTileForDurability(Vector3Int cellPos, float currentDurability) {
+    private TileBase GetCrackTileForDurability(Vector3Int cellPos, float currentDurability,float maxDurability) {
         var t = _worldManager.GetFirstTileAtCellPos(cellPos);
         //var ore = _worldManager.GetOreFromID(chunk.oreID[localX, localY]);
         //var ore = _worldManager.GetOreAtCellPos(cellPos);
         if (t is TileSO tile) {
-            return tile.GetCrackTileForDurability(currentDurability);
+            return tile.GetCrackTileForDurability(currentDurability, maxDurability);
         }
         return null;
 

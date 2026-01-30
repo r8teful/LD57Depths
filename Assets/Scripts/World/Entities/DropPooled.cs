@@ -28,6 +28,7 @@ public class DropPooled : MonoBehaviour {
         _rb.linearVelocity = Vector2.zero;
         _rb.angularVelocity = 0f;
         transform.rotation = Quaternion.identity;
+        IsPicked = false;
     }
 
     public void OnStartMagnetizing(Vector2 toCenter,float strength) {

@@ -545,51 +545,64 @@ public class WorldGen : MonoBehaviour {
         }
     }*/
     private void SpawnStructuresInChunk(ChunkData chunkData, Vector2Int chunkCoord, ChunkPayload chunkPayload) {
-        // For artifact
-        var artifacts = worldmanager.StructureManager.ArtifactPlacements;
-        var artifactsToPlace = new List<StructurePlacementResult>();
-        // Check what biome artifacts need to be generated
-        foreach (var artifact in artifacts) {
+        var structures = worldmanager.StructureManager.StructurePlacements;
 
-            var s = new RectInt(artifact.Value.bottomLeftAnchor, Vector2Int.one * 3); 
-            //Debug.Log($"structureRect for artifact at {artifact.Value.centerAnchor} is : {s}, xMin: {s.xMin} yMin: {s.yMin} xMax: {s.xMax} yMax {s.yMax}");
-            if (!artifact.Value.fullyStamped)
-                artifactsToPlace.Add(artifact.Value);
-        }
-        if (artifactsToPlace.Count <= 0) return; // already placed all artifacts! 
         var chunkRect = ChunkCoordToRect(chunkCoord);
-        foreach (var artifact in artifactsToPlace) {
-            var structureRect = new RectInt(artifact.bottomLeftAnchor, Vector2Int.one * 3);
-            var intersect = RectIntersection(chunkRect, structureRect); // artifact is 3x3
-            if (intersect == RectInt.zero) {
-                continue; // No intersection, this chunk does not generate specified artifact
-            }
-            Debug.Log($"structure {structureRect} and chunk {chunkRect} intersection is : {intersect}, xMin: {intersect.xMin} yMin: {intersect.yMin} xMax: {intersect.xMax} yMax {intersect.yMax}");
 
-            Debug.Log($"generated new artifact for biome at {artifact.bottomLeftAnchor}");
-            // Stamp only the intersection cells
-            List<TileBase> tiles = App.ResourceSystem.GetPrefab<Artifact>("Artifact").tiles;
+        foreach (var entry in structures) {
+            StructurePlacementResult placement = entry.Value;
+            if (placement.fullyStamped) continue;
+
+            StructureSO structure = App.ResourceSystem.GetStructureByID(placement.ID);
+            if (structure == null) 
+                continue;
+
+            var structureRect = new RectInt(placement.bottomLeftAnchor, structure.Size);
+            var intersect = RectIntersection(chunkRect, structureRect);
+            if (intersect.width == 0 || intersect.height == 0) {
+                continue; // No intersection with this chunk
+            }
+            // Debug.Log($"Spawning {placement.structureID} at {placement.bottomLeftAnchor}. Intersection: {intersect}");
+
+            List<TileBase> tiles = structure.tiles;
+            int structureWidth = structure.Size.x;
+
             for (int wy = intersect.yMin; wy < intersect.yMax; ++wy) {
                 for (int wx = intersect.xMin; wx < intersect.xMax; ++wx) {
+                    // Structure-local coords (0 to width-1, 0 to height-1)
+                    int localDx = wx - structureRect.x;
+                    int localDy = wy - structureRect.y;
 
-                    // structure-local coords (used to index structure template)
-                    int localDx = wx - structureRect.x; // expected 0..2
-                    int localDy = wy - structureRect.y; // expected 0..2
+                    // Chunk-local coords
+                    int chunkLocalX = wx - chunkRect.x;
+                    int chunkLocalY = wy - chunkRect.y;
 
-                    // chunk-local coords (where to write in the chunk buffer)
-                    int chunkLocalX = wx - chunkRect.x; // expected 0..chunkRect.width-1
-                    int chunkLocalY = wy - chunkRect.y; // expected 0..chunkRect.height-1
+                    // Flat Array Indexing using dynamic width
+                    int index = localDx + (localDy * structureWidth);
 
-                    int index = localDx + localDy * 3; // 3 is width
+                    // Check bounds just in case the template data is shorter than the size definitions
+                    if (index >= tiles.Count) continue;
                     var tile = tiles[index] as TileSO;
-                    chunkData.tiles[chunkLocalX, chunkLocalY] = ResourceSystem.GetTileFromBiome(artifact.biome);// Use artifact biome 
-                    chunkData.oreID[chunkLocalX, chunkLocalY] = tile.ID;
-                    chunkPayload.OreIds[chunkLocalX + chunkLocalY * CHUNK_TILE_DIMENSION] = tile.ID;
-                    chunkPayload.TileIds[chunkLocalX + chunkLocalY * CHUNK_TILE_DIMENSION] = ResourceSystem.GetTileFromBiome(artifact.biome);// Use artifact biome 
+                    if (tile == null) continue;
+                    // WRITE DATA
+                    int payloadIndex = chunkLocalX + chunkLocalY * CHUNK_TILE_DIMENSION;
+
+                    // We can either treat the tiles on the structure as ore (like an overlay). Or as the base. We can't currently have both 
+                    ushort baseTileID;
+                    if (structure.tileIsOreLayer) {
+                        baseTileID = ResourceSystem.StoneToughID; // Should be depending on what layer you're on but cba figuring that out here
+                        chunkData.oreID[chunkLocalX, chunkLocalY] = tile.ID;
+                        chunkPayload.OreIds[payloadIndex] = tile.ID;
+                    } else {
+                        baseTileID = tile.ID; // structure tile
+                    }
+                    chunkData.tiles[chunkLocalX, chunkLocalY] = baseTileID;
+                    chunkPayload.TileIds[payloadIndex] = baseTileID;
                 }
             }
         }
     }
+
 
     private RectInt ChunkCoordToRect(Vector2Int chunkCoord) {
         // I'm assuming chunkcoord is bottom left

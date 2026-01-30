@@ -4,7 +4,6 @@ using UnityEngine.Tilemaps;
 
 // This should be an entity but just have it a monobehaviour I don't care anymore it wont be multiplayer
 public class Artifact : MonoBehaviour {
-    public List<TileBase> tiles;
     private BiomeDataSO biomeData;
     private RectInt _footprintRect;
     private int _breakCount;

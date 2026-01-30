@@ -22,16 +22,15 @@ public class TileSO : RuleTile, IIdentifiable {
     // public int minToolLevel;
     // public AudioClip breakSound;
     // public AudioClip hitSound;
-    public float GetDurabilityRatio(float current) {
+    public float GetDurabilityRatio(float current, float max) {
         if(maxDurability<=0)
             return -1; // error
-        return Mathf.Clamp(current / maxDurability, 0f, 1f);
+        return Mathf.Clamp(current / max, 0f, 1f);
     }
-    public TileBase GetCrackTileForDurability(float currentDurability) {
+    public TileBase GetCrackTileForDurability(float currentDurability, float maxDurability) {
         if (breakVersions == null || breakVersions.Count == 0) return null;
         if (currentDurability < 0) return null;
-        float r = GetDurabilityRatio(currentDurability);
-        // Map ratio -> index:
+        float r = GetDurabilityRatio(currentDurability, maxDurability);
         // r == 1  -> index 0 (no crack)
         // r == 0  -> index versions.Length - 1 (fully cracked)
         int len = breakVersions.Count;

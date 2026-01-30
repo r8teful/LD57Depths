@@ -4,14 +4,13 @@ Add description to the upgrades?
 
 * Visual for when going low on oxygen
 * Need some kind of tutorial / reminder of using the brimstone ability
-* Test how the game feels with block break sounds
+* Test how the game feels with block break sounds - EH idk its more satisfying but the sound has to be really good 
 
 
 
 
 
 * Add exploration entities
-* Add biome essence
 
 
 

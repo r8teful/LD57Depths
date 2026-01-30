@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
@@ -68,5 +69,77 @@ namespace r8teful {
             return Mathf.Log(luck + 1f) * 1.2f;
         }
 
+
+        // Returns random points within an area
+        public static List<Vector2> PoissonDisc(float width, float height, float minDist, int seed, int k = 50) {
+            float cellSize = minDist / Mathf.Sqrt(2f);
+            int gridW = Mathf.CeilToInt(width / cellSize);
+            int gridH = Mathf.CeilToInt(height / cellSize);
+
+            Vector2[,] grid = new Vector2[gridW, gridH];
+            bool[,] has = new bool[gridW, gridH];
+
+            var rand = new System.Random(seed);
+
+            List<Vector2> points = new List<Vector2>();
+            List<Vector2> active = new List<Vector2>();
+
+            // initial sample
+            Vector2 first = new Vector2((float)rand.NextDouble() * width, (float)rand.NextDouble() * height);
+            points.Add(first);
+            active.Add(first);
+            int gi = (int)(first.x / cellSize);
+            int gj = (int)(first.y / cellSize);
+            grid[gi, gj] = first;
+            has[gi, gj] = true;
+
+            while (active.Count > 0) {
+                int idx = rand.Next(active.Count);
+                Vector2 cur = active[idx];
+                bool found = false;
+
+                for (int i = 0; i < k; i++) {
+                    // sample in annulus [minDist, 2*minDist)
+                    float radius = minDist * (1f + (float)rand.NextDouble());
+                    float angle = (float)rand.NextDouble() * Mathf.PI * 2f;
+                    Vector2 cand = cur + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+
+                    if (cand.x < 0 || cand.x >= width || cand.y < 0 || cand.y >= height) continue;
+
+                    int ci = (int)(cand.x / cellSize);
+                    int cj = (int)(cand.y / cellSize);
+
+                    bool ok = true;
+                    // check neighbors within 2 cells in each direction (safe bound)
+                    int i0 = Mathf.Max(0, ci - 2), i1 = Mathf.Min(gridW - 1, ci + 2);
+                    int j0 = Mathf.Max(0, cj - 2), j1 = Mathf.Min(gridH - 1, cj + 2);
+                    for (int gx = i0; gx <= i1 && ok; gx++) {
+                        for (int gy = j0; gy <= j1; gy++) {
+                            if (!has[gx, gy]) continue;
+                            if (Vector2.SqrMagnitude(grid[gx, gy] - cand) < minDist * minDist) {
+                                ok = false; break;
+                            }
+                        }
+                    }
+
+                    if (ok) {
+                        points.Add(cand);
+                        active.Add(cand);
+                        grid[ci, cj] = cand;
+                        has[ci, cj] = true;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    // no candidate found, remove active
+                    active.RemoveAt(idx);
+                }
+            }
+
+            return points;
+        }
+        
     }
 }
