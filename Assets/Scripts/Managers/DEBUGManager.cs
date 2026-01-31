@@ -97,7 +97,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     }
     [ConsoleCommand("giveXP")]
     private void debugXP(int i) {
-        XPEvents.TriggerGainXP(i);
+        RewardEvents.TriggerGainXP(i);
     }
 
 

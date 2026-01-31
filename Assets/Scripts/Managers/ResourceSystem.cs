@@ -49,6 +49,8 @@ public class ResourceSystem {
     public const ushort BiomeEssenceID = 11; 
     public const ushort StructureArtifactID = 1; 
     public const ushort StructureChestID = 2; 
+    public const ushort StructureShrineID = 3; 
+    public const ushort StructureEventCaveID = 4; 
 
     // World stuff?
     public static ushort WORLD_MAP_ID = 1;

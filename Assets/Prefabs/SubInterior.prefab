@@ -377,7 +377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6518149e97611049b3b57988ab47110, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SubGrid: {fileID: 0}
+  submarineExterior: {fileID: 0}
 --- !u!1 &2687825813671122263
 GameObject:
   m_ObjectHideFlags: 0
@@ -915,9 +915,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c42300b3910f0e54d9c00624f565e240, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   FixIcon: {fileID: -275753912, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   _popupPos: {fileID: 2616920178592729114}
   fixRecipe: {fileID: 11400000, guid: 7dd42cc13121c6943a85e3ec7857f0f7, type: 2}
@@ -949,6 +946,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactIcon: {fileID: 0}
   popupPosition: {fileID: 2616920178592729114}
+  _useOutline: 0
+  _spriteRenderer: {fileID: 1147580245095045659}
 --- !u!1 &4782832984471028093
 GameObject:
   m_ObjectHideFlags: 0
@@ -1035,7 +1034,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ad833c6b3f6c9254fab06ca0135b62ff, type: 2}
+  - {fileID: 2100000, guid: b344421852484d741b3c9c2b7259e31c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1216,7 +1215,7 @@ Transform:
   m_GameObject: {fileID: 6704352362333396210}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.34000015, y: 3.01, z: 0}
+  m_LocalPosition: {x: -0.34000015, y: 2.987, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1603,9 +1602,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c42300b3910f0e54d9c00624f565e240, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   FixIcon: {fileID: -275753912, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   _popupPos: {fileID: 3141793934502187820}
   fixRecipe: {fileID: 11400000, guid: 8fe473f058f0839428c8dfd480b0a2e3, type: 2}
@@ -1624,6 +1620,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactIcon: {fileID: 0}
   popupPosition: {fileID: 3141793934502187820}
+  _useOutline: 0
+  _spriteRenderer: {fileID: 5229215333937229237}
 --- !u!114 &3019531992173901267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1928,6 +1926,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactIcon: {fileID: 0}
   popupPosition: {fileID: 4626099869727053461}
+  _useOutline: 1
+  _spriteRenderer: {fileID: 6845955002950831498}
 --- !u!61 &2104683083912923185
 BoxCollider2D:
   m_ObjectHideFlags: 0

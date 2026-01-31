@@ -3,7 +3,6 @@
 public class PlayerExperienceManager : MonoBehaviour, IPlayerModule {
     [Header("Player Stats")]
     private LevelData levelData;
-    private bool isLevelUpSequenceActive;
     private PlayerManager _player;
 
     public int InitializationOrder => 99;
@@ -13,58 +12,57 @@ public class PlayerExperienceManager : MonoBehaviour, IPlayerModule {
         _player = playerParent;
         // Ensure the required XP is calculated correctly on start
         levelData.CalculateNextLevelThreshold();
-        XPEvents.OnGainXP += AddExperience;
-        XPEvents.OnUILevelReady += CommitLevelUp;
+        RewardEvents.OnGainXP += AddExperience;
+        RewardEvents.OnUILevelReady += CommitLevelUp;
     }
 
     private void AddExperience(int amount) {
         levelData.currentXP += amount;
-        XPEvents.TriggerXPGained(levelData.ProgressNormalized, levelData.currentXP);
+        RewardEvents.TriggerXPGainedUI(levelData.ProgressNormalized, levelData.currentXP);
         //Debug.Log($"Gained {amount} XP. Total: {levelData.currentXP}/{levelData.xpToNextLevel}");
         TryProcessLevelUp();
     }
     
     private void TryProcessLevelUp() {
-        // Guard Clause: If UI is already busy handling a level up, stop here.
-        if (isLevelUpSequenceActive) return;
-
         // Check if we actually have enough XP
         if (levelData.currentXP >= levelData.xpToNextLevel) {
-            StartLevelUpSequence();
+            QueueLevelup();
         }
     }
 
-    private void StartLevelUpSequence() {
-        isLevelUpSequenceActive = true;
+    private void QueueLevelup() {
 
+        // We calculate the level number NOW, so the UI shows the correct number 
         int levelToBecome = levelData.currentLevel + 1;
         
-        // Tell reward manager to create rewards
-        _player.PlayerReward.GenerateRewards(levelToBecome);
-        Time.timeScale = 0; // Pause
-        XPEvents.TriggerLevelUp(levelToBecome);
-        // UI will then call CommitLevelUp when we are ready to actually increment the level and start new level progress
+        // Add to the centralized queue
+        GameSequenceManager.Instance.AddEvent(
+            onStart: () => {
+                _player.PlayerReward.GenerateRewardsLevel(levelToBecome);
+                RewardEvents.TriggerLevelUp(levelToBecome);
+            },
+            onFinish: () => {
+                // This logic is handled by CommitLevelUp below which is called from UI
+            }
+        );     
     }
 
     /// <summary>
     /// Call this function when we've selected level rewards
     /// </summary>
-    public void CommitLevelUp(IExecutable choice) {
-        // Tell reward manager to execute the reward we have chosen
-        _player.PlayerReward.ExecuteReward(choice);
-
+    public void CommitLevelUp() {
         // Subtract the cost of the level
         levelData.currentXP -= levelData.xpToNextLevel;
         // Increase Level
         levelData.currentLevel++;
         // Recalculate requirement for the *new* level
         levelData.CalculateNextLevelThreshold();
-        isLevelUpSequenceActive = false;
 
-        XPEvents.TriggerXPGained(levelData.ProgressNormalized,levelData.currentXP);
+        RewardEvents.TriggerXPGainedUI(levelData.ProgressNormalized,levelData.currentXP);
         Debug.Log($"<color=green>LEVEL UP! Now Level {levelData.currentLevel}</color>");
-        Time.timeScale = 1; // Unpause 
         TryProcessLevelUp(); // Recursion check 
+
+        GameSequenceManager.Instance.AdvanceSequence(); // connected to level up sequence.
     }
     public void DEBUGAddXP() {
         //ExperienceEvents.TriggerGainXP(50);

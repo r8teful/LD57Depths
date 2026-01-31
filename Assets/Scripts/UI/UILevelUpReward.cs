@@ -3,17 +3,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class UILevelUpReward : MonoBehaviour {
+public class UILevelUpReward : MonoBehaviour, IUIReward {
     [SerializeField] private List<Sprite> _images;
     [SerializeField] private TextMeshProUGUI _rewardText;
     [SerializeField] private TextMeshProUGUI _descriptionText;
     [SerializeField] private Button _button;
     [SerializeField] private Transform _statsChangeContainer;
     [SerializeField] private Image _boarderImage;
-    private UILevelUpScreen _parent;
+    private UIRewardScreenBase _parent;
     private IExecutable _myReward;
 
-    internal void Init(UILevelUpScreen uILevelUpScreen, IExecutable reward) {
+    public void Init(UIRewardScreenBase uILevelUpScreen, IExecutable reward) {
         _parent = uILevelUpScreen;
         _myReward = reward;
         // Maybe these should spawn their own separate prefab visuals?
@@ -45,6 +45,7 @@ public class UILevelUpReward : MonoBehaviour {
         _button.onClick.RemoveListener(ButtonClick);
     }
     public void ButtonClick() {
-        _parent.OnButtonClicked(this, _myReward);
+        _parent.OnButtonClicked(_myReward);
     }
+
 }

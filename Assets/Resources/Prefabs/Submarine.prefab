@@ -234,6 +234,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactIcon: {fileID: -639517231, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   popupPosition: {fileID: 8173724103343569615}
+  _useOutline: 1
+  _spriteRenderer: {fileID: 54535002290006066}
 --- !u!1 &3269108620828144783
 GameObject:
   m_ObjectHideFlags: 0
@@ -781,7 +783,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: b344421852484d741b3c9c2b7259e31c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

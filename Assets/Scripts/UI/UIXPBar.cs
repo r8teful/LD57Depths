@@ -13,13 +13,13 @@ public class UIXPBar : MonoBehaviour {
     private bool isLevelingUp = false;
 
     private void OnEnable() {
-        XPEvents.OnXPChanged += UpdateBar;
-        XPEvents.OnLevelUpReady += HandleLevelUpReady;
+        RewardEvents.OnXPChanged += UpdateBar;
+        RewardEvents.OnLevelUpReady += HandleLevelUpReady;
     }
 
     private void OnDisable() {
-        XPEvents.OnXPChanged -= UpdateBar;
-        XPEvents.OnLevelUpReady -= HandleLevelUpReady;
+        RewardEvents.OnXPChanged -= UpdateBar;
+        RewardEvents.OnLevelUpReady -= HandleLevelUpReady;
     }
 
     private void Update() {

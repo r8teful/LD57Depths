@@ -11,6 +11,10 @@ public struct ItemQuantity {
         this.item = item;
         quantity = q;
     }
+    public ItemQuantity(ushort id, int q) {
+        this.item = App.ResourceSystem.GetItemByID(id);
+        quantity = q;
+    }
 }
 [System.Serializable]
 public struct IDQuantity {

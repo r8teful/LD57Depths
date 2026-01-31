@@ -6,22 +6,22 @@ using UnityEngine;
 
 public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
     public int InitializationOrder => 99;
-    private IExecutable[] _upgradeEffects = new IExecutable[3];
+    private IExecutable[] _rewardEffects = new IExecutable[3];
     private PlayerManager _player;
     private HashSet<ushort> pickedAbilityIDs =         new();
     private HashSet<ushort> pickedAbilityUpgradeIDs =  new();
     private HashSet<ushort> pickedUpgradeNodeIDs =     new();
-    public IExecutable[] UpgradeEffects => _upgradeEffects;
+    public IExecutable[] UpgradeEffects => _rewardEffects;
     public void InitializeOnOwner(PlayerManager playerParent) {
-        _upgradeEffects = new IExecutable[3];
+        _rewardEffects = new IExecutable[3];
         _player = playerParent;
     }
 
-    internal void GenerateRewards(int level) {
+    internal void GenerateRewardsLevel(int level) {
         int rewardsMade = 0;
         int safetyTries = 0;
-        while(rewardsMade < 3 && safetyTries < 10000) {
-            if (TryCreateReward(rewardsMade)) {
+        while(rewardsMade < 3 && safetyTries < 1000) {
+            if (TryCreateLevelReward(rewardsMade)) {
                 rewardsMade++;
             }
             safetyTries++;
@@ -31,7 +31,31 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
         pickedAbilityUpgradeIDs.Clear();
         pickedUpgradeNodeIDs.Clear();
     }
-    private bool TryCreateReward(int rewardNumber) {
+
+    public void GenerateRewardsChest() {
+        int rewardsMade = 0;
+        int safetyTries = 0;
+        while (rewardsMade < 3 && safetyTries < 1000) {
+            if (TryCreateChestReward(rewardsMade)) {
+                rewardsMade++;
+            }
+            safetyTries++;
+        }
+    }
+
+    private bool TryCreateChestReward(int rewardsMade) {
+        List<ItemQuantity> items = new List<ItemQuantity>();
+        // Todo make some kind of function that calculates some reasonable resources 
+        items.Add(new(0, 100));
+        items.Add(new(1, 100));
+        items.Add(new(2, 100));
+        int XpToGain = 30;
+        var reward = new ChestRewardEffect(items,XpToGain);
+        _rewardEffects[rewardsMade] = reward;
+        return true;
+    }
+
+    private bool TryCreateLevelReward(int rewardNumber) {
         int[] weights = { 1, 4, 5 };
         int i = RandomnessHelpers.PickIndex(weights);
         // Very cool
@@ -43,7 +67,7 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
 
         // safety
         if (i < 0 || i >= pickers.Length) return false;
-        _upgradeEffects[rewardNumber] = pickers[i]();
+        _rewardEffects[rewardNumber] = pickers[i]();
         return pickers[i]() != null;
     }
 
