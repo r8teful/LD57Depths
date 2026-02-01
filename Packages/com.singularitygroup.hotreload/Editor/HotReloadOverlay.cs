@@ -1,6 +1,7 @@
 #if UNITY_2021_2_OR_NEWER
 using System;
 using System.Collections.Generic;
+using SingularityGroup.HotReload.Editor.Localization;
 using UnityEditor.Overlays;
 using UnityEngine.UIElements;
 using UnityEditor;
@@ -8,7 +9,7 @@ using UnityEngine;
 using UnityEditor.Toolbars;
 
 namespace SingularityGroup.HotReload.Editor {
-    [Overlay(typeof(SceneView), "Hot Reload", true)]
+    [Overlay(typeof(SceneView), Translations.MenuItems.OverlayDescription, true)]
     [Icon("Assets/HotReload/Editor/Resources/Icon_DarkMode.png")]
     internal class HotReloadOverlay : ToolbarOverlay {
         HotReloadOverlay() : base(HotReloadToolbarIndicationButton.id, HotReloadToolbarEventsButton.id, HotReloadToolbarRecompileButton.id) {
@@ -59,7 +60,7 @@ namespace SingularityGroup.HotReload.Editor {
             
             internal HotReloadToolbarEventsButton() {
                 icon = HotReloadState.ShowingRedDot ? GUIHelper.GetInvertibleIcon(InvertibleIcon.EventsNew) : GUIHelper.GetInvertibleIcon(InvertibleIcon.Events);
-                tooltip = "Events";
+                tooltip = Translations.Timeline.EventsTooltip;
                 clicked += OnClick;
                 EditorApplication.update += Update;
             }
@@ -91,7 +92,7 @@ namespace SingularityGroup.HotReload.Editor {
             private Texture2D refreshIcon => GUIHelper.GetInvertibleIcon(InvertibleIcon.Recompile);
             internal HotReloadToolbarRecompileButton() {
                 icon = refreshIcon;
-                tooltip = "Recompile";
+                tooltip = Translations.Miscellaneous.OverlayTooltipRecompile;
                 clicked += HotReloadRunTab.RecompileWithChecks;
             }
         }
@@ -116,7 +117,7 @@ namespace SingularityGroup.HotReload.Editor {
         /// Create Hot Reload overlay panel.
         /// </summary>
         public override VisualElement CreatePanelContent() {
-            var root = new VisualElement() { name = "Hot Reload Indication" };
+            var root = new VisualElement() { name = Translations.UI.OverlayPanelName };
             root.style.flexDirection = FlexDirection.Row;
             
             indicationIcon = new Image() { image = GUIHelper.GetLocalIcon(EditorIndicationState.greyIconPath) };

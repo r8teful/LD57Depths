@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SingularityGroup.HotReload.DTO;
+using SingularityGroup.HotReload.Editor.Localization;
 using UnityEngine;
 
 namespace SingularityGroup.HotReload.Editor {
@@ -58,23 +59,23 @@ namespace SingularityGroup.HotReload.Editor {
             .ToArray();
         
         // NOTE: if you add longer text, make sure UI is wide enough for it
-        public static readonly Dictionary<IndicationStatus, string> IndicationText = new Dictionary<IndicationStatus, string> {
-            { IndicationStatus.FinishRegistration, "Finish Registration" },
-            { IndicationStatus.Started, "Waiting for code changes" },
-            { IndicationStatus.Stopping, "Stopping Hot Reload" },
-            { IndicationStatus.Stopped, "Hot Reload inactive" },
-            { IndicationStatus.Paused, "Hot Reload paused" },
-            { IndicationStatus.Installing, "Installing" },
-            { IndicationStatus.Starting, "Starting Hot Reload" },
-            { IndicationStatus.Reloaded, "Reload finished" },
-            { IndicationStatus.PartiallySupported, "Changes partially applied" },
-            { IndicationStatus.Unsupported, "Finished with warnings" },
-            { IndicationStatus.Patching, "Reloading" },
-            { IndicationStatus.Compiling, "Compiling" },
-            { IndicationStatus.CompileErrors, "Scripts have compile errors" },
-            { IndicationStatus.ActivationFailed, "Activation failed" },
-            { IndicationStatus.Loading, "Loading" },
-            { IndicationStatus.Undetected, "No changes applied"},
+        public static Dictionary<IndicationStatus, string> IndicationText => new Dictionary<IndicationStatus, string> {
+            { IndicationStatus.FinishRegistration, Translations.Miscellaneous.IndicationFinishRegistration },
+            { IndicationStatus.Started, Translations.Miscellaneous.IndicationStarted },
+            { IndicationStatus.Stopping, Translations.Miscellaneous.IndicationStopping },
+            { IndicationStatus.Stopped, Translations.Miscellaneous.IndicationStopped },
+            { IndicationStatus.Paused, Translations.Miscellaneous.IndicationPaused },
+            { IndicationStatus.Installing, Translations.Miscellaneous.IndicationInstalling },
+            { IndicationStatus.Starting, Translations.Miscellaneous.IndicationStarting },
+            { IndicationStatus.Reloaded, Translations.Miscellaneous.IndicationReloaded },
+            { IndicationStatus.PartiallySupported, Translations.Miscellaneous.IndicationPartiallySupported },
+            { IndicationStatus.Unsupported, Translations.Miscellaneous.IndicationUnsupported },
+            { IndicationStatus.Patching, Translations.Miscellaneous.IndicationPatching },
+            { IndicationStatus.Compiling, Translations.Miscellaneous.IndicationCompiling },
+            { IndicationStatus.CompileErrors, Translations.Miscellaneous.IndicationCompileErrors },
+            { IndicationStatus.ActivationFailed, Translations.Miscellaneous.IndicationActivationFailed },
+            { IndicationStatus.Loading, Translations.Miscellaneous.IndicationLoading },
+            { IndicationStatus.Undetected, Translations.Miscellaneous.IndicationUndetected},
         };
 
         private const int MinSpinnerDuration = 200;
@@ -178,7 +179,7 @@ namespace SingularityGroup.HotReload.Editor {
                 if (indicationStatus == IndicationStatus.Starting && EditorCodePatcher.StartupProgress != null) {
                     txt = EditorCodePatcher.StartupProgress.Item2;
                 } else if (!IndicationText.TryGetValue(indicationStatus, out txt)) {
-                    Log.Warning($"Indication text not found for status {indicationStatus}");
+                    Log.Warning(Translations.Errors.WarningIndicationTextNotFound, indicationStatus);
                 } else {
                     txt = IndicationText[indicationStatus];
                 }

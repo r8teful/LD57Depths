@@ -39,18 +39,9 @@ public class InventorySlot {
     // Check against InvalidID
     public bool IsEmpty() => itemID == ResourceSystem.InvalidID || quantity <= 0;
 
-    public void Clear() {
-        itemID = ResourceSystem.InvalidID;
-        quantity = 0;
-        _cachedItemData = null; // Clear cache
-    }
-
 
     public void AddQuantity(int amount) {
         quantity += amount;
-        if (quantity <= 0) {
-            Clear(); // Clear completely if quantity drops to 0 or less
-        }
     }
 
     public void RemoveQuantity(int amount) {

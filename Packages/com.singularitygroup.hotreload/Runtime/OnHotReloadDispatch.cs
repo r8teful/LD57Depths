@@ -1,5 +1,4 @@
-﻿#if ENABLE_MONO && (DEVELOPMENT_BUILD || UNITY_EDITOR)
-#pragma warning disable CS0618 // obsolete warnings (stay warning-free also in newer unity versions) 
+﻿#pragma warning disable CS0618 // obsolete warnings (stay warning-free also in newer unity versions) 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using SingularityGroup.HotReload.Localization;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -48,7 +48,7 @@ namespace SingularityGroup.HotReload {
                     InvokeInstanceMethodStatic(patchMethod, go);
                 }
             } else {
-                Log.Warning($"[{nameof(InvokeOnHotReloadLocal)}] {patchMethod.DeclaringType?.Name} {patchMethod.Name} failed. Make sure it's a method with 0 parameters either static or defined on MonoBehaviour.");
+                Log.Warning($"[{nameof(InvokeOnHotReloadLocal)}] {patchMethod.DeclaringType?.Name} {patchMethod.Name} {Localization.Translations.Utility.MethodCallWarning}");
             }
         }
 
@@ -57,7 +57,7 @@ namespace SingularityGroup.HotReload {
             var reloadMethod = reloadForType?.GetMethod(attrib.methodToInvoke, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
             if (reloadMethod == null) {
-                Log.Warning($"[{nameof(InvokeOnHotReloadLocal)}] failed to find method {attrib.methodToInvoke}. Make sure it exists within the same class.");
+                Log.Warning($"[{nameof(InvokeOnHotReloadLocal)}] {string.Format(Localization.Translations.Utility.OnHotReloadLocalWarning, attrib.methodToInvoke)}");
                 return;
             }
             if (reloadMethod.IsStatic) {
@@ -67,7 +67,7 @@ namespace SingularityGroup.HotReload {
                     InvokeInstanceMethod(reloadMethod, go, null);
                 }
             } else {
-                Log.Warning($"[{nameof(InvokeOnHotReloadLocal)}] {reloadMethod.DeclaringType?.Name} {reloadMethod.Name} failed. Make sure it's a method with 0 parameters either static or defined on MonoBehaviour.");
+                Log.Warning($"[{nameof(InvokeOnHotReloadLocal)}] {reloadMethod.DeclaringType?.Name} {reloadMethod.Name} {Localization.Translations.Utility.MethodCallWarning}");
             }
         }
 
@@ -154,7 +154,7 @@ namespace SingularityGroup.HotReload {
                 }
             } catch (Exception e) {
                 if (m.GetParameters().Length != 0) {
-                    Log.Warning($"[{attrName}] {m.DeclaringType?.Name} {m.Name} failed. Make sure it has 0 parameters, or 1 parameter with type List<MethodPatch>. Exception:\n{e}");
+                    Log.Warning($"[{attrName}] {m.DeclaringType?.Name} {m.Name} {Localization.Translations.Utility.OnHotReloadWarning}\n{e}");
                 } else {
                     Log.Warning($"[{attrName}] {m.DeclaringType?.Name} {m.Name} failed. Exception\n{e}");
                 }
@@ -170,9 +170,9 @@ namespace SingularityGroup.HotReload {
                 }
             } catch (Exception e) {
                 if (m.GetParameters().Length != 0) {
-                    Log.Warning($"[InvokeOnHotReload] {m.DeclaringType?.Name} {m.Name} failed. Make sure it has 0 parameters, or 1 parameter with type List<MethodPatch>. Exception:\n{e}");
+                    Log.Warning($"[InvokeOnHotReload] {m.DeclaringType?.Name} {m.Name} {Localization.Translations.Utility.OnHotReloadWarning}\n{e}");
                 } else {
-                    Log.Warning($"[InvokeOnHotReload] {m.DeclaringType?.Name} {m.Name} failed. Exception:\n{e}");
+                    Log.Warning(string.Format(Localization.Translations.Logging.InvokeOnHotReloadFailed, m.DeclaringType?.Name, m.Name, e));
                 }
             }
         }
@@ -182,13 +182,12 @@ namespace SingularityGroup.HotReload {
                 m.Invoke(null, new object[] { go });
             } catch (Exception e) {
                 if (m.GetParameters().Length != 0) {
-                    Log.Warning($"[InvokeOnHotReloadLocal] {m.DeclaringType?.Name} {m.Name} failed. Make sure it has 0 parameters. Exception:\n{e}");
+                    Log.Warning($"[InvokeOnHotReloadLocal] {m.DeclaringType?.Name} {m.Name} {Localization.Translations.Utility.OnHotReloadLocalCallWarning}\n{e}");
                 } else {
-                    Log.Warning($"[InvokeOnHotReloadLocal] {m.DeclaringType?.Name} {m.Name} failed. Exception:\n{e}");
+                    Log.Warning(Localization.Translations.Logging.InvokeOnHotReloadLocalFailed, m.DeclaringType?.Name, m.Name, e);
                 }
             }
         }
 
     }
 }
-#endif

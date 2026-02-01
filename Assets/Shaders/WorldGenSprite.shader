@@ -158,7 +158,7 @@ Shader "Custom/WorldGenSprite"
                 return mask ? 1.0 : 0.0;
             }
             float4 WorldLayerColor(float2 uv, float maxDepth) {
-                float4 fallback = float4(3, 1, 0, 255) / 255.0; // very tough rock
+                float4 fallback = float4(3, 3, 0, 255) / 255.0; // very tough rock
                 int layers = max(1, min(_TotalLayers, MAX_LAYERS));
                 float borderPos[MAX_LAYERS + 1];
                 // compute each border once and apply a single noise offset per border

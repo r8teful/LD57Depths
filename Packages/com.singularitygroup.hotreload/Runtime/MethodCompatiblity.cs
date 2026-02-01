@@ -1,8 +1,7 @@
-#if ENABLE_MONO && (DEVELOPMENT_BUILD || UNITY_EDITOR)
-
 using System;
 using System.Reflection;
 using SingularityGroup.HotReload.MonoMod.Utils;
+using SingularityGroup.HotReload.Localization;
 
 namespace SingularityGroup.HotReload {
     static class MethodCompatiblity {
@@ -17,12 +16,12 @@ namespace SingularityGroup.HotReload {
             if(!ReferenceEquals(previousMethodInfo, null) && !ReferenceEquals(patchMethodInfo, null)) {
                 return AreMethodInfosCompatible(previousMethodInfo, patchMethodInfo);
             }
-            return "unknown issue";
+            return Localization.Translations.Logging.UnknownIssue;
         }
             
         static string AreMethodBasesCompatible(MethodBase previousMethod, MethodBase patchMethod) {
             if(previousMethod.Name != patchMethod.Name) {
-                return "Method name mismatch";
+                return Localization.Translations.Errors.MethodNameMismatch;
             }
             //Declaring type of patch method is different from the target method but their full name (namespace + name) is equal
             bool isDeclaringTypeCompatible = false;
@@ -35,11 +34,11 @@ namespace SingularityGroup.HotReload {
                 declaringType = declaringType.BaseType;
             }
             if (!isDeclaringTypeCompatible) {
-                return "Declaring type name mismatch";
+                return Localization.Translations.Errors.DeclaringTypeNameMismatch;
             }
             //Check in case type parameter overloads to distinguish between: void M<T>() { } <-> void M() { }
             if(previousMethod.IsGenericMethodDefinition != patchMethod.IsGenericMethodDefinition) {
-                return "IsGenericMethodDefinition mismatch";
+                return Localization.Translations.Errors.IsGenericMethodDefinitionMismatch;
             }
             
             var prevParams = previousMethod.GetParameters();
@@ -62,11 +61,11 @@ namespace SingularityGroup.HotReload {
                 //Special case: patch method for an instance method is static and has an explicit this parameter.
                 //If the patch method doesn't have any parameters it is not compatible.
                 if(patchParams.Length == 0) {
-                    return "missing this parameter";
+                    return Localization.Translations.Errors.MissingThisParameter;
                 }
                 //this parameter has to be the declaring type
                 if(!ParamTypeMatches(patchParams[0].ParameterType, previousMethod.DeclaringType)) {
-                    return "this parameter type mismatch";
+                    return Localization.Translations.Errors.ThisParameterTypeMismatch;
                 }
                 //Ignore the this parameter and compare the remaining ones.
                 patchParamsSegment = new ArraySegment<ParameterInfo>(patchParams, 1, patchParams.Length - 1);
@@ -93,11 +92,11 @@ namespace SingularityGroup.HotReload {
         
         static string CompareParameters(ArraySegment<ParameterInfo> x, ArraySegment<ParameterInfo> y) {
             if(x.Count != y.Count) {
-                return "parameter count mismatch";
+                return Localization.Translations.Errors.ParameterCountMismatch;
             }
             for (var i = 0; i < x.Count; i++) {
                 if(x.Array[i + x.Offset].ParameterType != y.Array[i + y.Offset].ParameterType) {
-                    return "parameter type mismatch";
+                    return Localization.Translations.Errors.ParameterTypeMismatch;
                 }
             }
             return null;
@@ -109,8 +108,7 @@ namespace SingularityGroup.HotReload {
         }
             
         static string AreMethodInfosCompatible(MethodInfo x, MethodInfo y) {
-            return AreMethodBasesCompatible(x, y) ?? (x.ReturnType == y.ReturnType ? null : "Return type mismatch");
+            return AreMethodBasesCompatible(x, y) ?? (x.ReturnType == y.ReturnType ? null : Localization.Translations.Errors.ReturnTypeMismatch);
         }
     }
 }
-#endif

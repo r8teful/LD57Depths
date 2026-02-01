@@ -11,6 +11,7 @@ using SingularityGroup.HotReload.Editor.Cli;
 using SingularityGroup.HotReload.Editor.Semver;
 using UnityEditor;
 using UnityEditor.Compilation;
+using SingularityGroup.HotReload.Editor.Localization;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("SingularityGroup.HotReload.EditorSamples")]
@@ -53,7 +54,7 @@ namespace SingularityGroup.HotReload.Editor {
 
         static readonly PackageUpdateChecker packageUpdateChecker = new PackageUpdateChecker();
 
-        [MenuItem("Window/Hot Reload/Open &#H")]
+        [MenuItem(Translations.MenuItems.OpenHotReload)]
         internal static void Open() {
             // opening the window on CI systems was keeping Unity open indefinitely
             if (EditorWindowHelper.IsHumanControllingUs()) {
@@ -66,7 +67,7 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
         
-        [MenuItem("Window/Hot Reload/Recompile")]
+        [MenuItem(Translations.MenuItems.RecompileHotReload)]
         internal static void Recompile() {
             HotReloadRunTab.Recompile();
         }
@@ -262,15 +263,15 @@ namespace SingularityGroup.HotReload.Editor {
             }
             using (new EditorGUILayout.VerticalScope(renderAppBoxStyle)) {
                 using (new EditorGUILayout.HorizontalScope()) {
-                    HotReloadGUIHelper.HelpBox("Are you enjoying using Hot Reload?", MessageType.Info, 11);
-                    if (GUILayout.Button("Hide", NonExpandableLayout)) {
+                    HotReloadGUIHelper.HelpBox(Translations.Miscellaneous.RateAppQuestion, MessageType.Info, 11);
+                    if (GUILayout.Button(Translations.Common.ButtonHide, NonExpandableLayout)) {
                         RequestHelper.RequestEditorEventWithRetry(new Stat(StatSource.Client, StatLevel.Debug, StatFeature.RateApp), new EditorExtraData { { "dismissed", true } }).Forget();
                         HotReloadPrefs.RateAppShown = true;
                     }
                 }
                 using (new EditorGUILayout.HorizontalScope()) {
-                    if (GUILayout.Button("Yes")) {
-                        var openedUrl = PackageConst.IsAssetStoreBuild && EditorUtility.DisplayDialog("Rate Hot Reload", "Thank you for using Hot Reload!\n\nPlease consider leaving a review on the Asset Store to support us.", "Open in browser", "Cancel");
+                    if (GUILayout.Button(Translations.Common.ButtonYes)) {
+                        var openedUrl = PackageConst.IsAssetStoreBuild && EditorUtility.DisplayDialog(Translations.Dialogs.DialogTitleRateApp, Translations.Dialogs.DialogMessageRateApp, Translations.Common.ButtonOpenInBrowser, Translations.Common.ButtonCancel);
                         if (openedUrl) {
                             Application.OpenURL(Constants.UnityStoreRateAppURL);
                         }
@@ -282,7 +283,7 @@ namespace SingularityGroup.HotReload.Editor {
                         data.Add("enjoy_app", true);
                         RequestHelper.RequestEditorEventWithRetry(new Stat(StatSource.Client, StatLevel.Debug, StatFeature.RateApp), data).Forget();
                     }
-                    if (GUILayout.Button("No")) {
+                    if (GUILayout.Button(Translations.Common.ButtonNo)) {
                         HotReloadPrefs.RateAppShown = true;
                         var data = new EditorExtraData();
                         data.Add("enjoy_app", false);
@@ -304,7 +305,7 @@ namespace SingularityGroup.HotReload.Editor {
         }
 
         void RenderUpdateButton(SemVersion newVersion) {
-            if (GUILayout.Button($"Update To v{newVersion}", HotReloadWindowStyles.UpgradeButtonStyle)) {
+            if (GUILayout.Button(string.Format(Translations.Miscellaneous.ButtonUpdateToVersionFormat, newVersion), HotReloadWindowStyles.UpgradeButtonStyle)) {
                 packageUpdateChecker.UpdatePackageAsync(newVersion).Forget(CancellationToken.None);
             }
         }
@@ -315,7 +316,7 @@ namespace SingularityGroup.HotReload.Editor {
                 EditorGUIUtility.labelWidth = 105f;
                 using (new GUILayout.VerticalScope()) {
                     using (new GUILayout.HorizontalScope()) {
-                        GUILayout.Label("Show On Startup");
+                        GUILayout.Label(Translations.Common.LabelShowOnStartup);
                         Rect buttonRect = GUILayoutUtility.GetLastRect();
                         if (EditorGUILayout.DropdownButton(new GUIContent(Regex.Replace(_showOnStartupOption.ToString(), "([a-z])([A-Z])", "$1 $2")), FocusType.Passive, GUILayout.Width(110f))) {
                             GenericMenu menu = new GenericMenu();
@@ -335,8 +336,7 @@ namespace SingularityGroup.HotReload.Editor {
                 EditorGUIUtility.labelWidth = prevLabelWidth;
             }
         }
-        
-        internal static readonly OpenURLButton autoRefreshTroubleshootingBtn = new OpenURLButton("Troubleshooting", Constants.TroubleshootingURL);
+
         void RenderBottomBarCore() {
             bool troubleshootingShown = EditorCodePatcher.Started && HotReloadWindowStyles.windowScreenWidth >= 400;
             bool alertsShown = EditorCodePatcher.Started && HotReloadWindowStyles.windowScreenWidth > Constants.EventFiltersShownHideWidth;
@@ -376,7 +376,7 @@ namespace SingularityGroup.HotReload.Editor {
                     if (troubleshootingShown) {
                         using (new EditorGUILayout.VerticalScope()) {
                             GUILayout.FlexibleSpace();
-                            autoRefreshTroubleshootingBtn.OnGUI();
+                            OpenURLButton.Render(Translations.Miscellaneous.ButtonTroubleshooting, Constants.TroubleshootingURL);
                             GUILayout.FlexibleSpace();
                         }
                         GUILayout.Space(21);

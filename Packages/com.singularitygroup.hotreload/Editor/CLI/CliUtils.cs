@@ -5,6 +5,7 @@ using System.Text;
 using SingularityGroup.HotReload.Newtonsoft.Json;
 using UnityEngine;
 using System;
+using SingularityGroup.HotReload.Localization;
 
 namespace SingularityGroup.HotReload.Editor.Cli {
     internal static class CliUtils {
@@ -66,7 +67,13 @@ namespace SingularityGroup.HotReload.Editor.Cli {
         
         public static string GetExecutableTargetDir() {
             if (PackageConst.IsAssetStoreBuild) {
+                if (PackageConst.DefaultLocaleField == Locale.SimplifiedChinese) {
+                    return Path.Combine(GetAppDataPath(), "asset-store", "zh", $"executables_{PackageConst.ServerVersion.Replace('.', '-')}");
+                }
                 return Path.Combine(GetAppDataPath(), "asset-store", $"executables_{PackageConst.ServerVersion.Replace('.', '-')}");
+            }
+            if (PackageConst.DefaultLocaleField == Locale.SimplifiedChinese) {
+                return Path.Combine(GetAppDataPath(), "zh", $"executables_{PackageConst.ServerVersion.Replace('.', '-')}");
             }
             return Path.Combine(GetAppDataPath(), $"executables_{PackageConst.ServerVersion.Replace('.', '-')}");
         }

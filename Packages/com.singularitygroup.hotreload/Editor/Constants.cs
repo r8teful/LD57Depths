@@ -1,8 +1,12 @@
-﻿
+﻿using SingularityGroup.HotReload.Editor.Localization;
+using SingularityGroup.HotReload.Localization;
+using Translations = SingularityGroup.HotReload.Editor.Localization.Translations;
+
 namespace SingularityGroup.HotReload.Editor {
     internal static class Constants {
-        public const string WebsiteURL = "https://hotreload.net";
-
+        public const string WebsiteURL = PackageConst.DefaultLocale == Locale.SimplifiedChinese ?
+            "https://hotreload.net/zh" :
+            "https://hotreload.net";
         public const string ProductPurchaseURL = WebsiteURL + "/pricing";
         public const string ProductPurchaseBusinessURL = ProductPurchaseURL + "?tab=business";
         public const string DocumentationURL = WebsiteURL + "/documentation";
@@ -14,7 +18,7 @@ namespace SingularityGroup.HotReload.Editor {
         public const string ManageAccountURL = "https://users.licensespring.com/login";
         public const string ForgotPasswordURL = "https://users.licensespring.com/reset-password";
         public const string ReportIssueURL = "https://gitlab.com/singularitygroup/hot-reload-for-unity/-/issues/new";
-        public const string TroubleshootingURL = "https://hotreload.net/documentation/troubleshooting";
+        public const string TroubleshootingURL = DocumentationURL + "/troubleshooting";
         public const string RecompileTroubleshootingURL = TroubleshootingURL + "#unity-recompiles-every-time-i-enterexit-playmode";
         public const string FeaturesDocumentationURL = DocumentationURL + "/features";
         public const string MultipleEditorsURL = DocumentationURL + "/multiple-editors";
@@ -39,6 +43,6 @@ namespace SingularityGroup.HotReload.Editor {
         public const int ConsumptionsHideWidth = 300;
         public const int ConsumptionsHideHeight = 360;
         
-        public const string Only40EntriesShown = "Only last 40 entries are shown";
+        public static string Only40EntriesShown => Translations.Timeline.MessageOnly40EntriesShown;
     }
 }

@@ -14,8 +14,8 @@ namespace SingularityGroup.HotReload {
         public GameObject connectedPrompt;
         public GameObject questionPrompt;
         
-        [Header("Other")]
-        [Tooltip("Used when project does not create an EventSystem early enough")]
+        [Header(Localization.Translations.MenuItems.Other)]
+        [Tooltip(Localization.Translations.MenuItems.FalllbackEventSystem)]
         public GameObject fallbackEventSystem;
         
         #region Singleton
@@ -33,7 +33,7 @@ namespace SingularityGroup.HotReload {
                 if (_I == null) {
                     // allow showing prompts in editor (for testing)
                     if (!Application.isEditor && !PlayerEntrypoint.IsPlayerWithHotReload()) {
-                        throw new NotSupportedException("IsPlayerWithHotReload() is false");
+                        throw new NotSupportedException(Localization.Translations.Errors.IsPlayerWithHotReloadFalse);
                     }
                     var go = Instantiate(HotReloadSettingsObject.I.PromptsPrefab,
                         new Vector3(0, 0, 0), Quaternion.identity);
@@ -134,8 +134,7 @@ namespace SingularityGroup.HotReload {
         /// Scene must contain an EventSystem and StandaloneInputModule, otherwise clicking/tapping on the overlay does nothing.
         private void DoEnsureEventSystem() {
             if (EventSystem.current == null) {
-                Log.Info($"No EventSystem is active, enabling an EventSystem inside Hot Reload {name} prefab." +
-                    " A Unity EventSystem and an Input module is required for tapping buttons on the Unity UI.");
+                Log.Info(string.Format(Localization.Translations.Settings.NoEventSystemWarning, name));
                 fallbackEventSystem.SetActive(true);
             }
         }

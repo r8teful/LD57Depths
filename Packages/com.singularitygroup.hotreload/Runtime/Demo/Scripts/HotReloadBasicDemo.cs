@@ -32,9 +32,9 @@ namespace SingularityGroup.HotReload.Demo {
         // Update is called once per frame
         void Update() {
             if (Demo.I.IsServerRunning()) {
-                informationText.text = "Hot Reload is running";
+                informationText.text = Localization.Translations.Common.HotReloadIsRunning;
             } else {
-                informationText.text = "Hot Reload is not running";
+                informationText.text = Localization.Translations.Common.HotReloadIsNotRunning;
             }
 
             // // 2. Editing functions in monobehaviours, normal classes or static classes

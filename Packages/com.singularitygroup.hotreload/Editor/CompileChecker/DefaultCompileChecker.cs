@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using SingularityGroup.HotReload.Editor.Localization;
 using UnityEditor;
 using UnityEditor.Compilation;
 using UnityEngine;
@@ -30,7 +31,7 @@ namespace SingularityGroup.HotReload.Editor {
                 } catch(FileNotFoundException) {
                    //file doesn't exist -> no recompile required
                 } catch(Exception ex) {
-                    Log.Warning("compile checker encountered issue: {0} {1}", ex.GetType().Name, ex.Message);
+                    Log.Warning(Translations.Errors.WarningCompileCheckerIssue, ex.GetType().Name, ex.Message);
                 }
             });
         }

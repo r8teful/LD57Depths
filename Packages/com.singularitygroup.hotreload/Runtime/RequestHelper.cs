@@ -1,5 +1,4 @@
-﻿#if ENABLE_MONO && (DEVELOPMENT_BUILD || UNITY_EDITOR)
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -11,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using SingularityGroup.HotReload.DTO;
+using SingularityGroup.HotReload.Localization;
 using SingularityGroup.HotReload.Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -45,7 +45,9 @@ namespace SingularityGroup.HotReload {
     static class RequestHelper {
         internal const ushort defaultPort = 33242;
         internal const string defaultServerHost = "127.0.0.1";
-        const string ChangelogURL = "https://d2tc55zjhw51ly.cloudfront.net/releases/latest/changelog.json";
+        const string ChangelogURL = PackageConst.DefaultLocale == Locale.SimplifiedChinese ? 
+            "https://d2tc55zjhw51ly.cloudfront.net/releases/latest/changelog-zh.json" :
+            "https://d2tc55zjhw51ly.cloudfront.net/releases/latest/changelog.json";
         static readonly string defaultOrigin = Path.GetDirectoryName(UnityHelper.DataPath);
         public static string origin { get; private set; } = defaultOrigin;
         
@@ -161,7 +163,7 @@ namespace SingularityGroup.HotReload {
                     //Server shut down
                     await Task.Delay(5000);
                 } else {
-                    Log.Info("PollMethodPatches failed with code {0} {1} {2}", (int)result.statusCode, result.responseText, result.exception);
+                    Log.Info(Localization.Translations.Logging.PollMethodPatchesFailed, (int)result.statusCode, result.responseText, result.exception);
                 }
             } finally {
                 pollPending = false;
@@ -189,7 +191,7 @@ namespace SingularityGroup.HotReload {
                     //Server shut down
                     await Task.Delay(5000);
                 } else {
-                    Log.Info("PollPatchStatus failed with code {0} {1} {2}", (int)result.statusCode, result.responseText, result.exception);
+                    Log.Info(Localization.Translations.Logging.PollPatchStatusFailed, (int)result.statusCode, result.responseText, result.exception);
                 }
             } finally {
                 pollPatchStatusPending = false;
@@ -229,7 +231,7 @@ namespace SingularityGroup.HotReload {
                     //Server shut down
                     await Task.Delay(5000);
                 } else {
-                    Log.Info("PollAssetChanges failed with code {0} {1} {2}", (int)result.statusCode, result.responseText, result.exception);
+                    Log.Info(Localization.Translations.Logging.PollAssetChangesFailed, (int)result.statusCode, result.responseText, result.exception);
                 }
             } finally {
                 assetPollPending = false;
@@ -293,10 +295,10 @@ namespace SingularityGroup.HotReload {
                 try {
                     return JsonConvert.DeserializeObject<LoginStatusResponse>(resp.responseText);
                 } catch (Exception ex) {
-                    return LoginStatusResponse.FromRequestError($"Deserializing response failed with {ex.GetType().Name}: {ex.Message}");
+                    return LoginStatusResponse.FromRequestError(string.Format(Localization.Translations.Logging.DeserializingResponseFailed, ex.GetType().Name, ex.Message));
                 }
             } else {
-                return LoginStatusResponse.FromRequestError(resp.responseText ?? "Request timeout");
+                return LoginStatusResponse.FromRequestError(resp.responseText ?? Localization.Translations.Logging.RequestTimeout);
             }
         }
 
@@ -455,4 +457,3 @@ namespace SingularityGroup.HotReload {
         }
     }
 }
-#endif

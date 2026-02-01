@@ -1,10 +1,9 @@
-#if ENABLE_MONO && (DEVELOPMENT_BUILD || UNITY_EDITOR)
-
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using SingularityGroup.HotReload.DTO;
 using SingularityGroup.HotReload.RuntimeDependencies;
+using SingularityGroup.HotReload.Localization;
 
 namespace SingularityGroup.HotReload {
     internal class SymbolResolver {
@@ -32,11 +31,11 @@ namespace SingularityGroup.HotReload {
                     result = assmeblies[i].GetLoadedModules()[0].ResolveType(t.metadataToken);
                     if (t.isGenericParameter) {
                         if (!result.IsGenericTypeDefinition) {
-                            throw new SymbolResolvingFailedException(t, new ApplicationException("Generic parameter did not resolve to generic type definition"));
+                            throw new SymbolResolvingFailedException(t, new ApplicationException(Localization.Translations.Errors.GenericParameterNotGenericType));
                         }
                         var genericParameters = result.GetGenericArguments();
                         if (t.genericParameterPosition >= genericParameters.Length) {
-                            throw new SymbolResolvingFailedException(t, new ApplicationException("Generic parameter did not exist on the generic type definition"));
+                            throw new SymbolResolvingFailedException(t, new ApplicationException(Localization.Translations.Errors.GenericParameterDidNotExist));
                         }
                         result = genericParameters[t.genericParameterPosition];
                     }
@@ -96,4 +95,3 @@ namespace SingularityGroup.HotReload {
         }
     }
 }
-#endif

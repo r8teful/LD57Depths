@@ -58,6 +58,9 @@ namespace SingularityGroup.HotReload.Editor {
             HotReloadPrefs.AllAssetChanges = true;
             HotReloadPrefs.AutoRecompileUnsupportedChanges = true;
             HotReloadPrefs.AutoRecompileUnsupportedChangesOnExitPlayMode = true;
+#if UNITY_EDITOR_WIN
+            HotReloadPrefs.UseWatchman = false;
+#endif
             if (HotReloadCli.CanOpenInBackground) {
                 HotReloadPrefs.DisableConsoleWindow = true;
             }
