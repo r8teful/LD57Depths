@@ -2,6 +2,7 @@
 using Sirenix.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
@@ -43,6 +44,29 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
         }
     }
 
+    public void GenerateRewardsShrine() {
+        int rewardsMade = 0;
+        int safetyTries = 0;
+        while (rewardsMade < 3 && safetyTries < 1000) {
+            if (TryCreateShrineReward(rewardsMade)) {
+                rewardsMade++;
+            }
+            safetyTries++;
+        }
+    }
+    private bool TryCreateShrineReward(int rewardsMade) {
+        // Todo make some kind of function that calculates some reasonable resources 
+        List<StatModifier> stats = ResourceSystem.GetStatRewards();
+        var randomStat = stats.OrderBy(_ => UnityEngine.Random.value).First();
+        // Todo can't be same stat as already chosen
+        int[] weights = ResourceSystem.GetRarityWeight;
+        var i = RandomnessHelpers.PickIndexWithLuck(weights, _player.PlayerStats.GetStat(StatType.Luck));
+        var modValue = randomStat.Value * ResourceSystem.GetIncreaseByRarity((RarityType)i);
+
+        var reward = new ShrineRewardEffect(new(modValue, randomStat.Stat,randomStat.Type,null));
+        _rewardEffects[rewardsMade] = reward;
+        return true;
+    }
     private bool TryCreateChestReward(int rewardsMade) {
         List<ItemQuantity> items = new List<ItemQuantity>();
         // Todo make some kind of function that calculates some reasonable resources 
@@ -82,7 +106,7 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
         var u = a.Data.UpgradeValues[rnd.Next(a.Data.UpgradeValues.Count)];
 
         // Pick rarity
-        int[] weights = { 70, 15, 6, 2 };
+        int[] weights = ResourceSystem.GetRarityWeight;
         var i = RandomnessHelpers.PickIndexWithLuck(weights, _player.PlayerStats.GetStat(StatType.Luck));
         var ModValue = u.Value * ResourceSystem.GetIncreaseByRarity((RarityType)i);
         var mod = new StatModifier(ModValue, u.Stat, u.Type, this);

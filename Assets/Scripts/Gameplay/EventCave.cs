@@ -14,7 +14,7 @@ public class EventCave : MonoBehaviour {
     }
 
     private void OnInteract(PlayerManager p) {
-
+        
     }
     public void Init(StructurePlacementResult data) {
         transform.position = new(data.bottomLeftAnchor.x, data.bottomLeftAnchor.y, 0);

@@ -4,8 +4,7 @@ using UnityEngine;
 //[ExecuteAlways] // This is so cool it lets us call PushBiomesToMaterial when changing the asset
 public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
     public static int NUM_BIOMES = 6; // MUST match shader's NUM_BIOMES
-    public float uvScale = 100.0f; // tune to match the transform in shader (if using the example uv transform)
-   // [OnValueChanged("DebugUpdate")]
+    // [OnValueChanged("DebugUpdate")]
    // public float DebugupdateMaterial = 10f;
     [SerializeField] SpriteRenderer worldSpriteRenderer;
     [Button]

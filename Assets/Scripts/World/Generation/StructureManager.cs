@@ -48,7 +48,7 @@ public class StructureManager : MonoBehaviour {
                 Mathf.RoundToInt(pos.y - depthAbs)
             )).ToList();
 
-        List<Vector2Int> eventCaveIntPos = shrinePositions
+        List<Vector2Int> eventCaveIntPos = eventCavePositions
             .Select(pos => new Vector2Int(
                 Mathf.RoundToInt(pos.x - halfWidth),
                 Mathf.RoundToInt(pos.y - depthAbs)

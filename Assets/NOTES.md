@@ -658,6 +658,68 @@ Need to have biome slightly closer
 
 
 
+### REALITY CHECK:
+
+Hello yes this is Rik again, we have done the first 8 minutes of gameplay, well done. Now that was pretty difficult to get right. But now you have to do 20 more minutes, maybe even 40 more minutes. How the fuck are we going to do that? Well, I have some tricks up my sleave. So, lets write out what we need to do next:
+
+
+
+What is our baseline now??
+
+
+
+Player has a powerful lazer, maybe it grows a bit too powerfull to quickly? But maybe that's good, idk. They can go outside the submarine for 70 seconds, combine that with a speed up and they can easily go to a biome and back to the submarine (that SHOULD be possible). They have a somewhat powerfull brimstone ability they can use SOMETIMES (it shouldn't completely demolish every block in its path like its doing now, NERF IT).
+
+
+
+So where can we go from here? Players understand the loop, maybe its time to break it up a bit? We could focus more on the exploration part at this point perhaps. When they explore they can find the useful entities. Which will be quite cool to find. Perhaps the sub fixing should be around this time? Its hard to actually see because you're so focused on the upgrade tree. So maybe that could be part of the upgrade tree?
+
+
+
+
+
+When the player goes to the next floor the stone should be a lot harder to mine, basically make it so you feel like you've gone back to the starting point
+
+
+
+
+
+Maybe we add elements that spelunky has? A secret sequence of actions you can take
+
+
+
+What if Data.x = 90? Then we select bio, but then we lose that we need durability = 300 or whatever. Basically you want to separate what you see "bio tile" vs what you get "stone + 300 durability" Solution is simply have the X be the "what you get" part, while the biome "what you see!". The problem with that is that right now the X basically just represents the TileID, which we still want to happen, but now the Y simply determines the TEXTUREINDEX. But how would we do that with TILESO??
+
+
+
+
+
+
+
+UAIUGHAIGUHAIUGOH I feel like I need to redo the entire chunk manager it is so fucking messy I hate it all it has to do is store some stupid data its not so difficult. When I say that the tiles are layered, like the ore is dropped when we have an ore in that cell why can't I simply say the same but with the fucking durability
+
+
+
+
+
+
+
+Basically we need to have the level up thing but also for the shrine, event, and possibly chest. Its within the same range because shrine and event will pause the game and show a screen, which is basically what a level up is aswell so we should re use the same code to make it easier for ourselves. We could make UILevelupscreen into its own managed thing, or we expand it into some kind of other manager that handles which thing we should spawn, yeah that probably makes sense
+
+
+
+
+
+Chill out all you need left to do is the exploration entities, and then balance again, and your done that's basically the demo, atleast all the gameplay aspects of the demo. Then polishing and boom you have a demo and all you need to do is add replayablitiy, add more content, and you have a game. Its so easy just stick in there and youll be all good
+
+
+
+
+
+
+
+
+
 
 
 

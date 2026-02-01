@@ -16,6 +16,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     public event Action<ushort> OnCurRecipeChanged; // Passes the new RecipeID 
     public event Action OnSubMoved; // Used by map UI 
     public GameObject submarineExterior;
+    public Transform InteriorSpawnPoint;
     public void MoveSub(int index) {
         submarineExterior.transform.position = new(0, GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(index));
         SetSubPosIndex(index);

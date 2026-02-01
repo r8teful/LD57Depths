@@ -18,6 +18,9 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     private bool _isFlashing;
     private Coroutine _flashCoroutine;
     private bool _initialized;
+    private bool _oxygenDepleted;
+    [SerializeField] private LowOxygenVisual _lowoxygenVisual;
+    private LowOxygenVisual _lowoxygenVisualInstance;
 
     public static event Action<float, float> OnOxygenChanged;
     public int InitializationOrder => 92; // After playerstats
@@ -80,39 +83,40 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
             //SliderFlash(true);
         }
         if (CurrentOxygen <= 0) {
+            if (!_oxygenDepleted) {
+                // First time reaching here spawn the depleting effect
+                _oxygenDepleted = true;
+                _lowoxygenVisualInstance = Instantiate(_lowoxygenVisual);
+            }
             // Slowly fade out and then teleport player back to base?
             playerHealth -= 1 * Time.deltaTime;
             if (playerHealth <= 0) {
+                _player.PlayerLayerController.PutPlayerInSub();
                 // Todo remove resources?
                 Debug.LogWarning("No logic for resource removement");
                 Resurect();
             }
-            UpdateFadeOutVisual();
         }
     }
     void ReplenishOxygen() {
         peepPlayed = false;
-        //SliderFlash(false);
+        if (_oxygenDepleted) {
+            // Remove low oxygen effect 
+            _oxygenDepleted = false;
+            _lowoxygenVisualInstance.CancelAndRemove();
+        }
         CurrentOxygen += oxygenDepletionRate * 50 * Time.deltaTime;
         playerHealth = maxHealth;
         OnOxygenChanged?.Invoke(CurrentOxygen, maxOxygen);
-        UpdateFadeOutVisual();
     }
     private void Resurect() {
         playerHealth = maxHealth;
         CurrentOxygen = maxOxygen;
-        UpdateFadeOutVisual();
     }
     public void GainOxygen(float amount) {
         CurrentOxygen += amount;
     }
 
-    private void UpdateFadeOutVisual() {
-        float healthRatio = playerHealth / maxHealth;
-        float easedValue = 1 - Mathf.Pow(healthRatio, 2); // Quadratic ease-out
-
-        //blackout.alpha = easedValue;
-    }
     // Call this function to start or stop the flashing
     public void SliderFlash(bool shouldFlash) {
         if (OxygenWarning == null) {

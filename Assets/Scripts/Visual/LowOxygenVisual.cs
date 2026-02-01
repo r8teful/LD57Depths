@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -13,6 +14,7 @@ public class LowOxygenVisual : MonoBehaviour {
     [Header("Effect Targets (applied in profile)")]
     [Range(0f, 1f)] public float targetVignetteIntensity = 0.8f;
     [Range(-100f, 0f)] public float targetSaturation = -60f; // negative = desaturate
+    [Range(-10f, 0f)] public float targetExposure = -8f; 
     [Range(0f, 1f)] public float targetChromatic = 0.8f;
     [Range(0f, 1f)] public float targetFilmGrain = 0.25f;
 
@@ -20,7 +22,7 @@ public class LowOxygenVisual : MonoBehaviour {
     [Header("Optional")]
     [Tooltip("If provided, the script will reuse this profile. Otherwise a runtime profile will be created.")]
     public VolumeProfile presetProfile;
-
+    public AnimationCurve curve;
     // Internal
     Volume _volume;
     VolumeProfile _runtimeProfile;
@@ -69,6 +71,8 @@ public class LowOxygenVisual : MonoBehaviour {
             var color = ScriptableObject.CreateInstance<ColorAdjustments>();
             color.saturation.overrideState = true;
             color.saturation.value = targetSaturation;
+            color.postExposure.value = targetExposure;
+            color.postExposure.overrideState = true;
             color.active = true;
             _runtimeProfile.components.Add(color);
 
@@ -93,24 +97,10 @@ public class LowOxygenVisual : MonoBehaviour {
     public void Play() {
         if (_activeCoroutine != null) StopCoroutine(_activeCoroutine);
         _isCancelling = false;
-        _activeCoroutine = StartCoroutine(RampVolumeWeight(0f, 1f, rampUpDuration, new(), onComplete: null));
+        _activeCoroutine = StartCoroutine(RampVolumeWeight(0f, 1f, rampUpDuration, curve, onComplete: null));
     }
     void Start() {
-        var vignette = ScriptableObject.CreateInstance<Vignette>();
-        vignette.active = true;
-        vignette.intensity.Override(1f);
-        VolumeProfile v;
-        /*
-        volume.weight = 0f;
-        DOTween.Sequence()
-           .Append(DOTween.To(() => volume.weight, x => volume.weight = x, 1f, 1f))
-           .AppendInterval(1f)
-           .Append(DOTween.To(() => volume.weight, x => volume.weight = x, 0f, 1f))
-           .OnComplete(() => {
-               RuntimeUtilities.DestroyVolume(volume, true, true);
-               Destroy(this);
-           });
-         */
+        Play();
     }
 
     public void CancelAndRemove() {
@@ -120,7 +110,6 @@ public class LowOxygenVisual : MonoBehaviour {
         // stop any existing ramp coroutine and start ramp down from current weight
         if (_activeCoroutine != null) StopCoroutine(_activeCoroutine);
         float startWeight = _volume != null ? _volume.weight : 0f;
-        AnimationCurve curve = new();
         _activeCoroutine = StartCoroutine(RampVolumeWeight(startWeight, 0f, rampDownDuration, curve, onComplete: () => {
             // cleanup: destroy object
             if (this != null) Destroy(gameObject);
@@ -148,6 +137,4 @@ public class LowOxygenVisual : MonoBehaviour {
         _volume.weight = to;
         onComplete?.Invoke();
     }
-
-
 }

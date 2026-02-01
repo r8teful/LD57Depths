@@ -18,22 +18,22 @@ public class PlayerLayerController : MonoBehaviour, IPlayerModule {
         //_playerParent = playerParent;  
     }
 
+    public void PutPlayerInSub() {
+        _currentLayer = VisibilityLayerType.Interior;
+        SubmarineManager.Instance.MoveInterior(_currentLayer);
+        MovePlayerToPos(SubmarineManager.Instance.InteriorSpawnPoint.position);
+        OnPlayerVisibilityChanged?.Invoke(_currentLayer);
+    }
 
     public void PortalInteraction(SubPortal portal) {
         // Invert
         _currentLayer = _currentLayer == VisibilityLayerType.Exterior ? VisibilityLayerType.Interior : VisibilityLayerType.Exterior;
         SubmarineManager.Instance.MoveInterior(_currentLayer);
-        if (_currentLayer == VisibilityLayerType.Exterior && portal.IsEntrance) {
-            // First move submarine there
-        } else if (_currentLayer == VisibilityLayerType.Interior && !portal.IsEntrance) {
-            // Move submarine out the way
-        }
-        MovePlayerToPortalDest(portal);
+        MovePlayerToPos(portal.PortalDestination.transform.position);
         OnPlayerVisibilityChanged?.Invoke(_currentLayer);
     }
 
-    private void MovePlayerToPortalDest(SubPortal portal) {
-        Vector3 worldSpawnPosition = portal.PortalDestination.position;
+    private void MovePlayerToPos(Vector3 worldSpawnPosition) {
         this.transform.position = worldSpawnPosition;
         if (TryGetComponent<Rigidbody2D>(out var rb)) rb.linearVelocity = Vector2.zero;
     }

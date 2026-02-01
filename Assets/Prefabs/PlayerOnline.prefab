@@ -389,9 +389,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333514cc182728469f170a484caaa89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   sprite: {fileID: 7243094486825796002}
   _bobHand: {fileID: 6053458303575230055}
   _bobHandNormal: {fileID: -400212278, guid: df1dde7b5fad595409e2e9fdaeeef128, type: 3}
@@ -467,6 +464,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OxygenWarning: {fileID: 0}
+  _lowoxygenVisual: {fileID: 9041961029085298581, guid: 9171419f9fc554a43b7bf91e70173df6, type: 3}
 --- !u!114 &7250565941071333612
 MonoBehaviour:
   m_ObjectHideFlags: 0

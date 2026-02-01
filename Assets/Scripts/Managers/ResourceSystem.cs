@@ -11,6 +11,7 @@ public class ResourceSystem {
     public List<Material> Materials { get; private set; }
     public List<BackgroundObjectSO> BackgroundObjects { get; private set; }
     public List<UpgradeTreeDataSO> UpgradeTreeData { get; private set; }
+    public static int[] GetRarityWeight => new[] { 70, 15, 6, 2 };
 
     private Dictionary<string, GameObject> _prefabDict;
     private Dictionary<string, Sprite> _spriteDict;
@@ -414,6 +415,15 @@ public class ResourceSystem {
         };
     }
 
+    internal static List<StatModifier> GetStatRewards() {
+        return new List<StatModifier>() {
+            new(0.2f, StatType.Size, StatModifyType.Add,null),
+            new(0.2f, StatType.Cooldown, StatModifyType.Add,null),
+            new(0.2f, StatType.MiningDamage, StatModifyType.Add,null),
+            new(0.2f, StatType.Luck, StatModifyType.Add,null),
+            new(0.2f, StatType.ProjectileCount, StatModifyType.Add,null)
+        };
+    }
 }
 
 [System.Serializable]
