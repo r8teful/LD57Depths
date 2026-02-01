@@ -1,5 +1,2 @@
-﻿using System.Collections;
-using UnityEngine;
-
-public class UIShrineRewardScreen : UIRewardScreenBase {
+﻿public class UIShrineRewardScreen : UIRewardScreenBase {
 }

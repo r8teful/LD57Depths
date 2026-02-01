@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Interactable))]
 public class Chest : MonoBehaviour {

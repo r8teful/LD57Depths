@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Shrine : MonoBehaviour {
     [SerializeField] private Interactable _interactable;

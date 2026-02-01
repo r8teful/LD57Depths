@@ -1,9 +1,7 @@
 ﻿using r8teful;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 // Holds runtime data for structures
 public class StructureManager : MonoBehaviour {
     public List<StructurePlacementResult> StructurePlacements = new List<StructurePlacementResult>();

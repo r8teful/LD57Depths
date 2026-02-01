@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 // This should be an entity but just have it a monobehaviour I don't care anymore it wont be multiplayer
 public class Artifact : MonoBehaviour {

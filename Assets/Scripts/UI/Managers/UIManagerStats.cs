@@ -102,6 +102,7 @@ public class UIManagerStats : MonoBehaviour {
 
 
     private void CreateStatDisplays() {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         foreach (Transform child in _statDisplayElements.transform) {
             Destroy(child.gameObject);
         }
@@ -110,11 +111,14 @@ public class UIManagerStats : MonoBehaviour {
             var e = Instantiate(App.ResourceSystem.GetPrefab<UIStatDisplayElement>("UIStatDisplayElement"), _statDisplayElements);
             e.Init(stat, statValue);
         }
+#endif
     }
 
     private void CreateAbilityUIMenu(AbilityInstance ability) {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         var abilityStats = Instantiate(App.ResourceSystem.GetPrefab<UIAbilityStats>("UIAbilityStats"), _abilityDisplayElements);
         abilityStats.Init(ability);
+#endif
     }
     private UIHudIconStatus CreateHudIcon(BuffSnapshot snapshot) {
         var uiIcon = Instantiate(App.ResourceSystem.GetPrefab<UIHudIconStatus>("UIHudIconStatus"), _iconContainerBuffs);

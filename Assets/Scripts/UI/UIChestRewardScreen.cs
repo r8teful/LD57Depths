@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
-
-public class UIChestRewardScreen : UIRewardScreenBase {
+﻿public class UIChestRewardScreen : UIRewardScreenBase {
     private void Awake() {
         RewardEvents.OnChestOpen += ShowScreen;
     }

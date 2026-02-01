@@ -2,7 +2,7 @@ Add description to the upgrades?
 
 
 
-* Visual for when going low on oxygen
+* Visual for when going low on oxygen <- DO NOW
 * Need some kind of tutorial / reminder of using the brimstone ability
 * Test how the game feels with block break sounds - EH idk its more satisfying but the sound has to be really good
 
@@ -41,6 +41,5 @@ Steamdeck notes:
 
 * Icons not updating correctly for controller
 * Can't go into submarine
-* When I went into the sub it didn't cull any world things and didn't go into walk state
 * Should a start menu with settings to change full screen mode etc...
-* Also the block texture seems zoomed in...
+* Also the block texture seems zoomed in... - WHY!?

@@ -45,7 +45,7 @@ public class InventoryManager {
         }
 
         for (int i = 0; i < Slots.Count; i++) {
-            if (Slots[i].itemID == itemIDToAdd) // Same item?
+            if (Slots[i].ItemID == itemIDToAdd) // Same item?
             {
                 Slots[i].AddQuantity(quantityToAdd);
                 OnSlotChanged?.Invoke(i);
@@ -55,42 +55,16 @@ public class InventoryManager {
         return true;
     }
 
-
-
-    /// <summary>
-    /// Removes a specific quantity of an item from a given slot index.
-    /// </summary>
-    /// <param name="slotIndex">The index of the slot to remove from.</param>
-    /// <param name="quantityToRemove">How many to remove.</param>
-    public void RemoveItem(int slotIndex, int quantityToRemove = 1, bool sendTargetRpcUpdate = true) {
-        if (!IsValidIndex(slotIndex) || Slots[slotIndex].IsEmpty() || quantityToRemove <= 0) {
-            return; // Invalid operation
-        }
-        if (sendTargetRpcUpdate) {
-            //PlayerInventorySyncer.CmdUpdateSlotAfterLocalRemove(...); // Not how it works currently
-        }
-        Slots[slotIndex].RemoveQuantity(quantityToRemove); // Let InventorySlot handle clamping and clearing
-        Debug.Log($"Removed: {quantityToRemove} from slot {slotIndex}");
-        OnSlotChanged?.Invoke(slotIndex); // Notify UI
-    }
     public bool RemoveItem(ushort itemID, int quantityToRemove) {
         if (itemID == ResourceSystem.InvalidID || quantityToRemove <= 0)
             return false;
         int S = Slots.Count - 1;
         for (int i = S; i >= 0; --i) { //Iterate backwards to make removing easier during loop
-            if (Slots[i].itemID == itemID) {
-                if (Slots[i].quantity > quantityToRemove) {
+            if (Slots[i].ItemID == itemID) {
+                if (Slots[i].quantity >= quantityToRemove) {
                     Slots[i].quantity -= quantityToRemove;
                     OnSlotChanged?.Invoke(i); // Notify UI
                     return true;
-                } else {
-                    quantityToRemove -= Slots[i].quantity;
-                    Slots[i].itemID = ResourceSystem.InvalidID;
-                    Slots[i].quantity = 0;
-                    if (quantityToRemove == 0) {
-                        OnSlotChanged?.Invoke(i); // Notify UI
-                        return true;
-                    }
                 }
             }
         }
@@ -109,23 +83,7 @@ public class InventoryManager {
         }
         return true;
     }
-    /// <summary>
-    /// Swaps the contents of two slots.
-    /// </summary>
-    public void SwapSlots(int indexA, int indexB) {
-        if (!IsValidIndex(indexA) || !IsValidIndex(indexB) || indexA == indexB) {
-            return; // Invalid swap
-        }
-
-        // Simple swap
-        InventorySlot temp = Slots[indexA];
-        Slots[indexA] = Slots[indexB];
-        Slots[indexB] = temp;
-
-        // Notify that both slots changed
-        OnSlotChanged?.Invoke(indexA);
-        OnSlotChanged?.Invoke(indexB);
-    }
+   
 
 
     /// <summary>
@@ -145,13 +103,11 @@ public class InventoryManager {
     public bool IsValidIndex(int index) {
         return index >= 0 && index < Slots.Count;
     }
-
-    public void TriggerOnSlotChanged(int slotIndex) { OnSlotChanged?.Invoke(slotIndex); }
-
+ 
     private List<int> FindSlotsContaining(ushort itemID) {
         List<int> indices = new List<int>();
         for (int i = 0; i < Slots.Count; ++i) {
-            if (!Slots[i].IsEmpty() && Slots[i].itemID == itemID) {
+            if (!Slots[i].IsEmpty() && Slots[i].ItemID == itemID) {
                 indices.Add(i);
             }
         }

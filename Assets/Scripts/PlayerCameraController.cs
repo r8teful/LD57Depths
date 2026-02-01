@@ -17,7 +17,7 @@ public class PlayerCameraController : MonoBehaviour {
      }
 
     private void OnDisable() {
-        PlayerLayerController.OnPlayerVisibilityChanged += OnPlayerVisibilityLayerChanged;
+        PlayerLayerController.OnPlayerVisibilityChanged -= OnPlayerVisibilityLayerChanged;
     }
 
     private void OnPlayerVisibilityLayerChanged(VisibilityLayerType layerType) {

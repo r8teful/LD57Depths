@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Collections.Generic; // top of file
 
 public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
 

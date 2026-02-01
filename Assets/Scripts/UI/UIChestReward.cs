@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 public class UIChestReward : MonoBehaviour, IUIReward {
     [SerializeField] private UIItemQuantity _itemQuanity;
     [SerializeField] private Transform _itemContainer;

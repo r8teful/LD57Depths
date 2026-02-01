@@ -714,6 +714,88 @@ Chill out all you need left to do is the exploration entities, and then balance 
 
 
 
+What was that beep!?
+
+Don't know what to fix first 
+
+Oxygen should be easier to upgrade because worried that Copper runs out ??
+
+Not sure what I'm aiming for next?
+
+Oxygen bar should tell you its oxygen
+
+
+
+Don't feel like going outside of the trench because resource are close to it 
+
+Forgets to use lazer blast 
+
+Each trip should be shorter but give you more 
+
+Doesn't really care about passing out because it doesn't clearly show the consequences 
+
+Using lazer blast - Oh that was fun
+
+I didn't read what it said when upgrading it so I don't know what button to press
+
+Unlocl computer on the unlock gree??
+
+Particles don't break?
+
+
+
+
+
+Thoughts
+
+Didn't feel the urge of getting stronger fast enough, didn't feel like I was making progress
+
+Also couldn't see how many resources I had so it was had to tell if you got more in one run 
+
+Couldn't see any numbers go up, wasn't looking at that costs of the upgrades. 
+
+fever upgrades at the start but easier to get. 
+
+
+
+
+
+Make abilities come later? Try exploring other systems of gaining them 
+
+
+
+**Smaller visual stuff:**
+
+* Ladder to floor
+* sub Background is too plain \& submarine seems boring and lifeless 
+* Interactable things should also have a stroke "highlight" 
+* Popup is tiny
+* Upgrade tree header in ui
+* No units in upgrades 
+* Don't let submarine spawn inside a rock
+* World background too blurry
+* Particles look like copper 
+
+
+
+Gameplay
+
+* Not sure what to do at the start, needs a bit more handholding 
+* You slide too much when moving and its very annoying
+* Hard to notice improvement
+* Don't know how much resources you have
+* Forget to use lazer blast \& what button it needs to activate
+* Lazer blast too powerful 
+
+
+
+Upgrades
+
+* Make the pacing faster
+* Add sub fixing to the tree because you forget it easy and you don't really notice it being there
+
+
+
 
 
 

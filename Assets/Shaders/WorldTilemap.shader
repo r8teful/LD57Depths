@@ -82,8 +82,9 @@ Shader "Custom/WorldTilemap"
                         return fixed4(spriteColor.a, spriteColor.a, spriteColor.a, 1.0);
                     }
                     if(_DebugMode < 4){                    
-                        return fixed4(i.uv.x, i.uv.y, 0.0, 1.0);
-                    }
+                       // return fixed4(i.uv.x, i.uv.y, 0.0, 1.0);
+                        return fixed4(frac(worldUV).x, frac(worldUV).y, 0, 1); 
+                   }
                 }
                 return finalColor;
             }
