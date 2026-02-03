@@ -1,6 +1,6 @@
 ﻿[System.Serializable]
 public class InventorySlot {
-    public ushort ItemID => _cachedItemData.ID;
+    public ushort ItemID => _cachedItemData != null ? _cachedItemData.ID : ResourceSystem.InvalidID;
 
     // Store quantity.
     public int quantity;
@@ -17,9 +17,7 @@ public class InventorySlot {
         _cachedItemData = App.ResourceSystem.GetItemByID(id);
         this.discovered = discovered;
     }
-
-    public bool IsEmpty() => ItemID == ResourceSystem.InvalidID || quantity <= 0;
-
+    public bool IsEmpty() => _cachedItemData == null || ItemID == ResourceSystem.InvalidID || quantity <= 0;
     public void AddQuantity(int amount) {
         quantity += amount;
     }

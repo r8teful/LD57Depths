@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+// Old script we don't use anymore
 public class PickupPopupSpawner : MonoBehaviour {
-     private NetworkedPlayerInventory playerInventory;
     [SerializeField] private Transform popupParent;
 
-    private Dictionary<ushort, UIPickupPopup> activePopups = new Dictionary<ushort, UIPickupPopup>();
+    private Dictionary<ushort, UIInventoryGainPopup> activePopups = new Dictionary<ushort, UIInventoryGainPopup>();
 
     private void Awake() {
         // If playerInventory is not assigned in the inspector, attempt to find it
@@ -14,11 +14,11 @@ public class PickupPopupSpawner : MonoBehaviour {
     }
 
     private void OnEnable() {
-        NetworkedPlayerInventory.OnItemPickup += HandleItemPickup;
+        PlayerInventory.OnItemPickup += HandleItemPickup;
     }
 
     private void OnDisable() {
-        NetworkedPlayerInventory.OnItemPickup -= HandleItemPickup;
+        PlayerInventory.OnItemPickup -= HandleItemPickup;
     }
 
     private void HandleItemPickup(ushort itemId, int amount) {
@@ -30,17 +30,17 @@ public class PickupPopupSpawner : MonoBehaviour {
             return;
         }
 
-        if (activePopups.TryGetValue(itemId, out UIPickupPopup popup) && popup != null) {
+        if (activePopups.TryGetValue(itemId, out UIInventoryGainPopup popup) && popup != null) {
             popup.IncreaseAmount(amount);
         } else {
-            popup = Instantiate(App.ResourceSystem.GetPrefab<UIPickupPopup>("UIPickupPopup"), popupParent);
+            popup = Instantiate(App.ResourceSystem.GetPrefab<UIInventoryGainPopup>("UIInventoryGainPopup"), popupParent);
             popup.Init(icon, amount);
             popup.OnDespawned += HandlePopupDespawn;
             activePopups[itemId] = popup;
         }
     }
 
-    private void HandlePopupDespawn(UIPickupPopup popup) {
+    private void HandlePopupDespawn(UIInventoryGainPopup popup) {
         popup.OnDespawned -= HandlePopupDespawn;
 
         var entry = activePopups.FirstOrDefault(kvp => kvp.Value == popup);

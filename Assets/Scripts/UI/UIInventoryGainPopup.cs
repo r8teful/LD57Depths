@@ -4,19 +4,22 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIPickupPopup : MonoBehaviour {
+public class UIInventoryGainPopup : MonoBehaviour {
     [SerializeField] private Image itemIconImage;
     [SerializeField] private TextMeshProUGUI quantityText;
     [SerializeField] private CanvasGroup canvasGroup;
 
     private int _quantity;
-    public Action<UIPickupPopup> OnDespawned { get; internal set; }
+    public Action<UIInventoryGainPopup> OnDespawned { get; internal set; }
 
     private float lastUpdateTime;
     private const float DespawnDelay = 1f;
     private bool isFading = false;
     private Tween fadeTween;
 
+    private void OnDestroy() {
+        transform.DOKill();
+    }
     public void Init(Sprite icon, int amount) {
         if (canvasGroup == null) {
             canvasGroup = gameObject.AddComponent<CanvasGroup>();

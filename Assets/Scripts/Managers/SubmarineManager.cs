@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,9 +15,20 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     // A client-side event that the UI can subscribe to.
     public event Action<ushort> OnUpgradeDataChanged; // Passes the RecipeID that changed
     public event Action<ushort> OnCurRecipeChanged; // Passes the new RecipeID 
-    public event Action OnSubMoved; // Used by map UI 
+    public event Action OnSubMoved; // Used by map 
     public GameObject submarineExterior;
     public Transform InteriorSpawnPoint;
+    [ShowInInspector]
+    private InventoryManager subInventory;
+    public InventoryManager SubInventory => subInventory;
+    [SerializeField] private SubItemGainVisualSpawner itemGainSpawner;
+
+
+    protected override void Awake() {
+        base.Awake();
+        subInventory = new InventoryManager();
+        itemGainSpawner.Init(subInventory);
+    }
     public void MoveSub(int index) {
         submarineExterior.transform.position = new(0, GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(index));
         SetSubPosIndex(index);

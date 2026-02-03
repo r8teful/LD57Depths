@@ -19,7 +19,7 @@ public class UIUpgradeTree : MonoBehaviour {
         _nodeMap.Clear();
         _treeData = tree;
         _player = player;
-        var inv = player.GetInventory();
+        var inv = SubmarineManager.Instance.SubInventory;
         // Instead of instantiating the nodes, we "link" the existing node prefab to the data, so that it displays the right
         // upgrade. This is how we have to do it if we want more complex trees, instead of just instantiating the nodes
         // in a horizontal layout group. A bit more work to setup now but easier to code

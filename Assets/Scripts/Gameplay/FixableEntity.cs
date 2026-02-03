@@ -75,9 +75,9 @@ public class FixableEntity : MonoBehaviour, IInteractable, IPopupInfo {
                 return; 
             }
             _currentlyInteracting = true;
-            var clientInventory = player.InventoryN.GetInventoryManager(); // Probably really bad to do this but EH?
+            var clientInventory = SubmarineManager.Instance.SubInventory; // Probably really bad to do this but EH?
             instantatiatedPopup = Instantiate(App.ResourceSystem.GetPrefab("Popup"), instantatiatedCanvas.transform).GetComponent<UIPopup>();
-            instantatiatedPopup.transform.localScale = Vector3.one * 0.015f;
+            instantatiatedPopup.transform.localScale = Vector3.one * 0.025f;
             instantatiatedPopup.SetData(new(fixRecipe.displayName, fixRecipe.description, fixRecipe.GetIngredientStatuses(clientInventory)));
             instantatiatedCanvas.SetPromptNextStage(instantatiatedPopup.transform);
         } else if(instantatiatedPopup != null) {

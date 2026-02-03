@@ -2,7 +2,7 @@
 
 // Root of all player UI
 public class UIManager : Singleton<UIManager> {
-    private InventoryManager _localInventoryManager;
+    private InventoryManager _inventory;
     public PopupManager PopupManager { get; private set; }
     [field:SerializeField] public UIUpgradeScreen UpgradeScreen { get; private set; }
     [field: SerializeField] public UIManagerInventory UIManagerInventory {  get; private set; }
@@ -21,10 +21,10 @@ public class UIManager : Singleton<UIManager> {
 
     }
     public void Init(PlayerManager client, GameObject owningPlayer) {
-        _localInventoryManager = client.InventoryN.GetInventoryManager();
+        _inventory = SubmarineManager.Instance.SubInventory;
         PopupManager = GetComponent<PopupManager>();
         _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage
-        if (_localInventoryManager == null || _playerGameObject == null) {
+        if (_inventory == null || _playerGameObject == null) {
             Debug.LogError("InventoryUIManager received null references during Initialize! UI may not function.", gameObject);
             enabled = false;
             return;
@@ -34,7 +34,7 @@ public class UIManager : Singleton<UIManager> {
         // Init managers
         UpgradeScreen.Init(this,client);
         UIManagerInventory.Init(owningPlayer,client);
-        PopupManager.Init(_localInventoryManager);
+        PopupManager.Init(_inventory);
         UIManagerStats.Init(client);;
 
     }

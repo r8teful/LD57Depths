@@ -1,105 +1,42 @@
-﻿// InventorySlotUI.cs
+﻿using DG.Tweening;
+using TMPro; 
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems; // Required for Drag Handlers
-using TMPro; // Required for TextMeshPro
 
-public class UIInventoryItem : MonoBehaviour, IPointerClickHandler {
-    [Header("UI Elements")]
-    [SerializeField] private Image itemIconImage; // Assign the child Image component for the icon
-    [SerializeField] private TextMeshProUGUI quantityText; // Assign the child TextMeshProUGUI component
-    [SerializeField] private Image highlightBorder; // Assign a child Image used as a border/outline
-    [Header("Settings")]
-    [SerializeField] private Color emptySlotColor = new Color(1, 1, 1, 0.5f); // Slightly transparent white when empty
-    [SerializeField] private Color draggingMaskColor = new Color(0.5f, 0.5f, 0.5f, 0.5f); // Color when being dragged from
-
-    // --- Runtime ---
-    private UIManagerInventory uiManager;
-
-    private bool isContainerSlot = false; // New flag
-    public bool IsContainerSlot => isContainerSlot; // Expose context flag
+public class UIInventoryItem : MonoBehaviour {
+    [SerializeField] private Image itemIconImage; 
+    [SerializeField] private TextMeshProUGUI quantityText; 
+  
     void Awake() {
         if (!itemIconImage || !quantityText) {
             Debug.LogError($"Slot UI on {gameObject.name} is missing references to Icon Image or Quantity Text!", gameObject);
         }
-        if (!highlightBorder) {
-            Debug.LogWarning($"Slot UI on {gameObject.name} has no highlight border assigned. Selection won't be visible.", gameObject);
-        } else {
-            highlightBorder.enabled = false; // Start hidden
-        }
-        var selectable = GetComponent<Selectable>();
-        if (selectable == null) {
-            Debug.LogError("Need selectable on component!");
-            // Add Selectable if not present. Requires Image component on same object for default interaction.
-            // selectable = gameObject.AddComponent<Selectable>();
-            // selectable.transition = Selectable.Transition.None; // Or set up color tint/sprite swap
-        }
+    }
+    private void OnDestroy() {
+    }
+    public void Remove() {
+        transform.DOKill();
+        quantityText.transform.DOKill();
+        Destroy(gameObject);
+    }
+    public void Init(ItemData item) {
+        itemIconImage.sprite = item.icon;
+
+        // pop in
+        transform.localScale = Vector3.zero;
+        transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
     }
 
-    // Called by InventoryUIManager during setup
-    public void Initialize(UIManagerInventory manager) {
-        uiManager = manager;
-        isContainerSlot = false;
-    }
-    public void SetContainerContext(UIManagerInventory manager, int index) {
-        uiManager = manager; // Still need manager for drag events
-        isContainerSlot = true;
+    public void UpdateSlot(int amount) {
+        quantityText.text = amount.ToString();
+        DoAnimation(); // Satisfying!
     }
 
-    // Updates the visual elements based on the slot data
-    public void UpdateSlot(InventorySlot slotData) {
-        // todo add some check here if item has been discovered
-        if (slotData == null) {
-            // Slot is empty
-            itemIconImage.enabled = false;
-            quantityText.enabled = false;
-            //if (backgroundImage) backgroundImage.color = emptySlotColor; // Make slot visually 'empty'
-        } else {
-            // Slot has an item
-            if(slotData.ItemData != null) {
-                itemIconImage.sprite = slotData.ItemData.icon; 
-                itemIconImage.enabled = true;
-                quantityText.enabled = slotData.quantity > 1;
-                if (quantityText.enabled) quantityText.text = slotData.quantity.ToString();
-            } 
-          //  if (backgroundImage) backgroundImage.color = Color.white; // Reset slot background color
-        }
+    private void DoAnimation() {
+        quantityText.transform.localScale = Vector3.one;
+        quantityText.transform.DOKill();
+        var punchAmount = 1.0001f;
+        quantityText.transform.DOPunchScale(new Vector3(punchAmount, punchAmount, punchAmount), 0.3f, 1, 1f);
 
-        // Reset drag mask just in case
-        SetVisualsDuringDrag(false);
-    }
-
-    // Used to visually change the slot when its item is being dragged FROM it
-    public void SetVisualsDuringDrag(bool isBeingDragged, bool sameSlot = false) {
-        if (itemIconImage) {
-            // Option 1: Just hide the icon
-            // itemIconImage.enabled = !isBeingDragged;
-
-            // Option 2: Make icon semi-transparent (use a color)
-            itemIconImage.color = isBeingDragged ? draggingMaskColor : Color.white;
-        }
-        if (quantityText) {
-            quantityText.enabled = !isBeingDragged && quantityText.text != "" && quantityText.text != "0" && quantityText.enabled; // Also re-check conditions
-            if (sameSlot) quantityText.enabled = true;
-        }
-    }
-    public void SetSelected(bool isSelected) {
-        if (highlightBorder != null) {
-            highlightBorder.enabled = isSelected;
-        }
-    }
-
-    // SetFocus is for controller navigation/mouse hover
-    public void SetFocus(bool hasFocus) {
-       // if (focusBorder) focusBorder.enabled = hasFocus;
-    }
-
-    // --- IPointerClickHandler ---
-    public void OnPointerClick(PointerEventData eventData) {
-        if (uiManager == null) return;
-
-        // Forward click event to the UIManager
-        // eventData.button tells us PointerEventData.InputButton.Left, .Right, .Middle
-        //uiManager.HandleSlotClick(this, eventData.button);
     }
 }

@@ -8,7 +8,7 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
     public UpgradeManagerPlayer UpgradeManager { get; private set; }
     public InputManager InputManager { get; private set; }
     public CraftingComponent CraftingComponent { get; private set; }
-    public NetworkedPlayerInventory InventoryN { get; private set; }
+    public PlayerInventory InventoryN { get; private set; }
     public UIManager UiManager => _uiSpawner.UiManager; // Expose UIManager from the PlayerUISpawner
     public PlayerVisualHandler PlayerVisuals { get; private set; }
     public PlayerLayerController PlayerLayerController { get; private set; }
@@ -57,7 +57,7 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
         PlayerStats = GetComponent<PlayerStatsManager>(); 
         UpgradeManager = GetComponent<UpgradeManagerPlayer>(); 
         _uiSpawner = GetComponent<PlayerUISpawner>();
-        InventoryN = GetComponent<NetworkedPlayerInventory>();
+        InventoryN = GetComponent<PlayerInventory>();
         PlayerVisuals = GetComponent<PlayerVisualHandler>();
         PlayerAbilities = GetComponent<PlayerAbilities>();
         OxygenManager = GetComponent<OxygenManager>();

@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 7250565941071333612}
   - component: {fileID: 8635853783913038229}
   - component: {fileID: 3950145110356713766}
+  - component: {fileID: 942153636855539669}
   m_Layer: 2
   m_Name: PlayerOnline
   m_TagString: Player
@@ -425,7 +426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4700398cfc0012e439f4cd9f3606709e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _baseStats: {fileID: 11400000, guid: d8685c4b27708d64da3f05ac7c44d328, type: 2}
+  _baseStats: {fileID: 11400000, guid: f0e239b904808f94d8c26c32a0e5bdba, type: 2}
 --- !u!114 &1978658108044632745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -504,6 +505,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa540af90e69e2c4caf9fdebb8dc937f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &942153636855539669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228294681075539138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de832d855c611b04d9794dfe201c2196, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timePerCategory: 1
+  transferSteps: 10
+  delayBetweenCategories: 0
 --- !u!1 &1942967068140502079
 GameObject:
   m_ObjectHideFlags: 0

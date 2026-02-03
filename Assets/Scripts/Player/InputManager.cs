@@ -408,12 +408,12 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     private void UIOnToggleInventory(InputAction.CallbackContext context) {
         if (Console.IsConsoleOpen())
             return;
-        _inventoryUIManager.HandleToggleInventory();
+       // _inventoryUIManager.HandleToggleInventory();
     }
 
     private void UIHandleCloseAction(InputAction.CallbackContext context) {
         // E.g., Escape key or Gamepad B/Start 
-        _inventoryUIManager.HandleCloseAction(context); // For UI related
+        //_inventoryUIManager.HandleCloseAction(context); // For UI related
         ClearInteractable(); // Also clear interactable
     }
     private void HandleCancelAction(InputAction.CallbackContext context) {
