@@ -60,7 +60,7 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule {
     private IEnumerator TransferRoutine() {
         // Snapshot the list of ItemIDs to transfer so we have a queue
         List<ushort> itemsToTransfer = new List<ushort>(inventoryPlayer.Slots.Keys);
-
+        //yield return new WaitForSeconds(0.5f);
         foreach (ushort itemID in itemsToTransfer) {
             if (!inventoryPlayer.Slots.ContainsKey(itemID)) continue;
 

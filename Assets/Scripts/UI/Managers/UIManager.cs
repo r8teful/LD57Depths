@@ -8,6 +8,7 @@ public class UIManager : Singleton<UIManager> {
     [field: SerializeField] public UIManagerInventory UIManagerInventory {  get; private set; }
     [field: SerializeField] public UIManagerStats UIManagerStats {  get; private set; }
     [field: SerializeField] public UISubControlPanel UISubControlPanel {  get; private set; }
+    [field: SerializeField] public UISubInventory UISubInventory {  get; private set; }
 
     private GameObject _playerGameObject;
     public bool IsAnyUIOpen() {
@@ -36,7 +37,7 @@ public class UIManager : Singleton<UIManager> {
         UIManagerInventory.Init(owningPlayer,client);
         PopupManager.Init(_inventory);
         UIManagerStats.Init(client);;
-
+        UISubInventory.Init();
     }
 
     internal void ShowMessage(string v) {

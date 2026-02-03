@@ -170,6 +170,68 @@ MonoBehaviour:
   barAnimator: {fileID: 0}
   xpText: {fileID: 8172057839191995962}
   fillSpeed: 5
+--- !u!1 &607422300945542706
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2317228383370707949}
+  - component: {fileID: 1851855138170274453}
+  m_Layer: 5
+  m_Name: LayoutGroup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2317228383370707949
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 607422300945542706}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3339560468690781946}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 290.4917, y: 572.51636}
+  m_Pivot: {x: 1, y: 1}
+--- !u!114 &1851855138170274453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 607422300945542706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 35
+    m_Top: 45
+    m_Bottom: 0
+  m_ChildAlignment: 2
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &642015997681676741
 GameObject:
   m_ObjectHideFlags: 0
@@ -544,6 +606,7 @@ RectTransform:
   - {fileID: 2412999984877479479}
   - {fileID: 6168432358688400932}
   - {fileID: 5743480262160310056}
+  - {fileID: 2317228383370707949}
   - {fileID: 599686058378027384}
   m_Father: {fileID: 2273074943151742602}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -562,6 +625,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2273074943151742602}
   - component: {fileID: 7822304368068707891}
+  - component: {fileID: 2824223025448894423}
   m_Layer: 5
   m_Name: UpgradeUICanvas
   m_TagString: Untagged
@@ -605,6 +669,19 @@ MonoBehaviour:
   _upgradePanelTree: {fileID: 2261421801698203721}
   _upgradeTreeController: {fileID: 6878994613900001162}
   PanAndZoom: {fileID: 1279069063902374804}
+--- !u!114 &2824223025448894423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621246366461918266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81fad91bccddcef4e8ed8e28855ee160, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _itemContainer: {fileID: 2317228383370707949}
 --- !u!1 &1637880582087029881
 GameObject:
   m_ObjectHideFlags: 0
@@ -2442,6 +2519,7 @@ MonoBehaviour:
   <UIManagerInventory>k__BackingField: {fileID: 3842612885317811593}
   <UIManagerStats>k__BackingField: {fileID: 1275074982264350178}
   <UISubControlPanel>k__BackingField: {fileID: 875838258953143664}
+  <UISubInventory>k__BackingField: {fileID: 2824223025448894423}
 --- !u!114 &4979282666481976631
 MonoBehaviour:
   m_ObjectHideFlags: 0
