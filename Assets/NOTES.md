@@ -798,9 +798,19 @@ Upgrades
 
 For the inventory:
 
-For yOUR inventory. Items should pop in when you pick them up. 
+For yOUR inventory. Items should pop in when you pick them up.
 
 
+
+
+
+
+
+Okay for the sub upgrade as nodes we simply want to do the following:
+
+
+
+Submarine manager NEEDS certain upgrades before it can move, it doesn't have to hold progress or anything, this is already done by the upgrade tree nodes system thing. Basically when we get the effect, we sat to the submarine manager: Look! We've gotten upgrade with ID X, then it's like, cool, now we can change the sprite of this and this to make the sub look a bit better. Also, we can now move to the next zone because we have upgrade X. that's it, you don't need anything else. So how would the upgrading work? You simply have a node with 3 stages. Each stage fixes that specific thing one upgrade. when you've fully completed the node, that's when you can move the submarine further
 
 
 

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
+  m_Name: UpgradeSubCables
+  m_EditorClassIdentifier: 
+  nodeName: SubUpgradeCable
+  uniqueID: 400
+  description: 
+  icon: {fileID: -1703950749, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  prerequisiteNodesAny:
+  - {fileID: 11400000, guid: 3fc0c9bd770644d448652616cf99fcec, type: 2}
+  UnlockedAtFirstPrereqStage: 0
+  stages:
+  - upgrade: {fileID: 11400000, guid: 9fb29b35117da1844a612699ef783042, type: 2}
+    costMultiplier: 1
+    costTier: 8
+    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
+  - upgrade: {fileID: 11400000, guid: 1804cbd871178144aa8daa86a1718ea1, type: 2}
+    costMultiplier: 1
+    costTier: 9
+    upgradeItemPool: {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
+  - upgrade: {fileID: 11400000, guid: 062f003fcc40dcb4a82a74b76708d45a, type: 2}
+    costMultiplier: 1
+    costTier: 10
+    upgradeItemPool: {fileID: 11400000, guid: 252630a728eb6594c979e7727659293c, type: 2}

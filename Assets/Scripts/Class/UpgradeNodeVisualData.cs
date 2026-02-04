@@ -43,6 +43,11 @@ public class UpgradeNodeVisualData {
         } else {
             // Use title if we have node aswell?
             Description = _currentRecipe.description;
+            if(_currentRecipe is SubRecipeSO s) {
+                // Take extra icon from it
+                RefreshRecipeData(existingUpgrades); // fresh before fetching max lvl
+                IconExtra = IsMaxLevel() ? s.UpgradeIconComplete : s.UpgradeIcon;
+            }
         }
         RefreshRecipeData(existingUpgrades);
         // Don't really need to get the popup info on Init because we dont show it untill we 

@@ -242,11 +242,13 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public PopupData GetPopupData(InventoryManager clientInv) {
         // Stat data
         _visualData.UpdateForPopup(clientInv);
-        return new PopupData(_visualData.Title, _visualData.Description, 
+        return new PopupData(_visualData.Title, _visualData.Description,
             _visualData.IngredientStatuses, // We'll have to pull this everytime we want to show it because 
-            // We need a new way to get the stat statuses, it will depend on the upgrade. 
+                                            // We need a new way to get the stat statuses, it will depend on the upgrade. 
             statInfo: _visualData.StatChangeStatuses, // This lagging behind, for some reason, rest is updating correctly
-            progressionInfo: new(_visualData.LevelMax, _visualData.LevelCurrent));
+            progressionInfo: new(_visualData.LevelMax, _visualData.LevelCurrent),
+            icon: _visualData.IconExtra
+            );
     }
 
     internal void SetSelected() {

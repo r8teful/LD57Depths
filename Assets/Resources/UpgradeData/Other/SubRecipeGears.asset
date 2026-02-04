@@ -12,16 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 020b853878c43ca448a2fd89a70703c3, type: 3}
   m_Name: SubRecipeGears
   m_EditorClassIdentifier: 
-  RecipeID: 204
+  RecipeID: 820
   displayName: Gears
   description: "Replace the sub\u2019s rusty gears with strong new ones to move to
     the next zone."
-  icon: {fileID: 0}
+  icon: {fileID: -1703950749, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   requiredItems:
   - item: {fileID: 11400000, guid: 9d1117d8bc8ca42498829667bd205792, type: 2}
     quantity: 10
   - item: {fileID: 11400000, guid: f84752ce61f61e443b5200aae63a948a, type: 2}
     quantity: 20
+  effects: []
   UpgradeType: 0
   UpgradeIconSteps:
   - {fileID: -885203896, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}

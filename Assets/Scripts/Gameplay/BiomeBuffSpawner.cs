@@ -15,7 +15,9 @@ public class BiomeBuffSpawner : MonoBehaviour, IInitializableAbility {
     private void Awake() {
     }
     private void OnDestroy() {
-        BiomeManager.Instance.OnNewClientBiome -= NewClientBiome;
+        if(BiomeManager.Instance != null){
+            BiomeManager.Instance.OnNewClientBiome -= NewClientBiome;
+        }
     }
 
    

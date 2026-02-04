@@ -1,4 +1,6 @@
 ﻿using DG.Tweening;
+using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -102,11 +104,32 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         // Icon, used for control screen
         if (data.Icon != null) {
             _iconImage.sprite = data.Icon;
-            _iconContainer.SetActive(true);
+            SetRightImageHeightNextFrame();
+
         } else if (_iconContainer != null) {
             _iconContainer.SetActive(false);
         }
     }
+
+    private void SetRightImageHeightNextFrame() {
+        StartCoroutine(SetHeightNextFrame());
+    }
+    private IEnumerator SetHeightNextFrame() {
+        yield return null;
+
+        const float originalW = 39f;
+        const float originalH = 65f;
+        float aspect = originalW / originalH;
+        float targetHeight = rectTransform.rect.height;
+        float newWidth = targetHeight * aspect;
+
+        // Respect RectTransform layout (works with different anchors)
+        _iconImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, targetHeight);
+        _iconImage.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, newWidth);
+
+        _iconContainer.SetActive(true);// Enable 
+    }
+
     public void HandleFailVisual() {
         if (_isWorldPopup) {
             transform.DOShakePosition(0.2f,0.3f,50);
