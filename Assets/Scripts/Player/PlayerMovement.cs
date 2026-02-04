@@ -7,12 +7,9 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
     private Camera MainCam;
     public Transform insideSubTransform;
 
-    [Header("Movement Parameters")]
-    [Tooltip("Maximum speed the swimmer can reach.")]
     public float walkSpeed = 5f;
-    public float climbSpeed = 5f;
-    [Tooltip("Deceleration force applied when no input is given, simulating water resistance.")]
-    public float decelerationForce = 15f;
+    
+    private float decelerationForce = 3f;
 
     public enum PlayerState {None, Swimming, Grounded}
     private PlayerState _currentState;

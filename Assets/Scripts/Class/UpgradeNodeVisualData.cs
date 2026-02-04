@@ -18,6 +18,7 @@ public class UpgradeNodeVisualData {
     public UpgradeNodeSO Node => _node;
     // Straight from SO
     public Sprite Icon;
+    public Sprite IconExtra; // Used for sub upgrades as a cool extra for the popup
     public string Title;
     public string Description;
 

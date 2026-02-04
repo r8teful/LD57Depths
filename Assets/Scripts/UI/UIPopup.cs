@@ -102,6 +102,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         // Icon, used for control screen
         if (data.Icon != null) {
             _iconImage.sprite = data.Icon;
+            _iconContainer.SetActive(true);
         } else if (_iconContainer != null) {
             _iconContainer.SetActive(false);
         }
