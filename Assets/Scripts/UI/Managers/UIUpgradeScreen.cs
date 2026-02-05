@@ -15,7 +15,6 @@ public class UIUpgradeScreen : MonoBehaviour {
     public bool IsOpen => _upgradePanel.activeSelf;
     
     public UIManager GetUIManager() => _UIManagerParent;
-    public static event Action<UpgradeTreeDataSO> OnTabChanged; // Used to show correct stats 
     public static event Action<UpgradeNodeSO> OnSelectedNodeChanged; // Used to show correct stats 
     public event Action<bool> OnPanelChanged;
     private void Awake() {
@@ -73,9 +72,10 @@ public class UIUpgradeScreen : MonoBehaviour {
             _upgradePanelRect.localScale = Vector3.one;
             _upgradePanelRect.DOScaleY(0.2f, 0.05f).SetEase(Ease.OutCubic).
                 OnComplete(() => _upgradePanel.SetActive(false));
+            _upgradeTreeController.OnTreeClose();
             // close
         }
-            OnPanelChanged?.Invoke(isActive);
+        OnPanelChanged?.Invoke(isActive);
     }
 
     internal void PanelHide() {

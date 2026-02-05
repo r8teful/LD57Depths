@@ -10,7 +10,7 @@ public class SubUpgradeEffect : UpgradeEffect {
     public Sprite SpriteInterior;
     public SubRecipeSO upgrade; // So we can simply look at the ID and be like, this has been upgraded
     public override void Execute(ExecutionContext context) {
-        SubmarineManager.Instance.NewSubUpgrade(upgrade, this);
+        SubmarineManager.Instance.NewSubUpgrade(upgrade);
     }
 
     public override StatChangeStatus GetChangeStatus() {

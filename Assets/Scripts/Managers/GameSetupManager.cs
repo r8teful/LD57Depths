@@ -50,6 +50,7 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
         w.Init(this);
         yield return null;
         
+        // This just does biomes. Not caves or anything 
         var bm = FindFirstObjectByType<BiomeMaterialUploader>();
         if (bm == null)
             LogError(bm);

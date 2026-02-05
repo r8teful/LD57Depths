@@ -43,11 +43,6 @@ public class UpgradeNodeVisualData {
         } else {
             // Use title if we have node aswell?
             Description = _currentRecipe.description;
-            if(_currentRecipe is SubRecipeSO s) {
-                // Take extra icon from it
-                RefreshRecipeData(existingUpgrades); // fresh before fetching max lvl
-                IconExtra = IsMaxLevel() ? s.UpgradeIconComplete : s.UpgradeIcon;
-            }
         }
         RefreshRecipeData(existingUpgrades);
         // Don't really need to get the popup info on Init because we dont show it untill we 
@@ -67,6 +62,10 @@ public class UpgradeNodeVisualData {
         State = _node.GetState(existingUpgrades,canAfford);
         LevelMax = _node.MaxLevel;
         LevelCurrent = _node.GetCurrentLevel(existingUpgrades);
+        if (_currentRecipe is SubRecipeSO s) {
+            // Take extra icon from it
+            IconExtra = IsMaxLevel() ? s.UpgradeIconComplete : s.UpgradeIcon;
+        }
         UpdateForPopup(_inventory); // We're ontop of the upgrade when upgrading it so we should refresh the popup
     }
     public void UpdateForUpgradePurchase(HashSet<ushort> existingUpgrades) {

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -24,15 +25,32 @@ public class UpgradeTreeController : MonoBehaviour {
         _inputManager = client.InputManager;
         _inputManager.OnUIInteraction += HandleActionInput;
         startingNode = baseNode;
+
+        client.UiManager.UpgradeScreen.OnPanelChanged += OnPanelChange;
         //if (_inputManager.IsUsingController) {
         //    if (startingNode != null) {
         //        SetSelection(startingNode);
         //    }
         //}
     }
+    private void OnDestroy() {
+        if(PlayerManager.Instance != null) {
+            PlayerManager.Instance.UiManager.UpgradeScreen.OnPanelChanged -= OnPanelChange;
+        }
+    }
+
+    private void OnPanelChange(bool isActive) {
+        if (!isActive) {
+            // Eh its done directly now
+        }
+    }
 
     internal void OnTreeOpen() {
         SetSelection(startingNode);
+    }
+
+    internal void OnTreeClose() {
+        SetSelection(null);
     }
 
     private void Update() {
@@ -73,6 +91,7 @@ public class UpgradeTreeController : MonoBehaviour {
 
         // Select new
         currentSelection = newNode;
+        if (currentSelection == null) return;
         currentSelection.Select(usingPointer: false);
     }
     private IEnumerator SetSelectionRoutine(UIUpgradeNode newNode) {

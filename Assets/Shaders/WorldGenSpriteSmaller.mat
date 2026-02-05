@@ -29,22 +29,22 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BaseOctaves: 4.31
-    - _CaveAmp: 0.6
-    - _CaveCutoff: 0.03
-    - _CaveNoiseScale: 0.03
+    - _BaseOctaves: 1.57
+    - _CaveAmp: 0.2
+    - _CaveCutoff: 0.02
+    - _CaveNoiseScale: 0.04
     - _GlobalSeed: 1915
-    - _RidgeOctaves: 1.89
+    - _RidgeOctaves: 1.53
     - _TotalLayers: 6.39
     - _TrenchBaseWiden: -0.04
     - _TrenchBaseWidth: 24.4
     - _TrenchEdgeAmp: 3.13
     - _TrenchNoiseScale: 0.14
-    - _WarpAmp: 0.81
+    - _WarpAmp: 0.59
     - _WorldLayerEdgeAmp: 6.39
     - _WorldLayerNoiseScale: 0.13
     - _WorldUVScale: 1
-    - _WorleyWeight: 2.5
+    - _WorleyWeight: 2.27
     m_Colors:
     - _ColorMult: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

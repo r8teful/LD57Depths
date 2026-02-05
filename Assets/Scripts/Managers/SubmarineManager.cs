@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 // This is on the interior instance
@@ -19,7 +20,9 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     public InventoryManager SubInventory => subInventory;
     [SerializeField] private SubItemGainVisualSpawner itemGainSpawner;
 
-
+    private HashSet<ushort> _subRecipes = new HashSet<ushort>();
+    [SerializeField] private List<SubRecipeSO> _majorUpgrades; // Assign in inspector, when the player gets this recipe, we increase the "stage"
+    private int _upgradeStage;
     protected override void Awake() {
         base.Awake();
         subInventory = new InventoryManager();
@@ -38,9 +41,16 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
         var y = GameSetupManager.Instance.WorldGenSettings.MaxDepth;
         submarineExterior.transform.position = new Vector3(0, y);
     }
-    
-    internal void NewSubUpgrade(SubRecipeSO r, SubUpgradeEffect subUpgradeEffect) {
 
+    internal void NewSubUpgrade(SubRecipeSO newUpgrade) {
+        bool success = _subRecipes.Add(newUpgrade.ID);
+        if (!success) {
+            Debug.LogError("Sub recipe already purchased! Did you assigned a unique ID?");
+            return;
+        }
+        if (_majorUpgrades.Exists(r => r.ID == newUpgrade.ID)) {
+            _upgradeStage++;
+        }
     }
 
     internal void MoveInterior(VisibilityLayerType currentLayer) {
@@ -54,10 +64,9 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
         }
     }
 
-    public int GetUpgradeStage() {
-        return 1; // todo
-    }
-    public bool CanMoveTo(int currentShownIndex) {
-        return false; // todo
+    public int GetUpgradeStage() => _upgradeStage; 
+    
+    public bool CanMoveTo(int index) {
+        return index <= _upgradeStage;
     }
 }
