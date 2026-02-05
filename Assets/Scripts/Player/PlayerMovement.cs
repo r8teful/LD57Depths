@@ -5,7 +5,6 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
 
     private Rigidbody2D rb;
     private Camera MainCam;
-    public Transform insideSubTransform;
 
     public float walkSpeed = 5f;
     
@@ -182,8 +181,6 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
                 break;
             case PlayerState.Grounded:
                 rb.gravityScale = 2;
-                //MainCam.transform.SetParent(insideSubTransform);
-                //MainCam.transform.localPosition = new Vector3(0, 0, -10);
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0); // Reset vertical velocity when entering from climb
                 break;
         }

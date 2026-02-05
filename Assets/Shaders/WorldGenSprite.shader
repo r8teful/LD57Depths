@@ -166,6 +166,8 @@ Shader "Custom/WorldGenSprite"
                     float pos = maxDepth * (abs((float)b - (float)layers) / (float)layers);
                     float n = EdgeNoise_Smooth(uv, _GlobalSeed, b, _WorldLayerNoiseScale);
                     float offset = (n - 0.5) * 2.0 * _WorldLayerEdgeAmp;
+                    if (b == 0)
+                        pos += maxDepth * 0.1; // Bottom goes down a bit further
                     borderPos[b] = pos + offset;
                 }
 

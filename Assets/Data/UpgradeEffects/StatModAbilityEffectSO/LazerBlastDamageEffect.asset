@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb3d0041ed540d04d9d938a5f700a60c, type: 3}
   m_Name: LazerBlastDamageEffect
   m_EditorClassIdentifier: 
-  Id: 122
   upgradeType: 1
   increaseType: 0
-  modificationValue: 0.333
+  modificationValue: 0.3
   targetAbility: {fileID: 11400000, guid: 684d11520b9ebe74ba73394e13a15771, type: 2}

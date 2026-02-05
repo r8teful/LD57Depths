@@ -29,10 +29,11 @@ public class UIHudIconAbilityActive : UIHudIconBase {
         timeText.color = Color.green;
         
     }
-    private void OnAbilityCooldownChanged(float time) {
-        _progressImage.fillAmount = time;
-        //timeText.text = time.ToString();
-        //timeText.color = Color.white;
+    private void OnAbilityCooldownChanged(float time,float max) {
+        float progress = time / Mathf.Max(0.001f,max);
+        _progressImage.fillAmount = progress;
+        timeText.text = FormatSeconds(time);
+        timeText.color = Color.red;
     }
     string FormatSeconds(float sec) {
         if (sec <= 0) return "0s";

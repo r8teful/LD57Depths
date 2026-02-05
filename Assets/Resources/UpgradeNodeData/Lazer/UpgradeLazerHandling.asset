@@ -21,7 +21,7 @@ MonoBehaviour:
   UnlockedAtFirstPrereqStage: 1
   stages:
   - upgrade: {fileID: 11400000, guid: 0feeca99e35d47044abb58251c54e1e3, type: 2}
-    costMultiplier: 1
+    costMultiplier: 1.17
     costTier: 1
     upgradeItemPool: {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
   - upgrade: {fileID: 11400000, guid: b01b83f0a0d6f3d488dd62d657f2c89b, type: 2}

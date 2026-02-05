@@ -352,8 +352,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   insideSubTransform: {fileID: 0}
   walkSpeed: 8
-  climbSpeed: 4
-  decelerationForce: 0.7
 --- !u!114 &-7626533647889685779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426,7 +424,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4700398cfc0012e439f4cd9f3606709e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _baseStats: {fileID: 11400000, guid: f0e239b904808f94d8c26c32a0e5bdba, type: 2}
+  _baseStats: {fileID: 11400000, guid: d8685c4b27708d64da3f05ac7c44d328, type: 2}
 --- !u!114 &1978658108044632745
 MonoBehaviour:
   m_ObjectHideFlags: 0

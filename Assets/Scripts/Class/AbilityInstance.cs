@@ -26,7 +26,7 @@ public class AbilityInstance {
     public bool IsReady => _cooldownRemaining <= 0f && _activeRemaining <= 0f;
 
 
-    public event Action<float> OnCooldownChanged; // sends fraction 0..1 or raw remaining
+    public event Action<float,float> OnCooldownChanged; // remaining, max
     public event Action<float> OnActiveTimeChanged;
     
     public event Action OnActivated; // When player presses the ability button and we start to use it
@@ -97,12 +97,12 @@ public class AbilityInstance {
                 // active ended -> start cooldown
                 OnDeactivated?.Invoke();
                 _cooldownRemaining = GetEffectiveStat(StatType.Cooldown);
-                OnCooldownChanged?.Invoke(_cooldownRemaining);
+                OnCooldownChanged?.Invoke(_cooldownRemaining, GetEffectiveStat(StatType.Cooldown));
             }
         // The else here makes it so that the cooldown only starts after we have no active time remaining!
         } else if (_cooldownRemaining > 0f) { 
             _cooldownRemaining = Mathf.Max(0f, _cooldownRemaining - dt);
-            OnCooldownChanged?.Invoke(_cooldownRemaining);
+            OnCooldownChanged?.Invoke(_cooldownRemaining, GetEffectiveStat(StatType.Cooldown));
             if (_cooldownRemaining == 0f) OnReady?.Invoke();
         }
     }
@@ -220,7 +220,7 @@ public class AbilityInstance {
         } else {
             // Instant ability 
             _cooldownRemaining = GetEffectiveStat(StatType.Cooldown);
-            OnCooldownChanged?.Invoke(_cooldownRemaining);
+            OnCooldownChanged?.Invoke(_cooldownRemaining, GetEffectiveStat(StatType.Cooldown));
         }
         OnUsed?.Invoke();
         return true;
@@ -236,7 +236,7 @@ public class AbilityInstance {
         if (startCooldown) {
             _cooldownRemaining = remainingCooldownOverride >= 0f ?
                 remainingCooldownOverride : GetEffectiveStat(StatType.Cooldown);
-            OnCooldownChanged?.Invoke(_cooldownRemaining);
+            OnCooldownChanged?.Invoke(_cooldownRemaining, GetEffectiveStat(StatType.Cooldown));
         }
     }
 }

@@ -61,9 +61,23 @@ Gameplay
 * Hard to notice improvement
 * Forget to use lazer blast \& what button it needs to activate
 * Lazer blast too powerful
+* Actual lazer cooldown visual 
 
 
 
 Upgrades
 
-* Make the pacing faster
+* Make the pacing faster <- THIS
+* Using up all of one resource will not remove it from the sub UI 
+* Stone is most common so that could be for fixing the cables?
+
+
+
+
+
+
+
+
+
+
+
