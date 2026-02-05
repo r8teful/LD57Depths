@@ -29,6 +29,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
 
 
     internal bool CanUseTool() => _currentState == PlayerState.Swimming;
+    internal PlayerState GetState => _currentState;
     internal bool CanBuild() => _currentState == PlayerState.Swimming;
     public event Action<PlayerState> OnPlayerStateChanged;
     public Rigidbody2D GetRigidbody() => rb;

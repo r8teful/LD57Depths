@@ -45,6 +45,8 @@ Steamdeck notes:
 
 **Smaller visual stuff:**
 
+
+
 * sub Background is too plain \& submarine seems boring and lifeless
 * Interactable things should also have a stroke "highlight"
 * Upgrade tree header in ui
@@ -61,21 +63,24 @@ Gameplay
 * Hard to notice improvement
 * Forget to use lazer blast \& what button it needs to activate
 * Lazer blast too powerful
-* Actual lazer cooldown visual 
+* Actual lazer cooldown visual
 
 
 
 Upgrades
 
 * Make the pacing faster <- THIS
-* Using up all of one resource will not remove it from the sub UI 
+* Using up all of one resource will not remove it from the sub UI
 * Stone is most common so that could be for fixing the cables?
 
 
 
+* Remove world popup. Instead have it as a node
+* Smaller sub outside hitbox
+* Ores less hard
+* Have the tree expand more, it stays too long within lazer upgrade + blast upgrade. We need more exiting things!! Could add magnetism, ore drop chance, luck.
 
-
-
+You have a lot of stone in the end maybe do something with that?
 
 
 

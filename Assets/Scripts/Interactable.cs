@@ -19,8 +19,6 @@ public class Interactable : MonoBehaviour, IInteractable {
     public event Action OnCeaseInteractable;
     public event Action OnSetInteractable;
 
-    public void DissableInteraction() => isInteractionEnabled = false;
-
     // --- Interface Implementation ---
     public Sprite InteractIcon => interactIcon;
 

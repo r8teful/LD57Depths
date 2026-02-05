@@ -303,8 +303,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.21614714, y: 0.49587098}
-  m_Size: {x: 3.3210776, y: 9.36}
+  m_Offset: {x: 0.48, y: 0.51}
+  m_Size: {x: 2.92, y: 8.22}
   m_Direction: 0
 --- !u!114 &764032909507736472
 MonoBehaviour:
@@ -528,7 +528,6 @@ GameObject:
   m_Component:
   - component: {fileID: 149280859870868902}
   - component: {fileID: 4359031078748739721}
-  - component: {fileID: 2830491816155376127}
   m_Layer: 0
   m_Name: Propeller
   m_TagString: Untagged
@@ -606,21 +605,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &2830491816155376127
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5857983456449568546}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: befcf1c2239b3174a893cfc7419a674c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _spriteRenderer: {fileID: 4359031078748739721}
-  UpgradeType: 3
-  isInterior: 0
 --- !u!1 &6355096195184636506
 GameObject:
   m_ObjectHideFlags: 0
@@ -631,7 +615,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2287377827395960258}
   - component: {fileID: 2848429140973863971}
-  - component: {fileID: 8905074463797950913}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -711,21 +694,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8905074463797950913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6355096195184636506}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: befcf1c2239b3174a893cfc7419a674c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _spriteRenderer: {fileID: 2848429140973863971}
-  UpgradeType: 4
-  isInterior: 0
 --- !u!1 &6758146720181148180
 GameObject:
   m_ObjectHideFlags: 0

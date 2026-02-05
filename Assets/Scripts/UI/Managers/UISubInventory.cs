@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -20,13 +21,21 @@ public class UISubInventory : MonoBehaviour {
         if (_localInventoryManager != null) {
             _localInventoryManager.OnSlotChanged += UpdateSlot;
             _localInventoryManager.OnSlotNew += CreateUISlot;
+            _localInventoryManager.OnSlotRemoved += SlotRemoved;
         }
     }
-
     private void UnsubscribeToEvents() {
         if (_localInventoryManager != null) {
             _localInventoryManager.OnSlotChanged -= UpdateSlot;
             _localInventoryManager.OnSlotNew -= CreateUISlot;
+            _localInventoryManager.OnSlotRemoved -= SlotRemoved;
+        }
+    }
+
+
+    private void SlotRemoved(ushort itemID) {
+        if (slotInventoryUIs.TryGetValue(itemID, out var uiItem)) {
+            uiItem.UpdateSlot(0); // set value as zero
         }
     }
 

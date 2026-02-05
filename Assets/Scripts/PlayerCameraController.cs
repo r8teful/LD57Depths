@@ -11,6 +11,8 @@ public class PlayerCameraController : MonoBehaviour {
     private Tweener _zoomTween;
     private Tweener _posTween;
 
+    public bool IsMoving => _posTween.IsActive() || !_zoomTween.IsComplete();
+
     public void Awake() {
         _playerMainCamera = GetComponent<Camera>();
         PlayerLayerController.OnPlayerVisibilityChanged += OnPlayerVisibilityLayerChanged;
@@ -79,15 +81,19 @@ public class PlayerCameraController : MonoBehaviour {
                              .SetEase(Ease.OutCubic)
                              .SetTarget(_playerMainCamera);
     }
+    public void SetCameraPosRelative(Vector2 globalPos,float time) {
+       var p =  _playerMainCamera.transform.parent.InverseTransformPoint(globalPos);
+        SetCameraPos(p, time);
+    }
 
-    private void SetCameraPos(Vector2 pos, float time) {
+    public void SetCameraPos(Vector2 localPos, float time) {
         if (_playerMainCamera == null) {
             Debug.LogWarning("SetCameraPos: camera is null.");
             return;
         }
 
         Transform t = _playerMainCamera.transform;
-        Vector3 targetPos = new Vector3(pos.x, pos.y, t.localPosition.z);
+        Vector3 targetPos = new Vector3(localPos.x, localPos.y, t.localPosition.z);
 
         // If we already have an active position tween, update its end value & duration
         if (_posTween != null && _posTween.IsActive() && !_posTween.IsComplete()) {

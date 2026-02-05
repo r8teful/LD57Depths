@@ -8,17 +8,6 @@ public abstract class EntitySpecificData {
     public abstract void ApplyTo(GameObject go);
 }
 
-public class BreakEntityData : EntitySpecificData {
-    public bool isBroken;
-
-    public BreakEntityData(bool isBroken) {
-        this.isBroken = isBroken;
-    }
-
-    public override void ApplyTo(GameObject go) {
-        go.GetComponent<FixableEntity>().SetFixed(!isBroken);
-    }
-}
 public class GrowthEntityData : EntitySpecificData {
     public int GrowthStage;
     public GrowthEntityData(int stage) {

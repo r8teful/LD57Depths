@@ -49,7 +49,7 @@ public class GameSequenceManager : StaticInstance<GameSequenceManager> {
             currentEvent = eventQueue.Dequeue();
 
             // Pausing logic usually happens here (or inside OnStart)
-            Time.timeScale = 0;
+            //Time.timeScale = 0;
 
             currentEvent.OnStart?.Invoke();
         } else {

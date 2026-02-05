@@ -267,7 +267,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // update visual data
         _visualData.UpdateForUpgradePurchase(unlockedUpgrades);
         OnPurchased();
-        PopupDataChanged.Invoke(); // This will tell the upgrade manager to fetch new upgrade data
+        PopupDataChanged?.Invoke(); // This will tell the upgrade manager to fetch new upgrade data
         _treeParent.UpdateNodeVisualData();
         UpdateVisual(); // Sets color, stage text etc...
     }

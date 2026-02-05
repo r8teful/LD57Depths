@@ -16,7 +16,7 @@ public class Chest : MonoBehaviour {
 
     private void OnInteract(PlayerManager p) {
         if(_opened) return;
-        _interactable.DissableInteraction();
+        _interactable.CanInteract = false;
         _openParticles.Play();
         _animator.Play("Opening");
 

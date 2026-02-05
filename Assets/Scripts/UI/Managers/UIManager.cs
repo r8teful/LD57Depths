@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 // Root of all player UI
 public class UIManager : Singleton<UIManager> {
@@ -19,8 +20,17 @@ public class UIManager : Singleton<UIManager> {
         if (UISubControlPanel.IsOpen)
             return true;
         return false;
-
     }
+    public void TryOpenCloseUpgradeUI(bool setActive, out bool didSucceed) {
+        if (UpgradeScreen.IsOpen == setActive) {
+            didSucceed = false;
+            return;
+        }
+        UpgradeScreen.PanelToggle();
+        didSucceed = true;
+    }
+
+
     public void Init(PlayerManager client, GameObject owningPlayer) {
         _inventory = SubmarineManager.Instance.SubInventory;
         PopupManager = GetComponent<PopupManager>();
@@ -73,4 +83,5 @@ public class UIManager : Singleton<UIManager> {
         }
 
     }
+
 }

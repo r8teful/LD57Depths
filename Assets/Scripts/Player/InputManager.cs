@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 public enum PlayerInteractionContext {
     None,                 // Default state, no specific interaction available
     InteractingWithUI,    // Mouse is over any UI element
-    DraggingItem,         // Player is dragging an item from inventory
     WorldInteractable,    // Player is near an object they can interact with (e.g., "Press E to open")
     UsingToolOnWorld      // Lowest priority: The default game world interaction (mining, placing)
 }
@@ -177,8 +176,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     }
 
     private void UpdateCursor() {
-        if(_currentContext == PlayerInteractionContext.InteractingWithUI 
-            || _currentContext == PlayerInteractionContext.DraggingItem) {
+        if(_currentContext == PlayerInteractionContext.InteractingWithUI) {
             Cursor.SetCursor(Resources.Load<Texture2D>("cursorMenu"), new Vector2(3, 3), CursorMode.Auto);
         } else {
             Cursor.SetCursor(Resources.Load<Texture2D>("cursorCrossHair"), new Vector2(10.5f, 10.5f), CursorMode.Auto);
@@ -187,30 +185,23 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     }
 
     private void UpdateInteractionContext() {
-        // Check for UI interaction
-       // if (EventSystem.current.IsPointerOverGameObject() || _inventoryUIManager.IsOpen) {
-        if (_UIManager.IsAnyUIOpen()) { // Removed IsPointerOverGameObject because it also does it in world popups which is annyoing
-            _currentContext = PlayerInteractionContext.InteractingWithUI;
-            // TODO this should sometimes clear the interactable, but sometimes not. As the UI could be the interactable!
-            
-            //ClearInteractable(); // Can't interact with world objects if UI is in the way
-            return;
+        if(_playerMovement.GetState == PlayerMovement.PlayerState.None) {
+            _currentContext = PlayerInteractionContext.None;
         }
 
-        // Check for nearby world interactables (your existing logic)
+        // Check for UI interaction
+        if (_UIManager.IsAnyUIOpen()) {
+            _currentContext = PlayerInteractionContext.InteractingWithUI;
+            // TODO this should sometimes clear the interactable, but sometimes not. As the UI could be the interactable!            
+            return;
+        }
         
-        CheckForNearbyInteractables(); // This method now just *finds* the interactable, doesn't handle input
+        CheckForNearbyInteractables();
         
         if (_currentInteractable != null) {
             _currentContext = PlayerInteractionContext.WorldInteractable;
             return;
         }
-        // Not having hotbar selections anymore, for now 
-        //if (_inventoryUIManager.ItemSelectionManager.CanUseSelectedSlotItem()) {
-        //    _currentContext = PlayerInteractionContext.HotebarItemSelected;
-        //    return;
-        //}
-
         // Default to using a tool on the world
         _currentContext = PlayerInteractionContext.UsingToolOnWorld;
     }
@@ -274,7 +265,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     // Get movement input (e.g., WASD, joystick)
     public Vector2 GetMovementInput() {
         // Dissable movement if we are in a menu
-        return _currentContext != PlayerInteractionContext.DraggingItem && _currentContext != PlayerInteractionContext.InteractingWithUI 
+        return _currentContext == PlayerInteractionContext.UsingToolOnWorld || _currentContext == PlayerInteractionContext.WorldInteractable
             ? movementInput : Vector2.zero;
     }
   

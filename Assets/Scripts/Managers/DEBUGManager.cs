@@ -118,6 +118,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     [ConsoleCommand("clearAllUpgrade")]
     private void debugClearUpgrades() {
         _player.UpgradeManager.RemoveAllUpgrades();
+        SubmarineManager.Instance.RemoveAllUpgrades();
     }
     [ConsoleCommand("showcontrol")]
     private void debugShowSubControlScreen() {

@@ -21,7 +21,12 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     [SerializeField] private SubItemGainVisualSpawner itemGainSpawner;
 
     private HashSet<ushort> _subRecipes = new HashSet<ushort>();
-    [SerializeField] private List<SubRecipeSO> _majorUpgrades; // Assign in inspector, when the player gets this recipe, we increase the "stage"
+    [SerializeField] private List<SubRecipeSO> _majorUpgrades; // When the player gets this recipe, we increase the "stage"
+    
+    [SerializeField] private Transform _cutsceneCameraPosUpgradeMachine;
+    [SerializeField] private Transform _cutsceneCameraPosControlPanel; 
+    [SerializeField] private SpriteRenderer _upgradeMachine; 
+    
     private int _upgradeStage;
     protected override void Awake() {
         base.Awake();
@@ -42,7 +47,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
         submarineExterior.transform.position = new Vector3(0, y);
     }
 
-    internal void NewSubUpgrade(SubRecipeSO newUpgrade) {
+    internal void NewSubUpgrade(SubRecipeSO newUpgrade, SubUpgradeEffect effect) {
         bool success = _subRecipes.Add(newUpgrade.ID);
         if (!success) {
             Debug.LogError("Sub recipe already purchased! Did you assigned a unique ID?");
@@ -51,6 +56,26 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
         if (_majorUpgrades.Exists(r => r.ID == newUpgrade.ID)) {
             _upgradeStage++;
         }
+        HandlePanelUpgrade(newUpgrade, effect);
+    }
+
+    private void HandlePanelUpgrade(SubRecipeSO newUpgrade, SubUpgradeEffect effect) {
+        if (newUpgrade.ID == ResourceSystem.UpgradeUpgradePanel) {
+            GameSequenceManager.Instance.AddEvent(
+                onStart: () => {
+                    GameCutsceneManager.Instance.StartSubUpgradeCutscene(
+                        _cutsceneCameraPosUpgradeMachine,
+                        () => _upgradeMachine.sprite = effect.SpriteInterior
+                        );
+                },
+            onFinish: () => {
+
+            }
+           );
+        }
+    }
+    private void ChangeUpgradeSprite() {
+
     }
 
     internal void MoveInterior(VisibilityLayerType currentLayer) {
@@ -68,5 +93,10 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     
     public bool CanMoveTo(int index) {
         return index <= _upgradeStage;
+    }
+
+    // FOR DEBUGING PUPROSES!!
+    internal void RemoveAllUpgrades() {
+        _subRecipes.Clear();
     }
 }

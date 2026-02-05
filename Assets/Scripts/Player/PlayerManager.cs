@@ -18,6 +18,7 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
     public OxygenManager OxygenManager { get; private set; }
     public PlayerAbilities PlayerAbilities { get; private set; } 
     public PlayerRewardManager PlayerReward { get; private set; } 
+    public PlayerCameraController PlayerCamera { get; private set; } 
     public PopupManager PopupManager => UiManager.PopupManager;
     public InventoryManager GetInventory() => InventoryN.GetInventoryManager();
     public Vector3 GetWorldPosition => transform.position;
@@ -72,7 +73,8 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
             //Debug.Log($"Initialized Module: {module.GetType().Name} (Order: {module.InitializationOrder})");
 
         }
-        
+        PlayerCamera = Camera.main.gameObject.GetComponent<PlayerCameraController>(); // Should work
+        if (PlayerCamera == null) Debug.LogError("Coudn't find cameraController on main camera!");
         Debug.Log($"Player Initialization Complete! Initialized {_modules.Count} modules");
     }
    
