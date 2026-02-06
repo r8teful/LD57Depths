@@ -1,30 +1,24 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
+public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiable {
 
     private float _pickupTimer;
     private float pickupRadius = 1f;
     [SerializeField] private LayerMask pickupLayerMask; // Set this to the layer your WorldItem prefabs are on
     private PlayerManager _player;
-    private float _cachedMagnetism;
-    private float MagnetRange => _cachedMagnetism * 2; // idk?
-    private float MagnetStrength => _cachedMagnetism * 0.2f; // idk?
- 
+    private float _magnetStrength = 0.2f;
+    private float _magnetRange = 2;
+    
     public int InitializationOrder => 42;// Again no clue if this matters
 
     private HashSet<DropPooled> _currentlyMagnetized = new HashSet<DropPooled>(); // We keep that so we can call StopMagn
 
     public void InitializeOnOwner(PlayerManager playerParent) {
         _player = playerParent;
-        _player.PlayerStats.OnStatChanged += OnStatChange;
-        _cachedMagnetism = _player.PlayerStats.GetStat(StatType.PlayerMagnetism);
+        Register();
     }
 
-    private void OnStatChange() {
-        // Cache new magnetism value
-        _cachedMagnetism = _player.PlayerStats.GetStat(StatType.PlayerMagnetism);
-    }
 
     private void Update() {
         _pickupTimer -= Time.deltaTime;
@@ -38,7 +32,7 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
     }
 
     private void MagnetCheck() {
-        var results = Physics2D.OverlapCircleAll(transform.position, MagnetRange, pickupLayerMask);
+        var results = Physics2D.OverlapCircleAll(transform.position, _magnetRange, pickupLayerMask);
         // If nothing currently in range, stop magnetizing any previously magnetized items.
         if (results == null || results.Length == 0) {
             if (_currentlyMagnetized.Count > 0) {
@@ -65,7 +59,7 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
 
             current.Add(item);
             Vector2 toCenter = (center - (Vector2)item.transform.position);
-            item.OnStartMagnetizing(toCenter, MagnetStrength);
+            item.OnStartMagnetizing(toCenter, _magnetStrength);
         }
 
         // Any previously magnetized item that is not in the current set (or null) has been "lost"
@@ -104,5 +98,24 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
         AudioController.Instance.PlaySound2D("popPickup", 0.1f, pitch: new AudioParams.Pitch(AudioParams.Pitch.Variation.Small));
         _player.InventoryN.AwardItem(itemID,item.Amount);
         WorldDropManager.Instance.ReturnToPool(item);
+    }
+
+    public void ModifyValue(ValueModifier modifier) {
+        if(modifier.Key == ValueKey.MagnetismPickup) {
+            var newV = UpgradeCalculator.CalculateUpgradeChange(_magnetRange,modifier.Type, modifier.Value);
+            _magnetRange = newV; 
+        } else if(modifier.Key == ValueKey.MagnetismStrength) {
+            var newV = UpgradeCalculator.CalculateUpgradeChange(_magnetStrength, modifier.Type, modifier.Value);
+            _magnetStrength = newV; 
+        }
+    }
+
+    public float GetValue(ValueKey key) {
+        return 0;
+    }
+
+    public void Register() {
+        UpgradeManagerPlayer.LocalInstance.RegisterValueModifierScript(ValueKey.MagnetismPickup, this);
+        UpgradeManagerPlayer.LocalInstance.RegisterValueModifierScript(ValueKey.MagnetismStrength, this);
     }
 }

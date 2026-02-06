@@ -78,7 +78,7 @@ namespace r8teful {
             float finalPercentAdd = GetTotalPercentAdd(extraMod);
 
             float result = (BaseValue + finalFlat) * (1f + finalPercentAdd);
-            float increase = result / BaseValue; // 80 / 40 = 2
+            float increase = result / BaseValue; 
             return Mathf.Max(0, increase);
         }
     }

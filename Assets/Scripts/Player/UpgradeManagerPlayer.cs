@@ -10,6 +10,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
     private CraftingComponent _crafting;
     private PlayerManager _localNetworkedPlayer;
 
+    private readonly Dictionary<ValueKey, IValueModifiable> _valueModifierScipts = new Dictionary<ValueKey, IValueModifiable>();
     public static UpgradeManagerPlayer LocalInstance { get; private set; }
 
     public HashSet<ushort> GetUnlockedUpgrades() => unlockedUpgrades;
@@ -60,10 +61,20 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
         OnUpgradePurchase(recipe);
     }
   
-
-
     internal bool IsUpgradePurchased(UpgradeRecipeSO upgradeData) {
         return unlockedUpgrades.Contains(upgradeData.ID);
+    }
+
+    public void RegisterValueModifierScript(ValueKey key, IValueModifiable modifiable) {
+        if (_valueModifierScipts.ContainsKey(key)) {
+            Debug.LogWarning($"SimpleValueManager: {modifiable} already registered, overwriting.");
+        }
+        _valueModifierScipts.Add(key,modifiable);
+    }
+
+    public T Get<T>(ValueKey key) where T : class, IValueModifiable {
+        _valueModifierScipts.TryGetValue(key, out var value);
+        return value as T;
     }
     /// <summary>
     /// Applies the one-time effects (UpgradeActions) of all upgrades currently owned by the player.

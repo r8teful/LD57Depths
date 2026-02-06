@@ -12,7 +12,8 @@ public class TileUpgradeEffectSO : UpgradeEffect {
     public override StatChangeStatus GetChangeStatus() {
         var current =  WorldDropManager.Instance.GetTileDropAmount(tileToUpgrade);
         var next =  WorldDropManager.Instance.GetTileDropAmount(tileToUpgrade, dropIncrease);
-        // Would be creat if the name could be an icon here
-        return new("Copper",current,next,false);  
+        int currentProcent = Mathf.RoundToInt(current * 100f);
+        int nextProcent = Mathf.RoundToInt(next * 100f);
+        return new("Copper", $"{currentProcent}%", $"{nextProcent}%", true); 
     }
 }

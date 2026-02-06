@@ -353,7 +353,6 @@ public class ResourceSystem {
             StatType.MiningFalloff => "Falloff",
             StatType.MiningCombo => "Damage Falloff",
             StatType.PlayerDrag => "Player Drag",
-            StatType.PlayerMagnetism => "Item Magnetism",
             StatType.Cooldown => "Cooldown",
             StatType.Duration => "Duration",
             StatType.Size => "Size",
@@ -445,7 +444,6 @@ public enum StatType {
     PlayerSpeedMax = 20,
     PlayerAcceleration = 21,
     PlayerDrag = 22,
-    PlayerMagnetism = 23,
     PlayerOxygenMax = 24,
 
     // General

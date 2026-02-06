@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 08d8bdbe60c43c64e8eafe5c7dc8491e, type: 3}
-  m_Name: LazerDamage4
+  m_Name: PickupRange1
   m_EditorClassIdentifier: 
-  RecipeID: 4
-  displayName: Lazer Damage 4
+  RecipeID: 235
+  displayName: PickupRange1
   description: 
-  icon: {fileID: 1012510582, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  icon: {fileID: -1852799296, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   requiredItems: []
   effects:
-  - {fileID: 11400000, guid: ceed0240868a5d441a1fc6ad48f81095, type: 2}
+  - {fileID: 11400000, guid: 732a1f142d39d9e469c0148b14ec2c9e, type: 2}
