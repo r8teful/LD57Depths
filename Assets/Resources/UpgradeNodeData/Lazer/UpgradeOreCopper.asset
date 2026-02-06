@@ -16,9 +16,11 @@ MonoBehaviour:
   uniqueID: 300
   description: 
   icon: {fileID: 776407073, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
-  prerequisiteNodesAny: []
+  prerequisiteNodesAny:
+  - {fileID: 11400000, guid: f91cba5791db2154ea00b5851acd13f1, type: 2}
   UnlockedAtFirstPrereqStage: 0
   stages:
   - upgrade: {fileID: 11400000, guid: 9272b23d6b2abf74aaf9d54e721723a1, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 4
+    upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}

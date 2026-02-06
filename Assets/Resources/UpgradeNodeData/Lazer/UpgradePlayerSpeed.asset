@@ -17,8 +17,8 @@ MonoBehaviour:
   description: 
   icon: {fileID: 868697242, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: 3fc0c9bd770644d448652616cf99fcec, type: 2}
-  UnlockedAtFirstPrereqStage: 0
+  - {fileID: 11400000, guid: 1c2a3b5e991a8dc4bafd8ed8e5a6ac78, type: 2}
+  UnlockedAtFirstPrereqStage: 1
   stages:
   - upgrade: {fileID: 11400000, guid: 0fb0193b83a868b4a894e158a9642132, type: 2}
     costMultiplier: 1

@@ -236,7 +236,11 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         _rectTransform.localScale = Vector3.one;
         _rectTransform.rotation = Quaternion.identity;
 
-        _rectTransform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity);
+        _rectTransform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity)
+            .OnComplete(() => {
+                _rectTransform.localScale = Vector3.one;
+                _rectTransform.rotation = Quaternion.identity;
+                });
         _rectTransform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-rotation, rotation)), 0.2f, vibrato, elasticity);
     }
 

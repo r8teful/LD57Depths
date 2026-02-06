@@ -144,6 +144,11 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     [ConsoleCommand("toggleGod")]
     private void debugToggleGOD() {
         _player.PlayerMovement.DEBUGToggleGodMove();
+        _player.OxygenManager.DEBUGinfOx();
+    }
+    [ConsoleCommand("giveInfOxygen")]
+    private void debugOxygen() {
+        _player.OxygenManager.DEBUGinfOx();
     }
     //[ConsoleCommand("setSpeed")]
     //private void debugSetSpeed(float speed) {

@@ -52,6 +52,8 @@ Steamdeck notes:
 * World background too blurry
 * Particles look like copper
 * Fix popup appearing when closing inventory
+* Make popup fade out instead of disappear instant
+* 11 small 13 big
 
 
 
@@ -67,15 +69,10 @@ Gameplay
 
 Upgrades
 
-
-
 * Make the pacing faster <- THIS
 * Stone is most common so that could be for fixing the cables?
 * Have the tree expand more, it stays too long within lazer upgrade + blast upgrade. We need more exiting things!! Could add magnetism, ore drop chance, luck.
+* 
 
 You have a lot of stone in the end maybe do something with that?
-
-
-
-
 
