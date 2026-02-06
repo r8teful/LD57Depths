@@ -107,7 +107,7 @@ public class ChunkManager : MonoBehaviour {
 
     [Header("Player & Loading")]
     [SerializeField] private Transform playerTransform; // Assign the player's transform
-    private int loadDistance = 3; // How many chunks away from the player to load (e.g., 3 means a 7x7 area around the player's chunk)
+    private int loadDistance = 2; // How many chunks away from the player to load (e.g., 3 means a 7x7 area around the player's chunk)
     [SerializeField] private float checkInterval = 0.5f; // How often (seconds) to check for loading/unloading chunks
 
     public const int CHUNK_SIZE = 16; // Size of chunks (16x16 tiles) - Power of 2 often good

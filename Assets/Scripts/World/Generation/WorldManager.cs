@@ -115,18 +115,18 @@ public class WorldManager : StaticInstance<WorldManager> {
     private IEnumerator SetWorldTiles(Dictionary<BoundsInt, TileBase[]> tilesToSet, Dictionary<BoundsInt, TileBase[]> tilesShading) {
         foreach (var kvp in tilesToSet) {
             mainTilemap.SetTilesBlock(kvp.Key, kvp.Value);
-            yield return null; // pause one frame
         }
+            yield return null; // pause one frame
         foreach (var kvp in tilesShading) {
             overlayTilemapShading.SetTilesBlock(kvp.Key, kvp.Value);
-            yield return null; // pause one frame
         }
+            yield return null; // pause one frame
     }
     private IEnumerator SetWorldOres(Dictionary<BoundsInt, TileBase[]> oresToSet) {
         foreach (var kvp in oresToSet) {
             overlayTilemapOre.SetTilesBlock(kvp.Key, kvp.Value);
-            yield return null; // pause one frame
         }
+            yield return null; // pause one frame
     }
     //  You should use BoundsInt instead its faster
     internal void SetTiles(Vector3Int[] tiles, TileBase[] tilesToSet) {

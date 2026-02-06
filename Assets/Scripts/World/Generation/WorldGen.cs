@@ -48,7 +48,7 @@ public class WorldGen : MonoBehaviour {
     private WorldGenSettings _cachedSettings;
     private RenderTexture _renderTexture; // Target 96x96 RenderTexture
 
-    public const int CHUNK_TILE_DIMENSION = 16; // Size of a chunk in tiles (e.g., 16x16)
+    public const int CHUNK_TILE_DIMENSION = 16; // Size of a chunk in tiles
 
     // These are derived from the problem statement but made const for clarity
     public const int RENDER_TEXTURE_DIMENSION = 96*2; // Fixed size of the RenderTexture (e.g., 96x96)
