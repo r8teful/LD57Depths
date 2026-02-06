@@ -129,6 +129,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
     public void Select(bool usingPointer) {
         if (_visualData.State == UpgradeNodeState.Locked) return;
+        if (_treeParent.IsClosing) return;
         if (usingPointer) {
             // No coroutine movement, simply show the popup
             PopupManager.Instance.ShowPopup(this, true);

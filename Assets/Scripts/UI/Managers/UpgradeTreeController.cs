@@ -17,7 +17,6 @@ public class UpgradeTreeController : MonoBehaviour {
     private InputManager _inputManager;
     private float _lastInputTime;
     private UIUpgradeNode startingNode;
-
     public void Init(PlayerManager client, UIUpgradeTree upgradeTreeInstance) {
         var nodes = upgradeTreeInstance.GetNodeMap;
         _allNodes = nodes.Values.ToList();
@@ -52,7 +51,7 @@ public class UpgradeTreeController : MonoBehaviour {
     internal void OnTreeClose() {
         SetSelection(null);
     }
-
+    
     private void Update() {
         HandleDirectionalInput();
     }

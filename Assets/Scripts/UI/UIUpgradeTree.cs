@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 
@@ -12,7 +13,8 @@ public class UIUpgradeTree : MonoBehaviour {
     private UpgradeTreeDataSO _treeData;
     private PlayerManager _player;
     private Dictionary<ushort, List<ushort>> _adjacencyDict;
-
+    private bool _closing;
+    public bool IsClosing => _closing; // to fix a stupid bug where you get a popup because we squich the transform
     public static event Action OnUpgradeButtonPurchased; // this would break if we have several trees
     public Dictionary<ushort, UIUpgradeNode> GetNodeMap => _nodeMap;
     internal void Init(UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades, PlayerManager player) {
@@ -238,5 +240,13 @@ public class UIUpgradeTree : MonoBehaviour {
         if (uiNodes != null && uiNodes.TryGetValue(nodeId, out var uiNode) && uiNode != null) {
             uiNode.DoPulseAnim(level);
         } 
+    }
+
+    internal void OnTreeCloseFinish() {
+        _closing = false;
+    }
+
+    internal void OnTreeClose() {
+        _closing = true;
     }
 }
