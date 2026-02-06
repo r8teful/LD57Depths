@@ -16,7 +16,7 @@ public static class UpgradeCalculator {
         switch (type) {
             case StatModifyType.Add:
                 return current + increaseAmount;
-            case StatModifyType.Multiply:
+            case StatModifyType.PercentAdd:
                 return current * increaseAmount;
             default:
                 Debug.LogWarning("Fallback, coudn't find approriate increase type calculation!");

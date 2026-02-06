@@ -20,10 +20,15 @@ public class StatUpgradeEffectSO : UpgradeEffect {
 
     public override StatChangeStatus GetChangeStatus() {
         var name = ResourceSystem.GetStatString(upgradeType);
-        var currentValue = PlayerManager.LocalInstance.PlayerStats.GetStat(upgradeType);
-        var nextValue = UpgradeCalculator.CalculateUpgradeChange(currentValue, increaseType, modificationValue);
+
+        StatModifier tempMod = new(modificationValue, upgradeType, increaseType, this);
+        var currentIncrease = PlayerManager.LocalInstance.PlayerStats.GetProcentStat(upgradeType) * 0.1f;
+        var nextIncrease = PlayerManager.LocalInstance.PlayerStats.GetProcentStat(upgradeType, tempMod) * 0.1f;
+
+        int currentProcent = Mathf.RoundToInt(currentIncrease * 100f);
+        int nextProcent = Mathf.RoundToInt(nextIncrease * 100f);
         var isLowerBad = ResourceSystem.IsLowerBad(upgradeType);
-        return new(name, currentValue, nextValue, isLowerBad);
+        return new(name, $"{currentProcent}%", $"{nextProcent}%", isLowerBad);
 
     }
 }

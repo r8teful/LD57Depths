@@ -37,9 +37,11 @@ public class StatModAbilityEffectSO : UpgradeEffect {
        
         StatModifier tempMod = new(modificationValue, upgradeType, increaseType, this);
 
-        var currentValue = abilityInstance.GetEffectiveStat(upgradeType); 
-        var nextValue = abilityInstance.GetEffectiveStat(upgradeType,tempMod);
- 
-        return new(statName, currentValue.ToString("F2"), nextValue.ToString("F2"), ResourceSystem.IsLowerBad(upgradeType));
+        var currentIncrease = abilityInstance.GetProcentStat(upgradeType) * 0.1f; 
+        var nextIncrease = abilityInstance.GetProcentStat(upgradeType,tempMod) * 0.1f;
+
+        int currentProcent =  Mathf.RoundToInt(currentIncrease * 100f);
+        int nextProcent=  Mathf.RoundToInt(nextIncrease * 100f);
+        return new(statName, $"{currentProcent}%", $"{nextProcent}%", ResourceSystem.IsLowerBad(upgradeType));
     }
 }

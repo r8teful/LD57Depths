@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb3d0041ed540d04d9d938a5f700a60c, type: 3}
   m_Name: DashDragEffect
   m_EditorClassIdentifier: 
-  Id: 305
   upgradeType: 22
-  increaseType: 0
+  increaseType: 1
   modificationValue: 1
   targetAbility: {fileID: 11400000, guid: b169ca4e869088840bd9cdd86a6577bd, type: 2}

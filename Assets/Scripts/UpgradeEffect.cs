@@ -28,5 +28,6 @@ public struct StatChangeStatus {
 }
 public enum StatModifyType { 
     Add, 
-    Multiply 
+    PercentAdd, 
+    PercentMult 
 }

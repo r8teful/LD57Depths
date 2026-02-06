@@ -41,6 +41,14 @@ public class WorldDropManager : StaticInstance<WorldDropManager> {
         }
     }
 
+    public int GetTileDropAmount(TileSO tile, int increase = 0) {
+        if (_tileUpgradeData.TryGetValue(tile.ID, out TileUpgradeData tileUpgradeData)) {
+            return tileUpgradeData.DropIncrease + increase;
+        } else {
+            // If we later have several drops at start get the tileSO drop from here
+            return 1 + increase;
+        }
+    }
     // its a list incase we want different drops from the same tile, right now we just add one 
     public List<DropInfo> GetDropData(TileSO tile) {
         var dropData = new List<DropInfo>();

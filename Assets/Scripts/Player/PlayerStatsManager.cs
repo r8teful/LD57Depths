@@ -93,6 +93,15 @@ public class PlayerStatsManager : MonoBehaviour, IPlayerModule {
         return 0; 
     }
 
+
+    internal float GetProcentStat(StatType stat, StatModifier tempMod = null) {
+        if (_stats.TryGetValue(stat, out var StatClass)) {
+            return StatClass.GetTotalIncrease(tempMod);
+        } else {
+            Debug.LogWarning($"Attempted to get stat '{stat}' but it was not initialized. Returning 0.");
+            return 0f;
+        }
+    }
     public IReadOnlyList<BuffSnapshot> GetBuffSnapshots() {
         // Snapshots are only used for UI.
         _snapshotCache.Clear();
@@ -140,6 +149,7 @@ public class PlayerStatsManager : MonoBehaviour, IPlayerModule {
         if (buffInstance == null) throw new ArgumentNullException(nameof(buffInstance));
         return InternalTriggerBuff(buffInstance, registerUnsubscribe);
     }
+
 
     // Centralized logic
     private BuffHandle InternalTriggerBuff(BuffInstance buff, Action<Action> registerUnsubscribe) {

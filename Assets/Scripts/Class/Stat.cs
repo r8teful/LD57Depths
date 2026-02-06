@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 namespace r8teful {
     public class Stat {
         public float BaseValue; 
@@ -35,52 +37,49 @@ namespace r8teful {
             }
             return false;
         }
-    
-        public float GetTotalFlatModifier(StatModifier extraMod) {
-            if (extraMod != null) {
-                var mod = new List<StatModifier>();
-                mod.AddRange(_modifiers);
-                mod.Add(extraMod);
-                return mod.Where(m => m.Type == StatModifyType.Add).Sum(m => m.Value);
-            }
-            return _modifiers.Where(m => m.Type == StatModifyType.Add).Sum(m => m.Value);
+        public float GetTotalFlat(StatModifier extraMod = null) {
+            float sum = 0;
+            foreach (var mod in _modifiers)
+                if (mod.Type == StatModifyType.Add) sum += mod.Value;
+
+            if (extraMod != null && extraMod.Type == StatModifyType.Add) sum += extraMod.Value;
+            return sum;
         }
-        public float GetTotalPercentModifier(StatModifier extraMod) {
-            if (extraMod != null) {
-                var mod = new List<StatModifier>();
-                mod.AddRange(_modifiers);
-                mod.Add(extraMod);
-                return mod.Where(m => m.Type == StatModifyType.Multiply).Sum(m => m.Value);
-            }
-            return _modifiers.Where(m => m.Type == StatModifyType.Multiply).Sum(m => m.Value);
-            //return _instanceMods.Where(m => m.Stat == stat && m.Type == IncreaseType.Multiply).Aggregate(1f, (a, m) => a * m.Value);
+        public float GetTotalPercentAdd(StatModifier extraMod = null) {
+            float sum = 0;
+            foreach (var mod in _modifiers)
+                if (mod.Type == StatModifyType.PercentAdd) sum += mod.Value;
+
+            if (extraMod != null && extraMod.Type == StatModifyType.PercentAdd) sum += extraMod.Value;
+            return sum;
         }
-    
+
+        public float GetTotalPercentMult(StatModifier extraMod = null) {
+            float product = 1f;
+            foreach (var mod in _modifiers)
+                if (mod.Type == StatModifyType.PercentMult) product *= mod.Value;
+
+            if (extraMod != null && extraMod.Type == StatModifyType.PercentMult) product *= extraMod.Value;
+            return product;
+        }
         public float CalculateFinalValue(StatModifier extraMod) {
-            float baseValue = BaseValue;
+            float finalFlat = GetTotalFlat(extraMod);
+            float finalPercentAdd = GetTotalPercentAdd(extraMod);
+            float finalPercentMult = GetTotalPercentMult(extraMod);
 
-            var flat = GetTotalFlatModifier(extraMod);
-            var percentAdd = GetTotalPercentModifier(extraMod); // Multiplier value we want to use if its a buf
-            //var finalValue = (baseValue + flat) * (1+percentAdd);
-            var finalValue = 1f;
+            float result = (BaseValue + finalFlat) * (1f + finalPercentAdd) * finalPercentMult;
 
-            // Not sure if this is the right way to do this but if we have no procent to add ( meaning no mult modifiers) we should simply
-            // not multiply with it because we'd get 0 as final value
-            if(percentAdd > 0) {
-                finalValue = (baseValue + flat) * percentAdd;
-            } else {
-                finalValue = (baseValue + flat);
-            }
-                /*
-                 * Maybe this later?
-                // Apply Multiplicative Percentages 
-                for (int i = 0; i < _modifiers.Count; i++) {
-                    if (_modifiers[i].Type == StatModType.PercentMult)
-                        finalValue *= _modifiers[i].Value;
-                }
-                    */
+            return Mathf.Max(0, result);
+        }
 
-                return finalValue; // Math.Max(0, finalValue) if you want no negatives
+        // For ui:  base * percent add
+        internal float GetTotalIncrease(StatModifier extraMod) {
+            float finalFlat = GetTotalFlat(extraMod);
+            float finalPercentAdd = GetTotalPercentAdd(extraMod);
+
+            float result = (BaseValue + finalFlat) * (1f + finalPercentAdd);
+            float increase = result / BaseValue; // 80 / 40 = 2
+            return Mathf.Max(0, increase);
         }
     }
 }

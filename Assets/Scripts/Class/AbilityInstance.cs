@@ -165,7 +165,15 @@ public class AbilityInstance {
             return rawStat.Value;
         }
         return -1;
-    } 
+    }
+
+
+    internal float GetProcentStat(StatType stat, StatModifier tempMod = null) {
+        if (_stats.TryGetValue(stat, out Stat rawStat)) {
+            return rawStat.GetTotalIncrease(tempMod);
+        }
+        return -1f;
+    }
     public Stat GetStat(StatType stat) {
         if (_stats.TryGetValue(stat, out Stat rawStat)) {
             return rawStat;
@@ -239,5 +247,6 @@ public class AbilityInstance {
             OnCooldownChanged?.Invoke(_cooldownRemaining, GetEffectiveStat(StatType.Cooldown));
         }
     }
+
 }
 // Ability data -> Ability Instance -> Ability Effect -> Buff instance -> statmanager

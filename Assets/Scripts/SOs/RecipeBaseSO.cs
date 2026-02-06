@@ -51,12 +51,13 @@ public struct NodeProgressionStatus {
 public abstract class RecipeBaseSO : ScriptableObject, IIdentifiable, IExecutable {
 
     [BoxGroup("Identification")]
-    [HorizontalGroup("Identification/Left")]
+    [HorizontalGroup("Identification/Left",Width = 400)]
     [VerticalGroup("Identification/Left/2")]
     public ushort RecipeID; // Unique ID for the recipe
     [VerticalGroup("Identification/Left/2")]
     public string displayName;
     [VerticalGroup("Identification/Left/2")]
+    [TextArea(2,3)]
     public string description;
     [VerticalGroup("Identification/Left/1")]
     [PreviewField(75), HideLabel, LabelWidth(0)]

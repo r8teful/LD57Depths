@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb3d0041ed540d04d9d938a5f700a60c, type: 3}
   m_Name: PlayerDragEffect
   m_EditorClassIdentifier: 
-  Id: 402
   upgradeType: 22
-  increaseType: 0
+  increaseType: 1
   modificationValue: -0.2
   targetAbility: {fileID: 0}

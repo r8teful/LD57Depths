@@ -10,6 +10,9 @@ public class TileUpgradeEffectSO : UpgradeEffect {
     }
 
     public override StatChangeStatus GetChangeStatus() {
-        return new(); // How would we show this? 
+        var current =  WorldDropManager.Instance.GetTileDropAmount(tileToUpgrade);
+        var next =  WorldDropManager.Instance.GetTileDropAmount(tileToUpgrade, dropIncrease);
+        // Would be creat if the name could be an icon here
+        return new("Copper",current,next,false);  
     }
 }
