@@ -748,7 +748,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ice_Tree1
+      name: Snow_Tree1
       rect:
         serializedVersion: 2
         x: 58
@@ -770,7 +770,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ice_Tree2
+      name: Snow_Tree2
       rect:
         serializedVersion: 2
         x: 113
@@ -792,7 +792,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ice_Tree3
+      name: Snow_Tree3
       rect:
         serializedVersion: 2
         x: 167
@@ -814,7 +814,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ice_SnowClumpBig
+      name: Snow_SnowClumpBig
       rect:
         serializedVersion: 2
         x: 207
@@ -836,7 +836,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ice_SnowClumpSmall
+      name: Snow_SnowClumpSmall
       rect:
         serializedVersion: 2
         x: 231
@@ -858,7 +858,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ice_Log
+      name: Snow_Log
       rect:
         serializedVersion: 2
         x: 245
@@ -880,7 +880,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ice_Stump
+      name: Snow_Stump
       rect:
         serializedVersion: 2
         x: 288
@@ -902,7 +902,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ice_Snowman
+      name: Snow_Snowman
       rect:
         serializedVersion: 2
         x: 320
@@ -932,7 +932,7 @@ TextureImporter:
         width: 16
         height: 17
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -946,7 +946,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ice_PineTree
+      name: Snow_PineTree
       rect:
         serializedVersion: 2
         x: 508
@@ -954,7 +954,7 @@ TextureImporter:
         width: 44
         height: 52
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -1012,15 +1012,6 @@ TextureImporter:
       Gems_TreePink: 1536796103
       Gems_TreePurple: 1874521101
       Gems_Vines: 422276256
-      Ice_Log: -1616070694
-      Ice_PineTree: 1432126319
-      Ice_SnowClumpBig: -1523365185
-      Ice_SnowClumpSmall: -493671851
-      Ice_Snowman: -1548928228
-      Ice_Stump: 1308389351
-      Ice_Tree1: 760745347
-      Ice_Tree2: -883669948
-      Ice_Tree3: 1834423434
       LostCity_AmphoraMedOrange: -739826433
       LostCity_AmphoraMediumBeige: -1827835178
       LostCity_AmphoraMediumPurple: -763865072
@@ -1037,6 +1028,15 @@ TextureImporter:
       LostCity_ManBrokenEnd: 1743495612
       LostCity_ManFlatEnd: -517559342
       PlantsSheet_MasterCopy_1: -1633156074
+      Snow_Log: -1616070694
+      Snow_PineTree: 1432126319
+      Snow_SnowClumpBig: -1523365185
+      Snow_SnowClumpSmall: -493671851
+      Snow_Snowman: -1548928228
+      Snow_Stump: 1308389351
+      Snow_Tree1: 760745347
+      Snow_Tree2: -883669948
+      Snow_Tree3: 1834423434
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
