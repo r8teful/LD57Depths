@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d283f47e58bd0e2429af7b3c6ea7dc9c, type: 3}
-  m_Name: MagnetismIncrease
-  m_EditorClassIdentifier: Assembly-CSharp::StatUpgradeEffect
-  upgradeType: 23
+  m_Script: {fileID: 11500000, guid: 9d6a735d205374942bd16c7c3254a7bd, type: 3}
+  m_Name: MagnetismRange
+  m_EditorClassIdentifier: 
+  valueType: 10
   increaseType: 1
-  modificationValue: 2
+  modificationValue: 1

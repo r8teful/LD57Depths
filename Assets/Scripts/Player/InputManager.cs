@@ -53,7 +53,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     private bool _primaryInputToggle;
     private Vector2 _uiNavigationVector;
 
-    public int InitializationOrder => 101;
+    public int InitializationOrder => 1001; // after ui 
 
     public bool IsUsingController { get; internal set; }
     public event Action<InputAction.CallbackContext> OnUIInteraction;

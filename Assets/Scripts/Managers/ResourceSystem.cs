@@ -71,7 +71,8 @@ public class ResourceSystem {
     public const ushort UpgradeFlippersID = 102; // Max speed 3 
     public const ushort UpgradeOxygenID = 122;  // Oxygen tier 3
     public const ushort UpgradeJetpackID = 132; // Special handling 
-    public const ushort UpgradeUpgradePanel = 830; //  
+    public const ushort SubUpgradePanel = 830; //  
+    public const ushort SubCables3 = 802; //  
     public const ushort FIRST_SHIP_RECIPE_ID = 200;
     public static bool IsGrowEntity(ushort id) {
         if (id == 900) // Tree farm

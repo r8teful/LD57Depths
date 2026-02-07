@@ -232,7 +232,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         var elasticity = 1;
         var scale = -0.1f;
         float rotation = 5;
-        _rectTransform.DOKill();
+        //_rectTransform.DOKill();
         _rectTransform.localScale = Vector3.one;
         _rectTransform.rotation = Quaternion.identity;
 
@@ -241,7 +241,11 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
                 _rectTransform.localScale = Vector3.one;
                 _rectTransform.rotation = Quaternion.identity;
                 });
-        _rectTransform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-rotation, rotation)), 0.2f, vibrato, elasticity);
+        _rectTransform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-rotation, rotation)), 0.2f, vibrato, elasticity)
+            .OnComplete(() => {
+                _rectTransform.localScale = Vector3.one;
+                _rectTransform.rotation = Quaternion.identity;
+            });
     }
 
     public PopupData GetPopupData(InventoryManager clientInv) {
@@ -289,13 +293,20 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // sine ease (from easings.net
         //float depthRatio = (float)((float)1 - ((1 - Math.Cos(depthProgress * Math.PI)) / 2));
         float depthRatio = Mathf.Pow(1-depthProgress,3);
-        Debug.Log($"depth: {depth} gives progress: {depthProgress} gives ratio {depthRatio}");
+        //Debug.Log($"depth: {depth} gives progress: {depthProgress} gives ratio {depthRatio}");
         int vibrato = (int)(5 * depthRatio);
         float elasticity = 1 * depthRatio;
         float scale = -0.2f *depthRatio;
         float rotation = 5;
-        _rectTransform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity);
-        _rectTransform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-rotation, rotation)), 0.2f, vibrato, elasticity);
-
+        _rectTransform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity)
+            .OnComplete(() => {
+                _rectTransform.localScale = Vector3.one;
+                _rectTransform.rotation = Quaternion.identity;
+            });
+        _rectTransform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-rotation, rotation)), 0.2f, vibrato, elasticity)
+            .OnComplete(() => {
+                _rectTransform.localScale = Vector3.one;
+                _rectTransform.rotation = Quaternion.identity;
+            });
     }
 }

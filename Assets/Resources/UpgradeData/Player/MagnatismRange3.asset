@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 08d8bdbe60c43c64e8eafe5c7dc8491e, type: 3}
-  m_Name: PickupRange3
+  m_Name: MagnatismRange3
   m_EditorClassIdentifier: 
   RecipeID: 237
-  displayName: PickupRange1
+  displayName: MagnatismRange
   description: 
   icon: {fileID: -1852799296, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   requiredItems: []
   effects:
-  - {fileID: 11400000, guid: 732a1f142d39d9e469c0148b14ec2c9e, type: 2}
+  - {fileID: 11400000, guid: 7106597e3fec280478f1a99c322c1834, type: 2}

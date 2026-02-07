@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public class PlayerUISpawner : MonoBehaviour, IPlayerModule {
-    public int InitializationOrder => 11;
+    public int InitializationOrder => 1000; // before inputmanager
 
     public UIManager UiManager { get; private set; }
 

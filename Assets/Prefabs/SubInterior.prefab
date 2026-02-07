@@ -365,9 +365,10 @@ MonoBehaviour:
   submarineExterior: {fileID: 0}
   InteriorSpawnPoint: {fileID: 5362015592891457319}
   itemGainSpawner: {fileID: 6972339307842617825}
-  _majorUpgrades: []
+  _majorUpgrades:
+  - {fileID: 11400000, guid: 062f003fcc40dcb4a82a74b76708d45a, type: 2}
   _cutsceneCameraPosUpgradeMachine: {fileID: 7923913168107496958}
-  _cutsceneCameraPosControlPanel: {fileID: 0}
+  _cutsceneCameraPosControlPanel: {fileID: 5055747747755286226}
   _upgradeMachine: {fileID: 5229215333937229237}
 --- !u!114 &6972339307842617825
 MonoBehaviour:

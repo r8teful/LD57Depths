@@ -810,7 +810,69 @@ Okay for the sub upgrade as nodes we simply want to do the following:
 
 
 
-Submarine manager NEEDS certain upgrades before it can move, it doesn't have to hold progress or anything, this is already done by the upgrade tree nodes system thing. Basically when we get the effect, we sat to the submarine manager: Look! We've gotten upgrade with ID X, then it's like, cool, now we can change the sprite of this and this to make the sub look a bit better. Also, we can now move to the next zone because we have upgrade X. that's it, you don't need anything else. So how would the upgrading work? You simply have a node with 3 stages. Each stage fixes that specific thing one upgrade. when you've fully completed the node, that's when you can move the submarine further
+Submarine manager NEEDS certain upgrades before it can move, it doesn't have to hold progress or anything, this is already done by the upgrade tree nodes system thing. Basically when we get the effect, we sat to the submarine manager: Look! We've gotten upgrade with ID X, then it's like, cool, now we can change the sprite of this and this to make the sub look a bit better. Also, we can now move to the next zone because we have upgrade X. that's it, you don't need anything else. So how would the upgrading work? You simply have a node with 3 stages. Each stage fixes that specific thing one upgrade. when you've fully completed the node, that's when you can move the submarine further. How does
+
+
+
+How do me make the pacing faster?? We simply make you improve faster DUH
+
+
+
+
+
+* Remove world popup. Instead have it as a node
+* Smaller sub outside hitbox
+* Ores less hard
+* Have the tree expand more, it stays too long within lazer upgrade + blast upgrade. We need more exiting things!! Could add magnetism, ore drop chance, luck.
+* You have a lot of stone in the end maybe do something with that?
+
+
+
+Lucy said that dropchance would be a good idea to add early. I like that, make  number go up quick!! 
+
+
+
+If oxygen is 40 to start, and you increase it by 40 to 80, then to get the add you need to get the END VALUE 80 and DEVIDE IT BY THE STARTING VALUE 40 = 2 = 200%?? 
+
+
+
+If 10% is at the 40, then going to 80 is 20% 
+
+
+
+#### Solo playtest number #3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

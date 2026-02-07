@@ -56,15 +56,16 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
         if (_majorUpgrades.Exists(r => r.ID == newUpgrade.ID)) {
             _upgradeStage++;
         }
-        HandlePanelUpgrade(newUpgrade, effect);
+        HandleCutscene(newUpgrade, effect, ResourceSystem.SubUpgradePanel, _cutsceneCameraPosUpgradeMachine);
+        HandleCutscene(newUpgrade, effect, ResourceSystem.SubCables3, _cutsceneCameraPosControlPanel);
     }
 
-    private void HandlePanelUpgrade(SubRecipeSO newUpgrade, SubUpgradeEffect effect) {
-        if (newUpgrade.ID == ResourceSystem.UpgradeUpgradePanel) {
+    private void HandleCutscene(SubRecipeSO newUpgrade, SubUpgradeEffect effect, ushort ID, Transform cameraPos) {
+        if (newUpgrade.ID == ID) {
             GameSequenceManager.Instance.AddEvent(
                 onStart: () => {
                     GameCutsceneManager.Instance.StartSubUpgradeCutscene(
-                        _cutsceneCameraPosUpgradeMachine,
+                        cameraPos,
                         () => _upgradeMachine.sprite = effect.SpriteInterior
                         );
                 },

@@ -10,21 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
-  m_Name: UpgradeFlippersMagnetism
+  m_Name: UpgradeMagnetismStrength1
   m_EditorClassIdentifier: 
   nodeName: Magnetism
-  uniqueID: 207
+  uniqueID: 241
   description: 
   icon: {fileID: 1662966539, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
-  prerequisiteNodesAny: []
+  prerequisiteNodesAny:
+  - {fileID: 11400000, guid: f2266ccd8a0e6d64c94a903011ba3866, type: 2}
   UnlockedAtFirstPrereqStage: 0
   stages:
   - upgrade: {fileID: 11400000, guid: 12445ce3d25779041a7302c61aab3ed9, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 6
+    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
   - upgrade: {fileID: 11400000, guid: 5b8bd740e985c3a45a6f3ec3aa67a174, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 7
+    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
   - upgrade: {fileID: 11400000, guid: 07884f3e497162c4e8db180511a4bf97, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 8
+    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}

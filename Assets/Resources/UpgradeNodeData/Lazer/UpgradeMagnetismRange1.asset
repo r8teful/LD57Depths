@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
+  m_Name: UpgradeMagnetismRange1
+  m_EditorClassIdentifier: 
+  nodeName: Magnetism
+  uniqueID: 240
+  description: 
+  icon: {fileID: -1852799296, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
+  prerequisiteNodesAny:
+  - {fileID: 11400000, guid: 7fdeec9bef1fa684bb0af10415dffebe, type: 2}
+  UnlockedAtFirstPrereqStage: 1
+  stages:
+  - upgrade: {fileID: 11400000, guid: 80fcf358d3ba8b84a9e56507f42e1596, type: 2}
+    costMultiplier: 1
+    costTier: 5
+    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
+  - upgrade: {fileID: 11400000, guid: 0b76703fc0b0ff14ca41fca4108f92b5, type: 2}
+    costMultiplier: 1
+    costTier: 6
+    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
+  - upgrade: {fileID: 11400000, guid: ecf4654f42191714aa5e3c12ec74b29f, type: 2}
+    costMultiplier: 1
+    costTier: 7
+    upgradeItemPool: {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
