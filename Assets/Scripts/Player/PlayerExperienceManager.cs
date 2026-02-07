@@ -8,6 +8,7 @@ public class PlayerExperienceManager : MonoBehaviour, IPlayerModule {
     public int InitializationOrder => 99;
 
     public void InitializeOnOwner(PlayerManager playerParent) {
+        if (!enabled) return;
         levelData ??= new LevelData();
         _player = playerParent;
         // Ensure the required XP is calculated correctly on start
