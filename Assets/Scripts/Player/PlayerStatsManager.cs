@@ -236,8 +236,9 @@ public class PlayerStatsManager : MonoBehaviour, IPlayerModule {
     }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-    public void DEBUGSetStat(StatType stat, float value) {
-        //_rawStats[stat] = value;
+    public void DEBUGADDSTAT(StatType stat, float value) {
+        StatModifier mod = new(value, stat, StatModifyType.Add, this);
+        AddInstanceModifier(mod);
     }
 
 #endif

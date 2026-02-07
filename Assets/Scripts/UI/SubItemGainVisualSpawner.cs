@@ -17,12 +17,13 @@ public class SubItemGainVisualSpawner : MonoBehaviour {
     }
 
     private void SlotNew(ushort itemId,int newAmount) {
+        if (newAmount <= 0) return;
         Sprite icon = App.ResourceSystem.GetItemByID(itemId).icon;
         var popup = Instantiate(_popup, _popupContainer);
         popup.Init(icon, newAmount);
         popup.OnDespawned += HandlePopupDespawn;
         activePopups[itemId] = popup;
-    }
+     }
     private void SlotChanged(ushort itemId,int changeAmount) {
         if (activePopups.TryGetValue(itemId, out UIInventoryGainPopup popup) && popup != null) {
             popup.IncreaseAmount(changeAmount);

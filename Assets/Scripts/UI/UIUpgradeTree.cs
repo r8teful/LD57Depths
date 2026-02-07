@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 
@@ -53,8 +52,10 @@ public class UIUpgradeTree : MonoBehaviour {
         _adjacencyDict = BuildUndirectedAdjacency(tree.nodes);
         UIUpgradeScreen.OnSelectedNodeChanged += SelectedChange;
         _player.UiManager.UpgradeScreen.OnPanelChanged += PanelChanged;
+        ItemTransferManager.OnTransferComplete += UpdateNodeVisualData; // Fixes a bug where nodes don't update when you rush to the upgrade machine
 
     }
+
 
     private void SelectedChange(UpgradeNodeSO node) {
         if(!_nodeMap.TryGetValue(node.ID, out var nodeUI)){

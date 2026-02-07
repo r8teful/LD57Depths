@@ -77,7 +77,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     void DepleteOxygen() {
         CurrentOxygen -= oxygenDepletionRate * Time.deltaTime;
         OnOxygenChanged?.Invoke(CurrentOxygen, maxOxygen);
-        if (CurrentOxygen <= 10 && !peepPlayed) {
+        if (CurrentOxygen <= 15 && !peepPlayed) {
             if (AudioController.Instance != null) AudioController.Instance.PlaySound2D("PeepPeep", 1f);
             peepPlayed = true;
             //SliderFlash(true);
@@ -91,9 +91,8 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
             // Slowly fade out and then teleport player back to base?
             playerHealth -= 1 * Time.deltaTime;
             if (playerHealth <= 0) {
+                _player.InventoryN.RemoveAll(); // womp womp 
                 _player.PlayerLayerController.PutPlayerInSub();
-                // Todo remove resources?
-                Debug.LogWarning("No logic for resource removement");
                 Resurect();
             }
         }

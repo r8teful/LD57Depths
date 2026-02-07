@@ -7,8 +7,10 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
     private float pickupRadius = 1f;
     [SerializeField] private LayerMask pickupLayerMask; // Set this to the layer your WorldItem prefabs are on
     private PlayerManager _player;
-    private float _magnetStrength = 0.2f;
-    private float _magnetRange = 2;
+    private float _magnetStrengthBase = 0.2f;
+    private float _magnetStrength;
+    private float _magnetRangeBase = 2;
+    private float _magnetRange;
     
     public int InitializationOrder => 42;// Again no clue if this matters
 
@@ -17,10 +19,14 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
     public void InitializeOnOwner(PlayerManager playerParent) {
         _player = playerParent;
         Register();
+        _magnetStrength = _magnetStrengthBase;
+        _magnetRange = _magnetRangeBase;
     }
 
 
     private void Update() {
+        if (_player == null) return;
+        if (!_player.PlayerMovement.CanPickup()) return;
         _pickupTimer -= Time.deltaTime;
         if (_pickupTimer <= 0f) {
             PickupCheck();
@@ -28,6 +34,7 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
         }
     }
     private void FixedUpdate() {
+        if (!_player.PlayerMovement.CanPickup()) return;
         MagnetCheck();
     }
 
@@ -110,7 +117,19 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
         }
     }
 
-    public float GetValue(ValueKey key) {
+    public float GetValueNow(ValueKey key) {
+        if (key == ValueKey.MagnetismPickup)
+            return _magnetRange;
+        if (key == ValueKey.MagnetismStrength)
+            return _magnetStrength;
+        return 0;
+    }
+
+    public float GetValueBase(ValueKey key) {
+        if (key == ValueKey.MagnetismPickup)
+            return _magnetRangeBase;
+        if (key == ValueKey.MagnetismStrength)
+            return _magnetStrengthBase;
         return 0;
     }
 
@@ -118,4 +137,5 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
         UpgradeManagerPlayer.LocalInstance.RegisterValueModifierScript(ValueKey.MagnetismPickup, this);
         UpgradeManagerPlayer.LocalInstance.RegisterValueModifierScript(ValueKey.MagnetismStrength, this);
     }
+
 }

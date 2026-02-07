@@ -431,11 +431,4 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         Gizmos.DrawWireSphere(new(transform.position.x,transform.position.y+_interactionRadius,0), _interactionRadius);
     }
 
-    internal bool TryEnterBuildMode() {
-        if (!_playerMovement.CanBuild()) {
-            return false;
-        }
-
-        return true;
-    }
 }

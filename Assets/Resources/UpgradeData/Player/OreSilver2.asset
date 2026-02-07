@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 08d8bdbe60c43c64e8eafe5c7dc8491e, type: 3}
-  m_Name: OreCopper
+  m_Name: OreSilver2
   m_EditorClassIdentifier: 
-  RecipeID: 300
-  displayName: Copper1
-  description: Chanse to drop an extra 1-3
-  icon: {fileID: 1772715872, guid: 4513b261e64723f41a0d2e635a2a3aba, type: 3}
+  RecipeID: 311
+  displayName: Silver1
+  description: Increase drop amount
+  icon: {fileID: -451602843, guid: 2239f7c87c9d95046ae3e15310442a9d, type: 3}
   requiredItems: []
   effects:
-  - {fileID: 11400000, guid: d7dc809899a1b964088ce27b69e01be9, type: 2}
+  - {fileID: 11400000, guid: f7305a10782cd994ca37f70f847c1c66, type: 2}

@@ -32,17 +32,17 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
         _player = player;
     }
     private void GiveAll() {
-        _player.InventoryN.DEBUGGIVE(0, 90000);
-        _player.InventoryN.DEBUGGIVE(1, 90000);
-        _player.InventoryN.DEBUGGIVE(2, 90000);
-        _player.InventoryN.DEBUGGIVE(3, 90000);
-        _player.InventoryN.DEBUGGIVE(4, 90000);
-        _player.InventoryN.DEBUGGIVE(5, 90000);
-        _player.InventoryN.DEBUGGIVE(6, 90000);
-        _player.InventoryN.DEBUGGIVE(7, 90000);
-        _player.InventoryN.DEBUGGIVE(8, 90000);
-        _player.InventoryN.DEBUGGIVE(9, 90000);
-        _player.InventoryN.DEBUGGIVE(10,90000);
+        SubmarineManager.Instance.SubInventory.AddItem(0, 90000);
+        SubmarineManager.Instance.SubInventory.AddItem(1, 90000);
+        SubmarineManager.Instance.SubInventory.AddItem(2, 90000);
+        SubmarineManager.Instance.SubInventory.AddItem(3, 90000);
+        SubmarineManager.Instance.SubInventory.AddItem(4, 90000);
+        SubmarineManager.Instance.SubInventory.AddItem(5, 90000);
+        SubmarineManager.Instance.SubInventory.AddItem(6, 90000);
+        SubmarineManager.Instance.SubInventory.AddItem(7, 90000);
+        SubmarineManager.Instance.SubInventory.AddItem(8, 90000);
+        SubmarineManager.Instance.SubInventory.AddItem(9, 90000);
+        SubmarineManager.Instance.SubInventory.AddItem(10,90000);
         /*
         _player.InventoryN.DEBUGGIVE(0, Random.Range(300,600));
         _player.InventoryN.DEBUGGIVE(1, Random.Range(300,500));
@@ -128,13 +128,13 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     private void debugSetSubIndex(int v) {
         SubmarineManager.Instance.MoveSub(v);
     }
-    [ConsoleCommand("setMineDamage")]
-    private void debugSetDamage(float v) {
-        PlayerManager.LocalInstance.PlayerStats.DEBUGSetStat(StatType.MiningDamage,v);
+    [ConsoleCommand("giveMineDamage")]
+    private void debugAddDamage(float v) {
+        PlayerManager.LocalInstance.PlayerStats.DEBUGADDSTAT(StatType.MiningDamage,v);
     }
-    [ConsoleCommand("setMineRange")]
+    [ConsoleCommand("giveMineRange")]
     private void debugSetRange(float v) {
-        PlayerManager.LocalInstance.PlayerStats.DEBUGSetStat(StatType.MiningRange, v);
+        PlayerManager.LocalInstance.PlayerStats.DEBUGADDSTAT(StatType.MiningRange, v);
     }
     [ConsoleCommand("toggleHitbox")]
     private void debugToggleHitbox() {

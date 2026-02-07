@@ -22,13 +22,13 @@ MonoBehaviour:
   stages:
   - upgrade: {fileID: 11400000, guid: 0fb0193b83a868b4a894e158a9642132, type: 2}
     costMultiplier: 1
-    costTier: 6
-    upgradeItemPool: {fileID: 11400000, guid: 252630a728eb6594c979e7727659293c, type: 2}
+    costTier: 3
+    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
   - upgrade: {fileID: 11400000, guid: 6191a7dac0b9db24f947c40f55d7cb29, type: 2}
     costMultiplier: 1.51
-    costTier: 7
-    upgradeItemPool: {fileID: 11400000, guid: 29f367e82be84e84aa1af9c8dd6f8436, type: 2}
+    costTier: 4
+    upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}
   - upgrade: {fileID: 11400000, guid: b41700fa93bc8ac4ea71a7dc99002665, type: 2}
     costMultiplier: 1
-    costTier: 8
-    upgradeItemPool: {fileID: 11400000, guid: c8505d26704f39c49ad4623ac0fd7558, type: 2}
+    costTier: 5
+    upgradeItemPool: {fileID: 11400000, guid: 1cd4b80218c52a14995e255b4a360102, type: 2}

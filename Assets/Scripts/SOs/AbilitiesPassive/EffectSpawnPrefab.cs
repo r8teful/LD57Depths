@@ -6,6 +6,10 @@ public class EffectSpawnPrefab : ScriptableObject, IEffectPassive, IExecutable {
     private GameObject _instantiatedEffect;
 
     public void Apply(AbilityInstance instance, PlayerManager player) {
+        if (prefabToSpawn != null) {
+            Debug.LogWarning("Couldn't spawn effect prefab because ists not been assigned");
+            return;
+        }
         _instantiatedEffect = Instantiate(prefabToSpawn, player.PlayerAbilities.AbilitySlot);
         if (_instantiatedEffect.TryGetComponent<IInitializableAbility>(out var initComp)) {
             initComp.Init(instance, player);

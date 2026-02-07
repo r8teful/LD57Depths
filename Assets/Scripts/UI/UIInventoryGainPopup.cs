@@ -16,6 +16,9 @@ public class UIInventoryGainPopup : MonoBehaviour {
     private const float DespawnDelay = 1f;
     private bool isFading = false;
     private Tween fadeTween;
+    private AudioSource _sound;
+    private float _sinceLastIncrease;
+    //private bool _hasIncremented;
 
     private void OnDestroy() {
         transform.DOKill();
@@ -25,32 +28,37 @@ public class UIInventoryGainPopup : MonoBehaviour {
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
         }
         canvasGroup.alpha = 1f;
-
+        
         itemIconImage.sprite = icon;
         _quantity = amount;
-        UpdateCount();
+        quantityText.text = _quantity.ToString();
+        //Animation();
         ResetTimer();
 
         // Pop in animation
         transform.localScale = Vector3.zero;
         transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
+        // sound
+        _sinceLastIncrease = Time.time;
+        _sound = AudioController.Instance.PlaySound2D("ItemAdd",0.2f,looping:true);
     }
 
     public void IncreaseAmount(int increaseBy) {
         _quantity += increaseBy;
-        UpdateCount();
+        quantityText.text = _quantity.ToString();
+        //Animation();
         ResetTimer();
-
+        if(_sound != null)
+            _sound.pitch = QuantityToPitch(_quantity);
         // If fading, cancel it
         if (isFading) {
             fadeTween?.Kill();
             canvasGroup.alpha = 1f;
             isFading = false;
         }
+        _sinceLastIncrease = Time.time;
     }
-
-    private void UpdateCount() {
-        quantityText.text = _quantity.ToString();
+    private void Animation() {
         quantityText.transform.localScale = Vector3.one;
         quantityText.transform.DOKill();
         var punchAmount = 1.0001f;
@@ -62,6 +70,14 @@ public class UIInventoryGainPopup : MonoBehaviour {
     }
 
     private void Update() {
+        if (_sound != null && Time.time - _sinceLastIncrease >= 0.05f) {
+            _sound.DOFade(0,0.5f).OnComplete(()=> {
+                _sound.DOKill();
+                Destroy(_sound.gameObject);
+                _sound = null;
+            });
+            
+        }
         if (!isFading && Time.time - lastUpdateTime > DespawnDelay) {
             isFading = true;
             fadeTween = canvasGroup.DOFade(0f, 1f).OnComplete(() => {
@@ -69,5 +85,18 @@ public class UIInventoryGainPopup : MonoBehaviour {
                 Destroy(gameObject);
             });
         }
+    }
+
+    float QuantityToPitch(long q) {
+        if (q <= 0) return 1; // min pich is 1
+
+        // normalized logarithmic value in [0,1]
+        float tRaw = Mathf.Log(1f + q) / Mathf.Log(1f + 10000);
+        tRaw = Mathf.Clamp01(tRaw);
+
+        // curveExponent > 1 makes small quantities produce much smaller t
+        float t = Mathf.Pow(tRaw, 3);
+
+        return Mathf.Lerp(1, 4, t);
     }
 }

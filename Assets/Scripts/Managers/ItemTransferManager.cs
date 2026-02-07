@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,18 +8,32 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule {
 
     private InventoryManager inventorySub;
     private InventoryManager inventoryPlayer;
+    private PlayerManager _player;
     [SerializeField] private float timePerCategory = 1.0f;
     [SerializeField] private int transferSteps = 10;
     [SerializeField] private float delayBetweenCategories = 0.5f;
 
     private Coroutine currentTransferRoutine;
-
-    public int InitializationOrder => 24; // no clue 
+    public static event Action OnTransferComplete;
+    public int InitializationOrder => 1001; // after ui 
 
     public void InitializeOnOwner(PlayerManager playerParent) {
         inventoryPlayer = playerParent.GetInventory();
+        _player = playerParent;
         inventorySub = SubmarineManager.Instance.SubInventory;
         PlayerLayerController.OnPlayerVisibilityChanged += PlayerLayerChange;
+        _player.UiManager.UpgradeScreen.OnPanelChanged += UpgradeScreenToggle;
+    }
+    private void OnDestroy() {
+        PlayerLayerController.OnPlayerVisibilityChanged -= PlayerLayerChange;
+        _player.UiManager.UpgradeScreen.OnPanelChanged -= UpgradeScreenToggle;
+        
+    }
+    private void UpgradeScreenToggle(bool isActive) {
+        if (isActive) {
+            // transfer all
+            TriggerInstantTransfer();
+        }
     }
 
     private void PlayerLayerChange(VisibilityLayerType layer) {
@@ -53,62 +68,60 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule {
                 }
             }
         }
-
+        OnTransferComplete?.Invoke();
         Debug.Log("Instant transfer complete.");
     }
 
     private IEnumerator TransferRoutine() {
-        // Snapshot the list of ItemIDs to transfer so we have a queue
+        // 1. Snapshot items
         List<ushort> itemsToTransfer = new List<ushort>(inventoryPlayer.Slots.Keys);
-        //yield return new WaitForSeconds(0.5f);
+
+        // 2. Count TOTAL items first
+        int totalItems = 0;
+        foreach (var id in itemsToTransfer) {
+            if (inventoryPlayer.Slots.ContainsKey(id))
+                totalItems += inventoryPlayer.Slots[id].quantity;
+        }
+
+        // 3. Calculate Speed
+        float targetDuration = 1.0f; // Max time allowed
+        float calculatedRate = totalItems / targetDuration;
+
+        // "Shorter is fine": 
+        // If we only have 5 items, 'calculatedRate' would be 5 per second (slow).
+        // We clamp it to a minimum (e.g., 50/sec) so small transfers feel snappy.
+        float minRate = 50f;
+        float itemsPerSecond = Mathf.Max(calculatedRate, minRate);
+
+        // 4. The Accumulator
+        float moveCredit = 0f;
+
         foreach (ushort itemID in itemsToTransfer) {
-            if (!inventoryPlayer.Slots.ContainsKey(itemID)) continue;
+            // Keep looping as long as the player still has this item
+            while (inventoryPlayer.Slots.ContainsKey(itemID) &&
+                   inventoryPlayer.Slots[itemID].quantity > 0) {
 
-            InventorySlot slot = inventoryPlayer.Slots[itemID];
-            int totalQuantityToMove = slot.quantity;
-
-            // If empty, skip
-            if (totalQuantityToMove <= 0) continue;
-
-            // --- Calculation Logic ---
-            // Calculate delay per step (e.g., 1.0s / 10 steps = 0.1s per step)
-            float stepDelay = timePerCategory / (float)transferSteps;
-
-            // Calculate base amount per step (e.g., 53 / 10 = 5)
-            int amountPerStep = totalQuantityToMove / transferSteps;
-
-            // If the stack is smaller than the step count (e.g. 4 items, 10 steps),
-            // we ensure we move at least 1 item per step.
-            if (amountPerStep < 1) amountPerStep = 1;
-
-            // Perform the transfer in steps
-            for (int i = 0; i < transferSteps; i++) {
-                if (!inventoryPlayer.Slots.ContainsKey(itemID)) break;
-                int currentRemaining = inventoryPlayer.Slots[itemID].quantity;
-
-                if (currentRemaining <= 0) break;
-
-                int amountToTransferThisStep = amountPerStep;
-
-                if (i == transferSteps - 1 || amountToTransferThisStep > currentRemaining) {
-                    amountToTransferThisStep = currentRemaining;
+                // Wait until we have enough "Credit" (Time) to move an item
+                // If FPS is high, we wait here.
+                // If FPS is low (lag), this loop is skipped, processing multiple items instantly.
+                while (moveCredit < 1.0f) {
+                    yield return null;
+                    moveCredit += Time.deltaTime * itemsPerSecond;
                 }
 
-                // Execute the move
-                if (inventoryPlayer.RemoveItem(itemID, amountToTransferThisStep)) {
-                    inventorySub.AddItem(itemID, amountToTransferThisStep);
+                // Move the item
+                if (inventoryPlayer.RemoveItem(itemID, 1)) {
+                    inventorySub.AddItem(itemID, 1);
+                    moveCredit -= 1.0f; // "Spend" the time credit
+                } else {
+                    break; // Failsafe
                 }
-
-                // Wait for the visual tick
-                yield return new WaitForSeconds(stepDelay);
             }
-
-            // --- Category Finished ---
-            // Wait the desired amount of time before starting the next item category (e.g. Copper after Stone)
             yield return new WaitForSeconds(delayBetweenCategories);
         }
 
         currentTransferRoutine = null;
-        Debug.Log("Sequential transfer complete.");
+        OnTransferComplete?.Invoke();
+        Debug.Log("Transfer Complete");
     }
 }

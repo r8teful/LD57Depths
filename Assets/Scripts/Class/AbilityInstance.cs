@@ -143,7 +143,7 @@ public class AbilityInstance {
             if (!isAbilitySpecificStat && TryGetBuffEffect(out var buffEffect)) {
                 baseStat = buffEffect.GetEffectiveStat(stat); // The interface implements where the effective stat comes from, either from a target ability instance (the case for brimstone), or the player (the case for dash)
             } else {
-                baseStat = GetBaseStat(stat);
+                baseStat = GetPlayerStat(stat);
             }
             var modifier = rawStat.CalculateFinalValue(modToPass);
             if (stat == StatType.Cooldown) {
@@ -180,7 +180,7 @@ public class AbilityInstance {
         }
         return null;
     }
-
+    public float GetPlayerStat(StatType stat) => _player.PlayerStats.GetStat(stat);
     public float GetBaseStat(StatType stat) => _player.PlayerStats.GetStatBase(stat);
     
     public BuffHandle TriggerBuff(BuffInstance buff) {

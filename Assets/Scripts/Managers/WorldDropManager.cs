@@ -1,5 +1,6 @@
 ﻿using r8teful;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TileUpgradeData {
@@ -31,8 +32,11 @@ public class WorldDropManager : StaticInstance<WorldDropManager> {
 
     // Queue is generally faster than List for First-In-First-Out pooling
     private Queue<DropPooled> _poolQueue = new Queue<DropPooled>();
-
     private Dictionary<ushort, TileUpgradeData> _tileUpgradeData = new();
+    protected override void Awake() {
+        base.Awake();
+        InitializePool();
+    }
     public void NewTileUpgrade(ushort tile, int increase) {
         if(_tileUpgradeData.TryGetValue(tile, out TileUpgradeData tileUpgradeData)) {
             tileUpgradeData.DropIncrease += increase;        
@@ -41,12 +45,12 @@ public class WorldDropManager : StaticInstance<WorldDropManager> {
         }
     }
 
-    public int GetTileDropAmount(TileSO tile, int increase = 0) {
+    public int GetExtraTileDropAmount(TileSO tile, int increase = 0) {
         if (_tileUpgradeData.TryGetValue(tile.ID, out TileUpgradeData tileUpgradeData)) {
             return tileUpgradeData.DropIncrease + increase;
         } else {
             // If we later have several drops at start get the tileSO drop from here
-            return 1 + increase;
+            return 0 + increase;
         }
     }
     // its a list incase we want different drops from the same tile, right now we just add one 
@@ -67,11 +71,6 @@ public class WorldDropManager : StaticInstance<WorldDropManager> {
         return dropData;
     }
 
-    protected override void Awake() {
-        base.Awake();
-        InitializePool();
-    }
-
     private void InitializePool() {
         for (int i = 0; i < _initialPoolSize; i++) {
             CreateNewPoolObject();
@@ -85,21 +84,40 @@ public class WorldDropManager : StaticInstance<WorldDropManager> {
         return drop;
     }
 
-    public DropPooled SpawnDrop(Vector3 position, int amount, ItemData item) {
+    public DropPooled SpawnDropOne(Vector3 position, int amount, ItemData item) {
         if (_poolQueue.Count == 0) {
             // Auto-expand pool if we run out
             CreateNewPoolObject();
         }
+        // Slightly randomize drop position
+        Vector3 spawnPos = position + (Vector3)Random.insideUnitCircle * 0.3f;
         DropPooled drop = _poolQueue.Dequeue();
-        drop.transform.SetPositionAndRotation(position, Quaternion.identity);
+        drop.transform.SetPositionAndRotation(spawnPos, Quaternion.identity);
         drop.Init(item, amount);
 
         // Activate
         drop.gameObject.SetActive(true);
-
         return drop;
     }
+    public void SpawnDrop(Vector3 position, int amount, ItemData item) {
+        int maxFromOne = 5;
+        if(amount <= maxFromOne) {
+            // One instance each
+            for (int i = 0; i < amount; i++) {
+                SpawnDropOne(position, 1, item);
+            }
+        } else {
+            // Divide amount as evenly as possible
+            int baseCount = amount / maxFromOne;
+            int remainder = amount % maxFromOne;
 
+            for (int i = 0; i < maxFromOne; i++) {
+                int bucketAmount = baseCount + (i < remainder ? 1 : 0);
+                if (bucketAmount <= 0) continue; // defensive
+                SpawnDropOne(position, bucketAmount, item);
+            }
+        }
+    }
     /// <summary>
     /// Call this from your PlayerPickupManager when the item is collected.
     /// </summary>

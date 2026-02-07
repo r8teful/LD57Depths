@@ -16,10 +16,16 @@ public class ValueUpgradeEffectSO : UpgradeEffect {
 
     public override StatChangeStatus GetChangeStatus() {
         var script = UpgradeManagerPlayer.LocalInstance.Get<IValueModifiable>(valueType);
-        var valueNow = script.GetValue(valueType);
+        var valueBase = script.GetValueBase(valueType);
+        var valueNow = script.GetValueNow(valueType);
+        var valueNext = UpgradeCalculator.CalculateUpgradeChange(valueNow, increaseType, modificationValue);
         
-        var newV = UpgradeCalculator.CalculateUpgradeChange(valueNow, increaseType, modificationValue);
         // make it a procent change duh
-        return new("todo",valueNow,newV,true);
+        float percentNow = valueNow / (float)valueBase;
+        float percentNext = valueNext / (float)valueBase;
+
+        int currentProcent = Mathf.RoundToInt(percentNow * 100f);
+        int nextProcent = Mathf.RoundToInt(percentNext * 100f);
+        return new("todo", $"{currentProcent}%", $"{nextProcent}%", true);
     }
 }

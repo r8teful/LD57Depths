@@ -842,6 +842,26 @@ If 10% is at the 40, then going to 80 is 20%
 
 #### Solo playtest number #3
 
+* nodes should update state as sub inventory changes
+* pickup from SUB? add logic that prevents
+* Better sub add, needs sounds think balatro 
+* nerf speed \& acceleration
+* nerf iron cost (should cost iron
+* add gold next!!
+* maybe stay with iron for a bit longer?
+* 2 ores SHOULD drop when you mine ONE not just one that counts like 2, maybe do this until like 4 or something and then you can start merging
+* Lazer blast is still too strong, now that the lazer is very strong
+* Magnatism doesn't have a value
+* Make items actually disappear when you die, maybe you can pick them up when you come to the same spot?
+
+Where to go from here? 
+
+* Now we start to get into BIOMES, also at around 10 minutes you've gotten the copper upgrade, then maybe the iron one aswell, as soon as you get the gold, you're chilling, you should be able to go to the next one... 
+* Tree should expand MORE!! Add more handling and range upgrades, but what ELSE??? Could have you unlock the abilities, that could be cool??
+* 
+
+
+
 
 
 

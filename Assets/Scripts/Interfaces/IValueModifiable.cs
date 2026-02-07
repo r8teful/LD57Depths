@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using UnityEngine;
-
-public interface IValueModifiable {
+﻿public interface IValueModifiable {
     void ModifyValue(ValueModifier modifier);
     void Register();
-    float GetValue(ValueKey key);
+    float GetValueNow(ValueKey key);
+    float GetValueBase(ValueKey key);
 }
 public enum ValueKey {
     MagnetismPickup = 10,

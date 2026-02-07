@@ -49,7 +49,7 @@ Steamdeck notes:
 * Upgrade tree header in ui
 * Don't let submarine spawn inside a rock
 * World background too blurry
-* Particles look like copper
+* Particles look like copper \& Don't seem to despawn
 * Make popup fade out instead of disappear instant
 
 
@@ -61,13 +61,14 @@ Gameplay
 
 
 
-Upgrades
+Todo
 
-* Make the pacing faster <- THIS
-* Stone is most common so that could be for fixing the cables?
-* Have the tree expand more, it stays too long within lazer upgrade + blast upgrade. We need more exiting things!! Could add magnetism, ore drop chance, luck.
+* maybe stay with iron for a bit longer?
+* Lazer blast is still too strong, now that the lazer is very strong
+* Magnatism doesn't have a value
+* REMOVE xp stuff (for now)
 
-
+Make items actually disappear when you die, maybe you can pick them up when you come to the same spot?
 
 
 

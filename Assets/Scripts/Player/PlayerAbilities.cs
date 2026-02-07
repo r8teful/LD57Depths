@@ -11,7 +11,7 @@ public class PlayerAbilities : MonoBehaviour, IPlayerModule {
     private PlayerManager _player;
     [SerializeField] private Transform _abilitySlotTransform;
     public Transform AbilitySlot => _abilitySlotTransform;
-    public int InitializationOrder => 999; // Has to be after player movement because some abilities need it
+    public int InitializationOrder => 1004; // Has to be after player movement because some abilities need it. Also needs to be after UI because UI subscribes to AddAbility
 
     public event Action<AbilityInstance> OnabilityRemove;
     public event Action<AbilityInstance> OnAbilityAdd;
@@ -21,8 +21,8 @@ public class PlayerAbilities : MonoBehaviour, IPlayerModule {
     public void InitializeOnOwner(PlayerManager playerParent) {
         _player = playerParent;
         AddAbility(App.ResourceSystem.GetAbilityByID(0)); // Lazer is ID 0 
-        //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BrimstoneBuffID)); // Lazer blast
         AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BiomeBuffID)); // Biome buffs
+        //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BrimstoneBuffID)); // Lazer blast
         //AddAbility(App.ResourceSystem.GetAbilityByID(101)); // cactus suit
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BlockOxygenID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.PlayerDashID));

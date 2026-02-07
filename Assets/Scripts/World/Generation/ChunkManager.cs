@@ -520,10 +520,13 @@ public class ChunkManager : MonoBehaviour {
         // Query dropmanager for drops
         var dropData = WorldDropManager.Instance.GetDropData(sourceTile);
         foreach (var drop in dropData) {
-            // Slightly randomize drop position
-            Vector3 spawnPos = position + (Vector3)Random.insideUnitCircle * 0.3f;
             // WorldDropManager handles drop gameobjects
-            WorldDropManager.Instance.SpawnDrop(spawnPos, drop.Amount, drop.ItemData);
+            if (drop.Amount == 1) { 
+                WorldDropManager.Instance.SpawnDropOne(position,1, drop.ItemData);
+            } else {
+                WorldDropManager.Instance.SpawnDrop(position, drop.Amount, drop.ItemData);
+            }
+            
         }
         
     }
