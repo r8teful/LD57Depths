@@ -828,15 +828,15 @@ How do me make the pacing faster?? We simply make you improve faster DUH
 
 
 
-Lucy said that dropchance would be a good idea to add early. I like that, make  number go up quick!! 
+Lucy said that dropchance would be a good idea to add early. I like that, make  number go up quick!!
 
 
 
-If oxygen is 40 to start, and you increase it by 40 to 80, then to get the add you need to get the END VALUE 80 and DEVIDE IT BY THE STARTING VALUE 40 = 2 = 200%?? 
+If oxygen is 40 to start, and you increase it by 40 to 80, then to get the add you need to get the END VALUE 80 and DEVIDE IT BY THE STARTING VALUE 40 = 2 = 200%??
 
 
 
-If 10% is at the 40, then going to 80 is 20% 
+If 10% is at the 40, then going to 80 is 20%
 
 
 
@@ -844,7 +844,7 @@ If 10% is at the 40, then going to 80 is 20%
 
 * nodes should update state as sub inventory changes
 * pickup from SUB? add logic that prevents
-* Better sub add, needs sounds think balatro 
+* Better sub add, needs sounds think balatro
 * nerf speed \& acceleration
 * nerf iron cost (should cost iron
 * add gold next!!
@@ -854,9 +854,9 @@ If 10% is at the 40, then going to 80 is 20%
 * Magnatism doesn't have a value
 * Make items actually disappear when you die, maybe you can pick them up when you come to the same spot?
 
-Where to go from here? 
+Where to go from here?
 
-* Now we start to get into BIOMES, also at around 10 minutes you've gotten the copper upgrade, then maybe the iron one aswell, as soon as you get the gold, you're chilling, you should be able to go to the next one... 
+* Now we start to get into BIOMES, also at around 10 minutes you've gotten the copper upgrade, then maybe the iron one aswell, as soon as you get the gold, you're chilling, you should be able to go to the next one...
 * Tree should expand MORE!! Add more handling and range upgrades, but what ELSE??? Could have you unlock the abilities, that could be cool??
 * 
 
@@ -879,10 +879,10 @@ Where to go from here?
 * Rename acceleration to movement control
 * Doesn't feel like I'm upgrading enough, I feel like I should upgrade more things each time
 * Switch lazer damage with range
-* New color node with one upgrade but not getting one upgrade 
-* Background doesn't match with 
+* New color node with one upgrade but not getting one upgrade
+* Background doesn't match with
 * Cactus particle effect?? When you turn into one
-* Still drags out for too long you want something else 
+* Still drags out for too long you want something else
 * Make movement slower on the next layer, higher up -> More dense. Could have the same with oxygen!!
 * Clarify that all three upgrades need to happen for you to move
 * Items go From bob to PC? -> Visually show it go from bob to pc, and make the PC bounce or something (show that its receiving it)
@@ -897,25 +897,37 @@ Upgrade that lets you only lose some of your items
 
 
 
+The shader is just not considering the position, need to look if its also not taking the background. I think its going wrong because the position is not what matters its what INDEX they are within the biome array,
+
+
+
+Desert is index 2
+
+Forest is index 0
 
 
 
 
 
+IDea: You have a random item pool which give interesting extra bonuses for the run, the point of these is to make each run different, but how would you get these items? Maybe from rewards you get from mining, or from the exploration entities
 
 
 
+You could do some crazy stuff by "unlocking" iron ore, and it would reset the world and then generate it with it there, kind of like an early prestige 
 
 
 
+I'm making the world more dense because its all about mining and having lots of air kind of ruins the flow because you'd just be swimming which is not really what it is about 
 
 
 
+Divide 2nd oxygen into two instead of 1, its too big of a jump
+
+Make acceleration give less drag 
 
 
 
-
-
+it feels weird when you've got so much movement and you've kind of seen the trench all the way to the top you don't feel like you need to do anything anmore, you've done your thing, you've made it to the top, there is nothing left to do. As soon as you can go to the top and back is kind of the point that you should be done with the level, so you would either make it really far up, like you'd not even come close with the speed and oxygen, or simply make the oxygen and speed slow enough so that you can't really reach the top. Also just add more upgrades, make the damage more, make the range longer, keep having those upgrades with the current scaling and see how it goes
 
 
 

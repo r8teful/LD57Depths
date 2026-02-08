@@ -249,7 +249,7 @@ Shader "Custom/WorldGenSprite"
                     // Not in any biome - Check for caves
                     float caveNoise = CaveDensity_Combined(uv,_GlobalSeed,0,_CaveNoiseScale,_BaseOctaves, _RidgeOctaves,_WarpAmp,_WorleyWeight)* _CaveAmp;
                     //float caveNoise = CaveDensity_Tunnels(uv,_GlobalSeed,biomeIndex,_CaveNoiseScale,_BaseOctaves,_WarpAmp);
-                    if (caveNoise <_CaveCutoff) {
+                    if (caveNoise < _CaveCutoff) {
                     // Cave
                         resultColor = float4(0, 1, 1, 1); // air with trench biome 
                     }                    

@@ -71,6 +71,7 @@ Misc:
 * Ores should feel more rare? just feels like you find everything all the time
 * Cactus particle effect?? When you turn into one
 * MAKE SETTINGS (good for debugging, like disabling the background, fullscreen modes etc
+* Make transfer be upgrade based, this will also make it FEEL like you're getting more and more resources
 
 
 
@@ -80,7 +81,7 @@ PACING:
 * Doesn't feel like I'm upgrading enough, I feel like I should upgrade more things each time
 * Still drags out for too long you want something else
 * Make movement slower on the next layer, higher up -> More dense. Could have the same with oxygen!!
-* BRO, EASE INTO THINGS, DON'T GO 100%, START WITH STONE, THEN COPPER, THEN IRON, THEN GOLD, ITS THAT EASY, 3MIN ISH EACH
+* BRO, EASE INTO THINGS, DON'T GO 100%, START WITH STONE, THEN COPPER, THEN IRON, THEN GOLD, ITS THAT EASY, 3MIN ISH EACH. Basically, spread out the ore more, simply increase movement earlier, and players can get to the ores easy peacy
 
 
 
