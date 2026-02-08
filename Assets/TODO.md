@@ -32,6 +32,8 @@ consider the fact that players could be going down, have some kind of bedrock la
 
 
 
+For the nodes its important that whatever its connected is somewhat related to the node
+
 
 
 
@@ -45,12 +47,13 @@ Steamdeck notes:
 
 **Smaller visual stuff:**
 
-* Interactable things should also have a stroke "highlight"
 * Upgrade tree header in ui
-* Don't let submarine spawn inside a rock
+* Don't let submarine spawn inside a rock, and don't let anything "block" the sub, like plants spawn in front of it 
 * World background too blurry
 * Particles look like copper \& Don't seem to despawn
 * Make popup fade out instead of disappear instant
+
+
 
 
 
@@ -58,21 +61,31 @@ Gameplay
 
 * Not sure what to do at the start, needs a bit more handholding
 * Forget to use lazer blast \& what button it needs to activate
+* Should not fix the upgrade panel from the upgrade panel
+* Speed should not be connected to oxygen? Brain things that upgrade is related to oxygen because its branching FROM the oxygen
+* Bar should have more divisions
+* Doesn't have the feeling of getting strong really fast
+* Ores should feel more rare? just feels like you find everything all the time
+* Oxygen should have a value instead of procent?
+* You don't know where the beepbeep sound is comming from -> Make it clear that it comes from the oxygen bar running out
+* Expected the blast to fire when pressing space, not when holding the lazer button
+* Dies -> Frustrating but deserved. But seems like she made it, but still didn't. Maybe have even extra long when you're close to sub
+* Rename acceleration to movement control
+* Doesn't feel like I'm upgrading enough, I feel like I should upgrade more things each time
+* Switch lazer damage with range
+* New color node with one upgrade but not getting one upgrade
+* Background doesn't match with
+* Cactus particle effect?? When you turn into one
+* Still drags out for too long you want something else
+* Make movement slower on the next layer, higher up -> More dense. Could have the same with oxygen!!
+* Clarify that all three upgrades need to happen for you to move
+* Items go From bob to PC? -> Visually show it go from bob to pc, and make the PC bounce or something (show that its receiving it)
 
 
 
-Todo
+Upgrade that shows the way back?
 
-* maybe stay with iron for a bit longer?
-* Lazer blast is still too strong, now that the lazer is very strong
-* Magnatism doesn't have a value
-* REMOVE xp stuff (for now)
-
-Make items actually disappear when you die, maybe you can pick them up when you come to the same spot?
-
-
-
-You have a lot of stone in the end maybe do something with that?
+Upgrade that lets you only lose some of your items
 
 
 

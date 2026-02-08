@@ -862,7 +862,36 @@ Where to go from here?
 
 
 
+#### Lucy playtest number #2 07/02/2026
 
+
+
+* Nothing should block the sub
+* Should not fix the upgrade panel from the upgrade panel
+* Speed should not be connected to oxygen? Brain things that upgrade is related to oxygen because its branching FROM the oxygen
+* Bar should have more divisions
+* Doesn't have the feeling of getting strong really fast
+* Ores should feel more rare? just feels like you find everything all the time
+* Oxygen should have a value instead of?
+* Oxygen bar should flash when we run out
+* Expected the blast to fire when pressing space, not when holding the lazer button
+* Dies -> Frustrating but deserved. But seems like she made it, but still didn't. Maybe have even extra long when you're close to sub
+* Rename acceleration to movement control
+* Doesn't feel like I'm upgrading enough, I feel like I should upgrade more things each time
+* Switch lazer damage with range
+* New color node with one upgrade but not getting one upgrade 
+* Background doesn't match with 
+* Cactus particle effect?? When you turn into one
+* Still drags out for too long you want something else 
+* Make movement slower on the next layer, higher up -> More dense. Could have the same with oxygen!!
+* Clarify that all three upgrades need to happen for you to move
+* Items go From bob to PC? -> Visually show it go from bob to pc, and make the PC bounce or something (show that its receiving it)
+
+
+
+Upgrade that shows the way back?
+
+Upgrade that lets you only lose some of your items
 
 
 

@@ -9,18 +9,15 @@ public class MainMenu : MonoBehaviour {
     public AudioMixerGroup MusicMixer;
     public Slider SFXSlider;
     public Slider MusicSlider;
-    [SerializeField] Button _buttonHost;
-    [SerializeField] Button _buttonJoin;
+    [SerializeField] Button _buttonPlay;
     
     [SerializeField] private TMP_InputField _addressField;
 
     private void OnEnable() {
-        _buttonHost.onClick.AddListener(OnHostClicked);
-        _buttonJoin.onClick.AddListener(OnJoinClicked);
+        _buttonPlay.onClick.AddListener(OnHostClicked);
     }
     private void OnDisable() {
-        _buttonHost.onClick.RemoveListener(OnHostClicked);
-        _buttonJoin.onClick.RemoveListener(OnJoinClicked);
+        _buttonPlay.onClick.RemoveListener(OnHostClicked);
         // Unsubscribe from client connection events to avoid memory leaks.
     }
 
