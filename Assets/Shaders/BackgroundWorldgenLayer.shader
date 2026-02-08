@@ -96,6 +96,7 @@ Shader "Custom/BackgroundWorldGenLayer"
             float _YHeight[NUM_BIOMES];
             float _horSize[NUM_BIOMES];
             float _XOffset[NUM_BIOMES];
+            float _textureMap[NUM_BIOMES]; // what texture index the biome has in the textureArray
 
             float _baseOctaves[NUM_BIOMES];
             float _ridgeOctaves[NUM_BIOMES];
@@ -119,7 +120,8 @@ Shader "Custom/BackgroundWorldGenLayer"
                 }
                 return CaveDensity_Combined(uv,globalSeed,biomeIndex,scale,baseOctaves,ridgeOctaves,warpAmp,worleyWeight);
             }
-            int PickBiome2DBetter(float2 uv) {
+            // Gets what index within the array we are in
+            void PickBiome2DBetter(float2 uv, out int biomeIndex, out int textureIndex) {
                 for (int i = 0; i < NUM_BIOMES; i++) { 
                     // Fetch per-biome parameters
                     float b_edgeScale = _edgeNoiseScale[i];
@@ -149,10 +151,13 @@ Shader "Custom/BackgroundWorldGenLayer"
                     bool isInBiomeRegion = (width > abs(uv.x - b_XOffset)) && (uv.y >= heightBottom && uv.y < heightTop);
 
                     if (isInBiomeRegion) {
-                        return i + 1; // Shifting here, and will shift back in world mask
+                        biomeIndex = i + 1; // Shifting here, and will shift back in world mask
+                        textureIndex = _textureMap[i];
+                        return;
                     }
                 }
-                return 0;
+                biomeIndex = 0;
+                textureIndex = 0;
             }
 
             void MakeMasksFromSigned2(float s, float thickness, out float fillMask, out float edgeMask)
@@ -373,16 +378,18 @@ Shader "Custom/BackgroundWorldGenLayer"
                 float2 cam = _CameraPos.xy;
                 float2 parUV = ((worldUV - cam) * _ParallaxFactor) + worldUV; // your proposed formula ((UV - CameraPos) * Par) + UV
                 
-                int biomeIndex = PickBiome2DBetter(parUV);
+                int biomeIndex, textureIndex;
+                PickBiome2DBetter(parUV,biomeIndex, textureIndex);
                 float s_HighRes = GetWorldSDF(parUV, biomeIndex);
                 // a) compute mask at center pixel
                 float fillMask_HighRes, edgeMask_HighRes;
                 MakeMasksFromSigned(s_HighRes, _EdgeThickness, fillMask_HighRes, edgeMask_HighRes);
                 
                 float fillMask = step(0, s_HighRes);
-
-                float3 uvw = float3(parUV * _TextureTiling, biomeIndex); // ParallaxUV + biome index is shifted to +1 because texture array is setup to have 0 as default, and rest as biomes
-                fixed4 baseCol = UNITY_SAMPLE_TEX2DARRAY(_FillTexArray, uvw);
+                //The biome index doesn't stay consistent, because 0 is just the first biome in the array
+                // meaning we have to map the biome to its index in the texture array
+                 float3 uvw = float3(parUV * _TextureTiling, textureIndex); // ParallaxUV + biome index is shifted to +1 because texture array is setup to have 0 as default, and rest as biomes
+                fixed4 baseCol = UNITY_SAMPLE_TEX2DARRAY(_FillTexArray, uvw); // HERE its not randomized! needs to depend on biome index
                 
                 // a) Darken the filled area, but NOT the edge area.
                 float nonEdgeFilled = fillMask_HighRes * (1.0 - edgeMask_HighRes);
@@ -398,7 +405,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                 float t = saturate(_DarkenMax);
                 float4 backgroundColor;
                 if(biomeIndex < 1){
-                    // This means its 0, so not in any biome, use 
+                    // This means its 0, so not in any biome
                     backgroundColor = float4(0,0,0.007,1); // World color
                 } else {
                     backgroundColor = _ColorArray[biomeIndex-1]; // shifting BACK the index again, because first biome color is at position 0 
@@ -421,8 +428,12 @@ Shader "Custom/BackgroundWorldGenLayer"
                 {
                     if (_DebugMode < 1.5) return float4(s_HighRes*_FillMaskStep, 0, 0, 1); // red = positive, blue = negative
                     if (_DebugMode < 2.5) return float4(edgeMask_HighRes, edgeMask_HighRes, edgeMask_HighRes, 1.0); // edge visual
+                    if (_DebugMode < 3.5) return float4(baseCol.r,baseCol.g,baseCol.b,1.0); 
+                    if (_DebugMode < 4.5) return float4(backgroundColor.r,backgroundColor.g,backgroundColor.b,1.0); 
                 }
-
+                // 02050F bio backgrouncolor
+                // 00050D forests 
+                // 0E0014 fungal
                 return result;
             }
             ENDHLSL

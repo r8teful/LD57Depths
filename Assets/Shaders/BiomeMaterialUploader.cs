@@ -59,6 +59,7 @@ public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
         for (int i = 0; i < NUM_BIOMES; ++i) {
             if (i < settings.biomes.Count) {
                 var b = settings.biomes[i];
+                Debug.Log($"Biomeuploader: Biome {i} is of type: {b.BiomeType} in pos {b.XOffset},{b.YStart}");
                 edgeNoiseScale[i] = b.EdgeNoiseScale;
                 edgeNoiseAmp[i] = b.EdgeNoiseAmp;
                 blockNoiseScale[i] = b.BlockNoiseScale;

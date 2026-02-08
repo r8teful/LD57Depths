@@ -63,23 +63,17 @@ public class BackgroundManager : MonoBehaviour {
             default:
                 break;
         }
-        
-        if(App.ResourceSystem.TryGetPrefab($"Particles{prefabString}", out var particles)) {
-            if (_instantiatedParticles != null) {
-                if (_instantiatedParticles.TryGetComponent<ParticleSystem>(out var oldSystem)) {
-                    // Stop emission but let existing particles finish
-                    oldSystem.Stop();
-                    Destroy(_instantiatedParticles, oldSystem.main.startLifetime.constantMax);
-                }
+        // First destroy old
+        if (_instantiatedParticles != null) {
+            if (_instantiatedParticles.TryGetComponent<ParticleSystem>(out var oldSystem)) {
+                // Stop emission but let existing particles finish
+                oldSystem.Stop();
+                Destroy(_instantiatedParticles, oldSystem.main.startLifetime.constantMax);
             }
+        }
+        // Create new
+        if (App.ResourceSystem.TryGetPrefab($"Particles{prefabString}", out var particles)) {
             _instantiatedParticles = Instantiate(particles, trenchBackgroundContainer.transform);
-            // Way back "trench" particles are always there now
-            //if (prefabString == "Trench") {
-            //    if(_instantiatedParticles.TryGetComponent<ParticleSystem>(out var par)) {
-            //        var main = par.main;
-            //        main.customSimulationSpace =  _parallaxLayers[2];
-            //    }
-            //}
         }
     }
 

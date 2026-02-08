@@ -254,7 +254,7 @@ public class WorldGen : MonoBehaviour {
                 // TODO
                 context.OnCompleteCallback?.Invoke(processedPayloads, processedChunks, entities);
                 //TargetReceiveChunkDataMultiple(requester, processedPayloads);
-                Debug.Log($"Sent {processedPayloads.Count} processed chunks to player");
+                //Debug.Log($"Sent {processedPayloads.Count} processed chunks to player");
             } 
         }));
     }
@@ -279,6 +279,7 @@ public class WorldGen : MonoBehaviour {
 
         uint worldSeed = 12345; // Get your world seed
 
+        var sharedOreDefinitions = GetOreDefinitions();
         // --- 1. Setup Jobs for each chunk ---
         foreach (var kvp in initialChunks) {
             ChunkData chunk = kvp.Value;
@@ -298,7 +299,6 @@ public class WorldGen : MonoBehaviour {
                     k++;
                 }
             }
-            var nativeOreDefinitions = GetOreDefinitions();
             // --- Ore Generation Job ---
             var oreJob = new GenerateOresJob {
                 baseTileIDs = processingData.BaseTileIDs_NA, // GPU output
@@ -307,7 +307,7 @@ public class WorldGen : MonoBehaviour {
                 chunkSize = CHUNK_TILE_DIMENSION,
                 worldCenter = new(0, _cachedSettings.MaxDepth), // We're spawning at maxDepth so its like the center
                 seed = worldSeed + (uint)kvp.Key.x, // Vary seed per chunk slightly or use chunkCoord for determinism
-                oreDefinitions = nativeOreDefinitions
+                oreDefinitions = sharedOreDefinitions
             };
             processingData.OreJobHandle = oreJob.Schedule();
             jobHandles.Add(processingData.OreJobHandle);
@@ -401,6 +401,8 @@ public class WorldGen : MonoBehaviour {
             if (data.OreTileIDs_NA.IsCreated)
                 data.OreTileIDs_NA.Dispose();
         }
+        if (sharedOreDefinitions.IsCreated)
+            sharedOreDefinitions.Dispose();
         // Jobs done, now main thread...
 
 
@@ -427,7 +429,7 @@ public class WorldGen : MonoBehaviour {
             var entityList = entityIdsDict.TryGetValue(data.Key, out var entities);
             clientPayload.Add(new ChunkPayload(data.Value, entities));
         }
-        Debug.Log($"All chunk processing jobs complete. {clientPayload.Count} payloads ready.");
+        //Debug.Log($"All chunk processing jobs complete. {clientPayload.Count} payloads ready.");
         onProcessingComplete?.Invoke(clientPayload, chunksToSend,entitySpawnInfos);
     }
 

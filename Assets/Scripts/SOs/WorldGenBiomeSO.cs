@@ -32,6 +32,7 @@ public class WorldGenBiomeSO : ScriptableObject {
 
     [Header("Visual Shader")]
     public Color DarkenedColor;
+    public int TextureIndex;// what texture index the biome has in the textureArray
 
     // Event to invoke on changes
     public event Action onDataChanged;

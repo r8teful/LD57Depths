@@ -61,11 +61,14 @@ public class BackgroundWorldTexturesHandler : StaticInstance<BackgroundWorldText
         float[] yHeight = new float[numBiomes];
         float[] horSize = new float[numBiomes];
         float[] xOffset = new float[numBiomes];
-        Color[] backgroundColors = new Color[numBiomes];
+        float[] textureMap = new float[numBiomes];
+        //Color[] backgroundColors = new Color[numBiomes];
+        var backgroundColors = new Vector4[numBiomes];
 
         for (int i = 0; i < numBiomes; ++i) {
             if (i < settings.biomes.Count) {
                 var b = settings.biomes[i];
+                Debug.Log($"Background: Biome {i} is of type: {b.BiomeType} in pos {b.XOffset},{b.YStart}");
                 edgeNoiseScale[i] = b.EdgeNoiseScale;
                 edgeNoiseAmp[i] = b.EdgeNoiseAmp;
                 blockNoiseScale[i] = b.BlockNoiseScale;
@@ -80,6 +83,7 @@ public class BackgroundWorldTexturesHandler : StaticInstance<BackgroundWorldText
                 yHeight[i] = b.YHeight;
                 horSize[i] = b.HorSize;
                 xOffset[i] = b.XOffset;
+                textureMap[i] = b.TextureIndex;
                 backgroundColors[i] = b.DarkenedColor.linear;
             } else {
                 // sane defaults
@@ -92,7 +96,7 @@ public class BackgroundWorldTexturesHandler : StaticInstance<BackgroundWorldText
                 yHeight[i] = 16f;
                 horSize[i] = 40f;
                 xOffset[i] = (i - numBiomes / 2) * 30f;
-                backgroundColors[i] = new(0,0,0,1);
+                backgroundColors[i] = new(1,1,0,1);
             }
         }
 
@@ -106,12 +110,15 @@ public class BackgroundWorldTexturesHandler : StaticInstance<BackgroundWorldText
         mat.SetFloatArray("_YHeight", yHeight);
         mat.SetFloatArray("_horSize", horSize);
         mat.SetFloatArray("_XOffset", xOffset);
-        mat.SetColorArray("_ColorArray", backgroundColors);
+        //mat.SetColorArray("_ColorArray", backgroundColors);
+        mat.SetVectorArray("_ColorArray", backgroundColors); // or this!?
         mat.SetFloatArray("_baseOctaves", baseOctaves);
         mat.SetFloatArray("_ridgeOctaves", ridgeOctaves);
         mat.SetFloatArray("_warpAmp", warpAmp);
         mat.SetFloatArray("_worldeyWeight", wordleyWeight);
         mat.SetFloatArray("_caveType", caveType);
+        mat.SetFloatArray("_textureMap", textureMap);
+
 
         // global seed
         mat.SetFloat("_GlobalSeed", settings.seed * 1+ matIndex * 2352.124f);

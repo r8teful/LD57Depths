@@ -156,6 +156,7 @@ public class WorldGenBiomeData {
     public bool placed = false;
     [Header("Visual Shader")]
     public Color DarkenedColor;
+    public int TextureIndex;
 
     public static WorldGenBiomeData FromSO(WorldGenBiomeSO so) {
         var b = new WorldGenBiomeData();
@@ -172,6 +173,8 @@ public class WorldGenBiomeData {
         b.CaveType = so.CaveType;
         b.TileColor = so.TileColor;
         b.AirColor = so.AirColor;
+        b.DarkenedColor= so.DarkenedColor;
+        b.TextureIndex = so.TextureIndex;
         // Biome placement rules
         // Generate size of biome first
         b.HorSize = UnityEngine.Random.Range(so.HorSize * 0.8f, so.HorSize * 1.2f); // Using 80 to 120% of biome size right now but could also just have a set size
