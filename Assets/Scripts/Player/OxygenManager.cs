@@ -8,7 +8,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     private float maxOxygen;
     private float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
     private float currentOxygen;
-    private float maxHealth = 15; // amount in seconds the player can survive with 0 oxygen 
+    private float maxHealth = 10; // amount in seconds the player can survive with 0 oxygen 
     private float playerHealth;
     private PlayerManager _player;
     private bool _isInsideOxygenZone;
@@ -83,17 +83,18 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
             //SliderFlash(true);
         }
         if (CurrentOxygen <= 0) {
-            if (!_oxygenDepleted) {
-                // First time reaching here spawn the depleting effect
-                _oxygenDepleted = true;
-                _lowoxygenVisualInstance = Instantiate(_lowoxygenVisual);
-            }
             // Slowly fade out and then teleport player back to base?
-            playerHealth -= 1 * Time.deltaTime;
+            playerHealth -= Time.deltaTime;
             if (playerHealth <= 0) {
                 _player.InventoryN.RemoveAll(); // womp womp 
                 _player.PlayerLayerController.PutPlayerInSub();
                 Resurect();
+            }
+        } else if(CurrentOxygen <= 10) {
+            if (!_oxygenDepleted) {
+                // First time reaching here spawn the depleting effect
+                _oxygenDepleted = true;
+                _lowoxygenVisualInstance = Instantiate(_lowoxygenVisual);
             }
         }
     }

@@ -21,18 +21,25 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         _player = player;
         _visual = GetComponent<MiningLazerVisualNew>();
         _visual.Init(player,instance,this);
+        _abilityInstance.OnBuffExpired += OnBuffExpire;
     }
+
+    private void OnBuffExpire(BuffInstance buff) {
+        if(buff.buffID == ResourceSystem.BrimstoneBuffID) {
+            OnEndShoot();
+        }
+    }
+
     private void Update() {
         UpdateCurDir();
         HandleShootStateTransition();
+        if (!MineDelayCheck()) return;
         _isShooting = _player.InputManager.IsShooting();
-        if (!_isShooting) return;
-        if (MineDelayCheck()) {
-            if (_player.PlayerAbilities.IsBrimstoneAbilityActive()) {
-                MineAbility();
-            } else {
-                Mine();
-            }
+        if (_player.PlayerAbilities.IsBrimstoneAbilityActive()) {
+            MineAbility(); // Brimstone doesn't require shooting
+            _visual.HandleVisualUpdate();
+        } else if(_isShooting){
+            Mine();
             _visual.HandleVisualUpdate();
         }
     }

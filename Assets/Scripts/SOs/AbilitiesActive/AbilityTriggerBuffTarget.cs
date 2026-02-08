@@ -18,8 +18,8 @@ public class AbilityTriggerBuffTarget : ScriptableObject, IEffectActive, IEffect
         var buffinst = BuffInstance.CreateFromSO(_buff);
        
         buffinst.IncreaseBuffPower(source);
-        
-        targetInst.TriggerBuff(buffinst); 
+
+        targetInst.TriggerBuff(buffinst);
     }
 
     public float GetEffectiveStat(StatType stat, StatModifier tempMod = null) {

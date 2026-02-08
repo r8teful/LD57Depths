@@ -11,6 +11,7 @@ public class MiningLazerVisualNew : MonoBehaviour {
     private MiningLazerNew _lazerLogic;
     private AudioSource lazerSound;
     private bool _isUsingAbility;
+    private bool _hasStarted;
 
     private void Awake() {
         SetupParticlesVisual();
@@ -32,6 +33,9 @@ public class MiningLazerVisualNew : MonoBehaviour {
     }
 
     public void HandleVisualUpdate() {
+        if (!_hasStarted) {
+            StartVisual();
+        }
         //Vector2 dir = _player.InputManager.GetDirFromPos(transform.position);
         Vector2 dir = _lazerLogic.CurrentDir; //  
         // Update visuals each frame when mining
@@ -48,6 +52,7 @@ public class MiningLazerVisualNew : MonoBehaviour {
     }
 
     public void StartVisual() {
+        _hasStarted = true;
         // Update tool data
         lazerSound.volume = 0.2f;
         // _lineWidth is 0.1 to 2, so we lerp that to get values from 1 to 0.7
@@ -63,6 +68,7 @@ public class MiningLazerVisualNew : MonoBehaviour {
     }
 
     public void EndVisual() {
+        _hasStarted = false;
         _hitParticleSystem.Stop();
         lazerSound.volume = 0.0f;
         FadeOutLine(lineRenderer);

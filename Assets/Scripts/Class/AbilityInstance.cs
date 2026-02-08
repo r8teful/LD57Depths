@@ -33,6 +33,7 @@ public class AbilityInstance {
     public event Action OnDeactivated; // active finished (before cooldown)
     public event Action OnReady; // Ability is ready to be used
     public event Action OnUsed; // Ability is used. (For when any abilities is used) 
+    public event Action<BuffInstance> OnBuffExpired; 
 
     public event Action OnModifiersChanged;
     internal void SetGameObject(GameObject gameObject) => Object = gameObject;
@@ -208,7 +209,7 @@ public class AbilityInstance {
         _activeBuffsByID.Remove(buff.buffID);
         // The buff knows how to clean up the modifiers it created
         buff.Remove(this);
-
+        OnBuffExpired?.Invoke(buff);
         Debug.Log($"Removed buff {buff.buffID}");
     }
     // Tick and Use similar to before but use GetEffectiveCooldown() when setting cooldownRemaining

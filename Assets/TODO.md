@@ -34,7 +34,10 @@ consider the fact that players could be going down, have some kind of bedrock la
 
 For the nodes its important that whatever its connected is somewhat related to the node
 
+POLISH NEEDED FOR DEMO:
 
+* Upgrade progress should look animated / cooler, more exciting!!
+* Use more particles in the ui, even when its just stationary, like extra cool subtle things around a big upgrade node
 
 
 
@@ -43,43 +46,41 @@ Steamdeck notes:
 * Icons not updating correctly for controller
 * Can't go into submarine
 * Should a start menu with settings to change full screen mode etc...
-* Also the block texture seems zoomed in... - WHY!?
+* Also the block texture seems zoomed in... - WHY!? This also happens in windows build
 
 **Smaller visual stuff:**
 
 * Upgrade tree header in ui
-* Don't let submarine spawn inside a rock, and don't let anything "block" the sub, like plants spawn in front of it 
-* World background too blurry
-* Particles look like copper \& Don't seem to despawn
+* Don't let submarine spawn inside a rock, and don't let anything "block" the sub, like plants spawn in front of it
+* Don't let structure entities spawn in the trench
 * Make popup fade out instead of disappear instant
+* Items go From bob to PC? -> Visually show it go from bob to pc, and make the PC bounce or something (show that its receiving it)
+* New color node with one upgrade but not getting one upgrade
+* Add black background when in sub
 
-
-
-
-
-Gameplay
+UX:
 
 * Not sure what to do at the start, needs a bit more handholding
 * Forget to use lazer blast \& what button it needs to activate
-* Should not fix the upgrade panel from the upgrade panel
-* Speed should not be connected to oxygen? Brain things that upgrade is related to oxygen because its branching FROM the oxygen
-* Bar should have more divisions
-* Doesn't have the feeling of getting strong really fast
-* Ores should feel more rare? just feels like you find everything all the time
-* Oxygen should have a value instead of procent?
 * You don't know where the beepbeep sound is comming from -> Make it clear that it comes from the oxygen bar running out
-* Expected the blast to fire when pressing space, not when holding the lazer button
-* Dies -> Frustrating but deserved. But seems like she made it, but still didn't. Maybe have even extra long when you're close to sub
-* Rename acceleration to movement control
-* Doesn't feel like I'm upgrading enough, I feel like I should upgrade more things each time
-* Switch lazer damage with range
-* New color node with one upgrade but not getting one upgrade
-* Background doesn't match with
+* Clarify that all three upgrades need to happen for you to move
+
+Misc:
+
+* Should not fix the upgrade panel from the upgrade panel
+* Ores should feel more rare? just feels like you find everything all the time
 * Cactus particle effect?? When you turn into one
+* MAKE SETTINGS (good for debugging, like disabling the background, fullscreen modes etc
+
+
+
+PACING:
+
+* Doesn't have the feeling of getting strong really fast
+* Doesn't feel like I'm upgrading enough, I feel like I should upgrade more things each time
 * Still drags out for too long you want something else
 * Make movement slower on the next layer, higher up -> More dense. Could have the same with oxygen!!
-* Clarify that all three upgrades need to happen for you to move
-* Items go From bob to PC? -> Visually show it go from bob to pc, and make the PC bounce or something (show that its receiving it)
+* BRO, EASE INTO THINGS, DON'T GO 100%, START WITH STONE, THEN COPPER, THEN IRON, THEN GOLD, ITS THAT EASY, 3MIN ISH EACH
 
 
 
@@ -89,11 +90,5 @@ Upgrade that lets you only lose some of your items
 
 
 
-
-
-
-
-
-
-
+First to smaller QOL things, then you do big boy balancing! List is too long now
 

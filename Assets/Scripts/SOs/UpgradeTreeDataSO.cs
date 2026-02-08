@@ -16,8 +16,6 @@ public struct UpgradeTreeCosts {
 [CreateAssetMenu(fileName = "UpgradeTreeDataSO", menuName = "ScriptableObjects/Upgrades/UpgradeTreeDataSO")]
 public class UpgradeTreeDataSO : ScriptableObject {
     public UpgradeTreeCosts costsValues; // How the costs of the upgrades increases
-    public List<UpgradeTierSO> tiers;
-    public List<StatType> statsToDisplay; // Used in the upgrade screen UI, shows what the values of the suplied stats are
     public string treeName; 
     public List<UpgradeNodeSO> nodes = new List<UpgradeNodeSO>();
     public UIUpgradeTree prefab; // The visual representation of this tree in a prefab with the approriate nodes already created
