@@ -30,21 +30,21 @@ Material:
     m_Ints: []
     m_Floats:
     - _BaseOctaves: 1.57
-    - _CaveAmp: 0.2
-    - _CaveCutoff: 0.02
+    - _CaveAmp: 0.3
+    - _CaveCutoff: 0.025
     - _CaveNoiseScale: 0.04
-    - _GlobalSeed: 2738
+    - _GlobalSeed: 1915
     - _RidgeOctaves: 1.53
     - _TotalLayers: 6.39
     - _TrenchBaseWiden: -0.04
     - _TrenchBaseWidth: 24.4
     - _TrenchEdgeAmp: 3.13
     - _TrenchNoiseScale: 0.14
-    - _WarpAmp: 0.59
+    - _WarpAmp: 0.89
     - _WorldLayerEdgeAmp: 6.39
     - _WorldLayerNoiseScale: 0.13
     - _WorldUVScale: 1
-    - _WorleyWeight: 2.27
+    - _WorleyWeight: 1.37
     m_Colors:
     - _ColorMult: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
