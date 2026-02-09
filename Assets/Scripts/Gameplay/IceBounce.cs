@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 public class IceBounce : MonoBehaviour {
 
@@ -98,8 +99,11 @@ public class IceBounce : MonoBehaviour {
         //Debug.Log($"Hard impact on axis {axis}: pre-impact speed = {preImpactMagnitudeAbs:F2} (signed {signedValueAtMax:F2}) -> current {(axis == "X" ? currentVelocity.x : currentVelocity.y):F2}");
         var dmg = GetContactDamage(preImpactMagnitudeAbs);
         var contacts = _player.PlayerMovement.ContactsMostRecent;
-        foreach (var contact in contacts) {
-            _player.RequestDamageTile(contact.point, dmg);
+        if (contacts == null) return;
+        if(contacts.Count == 0) return;
+        var hits = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, contacts[0].point, 3);
+        foreach (var hit in hits) {
+            _player.RequestDamageTile(new DamageContainer(hit.DamageRatio * dmg, false, hit.CellPos));
         }
         // start cooldown to avoid repeated triggers for the same collision
         _cooldownCounter = cooldownFrames;

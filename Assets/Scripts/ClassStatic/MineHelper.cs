@@ -29,7 +29,7 @@ public static class MineHelper {
         }
         return result;
     }
-
+  
     public static List<TileDamageData> GetCone(Tilemap map, Vector2 origin, Vector2 direction, float length, float halfAngle, bool useFalloff = true) {
         var result = new List<TileDamageData>();
         int gridLen = Mathf.CeilToInt(length);

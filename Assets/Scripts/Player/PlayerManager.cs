@@ -83,20 +83,24 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
    
 
 
-    internal void RequestDamageTile(Vector3Int cellPos, float damage) {
+    internal void RequestDamageTile(Vector3Int cellPos, DamageContainer damage) {
         if (_worldManager == null)
             _worldManager = FindFirstObjectByType<WorldManager>();
-        _worldManager.RequestDamageTile(cellPos, damage);
+        _worldManager.RequestDamageTile(cellPos, damage.damage);
     }
-    public void RequestDamageTile(Vector3 worldPos, float damageAmount) {
+    internal void RequestDamageTile(DamageContainer damage) {
         if (_worldManager == null)
             _worldManager = FindFirstObjectByType<WorldManager>();
-        _worldManager.RequestDamageTile(worldPos, damageAmount);
+        _worldManager.RequestDamageTile(damage.tile, damage.damage);
     }
-    
+
     public void RequestDamageNearestSolidTile(Vector3 worldPosition, float dmg, int searchRadius = 3) {
         if (_worldManager == null)
             _worldManager = FindFirstObjectByType<WorldManager>();
         _worldManager.RequestDamageNearestSolidTile(worldPosition, dmg, searchRadius);
+    }
+
+    internal void RequestDamageTile(Vector3Int cellPos, float damage) {
+        RequestDamageTile(new(damage, false, cellPos));
     }
 }

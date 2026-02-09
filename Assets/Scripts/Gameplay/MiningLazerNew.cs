@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using r8teful;
+using System.Collections.Generic;
 using UnityEngine;
 
 // Making a totally clean and new class because I don't want to mess up the other stuff, we'll just delete that old code afterwards
@@ -112,21 +113,29 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         var range = _abilityInstance.GetEffectiveStat(StatType.MiningRange);
         var falloff = _abilityInstance.GetEffectiveStat(StatType.MiningFalloff);
         var damage = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
-
+        var dmg = new DamageContainer();
+        if(RandomnessHelpers.TryGetCritDamage(_abilityInstance, out var critMult)) {
+            // Crit!
+            damage *= critMult;
+            dmg.crit = true;
+        }
+        dmg.damage = damage;
         _lastKnownDirection = _currentDirection;
         // Use the (potentially smoothed) _currentDirection for the raycast
         RaycastHit2D hit = Physics2D.Raycast(toolPosition, _currentDirection, range, LayerMask.GetMask("MiningHit"));
         //Debug.Log($"damage: {damage}");
         if (hit.collider != null) {
-
-            //Debug.Log($"MINING HIT!!");
-            Vector2 nudgedPoint = hit.point + _currentDirection * 0.1f; 
-            // Damage Calculation
+            var tiles = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, hit.point,0.7f);
+            foreach (var tile in tiles) {
+                dmg.tile = tile.CellPos;
+                _player.RequestDamageTile(dmg);
+            }
+            /* todo if you want falloff
             float distance = hit.distance;
             float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloff);
             float finalDamage = damage * falloffFactor;
-            
-            _player.RequestDamageTile(new Vector3(nudgedPoint.x, nudgedPoint.y, 0), finalDamage);
+            dmg.damage = finalDamage;    
+             */
         }
     }
     public void MineAbility() {

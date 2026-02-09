@@ -26,7 +26,11 @@ public class BouncingBall : MonoBehaviour {
         _rb.AddForce(dir * _ability.GetEffectiveStat(StatType.ProjectileSpeed), ForceMode2D.Impulse);
     }
     private void OnCollisionEnter2D(Collision2D collision) {
-        _player.RequestDamageNearestSolidTile(transform.position,5);
+        var hits = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, transform.position, 3);
+        var dmg = _ability.GetEffectiveStat(StatType.MiningDamage);
+        foreach (var hit in hits) {
+            _player.RequestDamageTile(new DamageContainer(hit.DamageRatio * dmg, false, hit.CellPos));
+        }
         _bounceAmount++;
         if (_bounceAmount >= _maxBounces) {
             Destroy(gameObject);

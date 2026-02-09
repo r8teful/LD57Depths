@@ -140,6 +140,17 @@ namespace r8teful {
 
             return points;
         }
-        
+
+        internal static bool TryGetCritDamage(AbilityInstance abilityInstance, out float critMult) {
+            critMult = 1;
+            var critChance = abilityInstance.GetEffectiveStat(StatType.MiningCritChance);
+            var critDmg = abilityInstance.GetEffectiveStat(StatType.MiningCritDamage);
+            if (UnityEngine.Random.value < critChance) {
+                // crit!
+                critMult = critDmg;
+                return true;
+            }
+            return false;
+        }
     }
 }

@@ -181,10 +181,9 @@ public class WorldManager : StaticInstance<WorldManager> {
     public void RequestDamageTile(Vector3 worldPosition,float dmg) {
         var cell = WorldToCell(worldPosition);
         //Debug.Log($"Requesting processdamage of:{cell} with {dmg}");
-        ChunkManager.ProcessDamageTile(cell, dmg);
+        RequestDamageTile(cell, dmg);
     }
     public void RequestDamageTile(Vector3Int cellPos, float dmg) {
-        //Debug.Log($"Requesting processdamage of:{cell} with {dmg}");
         ChunkManager.ProcessDamageTile(cellPos, dmg);
     }
     public void RequestDamageNearestSolidTile(Vector3 worldPosition, float dmg, int searchRadius = 3) {
