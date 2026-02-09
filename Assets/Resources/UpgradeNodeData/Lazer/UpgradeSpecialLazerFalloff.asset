@@ -13,11 +13,14 @@ MonoBehaviour:
   m_Name: UpgradeSpecialLazerFalloff
   m_EditorClassIdentifier: 
   nodeName: Lazer Falloff
-  uniqueID: 5
+  uniqueID: 9997
+  description: 
   icon: {fileID: -1865080018, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: ed1a778afde390e4594c907d01455c33, type: 2}
+  UnlockedAtFirstPrereqStage: 0
   stages:
   - upgrade: {fileID: 11400000, guid: 0fdd7446845543546a346586e315e1c9, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 0
+    upgradeItemPool: {fileID: 0}

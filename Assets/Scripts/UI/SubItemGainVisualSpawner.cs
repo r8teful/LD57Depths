@@ -17,6 +17,8 @@ public class SubItemGainVisualSpawner : MonoBehaviour {
     }
 
     private void SlotNew(ushort itemId,int newAmount) {
+        if (PlayerManager.Instance == null) return;
+        if (!PlayerManager.Instance.PlayerLayerController.IsInSub) return;
         if (newAmount <= 0) return;
         Sprite icon = App.ResourceSystem.GetItemByID(itemId).icon;
         var popup = Instantiate(_popup, _popupContainer);

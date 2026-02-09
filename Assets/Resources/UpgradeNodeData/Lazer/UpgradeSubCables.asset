@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: UpgradeSubCables
   m_EditorClassIdentifier: 
   nodeName: SubUpgradeCable
-  uniqueID: 400
+  uniqueID: 1000
   description: 
   icon: {fileID: -1703950749, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: 3fc0c9bd770644d448652616cf99fcec, type: 2}
-  UnlockedAtFirstPrereqStage: 0
+  - {fileID: 11400000, guid: e8fa2fd387da1694d95c92b5f8d42c7a, type: 2}
+  UnlockedAtFirstPrereqStage: 1
   stages:
   - upgrade: {fileID: 11400000, guid: 9fb29b35117da1844a612699ef783042, type: 2}
     costMultiplier: 1

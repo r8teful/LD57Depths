@@ -9,6 +9,7 @@ public class PlayerLayerController : MonoBehaviour, IPlayerModule {
     private VisibilityLayerType _currentLayer;
 
     public VisibilityLayerType CurrentLayer => _currentLayer;
+    public bool IsInSub => _currentLayer == VisibilityLayerType.Interior;
 
     public int InitializationOrder => 100;
 

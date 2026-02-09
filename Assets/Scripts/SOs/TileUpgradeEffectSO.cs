@@ -4,14 +4,15 @@
 public class TileUpgradeEffectSO : UpgradeEffect {
     [SerializeField] private TileSO tileToUpgrade;
     [SerializeField] private int dropIncrease; // Again, here we could add more upgradable things
+    [SerializeField] private float durabilityIncrease = 0; // multiply ADD 
     public override void Execute(ExecutionContext context) {
         // I don't care just call the manager directly what could go wrong!?
-        WorldDropManager.Instance.NewTileUpgrade(tileToUpgrade.ID, dropIncrease);
+        WorldTileManager.Instance.NewTileUpgrade(tileToUpgrade.ID, dropIncrease, durabilityIncrease);
     }
 
     public override StatChangeStatus GetChangeStatus() {
-        var current =  WorldDropManager.Instance.GetExtraTileDropAmount(tileToUpgrade);
-        var next =  WorldDropManager.Instance.GetExtraTileDropAmount(tileToUpgrade, dropIncrease);
+        var current =  WorldTileManager.Instance.GetExtraTileDropAmount(tileToUpgrade);
+        var next =  WorldTileManager.Instance.GetExtraTileDropAmount(tileToUpgrade, dropIncrease);
         int startProcent = 100;
         int currentProcent = Mathf.RoundToInt(current * 100f) + startProcent;
         int nextProcent = Mathf.RoundToInt(next * 100f) + startProcent;

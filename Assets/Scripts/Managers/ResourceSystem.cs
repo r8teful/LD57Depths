@@ -440,6 +440,8 @@ public enum StatType {
     Knockback = 3,
     MiningFalloff = 4,
     MiningCombo = 5,
+    MiningCritDamage = 6,
+    MiningCritChance = 7,
 
     // PLAYER 
     PlayerSpeedMax = 20,

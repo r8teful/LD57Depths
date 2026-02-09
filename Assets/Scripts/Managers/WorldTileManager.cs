@@ -1,15 +1,19 @@
 ﻿using r8teful;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class TileUpgradeData {
     public int DropIncrease;
+    public float DurabilityIncrease; // as multiplier 
 
-    public TileUpgradeData(int increase) {
-        DropIncrease = increase;
+    public TileUpgradeData(int dropincrease) {
+        DropIncrease = dropincrease;
+        DurabilityIncrease = 1;
     }
-
+    public TileUpgradeData(int dropincrease,float durIncrease) {
+        DropIncrease = dropincrease;
+        DurabilityIncrease = durIncrease;
+    }
     // We might want to add more here like extra items to drop, etc
 }
 
@@ -26,7 +30,7 @@ public struct DropInfo {
 }
 
 // Also holds upgrades related to drops like how many drop from a tile
-public class WorldDropManager : StaticInstance<WorldDropManager> {
+public class WorldTileManager : StaticInstance<WorldTileManager> {
     [SerializeField] private DropPooled _dropPrefab;
     [SerializeField] private int _initialPoolSize = 200;
 
@@ -37,11 +41,12 @@ public class WorldDropManager : StaticInstance<WorldDropManager> {
         base.Awake();
         InitializePool();
     }
-    public void NewTileUpgrade(ushort tile, int increase) {
+    public void NewTileUpgrade(ushort tile, int increaseDrop,float increaseDur) {
         if(_tileUpgradeData.TryGetValue(tile, out TileUpgradeData tileUpgradeData)) {
-            tileUpgradeData.DropIncrease += increase;        
+            tileUpgradeData.DropIncrease += increaseDrop;
+            tileUpgradeData.DurabilityIncrease += increaseDur;
         } else {
-            _tileUpgradeData.Add(tile, new(increase));
+            _tileUpgradeData.Add(tile, new(increaseDrop,increaseDur + 1)); // +1 because we're basically summing the values afterwards and if we have already values like 1.4 we'd be adding way to much
         }
     }
 
@@ -52,6 +57,12 @@ public class WorldDropManager : StaticInstance<WorldDropManager> {
             // If we later have several drops at start get the tileSO drop from here
             return 0 + increase;
         }
+    }
+    public float GetDurabilityIncrease(ushort tile) {
+        if(_tileUpgradeData.TryGetValue(tile, out var data)) {
+            return data.DurabilityIncrease;
+        }
+        return 1; // no increase, so just 1 (because its mult)
     }
     // its a list incase we want different drops from the same tile, right now we just add one 
     public List<DropInfo> GetDropData(TileSO tile) {

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: UpgradeLuck
   m_EditorClassIdentifier: 
   nodeName: Luck
-  uniqueID: 208
+  uniqueID: 700
   description: 
   icon: {fileID: -717515431, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   prerequisiteNodesAny: []
@@ -21,4 +21,5 @@ MonoBehaviour:
   stages:
   - upgrade: {fileID: 11400000, guid: d3051f11d24fe514180b58dab6aa1ee4, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 0
+    upgradeItemPool: {fileID: 0}

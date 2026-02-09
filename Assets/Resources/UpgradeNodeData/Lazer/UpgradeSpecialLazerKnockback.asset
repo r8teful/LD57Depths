@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: UpgradeSpecialLazerKnockback
   m_EditorClassIdentifier: 
   nodeName: No lazer knockback
-  uniqueID: 6
+  uniqueID: 9999
   description: 
   icon: {fileID: 1593785198, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 3de091d34e60f6b448456c2eef1617da, type: 2}
+  UnlockedAtFirstPrereqStage: 0
   stages:
   - upgrade: {fileID: 11400000, guid: 2351f8a3c484c1f46a81247349473916, type: 2}
     costMultiplier: 1
-    tier: 1
+    costTier: 0
+    upgradeItemPool: {fileID: 0}

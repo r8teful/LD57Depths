@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: UpgradeMagnetismRange1
   m_EditorClassIdentifier: 
   nodeName: Magnetism Range
-  uniqueID: 240
+  uniqueID: 720
   description: 
   icon: {fileID: -1852799296, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: 7fdeec9bef1fa684bb0af10415dffebe, type: 2}
+  - {fileID: 11400000, guid: 9348d0b602d93da44aadd969b4c0a679, type: 2}
   UnlockedAtFirstPrereqStage: 1
   stages:
   - upgrade: {fileID: 11400000, guid: 80fcf358d3ba8b84a9e56507f42e1596, type: 2}

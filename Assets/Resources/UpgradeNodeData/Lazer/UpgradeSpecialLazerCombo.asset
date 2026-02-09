@@ -13,11 +13,14 @@ MonoBehaviour:
   m_Name: UpgradeSpecialLazerCombo
   m_EditorClassIdentifier: 
   nodeName: Lazer combo
-  uniqueID: 7
+  uniqueID: 9998
+  description: 
   icon: {fileID: -1272238471, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 287c7b7c66cc5be498d1eea9de862007, type: 2}
+  UnlockedAtFirstPrereqStage: 0
   stages:
   - upgrade: {fileID: 11400000, guid: ee9c7d02e889c8849bee9abe4d7bc0b1, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 0
+    upgradeItemPool: {fileID: 0}

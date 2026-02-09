@@ -16,15 +16,19 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
     private Coroutine transferCoroutine;
     public static event Action OnTransferCompleteAll;
     public static event Action<ushort> OnTransferCompleteItem;
-    public int InitializationOrder => 1001; // after ui 
+    public int InitializationOrder => 900; // before ui
 
     public void InitializeOnOwner(PlayerManager playerParent) {
-        inventoryPlayer = playerParent.GetInventory();
         _player = playerParent;
         inventorySub = SubmarineManager.Instance.SubInventory;
         itemsPerSecond = itemPerSecondBase;
+        Register();
         PlayerLayerController.OnPlayerVisibilityChanged += PlayerLayerChange;
 
+    }
+    // after ui
+    public void InitLate(PlayerManager playerParent) {
+        inventoryPlayer = playerParent.GetInventory();
     }
     private void OnDestroy() {
         PlayerLayerController.OnPlayerVisibilityChanged -= PlayerLayerChange;

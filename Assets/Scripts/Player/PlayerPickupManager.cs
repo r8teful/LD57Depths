@@ -104,7 +104,7 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
         ushort itemID = item.ItemID;
         AudioController.Instance.PlaySound2D("popPickup", 0.1f, pitch: new AudioParams.Pitch(AudioParams.Pitch.Variation.Small));
         _player.InventoryN.AwardItem(itemID,item.Amount);
-        WorldDropManager.Instance.ReturnToPool(item);
+        WorldTileManager.Instance.ReturnToPool(item);
     }
 
     public void ModifyValue(ValueModifier modifier) {

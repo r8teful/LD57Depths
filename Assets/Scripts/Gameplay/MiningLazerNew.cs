@@ -112,6 +112,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         var range = _abilityInstance.GetEffectiveStat(StatType.MiningRange);
         var falloff = _abilityInstance.GetEffectiveStat(StatType.MiningFalloff);
         var damage = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
+
         _lastKnownDirection = _currentDirection;
         // Use the (potentially smoothed) _currentDirection for the raycast
         RaycastHit2D hit = Physics2D.Raycast(toolPosition, _currentDirection, range, LayerMask.GetMask("MiningHit"));

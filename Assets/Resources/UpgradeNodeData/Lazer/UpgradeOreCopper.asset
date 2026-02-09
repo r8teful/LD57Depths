@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: UpgradeOreCopper
   m_EditorClassIdentifier: 
   nodeName: Copper
-  uniqueID: 300
+  uniqueID: 810
   description: 
   icon: {fileID: 776407073, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: ed1a778afde390e4594c907d01455c33, type: 2}
+  - {fileID: 11400000, guid: 9348d0b602d93da44aadd969b4c0a679, type: 2}
   UnlockedAtFirstPrereqStage: 0
   stages:
   - upgrade: {fileID: 11400000, guid: 9272b23d6b2abf74aaf9d54e721723a1, type: 2}

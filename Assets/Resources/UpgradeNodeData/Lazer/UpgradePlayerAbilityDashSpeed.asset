@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: UpgradePlayerAbilityDashSpeed
   m_EditorClassIdentifier: 
   nodeName: Dash Speed
-  uniqueID: 206
+  uniqueID: 280
   description: 
   icon: {fileID: 868697242, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   prerequisiteNodesAny:
@@ -22,10 +22,13 @@ MonoBehaviour:
   stages:
   - upgrade: {fileID: 11400000, guid: 4e3e8e462e01c7f4c901fccbf2c5b8d8, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 0
+    upgradeItemPool: {fileID: 0}
   - upgrade: {fileID: 11400000, guid: 12cc811a9756ac043a17ef7bfa96368f, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 0
+    upgradeItemPool: {fileID: 0}
   - upgrade: {fileID: 11400000, guid: cf36eccec61a6224aa30bf2294e4fadc, type: 2}
     costMultiplier: 1
-    tier: 0
+    costTier: 0
+    upgradeItemPool: {fileID: 0}

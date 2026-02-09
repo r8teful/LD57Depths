@@ -37,12 +37,11 @@ public class BackgroundManager : MonoBehaviour {
         _blackSprite.enabled = false;
         biomeManager = bio;
 
-        bio.OnNewClientBiome += NewClientBiome;
+        biomeManager.OnNewClientBiome += NewClientBiome;
         // Spawn particle systems
         //SpawnTrashParticles();
-        
     }
-
+ 
     private void NewClientBiome(BiomeType biomeOld, BiomeType biomeNew) {
         // This will only work for server host but you should make it so that its run locally on the client
         // This now means that we should locally change particles / lighting / etc.

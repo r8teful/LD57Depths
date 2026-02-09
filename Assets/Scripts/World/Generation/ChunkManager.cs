@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using Random = UnityEngine.Random;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
     public ushort[,] tiles; // The ground layer 
@@ -473,58 +472,64 @@ public class ChunkManager : MonoBehaviour {
         // --- Get Tile Type & Properties ---
         TileSO baseTile = App.ResourceSystem.GetTileByID(chunk.tiles[localX, localY]);
         TileSO oreTile = App.ResourceSystem.GetTileByID(chunk.oreID[localX, localY]);
+
         // if ore use Ore tilebase, not stone
-        if (baseTile != null) {
-            if (baseTile.maxDurability <= 0) return; // Indestructible tile
-
-            // --- Apply Damage ---
-            float curDur = chunk.tileDurability[localX, localY];
-            short extraDurability = (short)(oreTile != null ? oreTile.maxDurability : 0);
-            if (curDur < 0) { // Was at full health (-1 sentinel)
-                curDur = baseTile.maxDurability + extraDurability; 
-            }
-            float newDurability = curDur - damageAmount;
-            // Mark as modified ONLY if durability actually changed
-            if (newDurability != chunk.tileDurability[localX, localY]) {
-                chunk.isModified = true;
-            }
-            chunk.tileDurability[localX, localY] = newDurability;
-
-            TileSO targetTile = oreTile != null ? oreTile : baseTile;
-            // --- Check for Destruction ---
-            if (newDurability <= 0) {
-                chunk.tileDurability[localX, localY] = -1;
-                // TODO air tile type should be of the dominant biome of the chunk 
-                ServerRequestModifyTile(cellPos, ResourceSystem.AirID);
-                SpawnDrops(targetTile, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Drop at cell center
-
-                _lightManager.RequestLightUpdate();
-                if (targetTile.breakEffectPrefab != null)
-                    SpawnEffect(targetTile.breakEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Pass prefab path or ID if effects aren't NetworkObjects
-            } else {
-                // Tile Damaged, not destroyed
-                float maxDur = baseTile.maxDurability +  extraDurability; 
-                UpdateTileVisuals(cellPos, newDurability, maxDur);
-                // Spawn Hit Effect (Broadcast to clients)
-                if (targetTile.hitEffectPrefab != null)
-                    SpawnEffect(targetTile.hitEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0));
-            }
-        } else {
-            Debug.LogError("ResourceSystem returned NULL tile");
+        if (baseTile == null) {
+           Debug.LogError("ResourceSystem returned NULL tile");
         }
+        if (baseTile.maxDurability <= 0) return; // Indestructible tile
+        // --- Apply Damage ---
+        float curDur = chunk.tileDurability[localX, localY];
+        float extraOreDur = 0;
+        
+        if(oreTile != null) {
+            var durabilityModifier = WorldTileManager.Instance.GetDurabilityIncrease(oreTile.ID);
+            extraOreDur = oreTile.maxDurability * durabilityModifier;
+        }
+        var durabilityModifierBase = WorldTileManager.Instance.GetDurabilityIncrease(baseTile.ID);
+        float maxDur = (baseTile.maxDurability*durabilityModifierBase) + extraOreDur; 
+        if (curDur < 0) { // Was at full health (-1 sentinel)
+            curDur = maxDur;
+        }
+        float newDurability = curDur - damageAmount;
+        // Mark as modified ONLY if durability actually changed
+        if (newDurability != chunk.tileDurability[localX, localY]) {
+            chunk.isModified = true;
+        }
+        chunk.tileDurability[localX, localY] = newDurability;
+
+        TileSO targetTile = oreTile != null ? oreTile : baseTile;
+        // --- Check for Destruction ---
+        if (newDurability <= 0) {
+            chunk.tileDurability[localX, localY] = -1;
+            // TODO air tile type should be of the dominant biome of the chunk 
+            ServerRequestModifyTile(cellPos, ResourceSystem.AirID);
+            SpawnDrops(targetTile, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Drop at cell center
+
+            _lightManager.RequestLightUpdate();
+            if (targetTile.breakEffectPrefab != null)
+                SpawnEffect(targetTile.breakEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Pass prefab path or ID if effects aren't NetworkObjects
+        } else {
+            // Tile Damaged, not destroyed
+            UpdateTileVisuals(cellPos, newDurability, maxDur);
+            // Spawn Hit Effect (Broadcast to clients)
+            if (targetTile.hitEffectPrefab != null)
+                SpawnEffect(targetTile.hitEffectPrefab, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0));
+        }
+        
     }
     // --- Server-side method to handle spawning drops ---
     // We might want to move this to WorldManager but eh
     private void SpawnDrops(TileSO sourceTile, Vector3 position) {
         if (sourceTile.drop == null) return;
         // Query dropmanager for drops
-        var dropData = WorldDropManager.Instance.GetDropData(sourceTile);
+        var dropData = WorldTileManager.Instance.GetDropData(sourceTile);
         foreach (var drop in dropData) {
             // WorldDropManager handles drop gameobjects
             if (drop.Amount == 1) { 
-                WorldDropManager.Instance.SpawnDropOne(position,1, drop.ItemData);
+                WorldTileManager.Instance.SpawnDropOne(position,1, drop.ItemData);
             } else {
-                WorldDropManager.Instance.SpawnDrop(position, drop.Amount, drop.ItemData);
+                WorldTileManager.Instance.SpawnDrop(position, drop.Amount, drop.ItemData);
             }
             
         }

@@ -13,6 +13,7 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
     public PlayerVisualHandler PlayerVisuals { get; private set; }
     public PlayerLayerController PlayerLayerController { get; private set; }
     public PlayerMovement PlayerMovement { get; private set; }
+    public ItemTransferManager ItemTransferManager { get; private set; }
     public static PlayerManager LocalInstance { get; private set; } // Singleton for local player
     public PlayerStatsManager PlayerStats { get; private set; } 
     public OxygenManager OxygenManager { get; private set; }
@@ -64,6 +65,7 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
         OxygenManager = GetComponent<OxygenManager>();
         PlayerReward = GetComponent<PlayerRewardManager>();
         PlayerMovement = GetComponent<PlayerMovement>();
+        ItemTransferManager = GetComponent<ItemTransferManager>();
 
         InventoryN.Initialize(); // We have to do this first before everything else, then spawn the UI manager, and then start the other inits 
         
@@ -73,6 +75,7 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
             //Debug.Log($"Initialized Module: {module.GetType().Name} (Order: {module.InitializationOrder})");
 
         }
+        ItemTransferManager.InitLate(this); // need to init twice, once before inventory, due to regist, then after inv 
         PlayerCamera = Camera.main.gameObject.GetComponent<PlayerCameraController>(); // Should work
         if (PlayerCamera == null) Debug.LogError("Coudn't find cameraController on main camera!");
         Debug.Log($"Player Initialization Complete! Initialized {_modules.Count} modules");

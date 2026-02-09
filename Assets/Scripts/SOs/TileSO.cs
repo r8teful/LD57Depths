@@ -5,7 +5,7 @@ using System.Collections.Generic;
 [CreateAssetMenu(fileName = "TileSO", menuName = "ScriptableObjects/TileSO")]
 public class TileSO : RuleTile, IIdentifiable {
     [Header("Game Properties")]
-    public short maxDurability = 10; // How many "hits" it takes to break. -1 means non solid.
+    public float maxDurability = 10; // How many "hits" it takes to break. -1 means non solid.
     [HideInInspector]  // We now set it dynamically based on biome ( so Y color value in the shader )
     public int textureIndex = -1; // Used in the shader to know what the texture should be, set as -1 only if not used by shader
     ushort IIdentifiable.ID => ID;

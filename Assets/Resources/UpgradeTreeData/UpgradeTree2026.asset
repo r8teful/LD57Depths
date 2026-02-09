@@ -16,15 +16,6 @@ MonoBehaviour:
     baseValue: 4
     linearIncrease: 8
     expIncrease: 2.4
-  tiers:
-  - {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
-  - {fileID: 11400000, guid: c62c0885783485c439bdc01783a4c337, type: 2}
-  - {fileID: 11400000, guid: 252630a728eb6594c979e7727659293c, type: 2}
-  - {fileID: 11400000, guid: 29f367e82be84e84aa1af9c8dd6f8436, type: 2}
-  - {fileID: 11400000, guid: 7a7075eeb4ea12048beda4d095946b0f, type: 2}
-  - {fileID: 11400000, guid: 4ace887e572a03046b8ea064c2624545, type: 2}
-  - {fileID: 11400000, guid: c8505d26704f39c49ad4623ac0fd7558, type: 2}
-  statsToDisplay: 0300000004000000050000000600000007000000
   treeName: DefaultTree
   nodes:
   - {fileID: 11400000, guid: 3fc0c9bd770644d448652616cf99fcec, type: 2}
@@ -53,4 +44,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: aae5068873538734c98e5f1458a43eeb, type: 2}
   - {fileID: 11400000, guid: f2266ccd8a0e6d64c94a903011ba3866, type: 2}
   - {fileID: 11400000, guid: 36f7a8384bc3a494f8a9a74690b319f9, type: 2}
+  - {fileID: 11400000, guid: c8b8943fe4692a645902734d0c13ef6e, type: 2}
+  - {fileID: 11400000, guid: 9348d0b602d93da44aadd969b4c0a679, type: 2}
+  - {fileID: 11400000, guid: e8fa2fd387da1694d95c92b5f8d42c7a, type: 2}
+  - {fileID: 11400000, guid: 13e2c3f28a84ceb4f93532ece64ea809, type: 2}
   prefab: {fileID: 4102176661086873485, guid: c93e4d609b751e846a139bb3a64d1f21, type: 3}
