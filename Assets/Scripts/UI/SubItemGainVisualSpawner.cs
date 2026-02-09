@@ -20,7 +20,7 @@ public class SubItemGainVisualSpawner : MonoBehaviour {
         if (newAmount <= 0) return;
         Sprite icon = App.ResourceSystem.GetItemByID(itemId).icon;
         var popup = Instantiate(_popup, _popupContainer);
-        popup.Init(icon, newAmount);
+        popup.Init(icon, newAmount, itemId);
         popup.OnDespawned += HandlePopupDespawn;
         activePopups[itemId] = popup;
      }

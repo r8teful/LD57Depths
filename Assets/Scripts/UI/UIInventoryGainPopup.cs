@@ -17,17 +17,52 @@ public class UIInventoryGainPopup : MonoBehaviour {
     private bool isFading = false;
     private Tween fadeTween;
     private AudioSource _sound;
-    private float _sinceLastIncrease;
+   // private float _sinceLastIncrease;
+    private ushort _cachedID;
+
     //private bool _hasIncremented;
+    private void Awake() {
+        ItemTransferManager.OnTransferCompleteItem += ItemTransferComplete;
+        PlayerLayerController.OnPlayerVisibilityChanged += PlayerLayerChange;
+    }
+
+    private void PlayerLayerChange(VisibilityLayerType type) {
+        if(type == VisibilityLayerType.Exterior) {
+            // stop audio if its playing 
+            if (_sound != null && _sound.isPlaying) {
+                _sound.DOFade(0, 0.5f).OnComplete(() => {
+                    _sound.DOKill();
+                    Destroy(_sound.gameObject);
+                    _sound = null;
+                });
+            }
+            OnDespawned?.Invoke(this);
+            Destroy(gameObject);
+        }
+    }
 
     private void OnDestroy() {
-        transform.DOKill();
+        ItemTransferManager.OnTransferCompleteItem -= ItemTransferComplete;
+        PlayerLayerController.OnPlayerVisibilityChanged -= PlayerLayerChange;
     }
-    public void Init(Sprite icon, int amount) {
+
+    private void ItemTransferComplete(ushort id) {
+        if (id == _cachedID && _sound != null) {
+            _sound.DOFade(0, 0.5f).OnComplete(() => {
+                _sound.DOKill();
+                Destroy(_sound.gameObject);
+                _sound = null;
+            });
+        }
+    }
+
+    
+    public void Init(Sprite icon, int amount, ushort id) {
         if (canvasGroup == null) {
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
         }
         canvasGroup.alpha = 1f;
+        _cachedID = id;
         
         itemIconImage.sprite = icon;
         _quantity = amount;
@@ -39,8 +74,7 @@ public class UIInventoryGainPopup : MonoBehaviour {
         transform.localScale = Vector3.zero;
         transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
         // sound
-        _sinceLastIncrease = Time.time;
-        _sound = AudioController.Instance.PlaySound2D("ItemAdd",0.2f,looping:true);
+        _sound = AudioController.Instance.PlaySound2D("ItemAdd",0.1f,looping:true);
     }
 
     public void IncreaseAmount(int increaseBy) {
@@ -56,7 +90,6 @@ public class UIInventoryGainPopup : MonoBehaviour {
             canvasGroup.alpha = 1f;
             isFading = false;
         }
-        _sinceLastIncrease = Time.time;
     }
     private void Animation() {
         quantityText.transform.localScale = Vector3.one;
@@ -70,14 +103,6 @@ public class UIInventoryGainPopup : MonoBehaviour {
     }
 
     private void Update() {
-        if (_sound != null && Time.time - _sinceLastIncrease >= 0.05f) {
-            _sound.DOFade(0,0.5f).OnComplete(()=> {
-                _sound.DOKill();
-                Destroy(_sound.gameObject);
-                _sound = null;
-            });
-            
-        }
         if (!isFading && Time.time - lastUpdateTime > DespawnDelay) {
             isFading = true;
             fadeTween = canvasGroup.DOFade(0f, 1f).OnComplete(() => {

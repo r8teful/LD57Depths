@@ -109,10 +109,10 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
 
     public void ModifyValue(ValueModifier modifier) {
         if(modifier.Key == ValueKey.MagnetismPickup) {
-            var newV = UpgradeCalculator.CalculateUpgradeChange(_magnetRange,modifier.Type, modifier.Value);
+            var newV = UpgradeCalculator.CalculateUpgradeChange(_magnetRange,modifier);
             _magnetRange = newV; 
         } else if(modifier.Key == ValueKey.MagnetismStrength) {
-            var newV = UpgradeCalculator.CalculateUpgradeChange(_magnetStrength, modifier.Type, modifier.Value);
+            var newV = UpgradeCalculator.CalculateUpgradeChange(_magnetStrength, modifier);
             _magnetStrength = newV; 
         }
     }
@@ -134,8 +134,8 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
     }
 
     public void Register() {
-        UpgradeManagerPlayer.LocalInstance.RegisterValueModifierScript(ValueKey.MagnetismPickup, this);
-        UpgradeManagerPlayer.LocalInstance.RegisterValueModifierScript(ValueKey.MagnetismStrength, this);
+        UpgradeManagerPlayer.Instance.RegisterValueModifierScript(ValueKey.MagnetismPickup, this);
+        UpgradeManagerPlayer.Instance.RegisterValueModifierScript(ValueKey.MagnetismStrength, this);
     }
 
 }

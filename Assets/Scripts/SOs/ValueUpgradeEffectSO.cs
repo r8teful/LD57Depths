@@ -8,14 +8,14 @@ public class ValueUpgradeEffectSO : UpgradeEffect {
     public StatModifyType increaseType;
     public float modificationValue;
     public override void Execute(ExecutionContext context) {
-       var script = UpgradeManagerPlayer.LocalInstance.Get<IValueModifiable>(valueType);
+       var script = UpgradeManagerPlayer.Instance.Get<IValueModifiable>(valueType);
         ValueModifier modifier = new(modificationValue, valueType, increaseType, this);
         script.ModifyValue(modifier);
         // Programming out here!
     }
 
     public override StatChangeStatus GetChangeStatus() {
-        var script = UpgradeManagerPlayer.LocalInstance.Get<IValueModifiable>(valueType);
+        var script = UpgradeManagerPlayer.Instance.Get<IValueModifiable>(valueType);
         var valueBase = script.GetValueBase(valueType);
         var valueNow = script.GetValueNow(valueType);
         var valueNext = UpgradeCalculator.CalculateUpgradeChange(valueNow, increaseType, modificationValue);

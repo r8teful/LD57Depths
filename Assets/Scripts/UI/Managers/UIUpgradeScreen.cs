@@ -39,7 +39,7 @@ public class UIUpgradeScreen : MonoBehaviour {
        
         // We have to get the existing data from the UpgradeManager, for both the local player, and the communal from the server
         // I don't think we should do it here though, do it in the upgrade managers themselves, then they need to call the approriate things 
-        var pUpgrades = UpgradeManagerPlayer.LocalInstance.GetUnlockedUpgrades();
+        var pUpgrades = UpgradeManagerPlayer.Instance.GetUnlockedUpgrades();
 
         UpgradeTreeInstance = InstantiateTree(_treeData, _upgradePanelTree.transform, pUpgrades, client);
         PanAndZoom.Init(client.InputManager);

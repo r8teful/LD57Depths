@@ -34,7 +34,7 @@ public class PickupPopupSpawner : MonoBehaviour {
             popup.IncreaseAmount(amount);
         } else {
             popup = Instantiate(App.ResourceSystem.GetPrefab<UIInventoryGainPopup>("UIInventoryGainPopup"), popupParent);
-            popup.Init(icon, amount);
+            popup.Init(icon, amount, itemId);
             popup.OnDespawned += HandlePopupDespawn;
             activePopups[itemId] = popup;
         }

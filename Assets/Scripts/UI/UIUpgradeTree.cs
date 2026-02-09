@@ -52,7 +52,7 @@ public class UIUpgradeTree : MonoBehaviour {
         _adjacencyDict = BuildUndirectedAdjacency(tree.nodes);
         UIUpgradeScreen.OnSelectedNodeChanged += SelectedChange;
         _player.UiManager.UpgradeScreen.OnPanelChanged += PanelChanged;
-        ItemTransferManager.OnTransferComplete += UpdateNodeVisualData; // Fixes a bug where nodes don't update when you rush to the upgrade machine
+        ItemTransferManager.OnTransferCompleteAll += UpdateNodeVisualData; // Fixes a bug where nodes don't update when you rush to the upgrade machine
 
     }
 
@@ -142,7 +142,7 @@ public class UIUpgradeTree : MonoBehaviour {
         return adj;
     }
     internal void OnUpgradeButtonClicked(UIUpgradeNode uIUpgradeNode, UpgradeNodeSO upgradeNode) {
-      if (UpgradeManagerPlayer.LocalInstance.TryPurchaseUpgrade(upgradeNode)) {
+      if (UpgradeManagerPlayer.Instance.TryPurchaseUpgrade(upgradeNode)) {
             // Purchased succefully!
             var unlockedUpgrades = _player.UpgradeManager.GetUnlockedUpgrades();
             uIUpgradeNode.OnUpgraded(unlockedUpgrades);

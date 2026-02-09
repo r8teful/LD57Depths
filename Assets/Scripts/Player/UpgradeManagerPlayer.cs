@@ -11,7 +11,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
     private PlayerManager _localNetworkedPlayer;
 
     private readonly Dictionary<ValueKey, IValueModifiable> _valueModifierScipts = new Dictionary<ValueKey, IValueModifiable>();
-    public static UpgradeManagerPlayer LocalInstance { get; private set; }
+    public static UpgradeManagerPlayer Instance { get; private set; }
 
     public HashSet<ushort> GetUnlockedUpgrades() => unlockedUpgrades;
 
@@ -23,7 +23,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
     public int InitializationOrder => 10;
 
     public void InitializeOnOwner(PlayerManager playerParent) {
-        LocalInstance = this;
+        Instance = this;
         _crafting = playerParent.CraftingComponent;
         _localNetworkedPlayer = playerParent;
     }

@@ -6,5 +6,6 @@
 }
 public enum ValueKey {
     MagnetismPickup = 10,
-    MagnetismStrength = 11
+    MagnetismStrength = 11,
+    ItemTransferRate = 20
 }

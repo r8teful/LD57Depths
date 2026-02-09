@@ -4,55 +4,52 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Transfers the items from player inventory to sub inventory
-public class ItemTransferManager : MonoBehaviour, IPlayerModule {
+public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiable {
 
     private InventoryManager inventorySub;
     private InventoryManager inventoryPlayer;
     private PlayerManager _player;
-    [SerializeField] private float timePerCategory = 1.0f;
-    [SerializeField] private int transferSteps = 10;
     [SerializeField] private float delayBetweenCategories = 0.5f;
+    private float itemsPerSecond;
+    private const float itemPerSecondBase = 20f;
 
-    private Coroutine currentTransferRoutine;
-    public static event Action OnTransferComplete;
+    private Coroutine transferCoroutine;
+    public static event Action OnTransferCompleteAll;
+    public static event Action<ushort> OnTransferCompleteItem;
     public int InitializationOrder => 1001; // after ui 
 
     public void InitializeOnOwner(PlayerManager playerParent) {
         inventoryPlayer = playerParent.GetInventory();
         _player = playerParent;
         inventorySub = SubmarineManager.Instance.SubInventory;
+        itemsPerSecond = itemPerSecondBase;
         PlayerLayerController.OnPlayerVisibilityChanged += PlayerLayerChange;
-        _player.UiManager.UpgradeScreen.OnPanelChanged += UpgradeScreenToggle;
+
     }
     private void OnDestroy() {
         PlayerLayerController.OnPlayerVisibilityChanged -= PlayerLayerChange;
-        _player.UiManager.UpgradeScreen.OnPanelChanged -= UpgradeScreenToggle;
-        
-    }
-    private void UpgradeScreenToggle(bool isActive) {
-        if (isActive) {
-            // transfer all
-            TriggerInstantTransfer();
-        }
-    }
 
+    }
     private void PlayerLayerChange(VisibilityLayerType layer) {
-        if(layer == VisibilityLayerType.Interior) {
+        if (layer == VisibilityLayerType.Interior) {
             TriggerTransferSequence();
-        } else {
-            TriggerInstantTransfer();
+        } else if (layer == VisibilityLayerType.Exterior) {
+            if (transferCoroutine != null) {
+                // Stop transfering
+                StopCoroutine(transferCoroutine);
+                transferCoroutine = null; 
+            }
         }
     }
-
     public void TriggerTransferSequence() {
-        if (currentTransferRoutine != null) return;
-        currentTransferRoutine = StartCoroutine(TransferRoutine());
+        if (transferCoroutine != null) return;
+        transferCoroutine = StartCoroutine(TransferRoutine());
     }
 
     public void TriggerInstantTransfer() {
-        if (currentTransferRoutine != null) {
-            StopCoroutine(currentTransferRoutine);
-            currentTransferRoutine = null;
+        if (transferCoroutine != null) {
+            StopCoroutine(transferCoroutine);
+            transferCoroutine = null;
         }
         List<ushort> itemsToMove = new List<ushort>(inventoryPlayer.Slots.Keys);
 
@@ -68,60 +65,62 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule {
                 }
             }
         }
-        OnTransferComplete?.Invoke();
+        OnTransferCompleteAll?.Invoke();
         Debug.Log("Instant transfer complete.");
     }
-
+    // Uses a currency system, where the currency is the deltaTime and we pay based on our transfer rate
     private IEnumerator TransferRoutine() {
-        // 1. Snapshot items
-        List<ushort> itemsToTransfer = new List<ushort>(inventoryPlayer.Slots.Keys);
+        List<ushort> itemTypesToTransfer = new List<ushort>(inventoryPlayer.Slots.Keys);
+        float timeAccumulator = 0f;
+        foreach (ushort itemID in itemTypesToTransfer) {
+            // Verify item still exists in dictionary
+            while (inventoryPlayer.Slots.ContainsKey(itemID)) {
+                InventorySlot slot = inventoryPlayer.Slots[itemID];
+                if (slot.quantity <= 0) break; // None left of this type, move to next
 
-        // 2. Count TOTAL items first
-        int totalItems = 0;
-        foreach (var id in itemsToTransfer) {
-            if (inventoryPlayer.Slots.ContainsKey(id))
-                totalItems += inventoryPlayer.Slots[id].quantity;
-        }
-
-        // 3. Calculate Speed
-        float targetDuration = 1.0f; // Max time allowed
-        float calculatedRate = totalItems / targetDuration;
-
-        // "Shorter is fine": 
-        // If we only have 5 items, 'calculatedRate' would be 5 per second (slow).
-        // We clamp it to a minimum (e.g., 50/sec) so small transfers feel snappy.
-        float minRate = 50f;
-        float itemsPerSecond = Mathf.Max(calculatedRate, minRate);
-
-        // 4. The Accumulator
-        float moveCredit = 0f;
-
-        foreach (ushort itemID in itemsToTransfer) {
-            // Keep looping as long as the player still has this item
-            while (inventoryPlayer.Slots.ContainsKey(itemID) &&
-                   inventoryPlayer.Slots[itemID].quantity > 0) {
-
-                // Wait until we have enough "Credit" (Time) to move an item
-                // If FPS is high, we wait here.
-                // If FPS is low (lag), this loop is skipped, processing multiple items instantly.
-                while (moveCredit < 1.0f) {
-                    yield return null;
-                    moveCredit += Time.deltaTime * itemsPerSecond;
+                float secondsPerItem = 1.0f / itemsPerSecond;
+                timeAccumulator += Time.deltaTime;
+                while (timeAccumulator >= secondsPerItem) {
+                    // Check availability inside the micro-loop
+                    if (!inventoryPlayer.Slots.ContainsKey(itemID) ||
+                        inventoryPlayer.Slots[itemID].quantity <= 0) {
+                        break;
+                    }
+                    bool removed = inventoryPlayer.RemoveItem(itemID, 1);
+                    if (!removed) continue;
+                    bool added = inventorySub.AddItem(itemID, 1); 
+                    timeAccumulator -= secondsPerItem;
                 }
 
-                // Move the item
-                if (inventoryPlayer.RemoveItem(itemID, 1)) {
-                    inventorySub.AddItem(itemID, 1);
-                    moveCredit -= 1.0f; // "Spend" the time credit
-                } else {
-                    break; // Failsafe
-                }
+                // Wait for the next frame to accumulate more time
+                yield return null;
             }
+            OnTransferCompleteItem?.Invoke(itemID);
             yield return new WaitForSeconds(delayBetweenCategories);
         }
-
-        currentTransferRoutine = null;
-        OnTransferComplete?.Invoke();
-        Debug.Log("Transfer Complete");
+        transferCoroutine = null;
+        OnTransferCompleteAll?.Invoke();
+        Debug.Log("Transfer Complete.");
     }
+    public void StopTransfer() {
+        if (transferCoroutine != null) {
+            StopCoroutine(transferCoroutine);
+            transferCoroutine = null;
+        }
+    }
+
+    public void ModifyValue(ValueModifier modifier) {
+        itemsPerSecond = UpgradeCalculator.CalculateUpgradeChange(itemsPerSecond, modifier);
+    }
+
+    public void Register() {
+        UpgradeManagerPlayer.Instance.RegisterValueModifierScript(ValueKey.ItemTransferRate, this);
+    }
+
+    public float GetValueNow(ValueKey key) 
+        => key == ValueKey.ItemTransferRate? itemsPerSecond : 0;
+
+    public float GetValueBase(ValueKey key) 
+        => key == ValueKey.ItemTransferRate ? itemPerSecondBase : 0;
+    
 }

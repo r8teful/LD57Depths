@@ -1,4 +1,5 @@
 ﻿
+using System;
 using UnityEngine;
 
 public static class UpgradeCalculator {
@@ -17,10 +18,19 @@ public static class UpgradeCalculator {
             case StatModifyType.Add:
                 return current + increaseAmount;
             case StatModifyType.PercentAdd:
-                return current * (1+increaseAmount);
+                return current * (1 + increaseAmount);
+            case StatModifyType.PercentMult:
+                return current * increaseAmount;
             default:
                 Debug.LogWarning("Fallback, coudn't find approriate increase type calculation!");
                 return current;
-            }
+        }
+    }
+
+    public static float CalculateUpgradeChange(float current, ValueModifier modifier) {
+        return CalculateUpgradeChange(current, modifier.Type, modifier.Value);
+    }
+    public static float CalculateUpgradeChange(float current, StatModifier modifier) {
+        return CalculateUpgradeChange(current, modifier.Type, modifier.Value);
     }
 }
