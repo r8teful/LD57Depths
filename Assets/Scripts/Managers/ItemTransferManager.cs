@@ -15,7 +15,9 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
 
     private Coroutine transferCoroutine;
     public static event Action OnTransferCompleteAll;
-    public static event Action<ushort> OnTransferCompleteItem;
+    public static event Action<ushort,int> OnItemTransferStart;
+    public static event Action<ushort> OnItemTransferStop;
+
     public int InitializationOrder => 900; // before ui
 
     public void InitializeOnOwner(PlayerManager playerParent) {
@@ -78,8 +80,9 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
         float timeAccumulator = 0f;
         foreach (ushort itemID in itemTypesToTransfer) {
             // Verify item still exists in dictionary
+            if (!inventoryPlayer.Slots.TryGetValue(itemID, out var slot)) continue;
+            OnItemTransferStart.Invoke(itemID, slot.quantity);
             while (inventoryPlayer.Slots.ContainsKey(itemID)) {
-                InventorySlot slot = inventoryPlayer.Slots[itemID];
                 if (slot.quantity <= 0) break; // None left of this type, move to next
 
                 float secondsPerItem = 1.0f / itemsPerSecond;
@@ -99,7 +102,7 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
                 // Wait for the next frame to accumulate more time
                 yield return null;
             }
-            OnTransferCompleteItem?.Invoke(itemID);
+            OnItemTransferStop?.Invoke(itemID);
             yield return new WaitForSeconds(delayBetweenCategories);
         }
         transferCoroutine = null;

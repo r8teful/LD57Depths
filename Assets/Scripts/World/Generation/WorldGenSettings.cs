@@ -33,7 +33,7 @@ public class WorldGenSettings {
     }
 
     public float GetWorldLayerYPos(int number) {
-        int totalLayers = 5; // We'll have to check how many this will be later 
+        int totalLayers = 3; // We'll have to check how many this will be later 
         return MaxDepth * ((float)Mathf.Abs(number - totalLayers) / totalLayers);
     }
 

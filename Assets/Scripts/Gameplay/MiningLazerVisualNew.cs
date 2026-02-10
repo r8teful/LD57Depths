@@ -1,8 +1,10 @@
 ﻿using DG.Tweening;
+using System;
 using UnityEngine;
 
 public class MiningLazerVisualNew : MonoBehaviour {
     public LineRenderer lineRenderer;
+    public LineRenderer lineRendererChain;
     public ParticleSystem ParticlesPrefabHit;
     public ParticleSystem _lineLazerParticleSystem;
     private ParticleSystem _hitParticleSystem;
@@ -12,6 +14,7 @@ public class MiningLazerVisualNew : MonoBehaviour {
     private AudioSource lazerSound;
     private bool _isUsingAbility;
     private bool _hasStarted;
+    private bool _chainActive;
 
     private void Awake() {
         SetupParticlesVisual();
@@ -80,6 +83,7 @@ public class MiningLazerVisualNew : MonoBehaviour {
 
             }
         }
+        StopChain(); // idk
     }
     private void LaserVisual(Vector2 targetDirection, bool isAbility) {
         var range = _abilityInstance.GetEffectiveStat(StatType.MiningRange);
@@ -162,6 +166,8 @@ public class MiningLazerVisualNew : MonoBehaviour {
         }
     }
     private void FadeOutLine(LineRenderer lineRenderer) {
+        //if (!lineRenderer.enabled) return; // already faded out
+        //if (lineRenderer.startColor.a < 1) return; // already fading out
         DOTween.Kill(lineRenderer);
         Color2 startColor = new(lineRenderer.startColor, lineRenderer.endColor);
         var alphaStart0 = lineRenderer.startColor;
@@ -172,6 +178,8 @@ public class MiningLazerVisualNew : MonoBehaviour {
         lineRenderer.DOColor(startColor, endColor, 0.2f).OnComplete(() => lineRenderer.enabled = false);
     }
     private void FadeInLine(LineRenderer lineRenderer) {
+        //if (lineRenderer.enabled) return; // already faded in
+        //if (lineRenderer.startColor.a > 0) return; // already fading in
         DOTween.Kill(lineRenderer);
         Color2 startColor = new(lineRenderer.startColor, lineRenderer.endColor);
         var alphaStart1 = lineRenderer.startColor;
@@ -180,5 +188,37 @@ public class MiningLazerVisualNew : MonoBehaviour {
         alphaEnd1.a = 1;
         Color2 endColor = new(alphaStart1, alphaEnd1);
         lineRenderer.DOColor(startColor, endColor, 0.07f).OnComplete(() => lineRenderer.enabled = true);
+    }
+
+    internal void DrawChain(Vector2 start, Vector2 dir, float distance) {
+        Vector2 localStart = transform.InverseTransformPoint(start);
+        CreateLaserEffectChain(localStart, transform.InverseTransformPoint(start + dir * distance));
+    }
+    internal void DrawChain(Vector2 start, Vector2 target) {
+        Vector2 localStart = transform.InverseTransformPoint(start);
+        CreateLaserEffectChain(localStart, transform.InverseTransformPoint(target)); 
+    }
+    void CreateLaserEffectChain(Vector3 start, Vector3 end) {
+        var dmg = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
+        var lineWidth = Mathf.Min(Mathf.Max(dmg * 0.05f, 0.04f), 1f);
+        lineRendererChain.SetPosition(0, start);
+        lineRendererChain.SetPosition(1, end);
+        lineRendererChain.startWidth = lineWidth;
+        lineRendererChain.endWidth = lineWidth * 0.7f;
+        lineRenderer.material.SetColor("_Color", new(3, 0, 0));
+    }
+
+    internal void StopChain() {
+        if (_chainActive) {
+            FadeOutLine(lineRendererChain);
+            _chainActive = false;
+        }
+    }
+
+    internal void StartChain() {
+        if (!_chainActive) {
+            FadeInLine(lineRendererChain);
+            _chainActive = true;
+        }
     }
 }

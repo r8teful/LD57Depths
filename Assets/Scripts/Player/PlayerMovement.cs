@@ -129,6 +129,10 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
             accelerationForce *= 5;
         }
 #endif
+       // float waterDifficulty = 0.5f; // Boom 
+        float waterDifficulty = 1; 
+        accelerationForce *= waterDifficulty;
+        _cachedSwimSpeed  *= waterDifficulty;
         Vector2 moveDirection = _currentInput.normalized;
 
         if (moveDirection != Vector2.zero) {
@@ -136,7 +140,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
         } else {
             if (rb.linearVelocity.magnitude > 0.01f) {
                 Vector2 oppositeDirection = -rb.linearVelocity.normalized;
-                rb.AddForce(oppositeDirection * decelerationForce);
+                rb.AddForce(oppositeDirection * decelerationForce * accelerationForce*0.4f);
             } else {
                 rb.linearVelocity = Vector2.zero;
             }

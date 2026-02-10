@@ -913,35 +913,39 @@ IDea: You have a random item pool which give interesting extra bonuses for the r
 
 
 
-You could do some crazy stuff by "unlocking" iron ore, and it would reset the world and then generate it with it there, kind of like an early prestige 
+You could do some crazy stuff by "unlocking" iron ore, and it would reset the world and then generate it with it there, kind of like an early prestige
 
 
 
-I'm making the world more dense because its all about mining and having lots of air kind of ruins the flow because you'd just be swimming which is not really what it is about 
+I'm making the world more dense because its all about mining and having lots of air kind of ruins the flow because you'd just be swimming which is not really what it is about
 
 
 
 Divide 2nd oxygen into two instead of 1, its too big of a jump
 
-Make acceleration give less drag 
+Make acceleration give less drag
 
 
 
-it feels weird when you've got so much movement and you've kind of seen the trench all the way to the top you don't feel like you need to do anything anmore, you've done your thing, you've made it to the top, there is nothing left to do. As soon as you can go to the top and back is kind of the point that you should be done with the level, so you would either make it really far up, like you'd not even come close with the speed and oxygen, or simply make the oxygen and speed slow enough so that you can't really reach the top. Also just add more upgrades, make the damage more, make the range longer, keep having those upgrades with the current scaling and see how it goes
+it feels weird when you've got so much movement and you've kind of seen the trench all the way to the top you don't feel like you need to do anything anmore, you've done your thing, you've made it to the top, there is nothing left to do. As soon as you can go to the top and back is kind of the point that you should be done with the level, so you would either make it really far up, like you'd not even come close with the speed and oxygen, or simply make the oxygen and speed slow enough so that you can't really reach the top. Also just add more upgrades, make the damage more, make the range longer, keep having those upgrades with the current scaling and see how it goes. Also these stages you have with stone, copper, iron, etc. As soon as you "clear" that stage, like there are no more upgrades with that resource so it feels kind of pointless to have them but I guess maybe the sub upgrades can have those resources?
 
 
 
+For crit: Have a crit damage stat, add it to the tools crit damage, and times it by the normal damage, also crit chance is also added with tool crit chance, multiplied by crit chance buff etc
 
 
 
+Fucking hate how the "ability" shit is structured its so messy with the active and passive shit its horrible I hate it
 
 
 
+You're missing a lot of controll having the behaviours all be separate, they should be small scripts that are controlled through abilitymanager. Gives you more control
 
 
 
+Notes from shelldiver juice
 
-
+* Transfer has a very slight screenshake, the items go behind the character and pop in and rotate a bit , also loads of particles when that happens
 
  
 

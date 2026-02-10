@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -6,14 +7,49 @@ using UnityEngine;
 public class SubItemGainVisualSpawner : MonoBehaviour {
 
     [SerializeField] Transform _popupContainer;
+    [SerializeField] Transform _transferVisualWorldDestination;
     [SerializeField] UIInventoryGainPopup _popup; 
+    [SerializeField] SubItemTransferVisual _transferVisualPrefab; 
+
     private Dictionary<ushort, UIInventoryGainPopup> activePopups = new Dictionary<ushort, UIInventoryGainPopup>();
+    private Dictionary<ushort, SubItemTransferVisual> activeTransferVisuals= new Dictionary<ushort, SubItemTransferVisual>();
     private InventoryManager _inv;
 
     public void Init(InventoryManager subInventory) {
         subInventory.OnSlotNew += SlotNew;
         subInventory.OnSlotChanged += SlotChanged;
+        ItemTransferManager.OnItemTransferStart += ItemStart;
+        ItemTransferManager.OnItemTransferStop += ItemStop;
+        subInventory.OnSlotChanged += SlotChanged;
         _inv = subInventory;
+    }
+    private void OnDestroy() {
+        _inv.OnSlotNew -= SlotNew;
+        _inv.OnSlotChanged -= SlotChanged;
+        ItemTransferManager.OnItemTransferStart -= ItemStart;
+        ItemTransferManager.OnItemTransferStop -= ItemStop;
+        _inv.OnSlotChanged -= SlotChanged;
+    }
+    private void ItemStart(ushort itemID, int quantity) {
+        // quantity determines visual speed...
+        if (activeTransferVisuals.ContainsKey(itemID)) return;
+        var icon = App.ResourceSystem.GetItemByID(itemID).icon;
+        
+        var playerTrans = PlayerManager.Instance.transform;
+        var visual = Instantiate(_transferVisualPrefab, transform);
+        visual.StartVisual(playerTrans, _transferVisualWorldDestination, icon, quantity);
+        activeTransferVisuals.Add(itemID, visual);
+    }
+
+    private void ItemStop(ushort itemID) {
+        Debug.Log("item stop!");
+        if (!activeTransferVisuals.TryGetValue(itemID, out var visual)) {
+            Debug.LogError("STOPPED BUT COULDN'T FIND ID");
+            return;
+        }
+        
+        visual.StopVisual();
+        activeTransferVisuals.Remove(itemID);
     }
 
     private void SlotNew(ushort itemId,int newAmount) {

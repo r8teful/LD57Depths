@@ -44,7 +44,6 @@ POLISH NEEDED FOR DEMO:
 Steamdeck notes:
 
 * Icons not updating correctly for controller
-* Can't go into submarine
 * Should a start menu with settings to change full screen mode etc...
 * Also the block texture seems zoomed in... - WHY!? This also happens in windows build
 
@@ -56,7 +55,7 @@ Steamdeck notes:
 * Make popup fade out instead of disappear instant
 * Items go From bob to PC? -> Visually show it go from bob to pc, and make the PC bounce or something (show that its receiving it)
 * New color node with one upgrade but not getting one upgrade
-* Add black background when in sub
+* Hitstop when buying a node!?
 
 UX:
 
@@ -68,10 +67,9 @@ UX:
 Misc:
 
 * Should not fix the upgrade panel from the upgrade panel
-* Ores should feel more rare? just feels like you find everything all the time
 * Cactus particle effect?? When you turn into one
 * MAKE SETTINGS (good for debugging, like disabling the background, fullscreen modes etc
-* Make transfer be upgrade based, this will also make it FEEL like you're getting more and more resources
+* Implement pitch shift for each purchase in the upgrade tree for a visit
 
 
 
@@ -85,11 +83,23 @@ PACING:
 
 
 
-Upgrade that shows the way back?
-
-Upgrade that lets you only lose some of your items
 
 
+ADD MORE STUFF!
 
-First to smaller QOL things, then you do big boy balancing! List is too long now
+* Crit 
+* Lazer chain
+* Add exploration entity content
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -22,7 +22,7 @@ public class UIInventoryGainPopup : MonoBehaviour {
 
     //private bool _hasIncremented;
     private void Awake() {
-        ItemTransferManager.OnTransferCompleteItem += ItemTransferComplete;
+        ItemTransferManager.OnItemTransferStop += ItemTransferStopped;
         PlayerLayerController.OnPlayerVisibilityChanged += PlayerLayerChange;
     }
 
@@ -42,11 +42,11 @@ public class UIInventoryGainPopup : MonoBehaviour {
     }
 
     private void OnDestroy() {
-        ItemTransferManager.OnTransferCompleteItem -= ItemTransferComplete;
+        ItemTransferManager.OnItemTransferStop -= ItemTransferStopped;
         PlayerLayerController.OnPlayerVisibilityChanged -= PlayerLayerChange;
     }
 
-    private void ItemTransferComplete(ushort id) {
+    private void ItemTransferStopped(ushort id) {
         if (id == _cachedID && _sound != null) {
             _sound.DOFade(0, 0.5f).OnComplete(() => {
                 _sound.DOKill();

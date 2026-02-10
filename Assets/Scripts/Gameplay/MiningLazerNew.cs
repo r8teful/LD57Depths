@@ -1,8 +1,8 @@
 ﻿using r8teful;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Making a totally clean and new class because I don't want to mess up the other stuff, we'll just delete that old code afterwards
 public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     private AbilityInstance _abilityInstance;
     private PlayerManager _player;
@@ -16,12 +16,15 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     private bool _wasShootingLastFrame;
     private MiningLazerVisualNew _visual;
     private bool _firstShot;
+    private DamageContainer _damageContainer;
+
     public Vector2 CurrentDir => _currentDirection;
     public void Init(AbilityInstance instance, PlayerManager player) {
         _abilityInstance = instance;
         _player = player;
         _visual = GetComponent<MiningLazerVisualNew>();
         _visual.Init(player,instance,this);
+        _damageContainer = new DamageContainer();
         _abilityInstance.OnBuffExpired += OnBuffExpire;
     }
 
@@ -59,12 +62,14 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     private void OnEndShoot() {
         _visual.EndVisual();
         _timeToolStopped = Time.time;
+        _chainTarget = Vector3Int.zero; // no chain target anymore
+        Debug.Log("endshoot");
     }
 
     private void OnStartShoot() {
         _firstShot = true;
         _visual.StartVisual();
-
+        _visual.StartChain();
     }
 
     private bool MineDelayCheck() {
@@ -107,37 +112,80 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
             _player.PlayerMovement.ApplyMiningKnockback(knockbackForce);
         }
     }
+    Vector2 debugVectorDir;
+    Vector2 debugVectorStart;
+    private float _createdRand;
+    private Vector3Int _chainTarget;
+    private Vector3Int pointBlue;
+    private Vector3Int hitPointPrevious;
+    private Vector3Int hitPointCurrent;
 
     private void Mine() {
         Vector2 toolPosition = transform.position;
         var range = _abilityInstance.GetEffectiveStat(StatType.MiningRange);
         var falloff = _abilityInstance.GetEffectiveStat(StatType.MiningFalloff);
         var damage = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
-        var dmg = new DamageContainer();
+        
         if(RandomnessHelpers.TryGetCritDamage(_abilityInstance, out var critMult)) {
             // Crit!
             damage *= critMult;
-            dmg.crit = true;
+            _damageContainer.crit = true;
         }
-        dmg.damage = damage;
+        _damageContainer.damage = damage;
         _lastKnownDirection = _currentDirection;
-        // Use the (potentially smoothed) _currentDirection for the raycast
         RaycastHit2D hit = Physics2D.Raycast(toolPosition, _currentDirection, range, LayerMask.GetMask("MiningHit"));
         //Debug.Log($"damage: {damage}");
+        
         if (hit.collider != null) {
+            // move forward slighly so we get the right world block
+            Vector2 nudgedPoint = hit.point + _currentDirection * 0.1f;
+            HandleChainLogic(nudgedPoint);
+            debugVectorStart = hit.point;
             var tiles = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, hit.point,0.7f);
             foreach (var tile in tiles) {
-                dmg.tile = tile.CellPos;
-                _player.RequestDamageTile(dmg);
+                _damageContainer.tile = tile.CellPos;
+                _player.RequestDamageTile(_damageContainer);
             }
+            //_damageContainer.damage *= 0.5f;
+            
             /* todo if you want falloff
             float distance = hit.distance;
             float falloffFactor = Mathf.Clamp01(1f - (distance / range) * falloff);
             float finalDamage = damage * falloffFactor;
             dmg.damage = finalDamage;    
              */
-        }
+        } else {
+            _visual.StopChain();
+        } 
     }
+
+    private void HandleChainLogic(Vector2 hit) {
+        _visual.StartChain();
+        float chainRange = 3f;
+        hitPointCurrent = WorldManager.Instance.MainTileMap.WorldToCell(hit);
+        if (_chainTarget == Vector3Int.zero) {
+            // No target, find one
+            var t = MineHelper.GetClosestSolidTile(WorldManager.Instance.MainTileMap, hit, chainRange, hitPointCurrent);
+            if(t!=null) _chainTarget = t.Value.CellPos;
+        }
+        if(Vector3Int.Distance(hitPointCurrent,_chainTarget) > chainRange){
+            //Chain target to far, get new chain target
+            var t = MineHelper.GetClosestSolidTile(WorldManager.Instance.MainTileMap, hit, chainRange, hitPointCurrent);
+            if(t!=null) _chainTarget = t.Value.CellPos;
+        }
+        var tile = WorldManager.Instance.MainTileMap.GetTile<TileSO>(_chainTarget);
+        if (tile != null && !tile.IsSolid) {
+            // tile broke, find new 
+            var t = MineHelper.GetClosestSolidTile(WorldManager.Instance.MainTileMap, hit, 2, hitPointCurrent);
+            if(t!=null) _chainTarget = t.Value.CellPos;
+        }
+        var chainVisualTarget = new Vector2(_chainTarget.x +0.5f, _chainTarget.y + 0.5f);// offset by 0.5 to get into center of block 
+
+        _visual.DrawChain(hit, chainVisualTarget);
+        _damageContainer.tile = _chainTarget;
+        _player.RequestDamageTile(_damageContainer);
+    }
+
     public void MineAbility() {
         HashSet<Vector3Int> processedCells = new HashSet<Vector3Int>(); // To avoid duplicate tiles
         ApplyKnockback();
@@ -172,5 +220,19 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
                 }
             }
         }
+    }
+
+    private void FindChainTarget() {
+
+    }
+
+    private void OnDrawGizmos() {
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(debugVectorStart, debugVectorDir);
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(debugVectorStart, debugVectorDir);
+        Gizmos.DrawSphere(debugVectorDir,0.1f);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(pointBlue, 0.1f);
     }
 }

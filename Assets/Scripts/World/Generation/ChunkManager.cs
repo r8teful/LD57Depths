@@ -641,9 +641,6 @@ public class ChunkManager : MonoBehaviour {
         activeChunks.Clear(); // Clear active chunks before loading
     }
 
-    internal bool CanWriteData(Vector2Int chunkCoord) {
-        return worldChunks.ContainsKey(chunkCoord);
-    }
     public ushort GetTileAtWorldPos(int x, int y) {
         var chunkCoord = WorldToChunkCoord(new(x, y));
         if(worldChunks.TryGetValue(chunkCoord, out var chunk)) {
