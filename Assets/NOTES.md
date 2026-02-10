@@ -947,5 +947,53 @@ Notes from shelldiver juice
 
 * Transfer has a very slight screenshake, the items go behind the character and pop in and rotate a bit , also loads of particles when that happens
 
+
+
+
+
+BRUH, MINING CHAINNN. How do we do it. It should only fire when we're actually hitting a block, then do a random tile check within a circle, right? or should it do the closest adjacent. Think of it, its A CHAIN, like a lightning bolt, it searches the CLOSEST it possibly can, then damages that tile. Edge cases:
+
+Have to keep track of our current damaging tile, it can't be the same as the chain target. If we stop shooting reset the chain target. Should only switch target when too far away from range
+
+9 -110
+
+8 -110
+
+
+
+HIT: 22, -97 BUT ACTUALLY DAMAGE 22, -96
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
 

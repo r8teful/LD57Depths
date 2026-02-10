@@ -17,6 +17,9 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     private MiningLazerVisualNew _visual;
     private bool _firstShot;
     private DamageContainer _damageContainer;
+    private int _maxChainLength = 1; // Max number of chains allowed
+    private List<Vector3Int> _activeChainPath = new List<Vector3Int>();
+    private float _chainRange = 3f;
 
     public Vector2 CurrentDir => _currentDirection;
     public void Init(AbilityInstance instance, PlayerManager player) {
@@ -61,8 +64,8 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
 
     private void OnEndShoot() {
         _visual.EndVisual();
+        _visual.StopChain();
         _timeToolStopped = Time.time;
-        _chainTarget = Vector3Int.zero; // no chain target anymore
         Debug.Log("endshoot");
     }
 
@@ -112,14 +115,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
             _player.PlayerMovement.ApplyMiningKnockback(knockbackForce);
         }
     }
-    Vector2 debugVectorDir;
-    Vector2 debugVectorStart;
-    private float _createdRand;
-    private Vector3Int _chainTarget;
-    private Vector3Int pointBlue;
-    private Vector3Int hitPointPrevious;
-    private Vector3Int hitPointCurrent;
-
+    
     private void Mine() {
         Vector2 toolPosition = transform.position;
         var range = _abilityInstance.GetEffectiveStat(StatType.MiningRange);
@@ -140,8 +136,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
             // move forward slighly so we get the right world block
             Vector2 nudgedPoint = hit.point + _currentDirection * 0.1f;
             HandleChainLogic(nudgedPoint);
-            debugVectorStart = hit.point;
-            var tiles = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, hit.point,0.7f);
+            var tiles = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, hit.point,1f);
             foreach (var tile in tiles) {
                 _damageContainer.tile = tile.CellPos;
                 _player.RequestDamageTile(_damageContainer);
@@ -161,29 +156,69 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
 
     private void HandleChainLogic(Vector2 hit) {
         _visual.StartChain();
-        float chainRange = 3f;
-        hitPointCurrent = WorldManager.Instance.MainTileMap.WorldToCell(hit);
-        if (_chainTarget == Vector3Int.zero) {
-            // No target, find one
-            var t = MineHelper.GetClosestSolidTile(WorldManager.Instance.MainTileMap, hit, chainRange, hitPointCurrent);
-            if(t!=null) _chainTarget = t.Value.CellPos;
-        }
-        if(Vector3Int.Distance(hitPointCurrent,_chainTarget) > chainRange){
-            //Chain target to far, get new chain target
-            var t = MineHelper.GetClosestSolidTile(WorldManager.Instance.MainTileMap, hit, chainRange, hitPointCurrent);
-            if(t!=null) _chainTarget = t.Value.CellPos;
-        }
-        var tile = WorldManager.Instance.MainTileMap.GetTile<TileSO>(_chainTarget);
-        if (tile != null && !tile.IsSolid) {
-            // tile broke, find new 
-            var t = MineHelper.GetClosestSolidTile(WorldManager.Instance.MainTileMap, hit, 2, hitPointCurrent);
-            if(t!=null) _chainTarget = t.Value.CellPos;
-        }
-        var chainVisualTarget = new Vector2(_chainTarget.x +0.5f, _chainTarget.y + 0.5f);// offset by 0.5 to get into center of block 
+        Vector3Int currentLinkOriginCell = WorldManager.Instance.MainTileMap.WorldToCell(hit);
+        Vector2 currentLinkOriginWorld = hit;
+        // Keep track of visited tiles so the chain doesn't loop back on itself
+        List<Vector3Int> pointsToExclude = new List<Vector3Int> {
+            currentLinkOriginCell
+        };
 
-        _visual.DrawChain(hit, chainVisualTarget);
-        _damageContainer.tile = _chainTarget;
-        _player.RequestDamageTile(_damageContainer);
+        for (int i = 0; i < _activeChainPath.Count; i++) {
+            Vector3Int targetCell = _activeChainPath[i];
+            bool isLinkBroken = false;
+            var tile = WorldManager.Instance.MainTileMap.GetTile<TileSO>(targetCell);
+            if (tile == null || !tile.IsSolid) {
+                isLinkBroken = true;
+            } else { 
+                Vector2 targetCenterWorld = new Vector2(targetCell.x + 0.5f, targetCell.y + 0.5f);
+                if (Vector2.Distance(currentLinkOriginWorld, targetCenterWorld) > _chainRange) {
+                    isLinkBroken = true;
+                }
+            }
+
+            if (isLinkBroken) {
+                // Cut the chain here. This node and all subsequent nodes are removed.
+                // We break the loop so we can try to find NEW targets starting from here.
+                _activeChainPath.RemoveRange(i, _activeChainPath.Count - i);
+                break;
+            }
+
+            // Link is valid! 
+            pointsToExclude.Add(targetCell);
+            currentLinkOriginCell = targetCell;
+        }
+
+        // If the chain was cut, or if we haven't reached max length yet, try to find neighbors.
+        while (_activeChainPath.Count < _maxChainLength) {
+            var t = MineHelper.GetClosestSolidTile(
+                WorldManager.Instance.MainTileMap,
+                currentLinkOriginCell,
+                _chainRange,
+                pointsToExclude
+            );
+
+            if (!t.HasValue) break; 
+            Vector3Int newTarget = t.Value.CellPos;
+
+            _activeChainPath.Add(newTarget);
+            pointsToExclude.Add(newTarget);
+            // Move the origin point forward for the next iteration
+            currentLinkOriginCell = newTarget;
+        }
+        Vector2 drawStart = hit;
+        for (int i = 0; i < _activeChainPath.Count; i++) {
+            Vector3Int cellPos = _activeChainPath[i];
+            Vector2 drawEnd = new Vector2(cellPos.x + 0.5f, cellPos.y + 0.5f);
+            _visual.DrawSpecificChain(i, drawStart, drawEnd);
+
+            // Deal Damage
+            _damageContainer.tile = cellPos;
+            _player.RequestDamageTile(_damageContainer);
+
+            // The end of this line is the start of the next line
+            drawStart = drawEnd;
+        }
+        _visual.HideChainsFromIndex(_activeChainPath.Count);
     }
 
     public void MineAbility() {
@@ -222,17 +257,14 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         }
     }
 
-    private void FindChainTarget() {
-
-    }
 
     private void OnDrawGizmos() {
-        Gizmos.color = Color.green;
-        Gizmos.DrawRay(debugVectorStart, debugVectorDir);
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(debugVectorStart, debugVectorDir);
-        Gizmos.DrawSphere(debugVectorDir,0.1f);
-        Gizmos.color = Color.blue;
-        Gizmos.DrawSphere(pointBlue, 0.1f);
+        //Gizmos.color = Color.green;
+        //Gizmos.DrawRay(debugVectorStart, debugVectorDir);
+        //Gizmos.color = Color.red;
+        //Gizmos.DrawLine(debugVectorStart, debugVectorDir);
+        //Gizmos.DrawSphere(debugVectorDir,0.1f);
+        //Gizmos.color = Color.blue;
+        //Gizmos.DrawSphere(pointBlue, 0.1f);
     }
 }

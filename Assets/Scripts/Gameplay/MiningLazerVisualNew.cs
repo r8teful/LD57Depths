@@ -1,10 +1,13 @@
 ﻿using DG.Tweening;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MiningLazerVisualNew : MonoBehaviour {
     public LineRenderer lineRenderer;
-    public LineRenderer lineRendererChain;
+    [SerializeField] private LineRenderer lineRendererChainPrefab;
+    private List<LineRenderer> _chainLines = new List<LineRenderer>();
+    private int _activeChainIndex = 0;
     public ParticleSystem ParticlesPrefabHit;
     public ParticleSystem _lineLazerParticleSystem;
     private ParticleSystem _hitParticleSystem;
@@ -18,6 +21,13 @@ public class MiningLazerVisualNew : MonoBehaviour {
 
     private void Awake() {
         SetupParticlesVisual();
+        int maxChains = 5;
+
+        for (int i = 0; i < maxChains; i++) {
+            var line = Instantiate(lineRendererChainPrefab, transform);
+            line.enabled = false;
+            _chainLines.Add(line);
+        }
     }
     public void Init(PlayerManager player, AbilityInstance ability, MiningLazerNew miningLazerNew) {
         _player = player;
@@ -190,35 +200,61 @@ public class MiningLazerVisualNew : MonoBehaviour {
         lineRenderer.DOColor(startColor, endColor, 0.07f).OnComplete(() => lineRenderer.enabled = true);
     }
 
-    internal void DrawChain(Vector2 start, Vector2 dir, float distance) {
-        Vector2 localStart = transform.InverseTransformPoint(start);
-        CreateLaserEffectChain(localStart, transform.InverseTransformPoint(start + dir * distance));
-    }
-    internal void DrawChain(Vector2 start, Vector2 target) {
-        Vector2 localStart = transform.InverseTransformPoint(start);
-        CreateLaserEffectChain(localStart, transform.InverseTransformPoint(target)); 
-    }
     void CreateLaserEffectChain(Vector3 start, Vector3 end) {
         var dmg = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
         var lineWidth = Mathf.Min(Mathf.Max(dmg * 0.05f, 0.04f), 1f);
-        lineRendererChain.SetPosition(0, start);
-        lineRendererChain.SetPosition(1, end);
-        lineRendererChain.startWidth = lineWidth;
-        lineRendererChain.endWidth = lineWidth * 0.7f;
+        lineRendererChainPrefab.SetPosition(0, start);
+        lineRendererChainPrefab.SetPosition(1, end);
+        lineRendererChainPrefab.startWidth = lineWidth;
+        lineRendererChainPrefab.endWidth = lineWidth * 0.7f;
         lineRenderer.material.SetColor("_Color", new(3, 0, 0));
     }
 
     internal void StopChain() {
         if (_chainActive) {
-            FadeOutLine(lineRendererChain);
+            foreach (var line in _chainLines) {
+                FadeOutLine(line);
+            }
             _chainActive = false;
         }
     }
 
     internal void StartChain() {
         if (!_chainActive) {
-            FadeInLine(lineRendererChain);
+            _activeChainIndex = 0;
             _chainActive = true;
         }
+    }
+    // Call this to update a SPECIFIC link in the chain
+    internal void DrawSpecificChain(int index, Vector2 start, Vector2 target) {
+        if (index >= _chainLines.Count) return;
+
+        var line = _chainLines[index];
+        line.enabled = true;
+        FadeInLine(line);
+        Vector2 localStart = transform.InverseTransformPoint(start);
+        Vector2 localEnd = transform.InverseTransformPoint(target);
+
+        CreateLaserEffectChain(line, localStart, localEnd);
+    }
+
+    // Call this at the end to hide lines we didn't use this frame
+    internal void HideChainsFromIndex(int index) {
+        for (int i = index; i < _chainLines.Count; i++) {
+            _chainLines[i].enabled = false;
+        }
+    }
+
+    void CreateLaserEffectChain(LineRenderer lr, Vector3 start, Vector3 end) {
+        var dmg = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
+        var lineWidth = Mathf.Min(Mathf.Max(dmg * 0.05f, 0.04f), 1f);
+        lr.positionCount = 2; 
+        lr.SetPosition(0, start);
+        lr.SetPosition(1, end);
+
+        lr.startWidth = lineWidth;
+        lr.endWidth = lineWidth * 0.7f;
+
+        lr.material.SetColor("_Color", new Color(3, 0, 0));
     }
 }

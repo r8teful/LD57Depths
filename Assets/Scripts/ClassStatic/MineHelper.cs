@@ -86,7 +86,7 @@ public static class MineHelper {
         return result;
     }
 
-    public static TileDamageData? GetClosestSolidTile(Tilemap map, Vector3 position, float radius, Vector3Int exlude) {
+    public static TileDamageData? GetClosestSolidTile(Tilemap map, Vector3 position, float radius, List<Vector3Int> pointsToExclude) {
         int gridRadius = Mathf.CeilToInt(radius);
         Vector3Int centerCell = map.WorldToCell(position);
         float radiusSqr = radius * radius;
@@ -97,7 +97,7 @@ public static class MineHelper {
         for (int x = -gridRadius; x <= gridRadius; x++) {
             for (int y = -gridRadius; y <= gridRadius; y++) {
                 Vector3Int tilePos = centerCell + new Vector3Int(x, y, 0);
-                if (tilePos == exlude) continue;
+                if (pointsToExclude.Contains(tilePos)) continue;
                 if (!map.HasTile(tilePos)) continue;
 
                 Vector3 tileWorldPos = map.GetCellCenterWorld(tilePos);
