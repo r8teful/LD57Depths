@@ -81,7 +81,7 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
         foreach (ushort itemID in itemTypesToTransfer) {
             // Verify item still exists in dictionary
             if (!inventoryPlayer.Slots.TryGetValue(itemID, out var slot)) continue;
-            OnItemTransferStart.Invoke(itemID, slot.quantity);
+            OnItemTransferStart?.Invoke(itemID, slot.quantity);
             while (inventoryPlayer.Slots.ContainsKey(itemID)) {
                 if (slot.quantity <= 0) break; // None left of this type, move to next
 

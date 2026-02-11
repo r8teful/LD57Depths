@@ -144,6 +144,7 @@ namespace r8teful {
         internal static bool TryGetCritDamage(AbilityInstance abilityInstance, out float critMult) {
             critMult = 1;
             var critChance = abilityInstance.GetEffectiveStat(StatType.MiningCritChance);
+            Debug.Log("crit chance! " + critChance);
             var critDmg = abilityInstance.GetEffectiveStat(StatType.MiningCritDamage);
             if (UnityEngine.Random.value < critChance) {
                 // crit!

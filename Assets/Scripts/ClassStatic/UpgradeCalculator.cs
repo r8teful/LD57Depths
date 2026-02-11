@@ -1,6 +1,4 @@
-﻿
-using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public static class UpgradeCalculator {
     public static float CalculateCostForLevel(int level, float baseValue, float linearIncrease, float expIncrease) {

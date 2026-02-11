@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -18,17 +17,15 @@ public class SubItemGainVisualSpawner : MonoBehaviour {
     public void Init(InventoryManager subInventory) {
         subInventory.OnSlotNew += SlotNew;
         subInventory.OnSlotChanged += SlotChanged;
-        ItemTransferManager.OnItemTransferStart += ItemStart;
-        ItemTransferManager.OnItemTransferStop += ItemStop;
-        subInventory.OnSlotChanged += SlotChanged;
+        //ItemTransferManager.OnItemTransferStart += ItemStart;
+        //ItemTransferManager.OnItemTransferStop += ItemStop;
         _inv = subInventory;
     }
     private void OnDestroy() {
         _inv.OnSlotNew -= SlotNew;
         _inv.OnSlotChanged -= SlotChanged;
-        ItemTransferManager.OnItemTransferStart -= ItemStart;
-        ItemTransferManager.OnItemTransferStop -= ItemStop;
-        _inv.OnSlotChanged -= SlotChanged;
+        //ItemTransferManager.OnItemTransferStart -= ItemStart;
+        //ItemTransferManager.OnItemTransferStop -= ItemStop;
     }
     private void ItemStart(ushort itemID, int quantity) {
         // quantity determines visual speed...

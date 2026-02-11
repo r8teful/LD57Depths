@@ -1,5 +1,4 @@
 ﻿using r8teful;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,7 +16,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     private MiningLazerVisualNew _visual;
     private bool _firstShot;
     private DamageContainer _damageContainer;
-    private int _maxChainLength = 1; // Max number of chains allowed
+    private int _maxChainLength = 0; // Max number of chains allowed
     private List<Vector3Int> _activeChainPath = new List<Vector3Int>();
     private float _chainRange = 3f;
 
@@ -66,7 +65,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         _visual.EndVisual();
         _visual.StopChain();
         _timeToolStopped = Time.time;
-        Debug.Log("endshoot");
+        //Debug.Log("endshoot");
     }
 
     private void OnStartShoot() {
@@ -121,22 +120,33 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         var range = _abilityInstance.GetEffectiveStat(StatType.MiningRange);
         var falloff = _abilityInstance.GetEffectiveStat(StatType.MiningFalloff);
         var damage = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
-        
-        if(RandomnessHelpers.TryGetCritDamage(_abilityInstance, out var critMult)) {
-            // Crit!
-            damage *= critMult;
-            _damageContainer.crit = true;
-        }
-        _damageContainer.damage = damage;
+     
         _lastKnownDirection = _currentDirection;
         RaycastHit2D hit = Physics2D.Raycast(toolPosition, _currentDirection, range, LayerMask.GetMask("MiningHit"));
         //Debug.Log($"damage: {damage}");
         
         if (hit.collider != null) {
+            // Crit
+            if (RandomnessHelpers.TryGetCritDamage(_abilityInstance, out var critMult)) {
+                // Crit!
+                damage *= critMult;
+                _damageContainer.crit = true;
+                Debug.Log("crit hit!!!");
+                WorldJuiceCreator.Instance.SpawnCrit(hit.point);
+            } else {
+                Debug.Log("no crit ):");
+                _damageContainer.crit = false;
+
+            }
+            _damageContainer.damage = damage;
+            
+            // Chain & Damage
             // move forward slighly so we get the right world block
             Vector2 nudgedPoint = hit.point + _currentDirection * 0.1f;
-            HandleChainLogic(nudgedPoint);
-            var tiles = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, hit.point,1f);
+            if(_maxChainLength > 0) {
+                HandleChainLogic(nudgedPoint);
+            }
+            var tiles = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, hit.point,0.8f);
             foreach (var tile in tiles) {
                 _damageContainer.tile = tile.CellPos;
                 _player.RequestDamageTile(_damageContainer);

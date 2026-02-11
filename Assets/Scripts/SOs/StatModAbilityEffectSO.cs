@@ -30,18 +30,23 @@ public class StatModAbilityEffectSO : UpgradeEffect {
             //Debug.LogError("Can't get target ability for upgrade. We probably don't have it unlocked yet");
             return new();
         }
-        // For brimstone
-        // Target: Brimstone
-        // Brimstone targets lazer ability
-        // Solution: 
-       
         StatModifier tempMod = new(modificationValue, upgradeType, increaseType, this);
+        // We need different ways to display it, for damage, it needs to be "abstract"
+        // so 10% damage -> 20% would be 2x the damage
+        // But with things like crit chance, we need the ACTAUL value, 
+        // so 5% crit chacnce really means 5% 
+        float currentIncrease, nextIncrease;
+        if(upgradeType == StatType.MiningCritChance) {
+            currentIncrease = abilityInstance.GetEffectiveStat(upgradeType);
+            nextIncrease = abilityInstance.GetEffectiveStat(upgradeType,tempMod);
+        } else {
+            currentIncrease = abilityInstance.GetProcentStat(upgradeType) * 0.1f; 
+            nextIncrease = abilityInstance.GetProcentStat(upgradeType,tempMod) * 0.1f;
 
-        var currentIncrease = abilityInstance.GetProcentStat(upgradeType) * 0.1f; 
-        var nextIncrease = abilityInstance.GetProcentStat(upgradeType,tempMod) * 0.1f;
-
+        }
         int currentProcent =  Mathf.RoundToInt(currentIncrease * 100f);
         int nextProcent=  Mathf.RoundToInt(nextIncrease * 100f);
         return new(statName, $"{currentProcent}%", $"{nextProcent}%", ResourceSystem.IsLowerBad(upgradeType));
+
     }
 }

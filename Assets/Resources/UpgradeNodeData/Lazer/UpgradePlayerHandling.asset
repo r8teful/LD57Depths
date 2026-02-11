@@ -22,7 +22,7 @@ MonoBehaviour:
   stages:
   - upgrade: {fileID: 11400000, guid: 67523ad06ae4dc74b8b8c1ec12e6eafd, type: 2}
     costMultiplier: 1
-    costTier: 2
+    costTier: 1
     upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
   - upgrade: {fileID: 11400000, guid: 3bba1ffb78da78e4193c935a5e1007fa, type: 2}
     costMultiplier: 1.11

@@ -1,5 +1,4 @@
 ﻿using DG.Tweening;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +6,6 @@ public class MiningLazerVisualNew : MonoBehaviour {
     public LineRenderer lineRenderer;
     [SerializeField] private LineRenderer lineRendererChainPrefab;
     private List<LineRenderer> _chainLines = new List<LineRenderer>();
-    private int _activeChainIndex = 0;
     public ParticleSystem ParticlesPrefabHit;
     public ParticleSystem _lineLazerParticleSystem;
     private ParticleSystem _hitParticleSystem;
@@ -221,7 +219,6 @@ public class MiningLazerVisualNew : MonoBehaviour {
 
     internal void StartChain() {
         if (!_chainActive) {
-            _activeChainIndex = 0;
             _chainActive = true;
         }
     }

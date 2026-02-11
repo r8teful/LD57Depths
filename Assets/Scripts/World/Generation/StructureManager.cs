@@ -15,7 +15,7 @@ public class StructureManager : MonoBehaviour {
         Debug.Log($"generated new artifact for biome {biome.BiomeType} at {pos}");
         StructurePlacementResult structure = new(pos, ResourceSystem.StructureArtifactID);
         StructurePlacements.Add(structure);
-        Instantiate(App.ResourceSystem.GetPrefab<Artifact>("Artifact")).Init(structure,biome.BiomeType);
+        Instantiate(App.ResourceSystem.GetPrefab<Artifact>("Artifact"),transform).Init(structure,biome.BiomeType);
         return structure;
     }
     
@@ -61,17 +61,17 @@ public class StructureManager : MonoBehaviour {
             // If its a problem simply integrate this into the entity manager 
             StructurePlacementResult structure = new(pos, ResourceSystem.StructureChestID);
             StructurePlacements.Add(structure);
-            Instantiate(App.ResourceSystem.GetPrefab<Chest>("Chest")).Init(structure);
+            Instantiate(App.ResourceSystem.GetPrefab<Chest>("Chest"),transform).Init(structure);
         }
         foreach (var pos in shrineP) {
             StructurePlacementResult structure = new(pos, ResourceSystem.StructureShrineID);
             StructurePlacements.Add(structure);
-            Instantiate(App.ResourceSystem.GetPrefab<Shrine>("Shrine")).Init(structure);
+            Instantiate(App.ResourceSystem.GetPrefab<Shrine>("Shrine"), transform).Init(structure);
         }
         foreach (var pos in eventP) {
             StructurePlacementResult structure = new(pos, ResourceSystem.StructureEventCaveID);
             StructurePlacements.Add(structure);
-            Instantiate(App.ResourceSystem.GetPrefab<EventCave>("EventCave")).Init(structure);
+            Instantiate(App.ResourceSystem.GetPrefab<EventCave>("EventCave"), transform).Init(structure);
         }
     }
 

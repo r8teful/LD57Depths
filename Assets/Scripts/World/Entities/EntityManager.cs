@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;       // For InstanceFinder
+using System.Linq;
 using UnityEngine;
 
 public class EntityManager : StaticInstance<EntityManager> {
@@ -77,18 +77,12 @@ public class EntityManager : StaticInstance<EntityManager> {
         // Right now its not worth the effort because we just have 2 entities that actually store specific data, but could be good for later
         //EntitySpecificData e = App.ResourceSystem.GetEntityByID(id).CreateDefaultSpecificData(); // Something like that
 
-        EntitySpecificData data = CreateEntitySpecificDataByID(id); // This obviously doesn't scale properly
         PersistentEntityData newEntityData = new(uniqueID, id, pos, rot, entityData);
         persistentEntityDatabase.Add(uniqueID, newEntityData);
         //Debug.Log($"Added new persistent entity ID:{uniqueID} at {pos}");
         return newEntityData;
     }
-    private EntitySpecificData CreateEntitySpecificDataByID(ushort id) {
-        if (ResourceSystem.IsGrowEntity(id)) {
-            return new GrowthEntityData(0);
-        }
-        return null;
-    }
+    
 
     public void RequestEntityActivation(ulong persistentId) {
 
@@ -240,26 +234,5 @@ public class EntityManager : StaticInstance<EntityManager> {
         }
     }
 
-    public void NotifyNearbyPlayers(Vector3Int changedCellPosition, Vector2Int chunkCoord, int newTileID) {
-        List<ulong> candidateIds = GetEntityIDsByChunkCoord(chunkCoord);
-        if (candidateIds == null)
-            return; // No entities registered in this chunk
-        candidateIds = candidateIds.ToList();
-        float sqrNotifyRadius = 5 * 5; //default of 5 tiles now
-        Vector3 changeWorldPos = worldManager.GetCellCenterWorld(changedCellPosition);
-
-        foreach (ulong entityId in candidateIds) {
-            PersistentEntityData entityData = persistentEntityDatabase[entityId];
-            // Check if entity is ACTIVE and within notification radius
-            if (entityData != null && entityData.activeInstance != null) {
-                if (Vector3.SqrMagnitude(entityData.activeInstance.transform.position - changeWorldPos) <= sqrNotifyRadius) {
-                    // Found a nearby active entity, notify its components
-                    NotifyEntityComponents<ITileChangeReactor>(
-                         entityData.activeInstance,
-                         (reactor) => reactor.OnTileChangedNearby(changedCellPosition, newTileID)
-                     );
-                }
-            }
-        }
-    }
+   
 }

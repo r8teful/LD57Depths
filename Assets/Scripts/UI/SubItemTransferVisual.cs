@@ -1,7 +1,6 @@
 ﻿using DG.Tweening;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 // Handles a visual of one item going from player to the upgrademanager
 public class SubItemTransferVisual : MonoBehaviour {

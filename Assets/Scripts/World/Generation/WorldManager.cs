@@ -135,6 +135,7 @@ public class WorldManager : StaticInstance<WorldManager> {
     internal void SetTile(Vector3Int cellPos, TileBase tileToSet) {
         mainTilemap.SetTile(cellPos, tileToSet);
     }
+
     internal void SetTile(Vector3Int cellPos, ushort tileToSet) {
         mainTilemap.SetTile(cellPos, App.ResourceSystem.GetTileByID(tileToSet));
         if (tileToSet == 0) {

@@ -361,6 +361,8 @@ public class ResourceSystem {
             StatType.ProjectileSpeed => "Projectile Speed",
             StatType.ProjectileBounces => "Projectile Bounces",
             StatType.Luck => "Luck",
+            StatType.MiningCritDamage => "Crit DMG",
+            StatType.MiningCritChance => "Crit Chance",
             _ => "NULL",
         };
     }
