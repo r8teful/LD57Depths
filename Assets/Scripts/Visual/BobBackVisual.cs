@@ -39,14 +39,7 @@ public class BobBackVisual : MonoBehaviour {
         SetSpriteSwim(true);
     }
 
-    internal void HandleUpgradeBought(UpgradeRecipeSO upgrade) {
-        var upgradeID = upgrade.ID;
-        if (upgradeID == ResourceSystem.UpgradeJetpackID) {
-            SetBackSprite(_jetpackLaying, _jetpackStanding);
-        } else if (upgradeID == ResourceSystem.UpgradeOxygenID) {
-            SetBackSprite(_oxygenLaying, _oxygenStanding);
-        }
-    }
+  
     public void HandleStartup(IToolVisual toolVisual) {
         SetBackSprite(toolVisual.BackSprites.Item1, toolVisual.BackSprites.Item2);
         

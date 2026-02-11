@@ -45,7 +45,7 @@ public class UIUpgradeTree : MonoBehaviour {
             if (!dataToNodeLookup.TryGetValue(nodeData.ID, out UIUpgradeNode uiNode)) {
                 continue;
             }
-            uiNode.Init(this,_treeData,nodeData,inv,existingUpgrades);
+            uiNode.Init(this,nodeData, player.UpgradeManager);
             _nodeMap.Add(nodeData.ID, uiNode);
         }
         CreateConnectionLines(tree, existingUpgrades);

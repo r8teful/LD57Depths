@@ -21,9 +21,9 @@ public class UILevelUpReward : MonoBehaviour, IUIReward {
             _boarderImage.sprite = _images[0];
             _rewardText.text = a.Ability.displayName;
             _descriptionText.text = a.Ability.description;
-        } else if (reward is UpgradeRecipeSO u) {
+        } else if (reward is UpgradeStage u) {
             _boarderImage.sprite = _images[1];
-            _rewardText.text = u.displayName;
+            _rewardText.text = "TODO";
             _descriptionText.text = "";
             foreach (var statData in u.GetStatStatuses()) {
                 var statChange = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStatPopup"), _statsChangeContainer);

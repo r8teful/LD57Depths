@@ -75,9 +75,8 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _buttonSmall.gameObject.SetActive(true);
         }
     }
-    internal void Init(UIUpgradeTree parent,UpgradeTreeDataSO treeData,
-        UpgradeNodeSO data,InventoryManager inv, HashSet<ushort> existingUpgrades) {
-        _visualData = new(data,inv, treeData,existingUpgrades);
+    internal void Init(UIUpgradeTree parent, UpgradeNodeSO data, UpgradeManagerPlayer up) {
+        _visualData = new(data, up);
         _treeParent = parent;
         HandleButtonSize(); // Sets _buttonCurrent
         SetIcon();
@@ -250,7 +249,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
     public PopupData GetPopupData(InventoryManager clientInv) {
         // Stat data
-        _visualData.UpdateForPopup(clientInv);
+        _visualData.UpdateForPopup();
         return new PopupData(_visualData.Title, _visualData.Description,
             _visualData.IngredientStatuses, // We'll have to pull this everytime we want to show it because 
                                             // We need a new way to get the stat statuses, it will depend on the upgrade. 
@@ -274,7 +273,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
     internal void OnUpgraded(HashSet<ushort> unlockedUpgrades) {
         // update visual data
-        _visualData.UpdateForUpgradePurchase(unlockedUpgrades);
+        _visualData.UpdateForUpgradePurchase();
         OnPurchased();
         PopupDataChanged?.Invoke(); // This will tell the upgrade manager to fetch new upgrade data
         _treeParent.UpdateNodeVisualData();
@@ -283,7 +282,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
     // This is for when inderect nodes need to update their visualdata when a prerequaized 
     internal void UpdateVisualData(HashSet<ushort> unlockedUpgrades) {
-        _visualData.UpdateForUpgradePurchase(unlockedUpgrades);
+        _visualData.UpdateForUpgradePurchase();
         UpdateVisual(); 
     }
 

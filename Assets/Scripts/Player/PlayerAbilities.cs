@@ -91,10 +91,6 @@ public class PlayerAbilities : MonoBehaviour, IPlayerModule {
         // e.g., if you have IPassiveEffect components on ScriptableObject, call data.Apply(player)
     }
 
-    private void QueuePendingUpgradeForAbility(UpgradeRecipeSO up, StatModifier mod) {
-        // store pending to apply later when ability added
-        // For brevity, omitted implementation; simple map abilityId->List<StatModifier>
-    }
 
     internal bool IsBrimstoneAbilityActive() {
         // Simple, just check if we have the brimstone buff on the ability

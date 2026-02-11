@@ -127,7 +127,7 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
         var tree = App.ResourceSystem.GetTreeByName(GameSetupManager.Instance.GetUpgradeTreeName());
         var upgrade = tree.GetUpgradeWithValue(costValue, pickedUpgradeNodeIDs);
         if(upgrade == null) return null;
-        pickedUpgradeNodeIDs.Add(upgrade.ID);
+        //pickedUpgradeNodeIDs.Add(upgrade.ID);
         return upgrade;
     }
 
@@ -135,11 +135,11 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
         if(choice == null) return;
         if (choice is AddAbilityEffect a) {
             // no special logic here
-        } else if (choice is UpgradeRecipeSO u) {
+        } else if (choice is UpgradeStage u) {
             // Need to manually add to upgradeManager which is annoying but kind of works
             // alternatively we could have something similar like the AddAbilityEffect script that just calls this line
             // in the execute method
-            _player.UpgradeManager.AddUnlockedUpgrade(u.ID);
+            //_player.UpgradeManager.AddUnlockedUpgrade(u);
         } else {
             // no special logic here
         }

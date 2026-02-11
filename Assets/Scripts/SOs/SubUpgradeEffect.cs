@@ -5,7 +5,7 @@ public class SubUpgradeEffect : UpgradeEffect {
     // How the sub will visually change after this effect
     public Sprite SpriteExterior;
     public Sprite SpriteInterior;
-    public SubRecipeSO upgrade; // So we can simply look at the ID and be like, this has been upgraded
+    public UpgradeNodeSO upgrade; // So we can simply look at the ID and be like, this has been upgraded
     public override void Execute(ExecutionContext context) {
         SubmarineManager.Instance.NewSubUpgrade(upgrade, this);
     }

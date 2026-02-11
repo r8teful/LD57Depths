@@ -20,7 +20,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     [SerializeField] private SubItemGainVisualSpawner itemGainSpawner;
 
     private HashSet<ushort> _subRecipes = new HashSet<ushort>();
-    [SerializeField] private List<SubRecipeSO> _majorUpgrades; // When the player gets this recipe, we increase the "stage"
+    [SerializeField] private List<UpgradeNodeSO> _majorUpgrades; // When the player gets this recipe, we increase the "stage"
     
     [SerializeField] private Transform _cutsceneCameraPosUpgradeMachine;
     [SerializeField] private Transform _cutsceneCameraPosControlPanel; 
@@ -46,7 +46,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
         submarineExterior.transform.position = new Vector3(0, y);
     }
 
-    internal void NewSubUpgrade(SubRecipeSO newUpgrade, SubUpgradeEffect effect) {
+    internal void NewSubUpgrade(UpgradeNodeSO newUpgrade, SubUpgradeEffect effect) {
         bool success = _subRecipes.Add(newUpgrade.ID);
         if (!success) {
             Debug.LogError("Sub recipe already purchased! Did you assigned a unique ID?");
@@ -55,25 +55,25 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
         if (_majorUpgrades.Exists(r => r.ID == newUpgrade.ID)) {
             _upgradeStage++;
         }
-        HandleCutscene(newUpgrade, effect, ResourceSystem.SubUpgradePanel, _cutsceneCameraPosUpgradeMachine);
-        HandleCutscene(newUpgrade, effect, ResourceSystem.SubCables3, _cutsceneCameraPosControlPanel);
+        //HandleCutscene(newUpgrade, effect, , _cutsceneCameraPosUpgradeMachine);
+        //HandleCutscene(newUpgrade, effect, , _cutsceneCameraPosControlPanel);
     }
 
-    private void HandleCutscene(SubRecipeSO newUpgrade, SubUpgradeEffect effect, ushort ID, Transform cameraPos) {
-        if (newUpgrade.ID == ID) {
-            GameSequenceManager.Instance.AddEvent(
-                onStart: () => {
-                    GameCutsceneManager.Instance.StartSubUpgradeCutscene(
-                        cameraPos,
-                        () => _upgradeMachine.sprite = effect.SpriteInterior
-                        );
-                },
-            onFinish: () => {
+    //private void HandleCutscene(SubRecipeSO newUpgrade, SubUpgradeEffect effect, ushort ID, Transform cameraPos) {
+    //    if (newUpgrade.ID == ID) {
+    //        GameSequenceManager.Instance.AddEvent(
+    //            onStart: () => {
+    //                GameCutsceneManager.Instance.StartSubUpgradeCutscene(
+    //                    cameraPos,
+    //                    () => _upgradeMachine.sprite = effect.SpriteInterior
+    //                    );
+    //            },
+    //        onFinish: () => {
 
-            }
-           );
-        }
-    }
+    //        }
+    //       );
+    //    }
+    //}
     private void ChangeUpgradeSprite() {
 
     }

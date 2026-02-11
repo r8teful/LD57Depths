@@ -32,18 +32,8 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
     public void InitializeOnOwner(PlayerManager playerParent) {
         InitCommon();
         _localPlayer = playerParent;
-        playerParent.UpgradeManager.OnUpgradePurchased += OnPlayerUpgradePurchased;
     }
 
-    private void OnPlayerUpgradePurchased(UpgradeRecipeSO upgrade) {
-        // This works now, this will peace of code will now run on the client who purchased a specific upgrade
-        // Here you would change sprites etc..
-        if (upgrade.ID == ResourceSystem.UpgradeFlippersID) {
-            // equip flippers
-            _hasFlippers = true;
-        }
-        _bobBackHandler.HandleUpgradeBought(upgrade);   
-    }
 
     private void InitCommon() {
         lightIntensityOn = lightSpot.intensity;
@@ -59,7 +49,6 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
         InitCommon();
         _remotePlayer = remoteClient;
         // Subscribe to handle remote stat changes
-        remoteClient.UpgradeManager.OnUpgradePurchased += OnPlayerUpgradePurchased;
         hasInitializedNonOwner = true;
     }
   

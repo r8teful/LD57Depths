@@ -11,9 +11,8 @@ using UnityEngine;
 // Cleans it up, and lets UIUpgradeNode simply display whatever data needs to be displayed 
 // without having to do any of the logic itself
 public class UpgradeNodeVisualData {
-    private UpgradeRecipeSO _currentRecipe;
-    private readonly UpgradeTreeDataSO _cachedTree;
-    private readonly InventoryManager _inventory;
+    private UpgradeStage _currentUpgradeStage;
+    private UpgradeManagerPlayer _upgradeManager;
     private readonly UpgradeNodeSO _node;
     public UpgradeNodeSO Node => _node;
     // Straight from SO
@@ -29,54 +28,46 @@ public class UpgradeNodeVisualData {
     public int LevelMax;
     public int LevelCurrent;
 
-    public UpgradeNodeVisualData(UpgradeNodeSO node, InventoryManager inventory,
-        UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades) {
+    public UpgradeNodeVisualData(UpgradeNodeSO node, UpgradeManagerPlayer upgradeManager) {
         // Need to get current node STAGE, and get the recipe from that state from here
-        _currentRecipe = node.GetUpgradeData(existingUpgrades, tree);
-        _cachedTree = tree; // this *SHOULD* never change, unless we do some crazy stuff 
-        _inventory = inventory;
+         _upgradeManager = upgradeManager;
         _node = node;
         Icon = node.icon;
         Title = node.nodeName;
-        if (_currentRecipe == null) {
+        if (_currentUpgradeStage == null) {
             Description = node.description;
-        } else {
-            // Use title if we have node aswell?
-            Description = _currentRecipe.description;
         }
-        RefreshRecipeData(existingUpgrades);
-        // Don't really need to get the popup info on Init because we dont show it untill we 
-        // actually want to show the popup
+        RefreshRecipeData();
     }
 
 
-    private void RefreshRecipeData(HashSet<ushort> existingUpgrades) {
-        _currentRecipe = _node.GetUpgradeData(existingUpgrades, _cachedTree);
-        // Get new stat stanges
-        if(_currentRecipe == null) {
+    private void RefreshRecipeData() {
+        _currentUpgradeStage = _upgradeManager.GetUpgradeStage(_node);
+        if (_currentUpgradeStage != null) {
             // Probably no stages. simply return
-            return;
+            StatChangeStatuses = _currentUpgradeStage.GetStatStatuses();
         }
-        StatChangeStatuses = _currentRecipe.GetStatStatuses();
-        var canAfford = _currentRecipe.CanAfford(_inventory);
-        State = _node.GetState(existingUpgrades,canAfford);
+        // Wow this is so much better almost like I know what I'm doing!!
+        State = _upgradeManager.GetState(_node);
         LevelMax = _node.MaxLevel;
-        LevelCurrent = _node.GetCurrentLevel(existingUpgrades);
-        if (_currentRecipe is SubRecipeSO s) {
-            // Take extra icon from it
-            IconExtra = IsMaxLevel() ? s.UpgradeIconComplete : s.UpgradeIcon;
-        }
-        UpdateForPopup(_inventory); // We're ontop of the upgrade when upgrading it so we should refresh the popup
+        LevelCurrent = _upgradeManager.GetCurrentLevel(_node);
+
+        // TODO ADD UpgradeStageExtraData or something to the upgradeStage and define the icons in that
+        //if (_currentUpgradeStage is SubRecipeSO s) {
+        //    // Take extra icon from it
+        //    IconExtra = IsMaxLevel() ? s.UpgradeIconComplete : s.UpgradeIcon;
+        //}
+        UpdateForPopup(); // We're ontop of the upgrade when upgrading it so we should refresh the popup
     }
-    public void UpdateForUpgradePurchase(HashSet<ushort> existingUpgrades) {
-        RefreshRecipeData(existingUpgrades);
+    public void UpdateForUpgradePurchase() {
+        RefreshRecipeData();
     }
 
-    internal void UpdateForPopup(InventoryManager inv) {
-        if(_currentRecipe == null) {
+    internal void UpdateForPopup() {
+        if(_currentUpgradeStage == null) {
             return;
         }
-        IngredientStatuses = _currentRecipe.GetIngredientStatuses(inv);
+        IngredientStatuses = _upgradeManager.GetIngredientStatuses(_node);
     }
 
     internal bool IsMaxLevel() {

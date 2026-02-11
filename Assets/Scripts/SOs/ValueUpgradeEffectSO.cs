@@ -16,6 +16,10 @@ public class ValueUpgradeEffectSO : UpgradeEffect {
 
     public override StatChangeStatus GetChangeStatus() {
         var script = UpgradeManagerPlayer.Instance.Get<IValueModifiable>(valueType);
+        if(script == null) {
+            Debug.LogWarning("coudn't find script with valueType: " + valueType);
+            return new();
+        }
         var valueBase = script.GetValueBase(valueType);
         var valueNow = script.GetValueNow(valueType);
         var valueNext = UpgradeCalculator.CalculateUpgradeChange(valueNow, increaseType, modificationValue);

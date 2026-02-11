@@ -22,14 +22,11 @@ public class SOEditorWindow : OdinMenuEditorWindow {
         tree.Config.DrawSearchToolbar = true;
         // Load and sort assets for each category
         AddSortedAssets<ItemData>(tree, "Items", "Assets/Resources/ItemData");
-        AddSortedAssets<RecipeBaseSO>(tree, "Recipies", "Assets/Resources/RecipeData");
-        AddSortedAssets<RecipeBaseSO>(tree, "RecipiesUpgrade", "Assets/Resources/UpgradeData");
         AddSortedAssets<UpgradeNodeSO>(tree, "UpgradeNodes", "Assets/Resources/UpgradeNodeData");
         AddSortedAssets<EntityBaseSO>(tree, "Entities", "Assets/Resources/EntityData");
         AddSortedAssets<TileSO>(tree, "Tiles", "Assets/Resources/TileData");
         // Add drag handles to items, so they can be easily dragged into the inventory if characters etc...
         tree.EnumerateTree().Where(x => x.Value as ItemData).ForEach(AddDragHandles);
-        tree.EnumerateTree().Where(x => x.Value as RecipeBaseSO).ForEach(AddDragHandles);
         tree.EnumerateTree().Where(x => x.Value as EntityBaseSO).ForEach(AddDragHandles);
         tree.EnumerateTree().Where(x => x.Value as TileSO).ForEach(AddDragHandles);
         tree.EnumerateTree().Where(x => x.Value as UpgradeNodeSO).ForEach(AddDragHandles);
@@ -38,7 +35,6 @@ public class SOEditorWindow : OdinMenuEditorWindow {
         tree.EnumerateTree().Where(x => x.Value is Object).ForEach(AddDoubleClickSelect);    
         // Add icons to characters and items.
         tree.EnumerateTree().AddIcons<ItemData>(x => x.icon);
-        tree.EnumerateTree().AddIcons<RecipeBaseSO>(x => x.icon);
         tree.EnumerateTree().AddIcons<UpgradeNodeSO>(x => x.icon);
         tree.EnumerateTree().AddIcons<TileSO>(x => x.m_DefaultSprite);
         return tree;

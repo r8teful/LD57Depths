@@ -15,10 +15,7 @@ public class UIUpgradeStat : MonoBehaviour {
     private void OnDisable() {
        // UIUpgradeScreen.OnSelectedNodeChanged -= OnUpgradeChanged;
     }
-    private void OnUpgradeChanged(UpgradeRecipeSO sO) {
-        // Change to "unselected" visual if matching
-    }
-
+   
     internal void Init(StatChangeStatus status, bool removeStatName = false) {
         var stat = status.StatName;
         var valueNow = status.ValueNow;

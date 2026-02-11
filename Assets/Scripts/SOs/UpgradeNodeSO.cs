@@ -4,20 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[Serializable]
-public class UpgradeStage {
-    [Tooltip("The Scriptable Object defining the upgrade for this level.")]
-    [InlineEditor]
-    [GUIColor("#cbebca")]
-    public UpgradeRecipeSO upgrade;
-
-    [Range(0.1f, 5f)]
-    public float costMultiplier = 1.0f;
-
-    public int costTier;
-    public UpgradeTierSO upgradeItemPool;
-}
-
 [CreateAssetMenu(fileName = "UpgradeNodeSO", menuName = "ScriptableObjects/Upgrades/UpgradeNodeSO")]
 public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
     [BoxGroup("Identification")]
@@ -40,69 +26,43 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
 
     public ushort ID => uniqueID;
 
-    public bool IsNodeMaxedOut(IReadOnlyCollection<ushort> unlockedUpgrades) {
-        return GetCurrentLevel(unlockedUpgrades) >= MaxLevel;
+    public float GetStageCost(int stageNum, UpgradeTreeDataSO tree) {
+        if(stages.Count <= stageNum) return 0f;
+        var stage = stages[stageNum];
+        int currentStageLevel = stage.costTier;
+        var c = tree.costsValues;
+        float baseCost = UpgradeCalculator.CalculateCostForLevel(
+            currentStageLevel, c.baseValue, c.linearIncrease, c.expIncrease);
+        return baseCost * stage.costMultiplier;
     }
-    /// <summary>
-    /// Calculates the current level of a node based on the set of unlocked upgrades.
-    /// </summary>
-    /// <param name="node">The design-time node to check.</param>
-    /// <param name="unlockedUpgrades">The player's set of unlocked upgrade IDs.</param>
-    public int GetCurrentLevel(IReadOnlyCollection<ushort> unlockedUpgrades) {
-        if (stages == null || stages.Count == 0 || unlockedUpgrades == null) return 0;
-
-        int level = 0;
-        foreach (var stage in stages) {
-            if (stage.upgrade != null && unlockedUpgrades.Contains(stage.upgrade.ID)) {
-                level++;
-            } else {
-                // Since levels are sequential, we stop at the first un-purchased one.
-                break;
-            }
-        }
-        return level;
+    public UpgradeTierSO GetStageTier(int tier) {
+        if (stages.Count <= tier) return null;
+        return stages[tier].upgradeItemPool;
     }
-    /// <summary>
-    /// Gets the available stage for a specific node, if any.
-    /// </summary>
-    /// <param name="tree"> Needed to calculate the resource cost
-    /// <returns>The UpgradeStage to be purchased next, or null if the node is maxed out.</returns>
-    public UpgradeRecipeSO GetUpgradeData(IReadOnlyCollection<ushort> unlockedUpgrades, UpgradeTreeDataSO tree) {
-        
-        if (stages == null || unlockedUpgrades == null || stages.Count == 0) return null;
-        var isMaxed = IsNodeMaxedOut(unlockedUpgrades);
-        int currentLevel = GetCurrentLevel(unlockedUpgrades);
-        // Determine which stage's info to show (the next one, or the last one if maxed)
-        int infoStageIndex = isMaxed ? MaxLevel - 1 : currentLevel;
-        if (!isMaxed && ArePrerequisitesMet(unlockedUpgrades)) {
-            UpgradeStage nextStageToUnlock = stages[currentLevel];
-            return tree.GetPreparedRecipeForStage(nextStageToUnlock);
-        } else {
-            return stages[infoStageIndex].upgrade;
-        }
+    public UpgradeStage GetStage(int stage) {
+        if (stages.Count <= stage) return null;
+        return stages[stage];
     }
-
-    public bool ArePrerequisitesMet(IReadOnlyCollection<ushort> unlockedUpgrades) {
-        if (prerequisiteNodesAny == null || prerequisiteNodesAny.Count == 0) {
-            return true; // root nodes available by default
-        }
-        return UnlockedAtFirstPrereqStage ? 
-            prerequisiteNodesAny.Any(p => p != null && p.GetCurrentLevel(unlockedUpgrades) > 0) 
-        :  prerequisiteNodesAny.Any(p => p != null && p.IsNodeMaxedOut(unlockedUpgrades));
-    }
-
-    internal UpgradeNodeState GetState(IReadOnlyCollection<ushort> unlockedUpgrades,bool canAfford) {
-        int currentLevel = GetCurrentLevel(unlockedUpgrades);
-        bool isMaxed = currentLevel >= MaxLevel;
-        bool prereqsMet = ArePrerequisitesMet(unlockedUpgrades);
-        if (!prereqsMet && currentLevel == 0) {
-            return UpgradeNodeState.Locked;
-        } else if (isMaxed) {
-            return UpgradeNodeState.Purchased;
-        } else if (canAfford) {
-            return UpgradeNodeState.Purchasable;
-        } else { // prereqsMet and currentLevel is 0
-            return UpgradeNodeState.Unlocked;
-        }
-    }
+}
+public enum UpgradeType {
+    // MINING Lazer
+    MiningLazerRange,
+    MiningLazerDamage,
+    MiningLazerHandling,
+    MiningLazerSpecialNoFalloff,
+    MiningLazerSpecialNoKnockback,
+    MiningLazerSpecialCombo,
+    MiningLazerSpecialBrimstone,
+    // PLAYER SPEED
+    PlayerSpeedMax,
+    PlayerSpecialHandling,
+    PlayerSpecialOreEmit,
+    PlayerSpecialBlockOxygen,
+    PlayerSpecialDiver,
+    SpeedAcceleration,
+    // OXYGEN
+    OxygenMax,
+    // UTILITY  
+    PlayerLightRange,
+    UtilityLightIntensity,
 }

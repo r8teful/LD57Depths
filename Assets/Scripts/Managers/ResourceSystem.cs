@@ -25,11 +25,9 @@ public class ResourceSystem {
 
     private Dictionary<ushort, EntityBaseSO> _entityLookupByID;
 
-    private Dictionary<ushort, RecipeBaseSO> _recipeLookupByID;
-
     private Dictionary<ushort, WorldGenSettingSO> _worldGenLookupByID;
 
-    private Dictionary<ushort, UpgradeRecipeSO> _recipeUpgradeLookupByID;
+    private Dictionary<ushort, UpgradeNodeSO> _upgradeNodeByID;
 
     private Dictionary<ushort, BuffSO> _buffLookupByID;
     
@@ -67,13 +65,13 @@ public class ResourceSystem {
     public const ushort BlackholeID = 107; 
     public const ushort BouncingBallID = 108; 
     public const ushort FishShooterID = 109; 
-
-    public const ushort UpgradeFlippersID = 102; // Max speed 3 
-    public const ushort UpgradeOxygenID = 122;  // Oxygen tier 3
-    public const ushort UpgradeJetpackID = 132; // Special handling 
-    public const ushort SubUpgradePanel = 830; //  
-    public const ushort SubCables3 = 802; //  
-    public const ushort FIRST_SHIP_RECIPE_ID = 200;
+    // We don't have specific upgrade IDs anymore 
+    //public const ushort UpgradeFlippersID = 102; // Max speed 3 
+    //public const ushort UpgradeOxygenID = 122;  // Oxygen tier 3
+    //public const ushort UpgradeJetpackID = 132; // Special handling 
+    //public const ushort SubUpgradePanel = 830; //  
+    //public const ushort SubCables3 = 802; //  
+    //public const ushort FIRST_SHIP_RECIPE_ID = 200;
     public static bool IsGrowEntity(ushort id) {
         if (id == 900) // Tree farm
             return true;
@@ -100,14 +98,12 @@ public class ResourceSystem {
         InitializeLookup("ItemData", out _itemLookupByID, out _idLookupByItem);
         InitializeLookup("TileData", out _tileLookupByID, out _idLookupByTile);
         InitializeLookup("EntityData", out _entityLookupByID, out _);
-        InitializeLookup("RecipeData", out _recipeLookupByID, out _);
+        InitializeLookup("UpgradeNodeData", out _upgradeNodeByID, out _);
         InitializeLookup("WorldGenData", out _worldGenLookupByID, out _);
         InitializeLookup("BuffData", out _buffLookupByID, out _);
         InitializeLookup("AbilityData", out _abilityLookupByID, out _);
         InitializeLookup("StructureData", out _structureLookupByID, out _);
         InitializeLookup("BiomeData", out _biomeLookupByID, out _);
-
-        InitializeLookup<UpgradeRecipeSO>("", out _recipeUpgradeLookupByID, out _);
     }
 
     public void InitializeWorldEntities(int worldSeed,Vector2 worldOffset) {
@@ -179,19 +175,12 @@ public class ResourceSystem {
         }
         return entity;
     }
-    public RecipeBaseSO GetRecipeByID(ushort id) {
-        if (id == InvalidID || !_recipeLookupByID.TryGetValue(id, out RecipeBaseSO recipe)) {
-            Debug.LogWarning($"Recipe ID {id} not found in database.");
+    public UpgradeNodeSO GetUpgradeNodeByID(ushort id) {
+        if (id == InvalidID || !_upgradeNodeByID.TryGetValue(id, out UpgradeNodeSO node)) {
+            Debug.LogWarning($"UpgradeNodeSO ID {id} not found in database.");
             return null;
         }
-        return recipe;
-    }
-    public UpgradeRecipeSO GetRecipeUpgradeByID(ushort id) {
-        if (id == InvalidID || !_recipeUpgradeLookupByID.TryGetValue(id, out UpgradeRecipeSO recipe)) {
-            Debug.LogWarning($"Recipe ID {id} not found in database.");
-            return null;
-        }
-        return recipe;
+        return node; 
     }
     public WorldGenSettingSO GetWorldGenByID(ushort id) {
         if (id == InvalidID || !_worldGenLookupByID.TryGetValue(id, out WorldGenSettingSO worldGen)) {
@@ -288,12 +277,6 @@ public class ResourceSystem {
     }
     public Material GetMaterial(string s) => _materialDict[s];
 
-    public List<CraftingRecipeSO> GetAllCraftingRecipes() {
-        return _recipeLookupByID.Values.OfType<CraftingRecipeSO>().ToList();
-    }
-    internal List<SubRecipeSO> GetAllSubRecipes() {
-        return _recipeLookupByID.Values.OfType<SubRecipeSO>().ToList();
-    }
     internal List<ItemData> GetAllItems() {
         return _itemLookupByID.Values.OfType<ItemData>().OrderBy(item => item.ID).ToList();
     }

@@ -20,57 +20,41 @@ public class UpgradeTreeDataSO : ScriptableObject {
     public List<UpgradeNodeSO> nodes = new List<UpgradeNodeSO>();
     public UIUpgradeTree prefab; // The visual representation of this tree in a prefab with the approriate nodes already created
 
-    
-    /// <summary>
-    /// Since we no longer generate instances, we need a way to get the final cost on-demand.
-    /// </summary>
-    /// <param name="stage">The stage whose cost we want.</param>
-    /// <returns>The final prepared recipe with calculated costs.</returns>
-    public UpgradeRecipeSO GetPreparedRecipeForStage(UpgradeStage stage) {
-        int currentStageLevel = stage.costTier;
-        float baseCost = UpgradeCalculator.CalculateCostForLevel(currentStageLevel, costsValues.baseValue, costsValues.linearIncrease, costsValues.expIncrease);
-        float finalCost = baseCost * stage.costMultiplier;
-        if (stage.upgradeItemPool == null) return null;
-        List<ItemData> itemPool = stage.upgradeItemPool.Items;
-
-        UpgradeRecipeSO recipeInstance = Instantiate(stage.upgrade);
-        recipeInstance.name = $"{stage.upgrade.name}_Preview"; // Use a temporary name
-        recipeInstance.PrepareRecipe(finalCost, itemPool);
-
-        return recipeInstance;
-    }
-    public UpgradeRecipeSO GetUpgradeWithValue(int value, HashSet<ushort> pickedIDs) {
+    public UpgradeStage GetUpgradeWithValue(int value, HashSet<ushort> pickedIDs) {
         // I hate this but we never store any actual upgrade data so we have to make it every time
-        var u = PlayerManager.LocalInstance.UpgradeManager.GetUnlockedUpgrades();
-        int bestValueDiff = 99999;
-        UpgradeRecipeSO bestMatch = null;
-        foreach(var node in nodes) {
-            if (!node.ArePrerequisitesMet(u)) continue;
-            if (node.IsNodeMaxedOut(u)) continue;
-            // Note that there are two IDs, upgrade NODES, and upgrade RECIPES, we have to check RECIPES ( we could check nodes, it would probably be better, but slighlt more complicated to check for maybe?!?)
-            UpgradeRecipeSO recipe = node.GetUpgradeData(u,this);
-            if(pickedIDs != null) {
-                if (pickedIDs.Contains(recipe.ID)) continue; // Don't choose upgrades we already have picked before 
-            }
-            if (recipe == null) continue;
-            var valDiff = Mathf.Abs(recipe.GetRecipeValue() - value);
-            if (valDiff < bestValueDiff) {
-                bestMatch = recipe;
-                bestValueDiff = valDiff;
-            }
-        }
-        return bestMatch;
+        // We can actually change this now but idk if we will need to get any upgrades anymore (yet)
+
+        //var u = PlayerManager.LocalInstance.UpgradeManager.GetUnlockedUpgrades();
+        //int bestValueDiff = 99999;
+        //UpgradeStage bestMatch = null;
+        //foreach(var node in nodes) {
+        //    if (!node.ArePrerequisitesMet(u)) continue;
+        //    if (node.IsNodeMaxedOut(u)) continue;
+        //    // Note that there are two IDs, upgrade NODES, and upgrade RECIPES, we have to check RECIPES ( we could check nodes, it would probably be better, but slighlt more complicated to check for maybe?!?)
+        //    UpgradeStage recipe = node.GetUpgradeData(u,this);
+        //    if(pickedIDs != null) {
+        //        if (pickedIDs.Contains(recipe.ID)) continue; // Don't choose upgrades we already have picked before 
+        //    }
+        //    if (recipe == null) continue;
+        //    var valDiff = Mathf.Abs(recipe.GetRecipeValue() - value);
+        //    if (valDiff < bestValueDiff) {
+        //        bestMatch = recipe;
+        //        bestValueDiff = valDiff;
+        //    }
+        //}
+        return null;
+        //return bestMatch;
     }
-    public UpgradeRecipeSO GetRandomUpgrade() {
+    public UpgradeStage GetRandomUpgrade() {
         // I hate this but we never store any actual upgrade data so we have to make it every time
-        var u = PlayerManager.LocalInstance.UpgradeManager.GetUnlockedUpgrades();
-        System.Random rng = new System.Random();
-        var randomNodes = nodes.OrderBy(s => rng.Next());
-        foreach (var node in randomNodes) {
-            if (!node.ArePrerequisitesMet(u)) continue;
-            if (!node.IsNodeMaxedOut(u)) continue;
-            return node.GetUpgradeData(u,this);
-        }
+        //var u = PlayerManager.LocalInstance.UpgradeManager.GetUnlockedUpgrades();
+        //System.Random rng = new System.Random();
+        //var randomNodes = nodes.OrderBy(s => rng.Next());
+        //foreach (var node in randomNodes) {
+        //    if (!node.ArePrerequisitesMet(u)) continue;
+        //    if (!node.IsNodeMaxedOut(u)) continue;
+        //    return node.GetUpgradeData(u,this);
+        //}
         return null;
     }
 }

@@ -7,7 +7,6 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
     private PlayerUISpawner _uiSpawner;
     public UpgradeManagerPlayer UpgradeManager { get; private set; }
     public InputManager InputManager { get; private set; }
-    public CraftingComponent CraftingComponent { get; private set; }
     public PlayerInventory InventoryN { get; private set; }
     public UIManager UiManager => _uiSpawner.UiManager; // Expose UIManager from the PlayerUISpawner
     public PlayerVisualHandler PlayerVisuals { get; private set; }
@@ -46,8 +45,6 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
 
         gameObject.name = $"PlayerBob";
         // Add local behaviours that are required for the player.
-
-        CraftingComponent = gameObject.AddComponent<CraftingComponent>();
         InputManager = gameObject.AddComponent<InputManager>();
         // Discover all modules on this GameObject and sort based on initialization order.
         _modules = GetComponents<IPlayerModule>().ToList();

@@ -20,11 +20,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d6d480d424e893c4fa34893fb8b37e60, type: 2}
   UnlockedAtFirstPrereqStage: 0
   stages:
-  - upgrade: {fileID: 11400000, guid: f00671e21cc37fd4a86c8959e892eb30, type: 2}
+  - effects:
+    - {fileID: 11400000, guid: dc28ffe22230d3145abbfa5bfb0a9ecf, type: 2}
     costMultiplier: 1
     costTier: 6
     upgradeItemPool: {fileID: 11400000, guid: 2578a8b93b92f144997963031306a875, type: 2}
-  - upgrade: {fileID: 11400000, guid: bdacd97e67d60714688031a8790eeaa7, type: 2}
+  - effects:
+    - {fileID: 11400000, guid: dc28ffe22230d3145abbfa5bfb0a9ecf, type: 2}
     costMultiplier: 1
     costTier: 7
     upgradeItemPool: {fileID: 11400000, guid: 2578a8b93b92f144997963031306a875, type: 2}
