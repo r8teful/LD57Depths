@@ -7,5 +7,7 @@
 public enum ValueKey {
     MagnetismPickup = 10,
     MagnetismStrength = 11,
-    ItemTransferRate = 20
+    ItemTransferRate = 20,
+    LazerChainAmount = 30,
+    LazerChainDamage = 31 // as mult
 }

@@ -117,7 +117,9 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
     }
 
     public void ModifyValue(ValueModifier modifier) {
-        itemsPerSecond = UpgradeCalculator.CalculateUpgradeChange(itemsPerSecond, modifier);
+        if(modifier.Key == ValueKey.ItemTransferRate) {
+            itemsPerSecond = UpgradeCalculator.CalculateUpgradeChange(itemsPerSecond, modifier);
+        }
     }
 
     public void Register() {

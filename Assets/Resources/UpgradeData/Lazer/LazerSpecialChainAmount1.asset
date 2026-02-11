@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 08d8bdbe60c43c64e8eafe5c7dc8491e, type: 3}
-  m_Name: LazerCrit3
+  m_Name: LazerSpecialChainAmount1
   m_EditorClassIdentifier: 
-  RecipeID: 92
-  displayName: Lazer Range 0
+  RecipeID: 51
+  displayName: Lazer Amount
   description: 
-  icon: {fileID: 1944107450, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  icon: {fileID: -2060477575, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   requiredItems: []
   effects:
-  - {fileID: 11400000, guid: 0058baef9c84ecd4eae015af14122877, type: 2}
+  - {fileID: 11400000, guid: 62653efa439771e4e9915c0fedb5a411, type: 2}

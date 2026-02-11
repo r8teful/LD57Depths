@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
+public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifiable {
     private AbilityInstance _abilityInstance;
     private PlayerManager _player;
     private const float MINING_COOLDOWN = 0.02f;
@@ -19,6 +19,8 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     private int _maxChainLength = 0; // Max number of chains allowed
     private List<Vector3Int> _activeChainPath = new List<Vector3Int>();
     private float _chainRange = 3f;
+    private float _chainDamage;
+    private float _chainDamageBase = 0.5f;
 
     public Vector2 CurrentDir => _currentDirection;
     public void Init(AbilityInstance instance, PlayerManager player) {
@@ -27,6 +29,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         _visual = GetComponent<MiningLazerVisualNew>();
         _visual.Init(player,instance,this);
         _damageContainer = new DamageContainer();
+        _chainDamage = _chainDamageBase;
         _abilityInstance.OnBuffExpired += OnBuffExpire;
     }
 
@@ -223,6 +226,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
 
             // Deal Damage
             _damageContainer.tile = cellPos;
+            _damageContainer.damage *= _chainDamage; // chain damage is mult
             _player.RequestDamageTile(_damageContainer);
 
             // The end of this line is the start of the next line
@@ -276,5 +280,31 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         //Gizmos.DrawSphere(debugVectorDir,0.1f);
         //Gizmos.color = Color.blue;
         //Gizmos.DrawSphere(pointBlue, 0.1f);
+    }
+
+    public void ModifyValue(ValueModifier modifier) {
+        if (modifier.Key == ValueKey.LazerChainAmount) { 
+            _maxChainLength = Mathf.FloorToInt(UpgradeCalculator.CalculateUpgradeChange(_maxChainLength, modifier));
+        }
+        if (modifier.Key == ValueKey.LazerChainDamage) {
+            _chainDamage = UpgradeCalculator.CalculateUpgradeChange(_chainDamage, modifier);
+        }
+
+    }
+
+    public void Register() {
+        UpgradeManagerPlayer.Instance.RegisterValueModifierScript(ValueKey.LazerChainAmount, this);
+    }
+
+    public float GetValueNow(ValueKey key) {
+        if(key == ValueKey.LazerChainAmount) return _maxChainLength;
+        if(key == ValueKey.LazerChainDamage) return _chainDamage;
+        return 0;
+    }
+
+    public float GetValueBase(ValueKey key) {
+        if(key == ValueKey.LazerChainAmount) return 0;
+        if(key == ValueKey.LazerChainDamage) return _chainDamageBase; 
+        return 0;  
     }
 }
