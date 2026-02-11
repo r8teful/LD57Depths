@@ -138,4 +138,8 @@ public class WorldTileManager : StaticInstance<WorldTileManager> {
         drop.gameObject.SetActive(false);
         _poolQueue.Enqueue(drop);
     }
+
+    internal void RemoveAllTileUpgrades() {
+        _tileUpgradeData.Clear();
+    }
 }

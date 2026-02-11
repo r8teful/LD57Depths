@@ -71,6 +71,10 @@ Misc:
 * MAKE SETTINGS (good for debugging, like disabling the background, fullscreen modes etc
 * Implement pitch shift for each purchase in the upgrade tree for a visit
 
+Coding:
+
+* 
+
 
 
 PACING:
@@ -85,21 +89,8 @@ PACING:
 
 
 
-ADD MORE STUFF!
+ADD MORE STUFF! DO THIS TOMORROW!!
 
-* Crit 
-* Lazer chain
+* Crit - done
+* Lazer chain - just need nodes NOW!!
 * Add exploration entity content
-
-
-
-
-
-
-
-
-
-
-
-
-

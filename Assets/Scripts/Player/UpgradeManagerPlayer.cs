@@ -176,7 +176,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
         _player.UiManager.UpgradeScreen.UpgradeTreeInstance.UpdateNodeVisualData();
         _player.PlayerAbilities.RemoveAllAbilityModifiers();
         _player.PlayerStats.RemoveAllModifiers();
-        // Last would be to get all IValueModifiable scripts to reset to their base value but I cba 
+        WorldTileManager.Instance.RemoveAllTileUpgrades();
     }
 
     internal List<IngredientStatus> GetIngredientStatuses(UpgradeNodeSO node) {

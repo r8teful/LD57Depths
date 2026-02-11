@@ -15,7 +15,7 @@ MonoBehaviour:
   nodeName: Lazer Chain Damage
   uniqueID: 110
   description: 
-  icon: {fileID: 635439231, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
+  icon: {fileID: 1054548254, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: c8b8943fe4692a645902734d0c13ef6e, type: 2}
   UnlockedAtFirstPrereqStage: 1
@@ -25,13 +25,16 @@ MonoBehaviour:
     costMultiplier: 1
     costTier: 4
     upgradeItemPool: {fileID: 11400000, guid: 29f367e82be84e84aa1af9c8dd6f8436, type: 2}
+    extraData: {fileID: 0}
   - effects:
     - {fileID: 11400000, guid: 46cdf484be47d194d8cea9d7f34941d1, type: 2}
     costMultiplier: 1
     costTier: 5
     upgradeItemPool: {fileID: 11400000, guid: 29f367e82be84e84aa1af9c8dd6f8436, type: 2}
+    extraData: {fileID: 0}
   - effects:
     - {fileID: 11400000, guid: 46cdf484be47d194d8cea9d7f34941d1, type: 2}
     costMultiplier: 1
     costTier: 6
     upgradeItemPool: {fileID: 11400000, guid: 252630a728eb6594c979e7727659293c, type: 2}
+    extraData: {fileID: 0}

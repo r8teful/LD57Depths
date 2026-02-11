@@ -30,6 +30,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifi
         _visual.Init(player,instance,this);
         _damageContainer = new DamageContainer();
         _chainDamage = _chainDamageBase;
+        Register();
         _abilityInstance.OnBuffExpired += OnBuffExpire;
     }
 
@@ -306,5 +307,10 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifi
         if(key == ValueKey.LazerChainAmount) return 0;
         if(key == ValueKey.LazerChainDamage) return _chainDamageBase; 
         return 0;  
+    }
+
+    public void ReturnValuesToBase() {
+        _maxChainLength = 0;
+        _chainDamage = _chainDamageBase;
     }
 }

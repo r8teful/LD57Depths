@@ -138,4 +138,8 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
         UpgradeManagerPlayer.Instance.RegisterValueModifierScript(ValueKey.MagnetismStrength, this);
     }
 
+    public void ReturnValuesToBase() {
+        _magnetRange = _magnetRangeBase;
+        _magnetStrength = _magnetStrengthBase;
+    }
 }

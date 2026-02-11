@@ -131,5 +131,8 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
 
     public float GetValueBase(ValueKey key) 
         => key == ValueKey.ItemTransferRate ? itemPerSecondBase : 0;
-    
+
+    public void ReturnValuesToBase() {
+        itemsPerSecond = itemPerSecondBase;
+    }
 }

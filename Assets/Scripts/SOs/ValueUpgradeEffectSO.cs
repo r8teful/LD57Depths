@@ -10,6 +10,10 @@ public class ValueUpgradeEffectSO : UpgradeEffect {
     public override void Execute(ExecutionContext context) {
        var script = UpgradeManagerPlayer.Instance.Get<IValueModifiable>(valueType);
         ValueModifier modifier = new(modificationValue, valueType, increaseType, this);
+        if(script == null) {
+            Debug.LogError("couldn't find IValueModifable script, did you register it???");
+            return;
+        }
         script.ModifyValue(modifier);
         // Programming out here!
     }
