@@ -46,17 +46,18 @@ public class UpgradeNodeVisualData {
         if (_currentUpgradeStage != null) {
             // Probably no stages. simply return
             StatChangeStatuses = _currentUpgradeStage.GetStatStatuses();
+            if (_currentUpgradeStage.extraData != null) {
+                // Take extra icon from it
+                if (_currentUpgradeStage.extraData is UpgradeStageSubData s)
+                    IconExtra = _upgradeManager.IsNodeCompleted(_node) ? s.UpgradeIconComplete : s.UpgradeIcon;
+            }
         }
         // Wow this is so much better almost like I know what I'm doing!!
         State = _upgradeManager.GetState(_node);
         LevelMax = _node.MaxLevel;
         LevelCurrent = _upgradeManager.GetCurrentLevel(_node);
 
-        // TODO ADD UpgradeStageExtraData or something to the upgradeStage and define the icons in that
-        //if (_currentUpgradeStage is SubRecipeSO s) {
-        //    // Take extra icon from it
-        //    IconExtra = IsMaxLevel() ? s.UpgradeIconComplete : s.UpgradeIcon;
-        //}
+       
         UpdateForPopup(); // We're ontop of the upgrade when upgrading it so we should refresh the popup
     }
     public void UpdateForUpgradePurchase() {

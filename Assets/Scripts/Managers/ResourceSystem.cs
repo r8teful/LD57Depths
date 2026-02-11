@@ -65,14 +65,9 @@ public class ResourceSystem {
     public const ushort BlackholeID = 107; 
     public const ushort BouncingBallID = 108; 
     public const ushort FishShooterID = 109; 
-    // We don't have specific upgrade IDs anymore 
-    //public const ushort UpgradeFlippersID = 102; // Max speed 3 
-    //public const ushort UpgradeOxygenID = 122;  // Oxygen tier 3
-    //public const ushort UpgradeJetpackID = 132; // Special handling 
-    //public const ushort SubUpgradePanel = 830; //  
-    //public const ushort SubCables3 = 802; //  
-    //public const ushort FIRST_SHIP_RECIPE_ID = 200;
-    public static bool IsGrowEntity(ushort id) {
+  
+    public const ushort SubUpgradePanel = 1000; //  
+   public static bool IsGrowEntity(ushort id) {
         if (id == 900) // Tree farm
             return true;
         return false;

@@ -249,5 +249,13 @@ public class AbilityInstance {
         }
     }
 
+    /// <summary>
+    /// Use with causion!
+    /// </summary>
+    internal void RemoveAllModifiers() {
+        foreach (var stat in _stats) {
+            stat.Value.RemoveAllModifiers();
+        }
+    }
 }
 // Ability data -> Ability Instance -> Ability Effect -> Buff instance -> statmanager

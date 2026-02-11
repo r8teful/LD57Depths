@@ -234,12 +234,18 @@ public class PlayerStatsManager : MonoBehaviour, IPlayerModule {
             toolTier = 0 //TODO
         };
     }
+    internal void RemoveAllModifiers() {
+        foreach (var stat in _stats) {
+            stat.Value.RemoveAllModifiers();
+        }
+    }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public void DEBUGADDSTAT(StatType stat, float value) {
         StatModifier mod = new(value, stat, StatModifyType.Add, this);
         AddInstanceModifier(mod);
     }
+
 
 #endif
 }

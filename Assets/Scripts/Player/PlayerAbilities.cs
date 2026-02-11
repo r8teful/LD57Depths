@@ -112,5 +112,11 @@ public class PlayerAbilities : MonoBehaviour, IPlayerModule {
             }
         }
         return a.Count > 0;
-    } 
+    }
+
+    internal void RemoveAllAbilityModifiers() {
+        foreach (var ability in _abilities) {
+            ability.Value.RemoveAllModifiers();
+        }
+    }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 namespace r8teful {
     public class Stat {
@@ -78,6 +79,15 @@ namespace r8teful {
             float result = (BaseValue + finalFlat) * (1f + finalPercentAdd);
             float increase = result / BaseValue; 
             return Mathf.Max(0, increase);
+        }
+
+
+        /// <summary>
+        /// Use with causion!
+        /// </summary>
+        internal void RemoveAllModifiers() {
+            _modifiers.Clear();
+            _isDirty = true;
         }
     }
 }

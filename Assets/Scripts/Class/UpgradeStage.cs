@@ -61,7 +61,7 @@ public class UpgradeStage : IExecutable {
     public float costMultiplier = 1.0f;
     public int costTier;
     public UpgradeTierSO upgradeItemPool;
-    // public UpgradeStageExtraData extraData;
+    public UpgradeStageExtraDataSO extraData;
 
     public void Execute(ExecutionContext context) {
         foreach (var effect in effects) {

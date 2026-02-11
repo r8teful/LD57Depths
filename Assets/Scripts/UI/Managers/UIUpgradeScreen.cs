@@ -37,15 +37,11 @@ public class UIUpgradeScreen : MonoBehaviour {
         _UIManagerParent = UIManager;
         _treeData = App.ResourceSystem.GetTreeByName(GameSetupManager.Instance.GetUpgradeTreeName()); // This will obviously have to come from some sort of "game selection" manager
        
-        // We have to get the existing data from the UpgradeManager, for both the local player, and the communal from the server
-        // I don't think we should do it here though, do it in the upgrade managers themselves, then they need to call the approriate things 
-        var pUpgrades = UpgradeManagerPlayer.Instance.GetUnlockedUpgrades();
-
-        UpgradeTreeInstance = InstantiateTree(_treeData, _upgradePanelTree.transform, pUpgrades, client);
+        UpgradeTreeInstance = InstantiateTree(_treeData, _upgradePanelTree.transform, client);
         PanAndZoom.Init(client.InputManager);
         _upgradeTreeController.Init(client, UpgradeTreeInstance);    
     }
-    private UIUpgradeTree InstantiateTree(UpgradeTreeDataSO treeData, Transform transformParent, HashSet<ushort> pUpgrades, PlayerManager player) {
+    private UIUpgradeTree InstantiateTree(UpgradeTreeDataSO treeData, Transform transformParent, PlayerManager player) {
         if (treeData == null) {
             Debug.LogError("Could not find tree!");
             return null;
@@ -55,7 +51,7 @@ public class UIUpgradeScreen : MonoBehaviour {
             return null;
         }
         var treeObj = Instantiate(treeData.prefab, transformParent);
-        treeObj.Init(treeData, pUpgrades, player);
+        treeObj.Init(treeData, player);
         treeObj.name = $"UpgradeTree_{treeData.treeName}";
         return treeObj;
     }

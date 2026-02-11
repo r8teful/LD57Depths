@@ -6,7 +6,6 @@ using UnityEngine;
 // Has to hold upgrade info! 
 public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
 
-    private HashSet<ushort> unlockedUpgrades = new();
     private PlayerManager _player;
 
     private Dictionary<ushort, UpgradeNode> _nodeStates = new Dictionary<ushort, UpgradeNode>();
@@ -15,7 +14,6 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
     public static UpgradeManagerPlayer Instance { get; private set; }
     public event Action<UpgradeNodeSO> OnUpgradePurchased;
 
-    public HashSet<ushort> GetUnlockedUpgrades() => unlockedUpgrades;
     public UpgradeNode GetUpgradeNode(ushort id) {
         if(_nodeStates.TryGetValue(id, out var state)) {
             return state;
@@ -23,6 +21,9 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
         return null;
     }
     public UpgradeStage GetUpgradeStage(UpgradeNodeSO node) {
+        if (IsNodeCompleted(node)) {
+            return node.GetLastStage();
+        }
         var lvl = GetCurrentLevel(node);
         return node.GetStage(lvl);
     }
@@ -51,7 +52,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
     }
     
     // Call this lots when you're balancing
-    private void UpdateAllNodeCosts() {
+    public void UpdateAllNodeCosts() {
         foreach(var state in _nodeStates) {
             UpdateNodeCost(state.Key);
         }
@@ -70,11 +71,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
             Debug.LogError("coudn't find node with ID!");
             return;
         }
-        if (_nodeStates.TryGetValue(node.ID, out var data)) {
-            data.UpdateNodeCost(node, _cachedTree);
-        } else {
-            Debug.LogError($"{node.ID} was not found.");
-        }
+        UpdateNodeCost(node);
     }
     public bool TryPurchaseUpgrade(UpgradeNodeSO node) {
         if (!CanAffordUpgrade(node)) {
@@ -149,13 +146,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
         return true;
     }
 
-    // Rewards are unlocked without "trying" need this to track it so we know we have it unlocked
-    public void AddUnlockedUpgrade(ushort ID) {
-        unlockedUpgrades.Add(ID);
-        throw new NotImplementedException();
-        //var recipe = App.ResourceSystem.GetRecipeUpgradeByID(ID);
-        //OnUpgradePurchase(recipe);
-    }
+
   
     public int GetCurrentLevel(UpgradeNodeSO node) {
         return _nodeStates.TryGetValue(node.ID, out var state) ? state.CurrentLevel : 0;
@@ -180,8 +171,12 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
     }
 
     internal void RemoveAllUpgrades() {
-        unlockedUpgrades.Clear();
+        _nodeStates.Clear();
+        InitUpgradeNodes();
         _player.UiManager.UpgradeScreen.UpgradeTreeInstance.UpdateNodeVisualData();
+        _player.PlayerAbilities.RemoveAllAbilityModifiers();
+        _player.PlayerStats.RemoveAllModifiers();
+        // Last would be to get all IValueModifiable scripts to reset to their base value but I cba 
     }
 
     internal List<IngredientStatus> GetIngredientStatuses(UpgradeNodeSO node) {

@@ -43,6 +43,10 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
         if (stages.Count <= stage) return null;
         return stages[stage];
     }
+    public UpgradeStage GetLastStage() {
+        if (stages == null || stages.Count == 0) return null;
+        return stages[^1]; // => stages.count - 1
+    }
 }
 public enum UpgradeType {
     // MINING Lazer

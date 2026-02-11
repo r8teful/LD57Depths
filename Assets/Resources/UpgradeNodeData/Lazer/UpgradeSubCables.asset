@@ -23,15 +23,18 @@ MonoBehaviour:
   - effects:
     - {fileID: 11400000, guid: dc34436fd6d5f0e46bd58ba7c5c41b19, type: 2}
     costMultiplier: 1
-    costTier: 20
+    costTier: 4
     upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}
+    extraData: {fileID: 11400000, guid: 92cca87b824112441ba0b4c3a10df038, type: 2}
   - effects:
     - {fileID: 11400000, guid: a22ea25a3fcb9e2498a30d0888f00b2b, type: 2}
     costMultiplier: 1
     costTier: 9
     upgradeItemPool: {fileID: 11400000, guid: 1cd4b80218c52a14995e255b4a360102, type: 2}
+    extraData: {fileID: 11400000, guid: 5838afef1a990f341a8a7b6055cca5e4, type: 2}
   - effects:
     - {fileID: 11400000, guid: 73e2b28488486024cadd4b5879a2cba6, type: 2}
     costMultiplier: 1
     costTier: 10
     upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
+    extraData: {fileID: 11400000, guid: c20fd989c300b1a4eb793760f952dfc3, type: 2}

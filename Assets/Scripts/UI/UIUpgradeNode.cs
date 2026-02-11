@@ -271,7 +271,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         OnUpgradeButtonClicked();
     }
 
-    internal void OnUpgraded(HashSet<ushort> unlockedUpgrades) {
+    internal void OnUpgraded() {
         // update visual data
         _visualData.UpdateForUpgradePurchase();
         OnPurchased();
@@ -281,7 +281,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
 
     // This is for when inderect nodes need to update their visualdata when a prerequaized 
-    internal void UpdateVisualData(HashSet<ushort> unlockedUpgrades) {
+    internal void UpdateVisualData() {
         _visualData.UpdateForUpgradePurchase();
         UpdateVisual(); 
     }

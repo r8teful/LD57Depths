@@ -16,7 +16,7 @@ public class UIUpgradeTree : MonoBehaviour {
     public bool IsClosing => _closing; // to fix a stupid bug where you get a popup because we squich the transform
     public static event Action OnUpgradeButtonPurchased; // this would break if we have several trees
     public Dictionary<ushort, UIUpgradeNode> GetNodeMap => _nodeMap;
-    internal void Init(UpgradeTreeDataSO tree, HashSet<ushort> existingUpgrades, PlayerManager player) {
+    internal void Init(UpgradeTreeDataSO tree, PlayerManager player) {
         _nodeMap.Clear();
         _treeData = tree;
         _player = player;
@@ -48,7 +48,7 @@ public class UIUpgradeTree : MonoBehaviour {
             uiNode.Init(this,nodeData, player.UpgradeManager);
             _nodeMap.Add(nodeData.ID, uiNode);
         }
-        CreateConnectionLines(tree, existingUpgrades);
+        CreateConnectionLines(tree);
         _adjacencyDict = BuildUndirectedAdjacency(tree.nodes);
         UIUpgradeScreen.OnSelectedNodeChanged += SelectedChange;
         _player.UiManager.UpgradeScreen.OnPanelChanged += PanelChanged;
@@ -68,7 +68,7 @@ public class UIUpgradeTree : MonoBehaviour {
         
     }
 
-    private void CreateConnectionLines(UpgradeTreeDataSO treeData, IReadOnlyCollection<ushort> unlockedUpgrades) {
+    private void CreateConnectionLines(UpgradeTreeDataSO treeData) {
         foreach (var dataNode in treeData.nodes) {
             if (!_nodeMap.TryGetValue(dataNode.ID, out UIUpgradeNode childUiNode)) continue;
 
@@ -144,8 +144,7 @@ public class UIUpgradeTree : MonoBehaviour {
     internal void OnUpgradeButtonClicked(UIUpgradeNode uIUpgradeNode, UpgradeNodeSO upgradeNode) {
       if (UpgradeManagerPlayer.Instance.TryPurchaseUpgrade(upgradeNode)) {
             // Purchased succefully!
-            var unlockedUpgrades = _player.UpgradeManager.GetUnlockedUpgrades();
-            uIUpgradeNode.OnUpgraded(unlockedUpgrades);
+            uIUpgradeNode.OnUpgraded();
             OnUpgradeButtonPurchased.Invoke();
             StartSimpleRipple(upgradeNode.ID, _adjacencyDict, _nodeMap);
         } 
@@ -156,11 +155,14 @@ public class UIUpgradeTree : MonoBehaviour {
         if (isActive) {
             UpdateNodeVisualData();
         }
+#if UNITY_EDITOR
+        _player.UpgradeManager.UpdateAllNodeCosts();
+#endif
     }
 
     public void UpdateNodeVisualData() {
         foreach (var kvp in _nodeMap) {
-            kvp.Value.UpdateVisualData(_player.UpgradeManager.GetUnlockedUpgrades());
+            kvp.Value.UpdateVisualData();
         }
         Debug.Log($"Update: {_nodeMap.Count} nodes");
     }

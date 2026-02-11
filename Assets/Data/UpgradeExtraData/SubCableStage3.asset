@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a534d3f85bf1ca45800d17843b97461, type: 3}
-  m_Name: SubEffectCable1
+  m_Script: {fileID: 11500000, guid: 3b3dede1b9a45514d9de36282b5b139c, type: 3}
+  m_Name: SubCableStage3
   m_EditorClassIdentifier: 
-  SpriteExterior: {fileID: 0}
-  SpriteInterior: {fileID: 808791789, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
-  upgrade: {fileID: 0}
-  isMajor: 0
+  UpgradeIcon: {fileID: 1326732611, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  isLast: 1
+  UpgradeIconComplete: {fileID: -1717446064, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}

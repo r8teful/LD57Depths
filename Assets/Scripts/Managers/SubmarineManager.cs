@@ -19,14 +19,13 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     public InventoryManager SubInventory => subInventory;
     [SerializeField] private SubItemGainVisualSpawner itemGainSpawner;
 
-    private HashSet<ushort> _subRecipes = new HashSet<ushort>();
+    private HashSet<ushort> _subUpgrades = new HashSet<ushort>(); // UPGRADE NODE ID 
     [SerializeField] private List<UpgradeNodeSO> _majorUpgrades; // When the player gets this recipe, we increase the "stage"
     
     [SerializeField] private Transform _cutsceneCameraPosUpgradeMachine;
     [SerializeField] private Transform _cutsceneCameraPosControlPanel; 
     [SerializeField] private SpriteRenderer _upgradeMachine; 
     
-    private int _upgradeStage;
     protected override void Awake() {
         base.Awake();
         subInventory = new InventoryManager();
@@ -46,34 +45,34 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
         submarineExterior.transform.position = new Vector3(0, y);
     }
 
-    internal void NewSubUpgrade(UpgradeNodeSO newUpgrade, SubUpgradeEffect effect) {
-        bool success = _subRecipes.Add(newUpgrade.ID);
-        if (!success) {
-            Debug.LogError("Sub recipe already purchased! Did you assigned a unique ID?");
-            return;
+    internal void NewSubUpgrade(SubUpgradeEffect effect) {
+        if (effect.isMajor) {
+            bool success = _subUpgrades.Add(effect.upgrade.ID);
+            if (!success) {
+                Debug.LogError("Sub recipe already purchased! Did you assigned a unique ID?");
+                return;
+            }
+            HandleCutscene(effect.upgrade.ID, effect,ResourceSystem.SubUpgradePanel, _cutsceneCameraPosUpgradeMachine);
         }
-        if (_majorUpgrades.Exists(r => r.ID == newUpgrade.ID)) {
-            _upgradeStage++;
-        }
-        //HandleCutscene(newUpgrade, effect, , _cutsceneCameraPosUpgradeMachine);
-        //HandleCutscene(newUpgrade, effect, , _cutsceneCameraPosControlPanel);
+        // TODO update visual of the sub based on effect sprites
+
     }
 
-    //private void HandleCutscene(SubRecipeSO newUpgrade, SubUpgradeEffect effect, ushort ID, Transform cameraPos) {
-    //    if (newUpgrade.ID == ID) {
-    //        GameSequenceManager.Instance.AddEvent(
-    //            onStart: () => {
-    //                GameCutsceneManager.Instance.StartSubUpgradeCutscene(
-    //                    cameraPos,
-    //                    () => _upgradeMachine.sprite = effect.SpriteInterior
-    //                    );
-    //            },
-    //        onFinish: () => {
+    private void HandleCutscene(ushort newUpgrade, SubUpgradeEffect effect, ushort ID, Transform cameraPos) {
+        if (newUpgrade == ID) {
+            GameSequenceManager.Instance.AddEvent(
+                onStart: () => {
+                    GameCutsceneManager.Instance.StartSubUpgradeCutscene(
+                        cameraPos,
+                        () => _upgradeMachine.sprite = effect.SpriteInterior
+                        );
+                },
+            onFinish: () => {
 
-    //        }
-    //       );
-    //    }
-    //}
+            }
+           );
+        }
+    }
     private void ChangeUpgradeSprite() {
 
     }
@@ -89,14 +88,14 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
         }
     }
 
-    public int GetUpgradeStage() => _upgradeStage; 
+    public int GetUpgradeStage() => _subUpgrades.Count; // lol?
     
     public bool CanMoveTo(int index) {
-        return index <= _upgradeStage;
+        return index <= GetUpgradeStage();
     }
 
     // FOR DEBUGING PUPROSES!!
     internal void RemoveAllUpgrades() {
-        _subRecipes.Clear();
+        _subUpgrades.Clear();
     }
 }

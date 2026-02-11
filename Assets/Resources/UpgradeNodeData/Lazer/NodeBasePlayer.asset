@@ -19,7 +19,9 @@ MonoBehaviour:
   prerequisiteNodesAny: []
   UnlockedAtFirstPrereqStage: 0
   stages:
-  - upgrade: {fileID: 11400000, guid: ccad55654ade66a4785fc3bac5f85386, type: 2}
+  - effects:
+    - {fileID: 11400000, guid: f3e75dd184350bf4f9ac48e282e931cc, type: 2}
     costMultiplier: 1
     costTier: 0
     upgradeItemPool: {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
+    extraData: {fileID: 0}
