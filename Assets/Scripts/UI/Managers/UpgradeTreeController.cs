@@ -44,7 +44,8 @@ public class UpgradeTreeController : MonoBehaviour {
     }
 
     internal void OnTreeOpen() {
-        SetSelection(startingNode);
+        if(_inputManager.IsUsingController)
+            SetSelection(startingNode);
     }
 
     internal void OnTreeClose() {

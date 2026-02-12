@@ -64,8 +64,8 @@ Shader "Custom/WorldTilemap"
 
                 // Sample the seamless texture from the array
                 fixed4 seamlessColor = UNITY_SAMPLE_TEX2DARRAY(_TextureArray, float3(worldUV.x, worldUV.y, index));
-
-                // Optional: Combine with original sprite texture (e.g., multiply or replace)
+                
+				// Optional: Combine with original sprite texture (e.g., multiply or replace)
                 fixed4 spriteColor = tex2D(_MainTex, i.uv);
 
                 fixed4 finalColor = lerp(seamlessColor,spriteColor, spriteColor.a);

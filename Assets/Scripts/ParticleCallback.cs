@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ParticleCallback : MonoBehaviour {
     public int type = 0; // 0 is crit, idk this could just become an enum

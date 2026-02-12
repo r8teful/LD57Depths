@@ -2,7 +2,6 @@ using DG.Tweening;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -214,9 +213,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _stageText.gameObject.SetActive(false);
         _stageText.text = $"{_visualData.LevelCurrent}/{_visualData.LevelMax}";
     }
-    private void OnPurchased() {
+    private void OnPurchased(int upgradesBought) {
         // Hide popup
-        App.AudioController.PlaySound2D("UpgradeBought");
+        App.AudioController.PlaySound2D("UpgradeBought",pitch: new(1+(0.05f*upgradesBought)));
         var p = App.ResourceSystem.GetPrefab("UIParticleUpgradePurchase");
         var m =p.GetComponentInChildren<ParticleSystem>().main;
         Color c;
@@ -263,18 +262,14 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         _isSelected = true;
     }
 
-    internal void DoPurchaseAnim() {
-        OnPurchased();
-    }
-
     internal void OnPurchaseInput() {
         OnUpgradeButtonClicked();
     }
 
-    internal void OnUpgraded() {
+    internal void OnUpgraded(int upgradesBought) {
         // update visual data
         _visualData.UpdateForUpgradePurchase();
-        OnPurchased();
+        OnPurchased(upgradesBought);
         PopupDataChanged?.Invoke(); // This will tell the upgrade manager to fetch new upgrade data
         _treeParent.UpdateNodeVisualData();
         UpdateVisual(); // Sets color, stage text etc...

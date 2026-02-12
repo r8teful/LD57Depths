@@ -12,9 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c35d8407d1001914fad8e9a45d7cc0ab, type: 3}
   m_Name: EventCave0
   m_EditorClassIdentifier: 
-  Descritpion: 
+  Descritpion: 'You see a faint golden glow illuminating the end of a cave lined
+    with jagged rocks,do you try and reach the treasure? '
   Options:
-  - OptionText: 
-    effects:
-    - {fileID: 11400000, guid: e931c0b3fa967b14fa2dfb43753cf14d, type: 2}
+  - OptionText: Yes
+    result: []
+    ResultText: 
+  - OptionText: No
+    result:
+    - effects: []
+    - effects:
+      - {fileID: 11400000, guid: 5e74ec53483f51241bf1f7e8a660adf4, type: 2}
     ResultText: 

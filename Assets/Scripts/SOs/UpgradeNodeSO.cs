@@ -1,7 +1,5 @@
 ﻿using Sirenix.OdinInspector;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "UpgradeNodeSO", menuName = "ScriptableObjects/Upgrades/UpgradeNodeSO")]

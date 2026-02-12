@@ -94,6 +94,8 @@ public class InputManager : MonoBehaviour, IPlayerModule {
             Debug.LogWarning("PlayerInput component not found on player. Mouse-only or manual input bindings needed.", gameObject);
         }
     }
+
+
     void OnDisable() { if(_playerInput !=null) UnsubscribeFromEvents(); }
     private void SubscribeToEvents() {
         _UItoggleInventoryAction.performed += UIOnToggleInventory;
@@ -115,6 +117,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         _uiZoom.canceled += OnZoom;
         _uiNavigateAction.performed += OnUINavigation;
         _uiNavigateAction.canceled += OnUINavigation;
+        _playerInput.onControlsChanged += OnControlsChanged;
 
         _playerAbilityAction.performed+= OnAbilityPerformed;
     }
@@ -163,6 +166,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         }
 
         _uiNavigateAction.performed -= OnUINavigation;
+        _playerInput.onControlsChanged -= OnControlsChanged;
     }
     private void Update() {
         if (_inventoryUIManager == null) return;
@@ -326,7 +330,10 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     public void OnInteract(InputAction.CallbackContext context) {
 
     }
-   
+
+    private void OnControlsChanged(PlayerInput input) {
+        IsUsingController = input.currentControlScheme == "Gamepad";
+    }
     //private void OnUseHotbarInput(InputAction.CallbackContext context) {
     //    if(_currentContext == PlayerInteractionContext.HotebarItemSelected) {
     //        _inventoryUIManager.ItemSelectionManager.HandleUseInput(context);

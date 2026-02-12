@@ -17,7 +17,6 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     [SerializeField] private SubItemGainVisualSpawner itemGainSpawner;
 
     private HashSet<ushort> _subUpgrades = new HashSet<ushort>(); // UPGRADE NODE ID 
-    [SerializeField] private List<UpgradeNodeSO> _majorUpgrades; // When the player gets this recipe, we increase the "stage"
     
     [SerializeField] private Transform _cutsceneCameraPosUpgradeMachine;
     [SerializeField] private Transform _cutsceneCameraPosControlPanel; 
@@ -50,6 +49,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
                 return;
             }
             HandleCutscene(effect.upgrade.ID, effect,ResourceSystem.SubUpgradePanel, _cutsceneCameraPosUpgradeMachine);
+            HandleCutscene(effect.upgrade.ID, effect,ResourceSystem.SubUpgradeControlPanel, _cutsceneCameraPosControlPanel);
         }
         // TODO update visual of the sub based on effect sprites
 

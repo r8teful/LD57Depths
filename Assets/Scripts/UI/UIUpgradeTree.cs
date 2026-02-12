@@ -13,6 +13,8 @@ public class UIUpgradeTree : MonoBehaviour {
     private PlayerManager _player;
     private Dictionary<ushort, List<ushort>> _adjacencyDict;
     private bool _closing;
+    private int _upgradeBoughtThisVisit;
+
     public bool IsClosing => _closing; // to fix a stupid bug where you get a popup because we squich the transform
     public static event Action OnUpgradeButtonPurchased; // this would break if we have several trees
     public Dictionary<ushort, UIUpgradeNode> GetNodeMap => _nodeMap;
@@ -52,10 +54,16 @@ public class UIUpgradeTree : MonoBehaviour {
         _adjacencyDict = BuildUndirectedAdjacency(tree.nodes);
         UIUpgradeScreen.OnSelectedNodeChanged += SelectedChange;
         _player.UiManager.UpgradeScreen.OnPanelChanged += PanelChanged;
+        _player.PlayerMovement.OnPlayerStateChanged += PlayerStateChanged;
         ItemTransferManager.OnTransferCompleteAll += UpdateNodeVisualData; // Fixes a bug where nodes don't update when you rush to the upgrade machine
 
     }
 
+    private void PlayerStateChanged(PlayerMovement.PlayerState state) {
+        if(state == PlayerMovement.PlayerState.Swimming) {
+            _upgradeBoughtThisVisit = 0; // assume we've gone back to swim!
+        }
+    }
 
     private void SelectedChange(UpgradeNodeSO node) {
         if(!_nodeMap.TryGetValue(node.ID, out var nodeUI)){
@@ -144,9 +152,10 @@ public class UIUpgradeTree : MonoBehaviour {
     internal void OnUpgradeButtonClicked(UIUpgradeNode uIUpgradeNode, UpgradeNodeSO upgradeNode) {
       if (UpgradeManagerPlayer.Instance.TryPurchaseUpgrade(upgradeNode)) {
             // Purchased succefully!
-            uIUpgradeNode.OnUpgraded();
+            uIUpgradeNode.OnUpgraded(_upgradeBoughtThisVisit);
             OnUpgradeButtonPurchased.Invoke();
             StartSimpleRipple(upgradeNode.ID, _adjacencyDict, _nodeMap);
+            _upgradeBoughtThisVisit++;
         } 
     }
 

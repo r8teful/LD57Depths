@@ -257,7 +257,7 @@ Transform:
   m_GameObject: {fileID: 2130207052886854516}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.67, y: 1.44, z: 0}
+  m_LocalPosition: {x: 0.44, y: -1.06, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -398,7 +398,8 @@ MonoBehaviour:
   InteriorSpawnPoint: {fileID: 5362015592891457319}
   itemGainSpawner: {fileID: 6972339307842617825}
   _majorUpgrades:
-  - {fileID: 11400000, guid: 062f003fcc40dcb4a82a74b76708d45a, type: 2}
+  - {fileID: 11400000, guid: 3fc0c9bd770644d448652616cf99fcec, type: 2}
+  - {fileID: 11400000, guid: 3e35efeac4af63845b61ddb6dab4245a, type: 2}
   _cutsceneCameraPosUpgradeMachine: {fileID: 7923913168107496958}
   _cutsceneCameraPosControlPanel: {fileID: 5055747747755286226}
   _upgradeMachine: {fileID: 5229215333937229237}
@@ -617,7 +618,7 @@ Transform:
   m_GameObject: {fileID: 2842868928402850306}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.32, y: -0.96, z: 0}
+  m_LocalPosition: {x: -0.53, y: 1.99, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

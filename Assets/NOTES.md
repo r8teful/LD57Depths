@@ -1019,6 +1019,12 @@ OK How will we do event caves? They should be set templates, right? do we just m
 
 
 
+Decrease MAX SPEED BY A LOT,
+
+You get gold a bit too late? Idk the cool stuff need gold but you're not really looking what you need so you kind of lose that pasing if they don't stumble upon it earlier 
+
+
+
 
 
 

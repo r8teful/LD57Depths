@@ -48,6 +48,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: a3bc34920f46ec64fa6f4b0961c61685, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _TestTex:
+        m_Texture: {fileID: 2800000, guid: 635563a215a35cd45969f33cd31e2510, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _TextureArray:
         m_Texture: {fileID: 18700000, guid: 24138097c3a82bb4880324726ca69696, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -70,7 +74,7 @@ Material:
     - _Glossiness: 0.5
     - _MaxIndex: 255
     - _Metallic: 0
-    - _TilingScale: 0.3
+    - _TilingScale: 0.4
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

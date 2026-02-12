@@ -25,13 +25,16 @@ MonoBehaviour:
     costMultiplier: 1
     costTier: 1
     upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
+    extraData: {fileID: 0}
   - effects:
-    - {fileID: 11400000, guid: a6277ba6419843a4aa0d4de68d6ecedc, type: 2}
+    - {fileID: 11400000, guid: a54273edc7c53564ba520bac8eb633ed, type: 2}
     costMultiplier: 1.51
-    costTier: 2
+    costTier: 4
     upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
+    extraData: {fileID: 0}
   - effects:
     - {fileID: 11400000, guid: a54273edc7c53564ba520bac8eb633ed, type: 2}
     costMultiplier: 1
-    costTier: 3
+    costTier: 5
     upgradeItemPool: {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
+    extraData: {fileID: 0}

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
-
-public class ItemGainEffectSO : UpgradeEffect {
+﻿public class ItemGainEffectSO : UpgradeEffect {
     public override void Execute(ExecutionContext context) {
         
     }
