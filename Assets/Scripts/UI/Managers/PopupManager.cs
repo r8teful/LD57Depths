@@ -10,7 +10,7 @@ public class PopupManager : StaticInstance<PopupManager> {
     private IPopupInfo currentSelectedInfoProvider;
     private bool isMouseOverPopup;
     private InventoryManager inventoryManager;
-    private static event Action<IPopupInfo> infoProvider;
+    
     public UIPopup CurrentPopup => currentPopup;
     //private void Awake() {
     //    if (Instance == null)
@@ -22,7 +22,6 @@ public class PopupManager : StaticInstance<PopupManager> {
         inventoryManager = clientInv; // need it for popup box info
     }
     private void Start() {
-        GetComponent<UIManager>().UIManagerInventory.OnInventoryToggle += OnInventoryToggled;
         GetComponent<UIManager>().UpgradeScreen.OnPanelChanged += TryHidePopup;
         //EventSystem.current.onSelectedGameObjectChanged.AddListener(OnSelectedGameObjectChanged);
     }
@@ -34,7 +33,7 @@ public class PopupManager : StaticInstance<PopupManager> {
     }
 
     private void OnDestroy() {
-        GetComponent<UIManager>().UIManagerInventory.OnInventoryToggle -= OnInventoryToggled;
+        GetComponent<UIManager>().UpgradeScreen.OnPanelChanged -= TryHidePopup;
     }
 
     private void OnInventoryToggled(bool isOpen) {
@@ -98,7 +97,7 @@ public class PopupManager : StaticInstance<PopupManager> {
         currentPopup = Instantiate(popupPrefab, transform);
         currentPopup.SetData(data);
         //LayoutRebuilder.ForceRebuildLayoutImmediate(currentPopup.GetComponent<RectTransform>());
-        PositionPopup2(infoProvider);
+        PositionPopup(infoProvider);
         currentPopup.ShowAnimate();
     }
 
@@ -116,37 +115,8 @@ public class PopupManager : StaticInstance<PopupManager> {
         }
     }
 
+   
     private void PositionPopup(IPopupInfo infoProvider) {
-        RectTransform itemRT = (infoProvider as MonoBehaviour).GetComponent<RectTransform>();
-        RectTransform popupRT = currentPopup.gameObject.GetComponent<RectTransform>();
-
-        // Calculate item bottom and top centers
-        Vector2 itemBottomCenter = new Vector2(itemRT.position.x, itemRT.position.y + itemRT.rect.yMin);
-        Vector2 itemTopCenter = new Vector2(itemRT.position.x, itemRT.position.y + itemRT.rect.yMax);
-        float popupHeight = popupRT.rect.height;
-
-        // Try positioning below
-        Vector2 position = itemBottomCenter;
-        popupRT.position = new Vector3(position.x, position.y, 0);
-
-
-        UpgradePanAndZoom.ClampToParentBounds(popupRT, popupRT.GetComponentInParent<RectTransform>());
-        return;
-        // Check if bottom is off-screen
-        float popupBottom = position.y + popupRT.rect.yMin;
-        if (popupBottom < 0) {
-            // Position above
-            position = new Vector2(itemTopCenter.x, itemTopCenter.y + popupHeight);
-            popupRT.position = new Vector3(position.x, position.y, 0);
-        }
-
-        // Clamp x to stay within screen horizontally
-        float leftBound = -popupRT.rect.xMin;
-        float rightBound = Screen.width - popupRT.rect.xMax;
-        float clampedX = Mathf.Clamp(popupRT.position.x, leftBound, rightBound);
-        popupRT.position = new Vector3(clampedX, popupRT.position.y, 0);
-    }
-    private void PositionPopup2(IPopupInfo infoProvider) {
         var mb = infoProvider as MonoBehaviour;
         if (mb == null) return;
         RectTransform itemRT = mb.GetComponent<RectTransform>();

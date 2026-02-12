@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-// Has to hold upgrade info! 
+// Has to hold upgrade info! . Also holds the entire upgrade tree state it feels like that should be its own script 
 public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
 
     private PlayerManager _player;
@@ -13,7 +13,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
     private readonly Dictionary<ValueKey, IValueModifiable> _valueModifierScipts = new Dictionary<ValueKey, IValueModifiable>();
     public static UpgradeManagerPlayer Instance { get; private set; }
     public event Action<UpgradeNodeSO> OnUpgradePurchased;
-
+    private int _highestCostTierPurchased; // used for chest loot
     public UpgradeNode GetUpgradeNode(ushort id) {
         if(_nodeStates.TryGetValue(id, out var state)) {
             return state;
@@ -27,6 +27,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
         var lvl = GetCurrentLevel(node);
         return node.GetStage(lvl);
     }
+    
     private void OnUpgradePurchase(UpgradeNodeSO recipe) {
         Debug.Log($"Successfully purchased upgrade: {recipe.name}");
         OnUpgradePurchased?.Invoke(recipe);
@@ -87,6 +88,9 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
             effect.Execute(new(_player)); 
         }
         state.CurrentLevel++;
+        if(stage.costTier > _highestCostTierPurchased) {
+            _highestCostTierPurchased = stage.costTier;
+        }
         OnUpgradePurchased?.Invoke(node);
         UpdateNodeCost(node);
         return true;
@@ -145,9 +149,47 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
         if (!state.CanAfford(SubmarineManager.Instance.SubInventory)) return false;
         return true;
     }
+    public List<UpgradeNode> GetAvailableNodes() {
+        var list = new List<UpgradeNode>();
+        foreach (var node in _nodeStates) {
+            var upgradeNode = App.ResourceSystem.GetUpgradeNodeByID(node.Key);
+            if (upgradeNode == null) continue;
+            if (IsNodeUnlocked(upgradeNode)) {
+                list.Add(node.Value);
+            }
+        }
+        return list;
+    }
+    // Basically non completed upgrade that are around the highest bought upgrade so far
+    public List<UpgradeNode> GetUpgradesForChests() {
+        // Used for chest loot
+        const int maxRange = 4;
+        const int amount = 4;
+        int costStage = _highestCostTierPurchased;
+        for (int range = 1; range <= maxRange; range++) {
+            var list = new List<UpgradeNode>();
+            foreach (var node in _nodeStates) {
+                var upgradeNode = App.ResourceSystem.GetUpgradeNodeByID(node.Key);
+                if (upgradeNode == null) continue;
+                if (IsNodeCompleted(upgradeNode)) continue;
+                var stage = GetUpgradeStage(upgradeNode);
+                if (stage == null) continue;
+
+                // if outside the current expanding range, skip
+                if (stage.costTier > costStage + range) continue; // Too expensive
+                if (stage.costTier < costStage - range) continue; // Too cheap
+
+                list.Add(node.Value);
+            }
+            if (list.Count >= amount|| range == maxRange) {
+                return list;
+            }
+            // increase range and try again
+        }
+        return new List<UpgradeNode>();
+    }
 
 
-  
     public int GetCurrentLevel(UpgradeNodeSO node) {
         return _nodeStates.TryGetValue(node.ID, out var state) ? state.CurrentLevel : 0;
     }

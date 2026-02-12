@@ -61,8 +61,8 @@ public class MiningLazerVisual : MonoBehaviour, IToolVisual {
         _lineWidth = _cachedToolData.ToolWidth;
         laser.volume = 0.2f;
         // _lineWidth is 0.1 to 2, so we lerp that to get values from 1 to 0.7
-        var min = 0.1f;
-        var max = 4f;
+        //var min = 0.1f;
+        //var max = 4f;
         //laser.pitch = Mathf.Lerp(1f, 0.7f, (Mathf.Clamp(_lineWidth, min, max) - min) / (max - min));
         laser.pitch = 0.7f;
         // Could also have thicker line mean more bloom -> Nice glow

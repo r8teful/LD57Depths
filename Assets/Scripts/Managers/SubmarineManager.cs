@@ -8,9 +8,6 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
      private int _currentZoneIndex;
     public int CurrentZoneIndex => _currentZoneIndex;
 
-    // A client-side event that the UI can subscribe to.
-    public event Action<ushort> OnUpgradeDataChanged; // Passes the RecipeID that changed
-    public event Action<ushort> OnCurRecipeChanged; // Passes the new RecipeID 
     public event Action OnSubMoved; // Used by map 
     public GameObject submarineExterior;
     public Transform InteriorSpawnPoint;
@@ -60,7 +57,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
 
     private void HandleCutscene(ushort newUpgrade, SubUpgradeEffect effect, ushort ID, Transform cameraPos) {
         if (newUpgrade == ID) {
-            GameSequenceManager.Instance.AddEvent(
+            GameSequenceManager.Instance.AddEvent(shouldPause: false,
                 onStart: () => {
                     GameCutsceneManager.Instance.StartSubUpgradeCutscene(
                         cameraPos,

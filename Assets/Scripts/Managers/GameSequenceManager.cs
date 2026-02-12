@@ -8,6 +8,7 @@ public class GameSequenceManager : StaticInstance<GameSequenceManager> {
     public class QueuedEvent {
         public Action OnStart;  // What happens when this event begins
         public Action OnFinish; // What happens when this event is officially done
+        public bool ShouldPause;
     }
 
     private Queue<QueuedEvent> eventQueue = new Queue<QueuedEvent>();
@@ -17,10 +18,11 @@ public class GameSequenceManager : StaticInstance<GameSequenceManager> {
     /// <summary>
     /// Other scripts call this to request an interruption (Level up, Chest, etc)
     /// </summary>
-    public void AddEvent(Action onStart, Action onFinish = null) {
+    public void AddEvent(bool shouldPause, Action onStart, Action onFinish = null) {
         QueuedEvent newEvent = new QueuedEvent {
             OnStart = onStart,
-            OnFinish = onFinish
+            OnFinish = onFinish,
+            ShouldPause = shouldPause,
         };
 
         eventQueue.Enqueue(newEvent);
@@ -48,9 +50,8 @@ public class GameSequenceManager : StaticInstance<GameSequenceManager> {
 
             currentEvent = eventQueue.Dequeue();
 
-            // Pausing logic usually happens here (or inside OnStart)
-            //Time.timeScale = 0;
-
+            if(currentEvent.ShouldPause) Time.timeScale = 0;
+            
             currentEvent.OnStart?.Invoke();
         } else {
             Time.timeScale = 1;

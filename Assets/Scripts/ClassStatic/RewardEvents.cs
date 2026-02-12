@@ -11,12 +11,14 @@ public static class RewardEvents {
     // Ratio, XP amount. 
     public static event Action<float, int> OnXPChanged;
 
-    public static event Action OnChestOpen; // UI reacts to this
+    public static event Action OnChestOpen; // UIChestRewardScreen reacts
+    public static event Action OnShrineOpen; // UIShrineRewardScreen reacts
 
     public static void TriggerGainXP(int amount) => OnGainXP?.Invoke(amount);
     public static void TriggerLevelUp(int newLevel) => OnLevelUpReady?.Invoke(newLevel);
     public static void TriggerXPGainedUI(float ratio, int amount) => OnXPChanged?.Invoke(ratio,amount);
     public static void TriggerUIReady() => OnUILevelReady?.Invoke();
 
-    public static void TriggerOpenChest() => OnChestOpen?.Invoke();
+    public static void TriggerOpenChest() => OnChestOpen?.Invoke(); 
+    public static void TriggerOpenShrine() => OnShrineOpen?.Invoke(); 
 }

@@ -24,16 +24,7 @@ public class ValueUpgradeEffectSO : UpgradeEffect {
             Debug.LogWarning("coudn't find script with valueType: " + valueType);
             return new();
         }
-        var valueBase = script.GetValueBase(valueType);
-        var valueNow = script.GetValueNow(valueType);
-        var valueNext = UpgradeCalculator.CalculateUpgradeChange(valueNow, increaseType, modificationValue);
-        
-        // make it a procent change duh
-        float percentNow = valueNow / (float)valueBase;
-        float percentNext = valueNext / (float)valueBase;
-
-        int currentProcent = Mathf.RoundToInt(percentNow * 100f);
-        int nextProcent = Mathf.RoundToInt(percentNext * 100f);
-        return new("todo", $"{currentProcent}%", $"{nextProcent}%", true);
+        ValueModifier modifier = new(modificationValue, valueType, increaseType, this);
+        return modifier.GetStatus(script);
     }
 }

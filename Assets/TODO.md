@@ -89,8 +89,6 @@ PACING:
 
 
 
-ADD MORE STUFF! DO THIS TOMORROW!!
+ADD MORE STUFF!
 
-* Crit - done
-* Lazer chain - just need nodes NOW!!
 * Add exploration entity content

@@ -153,5 +153,19 @@ namespace r8teful {
             }
             return false;
         }
+
+        internal static IEnumerable<ItemQuantity> GetChestRewards(List<UpgradeNode> nodes) {
+            Random rand = new();
+            var result = new List<ItemQuantity>();
+            //keep extracting from the list until it's depleted or we've reached 3
+            while (result.Count <= 3 || nodes.Count <= 0) {
+                int index = rand.Next(0, nodes.Count);
+                foreach (var itemQ in nodes[index].requiredItems) {
+                    result.Add(itemQ);
+                }
+                nodes.RemoveAt(index);
+            }
+            return ItemQuantity.CombineItemQuantities(result); // lol?
+        }
     }
 }

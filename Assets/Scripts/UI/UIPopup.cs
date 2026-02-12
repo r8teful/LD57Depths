@@ -27,8 +27,8 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         int vibrato = 6;
         var elasticity = 2;
         var scale = 0.2f;
-        float rotation =20;
-        float strength = 10f;
+        //float rotation =20;
+        //float strength = 10f;
         rectTransform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity).SetEase(Ease.OutBack);
         //rectTransform.DOPunchRotation(new(0, 0, Random.Range(-rotation, rotation)), 0.2f, vibrato, elasticity)
         //    .SetEase(Ease.OutBack);

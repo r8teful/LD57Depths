@@ -100,6 +100,28 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
         RewardEvents.TriggerGainXP(i);
     }
 
+    [ConsoleCommand("giveShrine")]
+    private void debugShrineReward() {
+        GameSequenceManager.Instance.AddEvent(shouldPause: true,
+         onStart: () => {
+             _player.PlayerReward.GenerateRewardsShrine();
+             RewardEvents.TriggerOpenShrine();
+         }
+     );
+    }
+    [ConsoleCommand("giveChest")]
+    private void debugChestReward() {
+        GameSequenceManager.Instance.AddEvent(shouldPause: true,
+         onStart: () => {
+             _player.PlayerReward.GenerateRewardsChest();
+             RewardEvents.TriggerOpenChest();
+         }
+     );
+    }
+    [ConsoleCommand("giveCave")]
+    private void debugCaveReward() {
+        // todo
+    }
 
     [ConsoleCommand("showupgrade")]
     private void debugShowUpgradeScreen() {

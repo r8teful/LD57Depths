@@ -37,7 +37,7 @@ public class PlayerExperienceManager : MonoBehaviour, IPlayerModule {
         int levelToBecome = levelData.currentLevel + 1;
         
         // Add to the centralized queue
-        GameSequenceManager.Instance.AddEvent(
+        GameSequenceManager.Instance.AddEvent(shouldPause: true,
             onStart: () => {
                 _player.PlayerReward.GenerateRewardsLevel(levelToBecome);
                 RewardEvents.TriggerLevelUp(levelToBecome);

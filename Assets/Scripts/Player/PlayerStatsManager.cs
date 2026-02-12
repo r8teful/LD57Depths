@@ -21,7 +21,6 @@ public class PlayerStatsManager : MonoBehaviour, IPlayerModule {
     const float UI_UPDATE_INTERVAL = 0.2f; // Ui updates every 0.2s
     public bool IsInitialized => _isInitialized;
 
-    public event Action OnInitialized;
     public int InitializationOrder => 91;
 
     public event Action OnStatChanged;
@@ -216,7 +215,7 @@ public class PlayerStatsManager : MonoBehaviour, IPlayerModule {
                 changed = true;
             }
         }
-        OnStatChanged?.Invoke();
+        if(changed) OnStatChanged?.Invoke();
     }
 
     public void AddInstanceModifier(StatModifier mod) {

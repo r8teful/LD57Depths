@@ -1,7 +1,11 @@
 ﻿using System;
+using UnityEngine;
 
+/// <summary>
+/// Very similar to StatModifier but its a more generic value instead of a stat
+/// </summary>
 [Serializable] // So it can be viewed in the Inspector if needed
-public class ValueModifier {
+public class ValueModifier { 
     public float Value;
     public ValueKey Key; // The stat we want to modify
     public StatModifyType Type;
@@ -14,5 +18,19 @@ public class ValueModifier {
         Key = stat;
         Type = type;
         Source = source;
+    }
+    public StatChangeStatus GetStatus(IValueModifiable script) {
+        var valueBase = script.GetValueBase(Key);
+        var valueNow = script.GetValueNow(Key);
+        var valueNext = UpgradeCalculator.CalculateUpgradeChange(valueNow, Type, Value);
+
+        // make it a procent change duh
+        float percentNow = valueNow / (float)valueBase;
+        float percentNext = valueNext / (float)valueBase;
+
+        int currentProcent = Mathf.RoundToInt(percentNow * 100f);
+        int nextProcent = Mathf.RoundToInt(percentNext * 100f);
+
+        return new("todo", $"{currentProcent}%", $"{nextProcent}%", true);
     }
 }

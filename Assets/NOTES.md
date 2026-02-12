@@ -967,6 +967,7 @@ HIT: 22, -97 BUT ACTUALLY DAMAGE 22, -96
 
 
 
+make speed a bit more expensive? Could literally do two in one go and speed is SO quick at tier 3
 
 
 
@@ -974,18 +975,35 @@ HIT: 22, -97 BUT ACTUALLY DAMAGE 22, -96
 
 
 
+OK very good until tier 6, this is when you need arund 150 points for an upgrade. BUT, we need to really up the power after this point, because its 300 -> 600 -> 1200 -> 2400. About this time would be nice for some extras though, like the blast, the chain, the crit. Also things are getting so far away its a bit annoying to have to swim all the way over to them
 
 
 
+I might just remove the entire RecipeiesUpgrade step because it is literally pointless to have. It adds no extra data. We could literally have all the data within the node, and that's it, we don't have to have this extra step of 
 
 
 
+each stage is given an ID at runtime, this is then used to track state, much like your current logic, which is a bit fucked but does work. OMG 
+
+Dictionary<ushort, UpgradeNodeState> IS PERFECT 
 
 
 
+UpgradeNodeSO holds DATA, how to construct the actual run instance 
+
+UpgradeNode is where the public List<ItemQuantity> would live Idk though I like the upgrade data being in the UpgradeNodeSO, then we just dynamically calculate it every time it is nicee to balance it when you're balancing. 
 
 
 
+So basically just make the UpgradeNodeSO and UpgradeNodeState which holds what stage a specific node is in, just simple runtime data. This can also then be read from and saved more easily if you actually store it somewhere instead of calculating the state dynamically everytime solely based on a list of unlocked upgrades 
+
+
+
+All we need to do is calculate the upgradeCost, that is all we need to calculate, nothing else. Its not complicated, remove all the fucking stupid places where you call the same code, then simply add it once, and you're done. Where do we calculate it!? IDK We could simply store it in UpgradeNode, and we generate it once when we init, and if we are balancing we just let it constantly generate new ones 
+
+
+
+HOW REWARDS? Will it just look at the cost of the highest node that is avaible and generate some random resources based on that?? it should be resources that are USEFULL for the player. THey open the chest, then come back, and then they can immediately upgrade lots of things with those resources. So following that logic, we should look at the current unlocked nodes, then randomly pick 3? Then just take resources from their required costs, put it in the chest and boom you've got a chest with good stuff. NO CANT JUST GET 3 RANDOM ONES, what if it picks the one upgrade that unreasonable price and then suddenly you're way ahead of what you should be. We should keep track of the Cost tier we have purchased last, then pick (non maxed) nodes around that cost tier +-1. That will make it balanced 
 
 
 

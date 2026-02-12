@@ -398,11 +398,16 @@ public class ResourceSystem {
 
     internal static List<StatModifier> GetStatRewards() {
         return new List<StatModifier>() {
-            new(0.2f, StatType.Size, StatModifyType.Add,null),
-            new(0.2f, StatType.Cooldown, StatModifyType.Add,null),
-            new(0.2f, StatType.MiningDamage, StatModifyType.Add,null),
-            new(0.2f, StatType.Luck, StatModifyType.Add,null),
-            new(0.2f, StatType.ProjectileCount, StatModifyType.Add,null)
+            //new(0.2f, StatType.Size, StatModifyType.Add,null),
+            //new(0.2f, StatType.Cooldown, StatModifyType.Add,null),
+            new(0.2f, StatType.MiningDamage, StatModifyType.PercentAdd,null),
+            new(0.2f, StatType.MiningRange, StatModifyType.PercentAdd,null),
+            new(0.2f, StatType.PlayerSpeedMax, StatModifyType.PercentAdd,null),
+            new(1f, StatType.MiningCritDamage, StatModifyType.PercentAdd,null),
+            new(0.02f, StatType.MiningCritChance, StatModifyType.Add,null),
+            new(20f, StatType.PlayerOxygenMax, StatModifyType.Add,null),
+            //new(0.2f, StatType.Luck, StatModifyType.Add,null),
+            //new(0.2f, StatType.ProjectileCount, StatModifyType.Add,null)
         };
     }
 }

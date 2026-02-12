@@ -19,16 +19,12 @@ public class StatUpgradeEffectSO : UpgradeEffect {
     }
 
     public override StatChangeStatus GetChangeStatus() {
-        var name = ResourceSystem.GetStatString(upgradeType);
-
         StatModifier tempMod = new(modificationValue, upgradeType, increaseType, this);
-        var currentIncrease = PlayerManager.LocalInstance.PlayerStats.GetProcentStat(upgradeType) * 0.1f;
-        var nextIncrease = PlayerManager.LocalInstance.PlayerStats.GetProcentStat(upgradeType, tempMod) * 0.1f;
-
-        int currentProcent = Mathf.RoundToInt(currentIncrease * 100f);
-        int nextProcent = Mathf.RoundToInt(nextIncrease * 100f);
-        var isLowerBad = ResourceSystem.IsLowerBad(upgradeType);
-        return new(name, $"{currentProcent}%", $"{nextProcent}%", isLowerBad);
-
+        var playerStats = PlayerManager.LocalInstance.PlayerStats;
+        if(playerStats == null) {
+            Debug.LogError("Couldnt find player stats!");
+            return new();
+        }
+        return tempMod.GetStatus(playerStats);
     }
 }

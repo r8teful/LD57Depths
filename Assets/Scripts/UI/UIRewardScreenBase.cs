@@ -18,7 +18,7 @@ public abstract class UIRewardScreenBase : MonoBehaviour {
             if (g.TryGetComponent<IUIReward>(out var r)) {
                 r.Init(this, reward);
             } else {
-                Debug.LogError("Rward missing IUIReward component!");
+                Debug.LogError("Reward missing IUIReward component!");
             }
         }
     }

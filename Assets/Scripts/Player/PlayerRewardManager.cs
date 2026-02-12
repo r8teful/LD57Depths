@@ -9,9 +9,12 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
     public int InitializationOrder => 99;
     private IExecutable[] _rewardEffects = new IExecutable[3];
     private PlayerManager _player;
+
+    // These hashsets makes sure we don't pick the same reward multiple times
     private HashSet<ushort> pickedAbilityIDs =         new();
     private HashSet<ushort> pickedAbilityUpgradeIDs =  new();
     private HashSet<ushort> pickedUpgradeNodeIDs =     new();
+    private HashSet<StatType> pickedStats =            new();
     public IExecutable[] UpgradeEffects => _rewardEffects;
     public void InitializeOnOwner(PlayerManager playerParent) {
         _rewardEffects = new IExecutable[3];
@@ -31,6 +34,7 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
         pickedAbilityIDs.Clear();
         pickedAbilityUpgradeIDs.Clear();
         pickedUpgradeNodeIDs.Clear();
+        pickedStats.Clear();
     }
 
     public void GenerateRewardsChest() {
@@ -59,21 +63,23 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
         List<StatModifier> stats = ResourceSystem.GetStatRewards();
         var randomStat = stats.OrderBy(_ => UnityEngine.Random.value).First();
         // Todo can't be same stat as already chosen
+        if (pickedStats.Contains(randomStat.Stat)) return false;
         int[] weights = ResourceSystem.GetRarityWeight;
         var i = RandomnessHelpers.PickIndexWithLuck(weights, _player.PlayerStats.GetStat(StatType.Luck));
         var modValue = randomStat.Value * ResourceSystem.GetIncreaseByRarity((RarityType)i);
-
         var reward = new ShrineRewardEffect(new(modValue, randomStat.Stat,randomStat.Type,null));
         _rewardEffects[rewardsMade] = reward;
+        pickedStats.Add(randomStat.Stat);
         return true;
     }
     private bool TryCreateChestReward(int rewardsMade) {
         List<ItemQuantity> items = new List<ItemQuantity>();
         // Todo make some kind of function that calculates some reasonable resources 
-        items.Add(new(0, 100));
-        items.Add(new(1, 100));
-        items.Add(new(2, 100));
-        int XpToGain = 30;
+        if (UpgradeManagerPlayer.Instance == null) return false;
+        var nodes = UpgradeManagerPlayer.Instance.GetUpgradesForChests();
+        items.AddRange(RandomnessHelpers.GetChestRewards(nodes));
+
+        int XpToGain = 0;
         var reward = new ChestRewardEffect(items,XpToGain);
         _rewardEffects[rewardsMade] = reward;
         return true;

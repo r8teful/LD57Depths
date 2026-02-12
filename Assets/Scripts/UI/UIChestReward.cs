@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 public class UIChestReward : MonoBehaviour, IUIReward {
     [SerializeField] private UIItemQuantity _itemQuanity;
     [SerializeField] private Transform _itemContainer;
@@ -7,6 +8,7 @@ public class UIChestReward : MonoBehaviour, IUIReward {
 
     public void Init(UIRewardScreenBase parent, IExecutable reward) {
         if(reward is ChestRewardEffect chestReward) {
+            DestroyChildren();
             var r = chestReward.GetRewards();
             foreach (var item in r) {
                 Instantiate(_itemQuanity, _itemContainer).Init(item);
@@ -15,6 +17,13 @@ public class UIChestReward : MonoBehaviour, IUIReward {
         _parent = parent;
         _myReward = reward;
     }
+
+    private void DestroyChildren() {
+        foreach (Transform item in _itemContainer) {
+            Destroy(item.gameObject);
+        }
+    }
+
     public void ButtonClick() {
         _parent.OnButtonClicked(_myReward);
     }

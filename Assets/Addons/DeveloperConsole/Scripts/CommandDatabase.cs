@@ -556,7 +556,7 @@ namespace Anarkila.DeveloperConsole {
                 Type type = Type.GetType(scriptNames[i]);
                 if (type == null) continue;
 
-                MonoBehaviour[] monoScripts = GameObject.FindObjectsOfType(type) as MonoBehaviour[];
+                MonoBehaviour[] monoScripts = GameObject.FindObjectsByType(type,FindObjectsSortMode.None) as MonoBehaviour[];
 
                 for (int j = 0; j < monoScripts.Length; j++) {
                     if (monoScripts[j] == null) continue;

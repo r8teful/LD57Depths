@@ -17,6 +17,24 @@ public struct ItemQuantity {
         this.item = App.ResourceSystem.GetItemByID(id);
         quantity = q;
     }
+    public static List<ItemQuantity> CombineItemQuantities(List<ItemQuantity> input) {
+        var map = new Dictionary<int, ItemQuantity>();
+
+        foreach (var iq in input) {
+            if (iq.item == null) continue; 
+
+            int id = iq.item.ID;
+
+            if (map.TryGetValue(id, out var existing)) {
+                existing.quantity += iq.quantity;
+                map[id] = existing; // reassign because value type
+            } else {
+                map[id] = iq;
+            }
+        }
+
+        return new List<ItemQuantity>(map.Values);
+    }
 }
 [System.Serializable]
 public struct IDQuantity {

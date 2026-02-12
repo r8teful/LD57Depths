@@ -20,7 +20,7 @@ public class Chest : MonoBehaviour {
         _openParticles.Play();
         _animator.Play("Opening");
 
-        GameSequenceManager.Instance.AddEvent(
+        GameSequenceManager.Instance.AddEvent(shouldPause: true,
            onStart: () => {
                p.PlayerReward.GenerateRewardsChest();
                RewardEvents.TriggerOpenChest();
