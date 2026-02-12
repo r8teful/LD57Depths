@@ -979,37 +979,37 @@ OK very good until tier 6, this is when you need arund 150 points for an upgrade
 
 
 
-I might just remove the entire RecipeiesUpgrade step because it is literally pointless to have. It adds no extra data. We could literally have all the data within the node, and that's it, we don't have to have this extra step of 
+I might just remove the entire RecipeiesUpgrade step because it is literally pointless to have. It adds no extra data. We could literally have all the data within the node, and that's it, we don't have to have this extra step of
 
 
 
-each stage is given an ID at runtime, this is then used to track state, much like your current logic, which is a bit fucked but does work. OMG 
+each stage is given an ID at runtime, this is then used to track state, much like your current logic, which is a bit fucked but does work. OMG
 
-Dictionary<ushort, UpgradeNodeState> IS PERFECT 
-
-
-
-UpgradeNodeSO holds DATA, how to construct the actual run instance 
-
-UpgradeNode is where the public List<ItemQuantity> would live Idk though I like the upgrade data being in the UpgradeNodeSO, then we just dynamically calculate it every time it is nicee to balance it when you're balancing. 
+Dictionary<ushort, UpgradeNodeState> IS PERFECT
 
 
 
-So basically just make the UpgradeNodeSO and UpgradeNodeState which holds what stage a specific node is in, just simple runtime data. This can also then be read from and saved more easily if you actually store it somewhere instead of calculating the state dynamically everytime solely based on a list of unlocked upgrades 
+UpgradeNodeSO holds DATA, how to construct the actual run instance
+
+UpgradeNode is where the public List<ItemQuantity> would live Idk though I like the upgrade data being in the UpgradeNodeSO, then we just dynamically calculate it every time it is nicee to balance it when you're balancing.
 
 
 
-All we need to do is calculate the upgradeCost, that is all we need to calculate, nothing else. Its not complicated, remove all the fucking stupid places where you call the same code, then simply add it once, and you're done. Where do we calculate it!? IDK We could simply store it in UpgradeNode, and we generate it once when we init, and if we are balancing we just let it constantly generate new ones 
+So basically just make the UpgradeNodeSO and UpgradeNodeState which holds what stage a specific node is in, just simple runtime data. This can also then be read from and saved more easily if you actually store it somewhere instead of calculating the state dynamically everytime solely based on a list of unlocked upgrades
 
 
 
-HOW REWARDS? Will it just look at the cost of the highest node that is avaible and generate some random resources based on that?? it should be resources that are USEFULL for the player. THey open the chest, then come back, and then they can immediately upgrade lots of things with those resources. So following that logic, we should look at the current unlocked nodes, then randomly pick 3? Then just take resources from their required costs, put it in the chest and boom you've got a chest with good stuff. NO CANT JUST GET 3 RANDOM ONES, what if it picks the one upgrade that unreasonable price and then suddenly you're way ahead of what you should be. We should keep track of the Cost tier we have purchased last, then pick (non maxed) nodes around that cost tier +-1. That will make it balanced 
+All we need to do is calculate the upgradeCost, that is all we need to calculate, nothing else. Its not complicated, remove all the fucking stupid places where you call the same code, then simply add it once, and you're done. Where do we calculate it!? IDK We could simply store it in UpgradeNode, and we generate it once when we init, and if we are balancing we just let it constantly generate new ones
+
+
+
+HOW REWARDS? Will it just look at the cost of the highest node that is avaible and generate some random resources based on that?? it should be resources that are USEFULL for the player. THey open the chest, then come back, and then they can immediately upgrade lots of things with those resources. So following that logic, we should look at the current unlocked nodes, then randomly pick 3? Then just take resources from their required costs, put it in the chest and boom you've got a chest with good stuff. NO CANT JUST GET 3 RANDOM ONES, what if it picks the one upgrade that unreasonable price and then suddenly you're way ahead of what you should be. We should keep track of the Cost tier we have purchased last, then pick (non maxed) nodes around that cost tier +-1. That will make it balanced
 
 
 
 8inch wide
 
-7inch tall 
+7inch tall
 
 4inch deep
 
@@ -1021,9 +1021,32 @@ OK How will we do event caves? They should be set templates, right? do we just m
 
 Decrease MAX SPEED BY A LOT,
 
-You get gold a bit too late? Idk the cool stuff need gold but you're not really looking what you need so you kind of lose that pasing if they don't stumble upon it earlier 
+You get gold a bit too late? Idk the cool stuff need gold but you're not really looking what you need so you kind of lose that pasing if they don't stumble upon it earlier
 
 
+
+\### Lucy Playtest #3
+
+* Start in sub
+* Stone -> stone density
+* Fix tilemap tearing? no texture is creating lots of lines
+* "Don't like how much he's bouncing off of stuff!!"
+* Pitch should not reset after each category
+* I can't go exploring far enough!
+* Keeps going to the same spot
+* I need more oxygen!! It's driving me a bit insane
+* Forgot I had the brimstone
+* Destroy shrine when block breaks under it? Or simply destroy it when you
+* as pacing starts to slow down "It should kind of tell me how to proceed now"
+* drops look like particles, not something I need to pickup
+* Density upgrade didn't feel worth it because I felt like I was never running out of stone
+* Ores still don't work really, maybe try and have them unique to a biome
+* Outside of the upgrade tree sub consciously feels like it should be harder to upgrade. While the things close should be easier
+* Make stone density not increase tile HP? Because it doesn't feel nice getting less strong, to compensate just scale the damage less quickly up
+
+
+
+You have to think about what you actually want the player to experience when
 
 
 
