@@ -58,6 +58,19 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
             safetyTries++;
         }
     }
+    internal void GenerateRewardCave() {
+        int rewardsMade = 0;
+        int safetyTries = 0;
+        while (rewardsMade < 1 && safetyTries < 1000) {
+            if (TryCreateCaveReward(rewardsMade)) {
+                rewardsMade++;
+            }
+            safetyTries++;
+        }
+    }
+
+   
+
     private bool TryCreateShrineReward(int rewardsMade) {
         // Todo make some kind of function that calculates some reasonable resources 
         List<StatModifier> stats = ResourceSystem.GetStatRewards();
@@ -81,6 +94,13 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
 
         int XpToGain = 0;
         var reward = new ChestRewardEffect(items,XpToGain);
+        _rewardEffects[rewardsMade] = reward;
+        return true;
+    }
+    private bool TryCreateCaveReward(int rewardsMade) {
+        
+
+        var reward = new CaveRewardEffect();
         _rewardEffects[rewardsMade] = reward;
         return true;
     }
@@ -151,4 +171,5 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
         }
         choice.Execute(new(_player));
     }
+
 }

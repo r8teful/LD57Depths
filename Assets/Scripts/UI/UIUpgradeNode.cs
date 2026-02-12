@@ -253,7 +253,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         return new PopupData(_visualData.Title, _visualData.Description,
             _visualData.IngredientStatuses, // We'll have to pull this everytime we want to show it because 
                                             // We need a new way to get the stat statuses, it will depend on the upgrade. 
-            statInfo: _visualData.StatChangeStatuses, // This lagging behind, for some reason, rest is updating correctly
+            statInfo: _visualData.StatChangeStatuses, 
             progressionInfo: new(_visualData.LevelMax, _visualData.LevelCurrent),
             icon: _visualData.IconExtra
             );

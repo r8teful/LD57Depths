@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 
-[CreateAssetMenu(fileName = "TileSO", menuName = "ScriptableObjects/TileSO")]
+[CreateAssetMenu(fileName = "TileSO", menuName = "ScriptableObjects/WorldGen/TileSO")]
 public class TileSO : RuleTile, IIdentifiable {
     [Header("Game Properties")]
     public float maxDurability = 10; // How many "hits" it takes to break. -1 means non solid.

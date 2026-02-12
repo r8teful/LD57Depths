@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "BuffSO", menuName = "ScriptableObjects/BuffSO", order = 7)]
+[CreateAssetMenu(fileName = "BuffSO", menuName = "ScriptableObjects/Upgrades/BuffSO", order = 7)]
 // Ability that changes the stat
 public class BuffSO : ScriptableObject, IIdentifiable {
     [SerializeField] private ushort id;

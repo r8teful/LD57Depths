@@ -2,7 +2,7 @@
 
 // Hold gameplay things of the biome
 // For example, what buffs the player gets when entering the biome, and informational things like what name it has, etc
-[CreateAssetMenu(fileName = "BiomeDataSO", menuName = "ScriptableObjects/BiomDataSO", order = 1)]
+[CreateAssetMenu(fileName = "BiomeDataSO", menuName = "ScriptableObjects/WorldGen/BiomDataSO", order = 1)]
 public class BiomeDataSO : ScriptableObject, IIdentifiable {
     public BiomeType BiomeType;
 

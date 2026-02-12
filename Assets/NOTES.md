@@ -1007,6 +1007,18 @@ HOW REWARDS? Will it just look at the cost of the highest node that is avaible a
 
 
 
+8inch wide
+
+7inch tall 
+
+4inch deep
+
+
+
+OK How will we do event caves? They should be set templates, right? do we just make scriptable objects. Its kind of like an upgrade, but it can have different effects based on your choice. So one scriptble object per event cave, then it can have a list of effects, and the same effects that upgrades have, so then you can have negative stat modifiers etc
+
+
+
 
 
 

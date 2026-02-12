@@ -20,5 +20,9 @@ public static class RewardEvents {
     public static void TriggerUIReady() => OnUILevelReady?.Invoke();
 
     public static void TriggerOpenChest() => OnChestOpen?.Invoke(); 
-    public static void TriggerOpenShrine() => OnShrineOpen?.Invoke(); 
+    public static void TriggerOpenShrine() => OnShrineOpen?.Invoke();
+
+    internal static void TriggerOpenCave() {
+        throw new NotImplementedException();
+    }
 }
