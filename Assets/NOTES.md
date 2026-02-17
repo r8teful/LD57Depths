@@ -1025,7 +1025,7 @@ You get gold a bit too late? Idk the cool stuff need gold but you're not really 
 
 
 
-\### Lucy Playtest #3
+### Lucy Playtest #3
 
 * Start in sub
 * Stone -> stone density
@@ -1044,7 +1044,9 @@ You get gold a bit too late? Idk the cool stuff need gold but you're not really 
 * Outside of the upgrade tree sub consciously feels like it should be harder to upgrade. While the things close should be easier
 * Make stone density not increase tile HP? Because it doesn't feel nice getting less strong, to compensate just scale the damage less quickly up
 
-
+* For ore spawning, you should try two options: 
+1. Ores spawn in specific biomes
+2. Ores spawn in specific layers
 
 You have to think about what you actually want the player to experience when
 
