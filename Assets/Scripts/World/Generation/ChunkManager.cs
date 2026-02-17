@@ -479,15 +479,23 @@ public class ChunkManager : MonoBehaviour {
         }
         if (baseTile.maxDurability <= 0) return; // Indestructible tile
         // --- Apply Damage ---
+
+        float biomeExtraDurMult = 1;
         float curDur = chunk.tileDurability[localX, localY];
         float extraOreDur = 0;
-        
-        if(oreTile != null) {
+        BiomeType tileBiome = (BiomeType)chunk.biomeID[localX, localX];
+        if (tileBiome != BiomeType.None && tileBiome != BiomeType.Trench) {
+            // Tile durability should depend on the biome tile durability set in the 
+            if (GameSetupManager.Instance.WorldGenSettings.BiomeTileHardness.TryGetValue(tileBiome, out var mult)) {
+                biomeExtraDurMult = mult;
+            }
+        }
+        if (oreTile != null) {
             var durabilityModifier = WorldTileManager.Instance.GetDurabilityIncrease(oreTile.ID);
             extraOreDur = oreTile.maxDurability * durabilityModifier;
         }
         var durabilityModifierBase = WorldTileManager.Instance.GetDurabilityIncrease(baseTile.ID);
-        float maxDur = (baseTile.maxDurability*durabilityModifierBase) + extraOreDur; 
+        float maxDur = (baseTile.maxDurability*durabilityModifierBase*biomeExtraDurMult) + extraOreDur; 
         if (curDur < 0) { // Was at full health (-1 sentinel)
             curDur = maxDur;
         }

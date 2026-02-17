@@ -234,13 +234,8 @@ Shader "Custom/WorldGenSprite"
                     float blockVal = PerBiomeNoise(uv,_GlobalSeed, biomeIndex, b_blockScale,b_caveType,
                         b_baseOctaves,b_ridgeOctaves,b_warpAmp,b_worldeyWeight) * b_blockAmp;
                     if (blockVal < b_blockCut)
-                        // keeping r value because that determines drops  
-                        resultColor = float4(
-                            resultColor.r,
-                            b_tileColor.g,
-                            b_tileColor.b,
-                            b_tileColor.a
-                        );
+                        // Biome overrides WorldLayerColor
+                        resultColor = b_tileColor;
                     else
                         resultColor = b_airColor;
                 }

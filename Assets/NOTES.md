@@ -1050,7 +1050,11 @@ You get gold a bit too late? Idk the cool stuff need gold but you're not really 
 
 For 1. how do we want to implement it? Pass biome ID into ore generator. Have ores specify which biome ID they can spawn into
 
-Make copper more hard, make gold ALOT more hard. At a point where you're like wtf, I should not be here yet. Maybe even make the STONE somewhat harder for the biome you're not at 
+Make copper more hard, make gold ALOT more hard. At a point where you're like wtf, I should not be here yet. Maybe even make the STONE somewhat harder for the biome you're not at.
+
+Tile strength should be dynamic, that's all I want. Strength should increase, and match up with the ores. Biomes should have increasing strength, for each layer, you'll have the base strength of that layer + extra strength that the biome provides, so say stone starts at 10, then first biome has 20, and last biome has 40 (or something) and that's it, repeat that for all the layers. Right now the shader determines what layer we are on which then determines the strength of the stone, but we don't want that anymore. Well, we do for the normal base layers, but for the biomes it should be fully from the worldgen settings. Just add more stages for rock, each of them need to be a bit more. OR you simply look at the biome id of the tile and add that durability, that could also work. Then you  wound't actually have to set it in the shader because the tile already knows its a biome tile, we just have to add the extra durability. Would world tile manager just have that information then? Or would we simply look at the worldGenSettings and have like a tile ID to durability lookup or something.
+
+maxDurability in tile SO is now quite useless, because we want to set it dynamically and store it in some kind of class. because the position of the biomes will be different every game. So basically the tiles durabilities are not really a consistent value. Ok, basically I'm treating the biome as a multiplier value to the base tile value, which makes sense right? I mean that is basiaclly what I explained in the text above with the biomes being harder versions of the layer. But that would mean if for some reason a biome is just touching a different layer that would be less hard but maybe that makes sense like that?
 
 
 

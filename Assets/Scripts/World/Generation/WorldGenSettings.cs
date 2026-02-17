@@ -23,7 +23,8 @@ public class WorldGenSettings {
     public float cavewWarpamp;
     public float caveWorleyWeight;
     public List<WorldGenOre> worldOres;
-   
+    public Dictionary<BiomeType, float> BiomeTileHardness;
+    
     public float MaxDepth { 
         get { 
             // 90% of the max theoretical depth, shader also uses 90%
@@ -66,6 +67,7 @@ public class WorldGenSettings {
 
         s.biomes = new List<WorldGenBiomeData>();
         s.worldOres = new List<WorldGenOre>();
+        s.BiomeTileHardness = new Dictionary<BiomeType, float>();
         foreach (var bSO in so.biomes)
             s.biomes.Add(WorldGenBiomeData.FromSO(bSO,randomizeBiomes));
         // Each biome has set their size, so now we need to place them properly
@@ -113,32 +115,22 @@ public class WorldGenSettings {
         }
         var currentLayer = 0;
         var amountPlaced = 0;
+        float startingHardness = 1;
+        float hardnessIncrease = 1.2f; // how much the hardness increases each biome. Should be modifiable by the player 
         foreach (var biome in settings.biomes) {
             // Place biomes one by one, selecting either left or right side of trench
-
-            /* Old place code 
-            bool placeLeft = false;
-            if (UnityEngine.Random.value > 0.5f) placeLeft = true;
-            // After selecting a side, check if it is not already full on that side
-            
-            // Simplification right now: each side can only have two biomes, this would have to be in WorldGenBiomeData, or we calculate it dynamically based on parametres or something
-            int amountPlacedOnSpecifiedSide = biomes.Count(b => b.IsPlacedLeft() == placeLeft);
-            if (amountPlacedOnSpecifiedSide >= 2) {
-                // Too many on specified side
-                placeLeft = !placeLeft; // This assumes there is enough space on the other side now
-            }
-             */
             bool firstLayerPlacement = amountPlaced % 2 == 0;
+            float thisHardness = startingHardness * (1+amountPlaced) * hardnessIncrease;
             // X placement
             var edgePos = firstLayerPlacement ? -biome.HorSize : biome.HorSize; // Place it on the very edge
 
             float OFFSET_TO_TRENCH = 0;
             if (randomizeBiomes) {
-                OFFSET_TO_TRENCH = Random.Range(20,30); // a min 100 seems fine for now but it would ofcourse depend on world size 
+                OFFSET_TO_TRENCH = Random.Range(20,30); 
             }
             biome.XOffset = firstLayerPlacement ? edgePos - OFFSET_TO_TRENCH : edgePos + OFFSET_TO_TRENCH; // Shift it by offsetToTrench
             
-            // y placement
+            // Y placement
             var yPos = settings.GetWorldLayerYPos(currentLayer);
             if (randomizeBiomes) {
                 biome.YStart = Random.Range(yPos*0.95f, yPos* 1.05f);
@@ -146,6 +138,7 @@ public class WorldGenSettings {
                 biome.YStart = Random.Range(yPos, yPos);
             }
             amountPlaced++;
+            settings.BiomeTileHardness.Add(biome.BiomeType, thisHardness);
             if (!firstLayerPlacement) currentLayer++; // increment only when not first placed, that would be every other because that would put two on each layer
             biome.placed = true;
         }
@@ -202,7 +195,6 @@ public class WorldGenBiomeData {
         b.WarpAmp = so.WarpAmp;
         b.WorleyWeight = so.WorleyWeight;
         b.CaveType = so.CaveType;
-        b.TileColor = so.TileColor;
         b.AirColor = so.AirColor;
         b.DarkenedColor= so.DarkenedColor;
         b.TextureIndex = so.TextureIndex;
@@ -218,6 +210,7 @@ public class WorldGenBiomeData {
         }
 
         // Set for now, will be overwritten by the random placement
+        b.TileColor = so.TileColor; // hardness of tile (so also color) is determined by the biomes placement
         b.placed = false;
         b.YStart = so.YStart; 
         b.XOffset = so.XOffset;
