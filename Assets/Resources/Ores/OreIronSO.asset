@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: OreIronSO
   m_EditorClassIdentifier: 
   oreTile: {fileID: 11400000, guid: f4b09cb01edb0244da271b27ca802fa3, type: 2}
-  WorldDepthBandProcent: 0.15
+  oreStage: 1
+  WorldDepthBandProcent: 0.05
   maxChance: 1
-  widthPercent: 0.24
+  widthPercent: 1.34
   noiseScale: 0.1
   noiseThreshold: 0.5
   noiseOffset: {x: 73462, y: 95323}

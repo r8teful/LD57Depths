@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "WorldGenOreSO", menuName = "ScriptableObjects/WorldGen/WorldGenOreSO")]
 public class WorldGenOreSO : ScriptableObject {
     public TileSO oreTile; // We pull ID and name from this
-
+    public int oreStage; // 
     [Header("Depth-Based Rarity")]
     // Ores spawn in a semi circle around the center of the world, 
     // 0 is at the bottom, 0.5 would be in the middle of the trench, 1 at the very top
@@ -22,4 +22,10 @@ public class WorldGenOreSO : ScriptableObject {
     // A unique offset for this ore's noise to prevent all ores from spawning in the same spots.
     public Vector2 noiseOffset;
     public Color DebugColor = Color.white;
+    private void OnValidate() {
+        if (!Application.isPlaying) return;
+        if (GameSetupManager.Instance == null) return;
+        GameSetupManager.Instance.RebuildSettings();
+
+    }
 }

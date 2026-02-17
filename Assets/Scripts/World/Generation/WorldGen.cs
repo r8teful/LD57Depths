@@ -24,7 +24,7 @@ public struct DeterministicStructure {
 [System.Serializable]
 public struct OreDefinition {
     public ushort tileID;
-
+    public uint allowedBiomeMask;
     public float worldDepthProcent;
     // The maximum spawn chance at the exact edge of the circle (0.0 to 1.0)
     public float maxChance;
@@ -35,6 +35,7 @@ public struct OreDefinition {
     // Noise
     public float noiseScale;
     public float noiseThreshold;
+    public float2 oreStart;
     public float2 noiseOffset;
 }
 public class WorldGen : MonoBehaviour {
@@ -66,6 +67,7 @@ public class WorldGen : MonoBehaviour {
         public Vector2Int ChunkCoord;
         public ChunkData OriginalChunkData; // From GPU
         public NativeArray<ushort> BaseTileIDs_NA; // NA for NativeArray
+        public NativeArray<ushort> BaseTileBiomeIDs_NA;
         public NativeArray<ushort> ProcessedTileIDs_NA;
         public NativeArray<ushort> OreTileIDs_NA; 
         public NativeList<Vector3Int> EntitySpawnPoints_NA; // For the entity job
@@ -288,6 +290,7 @@ public class WorldGen : MonoBehaviour {
             // Convert ushort[,] to NativeArray<ushort>
             int tileCount = CHUNK_TILE_DIMENSION * CHUNK_TILE_DIMENSION;
             processingData.BaseTileIDs_NA = new NativeArray<ushort>(tileCount, Allocator.TempJob);
+            processingData.BaseTileBiomeIDs_NA = new NativeArray<ushort>(tileCount, Allocator.TempJob); // For ore job output
             processingData.ProcessedTileIDs_NA = new NativeArray<ushort>(tileCount, Allocator.TempJob); // For ore job output
             processingData.OreTileIDs_NA = new NativeArray<ushort>(tileCount, Allocator.TempJob); // For ore job output
 
@@ -295,6 +298,7 @@ public class WorldGen : MonoBehaviour {
             for (int y = 0; y < CHUNK_TILE_DIMENSION; y++) {
                 for (int x = 0; x < CHUNK_TILE_DIMENSION; x++) {
                     processingData.BaseTileIDs_NA[k] = chunk.tiles[x, y]; // Assuming tileIDs[x,y] convention
+                    processingData.BaseTileBiomeIDs_NA[k] = chunk.biomeID[x, y]; 
                     processingData.OreTileIDs_NA[k] = ResourceSystem.InvalidID;
                     k++;
                 }
@@ -302,6 +306,7 @@ public class WorldGen : MonoBehaviour {
             // --- Ore Generation Job ---
             var oreJob = new GenerateOresJob {
                 baseTileIDs = processingData.BaseTileIDs_NA, // GPU output
+                tileBiome = processingData.BaseTileBiomeIDs_NA, // GPU output
                 processedOreIDs = processingData.OreTileIDs_NA, // This will be modified
                 chunkCoord = kvp.Key,
                 chunkSize = CHUNK_TILE_DIMENSION,
@@ -437,18 +442,21 @@ public class WorldGen : MonoBehaviour {
         int oreCount = _cachedSettings.worldOres.Count;
         var nativeOreDefinitions = new NativeArray<OreDefinition>(oreCount, Allocator.TempJob);
         for (int i = 0; i < oreCount; i++) {
-            WorldGenOreSO data = _cachedSettings.worldOres[i];
+            WorldGenOre data = _cachedSettings.worldOres[i];
             //float yStart = worldmanager.GetWorldLayerYPos(data.LayerStartSpawn);
             // TODO for layerStartSpawn 0 it should be wherever the bedrock starts 
             //yStart = GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(data.CircleLayer);
             nativeOreDefinitions[i] = new OreDefinition {
                 tileID = data.oreTile.ID,
-               maxChance = data.maxChance,
+                allowedBiomeMask = data.BiomeMask(),
+                maxChance = data.maxChance,
                 worldDepthProcent = data.WorldDepthBandProcent,
                 widthPercent = data.widthPercent,
                 noiseScale = data.noiseScale,
                 noiseThreshold = data.noiseThreshold,
+                oreStart = data.oreStart,
                 noiseOffset = new float2(data.noiseOffset.x, data.noiseOffset.y)
+                
             };
         }
         return nativeOreDefinitions;

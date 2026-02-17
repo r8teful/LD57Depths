@@ -39,7 +39,7 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
     private IEnumerator BootSequence() {
         Debug.Log("boot seq start");
 
-        SetupSettings();
+        SetupSettings(true);
 
         yield return null;
 
@@ -72,18 +72,19 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
         Debug.LogError($"Coudn't find script {script}!!");
     }
 
-    private void SetupSettings() {
+    private void SetupSettings(bool randomizeBiomes) {
         _settings = ResourceSystem.GetMainMap(); // We'll have to properly set this up later with nice menu icons etc..
 
-        _worldGenSettings = WorldGenSettings.FromSO(_settings); // This does most the heavy lifting for us
+        _worldGenSettings = WorldGenSettings.FromSO(_settings, randomizeBiomes); // This does most the heavy lifting for us
     }
 
 
     public void OnDrawGizmos() {
         if (_worldGenSettings == null)
             return;
-        Vector2 center = new Vector2(0, _worldGenSettings.MaxDepth);
         foreach (var ore in _worldGenSettings.worldOres) {
+            //Vector2 center = new Vector2(0, _worldGenSettings.MaxDepth);
+            Vector2 center = ore.oreStart;
             var color = ore.DebugColor;
             var targetR = ore.WorldDepthBandProcent * Mathf.Abs(_worldGenSettings.MaxDepth);
             float bandWidth = targetR * ore.widthPercent; 
@@ -116,6 +117,10 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
             Gizmos.DrawLine(prevPoint, nextPoint);
             prevPoint = nextPoint;
         }
+    }
+
+    internal void RebuildSettings() {
+        SetupSettings(false);
     }
 }
 

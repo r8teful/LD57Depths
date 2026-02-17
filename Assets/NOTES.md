@@ -1048,8 +1048,9 @@ You get gold a bit too late? Idk the cool stuff need gold but you're not really 
 1. Ores spawn in specific biomes
 2. Ores spawn in specific layers
 
-You have to think about what you actually want the player to experience when
+For 1. how do we want to implement it? Pass biome ID into ore generator. Have ores specify which biome ID they can spawn into
 
+Make copper more hard, make gold ALOT more hard. At a point where you're like wtf, I should not be here yet. Maybe even make the STONE somewhat harder for the biome you're not at 
 
 
 

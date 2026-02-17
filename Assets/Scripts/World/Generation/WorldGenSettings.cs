@@ -22,12 +22,12 @@ public class WorldGenSettings {
     public float caveOctavesRidge;
     public float cavewWarpamp;
     public float caveWorleyWeight;
-    public List<WorldGenOreSO> worldOres;
+    public List<WorldGenOre> worldOres;
    
     public float MaxDepth { 
         get { 
             // 90% of the max theoretical depth, shader also uses 90%
-            var maxD = -trenchBaseWidth / trenchWidenFactor;
+            var maxD = trenchBaseWidth / trenchWidenFactor;
             return -Mathf.Abs(maxD) * 0.70f; 
         } 
     }
@@ -46,7 +46,7 @@ public class WorldGenSettings {
 
     public WorldGenSettings() { }
 
-    public static WorldGenSettings FromSO(WorldGenSettingSO so) {
+    public static WorldGenSettings FromSO(WorldGenSettingSO so, bool randomizeBiomes = true) {
         Debug.Log("generating runinstance of worldSettings!"); 
         var s = new WorldGenSettings();
         s.seed = so.seed;
@@ -65,29 +65,52 @@ public class WorldGenSettings {
         s.caveWorleyWeight = so.caveWorleyWeight;
 
         s.biomes = new List<WorldGenBiomeData>();
+        s.worldOres = new List<WorldGenOre>();
         foreach (var bSO in so.biomes)
-            s.biomes.Add(WorldGenBiomeData.FromSO(bSO));
+            s.biomes.Add(WorldGenBiomeData.FromSO(bSO,randomizeBiomes));
         // Each biome has set their size, so now we need to place them properly
-        PlaceBiomes(s);
+        PlaceBiomes(s, randomizeBiomes);
 
         if (so.associatedMaterial != null) {
             s.worldGenSquareSprite = new Material(so.associatedMaterial); // Don't want to change original 
             s.worldGenSquareSprite.name = "WorldRunInstanceMat";
         }
 
-        // We simply store the scriptable data as ores
-        // If we want to configure this later we'd have to make it an actual class
-        // maybe modifiers would let you change ore rarity??
-        s.worldOres = App.ResourceSystem.GetAllOreData();
+        // Todo here we'd want to set the biomes depending on what biome placements we've done
+        var oreSOs = App.ResourceSystem.GetAllOreData();
+        foreach (var ore in oreSOs) {
+            s.worldOres.Add(WorldGenOre.FromSO(ore,s));
+        }
+        PlaceOres(s);
         return s;
     }
 
-    private static void PlaceBiomes(WorldGenSettings settings) {
+    private static void PlaceOres(WorldGenSettings s) {
+        bool isLeft = Random.value < 0.5; 
+        List<WorldGenBiomeData> biomes = s.biomes;
+        foreach (var ore in s.worldOres) {
+            // Place first layer ores either left or right ( its random ). Also this should probably be a generic function
+            if (ore.oreStage == 1) {
+                int biomeIndex = isLeft ? 0 : 1;
+                ore.oreStart = biomes[biomeIndex].Center();
+                ore.allowedBiomes[0] = biomes[biomeIndex].BiomeType;
+            }
+            if (ore.oreStage == 2) {
+                int biomeIndex = !isLeft ? 0 : 1; // ! INVERTED HERE ! 
+                ore.oreStart = biomes[biomeIndex].Center();
+                ore.allowedBiomes[0] = biomes[biomeIndex].BiomeType;
+            }
+        }
+    }
+
+    private static void PlaceBiomes(WorldGenSettings settings, bool randomizeBiomes = true) {
         // Start from the bottom, using the pool (or weighted chance based) of that layer, (if we are having that some biomes appear at the top)
         //var placedBiomes = new List<WorldGenBiomeData>();
         // Just use random placement for now
-        System.Random rng = new System.Random();
-        settings.biomes = settings.biomes.OrderBy(e => rng.Next()).ToList(); // Randomize list
+        if (randomizeBiomes) {
+            System.Random rng = new System.Random();
+            settings.biomes = settings.biomes.OrderBy(e => rng.Next()).ToList(); // Randomize list
+        }
         var currentLayer = 0;
         var amountPlaced = 0;
         foreach (var biome in settings.biomes) {
@@ -108,12 +131,20 @@ public class WorldGenSettings {
             bool firstLayerPlacement = amountPlaced % 2 == 0;
             // X placement
             var edgePos = firstLayerPlacement ? -biome.HorSize : biome.HorSize; // Place it on the very edge
-            var OFFSET_TO_TRENCH = Random.Range(30,60); // a min 100 seems fine for now but it would ofcourse depend on world size 
+
+            float OFFSET_TO_TRENCH = 0;
+            if (randomizeBiomes) {
+                OFFSET_TO_TRENCH = Random.Range(20,30); // a min 100 seems fine for now but it would ofcourse depend on world size 
+            }
             biome.XOffset = firstLayerPlacement ? edgePos - OFFSET_TO_TRENCH : edgePos + OFFSET_TO_TRENCH; // Shift it by offsetToTrench
             
             // y placement
             var yPos = settings.GetWorldLayerYPos(currentLayer);
-            biome.YStart = Random.Range(yPos*0.95f, yPos* 1.05f);
+            if (randomizeBiomes) {
+                biome.YStart = Random.Range(yPos*0.95f, yPos* 1.05f);
+            } else {
+                biome.YStart = Random.Range(yPos, yPos);
+            }
             amountPlaced++;
             if (!firstLayerPlacement) currentLayer++; // increment only when not first placed, that would be every other because that would put two on each layer
             biome.placed = true;
@@ -158,7 +189,7 @@ public class WorldGenBiomeData {
     public Color DarkenedColor;
     public int TextureIndex;
 
-    public static WorldGenBiomeData FromSO(WorldGenBiomeSO so) {
+    public static WorldGenBiomeData FromSO(WorldGenBiomeSO so, bool shouldRandomize) {
         var b = new WorldGenBiomeData();
         b.BiomeType = so.biomeType;
         b.EdgeNoiseScale = so.EdgeNoiseScale;
@@ -177,9 +208,15 @@ public class WorldGenBiomeData {
         b.TextureIndex = so.TextureIndex;
         // Biome placement rules
         // Generate size of biome first
-        b.HorSize = UnityEngine.Random.Range(so.HorSize * 0.8f, so.HorSize * 1.2f); // Using 80 to 120% of biome size right now but could also just have a set size
-        b.YHeight = UnityEngine.Random.Range(so.YHeight* 0.8f, so.YHeight* 1.2f); // Using 80 to 120% of biome size right now but could also just have a set size
-    
+        if (shouldRandomize) {
+           b.HorSize = UnityEngine.Random.Range(so.HorSize * 0.8f, so.HorSize * 1.2f); // Using 80 to 120% of biome size right now but could also just have a set size
+           b.YHeight = UnityEngine.Random.Range(so.YHeight* 0.8f, so.YHeight* 1.2f); // Using 80 to 120% of biome size right now but could also just have a set size
+
+        } else {
+            b.HorSize = so.HorSize; 
+            b.YHeight = so.YHeight; 
+        }
+
         // Set for now, will be overwritten by the random placement
         b.placed = false;
         b.YStart = so.YStart; 
@@ -201,13 +238,12 @@ public class WorldGenBiomeData {
     public float Top() => YStart + YHeight;
 
     // Size helpers
-    public float Width(float horizontalSize) => HorSize * 2f;
+    public float Width() => HorSize * 2f;
 
-    public float Height(float yHeight) => yHeight;
 
     // Center point (x is already the center)
-    public Vector2 Center(float xOffset, float yStart, float yHeight) =>
-        new Vector2(xOffset, yStart + yHeight * 0.5f);
+    public Vector2 Center() =>
+        new Vector2(XOffset, Bottom() + YHeight * 0.5f);
 
     // Corners
     public Vector2 BottomLeft() =>
@@ -216,6 +252,10 @@ public class WorldGenBiomeData {
     public Vector2 BottomRight() =>
         new Vector2(Right(), Bottom());
 
+    public Vector2 CenterRight() =>
+        new Vector2(Right(), Center().y);
+    public Vector2 CenterLeft() =>
+        new Vector2(Left(), Center().y);
     public Vector2 TopLeft() =>
         new Vector2(Left(), Top());
 
@@ -246,5 +286,57 @@ public class WorldGenBiomeData {
         float y = Random.Range(minY, maxY);
 
         return new Vector2Int(Mathf.RoundToInt(x), Mathf.RoundToInt(y));
+    }
+}
+
+[Serializable]
+public class WorldGenOre {
+    public TileSO oreTile; // We pull ID and name from this
+    public int oreStage;
+    public BiomeType[] allowedBiomes;
+    public float WorldDepthBandProcent = 0;
+    public float maxChance = 0.2f;
+
+    public float widthPercent = 0.2f;
+
+    public float noiseScale = 0.1f;
+    public float noiseThreshold = 0.6f;
+
+    public Vector2 noiseOffset;
+    public Vector2 oreStart;
+    public Color DebugColor = Color.white;
+
+    public static WorldGenOre FromSO(WorldGenOreSO ore, WorldGenSettings settings) {
+        WorldGenOre o = new();
+        o.oreTile = ore.oreTile;
+        o.oreStage = ore.oreStage;
+        o.WorldDepthBandProcent = ore.WorldDepthBandProcent;
+        o.maxChance = ore.maxChance;
+        o.widthPercent = ore.widthPercent;
+        o.noiseScale = ore.noiseScale;
+        o.noiseThreshold = ore.noiseThreshold;
+        o.noiseOffset = ore.noiseOffset;
+        o.DebugColor = ore.DebugColor; 
+        List<WorldGenBiomeData> biomes = settings.biomes;
+        o.allowedBiomes = new BiomeType[6];
+        // Horribly hard coded right now, for stage 0 it makes sence to just have it in the trench
+        // But for stage 0 and 1 (if we are doing that one is within a biome. We should have it alteast randomize
+        // if it eather takes the first (left) or second (right) biome
+        if (ore.oreStage == 0) {
+            o.oreStart = new(0,settings.MaxDepth);
+            o.allowedBiomes[0] = BiomeType.Trench;
+        }
+        
+        return o;
+    }
+
+    public uint BiomeMask() {
+        uint mask = 0;
+
+        for (int i = 0; i < allowedBiomes.Length; i++) {
+            mask |= 1u << (int)allowedBiomes[i];
+        }
+
+        return mask;
     }
 }
