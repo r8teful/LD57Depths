@@ -121,7 +121,7 @@ public class ChunkManager : MonoBehaviour {
 
     [Header("Player & Loading")]
     [SerializeField] private Transform playerTransform; // Assign the player's transform
-    private int loadDistance = 1; // How many chunks away from the player to load (e.g., 3 means a 7x7 area around the player's chunk)
+    private int loadDistance = 3; // How many chunks away from the player to load (e.g., 3 means a 7x7 area around the player's chunk)
     [SerializeField] private float checkInterval = 0.5f; // How often (seconds) to check for loading/unloading chunks
 
     public const int CHUNK_SIZE = 16; // Size of chunks (16x16 tiles) - Power of 2 often good
@@ -564,7 +564,7 @@ public class ChunkManager : MonoBehaviour {
 
         float biomeExtraDurMult = 1;
         float curDur = chunk.tileDurability[localX, localY];
-        float extraOreDur = 0;
+        float extraOreDur = 1;
         BiomeType tileBiome = (BiomeType)chunk.biomeID[localX, localY];
         if (tileBiome != BiomeType.None && tileBiome != BiomeType.Trench) {
             // Tile durability should depend on the biome tile durability set in the 
@@ -577,7 +577,7 @@ public class ChunkManager : MonoBehaviour {
             extraOreDur = oreTile.maxDurability * durabilityModifier;
         }
         var durabilityModifierBase = WorldTileManager.Instance.GetDurabilityIncrease(baseTile.ID);
-        float maxDur = (baseTile.maxDurability*durabilityModifierBase*biomeExtraDurMult) + extraOreDur; 
+        float maxDur = baseTile.maxDurability*durabilityModifierBase*biomeExtraDurMult * extraOreDur; 
         if (curDur < 0) { // Was at full health (-1 sentinel)
             curDur = maxDur;
         }

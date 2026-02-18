@@ -88,19 +88,14 @@ public class WorldGenSettings {
     }
 
     private static void PlaceOres(WorldGenSettings s) {
-        bool isLeft = Random.value < 0.5; 
         List<WorldGenBiomeData> biomes = s.biomes;
-        foreach (var ore in s.worldOres) {
-            // Place first layer ores either left or right ( its random ). Also this should probably be a generic function
-            if (ore.oreStage == 1) {
-                int biomeIndex = isLeft ? 0 : 1;
-                ore.oreStart = biomes[biomeIndex].Center();
-                ore.allowedBiomes[0] = biomes[biomeIndex].BiomeType;
-            }
-            if (ore.oreStage == 2) {
-                int biomeIndex = !isLeft ? 0 : 1; // ! INVERTED HERE ! 
-                ore.oreStart = biomes[biomeIndex].Center();
-                ore.allowedBiomes[0] = biomes[biomeIndex].BiomeType;
+        // Progression index indicates what ORE should be there
+        foreach (var biome in biomes) {
+            // Find all ores with the matching progression index
+            var ores = s.worldOres.Where(ore => ore.oreStage == biome.ProgressionIndex);
+            foreach (var ore in ores) {
+                ore.oreStart = biome.Center();
+                ore.allowedBiomes[0] = biome.BiomeType;
             }
         }
     }
@@ -115,11 +110,13 @@ public class WorldGenSettings {
         }
         var currentLayer = 0;
         var amountPlaced = 0;
+        bool indexIncrease = false; // We radnomize this bool each layer to determine what progression side shoulg go one
         float startingHardness = 2;
         float hardnessIncrease = 1.5f; // how much the hardness increases each biome. Should be modifiable by the player 
         foreach (var biome in settings.biomes) {
             // Place biomes one by one, selecting either left or right side of trench
-            bool firstLayerPlacement = amountPlaced % 2 == 0;
+            bool firstLayerPlacement = amountPlaced % 2 == 0;  
+          
             float thisHardness = startingHardness + (amountPlaced) * hardnessIncrease;
             // X placement
             var edgePos = firstLayerPlacement ? -biome.HorSize : biome.HorSize; // Place it on the very edge
@@ -137,8 +134,24 @@ public class WorldGenSettings {
             } else {
                 biome.YStart = Random.Range(yPos, yPos);
             }
-            amountPlaced++;
+            
+            // Progression
+            int layerProgression = (currentLayer * 3) + 1;
+            if (firstLayerPlacement) {
+                // generate new random value
+                indexIncrease = Random.value < 0.5;
+                // Times 3 because we have three progressoin each layer
+                biome.ProgressionIndex = indexIncrease ? layerProgression + 1 : layerProgression; // set this biome directly 
+            } else {
+                // second biome in this layer
+                biome.ProgressionIndex = !indexIncrease ? layerProgression + 1 : layerProgression; // opposite of first 
+            }
+            
+          
+
             settings.BiomeTileHardness.Add(biome.BiomeType, thisHardness);
+
+            amountPlaced++;
             if (!firstLayerPlacement) currentLayer++; // increment only when not first placed, that would be every other because that would put two on each layer
             biome.placed = true;
         }
@@ -162,6 +175,7 @@ public class WorldGenBiomeData {
     public float WarpAmp = 0.5f;
     public float WorleyWeight = 0.5f;
     public int   CaveType = 0; // 0 Default, 1 Tunnels
+    public int   ProgressionIndex = 0; // Testing out that biomes are visited sequentually as the game progresses
 
     [Header("Size")]
     public float HorSize = 40.0f;

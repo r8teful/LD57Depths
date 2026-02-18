@@ -1056,7 +1056,6 @@ Tile strength should be dynamic, that's all I want. Strength should increase, an
 
 maxDurability in tile SO is now quite useless, because we want to set it dynamically and store it in some kind of class. because the position of the biomes will be different every game. So basically the tiles durabilities are not really a consistent value. Ok, basically I'm treating the biome as a multiplier value to the base tile value, which makes sense right? I mean that is basiaclly what I explained in the text above with the biomes being harder versions of the layer. But that would mean if for some reason a biome is just touching a different layer that would be less hard but maybe that makes sense like that?
 
-
-
- 
-
+- Half player damage
+Scaling should be like 10 times on the second biome or something, that gives you that feeling that you shouldn't be there. 
+- More oxygen upgrades: You get sick of having to go back all the time so just increase oxygen and that will be fine. Next stage you can just nerf the shit out of it so they need to keep upgrading it if they want to get good oxygen 
