@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 // Based on https://youtu.be/tE1qH8OxO2Y
 // Basically just runs once at the start of the program and stores a dictionary of the different
@@ -410,6 +411,23 @@ public class ResourceSystem {
             //new(0.2f, StatType.Luck, StatModifyType.Add,null),
             //new(0.2f, StatType.ProjectileCount, StatModifyType.Add,null)
         };
+    }
+
+    internal TileBase GetDebugBiomeTile(BiomeType biomeID) {
+        switch (biomeID) {
+            case BiomeType.Bioluminescent:
+                return GetTileByID(65532);
+            case BiomeType.Deadzone:
+                return GetTileByID(65533);
+            case BiomeType.Forest:
+                return GetTileByID(65534);
+            case BiomeType.Fungal:
+                return GetTileByID(65535);
+            case BiomeType.None:
+                return null;
+            default:
+                return null;
+        }
     }
 }
 

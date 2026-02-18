@@ -1,4 +1,5 @@
 using Sirenix.OdinInspector;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,6 +25,7 @@ public class WorldManager : StaticInstance<WorldManager> {
     [SerializeField] private Tilemap overlayTilemapOre; // Ores are overlayed ontop of the main tilemap, when we break a tile, we first check if there is an ore there and use that as drop
     [SerializeField] private Tilemap overlayTilemapShading; 
     [SerializeField] private Tilemap overlayTilemapDamage; // for damaged tiles
+    [SerializeField] private Tilemap overlayDEBUG; 
     [SerializeField] private TileSO _shadeTile; // We can set this with the resource system but just doing this now
     public float GetVisualTilemapGridSize() => mainTilemap.transform.parent.GetComponent<Grid>().cellSize.x; // Cell size SHOULD be square
     public bool useSave; 
@@ -265,4 +267,9 @@ public class WorldManager : StaticInstance<WorldManager> {
         return (1 - dy) * 3 + (dx + 1);
     }
 
+    internal void SetBiomeDebug(Dictionary<BoundsInt, TileBase[]> tiles) {
+        foreach (var kvp in tiles) {
+            overlayDEBUG.SetTilesBlock(kvp.Key, kvp.Value);
+        }
+    }
 }

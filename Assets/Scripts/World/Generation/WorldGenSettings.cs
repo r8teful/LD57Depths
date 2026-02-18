@@ -115,12 +115,12 @@ public class WorldGenSettings {
         }
         var currentLayer = 0;
         var amountPlaced = 0;
-        float startingHardness = 1;
-        float hardnessIncrease = 1.2f; // how much the hardness increases each biome. Should be modifiable by the player 
+        float startingHardness = 2;
+        float hardnessIncrease = 1.5f; // how much the hardness increases each biome. Should be modifiable by the player 
         foreach (var biome in settings.biomes) {
             // Place biomes one by one, selecting either left or right side of trench
             bool firstLayerPlacement = amountPlaced % 2 == 0;
-            float thisHardness = startingHardness * (1+amountPlaced) * hardnessIncrease;
+            float thisHardness = startingHardness + (amountPlaced) * hardnessIncrease;
             // X placement
             var edgePos = firstLayerPlacement ? -biome.HorSize : biome.HorSize; // Place it on the very edge
 

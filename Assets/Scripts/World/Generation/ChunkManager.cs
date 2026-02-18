@@ -5,9 +5,16 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.WSA;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
+#if UNITY_EDITOR
+    [TableMatrix(DrawElementMethod = "DrawElementUshort")]
+#endif
     public ushort[,] tiles; // The ground layer 
+#if UNITY_EDITOR
+    [TableMatrix(DrawElementMethod = "DrawElementUshort")]
+#endif
     public ushort[,] oreID;      // Second "ore" layer
     public float[,] tileDurability; // Third "dmg" layer
 #if UNITY_EDITOR
@@ -62,6 +69,14 @@ public class ChunkData {
         // Cast back to byte and return as the new cell value
         return (byte)intVal;
     }
+    static ushort DrawElementUshort(Rect rect, ushort value) {
+        // Draw an int field in the given rect, initializing with the current byte value
+        int intVal = EditorGUI.IntField(rect, value);
+        // Clamp the int to the valid byte range 0–255
+        intVal = Mathf.Clamp(intVal, byte.MinValue, byte.MaxValue);
+        // Cast back to byte and return as the new cell value
+        return (ushort)intVal;
+    }
 #endif
 }
 // Used by CLIENT
@@ -106,7 +121,7 @@ public class ChunkManager : MonoBehaviour {
 
     [Header("Player & Loading")]
     [SerializeField] private Transform playerTransform; // Assign the player's transform
-    private int loadDistance = 3; // How many chunks away from the player to load (e.g., 3 means a 7x7 area around the player's chunk)
+    private int loadDistance = 1; // How many chunks away from the player to load (e.g., 3 means a 7x7 area around the player's chunk)
     [SerializeField] private float checkInterval = 0.5f; // How often (seconds) to check for loading/unloading chunks
 
     public const int CHUNK_SIZE = 16; // Size of chunks (16x16 tiles) - Power of 2 often good
@@ -156,7 +171,8 @@ public class ChunkManager : MonoBehaviour {
         _entitySpawner = EntityManager.Instance;
         _lightManager = FindFirstObjectByType<WorldLightingManager>();
         _didOnStart = true;
-        StartCoroutine(ClientChunkLoadingRoutine());
+        //StartCoroutine(ClientCurrentChunkLoadingRoutine());
+       StartCoroutine(ClientChunkLoadingRoutine());
     }
     // --- Client-Side Chunk VISUAL Loading ---
     // This routine runs on each client (including host) to manage visuals
@@ -211,7 +227,48 @@ public class ChunkManager : MonoBehaviour {
             yield return new WaitForSeconds(checkInterval);
         }
     }
-  
+    private IEnumerator ClientCurrentChunkLoadingRoutine() {
+        // Tracks which chunk visuals we've optimistically marked as active/pending
+        HashSet<Vector2Int> clientActiveVisualChunks = new HashSet<Vector2Int>();
+        Vector2Int clientCurrentChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
+
+        // Wait for the local player to exist
+        yield return new WaitUntil(() => PlayerManager.LocalInstance != null);
+        Transform localPlayerTransform = PlayerManager.LocalInstance.transform;
+
+        while (true) {
+            if (localPlayerTransform == null) { // safety if player despawns
+                yield return new WaitForSeconds(checkInterval);
+                continue;
+            }
+
+            Vector2Int newClientChunkCoord = WorldToChunkCoord(localPlayerTransform.position);
+
+            // If player moved to a new chunk, deactivate the old and request the new
+            if (newClientChunkCoord != clientCurrentChunkCoord) {
+                // Deactivate previous chunk visuals
+                if (clientCurrentChunkCoord.x != int.MinValue) {
+                    ClientDeactivateVisualChunk(clientCurrentChunkCoord);
+                    clientActiveVisualChunks.Remove(clientCurrentChunkCoord);
+                }
+
+                clientCurrentChunkCoord = newClientChunkCoord;
+
+                // If we don't already have (or marked) the current chunk, request it
+                if (!clientActiveVisualChunks.Contains(clientCurrentChunkCoord)) {
+                    clientActiveVisualChunks.Add(clientCurrentChunkCoord); // mark as pending/optimistic
+                                                                           // Request the single chunk from the server.
+                                                                           // Reuse your batch function with a single-element list:
+                    ServerRequestChunkDataBatch(new List<Vector2Int> { clientCurrentChunkCoord }, clientCurrentChunkCoord);
+
+                    // --- OR, if you have a single-chunk API, prefer that:
+                    // ServerRequestChunkData(clientCurrentChunkCoord);
+                }
+            }
+
+            yield return new WaitForSeconds(checkInterval);
+        }
+    }
     private void ServerRequestChunkDataBatch(List<Vector2Int> chunksToRequestBatch, Vector2Int newClientChunkCoor) {
         
         // 1. Check if data exists on server
@@ -308,16 +365,16 @@ public class ChunkManager : MonoBehaviour {
         // Debug.Log($"Client received and visually loaded chunk {chunkCoord}");
     }
     public void ReceiveChunkDataMultiple(List<ChunkPayload> chunks) {
-        // Executed ONLY on the client specified by 'conn'
-
         // --- Fallback to SetTiles per chunk if optimization wasn't possible ---
         Dictionary<BoundsInt, TileBase[]> tiles = new Dictionary<BoundsInt, TileBase[]>();
         Dictionary<BoundsInt, TileBase[]> ores = new Dictionary<BoundsInt, TileBase[]>();
         Dictionary<BoundsInt, TileBase[]> tilesShading = new Dictionary<BoundsInt, TileBase[]>();
+
         foreach (var chunkPayload in chunks) {
             TileBase[] tilesToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
             TileBase[] oresToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
             TileBase[] tilesShadingToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
+
             //List<short> durabilities = new List<short>(CHUNK_SIZE * CHUNK_SIZE);
             Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkPayload.ChunkCoord);
             BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, CHUNK_SIZE, CHUNK_SIZE, 1);
@@ -335,11 +392,13 @@ public class ChunkManager : MonoBehaviour {
                         if (t == null)
                             continue;
                        tileinstance = GetOrCreateTileInstance(t, tileID, worldChunks[chunkPayload.ChunkCoord].biomeID[x, y]); // idk if getting biome data like this is correct
+                       //tileinstance = GetOrCreateTileInstance(t, tileID, chunkPayload.Bo[x, y]); // idk if getting biome data like this is correct
 
                     }
                     tilesToSet[tileIndex] = tileinstance;
                     oresToSet[tileIndex] = App.ResourceSystem.GetTileByID(oreID);
                     tilesShadingToSet[tileIndex] = tileID != 0 ? App.ResourceSystem.GetTileByID(9999) : null;
+
                     tileIndex++;
                 }
             }
@@ -355,6 +414,8 @@ public class ChunkManager : MonoBehaviour {
         _worldManager.SetTileIEnumerator(tiles, tilesShading);
         _worldManager.SetOreIEnumerator(ores);
         _lightManager.RequestLightUpdate();
+
+        //DebugShowBiomeData(chunks);
         // for (int i = 0; i < chunk.TileIds.Count; i++) {
         //     tilesToSet[i] = App.ResourceSystem.GetTileByID(chunk.TileIds[i]);
         // }
@@ -373,6 +434,27 @@ public class ChunkManager : MonoBehaviour {
 
         // Debug.Log($"Client received and visually loaded chunk {chunkCoord}");
     }
+
+    private void DebugShowBiomeData(List<ChunkPayload> chunks) {
+        Dictionary<BoundsInt, TileBase[]> tiles = new Dictionary<BoundsInt, TileBase[]>();
+        foreach (var chunkPayload in chunks) {
+            TileBase[] tilesToSet = new TileBase[CHUNK_SIZE * CHUNK_SIZE];
+            Vector3Int chunkOriginCell = ChunkCoordToCellOrigin(chunkPayload.ChunkCoord);
+            BoundsInt chunkBounds = new BoundsInt(chunkOriginCell.x, chunkOriginCell.y, 0, CHUNK_SIZE, CHUNK_SIZE, 1);
+            int tileIndex = 0;
+            for (int y = 0; y < CHUNK_SIZE; y++) {
+                for (int x = 0; x < CHUNK_SIZE; x++) {
+                    ushort biomeID = worldChunks[chunkPayload.ChunkCoord].biomeID[x, y];
+                    tilesToSet[tileIndex] = App.ResourceSystem.GetDebugBiomeTile((BiomeType)biomeID);
+                    tileIndex++;
+                }
+            }
+            //ApplySingleChunkPayload(chunkPayload);
+            tiles.Add(chunkBounds, tilesToSet);
+        }
+        _worldManager.SetBiomeDebug(tiles);
+    }
+
     private void ApplySingleChunkPayload(ChunkPayload chunkPayload) {
         //ClientCacheChunkDurability(chunkPayload.ChunkCoord, chunkPayload.Durabilities);
         // New active local chunk
@@ -483,7 +565,7 @@ public class ChunkManager : MonoBehaviour {
         float biomeExtraDurMult = 1;
         float curDur = chunk.tileDurability[localX, localY];
         float extraOreDur = 0;
-        BiomeType tileBiome = (BiomeType)chunk.biomeID[localX, localX];
+        BiomeType tileBiome = (BiomeType)chunk.biomeID[localX, localY];
         if (tileBiome != BiomeType.None && tileBiome != BiomeType.Trench) {
             // Tile durability should depend on the biome tile durability set in the 
             if (GameSetupManager.Instance.WorldGenSettings.BiomeTileHardness.TryGetValue(tileBiome, out var mult)) {
