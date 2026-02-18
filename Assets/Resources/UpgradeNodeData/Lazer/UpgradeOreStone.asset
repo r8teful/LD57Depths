@@ -17,16 +17,18 @@ MonoBehaviour:
   description: 
   icon: {fileID: 776407073, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: 3fc0c9bd770644d448652616cf99fcec, type: 2}
-  UnlockedAtFirstPrereqStage: 0
+  - {fileID: 11400000, guid: f2266ccd8a0e6d64c94a903011ba3866, type: 2}
+  UnlockedAtFirstPrereqStage: 1
   stages:
   - effects:
     - {fileID: 11400000, guid: ebe12e7dfef346340a25905d4ef94817, type: 2}
     costMultiplier: 1
     costTier: 3
     upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
+    extraData: {fileID: 0}
   - effects:
     - {fileID: 11400000, guid: ebe12e7dfef346340a25905d4ef94817, type: 2}
     costMultiplier: 1
     costTier: 5
     upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
+    extraData: {fileID: 0}

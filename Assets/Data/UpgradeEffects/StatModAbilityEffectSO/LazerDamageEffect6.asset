@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb3d0041ed540d04d9d938a5f700a60c, type: 3}
+  m_Name: LazerDamageEffect6
+  m_EditorClassIdentifier: 
+  upgradeType: 1
+  increaseType: 1
+  modificationValue: 5
+  targetAbility: {fileID: 11400000, guid: bfa7ecccf4ae75f439325ee1ebc3c688, type: 2}

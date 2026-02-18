@@ -94,7 +94,7 @@ public class WorldGenSettings {
             // Find all ores with the matching progression index
             var ores = s.worldOres.Where(ore => ore.oreStage == biome.ProgressionIndex);
             foreach (var ore in ores) {
-                ore.oreStart = biome.Center();
+                ore.oreStart = biome.IsPlacedLeft() ? biome.CenterSlightRight() : biome.CenterSlightLeft();
                 ore.allowedBiomes[0] = biome.BiomeType;
             }
         }
@@ -111,13 +111,12 @@ public class WorldGenSettings {
         var currentLayer = 0;
         var amountPlaced = 0;
         bool indexIncrease = false; // We radnomize this bool each layer to determine what progression side shoulg go one
-        float startingHardness = 2;
-        float hardnessIncrease = 1.5f; // how much the hardness increases each biome. Should be modifiable by the player 
+        float startingHardness = 3f;
+        float hardnessIncrease = 3f; // how much the hardness increases each biome. Should be modifiable by the player 
         foreach (var biome in settings.biomes) {
             // Place biomes one by one, selecting either left or right side of trench
             bool firstLayerPlacement = amountPlaced % 2 == 0;  
           
-            float thisHardness = startingHardness + (amountPlaced) * hardnessIncrease;
             // X placement
             var edgePos = firstLayerPlacement ? -biome.HorSize : biome.HorSize; // Place it on the very edge
 
@@ -142,13 +141,21 @@ public class WorldGenSettings {
                 indexIncrease = Random.value < 0.5;
                 // Times 3 because we have three progressoin each layer
                 biome.ProgressionIndex = indexIncrease ? layerProgression + 1 : layerProgression; // set this biome directly 
+                biome.isSecondProgression = indexIncrease;
             } else {
                 // second biome in this layer
                 biome.ProgressionIndex = !indexIncrease ? layerProgression + 1 : layerProgression; // opposite of first 
+                biome.isSecondProgression = !indexIncrease;
             }
-            
-          
-
+            float thisHardness = 1;
+            layerProgression = currentLayer * 2; // we now change it to current layer x 2 because we don't count the middle as a progression for hardness
+            if (!biome.isSecondProgression) {
+                // first layer
+                thisHardness = startingHardness + (layerProgression * hardnessIncrease);
+            } else {
+                // second layer
+                thisHardness = startingHardness + ((layerProgression + 1)* hardnessIncrease);
+            }
             settings.BiomeTileHardness.Add(biome.BiomeType, thisHardness);
 
             amountPlaced++;
@@ -176,6 +183,7 @@ public class WorldGenBiomeData {
     public float WorleyWeight = 0.5f;
     public int   CaveType = 0; // 0 Default, 1 Tunnels
     public int   ProgressionIndex = 0; // Testing out that biomes are visited sequentually as the game progresses
+    public bool  isSecondProgression; // Testing out that biomes are visited sequentually as the game progresses
 
     [Header("Size")]
     public float HorSize = 40.0f;
@@ -251,6 +259,10 @@ public class WorldGenBiomeData {
     // Center point (x is already the center)
     public Vector2 Center() =>
         new Vector2(XOffset, Bottom() + YHeight * 0.5f);
+    public Vector2 CenterSlightRight() =>
+       new Vector2(XOffset + Width()*0.25f, Bottom() + YHeight * 0.5f);
+    public Vector2 CenterSlightLeft() =>
+       new Vector2(XOffset - Width() * 0.25f, Bottom() + YHeight * 0.5f);
 
     // Corners
     public Vector2 BottomLeft() =>

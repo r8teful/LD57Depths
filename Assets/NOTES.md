@@ -1058,4 +1058,24 @@ maxDurability in tile SO is now quite useless, because we want to set it dynamic
 
 - Half player damage
 Scaling should be like 10 times on the second biome or something, that gives you that feeling that you shouldn't be there. 
-- More oxygen upgrades: You get sick of having to go back all the time so just increase oxygen and that will be fine. Next stage you can just nerf the shit out of it so they need to keep upgrading it if they want to get good oxygen 
+- More oxygen upgrades: You get sick of having to go back all the time so just increase oxygen and that will be fine. Next stage you can just nerf the shit out of it so they need to keep upgrading it if they want to get good oxygen.
+- Make oxygen darkness less dark so you have a better chance of actually finding your wayh back 
+- Ores slighly more to the edge so you don't have to go so far away to get lots
+- Feels too slow?? 
+
+Okay we are getting there, but I feel like going to a biome to mine should be max 4 or so trips, more than that and it starts to feel slow and annoying, after you've been there 4 times you shouldn't have to go there again. you want to move on and go somewhere else. Right now you need 6 or so trips to get all the iron, and that's just iron for the damage upgrades
+
+Chest should explode into lil pickups which then give you that same pickup sound
+Big node doesn't really look like you can buy it
+
+More handling hupgrades
+more range upgrades?
+Lazer damage!! Stage with gold
+Feels like the tree should be expanding more its just comming to a halt when you've done the copper stuff
+
+Iconds should update when you're transfering
+Gold costs grow too quickly. Or atleast, it is hard to get gold upgrade 2 & 3 for lazer damage. I feel like the structure could be like this: Struggle through a bit of the progression stage. Then when you get the first damage upgrade for that stage, it becomes significatly easier. 
+- The other upgrades, like the block oxygen, lazer blast, lazer chain, make them better, it feels wrong, it just costs like 2 iron to buy, its not satisfying, make it cost somewhat mored
+- crit damage? ? 
+- Some particles go into the blocks and it looks like they flicker and its ugly
+- Furthers away color should change depending on the biome your in

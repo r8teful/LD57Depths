@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
-  m_Name: UpgradePlayerHandling
+  m_Name: UpgradePlayerHandling2
   m_EditorClassIdentifier: 
   nodeName: Movement Control
-  uniqueID: 200
+  uniqueID: 201
   description: 
   icon: {fileID: -214789424, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: cdf389641a0aeef4bb3b6416de14163c, type: 2}
-  UnlockedAtFirstPrereqStage: 1
+  - {fileID: 11400000, guid: 75f811e878cadfd44bc415ff9c84cb8b, type: 2}
+  UnlockedAtFirstPrereqStage: 0
   stages:
   - effects:
     - {fileID: 11400000, guid: 83d1f6dd478ca04449c48f4776531b67, type: 2}
     costMultiplier: 1
-    costTier: 1
-    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
+    costTier: 4
+    upgradeItemPool: {fileID: 11400000, guid: 1cd4b80218c52a14995e255b4a360102, type: 2}
     extraData: {fileID: 0}
   - effects:
     - {fileID: 11400000, guid: 83d1f6dd478ca04449c48f4776531b67, type: 2}
     costMultiplier: 1.11
-    costTier: 2
-    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
+    costTier: 5
+    upgradeItemPool: {fileID: 11400000, guid: 1cd4b80218c52a14995e255b4a360102, type: 2}
     extraData: {fileID: 0}
   - effects:
     - {fileID: 11400000, guid: 83d1f6dd478ca04449c48f4776531b67, type: 2}
     costMultiplier: 1.24
-    costTier: 3
-    upgradeItemPool: {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
+    costTier: 6
+    upgradeItemPool: {fileID: 11400000, guid: 2578a8b93b92f144997963031306a875, type: 2}
     extraData: {fileID: 0}

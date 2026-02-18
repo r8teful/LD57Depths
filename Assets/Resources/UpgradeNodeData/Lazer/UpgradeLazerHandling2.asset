@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
-  m_Name: UpgradeLazerHandling
+  m_Name: UpgradeLazerHandling2
   m_EditorClassIdentifier: 
   nodeName: Lazer Handling
-  uniqueID: 20
+  uniqueID: 21
   description: 
   icon: {fileID: -240984915, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: ed1a778afde390e4594c907d01455c33, type: 2}
+  - {fileID: 11400000, guid: 3de091d34e60f6b448456c2eef1617da, type: 2}
   UnlockedAtFirstPrereqStage: 1
   stages:
   - effects:
-    - {fileID: 11400000, guid: f1538347f34ec664693634b2674a3191, type: 2}
+    - {fileID: 11400000, guid: 4eb0c152a431bc542a9c0a9fd2e17a28, type: 2}
     costMultiplier: 1.17
-    costTier: 1
-    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
+    costTier: 4
+    upgradeItemPool: {fileID: 11400000, guid: 1cd4b80218c52a14995e255b4a360102, type: 2}
     extraData: {fileID: 0}
   - effects:
     - {fileID: 11400000, guid: f1538347f34ec664693634b2674a3191, type: 2}
     costMultiplier: 1
-    costTier: 2
-    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
+    costTier: 5
+    upgradeItemPool: {fileID: 11400000, guid: 1cd4b80218c52a14995e255b4a360102, type: 2}
     extraData: {fileID: 0}
   - effects:
     - {fileID: 11400000, guid: f1538347f34ec664693634b2674a3191, type: 2}
     costMultiplier: 1
-    costTier: 3
-    upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}
+    costTier: 6
+    upgradeItemPool: {fileID: 11400000, guid: 2578a8b93b92f144997963031306a875, type: 2}
     extraData: {fileID: 0}

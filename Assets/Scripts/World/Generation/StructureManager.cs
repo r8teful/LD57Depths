@@ -123,7 +123,7 @@ public class StructureManager : MonoBehaviour {
                 return false; // Too close to an existing point
             }
             float fromSpawn = (candidate - new Vector2(0, -Mathf.Abs(_cachedSettings.MaxDepth))).sqrMagnitude;
-            if (fromSpawn < thresholdSqr) {
+            if (fromSpawn < thresholdSqr*2) {
                 return false; // Too close to spawn
             }
         }

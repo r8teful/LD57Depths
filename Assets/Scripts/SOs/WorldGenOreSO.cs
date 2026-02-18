@@ -7,7 +7,7 @@ public class WorldGenOreSO : ScriptableObject {
     [Header("Depth-Based Rarity")]
     // Ores spawn in a semi circle around the center of the world, 
     // 0 is at the bottom, 0.5 would be in the middle of the trench, 1 at the very top
-    [Range(0.05f, 0.9f)] public float WorldDepthBandProcent = 0; 
+    [Range(0.01f, 0.9f)] public float WorldDepthBandProcent = 0; 
     [Range(0.01f, 1)] public float maxChance = 0.2f;
 
     // Width of the ore band relative to the ring size.

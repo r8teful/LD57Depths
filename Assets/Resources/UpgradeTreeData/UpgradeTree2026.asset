@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   costsValues:
     baseValue: 4
-    linearIncrease: 8
-    expIncrease: 2.2
+    linearIncrease: 7
+    expIncrease: 1.7
   treeName: DefaultTree
   nodes:
   - {fileID: 11400000, guid: 3fc0c9bd770644d448652616cf99fcec, type: 2}
@@ -51,4 +51,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0476152a18d365146840335cc0f542e1, type: 2}
   - {fileID: 11400000, guid: 2d77305c8800f78468bbf8cdfb68a316, type: 2}
   - {fileID: 11400000, guid: 1c854624ced58d947a611ed9aac8d10d, type: 2}
+  - {fileID: 11400000, guid: 5c0ccdbed75194a4c8ea3efc616da8b8, type: 2}
+  - {fileID: 11400000, guid: 85fa1acd675cf5e408376ce0f0751dd9, type: 2}
+  - {fileID: 11400000, guid: eacf12173c6e275418e864a294f406dc, type: 2}
   prefab: {fileID: 4102176661086873485, guid: c93e4d609b751e846a139bb3a64d1f21, type: 3}
