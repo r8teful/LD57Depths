@@ -10,7 +10,7 @@ public class AbilityUnlockEffectSO : UpgradeEffect {
         PlayerManager.LocalInstance.PlayerAbilities.AddAbility(abilityToUnlock);
     }
 
-    public override StatChangeStatus GetChangeStatus() {
-        return new StatChangeStatus();
+    public override UIExecuteStatus GetExecuteStatus() {
+        return null;
     }
 }

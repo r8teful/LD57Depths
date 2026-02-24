@@ -105,4 +105,12 @@ public class InventoryManager {
         }
         return true;
     }
+
+    internal int GetTotalItems() {
+        int total = 0;
+        foreach (var item in Slots) {
+            total += item.Value.quantity;
+        }
+        return total;
+    }
 }

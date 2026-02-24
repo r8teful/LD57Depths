@@ -18,4 +18,7 @@ public class ChestRewardEffect : IExecutable {
         RewardEvents.TriggerGainXP(xp);
     }
 
+    public UIExecuteStatus GetExecuteStatus() {
+        return null;
+    }
 }

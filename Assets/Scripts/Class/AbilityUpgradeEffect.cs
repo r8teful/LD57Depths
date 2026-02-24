@@ -17,12 +17,12 @@
 
     // Again same as StatModAbilityEffectSO
 
-    public StatChangeStatus GetChangeStatus() {
+    public UIExecuteStatus GetExecuteStatus() {
         var statName = ResourceSystem.GetStatString(statModifier.Stat);
        
         var currentValue = _ability.GetEffectiveStat(statModifier.Stat);
         var nextValue = _ability.GetEffectiveStat(statModifier.Stat, statModifier);
 
-        return new(statName, currentValue.ToString("F2"), nextValue.ToString("F2"), ResourceSystem.IsLowerBad(statModifier.Stat));
+        return new StatChangeStatus(statName, currentValue.ToString("F2"), nextValue.ToString("F2"), ResourceSystem.IsLowerBad(statModifier.Stat));
     }
 }

@@ -15,8 +15,8 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
 
     private Coroutine transferCoroutine;
     public static event Action OnTransferCompleteAll;
-    public static event Action<ushort,int> OnItemTransferStart;
-    public static event Action<ushort> OnItemTransferStop;
+    public static event Action<int,float> OnTransferStart;
+    public static event Action<float> TransferSpeedChange;
 
     public int InitializationOrder => 900; // before ui
 
@@ -78,10 +78,10 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
     private IEnumerator TransferRoutine() {
         List<ushort> itemTypesToTransfer = new List<ushort>(inventoryPlayer.Slots.Keys);
         float timeAccumulator = 0f;
+        OnTransferStart?.Invoke(inventoryPlayer.GetTotalItems(),itemsPerSecond);
         foreach (ushort itemID in itemTypesToTransfer) {
             // Verify item still exists in dictionary
             if (!inventoryPlayer.Slots.TryGetValue(itemID, out var slot)) continue;
-            OnItemTransferStart?.Invoke(itemID, slot.quantity);
             while (inventoryPlayer.Slots.ContainsKey(itemID)) {
                 if (slot.quantity <= 0) break; // None left of this type, move to next
 
@@ -102,7 +102,6 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
                 // Wait for the next frame to accumulate more time
                 yield return null;
             }
-            OnItemTransferStop?.Invoke(itemID);
             yield return new WaitForSeconds(delayBetweenCategories);
         }
         transferCoroutine = null;
@@ -119,6 +118,7 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
     public void ModifyValue(ValueModifier modifier) {
         if(modifier.Key == ValueKey.ItemTransferRate) {
             itemsPerSecond = UpgradeCalculator.CalculateUpgradeChange(itemsPerSecond, modifier);
+            TransferSpeedChange?.Invoke(itemsPerSecond);
         }
     }
 

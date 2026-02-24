@@ -1079,3 +1079,10 @@ Gold costs grow too quickly. Or atleast, it is hard to get gold upgrade 2 & 3 fo
 - crit damage? ? 
 - Some particles go into the blocks and it looks like they flicker and its ugly
 - Furthers away color should change depending on the biome your in
+
+Maybe have an ore converter? So you don't have to do the manual work of finding all the ores. Also if ores just spawn in a biome you'll have a finite number of that ore in the world 
+
+Just need to type, just need to do the bare minimum, to it simple first. SIMPLY Just give a 
+A cave has options, say 2 options, then those options have results. Like it could be like, you have a chance to gain 20 stone! but the other option could be like NAH I'm good, just give me 10 stone. Then one action is random weight, then other option is SET. The positive would be gain 20 stone, but then the negative could be DEBUFF and LOSE 20 stone (whatever), it would be TWO outcomes, so you would need a container of executables 
+
+It should't just be a list of Iexecutable, oh my fucking god I hate doing this so much fuck this shit I'm doing something else for a bit

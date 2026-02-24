@@ -84,10 +84,15 @@ public class UpgradeStage : IExecutable {
             effect.Execute(context);
         }
     }
+
+    public UIExecuteStatus GetExecuteStatus() {
+        return null;
+    }
+
     public List<StatChangeStatus> GetStatStatuses() {
         var statuses = new List<StatChangeStatus>();
         foreach (var effect in effects) {
-            statuses.Add(effect.GetChangeStatus());
+            statuses.Add(effect.GetExecuteStatus() as StatChangeStatus);
         }
         return statuses;
     }

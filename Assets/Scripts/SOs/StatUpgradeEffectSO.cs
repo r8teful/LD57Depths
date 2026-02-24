@@ -18,12 +18,12 @@ public class StatUpgradeEffectSO : UpgradeEffect {
         }
     }
 
-    public override StatChangeStatus GetChangeStatus() {
+    public override UIExecuteStatus GetExecuteStatus() {
         StatModifier tempMod = new(modificationValue, upgradeType, increaseType, this);
         var playerStats = PlayerManager.LocalInstance.PlayerStats;
         if(playerStats == null) {
             Debug.LogError("Couldnt find player stats!");
-            return new();
+            return null;
         }
         return tempMod.GetStatus(playerStats);
     }

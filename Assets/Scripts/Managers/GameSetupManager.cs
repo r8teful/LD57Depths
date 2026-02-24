@@ -130,9 +130,12 @@ public class GameSettings {
     public ushort WorldGenID;
     public ushort[] EnabledModifierIds = Array.Empty<ushort>();
     public List<AbilitySO> AvailableAbilities;
+    public List<EventCaveSO> AvailableEventcaves; // Either take all from resource system or just setting defined idk
 
     public HashSet<ushort> AvailableAbilityIDs 
         => AvailableAbilities.Select(a => a.ID).ToHashSet();
+    public HashSet<ushort> AvailableEventCaveIDs
+        => AvailableEventcaves.Select(a => a.ID).ToHashSet();
 
     public GameSettings(int worldSeed, ushort[] enabledModifierIds) {
         WorldSeed = worldSeed;

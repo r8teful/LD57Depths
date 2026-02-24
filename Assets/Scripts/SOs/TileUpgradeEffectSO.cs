@@ -10,12 +10,12 @@ public class TileUpgradeEffectSO : UpgradeEffect {
         WorldTileManager.Instance.NewTileUpgrade(tileToUpgrade.ID, dropIncrease, durabilityIncrease);
     }
 
-    public override StatChangeStatus GetChangeStatus() {
+    public override UIExecuteStatus GetExecuteStatus() {
         var current =  WorldTileManager.Instance.GetExtraTileDropAmount(tileToUpgrade);
         var next =  WorldTileManager.Instance.GetExtraTileDropAmount(tileToUpgrade, dropIncrease);
         int startProcent = 100;
         int currentProcent = Mathf.RoundToInt(current * 100f) + startProcent;
         int nextProcent = Mathf.RoundToInt(next * 100f) + startProcent;
-        return new("Copper", $"{currentProcent}%", $"{nextProcent}%", true); 
+        return new StatChangeStatus("Copper", $"{currentProcent}%", $"{nextProcent}%", true); 
     }
 }

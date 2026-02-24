@@ -18,7 +18,7 @@ MonoBehaviour:
   icon: {fileID: -240984915, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 3de091d34e60f6b448456c2eef1617da, type: 2}
-  UnlockedAtFirstPrereqStage: 1
+  UnlockedAtFirstPrereqStage: 0
   stages:
   - effects:
     - {fileID: 11400000, guid: 4eb0c152a431bc542a9c0a9fd2e17a28, type: 2}

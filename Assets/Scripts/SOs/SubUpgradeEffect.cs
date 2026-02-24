@@ -9,7 +9,7 @@ public class SubUpgradeEffect : UpgradeEffect {
         SubmarineManager.Instance.NewSubUpgrade(this);
     }
 
-    public override StatChangeStatus GetChangeStatus() {
-        return new();
+    public override UIExecuteStatus GetExecuteStatus() {
+        return null;
     }
 }

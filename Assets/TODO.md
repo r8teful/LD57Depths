@@ -59,35 +59,34 @@ Steamdeck notes:
 
 UX:
 
-* Not sure what to do at the start, needs a bit more handholding
+* Not sure what to do at the start, needs a bit more handholding. Arrow pointing at upgrade machine!?
 * Forget to use lazer blast \& what button it needs to activate
 * You don't know where the beepbeep sound is comming from -> Make it clear that it comes from the oxygen bar running out
 * Clarify that all three upgrades need to happen for you to move
+* Dark too soon
+* UI Doesn't tell you anything, it needs to be clear how to progress further!!
 
 Misc:
 
 * Should not fix the upgrade panel from the upgrade panel
 * Cactus particle effect?? When you turn into one
 * MAKE SETTINGS (good for debugging, like disabling the background, fullscreen modes etc
-* Implement pitch shift for each purchase in the upgrade tree for a visit
+* Chest should explode into lil pickups which then give you that same pickup sound
+* Big node doesn't really look like you can buy it
 
 Coding:
 
-* 
+* The other upgrades, like the block oxygen, lazer blast, lazer chain, make them better, it feels wrong, it just costs like 2 iron to buy, its not satisfying, make it cost somewhat mored
+* crit damage? ?
+* Furthers away color should change depending on the biome your in
+* Biome placement should not change with same seed
+* Make biome min biome pos a bit higher (it can actually spawn before you have a chance to run into copper) 
 
 
 
 PACING:
 
-* Doesn't have the feeling of getting strong really fast
-* Doesn't feel like I'm upgrading enough, I feel like I should upgrade more things each time
-* Still drags out for too long you want something else
 * Make movement slower on the next layer, higher up -> More dense. Could have the same with oxygen!!
-* BRO, EASE INTO THINGS, DON'T GO 100%, START WITH STONE, THEN COPPER, THEN IRON, THEN GOLD, ITS THAT EASY, 3MIN ISH EACH. Basically, spread out the ore more, simply increase movement earlier, and players can get to the ores easy peacy
-
-
-
-
 
 ADD MORE STUFF!
 

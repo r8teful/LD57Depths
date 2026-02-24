@@ -1,9 +1,0 @@
-﻿public class ItemGainEffectSO : UpgradeEffect {
-    public override void Execute(ExecutionContext context) {
-        
-    }
-
-    public override StatChangeStatus GetChangeStatus() {
-        return new();
-    }
-}

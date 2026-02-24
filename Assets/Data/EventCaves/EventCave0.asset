@@ -12,15 +12,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c35d8407d1001914fad8e9a45d7cc0ab, type: 3}
   m_Name: EventCave0
   m_EditorClassIdentifier: 
-  Descritpion: 'You see a faint golden glow illuminating the end of a cave lined
-    with jagged rocks,do you try and reach the treasure? '
+  id: 0
+  Description: You see a faint golden glow illuminating the end of a cave lined with
+    jagged rocks,do you try and reach the treasure?
   Options:
   - OptionText: Yes
-    result: []
-    ResultText: 
+    action:
+    - rid: 5787959389088645205
   - OptionText: No
-    result:
-    - effects: []
-    - effects:
-      - {fileID: 11400000, guid: 5e74ec53483f51241bf1f7e8a660adf4, type: 2}
-    ResultText: 
+    action:
+    - rid: 5787959389088645208
+  Type: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 5787959389088645205
+      type: {class: RandomOutcomeAction, ns: , asm: Assembly-CSharp}
+      data:
+        ResultText: You try and reach the glowing treasure
+        possibleOutcomes:
+        - weight: 4
+          actionsToRun:
+          - rid: 5787959389088645206
+        - weight: 1
+          actionsToRun:
+          - rid: 5787959389088645210
+    - rid: 5787959389088645206
+      type: {class: ItemGainRewardEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ResultText: Success!
+        Item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
+        Quantity: 50
+    - rid: 5787959389088645208
+      type: {class: ExitCaveAction, ns: , asm: Assembly-CSharp}
+      data:
+        ResultText: 
+    - rid: 5787959389088645210
+      type: {class: ItemGainRewardEffect, ns: , asm: Assembly-CSharp}
+      data:
+        ResultText: Fail!!
+        Item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
+        Quantity: 1

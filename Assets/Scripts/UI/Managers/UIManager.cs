@@ -9,6 +9,7 @@ public class UIManager : Singleton<UIManager> {
     [field: SerializeField] public UIManagerStats UIManagerStats {  get; private set; }
     [field: SerializeField] public UISubControlPanel UISubControlPanel {  get; private set; }
     [field: SerializeField] public UISubInventory UISubInventory {  get; private set; }
+    [field: SerializeField] public UISettings UISettings {  get; private set; }
 
     private GameObject _playerGameObject;
     public bool IsAnyUIOpen() {

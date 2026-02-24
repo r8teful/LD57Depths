@@ -192,8 +192,8 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
             return;
         if (currentAnimation != animationName) {
             currentAnimation = animationName;
-            animator.CrossFade(animationName, 0.2f,0);
-            // animator.Play(animationName); // Or use this one instead of crossfade
+            //animator.CrossFade(animationName, 0.2f,0);
+            animator.Play(animationName); // Or use this one instead of crossfade
         }
     }
     private void SetLights(bool setOn) {

@@ -34,6 +34,8 @@ public class ResourceSystem {
     
     private Dictionary<ushort, AbilitySO> _abilityLookupByID;
 
+    private Dictionary<ushort, EventCaveSO> _eventCaveLookupByID;
+
     private Dictionary<ushort, BiomeDataSO> _biomeLookupByID;
 
     private Dictionary<ushort, StructureSO> _structureLookupByID;
@@ -99,6 +101,7 @@ public class ResourceSystem {
         InitializeLookup("WorldGenData", out _worldGenLookupByID, out _);
         InitializeLookup("BuffData", out _buffLookupByID, out _);
         InitializeLookup("AbilityData", out _abilityLookupByID, out _);
+        InitializeLookup("EventCaveData", out _eventCaveLookupByID, out _);
         InitializeLookup("StructureData", out _structureLookupByID, out _);
         InitializeLookup("BiomeData", out _biomeLookupByID, out _);
     }
@@ -223,6 +226,16 @@ public class ResourceSystem {
         if (validEntries.Length == 0) return null;
         var abilityID = validEntries[rnd.Next(validEntries.Length)];
         return _abilityLookupByID[abilityID];
+    }
+    public EventCaveSO GetRandomAvailableCave(HashSet<ushort> exluded) {
+        var rnd = new System.Random();
+        var available = GameSetupManager.Instance.CurrentGameSettings.AvailableEventCaveIDs;
+        var validEntries = available
+            .Where(a => !exluded.Contains(a))
+            .ToArray();
+        if (validEntries.Length == 0) return null;
+        var abilityID = validEntries[rnd.Next(validEntries.Length)];
+        return _eventCaveLookupByID[abilityID];
     }
     public ZoneSO GetZoneByIndex(int zoneIndex) {
         var list = Resources.LoadAll<ZoneSO>("TrenchZones").ToList();

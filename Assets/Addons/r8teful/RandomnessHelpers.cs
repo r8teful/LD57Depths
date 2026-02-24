@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = System.Random;
 
@@ -155,15 +156,18 @@ namespace r8teful {
         }
 
         internal static IEnumerable<ItemQuantity> GetChestRewards(List<UpgradeNode> nodes) {
+            if (nodes == null || nodes.Count == 0)
+                return Enumerable.Empty<ItemQuantity>();
             Random rand = new();
             var result = new List<ItemQuantity>();
+            var remainingNodes = new List<UpgradeNode>(nodes);
             //keep extracting from the list until it's depleted or we've reached 3
-            while (result.Count <= 3 || nodes.Count <= 0) {
-                int index = rand.Next(0, nodes.Count);
-                foreach (var itemQ in nodes[index].requiredItems) {
+            while (result.Count < 3 && remainingNodes.Count > 0) {
+                int index = rand.Next(0, remainingNodes.Count);
+                foreach (var itemQ in remainingNodes[index].requiredItems) {
                     result.Add(itemQ);
                 }
-                nodes.RemoveAt(index);
+                remainingNodes.RemoveAt(index);
             }
             return ItemQuantity.CombineItemQuantities(result); // lol?
         }

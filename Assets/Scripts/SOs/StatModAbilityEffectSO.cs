@@ -21,12 +21,12 @@ public class StatModAbilityEffectSO : UpgradeEffect {
         return new StatModifier(modificationValue, upgradeType, increaseType, this);
     }
 
-    public override StatChangeStatus GetChangeStatus() { 
+    public override UIExecuteStatus GetExecuteStatus() { 
         // First we need the current multiplier value, which we need to pull from our targetAbility instance
         var abilityInstance = PlayerManager.LocalInstance.PlayerAbilities.GetAbilityInstance(targetAbility.ID);
         if(abilityInstance == null) {
             //Debug.LogError("Can't get target ability for upgrade. We probably don't have it unlocked yet");
-            return new();
+            return null;
         }
         StatModifier tempMod = new(modificationValue, upgradeType, increaseType, this);
         return tempMod.GetStatus(abilityInstance); // Wow! This lets us use the GetStatus elsewhere

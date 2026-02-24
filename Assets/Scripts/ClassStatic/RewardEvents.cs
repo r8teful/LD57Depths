@@ -13,6 +13,7 @@ public static class RewardEvents {
 
     public static event Action OnChestOpen; // UIChestRewardScreen reacts
     public static event Action OnShrineOpen; // UIShrineRewardScreen reacts
+    public static event Action OnCaveOpen; // UIEventRewardScreen  reacts
 
     public static void TriggerGainXP(int amount) => OnGainXP?.Invoke(amount);
     public static void TriggerLevelUp(int newLevel) => OnLevelUpReady?.Invoke(newLevel);
@@ -21,8 +22,5 @@ public static class RewardEvents {
 
     public static void TriggerOpenChest() => OnChestOpen?.Invoke(); 
     public static void TriggerOpenShrine() => OnShrineOpen?.Invoke();
-
-    internal static void TriggerOpenCave() {
-        throw new NotImplementedException();
-    }
+    internal static void TriggerOpenCave() => OnCaveOpen?.Invoke();
 }

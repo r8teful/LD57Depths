@@ -9,4 +9,8 @@
         // Add buff...
         context.Player.PlayerStats.AddInstanceModifier(_stat);
     }
+
+    public UIExecuteStatus GetExecuteStatus() {
+        return null;
+    }
 }

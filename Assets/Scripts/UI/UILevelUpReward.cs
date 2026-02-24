@@ -34,7 +34,7 @@ public class UILevelUpReward : MonoBehaviour, IUIReward {
             _boarderImage.sprite = _images[2];
             _rewardText.text = $"{ue.Ability.Data.displayName} Upgrade with rarity: {ue.Rarity}";
             _descriptionText.text = "";
-            var statData = ue.GetChangeStatus(); // Just suporting one change status. Because upgrade upgrade one stat for now
+            var statData = ue.GetExecuteStatus() as StatChangeStatus; // Just suporting one change status. Because upgrade upgrade one stat for now
             var statChange = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStatPopup"), _statsChangeContainer);
             statChange.Init(statData);
             

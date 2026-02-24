@@ -18,13 +18,17 @@ public class ValueUpgradeEffectSO : UpgradeEffect {
         // Programming out here!
     }
 
-    public override StatChangeStatus GetChangeStatus() {
+    public override UIExecuteStatus GetExecuteStatus() {
         var script = UpgradeManagerPlayer.Instance.Get<IValueModifiable>(valueType);
         if(script == null) {
             Debug.LogWarning("coudn't find script with valueType: " + valueType);
-            return new();
+            return null;
         }
         ValueModifier modifier = new(modificationValue, valueType, increaseType, this);
-        return modifier.GetStatus(script);
+        if(valueType == ValueKey.LazerChainAmount) {
+            // absolute change
+            return modifier.GetStatusAbsolute(script);
+        }
+        return modifier.GetStatusProcent(script);
     }
 }

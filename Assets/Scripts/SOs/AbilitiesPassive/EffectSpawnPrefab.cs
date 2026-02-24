@@ -25,6 +25,10 @@ public class EffectSpawnPrefab : ScriptableObject, IEffectPassive, IExecutable {
 
     }
 
+    public UIExecuteStatus GetExecuteStatus() {
+        return null;
+    }
+
     public void Remove(AbilityInstance instance, PlayerManager player) {
         if (_instantiatedEffect != null) {
             Destroy(_instantiatedEffect);

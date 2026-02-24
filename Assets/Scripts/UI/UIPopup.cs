@@ -85,7 +85,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
                 treatHeaderAsStatText = true;
             }
             foreach (var stat in data.upgradeEffects) {
-                if (stat.IsEmpty) continue;
+                if(stat == null) continue;
                 var statChange = Instantiate(App.ResourceSystem.GetPrefab<UIUpgradeStat>("UIUpgradeStatPopup"), _statsChangeContainer);
                 statChange.Init(stat, treatHeaderAsStatText); 
             }

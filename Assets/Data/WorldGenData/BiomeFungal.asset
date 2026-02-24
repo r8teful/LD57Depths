@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   biomeType: 8
   EdgeNoiseScale: 0.1
-  EdgeNoiseAmp: 16.81
+  EdgeNoiseAmp: 8.26
   BlockNoiseScale: 0.03
   BlockNoiseAmp: 0.05
-  BlockCutoff: 0.01
-  BaseOctaves: 3
-  RidgeOctaves: 20
-  WarpAmp: 1
-  WorleyWeight: 3.59
-  CaveType: 0
+  BlockCutoff: 0.008
+  BaseOctaves: 1
+  RidgeOctaves: 0
+  WarpAmp: 0.32
+  WorleyWeight: 1.51
+  CaveType: 1
   HorSize: 81.3
   YHeight: 54.1
   TileColor: {r: 0.37254903, g: 0.52156866, b: 0, a: 1}

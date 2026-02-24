@@ -5,7 +5,7 @@ public interface IExecutable {
     // So much old code is from this RecipeExecutionContext that can be removed
     // The only thing that still uses it is the sub fixing recipes, but we
     // should honestly remove it.
-    
+    public abstract UIExecuteStatus GetExecuteStatus();
     // We need this interface because a recipe execution and an upgrade effect 
     // both execute on something. This way we can use it in upgrade rewards
 }

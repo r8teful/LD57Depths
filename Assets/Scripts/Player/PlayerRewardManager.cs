@@ -90,7 +90,7 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
         // Todo make some kind of function that calculates some reasonable resources 
         if (UpgradeManagerPlayer.Instance == null) return false;
         var nodes = UpgradeManagerPlayer.Instance.GetUpgradesForChests();
-        items.AddRange(RandomnessHelpers.GetChestRewards(nodes));
+        items.AddRange(RandomnessHelpers.GetChestRewards(nodes)); 
 
         int XpToGain = 0;
         var reward = new ChestRewardEffect(items,XpToGain);
@@ -98,9 +98,13 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
         return true;
     }
     private bool TryCreateCaveReward(int rewardsMade) {
-        
-
-        var reward = new CaveRewardEffect();
+        // Pick a EventCaveSO
+        var cave = App.ResourceSystem.GetRandomAvailableCave(new());
+        // Got if any of the options results need to generate their outcome, do that now
+        cave.TryGenerateOutcome();
+        // 
+        // This would populate the rewardEffects with the actual options 
+        var reward = new CaveRewardEffect(EventCaveOutcomeType.Item);
         _rewardEffects[rewardsMade] = reward;
         return true;
     }

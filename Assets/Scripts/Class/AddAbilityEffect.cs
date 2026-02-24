@@ -11,4 +11,8 @@ public class AddAbilityEffect : IExecutable {
         PlayerManager.LocalInstance.PlayerAbilities.AddAbility(abilityToUnlock);
 
     }
+
+    public UIExecuteStatus GetExecuteStatus() {
+        return null;
+    }
 }
