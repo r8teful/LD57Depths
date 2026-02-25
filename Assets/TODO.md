@@ -77,10 +77,9 @@ Misc:
 Coding:
 
 * The other upgrades, like the block oxygen, lazer blast, lazer chain, make them better, it feels wrong, it just costs like 2 iron to buy, its not satisfying, make it cost somewhat mored
-* crit damage? ?
-* Furthers away color should change depending on the biome your in
+* crit damage?
 * Biome placement should not change with same seed
-* Make biome min biome pos a bit higher (it can actually spawn before you have a chance to run into copper) 
+* Make biome min biome pos a bit higher (it can actually spawn before you have a chance to run into copper)
 
 
 

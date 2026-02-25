@@ -47,8 +47,8 @@ MonoBehaviour:
   rampUpDuration: 15
   rampDownDuration: 0.4
   targetVignetteIntensity: 1
-  targetSaturation: -100
-  targetExposure: -4
+  targetSaturation: -64.5
+  targetExposure: -1.5
   targetChromatic: 1
   targetFilmGrain: 0.25
   presetProfile: {fileID: 0}
@@ -58,17 +58,17 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 1.1543206
-      outSlope: 1.1543206
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.10588235
+      outWeight: 0
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 2
-      outSlope: 2
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0

@@ -99,7 +99,7 @@ public class EntityManager : StaticInstance<EntityManager> {
         }
         // Instantiate and apply data
         Vector3 spawnPos = new Vector3(data.cellPos.x + 0.5f, data.cellPos.y + 0.5f, 0f); // Spawn in the centre of the tile
-        GameObject instance = Instantiate(prefab, spawnPos, data.rotation);
+        GameObject instance = Instantiate(prefab, spawnPos, data.rotation,transform);
         data.activeInstance = instance; // LINK
         //instance.transform.localScale = data.scale;
         ApplyDataToInstance(instance, data); // Apply health, growth etc.

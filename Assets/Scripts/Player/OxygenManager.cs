@@ -8,7 +8,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     private float maxOxygen;
     private float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
     private float currentOxygen;
-    private float maxHealth = 10; // amount in seconds the player can survive with 0 oxygen 
+    private float maxHealth = 7; // amount in seconds the player can survive with 0 oxygen 
     private float playerHealth;
     private PlayerManager _player;
     private bool _isInsideOxygenZone;
@@ -77,7 +77,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     void DepleteOxygen() {
         CurrentOxygen -= oxygenDepletionRate * Time.deltaTime;
         OnOxygenChanged?.Invoke(CurrentOxygen, maxOxygen);
-        if (CurrentOxygen <= 15 && !peepPlayed) {
+        if (CurrentOxygen <= maxOxygen * 0.2f && !peepPlayed) { // 20% max oxygen
             if (AudioController.Instance != null) AudioController.Instance.PlaySound2D("PeepPeep", 1f);
             peepPlayed = true;
             //SliderFlash(true);
@@ -90,7 +90,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
                 _player.PlayerLayerController.PutPlayerInSub();
                 Resurect();
             }
-        } else if(CurrentOxygen <= 10) {
+        } else if(CurrentOxygen <= maxOxygen * 0.2f) {
             if (!_oxygenDepleted) {
                 // First time reaching here spawn the depleting effect
                 _oxygenDepleted = true;

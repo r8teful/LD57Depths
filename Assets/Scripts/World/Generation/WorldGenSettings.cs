@@ -122,7 +122,7 @@ public class WorldGenSettings {
 
             float OFFSET_TO_TRENCH = 0;
             if (randomizeBiomes) {
-                OFFSET_TO_TRENCH = Random.Range(20,30); 
+                OFFSET_TO_TRENCH = Random.Range(25,35); 
             }
             biome.XOffset = firstLayerPlacement ? edgePos - OFFSET_TO_TRENCH : edgePos + OFFSET_TO_TRENCH; // Shift it by offsetToTrench
             
@@ -166,6 +166,10 @@ public class WorldGenSettings {
         // Ystart is the bottom of the biome, meaning that yStart+yHeight is the top of the biome, meaning that, incase there is a biome under us, we need atleast yStart+yHeight+ofssetToBiome of y height between it
         // But instead of that we could also just ensure the position + height never passes a certain range so that biomes would not overlap, or we just let themoverlap lol
 
+    }
+
+    internal float TrenchWidthAtY(int y) {
+        return trenchBaseWidth + Mathf.Abs(y) * trenchWidenFactor;
     }
 }
 

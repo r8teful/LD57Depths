@@ -1043,8 +1043,8 @@ You get gold a bit too late? Idk the cool stuff need gold but you're not really 
 * Ores still don't work really, maybe try and have them unique to a biome
 * Outside of the upgrade tree sub consciously feels like it should be harder to upgrade. While the things close should be easier
 * Make stone density not increase tile HP? Because it doesn't feel nice getting less strong, to compensate just scale the damage less quickly up
+* For ore spawning, you should try two options:
 
-* For ore spawning, you should try two options: 
 1. Ores spawn in specific biomes
 2. Ores spawn in specific layers
 
@@ -1056,12 +1056,12 @@ Tile strength should be dynamic, that's all I want. Strength should increase, an
 
 maxDurability in tile SO is now quite useless, because we want to set it dynamically and store it in some kind of class. because the position of the biomes will be different every game. So basically the tiles durabilities are not really a consistent value. Ok, basically I'm treating the biome as a multiplier value to the base tile value, which makes sense right? I mean that is basiaclly what I explained in the text above with the biomes being harder versions of the layer. But that would mean if for some reason a biome is just touching a different layer that would be less hard but maybe that makes sense like that?
 
-- Half player damage
-Scaling should be like 10 times on the second biome or something, that gives you that feeling that you shouldn't be there. 
-- More oxygen upgrades: You get sick of having to go back all the time so just increase oxygen and that will be fine. Next stage you can just nerf the shit out of it so they need to keep upgrading it if they want to get good oxygen.
-- Make oxygen darkness less dark so you have a better chance of actually finding your wayh back 
-- Ores slighly more to the edge so you don't have to go so far away to get lots
-- Feels too slow?? 
+* Half player damage
+  Scaling should be like 10 times on the second biome or something, that gives you that feeling that you shouldn't be there.
+* More oxygen upgrades: You get sick of having to go back all the time so just increase oxygen and that will be fine. Next stage you can just nerf the shit out of it so they need to keep upgrading it if they want to get good oxygen.
+* Make oxygen darkness less dark so you have a better chance of actually finding your wayh back
+* Ores slighly more to the edge so you don't have to go so far away to get lots
+* Feels too slow??
 
 Okay we are getting there, but I feel like going to a biome to mine should be max 4 or so trips, more than that and it starts to feel slow and annoying, after you've been there 4 times you shouldn't have to go there again. you want to move on and go somewhere else. Right now you need 6 or so trips to get all the iron, and that's just iron for the damage upgrades
 
@@ -1074,15 +1074,45 @@ Lazer damage!! Stage with gold
 Feels like the tree should be expanding more its just comming to a halt when you've done the copper stuff
 
 Iconds should update when you're transfering
-Gold costs grow too quickly. Or atleast, it is hard to get gold upgrade 2 & 3 for lazer damage. I feel like the structure could be like this: Struggle through a bit of the progression stage. Then when you get the first damage upgrade for that stage, it becomes significatly easier. 
-- The other upgrades, like the block oxygen, lazer blast, lazer chain, make them better, it feels wrong, it just costs like 2 iron to buy, its not satisfying, make it cost somewhat mored
-- crit damage? ? 
-- Some particles go into the blocks and it looks like they flicker and its ugly
-- Furthers away color should change depending on the biome your in
+Gold costs grow too quickly. Or atleast, it is hard to get gold upgrade 2 \& 3 for lazer damage. I feel like the structure could be like this: Struggle through a bit of the progression stage. Then when you get the first damage upgrade for that stage, it becomes significatly easier.
 
-Maybe have an ore converter? So you don't have to do the manual work of finding all the ores. Also if ores just spawn in a biome you'll have a finite number of that ore in the world 
+* The other upgrades, like the block oxygen, lazer blast, lazer chain, make them better, it feels wrong, it just costs like 2 iron to buy, its not satisfying, make it cost somewhat mored
+* crit damage? ?
+* Some particles go into the blocks and it looks like they flicker and its ugly
+* Furthers away color should change depending on the biome your in
 
-Just need to type, just need to do the bare minimum, to it simple first. SIMPLY Just give a 
-A cave has options, say 2 options, then those options have results. Like it could be like, you have a chance to gain 20 stone! but the other option could be like NAH I'm good, just give me 10 stone. Then one action is random weight, then other option is SET. The positive would be gain 20 stone, but then the negative could be DEBUFF and LOSE 20 stone (whatever), it would be TWO outcomes, so you would need a container of executables 
+Maybe have an ore converter? So you don't have to do the manual work of finding all the ores. Also if ores just spawn in a biome you'll have a finite number of that ore in the world
+
+Just need to type, just need to do the bare minimum, to it simple first. SIMPLY Just give a
+A cave has options, say 2 options, then those options have results. Like it could be like, you have a chance to gain 20 stone! but the other option could be like NAH I'm good, just give me 10 stone. Then one action is random weight, then other option is SET. The positive would be gain 20 stone, but then the negative could be DEBUFF and LOSE 20 stone (whatever), it would be TWO outcomes, so you would need a container of executables
 
 It should't just be a list of Iexecutable, oh my fucking god I hate doing this so much fuck this shit I'm doing something else for a bit
+
+
+
+# OKAY
+
+Time to lock the fuck in. We've got a game to make. I want an itch demo ASAP. Basically a vertical slice of the final product. Should be polished AF. It will just be the first layer, when you finally reach the end that's where the demo stops. No difficulty modifiers, no different starting skills or whatever, that's it is for the itch demo. And oh yeah it needs to run smoothly on the web browser. Okay so this is what we'll actually need to make sure we have
+
+* Fun and CLEAR progression. You don't want to be confused about anything. It should be fun, and it should be obvious what you should do to reach the end
+* Give them HINTS of what could be more!! This is just a demo after all, you need to tell the player that there is so much more in the full game and they should be excited to play the full version and WHISHLIST!!
+* Performant. It needs to run smoothly. Maybe you need to disable the background, maybe you need to make other optimizations, this is important because a slow and laggy game gets in the way of the flow we want them to be in
+
+That's basically it. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

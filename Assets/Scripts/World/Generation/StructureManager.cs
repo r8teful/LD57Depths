@@ -126,6 +126,13 @@ public class StructureManager : MonoBehaviour {
             if (fromSpawn < thresholdSqr*2) {
                 return false; // Too close to spawn
             }
+            float fullWidth = _cachedSettings.TrenchWidthAtY(candidate.y);
+            float halfWidth = fullWidth * 0.5f + 10; // half on each side + padding
+            // If candidate.x is within (-halfWidth, +halfWidth) it's inside the padded trench
+            if (Mathf.Abs(candidate.x) <= halfWidth) {
+                return false; // Not valid (inside trench + padding)
+            }
+
         }
         return true;
     }
