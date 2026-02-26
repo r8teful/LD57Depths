@@ -1098,21 +1098,15 @@ Time to lock the fuck in. We've got a game to make. I want an itch demo ASAP. Ba
 * Give them HINTS of what could be more!! This is just a demo after all, you need to tell the player that there is so much more in the full game and they should be excited to play the full version and WHISHLIST!!
 * Performant. It needs to run smoothly. Maybe you need to disable the background, maybe you need to make other optimizations, this is important because a slow and laggy game gets in the way of the flow we want them to be in
 
-That's basically it. 
+That's basically it.
+
+Oh yeah you will need music
 
 
 
+Oh lord.
 
 
 
-
-
-
-
-
-
-
-
-
-
+I think we are missing an identity. I'm seeing these games on the next fest and they have it nailed down. They know their vibe. But Resurface is missing that. I've always thought of Resurface as this chill game but it clashes a bit with the crazy nature of things and destroying everything. It's becauase it started as this startdew valley type game it was supposed to be cozy and lowstakes but its not that type of game anymore, and some of that is still in the game and also in the logo. It needs to be updated.
 

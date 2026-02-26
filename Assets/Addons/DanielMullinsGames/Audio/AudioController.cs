@@ -487,4 +487,28 @@ public class AudioController : PersistentSingleton<AudioController> {
 
         yield return DoFadeToVolume(duration * 0.5f, volume);
     }
+
+    internal void OnSfxVolumeChange(float newValue) {
+        currentSFXMixer.audioMixer.SetFloat("SFX", Mathf.Log10(newValue) * 20);
+    }
+    internal void OnMusicVolumeChange(float newValue) {
+        currentSFXMixer.audioMixer.SetFloat("Music", Mathf.Log10(newValue) * 20);
+    }
+
+    internal bool TryGetSfxVolume(out float sfx) {
+        sfx = 0;
+        if(currentSFXMixer.audioMixer.GetFloat("SFX", out var v)) {
+            sfx = v;
+            return true;
+        }
+        return false;
+    }
+    internal bool TryGetMusicVolume(out float music) {
+        music = 0;
+        if (currentSFXMixer.audioMixer.GetFloat("Music", out var v)) {
+            music = v;
+            return true;
+        }
+        return false;
+    }
 }

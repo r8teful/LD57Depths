@@ -194,7 +194,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         }
 
         // Check for UI interaction
-        if (_UIManager.IsAnyUIOpen()) {
+        if (_UIManager.IsAnyUIOpen()) { // I've tried to add || Console.IsConsoleOpen() but it doesn't really help because we need to also clear the interactable but then we coudn't close ui's because that is tied to the interactable thing
             _currentContext = PlayerInteractionContext.InteractingWithUI;
             // TODO this should sometimes clear the interactable, but sometimes not. As the UI could be the interactable!            
             return;

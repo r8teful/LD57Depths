@@ -7,10 +7,6 @@ using UnityEngine.UI;
 // Pause menu, settings, etc
 public class UISettings : MonoBehaviour {
     [SerializeField] TMP_Dropdown _screenModeDropdown;
-    public Slider SFXSlider;
-    public Slider MusicSlider;
-    public AudioMixerGroup SFXMixer;
-    public AudioMixerGroup MusicMixer;
     // Set in inspector
     public void onScreenModeSet() {
         var i = _screenModeDropdown.value;
@@ -28,11 +24,5 @@ public class UISettings : MonoBehaviour {
     private void SaveSettings() {
         //PlayerPrefs.SetFloat("soundVolume", _audioSlider.value);
         PlayerPrefs.SetInt("ScreenMode", (int)Screen.fullScreenMode);
-    }
-    public void OnSFXChanged(float v) {
-        SFXMixer.audioMixer.SetFloat("sfx", Mathf.Log10(SFXSlider.value) * 20);
-    }
-    public void OnMuiscChanged(float v) {
-        SFXMixer.audioMixer.SetFloat("music", Mathf.Log10(MusicSlider.value) * 20);
     }
 }

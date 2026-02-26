@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2418680334189894850}
   - component: {fileID: 7144636897363304702}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: SliderMusic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -258,6 +258,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1463948289563994328}
+  - component: {fileID: 5148890225774566423}
   m_Layer: 5
   m_Name: SoundSettings
   m_TagString: Untagged
@@ -287,6 +288,20 @@ RectTransform:
   m_AnchoredPosition: {x: -87.00001, y: -309.5}
   m_SizeDelta: {x: 648, y: 131}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5148890225774566423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3787836052279052620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91e6f8bfdaee1664c810fc0e8dbdcf03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  _musicSlider: {fileID: 7144636897363304702}
+  _sfxSlider: {fileID: 7363880011456597269}
 --- !u!1 &3885311950450459130
 GameObject:
   m_ObjectHideFlags: 0
@@ -335,7 +350,7 @@ GameObject:
   - component: {fileID: 940089081178497685}
   - component: {fileID: 7363880011456597269}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: SliderSfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -409,7 +424,7 @@ MonoBehaviour:
   m_MinValue: 0.00001
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 0.00001
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -603,8 +618,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Music
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6e84e3dc070981147ab4e9eccb5384ee, type: 2}
-  m_sharedMaterial: {fileID: -5338865807936191436, guid: 6e84e3dc070981147ab4e9eccb5384ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1ca26a4b22864fd4eb4279fb8d06348d, type: 2}
+  m_sharedMaterial: {fileID: 3603001062434081762, guid: 1ca26a4b22864fd4eb4279fb8d06348d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -639,6 +654,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -814,8 +830,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: SFX
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6e84e3dc070981147ab4e9eccb5384ee, type: 2}
-  m_sharedMaterial: {fileID: -5338865807936191436, guid: 6e84e3dc070981147ab4e9eccb5384ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1ca26a4b22864fd4eb4279fb8d06348d, type: 2}
+  m_sharedMaterial: {fileID: 3603001062434081762, guid: 1ca26a4b22864fd4eb4279fb8d06348d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -850,6 +866,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -917,7 +934,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -264, y: 1.5}
+  m_AnchoredPosition: {x: -268, y: -2}
   m_SizeDelta: {x: 20, y: 15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4836752696140937742
@@ -992,9 +1009,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 9.625, y: 0.5}
   m_SizeDelta: {x: 19.25, y: 10.199998}
-  m_Pivot: {x: 0, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4352481809991615881
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -9,7 +9,7 @@ public class UIManager : Singleton<UIManager> {
     [field: SerializeField] public UIManagerStats UIManagerStats {  get; private set; }
     [field: SerializeField] public UISubControlPanel UISubControlPanel {  get; private set; }
     [field: SerializeField] public UISubInventory UISubInventory {  get; private set; }
-    [field: SerializeField] public UISettings UISettings {  get; private set; }
+    [field: SerializeField] public UIPauseScreen UIPause {  get; private set; }
 
     private GameObject _playerGameObject;
     public bool IsAnyUIOpen() {
@@ -18,6 +18,8 @@ public class UIManager : Singleton<UIManager> {
         if (UpgradeScreen.IsOpen)
             return true;
         if (UISubControlPanel.IsOpen)
+            return true;
+        if (UIPause.IsOpen)
             return true;
         return false;
     }
