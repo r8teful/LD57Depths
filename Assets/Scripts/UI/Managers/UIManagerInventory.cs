@@ -9,10 +9,7 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
     
     private GameObject _playerGameObject; // player that own this UI
     private Dictionary<ushort,UIInventoryItem> slotInventoryUIs = new Dictionary<ushort, UIInventoryItem>();
-    private bool _isOpen = false;
-
-    // --- Properties ---
-    public bool IsOpen => _isOpen;
+   
     public void Init(GameObject owningPlayer, PlayerManager client) {
         _localInventoryManager = client.InventoryN.GetInventoryManager();
         _playerGameObject = owningPlayer; // Important for knowing who to pass to item usage

@@ -55,6 +55,7 @@ public class UIUpgradeScreen : MonoBehaviour {
         return treeObj;
     }
     public void PanelToggle() {
+        Debug.Log("TOGGLE");
         var isActive = !_upgradePanel.activeSelf;
         if (isActive) {
             _upgradePanel.SetActive(true);

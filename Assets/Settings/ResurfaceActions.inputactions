@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "ResurfaceActions",
     "maps": [
         {
@@ -261,6 +262,15 @@
                     "name": "UI_PanAction",
                     "type": "Button",
                     "id": "65e44046-c4bc-4146-937e-c55b85392925",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UI_Pause",
+                    "type": "Button",
+                    "id": "9fc67f51-9642-44ea-aede-1728fd689f02",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -1310,6 +1320,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "UI_PanAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0ba71bd4-3d7d-4d34-b98d-60b930aba84a",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI_Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -37,6 +37,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     private InputAction _uiTabRight;
     private InputAction _uiPan;
     private InputAction _uiZoom;
+    private InputAction _uiEscape;
     
     
     private LayerMask _interactableLayerMask;
@@ -88,6 +89,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
 
             _uiPan = _playerInput.actions.FindAction("UI_PanAction",true); // Start Moving upgrade view
             _uiZoom = _playerInput.actions.FindAction("UI_Scroll",true); // Zooming upgrade view
+            _uiEscape = _playerInput.actions.FindAction("UI_Pause",true); 
             _hotbarSelection = _playerInput.actions.FindAction("HotbarSelect",true);
             _useItemAction = _playerInput.actions.FindAction("Shoot",true);
         } else {
@@ -115,11 +117,22 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         _uiPointAction.performed += OnMousePosChange;
         _uiZoom.performed += OnZoom;
         _uiZoom.canceled += OnZoom;
+        _uiEscape.performed += OnEscape;
         _uiNavigateAction.performed += OnUINavigation;
         _uiNavigateAction.canceled += OnUINavigation;
         _playerInput.onControlsChanged += OnControlsChanged;
 
         _playerAbilityAction.performed+= OnAbilityPerformed;
+    }
+
+    private void OnEscape(InputAction.CallbackContext context) {
+        // If any ui open, close it 
+        if (_UIManager.TryCloseAnyOpenUI()) {
+            return;
+        }
+        // Nothing to close open pause
+        _UIManager.PausePanelUIToggle();
+        Time.timeScale = 0;
     }
 
     private void OnPanStop(InputAction.CallbackContext context) {

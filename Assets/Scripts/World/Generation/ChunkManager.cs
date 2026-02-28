@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.WSA;
 // Represents the runtime data for a single chunk (tile references)
 public class ChunkData {
 #if UNITY_EDITOR

@@ -12,9 +12,9 @@ public class UIManager : Singleton<UIManager> {
     [field: SerializeField] public UIPauseScreen UIPause {  get; private set; }
 
     private GameObject _playerGameObject;
+    private bool _isPaused;
+
     public bool IsAnyUIOpen() {
-        if (UIManagerInventory.IsOpen)
-            return true;
         if (UpgradeScreen.IsOpen)
             return true;
         if (UISubControlPanel.IsOpen)
@@ -22,6 +22,12 @@ public class UIManager : Singleton<UIManager> {
         if (UIPause.IsOpen)
             return true;
         return false;
+    }
+    public MonoBehaviour GetOpenUIScript() {
+        if (UpgradeScreen.IsOpen == true) return UpgradeScreen;
+        if (UISubControlPanel.IsOpen == true) return UISubControlPanel;
+        if (UIPause.IsOpen == true) return UIPause;
+        return null;
     }
     public void TryOpenCloseUpgradeUI(bool setActive, out bool didSucceed) {
         if (UpgradeScreen.IsOpen == setActive) {
@@ -76,6 +82,33 @@ public class UIManager : Singleton<UIManager> {
         UpgradeScreen.PanelHide();
     }
 
+    public void PausePanelUIToggle() {
+        if (_isPaused) Unpause();
+        else Pause();
+    }
+
+    private void Pause() {
+        Time.timeScale = 0f;
+        
+        AudioListener.pause = true; 
+        //Cursor.lockState = CursorLockMode.None;
+        //Cursor.visible = true;
+
+        // Dissable action maps?
+        UIPause.OnPauseOpen();
+        _isPaused = true;
+    }
+
+    private void Unpause() {
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
+
+        UIPause.OnPauseClose();
+        _isPaused = false;
+    }
     public void DEBUGToggleALLUI() {
         var cg = GetComponent<CanvasGroup>();
         if(cg.alpha >= 1) {
@@ -84,6 +117,25 @@ public class UIManager : Singleton<UIManager> {
             cg.alpha = 1.0f;
         }
 
+    }
+
+    internal bool TryCloseAnyOpenUI() {
+        var open = GetOpenUIScript();
+        if (open != null) { 
+            if(open is UIUpgradeScreen) {
+                UpgradePanelUIToggle();
+                return true;
+            }
+            if (open is UISubInventory) {
+                ControlPanelUIClose();
+                return true;
+            }
+            if (open is UIPauseScreen) {
+                PausePanelUIToggle();
+                return true;
+            }
+        }
+        return false;
     }
 
 }
