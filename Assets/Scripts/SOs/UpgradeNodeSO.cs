@@ -15,6 +15,7 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
     [VerticalGroup("Identification/Left/1")]
     [PreviewField(75), HideLabel,LabelWidth(0)]
     public Sprite icon;
+    public bool IsCool; // This could be an enum later maybe and we can have different stages of "coolnes" or different chategories idk...
 
     [Tooltip("ANY of these prerequisite nodes must be fully unlocked before this one can be started.")]
     public List<UpgradeNodeSO> prerequisiteNodesAny;

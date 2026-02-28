@@ -56,6 +56,17 @@ Steamdeck notes:
 * Items go From bob to PC? -> Visually show it go from bob to pc, and make the PC bounce or something (show that its receiving it)
 * New color node with one upgrade but not getting one upgrade
 * Hitstop when buying a node!?
+* Add cool particles to UI 
+
+&nbsp;	1. Particle when available
+
+&nbsp;	2. Particle when cooler upgrade
+
+&nbsp;	3. Cool shader on the outline of the node for extra cool upgrade. Several nodes have this effect but with different colours
+
+* Remove progress numbers!
+* Make node move a bit when selected 
+* Animate interaction (fade in, move up slightly)
 
 UX:
 

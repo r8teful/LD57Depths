@@ -20,6 +20,7 @@ public class UpgradeNodeVisualData {
     public Sprite IconExtra; // Used for sub upgrades as a cool extra for the popup
     public string Title;
     public string Description;
+    public bool IsCool; // for shader and particle effects
 
     // Depends on game state
     public List<IngredientStatus> IngredientStatuses; // This comes from a RecipeBaseSO
@@ -34,6 +35,7 @@ public class UpgradeNodeVisualData {
         _node = node;
         Icon = node.icon;
         Title = node.nodeName;
+        IsCool = node.IsCool;
         if (_currentUpgradeStage == null) {
             Description = node.description;
         }

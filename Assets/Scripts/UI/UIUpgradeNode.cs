@@ -1,3 +1,4 @@
+using Coffee.UIExtensions;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using System;
@@ -17,8 +18,11 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     [SerializeField] private Sprite _purchasableSpriteSmall;
     [SerializeField] private Sprite _purchasableSpriteBig;
     [SerializeField] private Sprite _purchasedSprite;
+    [SerializeField] private UIParticle _purchasableParticle;
+    [SerializeField] private UIParticle _purchasableParticleCool;
+    [SerializeField] private GameObject _coolBackground;
 
-    [SerializeField] private TextMeshProUGUI _stageText;
+    //[SerializeField] private TextMeshProUGUI _stageText;
     public ushort IDBoundNode = ResourceSystem.InvalidID; // Should match the NODE that its connected to 
     private Image _iconImage;
     private Button _buttonCurrent;
@@ -64,6 +68,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         _rectTransform = GetComponent<RectTransform>();
         _canvasGroup = GetComponent<CanvasGroup>();
         _canvasGroup.alpha = 1;
+        _coolBackground.SetActive(false);
     }
     public void InspectorBigChange() {
         if (IsBig) {
@@ -128,6 +133,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public void Select(bool usingPointer) {
         if (_visualData.State == UpgradeNodeState.Locked) return;
         if (_treeParent.IsClosing) return;
+        PlaySelectAnim();
         if (usingPointer) {
             // No coroutine movement, simply show the popup
             PopupManager.Instance.ShowPopup(this, true);
@@ -135,6 +141,20 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             StartCoroutine(SelectRoutine());
         }
     }
+
+    private void PlaySelectAnim() {
+        var vibrato = 5;
+        var elasticity = 1;
+        float rotation = 20;
+        _rectTransform.DOPunchRotation(new(0, 0, UnityEngine.Random.value > 0.5 ?  -rotation :  rotation), 0.2f, vibrato, elasticity)
+            .OnComplete(() => {
+                _rectTransform.localScale = Vector3.one;
+                _rectTransform.rotation = Quaternion.identity;
+            });
+    }
+
+    // A little bit stupid the popup position is not parented to the actual node, so we need to wait for the 
+    // Panning to move towards the node we've selected, and then we will show the popup
     private IEnumerator SelectRoutine() {
         // Simple solution, wait untill we've gotten to the target, and then we posision popup
         yield return _treeParent.OnPanSelect(this);
@@ -160,12 +180,13 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public void UpdateVisual() {
         var state = _visualData.State;
         //Debug.Log($" node: {gameObject.name} is updating its state to: {state}");
-        SetLevelText();
         // If this button is currently selected, show the manual Pressed sprite and early return.
         if (_isSelected) {
             // Highlit it?? idk
         }
         SetSprite(state);
+        HandleParticles(state);
+        HandleShaderState(state);
         switch (state) {
             case UpgradeNodeState.Purchased:
                 _canvasGroup.alpha = 1;
@@ -195,6 +216,30 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
     }
 
+    private void HandleShaderState(UpgradeNodeState state) {
+        if (!_visualData.IsCool) return;
+        if (state == UpgradeNodeState.Purchased) {
+            _coolBackground.SetActive(false);
+        } else {
+            _coolBackground.SetActive(true);
+        }
+    }
+
+    private void HandleParticles(UpgradeNodeState state) {
+        if (_visualData.IsCool && (state != UpgradeNodeState.Purchased)) {
+            _purchasableParticleCool.StartEmission();
+        }
+        if (state == UpgradeNodeState.Purchasable) {
+            _purchasableParticle.StartEmission();
+        } else if (state == UpgradeNodeState.Purchased) {
+            _purchasableParticle.Clear();
+            _purchasableParticleCool.Clear();
+        } else { 
+            // make sure it has stopped
+            _purchasableParticle.StopEmission();
+        }
+    }
+
     private void SetSprite(UpgradeNodeState state) {
         _imageCurrent.sprite = state switch {
             UpgradeNodeState.Purchased => _purchasedSprite,
@@ -208,11 +253,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         };
     }
 
-    private void SetLevelText() {
-        if(_visualData.LevelMax<= 1)
-            _stageText.gameObject.SetActive(false);
-        _stageText.text = $"{_visualData.LevelCurrent}/{_visualData.LevelMax}";
-    }
     private void OnPurchased(int upgradesBought) {
         // Hide popup
         App.AudioController.PlaySound2D("UpgradeBought",pitch: new(1+(0.05f*upgradesBought)));
@@ -229,7 +269,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         var vibrato = 5;
         var elasticity = 1;
         var scale = -0.1f;
-        float rotation = 5;
+        float rotation = 10;
         //_rectTransform.DOKill();
         _rectTransform.localScale = Vector3.one;
         _rectTransform.rotation = Quaternion.identity;

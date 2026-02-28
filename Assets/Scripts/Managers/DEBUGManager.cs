@@ -136,6 +136,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     [ConsoleCommand("clearAll")]
     private void debugClearInventory() {
         _player.InventoryN.RemoveAll();
+        SubmarineManager.Instance.SubInventory.RemoveAllItems();
     }
     [ConsoleCommand("clearAllUpgrade")]
     private void debugClearUpgrades() {

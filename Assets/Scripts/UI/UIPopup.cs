@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using Coffee.UIExtensions;
+using DG.Tweening;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -14,24 +15,38 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
     [SerializeField] private Transform _statsChangeContainer;
     [SerializeField] private Transform _ingredientContainer;
     [SerializeField] private UIPopupUpgradeBar _upgradeBar;
+    [SerializeField] private UIParticle _particlesPurchaseUp;
+    [SerializeField] private UIParticle _particlesPurchaseDown;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI descriptionText;
+    public TextMeshProUGUI _stageText;
     public UIIngredientVisual ingredientPrefab;
     public ItemData itemData;
     private bool _isWorldPopup; // Is this popup on a world space canvas?
     private void Awake() {
         UIUpgradeTree.OnUpgradeButtonPurchased += UpgradePurchased;
     }
+    private void OnDisable() {
+        UIUpgradeTree.OnUpgradeButtonPurchased -= UpgradePurchased;
+    }
 
     private void UpgradePurchased() {
-        int vibrato = 6;
+        int vibrato = 8;
         var elasticity = 2;
-        var scale = 0.2f;
-        //float rotation =20;
+        var scale = 0.6f;
+        float rotation =15;
+        float time = 0.6f;
+        //_particlesPurchaseUp.StartEmission();
+        _particlesPurchaseUp.Play();
+//        _particlesPurchaseDown.StartEmission();
+        _particlesPurchaseDown.Play();
         //float strength = 10f;
-        rectTransform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity).SetEase(Ease.OutBack);
-        //rectTransform.DOPunchRotation(new(0, 0, Random.Range(-rotation, rotation)), 0.2f, vibrato, elasticity)
-        //    .SetEase(Ease.OutBack);
+        rectTransform.DOPunchScale(new(scale, 0, 0), time*0.5f, vibrato, elasticity)
+            .SetEase(Ease.OutElastic);
+            //..SetEase(Ease.OutSine);
+        rectTransform.DOPunchRotation(new(0, 0, Random.value > 0.5 ? -rotation :  rotation), time, vibrato, elasticity)
+            //.SetEase(Ease.OutBack);
+            .SetEase(Ease.OutElastic);
         //rectTransform.DOPunchRotation(new(0, 0, Random.value > 0.5 ? -rotation :  rotation), 0.2f)
         //  .SetEase(Ease.OutElastic);
     }
@@ -96,7 +111,10 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
             // Set the status for the bar
             _upgradeBar.gameObject.SetActive(true);
             _upgradeBar.UpdateVisuals(data.progressionInfo);
+            _stageText.gameObject.SetActive(true);
+            _stageText.text = $"{data.progressionInfo.LevelCurr}/{data.progressionInfo.LevelMax}";
         } else {
+            _stageText.gameObject.SetActive(false);
             _upgradeBar.gameObject.SetActive(false);
         }
 

@@ -35,6 +35,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     private InputAction _cancelAction;       // Escape / Gamepad Start (to cancel holding)
     private InputAction _uiTabLeft;
     private InputAction _uiTabRight;
+
     private InputAction _uiPan;
     private InputAction _uiZoom;
     private InputAction _uiEscape;
@@ -132,7 +133,6 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         }
         // Nothing to close open pause
         _UIManager.PausePanelUIToggle();
-        Time.timeScale = 0;
     }
 
     private void OnPanStop(InputAction.CallbackContext context) {
