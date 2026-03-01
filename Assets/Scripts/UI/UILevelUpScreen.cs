@@ -4,6 +4,9 @@
         RewardEvents.OnLevelUpReady += ShowScreen;
         
     }
+    private void OnDestroy() {
+        RewardEvents.OnLevelUpReady -= ShowScreen;
+    }
 
     private void ShowScreen(int obj) {
         base.ShowScreen();

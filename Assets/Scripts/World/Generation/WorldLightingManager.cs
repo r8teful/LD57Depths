@@ -51,10 +51,6 @@ public class WorldLightingManager : MonoBehaviour {
         Backgroundmanager.Init(_worldManager.BiomeManager);
     }
     
-    public void OnDestroy() {
-        PlayerLayerController.OnPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
-        _worldManager.BiomeManager.OnNewClientBiome -= SetNewBiomeLight;
-    }
     void Initialize() {
         // Biome stuff
         _biomeLightSettingsMap = new Dictionary<BiomeType, LightProperties>();
@@ -73,6 +69,10 @@ public class WorldLightingManager : MonoBehaviour {
         // Setup starting light
         _currentClientBiome = BiomeType.Trench; // Or biome we left off at
         SetNewBiomeLightInstant(_currentClientBiome);
+    }
+    public void OnDestroy() {
+        PlayerLayerController.OnPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
+        _worldManager.BiomeManager.OnNewClientBiome -= SetNewBiomeLight;
     }
 
     private void PlayerVisibilityLayerChanged(VisibilityLayerType layer) {

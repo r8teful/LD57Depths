@@ -60,6 +60,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     public bool IsUsingController { get; internal set; }
     public event Action<InputAction.CallbackContext> OnUIInteraction;
     public void InitializeOnOwner(PlayerManager playerParent) {
+        Debug.Log("InputManagerInit..");
         _UIManager = playerParent.UiManager;
         _inventoryUIManager = _UIManager.UIManagerInventory;
         _player = playerParent;
@@ -159,27 +160,28 @@ public class InputManager : MonoBehaviour, IPlayerModule {
 
 
     private void UnsubscribeFromEvents() {
-        if (_UItoggleInventoryAction != null)
-            _UItoggleInventoryAction.performed -= UIOnToggleInventory;
-        if (_cancelAction != null)
-            _cancelAction.performed -= UIHandleCloseAction;
-            _cancelAction.performed -= HandleCancelAction;
-        if (_playerShootAction != null) {
-            _playerShootAction.performed -= OnPrimaryInteraction;
-            _playerShootAction.canceled -= OnPrimaryInteraction;
-        }
-        if (_playerMoveAction != null) { 
-            _playerMoveAction.performed -= OnMove;
-        }
-        if (_playerAimAction != null) {
-            _playerAimAction.performed -= OnAim;
-        }
-        if (_uiInteractAction != null) {
-            _uiInteractAction.performed -= OnPrimaryUIInteraction;
-        }
-
+        _UItoggleInventoryAction.performed -= UIOnToggleInventory;
+        _cancelAction.performed -= UIHandleCloseAction;
+        _cancelAction.performed -= HandleCancelAction;
+        _playerShootAction.performed -= OnPrimaryInteraction;
+        _playerShootAction.canceled -= OnPrimaryInteraction;
+        _uiInteractAction.performed -= OnPrimaryUIInteraction;
+        _playerDashAction.performed -= OnDashPerformed;
+        _playerDashAction.canceled -= OnDashPerformed;
+        _playerMoveAction.performed -= OnMove;
+        _playerMoveAction.canceled -= OnMove;
+        _playerAimAction.performed -= OnAim;
+        _playerAimAction.canceled -= OnAim;
+        _uiPan.performed -= OnPanStart;
+        _uiPan.canceled -= OnPanStop;
+        _uiPointAction.performed -= OnMousePosChange;
+        _uiZoom.performed -= OnZoom;
+        _uiZoom.canceled -= OnZoom;
+        _uiEscape.performed -= OnEscape;
         _uiNavigateAction.performed -= OnUINavigation;
+        _uiNavigateAction.canceled -= OnUINavigation;
         _playerInput.onControlsChanged -= OnControlsChanged;
+        _playerAbilityAction.performed -= OnAbilityPerformed;
     }
     private void Update() {
         if (_inventoryUIManager == null) return;

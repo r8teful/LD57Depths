@@ -13,7 +13,9 @@ public class UIUpgradeLine : MonoBehaviour {
     private UpgradeNodeState _upgradeNodeStateTo;
     private UILineRenderer _line;
     private Material _mat;
-    
+    private UIUpgradeNode _from;
+    private UIUpgradeNode _to;
+
     private void Awake() {
         ColorUtility.TryParseHtmlString(LINE_PURCHASED_HEX, out _linePurchasedColor);
         ColorUtility.TryParseHtmlString(LINE_AVAILABLE_HEX, out _lineAvailableColor);
@@ -21,6 +23,8 @@ public class UIUpgradeLine : MonoBehaviour {
     }
     public void Init(UIUpgradeNode from, UIUpgradeNode to,UILineRenderer myLine) {
         _mat = myLine.material;
+        _from = from;
+        _to = to;
         from.OnStateChange += StateChangeFrom;
         to.OnStateChange += StateChangeTo;
         _line = myLine;
@@ -30,6 +34,10 @@ public class UIUpgradeLine : MonoBehaviour {
         _upgradeNodeStateFrom = from.GetState;
         _upgradeNodeStateTo = to.GetState;
         UpdateColor();
+    }
+    private void OnDestroy() {
+        _from.OnStateChange -= StateChangeFrom;
+        _to.OnStateChange -= StateChangeTo;
     }
     private void StateChangeTo(UpgradeNodeState state, bool isPurchasedOnce) {
         _upgradeNodeStateTo = state;

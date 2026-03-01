@@ -24,6 +24,9 @@ public class UIUpgradeScreen : MonoBehaviour {
         _upgradePanelTree.SetActive(true);
         UIUpgradeTree.OnUpgradeButtonPurchased += OnUpgradePurchasedThroughTree;
     }
+    private void OnDestroy() {
+        UIUpgradeTree.OnUpgradeButtonPurchased -= OnUpgradePurchasedThroughTree;
+    }
     // todo make this good the shake is fucked it doesn't go back to where it started
     private void OnUpgradePurchasedThroughTree() {
         Debug.Log("PURSHASETREE");

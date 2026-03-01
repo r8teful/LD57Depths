@@ -3937,6 +3937,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: LowOxygenWarningExp
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 569
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d1ac67c2b5188a40a40a4321a1d463e
+      internalID: 897211980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -4002,6 +4024,7 @@ TextureImporter:
       InvTiny: 164083627
       InventoryTabButtonActive: 726674937
       InventoryTabButtonInactive: -692597868
+      LowOxygenWarningExp: 116287778
       OxygenBoarder: -268757789
       OxygenBoarder_Blue: 1579109010
       PlaceMarker: 116054401
@@ -4058,7 +4081,6 @@ TextureImporter:
       UISimpleBoarder: 1878530721
       UISliderBall: 401562208
       UISpriteSheet_0: -1359263483
-      UISpriteSheet_1: 116287778
       UISpriteSheet_22: 2050000292
       UISpriteSheet_29: -905512474
       UISpriteSheet_3: 1170321897

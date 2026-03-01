@@ -35,6 +35,7 @@ public class UpgradeTreeController : MonoBehaviour {
         if(PlayerManager.Instance != null) {
             PlayerManager.Instance.UiManager.UpgradeScreen.OnPanelChanged -= OnPanelChange;
         }
+        _inputManager.OnUIInteraction -= HandleActionInput;
     }
 
     private void OnPanelChange(bool isActive) {

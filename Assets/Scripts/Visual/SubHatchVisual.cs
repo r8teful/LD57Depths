@@ -11,7 +11,11 @@ public class SubHatchVisual : MonoBehaviour {
             _interactable.OnCeaseInteractable += OnTooFar;
         }
     }
+    private void OnDestroy() {
+        _interactable.OnSetInteractable -= OnCloseEnough;
+        _interactable.OnCeaseInteractable -= OnTooFar;
 
+    }
     private void OnTooFar() {
         HatchClose();
     }

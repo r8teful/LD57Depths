@@ -14,15 +14,14 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     private bool _isInsideOxygenZone;
     private PlayerState _cachedState;
     private bool peepPlayed;
-    public GameObject OxygenWarning;
-    private bool _isFlashing;
-    private Coroutine _flashCoroutine;
     private bool _initialized;
     private bool _oxygenDepleted;
     [SerializeField] private LowOxygenVisual _lowoxygenVisual;
     private LowOxygenVisual _lowoxygenVisualInstance;
 
     public static event Action<float, float> OnOxygenChanged;
+    public static event Action OnFlashStart;
+    public static event Action OnFlashStop;
     public int InitializationOrder => 92; // After playerstats
 
     public float CurrentOxygen { 
@@ -43,6 +42,11 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
         playerParent.PlayerStats.OnStatChanged += OnStatChanged;
         playerParent.PlayerMovement.OnPlayerStateChanged += StateChanged;
         _initialized = true;
+    }
+    private void OnDestroy() {
+        _player.PlayerStats.OnStatChanged -= OnStatChanged;
+        _player.PlayerMovement.OnPlayerStateChanged -= StateChanged;
+
     }
 
     private void OnStatChanged() {
@@ -79,8 +83,8 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
         OnOxygenChanged?.Invoke(CurrentOxygen, maxOxygen);
         if (CurrentOxygen <= maxOxygen * 0.2f && !peepPlayed) { // 20% max oxygen
             if (AudioController.Instance != null) AudioController.Instance.PlaySound2D("PeepPeep", 1f);
+            OnFlashStart?.Invoke();
             peepPlayed = true;
-            //SliderFlash(true);
         }
         if (CurrentOxygen <= 0) {
             // Slowly fade out and then teleport player back to base?
@@ -100,6 +104,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     }
     void ReplenishOxygen() {
         peepPlayed = false;
+        OnFlashStop?.Invoke();
         if (_oxygenDepleted) {
             // Remove low oxygen effect 
             _oxygenDepleted = false;
@@ -115,39 +120,6 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     }
     public void GainOxygen(float amount) {
         CurrentOxygen += amount;
-    }
-
-    // Call this function to start or stop the flashing
-    public void SliderFlash(bool shouldFlash) {
-        if (OxygenWarning == null) {
-            Debug.LogWarning("SliderFlash: sliderToFlash GameObject is not assigned! Please assign it in the Inspector.");
-            return;
-        }
-
-        if (shouldFlash) {
-            if (!_isFlashing) // Don't start a new coroutine if already flashing
-            {
-                _isFlashing = true;
-                _flashCoroutine = StartCoroutine(FlashCoroutine());
-            }
-        } else {
-            if (_isFlashing) // Only stop if currently flashing
-            {
-                _isFlashing = false;
-                StopCoroutine(_flashCoroutine);
-                OxygenWarning.SetActive(false); // Ensure it's visible when stopping the flash
-            }
-        }
-    }
-
-    private IEnumerator FlashCoroutine() {
-        while (_isFlashing) {
-            // Toggle the active state of the GameObject
-            OxygenWarning.SetActive(!OxygenWarning.activeSelf);
-
-            // Wait for the flashSpeed duration
-            yield return new WaitForSeconds(0.2f);
-        }
     }
 
 

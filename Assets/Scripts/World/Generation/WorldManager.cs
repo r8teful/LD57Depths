@@ -54,6 +54,10 @@ public class WorldManager : StaticInstance<WorldManager> {
         SpawnStructures();
         PlayerLayerController.OnPlayerVisibilityChanged += PlayerLayerChange;
     }
+    private void OnDestroy() {
+        PlayerLayerController.OnPlayerVisibilityChanged -= PlayerLayerChange;
+
+    }
 
     private void PlayerLayerChange(VisibilityLayerType type) {
         if(type == VisibilityLayerType.Exterior) {

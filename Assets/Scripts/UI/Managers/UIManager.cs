@@ -10,6 +10,7 @@ public class UIManager : Singleton<UIManager> {
     [field: SerializeField] public UISubControlPanel UISubControlPanel {  get; private set; }
     [field: SerializeField] public UISubInventory UISubInventory {  get; private set; }
     [field: SerializeField] public UIPauseScreen UIPause {  get; private set; }
+    [field: SerializeField] public GameObject DebugStatMenu {  get; private set; }
 
     private GameObject _playerGameObject;
     private bool _isPaused;
@@ -38,7 +39,12 @@ public class UIManager : Singleton<UIManager> {
         didSucceed = true;
     }
 
-
+    public void DebugStatsShow() {
+        DebugStatMenu.SetActive(true);
+    }
+    public void DebugStatsHide() {
+        DebugStatMenu.SetActive(false);
+    }
     public void Init(PlayerManager client, GameObject owningPlayer) {
         _inventory = SubmarineManager.Instance.SubInventory;
         PopupManager = GetComponent<PopupManager>();
@@ -99,7 +105,7 @@ public class UIManager : Singleton<UIManager> {
         _isPaused = true;
     }
 
-    private void Unpause() {
+    public void Unpause() {
         Time.timeScale = 1f;
         AudioListener.pause = false;
 

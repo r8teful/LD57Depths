@@ -1,16 +1,28 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour {
-    [SerializeField] Button _buttonPlay;
-    
+    [SerializeField] private  Button _buttonPlay;
+    [SerializeField] private  Button _buttonSettings;
+    [SerializeField] private UISettings _settings; 
+
     [SerializeField] private TMP_InputField _addressField;
 
     private void OnEnable() {
         _buttonPlay.onClick.AddListener(OnHostClicked);
+        _buttonSettings.onClick.AddListener(OnSettingsClicked);
     }
+    private void Start() {
+        _settings.Hide();
+    }
+
+    private void OnSettingsClicked() {
+        _settings.Show(false);
+    }
+
     private void OnDisable() {
         _buttonPlay.onClick.RemoveListener(OnHostClicked);
         // Unsubscribe from client connection events to avoid memory leaks.

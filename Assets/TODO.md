@@ -49,32 +49,22 @@ Steamdeck notes:
 
 **Smaller visual stuff:**
 
-* Upgrade tree header in ui
 * Don't let submarine spawn inside a rock, and don't let anything "block" the sub, like plants spawn in front of it
-* Don't let structure entities spawn in the trench
 * Make popup fade out instead of disappear instant
-* Items go From bob to PC? -> Visually show it go from bob to pc, and make the PC bounce or something (show that its receiving it)
+* Items go From bob to PC? -> Visually show it go from bob to pc, and make the PC bounce or something (show that its receiving it). I've tried this but its really hard to have it look good!!!!
 * New color node with one upgrade but not getting one upgrade
 * Hitstop when buying a node!?
-* Add cool particles to UI 
-
-&nbsp;	1. Particle when available
-
-&nbsp;	2. Particle when cooler upgrade
-
-&nbsp;	3. Cool shader on the outline of the node for extra cool upgrade. Several nodes have this effect but with different colours
-
-* Remove progress numbers!
-* Make node move a bit when selected 
+* Change popup particle colour to match the purchase particle color
 * Animate interaction (fade in, move up slightly)
+* Screenshake? 
+* Add MORE POLISH. NOTHING should instantly appear, it should have MOVEMENT
 
 UX:
 
 * Not sure what to do at the start, needs a bit more handholding. Arrow pointing at upgrade machine!?
 * Forget to use lazer blast \& what button it needs to activate
-* You don't know where the beepbeep sound is comming from -> Make it clear that it comes from the oxygen bar running out
-* Clarify that all three upgrades need to happen for you to move
 * UI Doesn't tell you anything, it needs to be clear how to progress further!!
+* A machine that shows the biome artifacts and which one's you've gotten
 
 Misc:
 

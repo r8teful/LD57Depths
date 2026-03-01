@@ -33,6 +33,9 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifi
         Register();
         _abilityInstance.OnBuffExpired += OnBuffExpire;
     }
+    private void OnDestroy() {
+        _abilityInstance.OnBuffExpired -= OnBuffExpire;
+    }
 
     private void OnBuffExpire(BuffInstance buff) {
         if(buff.buffID == ResourceSystem.BrimstoneBuffID) {

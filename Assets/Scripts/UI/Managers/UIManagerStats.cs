@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 // Shows stats, items etc.
@@ -14,18 +15,20 @@ public class UIManagerStats : MonoBehaviour {
     [SerializeField] Transform _iconContainerActive;
     [SerializeField] Transform _statDisplayElements;
     [SerializeField] Transform _abilityDisplayElements;
+    private PlayerManager _player;
 
-    internal void Init(PlayerManager client) {
-        _playerStats = client.PlayerStats;
+    internal void Init(PlayerManager player) {
+        _playerStats = player.PlayerStats;
         _playerStats.OnBuffListChanged += BuffListChange;
         _playerStats.OnBuffsUpdated += RefreshTimes;
         _playerStats.OnStatChanged += StatChange;
-        client.PlayerAbilities.OnAbilityAdd += OnAddAbility;
-        client.PlayerAbilities.OnabilityRemove += OnRemoveAbility;
+        player.PlayerAbilities.OnAbilityAdd += OnAddAbility;
+        player.PlayerAbilities.OnabilityRemove += OnRemoveAbility;
+        _player = player;
         RebuildBuffList();
         CreateStatDisplays();
     }
-
+    
     private void BuffListChange() {
         Debug.Log("BUFF LIST CHANGE!!");
         RebuildBuffList();
@@ -60,9 +63,13 @@ public class UIManagerStats : MonoBehaviour {
 
     void OnDestroy() {
         if (_playerStats != null) {
-            _playerStats.OnBuffListChanged -= RebuildBuffList;
+            _playerStats.OnBuffListChanged -= BuffListChange;
             _playerStats.OnBuffsUpdated -= RefreshTimes;
+            _playerStats.OnBuffsUpdated -= RefreshTimes;
+            _playerStats.OnStatChanged -= StatChange;
         }
+        _player.PlayerAbilities.OnabilityRemove -= OnRemoveAbility;
+        _player.PlayerAbilities.OnAbilityAdd -= OnAddAbility;
     }
     private void RefreshTimes() {
         var snapshots = _playerStats.GetBuffSnapshots();

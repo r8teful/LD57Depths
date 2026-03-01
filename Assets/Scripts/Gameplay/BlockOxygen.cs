@@ -10,6 +10,9 @@ public class BlockOxygen : MonoBehaviour, IInitializableAbility {
         _player = player;
         ChunkManager.OnTileChanged += TileChanged;
     }
+    private void OnDestroy() {
+        ChunkManager.OnTileChanged -= TileChanged;
+    }
 
     private void TileChanged(Vector3Int pos, ushort tileID) {
         if (tileID != ResourceSystem.AirID) return; // Only care for breaking

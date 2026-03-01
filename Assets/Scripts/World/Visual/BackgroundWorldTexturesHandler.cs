@@ -6,8 +6,6 @@ public class BackgroundWorldTexturesHandler : StaticInstance<BackgroundWorldText
     public List<Material> layerMaterials; // 4 materials for 4 layers
     public List<float> layerParallax; // each layer's parallax
     public List<float> layerPixelSize; // pixel sizes for each layer
-    [OnValueChanged("PushBiomesToMaterials")]
-    public float DebugupdateMaterial = 10f;
     public int numBiomes = 6;
     
     private void OnEnable() {

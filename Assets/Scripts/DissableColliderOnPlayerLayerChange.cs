@@ -7,6 +7,9 @@ public class DissableColliderOnPlayerLayerChange : MonoBehaviour {
         _collider =  GetComponent<Collider2D>();
         PlayerLayerController.OnPlayerVisibilityChanged += OnLayerChange;
     }
+    private void OnDestroy() {
+        PlayerLayerController.OnPlayerVisibilityChanged -= OnLayerChange;
+    }
 
     private void OnLayerChange(VisibilityLayerType newLayer) {
         switch (newLayer) {

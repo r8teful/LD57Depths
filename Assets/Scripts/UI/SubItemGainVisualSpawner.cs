@@ -56,8 +56,8 @@ public class SubItemGainVisualSpawner : MonoBehaviour {
         _sound = AudioController.Instance.PlaySound2D("ItemAdd", 0.1f, looping: true) as AudioSource;      
         _transferCoroutine = StartCoroutine(TransferLoop());
         if (PlayerManager.Instance == null) return;
-        _spawnedParticles = Instantiate(_gainParticles, PlayerManager.Instance.transform).GetComponent<ParticleAttractor>();
-        _spawnedParticles.StartAttract(_transferVisualWorldDestination);
+        //_spawnedParticles = Instantiate(_gainParticles, PlayerManager.Instance.transform).GetComponent<ParticleAttractor>();
+        //_spawnedParticles.StartAttract(_transferVisualWorldDestination);
     }
 
     // Call this to stop transferring and stop the sound

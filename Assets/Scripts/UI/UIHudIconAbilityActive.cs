@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class UIHudIconAbilityActive : UIHudIconBase {
     [SerializeField] private Image _progressImage;
     [SerializeField] private TextMeshProUGUI timeText; // We won't really have a time text but just for now
+    private AbilityInstance _ability;
+
     internal void Init(AbilityInstance ability) {
         InitBase(ability.Data.icon, ability.Data.displayName, "");
         // Subscribe to ability things
@@ -13,8 +15,14 @@ public class UIHudIconAbilityActive : UIHudIconBase {
         ability.OnActiveTimeChanged+= OnAbilityActiveTimeChanged;
         ability.OnReady += OnAbilityReady;
         ability.OnUsed += OnAbilityUsed;
+        _ability = ability;
     }
-
+    private void OnDestroy() {
+        _ability.OnCooldownChanged += OnAbilityCooldownChanged;
+        _ability.OnActiveTimeChanged += OnAbilityActiveTimeChanged;
+        _ability.OnReady += OnAbilityReady;
+        _ability.OnUsed += OnAbilityUsed;
+    }
 
     private void OnAbilityReady() {
         //_iconImage.color = Color.green;

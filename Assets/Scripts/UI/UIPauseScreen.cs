@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIPauseScreen : MonoBehaviour {
-    [SerializeField] private Transform _containerSettings;
     [SerializeField] private Transform _containerPause;
     [SerializeField] private GameObject _tint;
     [SerializeField] private Button _buttonResume;
@@ -27,8 +26,8 @@ public class UIPauseScreen : MonoBehaviour {
 
     // Make sure initial state is correct
     private void ResetToDefault() {
-        _containerSettings.gameObject.SetActive(false);
         _containerPause.gameObject.SetActive(false);
+        _settings.Hide();
         _tint.SetActive(false);
 
     }
@@ -41,7 +40,13 @@ public class UIPauseScreen : MonoBehaviour {
         OnSettingOpen();
     }
     private void OnExitButtonClick() {
-        //todo
+        // cool animation etc..
+        if (UIManager.Instance == null) {
+            Debug.LogError("uimanager null!");
+            return;
+        }
+        UIManager.Instance.Unpause();
+        SceneManager.LoadScene(0);
     }
 
     private void OnResumeButtonClick() {
@@ -55,12 +60,11 @@ public class UIPauseScreen : MonoBehaviour {
 
     public void OnSettingOpen() {
         _containerPause.gameObject.SetActive(false);
-        _containerSettings.gameObject.SetActive(true);
+        _settings.Show(fromPause: true);
     }
     public void OnSettingBack() {
         _containerPause.gameObject.SetActive(true);
-        _containerSettings.gameObject.SetActive(false);
-        _settings.OnBack();
+        _settings.Hide();
     }
 
     private void OnApplicationPause(bool pause) {

@@ -58,7 +58,13 @@ public class UIUpgradeTree : MonoBehaviour {
         ItemTransferManager.OnTransferCompleteAll += UpdateNodeVisualData; // Fixes a bug where nodes don't update when you rush to the upgrade machine
 
     }
+    private void OnDestroy() {
+        UIUpgradeScreen.OnSelectedNodeChanged -= SelectedChange;
+        _player.UiManager.UpgradeScreen.OnPanelChanged -= PanelChanged;
+        _player.PlayerMovement.OnPlayerStateChanged -= PlayerStateChanged;
+        ItemTransferManager.OnTransferCompleteAll -= UpdateNodeVisualData; //
 
+    }
     private void PlayerStateChanged(PlayerMovement.PlayerState state) {
         if(state == PlayerMovement.PlayerState.Swimming) {
             _upgradeBoughtThisVisit = 0; // assume we've gone back to swim!

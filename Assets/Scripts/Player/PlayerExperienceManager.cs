@@ -16,6 +16,11 @@ public class PlayerExperienceManager : MonoBehaviour, IPlayerModule {
         RewardEvents.OnGainXP += AddExperience;
         RewardEvents.OnUILevelReady += CommitLevelUp;
     }
+    private void OnDestroy() {
+        RewardEvents.OnGainXP -= AddExperience;
+        RewardEvents.OnUILevelReady -= CommitLevelUp;
+
+    }
 
     private void AddExperience(int amount) {
         levelData.currentXP += amount;
