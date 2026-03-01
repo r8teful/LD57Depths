@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
   m_Name: UpgradeSubCables
   m_EditorClassIdentifier: 
-  nodeName: SubUpgradeCable
+  nodeName: Cable upgrade
   uniqueID: 1000
-  description: 
+  description: Upgrade all three stages to unlock submarine movement
   icon: {fileID: -1703950749, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   IsCool: 1
   prerequisiteNodesAny:

@@ -9,26 +9,31 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Color = UnityEngine.Color;
 
-public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler {
-    [SerializeField] private Button _buttonBig;
-    [SerializeField] private Button _buttonSmall;
-
+public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler,IPointerUpHandler {
+    [SerializeField] private Button _button;
+    [SerializeField] private GameObject _buttonSmallVisual;
+    [SerializeField] private GameObject _buttonBigVisual;
+   
     [SerializeField] private Sprite _unlockedSpriteSmall;
     [SerializeField] private Sprite _unlockedSpriteBig;
     [SerializeField] private Sprite _purchasableSpriteSmall;
     [SerializeField] private Sprite _purchasableSpriteBig;
     [SerializeField] private Sprite _purchasedSprite;
+    [SerializeField] private Sprite _whiteSprite;
     [SerializeField] private UIParticle _purchasableParticle;
     [SerializeField] private UIParticle _purchasableParticleCool;
     [SerializeField] private GameObject _coolBackground;
+    [SerializeField] private RectTransform _visualRect;
+    [SerializeField] private Material _sheenMat;
+    private Material _defaultMat;
+    [SerializeField] private Gradient _coolGradient;
 
     //[SerializeField] private TextMeshProUGUI _stageText;
     public ushort IDBoundNode = ResourceSystem.InvalidID; // Should match the NODE that its connected to 
     private Image _iconImage;
-    private Button _buttonCurrent;
     private Image _imageCurrent;
     private CanvasGroup _canvasGroup;
-    private RectTransform _rectTransform;
+    private RectTransform _rectTransform; // DONT use for animation, use _visual
     public RectTransform Rect => _rectTransform;
     private UIUpgradeTree _treeParent;
     private UpgradeNodeVisualData _visualData;
@@ -58,6 +63,8 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Color _iconUnlockedColor;
     private bool _isSelected;
     private Vector2 _preferedSize;
+    private Sequence colorSequence;
+    private bool _isPressed;
 
     private void Awake() {
         // parse hex colors (falls back to white if parse fails)
@@ -69,22 +76,35 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         _canvasGroup = GetComponent<CanvasGroup>();
         _canvasGroup.alpha = 1;
         _coolBackground.SetActive(false);
+        _button.onClick.AddListener(OnUpgradeButtonClicked);
+    }
+    private void OnDestroy() {
+        _button.onClick.RemoveListener(OnUpgradeButtonClicked);
     }
     public void InspectorBigChange() {
         if (IsBig) {
-            _buttonBig.gameObject.SetActive(true);
-            _buttonSmall.gameObject.SetActive(false);
+            _buttonBigVisual.SetActive(true);
+            _buttonSmallVisual.SetActive(false);
         } else {
-            _buttonBig.gameObject.SetActive(false);
-            _buttonSmall.gameObject.SetActive(true);
+            _buttonBigVisual.SetActive(false);
+            _buttonSmallVisual.SetActive(true);
         }
     }
     internal void Init(UIUpgradeTree parent, UpgradeNodeSO data, UpgradeManagerPlayer up) {
         _visualData = new(data, up);
         _treeParent = parent;
         HandleButtonSize(); // Sets _buttonCurrent
+        HandleButtonMaterial();
         SetIcon();
+       
         UpdateVisual();
+    }
+
+    private void HandleButtonMaterial() {
+        if (_visualData.IsCool) {
+            _defaultMat = _imageCurrent.material; // revert back to this when we purchase 
+            _imageCurrent.material = _sheenMat;
+        }
     }
 
     private void SetIcon() {
@@ -109,26 +129,24 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
 
     private void HandleButtonSize() {
-        if (IsBig && _buttonBig != null) {
-            _buttonBig.onClick.RemoveAllListeners();
-            _buttonBig.onClick.AddListener(OnUpgradeButtonClicked);
-            _buttonSmall.gameObject.SetActive(false);
-            _buttonCurrent = _buttonBig;
+        if (IsBig && _buttonBigVisual != null) {
+            _buttonSmallVisual.SetActive(false);
             var r = _rectTransform.sizeDelta;
-            //r.x = 120f;
+            r.x = 128f;
+            r.y = 128f;
             _rectTransform.sizeDelta = r;
-            _preferedSize = r;
-        } else if (!IsBig && _buttonSmall != null) {
-            _buttonSmall.onClick.RemoveAllListeners();
-            _buttonSmall.onClick.AddListener(OnUpgradeButtonClicked);
-            _buttonCurrent = _buttonSmall;
-            _buttonBig.gameObject.SetActive(false);
+            _preferedSize = r; 
+            _imageCurrent = _buttonBigVisual.transform.GetChild(0).GetComponent<Image>(); // omg so uggly
+            _iconImage = _buttonBigVisual.transform.GetChild(1).GetComponent<Image>();// Even worse
+        } else if (!IsBig && _buttonSmallVisual != null) {
+            _buttonBigVisual.SetActive(false);
             var r = _rectTransform.sizeDelta;
-            //r.x = 65f;
+            r.x = 100f;
+            r.y = 100f;
             _rectTransform.sizeDelta = r;
+            _imageCurrent = _buttonSmallVisual.transform.GetChild(0).GetComponent<Image>(); // omg so uggly
+            _iconImage = _buttonSmallVisual.transform.GetChild(1).GetComponent<Image>();// Even worse
         }
-        _imageCurrent = _buttonCurrent.targetGraphic.gameObject.GetComponent<Image>(); // omg so uggly
-        _iconImage = _buttonCurrent.transform.GetChild(1).GetComponent<Image>();// Even worse
     }
     public void Select(bool usingPointer) {
         if (_visualData.State == UpgradeNodeState.Locked) return;
@@ -146,10 +164,10 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         var vibrato = 5;
         var elasticity = 1;
         float rotation = 20;
-        _rectTransform.DOPunchRotation(new(0, 0, UnityEngine.Random.value > 0.5 ?  -rotation :  rotation), 0.2f, vibrato, elasticity)
+        _visualRect.DOPunchRotation(new(0, 0, UnityEngine.Random.value > 0.5 ?  -rotation :  rotation), 0.2f, vibrato, elasticity)
             .OnComplete(() => {
-                _rectTransform.localScale = Vector3.one;
-                _rectTransform.rotation = Quaternion.identity;
+                _visualRect.localScale = Vector3.one;
+                _visualRect.rotation = Quaternion.identity;
             });
     }
 
@@ -166,14 +184,21 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
+        Debug.Log("On Pointer up!");
         Select(usingPointer: true);
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         Deselect();
     }
+
+    public void OnPointerUp(PointerEventData eventData) {
+        Debug.Log("On Pointer up!");
+    }
     private void OnUpgradeButtonClicked() {
         if (_visualData.Node.stages.Count == 0) return; // Some nodes have any stages and it will give null
+        Debug.Log("pressed");
+        _isPressed = true;
         _treeParent.OnUpgradeButtonClicked(this,_visualData.Node); // This seems wrong but its where we store what actual node we are
     }
     
@@ -186,31 +211,68 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         }
         SetSprite(state);
         HandleParticles(state);
-        HandleShaderState(state);
-        switch (state) {
-            case UpgradeNodeState.Purchased:
-                _canvasGroup.alpha = 1;
-                _iconImage.color = _iconPurchasedColor;
-                _buttonCurrent.interactable = false;
-                break;
-            case UpgradeNodeState.Unlocked:
-                _canvasGroup.alpha = 1;
-                _iconImage.color = _iconUnlockedColor;
-                _buttonCurrent.interactable = true;
-                break;
-            case UpgradeNodeState.Purchasable:
-                _iconImage.color = _iconPurchasableColor;
-                _buttonCurrent.interactable = true;
-                _canvasGroup.alpha = 1;
-                break;
-            case UpgradeNodeState.Locked:
-                _imageCurrent.sprite = null;
-                _canvasGroup.alpha = 0;
-                _buttonCurrent.interactable = false;
-                break;
-            default:
-                
-                break;
+        //HandleShaderState(state);
+
+        if (!_visualData.IsCool) {
+            switch (state) {
+                case UpgradeNodeState.Purchased:
+                    _canvasGroup.alpha = 1;
+                    _iconImage.color = _iconPurchasedColor;
+                    _button.interactable = false;
+                    break;
+                case UpgradeNodeState.Unlocked:
+                    _canvasGroup.alpha = 1;
+                    _iconImage.color = _iconUnlockedColor;
+                    _button.interactable = true;
+                    break;
+                case UpgradeNodeState.Purchasable:
+                    _iconImage.color = _iconPurchasableColor;
+                    _button.interactable = true;
+                    _canvasGroup.alpha = 1;
+                    break;
+                case UpgradeNodeState.Locked:
+                    _imageCurrent.sprite = null;
+                    _canvasGroup.alpha = 0;
+                    _button.interactable = false;
+                    break;
+                default:
+                    
+                    break;
+            }
+        } else {
+            switch (state) {
+                case UpgradeNodeState.Purchased:
+                    _canvasGroup.alpha = 1;
+                    _iconImage.color = _iconPurchasedColor;
+                    _button.interactable = false;
+                    if(colorSequence != null) {
+                        colorSequence.Kill();
+                        colorSequence = null;
+                        _imageCurrent.color = Color.white;
+                    }
+                    _imageCurrent.material = _defaultMat;
+                    break;
+                case UpgradeNodeState.Unlocked:
+                    _canvasGroup.alpha = 0.5f;
+                    _imageCurrent.sprite = _whiteSprite;
+                    colorSequence ??= _imageCurrent.DOGradientColor(_coolGradient, 30).SetLoops(-1);
+                    _button.interactable = true;
+                    break;
+                case UpgradeNodeState.Purchasable:
+                    _imageCurrent.sprite = _whiteSprite;
+                    colorSequence ??= _imageCurrent.DOGradientColor(_coolGradient, 30).SetLoops(-1);
+                    _button.interactable = true;
+                    _canvasGroup.alpha = 1;
+                    break;
+                case UpgradeNodeState.Locked:
+                    _imageCurrent.sprite = null;
+                    _canvasGroup.alpha = 0;
+                    _button.interactable = false;
+                    break;
+                default:
+
+                    break;
+            }
         }
         OnStateChange?.Invoke(state,_visualData.LevelCurrent>0);
 
@@ -227,7 +289,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
     private void HandleParticles(UpgradeNodeState state) {
         if (_visualData.IsCool && (state != UpgradeNodeState.Purchased)) {
-            _purchasableParticleCool.StartEmission();
+            _purchasableParticleCool.Play();
         }
         if (state == UpgradeNodeState.Purchasable) {
             _purchasableParticle.StartEmission();
@@ -271,18 +333,18 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         var scale = -0.1f;
         float rotation = 10;
         //_rectTransform.DOKill();
-        _rectTransform.localScale = Vector3.one;
-        _rectTransform.rotation = Quaternion.identity;
+        _visualRect.localScale = Vector3.one;
+        _visualRect.rotation = Quaternion.identity;
 
-        _rectTransform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity)
+        _visualRect.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity)
             .OnComplete(() => {
-                _rectTransform.localScale = Vector3.one;
-                _rectTransform.rotation = Quaternion.identity;
+                _visualRect.localScale = Vector3.one;
+                _visualRect.rotation = Quaternion.identity;
                 });
-        _rectTransform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-rotation, rotation)), 0.2f, vibrato, elasticity)
+        _visualRect.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-rotation, rotation)), 0.2f, vibrato, elasticity)
             .OnComplete(() => {
-                _rectTransform.localScale = Vector3.one;
-                _rectTransform.rotation = Quaternion.identity;
+                _visualRect.localScale = Vector3.one;
+                _visualRect.rotation = Quaternion.identity;
             });
     }
 
@@ -330,17 +392,18 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         //Debug.Log($"depth: {depth} gives progress: {depthProgress} gives ratio {depthRatio}");
         int vibrato = (int)(5 * depthRatio);
         float elasticity = 1 * depthRatio;
-        float scale = -0.2f *depthRatio;
-        float rotation = 5;
-        _rectTransform.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity)
+        float scale = -0.4f *depthRatio;
+        float rotation = 8;
+        _visualRect.DOPunchScale(new(scale, scale, scale), 0.2f, vibrato, elasticity)
             .OnComplete(() => {
-                _rectTransform.localScale = Vector3.one;
-                _rectTransform.rotation = Quaternion.identity;
+                _visualRect.localScale = Vector3.one;
+                _visualRect.rotation = Quaternion.identity;
             });
-        _rectTransform.DOPunchRotation(new(0, 0, UnityEngine.Random.Range(-rotation, rotation)), 0.2f, vibrato, elasticity)
+        _visualRect.DOPunchRotation(new(0, 0, UnityEngine.Random.value > 0.5 ? -rotation :  rotation), 0.2f, vibrato, elasticity)
             .OnComplete(() => {
-                _rectTransform.localScale = Vector3.one;
-                _rectTransform.rotation = Quaternion.identity;
+                _visualRect.localScale = Vector3.one;
+                _visualRect.rotation = Quaternion.identity;
             });
     }
+
 }

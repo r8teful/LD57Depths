@@ -11,6 +11,7 @@ public class SubItemGainVisualSpawner : MonoBehaviour {
     [SerializeField] Transform _transferVisualWorldDestination;
     [SerializeField] UIInventoryGainPopup _popup; 
     [SerializeField] SubItemTransferVisual _transferVisualPrefab; 
+    [SerializeField] ParticleSystem _gainParticles; 
 
     private Dictionary<ushort, UIInventoryGainPopup> activePopups = new Dictionary<ushort, UIInventoryGainPopup>();
     private Dictionary<ushort, SubItemTransferVisual> activeTransferVisuals= new Dictionary<ushort, SubItemTransferVisual>();
@@ -21,6 +22,7 @@ public class SubItemGainVisualSpawner : MonoBehaviour {
     private float _transferSpeed;
     private double _accumulatedQuantity;
     private Coroutine _transferCoroutine;
+    private ParticleAttractor _spawnedParticles;
 
     public void Init(InventoryManager subInventory) {
         subInventory.OnSlotNew += SlotNew;
@@ -51,11 +53,11 @@ public class SubItemGainVisualSpawner : MonoBehaviour {
         _accumulatedQuantity = 0.0;
         _isTransferring = true;
 
-        // Play the looping sound and keep a reference to the AudioSource
-        _sound = AudioController.Instance.PlaySound2D("ItemAdd", 0.1f, looping: true) as AudioSource;
-      
-        // Start the update coroutine
+        _sound = AudioController.Instance.PlaySound2D("ItemAdd", 0.1f, looping: true) as AudioSource;      
         _transferCoroutine = StartCoroutine(TransferLoop());
+        if (PlayerManager.Instance == null) return;
+        _spawnedParticles = Instantiate(_gainParticles, PlayerManager.Instance.transform).GetComponent<ParticleAttractor>();
+        _spawnedParticles.StartAttract(_transferVisualWorldDestination);
     }
 
     // Call this to stop transferring and stop the sound
@@ -78,7 +80,7 @@ public class SubItemGainVisualSpawner : MonoBehaviour {
                 _sound = null;
             });
         }
-
+        //Destroy(_spawnedParticles.gameObject);
         // reset accumulators if you want
         _accumulatedQuantity = 0.0;
         _quantityToTransferTarget = 0;
