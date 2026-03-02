@@ -1,4 +1,4 @@
-using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,6 +11,7 @@ public class UIPauseScreen : MonoBehaviour {
     [SerializeField] private Button _buttonExit;
     [SerializeField] private Button _buttonSettingBack;
     [SerializeField] private UISettings _settings;
+    [SerializeField] private TextMeshProUGUI _seedNumber;
 
     public bool IsOpen => _tint.activeSelf; 
 
@@ -21,8 +22,11 @@ public class UIPauseScreen : MonoBehaviour {
         _buttonExit.onClick.AddListener(OnExitButtonClick);
         _buttonSettingBack.onClick.AddListener(OnSettingBack);
     }
+    private void Start() {
+        if (GameSetupManager.Instance == null) return;
+        _seedNumber.text = GameSetupManager.Instance.WorldGenSettings.seed.ToString();
+    }
 
- 
 
     // Make sure initial state is correct
     private void ResetToDefault() {
@@ -50,7 +54,7 @@ public class UIPauseScreen : MonoBehaviour {
     }
 
     private void OnResumeButtonClick() {
-        OnPauseClose();
+        UIManager.Instance.Unpause(); // Will call on close
     }
 
     public void OnPauseOpen() {

@@ -7,6 +7,7 @@ public static class App {
    // public static GameManager GameManager;
     public static AudioController AudioController;
     public static ResourceSystem ResourceSystem;
+    public static CursorManager CursorManager;
     //public static EventManager EventManager;
     public static bool isEditor;
     public static bool isDebugMode;
@@ -28,6 +29,7 @@ public static class App {
         AudioController = app.GetComponentInChildren<AudioController>();
         //SaveManager = app.GetComponentInChildren<SaveManager>();
         Backdrop = app.GetComponentInChildren<BackdropManager>();
+        CursorManager = app.GetComponentInChildren<CursorManager>();
         Cursor.SetCursor(Resources.Load<Texture2D>("cursorMenu"), new Vector2(3, 3), CursorMode.Auto);
         Application.quitting += Shutdown;
 #if UNITY_EDITOR

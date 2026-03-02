@@ -1,8 +1,8 @@
 using UnityEngine;
 
 public class ParallaxUI : MonoBehaviour {
-    public Transform[] layers; // Assign your 6 depth images in order
-    public float parallaxStrength = 10f; // Adjust this to control the effect strength
+    public Transform[] layers; 
+    public float parallaxStrength = 10f; 
 
     private Vector3[] initialPositions;
     private Vector3 lastMousePosition;

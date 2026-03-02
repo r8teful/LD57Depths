@@ -14,6 +14,9 @@ public class ResourceSystem {
     public List<UpgradeTreeDataSO> UpgradeTreeData { get; private set; }
     public static int[] GetRarityWeight => new[] { 70, 15, 6, 2 };
 
+    public static string ScenePlayName = "PlayScene";
+    public static string SceneMenuName = "MainMenu";
+
     private Dictionary<string, GameObject> _prefabDict;
     private Dictionary<string, Sprite> _spriteDict;
     private Dictionary<string, Material> _materialDict;

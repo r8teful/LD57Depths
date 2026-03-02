@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 // Shows stats, items etc.

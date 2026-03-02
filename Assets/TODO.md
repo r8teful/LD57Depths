@@ -56,7 +56,7 @@ Steamdeck notes:
 * Hitstop when buying a node!?
 * Change popup particle colour to match the purchase particle color
 * Animate interaction (fade in, move up slightly)
-* Screenshake? 
+* Screenshake?
 * Add MORE POLISH. NOTHING should instantly appear, it should have MOVEMENT
 
 UX:
@@ -71,6 +71,7 @@ Misc:
 * Should not fix the upgrade panel from the upgrade panel
 * Cactus particle effect?? When you turn into one
 * MAKE SETTINGS (good for debugging, like disabling the background, fullscreen modes etc
+* ^^^^
 * Chest should explode into lil pickups which then give you that same pickup sound
 * Big node doesn't really look like you can buy it
 
@@ -78,7 +79,7 @@ Coding:
 
 * The other upgrades, like the block oxygen, lazer blast, lazer chain, make them better, it feels wrong, it just costs like 2 iron to buy, its not satisfying, make it cost somewhat mored
 * crit damage?
-* Biome placement should not change with same seed
+* Biome placement should not change with same seed -> Maybe fixed it need to check!! 
 
 
 
@@ -89,3 +90,27 @@ PACING:
 ADD MORE STUFF!
 
 * Add exploration entity content
+
+
+
+FOR POLISED DEMO:
+
+* Needs proper game start animation
+* Needs music
+* Some kind of animation when going into the submarine?
+* Just show the entire upgrade on the screen?!?
+* The pitch is a bit too loud and not very soothing 
+* Make big nodes have cool particles as well, also maybe the sheen
+* Decide what the fuck you want to do with the stone upgrade
+* Lazer chain is a level 2 thing
+* Fix hitbox
+* Remove biome essence
+* Just have sub move upgrade be one upgrade. Why have it be 3? You just want it to cost lots of gold, that's what you are aiming for.
+* Sub UI needs to be updated. Zone ui should show appropriate resources
+* Make lazer not go so thick.
+* Make you go much slower in the next level, if players try to go their they'll be like what the fuck
+
+
+
+
+

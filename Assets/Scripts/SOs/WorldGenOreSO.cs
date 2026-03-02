@@ -22,10 +22,11 @@ public class WorldGenOreSO : ScriptableObject {
     // A unique offset for this ore's noise to prevent all ores from spawning in the same spots.
     public Vector2 noiseOffset;
     public Color DebugColor = Color.white;
+#if UNITY_EDITOR
     private void OnValidate() {
         if (!Application.isPlaying) return;
         if (GameSetupManager.Instance == null) return;
         GameSetupManager.Instance.RebuildSettings();
-
     }
+#endif
 }

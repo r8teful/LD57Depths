@@ -196,10 +196,9 @@ public class InputManager : MonoBehaviour, IPlayerModule {
 
     private void UpdateCursor() {
         if(_currentContext == PlayerInteractionContext.InteractingWithUI) {
-            Cursor.SetCursor(Resources.Load<Texture2D>("cursorMenu"), new Vector2(3, 3), CursorMode.Auto);
+            App.CursorManager.SetCursor(CursorType.Menu);
         } else {
-            Cursor.SetCursor(Resources.Load<Texture2D>("cursorCrossHair"), new Vector2(10.5f, 10.5f), CursorMode.Auto);
-            // Crosshair
+            App.CursorManager.SetCursor(CursorType.Crosshair);
         }
     }
 

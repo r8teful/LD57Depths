@@ -102,7 +102,7 @@ public class ShaderOnLoadFix {
         targetMaterial.SetVectorArray("_tileColor", tileColors);
         targetMaterial.SetVectorArray("_airColor", airColors);
         // global floats
-        targetMaterial.SetFloat("_GlobalSeed", WorldGenSettingEDITOR.seed);
+        targetMaterial.SetFloat("_GlobalSeed", WorldGenSettingEDITOR.editorSeed);
     }
     //static void Update() {
     //    Debug.Log("Updating");

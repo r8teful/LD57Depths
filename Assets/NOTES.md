@@ -1095,8 +1095,9 @@ It should't just be a list of Iexecutable, oh my fucking god I hate doing this s
 Time to lock the fuck in. We've got a game to make. I want an itch demo ASAP. Basically a vertical slice of the final product. Should be polished AF. It will just be the first layer, when you finally reach the end that's where the demo stops. No difficulty modifiers, no different starting skills or whatever, that's it is for the itch demo. And oh yeah it needs to run smoothly on the web browser. Okay so this is what we'll actually need to make sure we have
 
 * Fun and CLEAR progression. You don't want to be confused about anything. It should be fun, and it should be obvious what you should do to reach the end
-* Give them HINTS of what could be more!! This is just a demo after all, you need to tell the player that there is so much more in the full game and they should be excited to play the full version and WHISHLIST!!
+* Give them HINTS of what could be more!! This is just a demo after all, you need to tell the player that there is so much more in the full game and they should be excited to play the full version and WHISHLIST!! The full game should feel like it is right there for the player. Like all it would need is the right key and they'll unlock all the content and its the full game right there! That's how the demo should feel
 * Performant. It needs to run smoothly. Maybe you need to disable the background, maybe you need to make other optimizations, this is important because a slow and laggy game gets in the way of the flow we want them to be in
+* Should FEEL like a complete game. No empty string, no weird bugs, it should feel complete. I guess this
 
 That's basically it.
 
@@ -1106,7 +1107,35 @@ Oh yeah you will need music
 
 Oh lord.
 
-
-
 I think we are missing an identity. I'm seeing these games on the next fest and they have it nailed down. They know their vibe. But Resurface is missing that. I've always thought of Resurface as this chill game but it clashes a bit with the crazy nature of things and destroying everything. It's becauase it started as this startdew valley type game it was supposed to be cozy and lowstakes but its not that type of game anymore, and some of that is still in the game and also in the logo. It needs to be updated.
+
+Okay what do we want the main menu to have? We want to be able to select difficulty modifiers, right?
+
+
+
+
+
+Just play the game with all these things in mind and then you write down what you need to add its the easiest way to do it. Also making a proper ending, like the submarine fixing etc should be part of it for sure
+
+
+
+
+
+* Needs proper game start animation
+* Needs music
+* Some kind of animation when going into the submarine?
+* Show seed in pause menu?
+* Biome placement should not change with same seed
+* Just show the entire upgrade on the screen?!?
+* The pitch is a bit too loud and not very soothing
+* Make big nodes have cool particles aswell, also maybe the sheen
+* Decide what the fuck you want to do with the stone upgrade
+* Lazer chain is a level 2 thing
+* Fix hitbox
+* Remove biome essence
+* Just have sub move upgrade be one upgrade. Why have it be 3? You just want it to cost lots of gold, that's what you are aiming for.
+* Sub UI needs to be updated. Zone ui should show appropriate resources
+* Make lazer not go so thick.
+
+Make you go much slower in the next level, if players try to go their they'll be like what the fuck
 

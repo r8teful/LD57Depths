@@ -3,7 +3,6 @@ using DG.Tweening;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -22,6 +21,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     [SerializeField] private Sprite _whiteSprite;
     [SerializeField] private UIParticle _purchasableParticle;
     [SerializeField] private UIParticle _purchasableParticleCool;
+    [SerializeField] private UIParticle _purchasableParticleBigNode;
     [SerializeField] private GameObject _coolBackground;
     [SerializeField] private RectTransform _visualRect;
     [SerializeField] private Material _sheenMat;
@@ -291,14 +291,18 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         if (_visualData.IsCool && (state != UpgradeNodeState.Purchased)) {
             _purchasableParticleCool.Play();
         }
-        if (state == UpgradeNodeState.Purchasable) {
+        if (state == UpgradeNodeState.Purchasable && !IsBig) {
             _purchasableParticle.StartEmission();
+        } else if (state == UpgradeNodeState.Purchasable && IsBig) {
+            _purchasableParticleBigNode.StartEmission();
         } else if (state == UpgradeNodeState.Purchased) {
             _purchasableParticle.Clear();
             _purchasableParticleCool.Clear();
-        } else { 
+            _purchasableParticleBigNode.Clear();
+        } else {
             // make sure it has stopped
             _purchasableParticle.StopEmission();
+            _purchasableParticleBigNode.StopEmission();
         }
     }
 

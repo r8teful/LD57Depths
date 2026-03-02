@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 [CreateAssetMenu(fileName = "WorldGenSettingSO", menuName = "ScriptableObjects/WorldGen/WorldGenSettingSO", order =1 )]
 public class WorldGenSettingSO : ScriptableObject, IIdentifiable {
-    public int seed = 12345;
+    public int editorSeed; // Seed is basically only runtime unless we want to provide predetermined worlds which I don't think we will. We need this to show the world in the scene view because shaders need some kind of value
     public Material associatedMaterial;
     public ushort id;
     public ushort ID => id;

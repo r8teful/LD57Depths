@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: WorldGenSpriteSmaller
-  m_Shader: {fileID: 4800000, guid: ce357dd9b005b6040b34d0dfaef30213, type: 3}
+  m_Name: Bob4.0
+  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -23,29 +23,21 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _MainTex:
+    - _AlphaTex:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 8e292b6434245f74ea833d8306832da1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BaseOctaves: 1.57
-    - _CaveAmp: 0.18
-    - _CaveCutoff: 0.02
-    - _CaveNoiseScale: 0.04
-    - _GlobalSeed: 0
-    - _RidgeOctaves: 1.53
-    - _TotalLayers: 3
-    - _TrenchBaseWiden: -0.04
-    - _TrenchBaseWidth: 24.4
-    - _TrenchEdgeAmp: 3.13
-    - _TrenchNoiseScale: 0.14
-    - _WarpAmp: 0.59
-    - _WorldLayerEdgeAmp: 6.39
-    - _WorldLayerNoiseScale: 0.13
-    - _WorldUVScale: 1
-    - _WorleyWeight: 2.27
+    - PixelSnap: 0
+    - _EnableExternalAlpha: 0
     m_Colors:
-    - _ColorMult: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

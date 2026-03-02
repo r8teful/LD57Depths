@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,7 +32,15 @@ public class MiningLazerVisualNew : MonoBehaviour {
         _player = player;
         _abilityInstance = ability; // Need this for lazer length 
         _lazerLogic = miningLazerNew;
+        _player.PlayerVisuals.OnFlipChange += OnPlayerFlip;
     }
+    private void OnDestroy() {
+        _player.PlayerVisuals.OnFlipChange -= OnPlayerFlip;
+    }
+    private void OnPlayerFlip(bool isFlipped) {
+        FlipVisual(isFlipped);
+    }
+
     private void SetupParticlesVisual() {
         _hitParticleSystem = Instantiate(ParticlesPrefabHit);
         _hitParticleSystem.Stop();
@@ -58,7 +67,6 @@ public class MiningLazerVisualNew : MonoBehaviour {
 
         _isUsingAbility = isAbility;
         //Debug.Log("IsAbility: " + isAbility);
-        SetCorrectLaserPos(_player.InputManager.GetMovementInput().x);
         LaserVisual(dir, isAbility);
     }
 
@@ -116,22 +124,14 @@ public class MiningLazerVisualNew : MonoBehaviour {
         }
     }
 
-    private void SetCorrectLaserPos(float horizontalInput) {
-        if (horizontalInput > 0.01f) {
-            FlipVisual(false);
-        } else if (horizontalInput < -0.01f) {
-            FlipVisual(true);
-        }
-    }
     public void FlipVisual(bool isFlipped) {
-        // I'm just as confused as you are when it comes to this bool. 
-        if (!isFlipped) {
+        if (isFlipped) {
             var pos = transform.localPosition;
-            pos.x = 0.5f;
+            pos.x = 0.75f;
             transform.localPosition = pos;
         } else {
             var pos = transform.localPosition;
-            pos.x = -0.5f;
+            pos.x = -0.333f;
             transform.localPosition = pos;
         }
     }

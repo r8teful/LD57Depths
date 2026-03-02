@@ -16,8 +16,8 @@ public class TilePlant : MonoBehaviour, ITileChangeReactor {
             if(cellPosition == cellPos) {
                 Debug.Log("on tile!!");
                 Destroy(gameObject); // This might need to be a pool aswell later
-                var item = App.ResourceSystem.GetItemByID(ResourceSystem.BiomeEssenceID);
-                WorldTileManager.Instance.SpawnDropOne(spriteGameobject.transform.position, 1, item);
+                //var item = App.ResourceSystem.GetItemByID(ResourceSystem.BiomeEssenceID);
+                //WorldTileManager.Instance.SpawnDropOne(spriteGameobject.transform.position, 1, item);
             }
         }
     }

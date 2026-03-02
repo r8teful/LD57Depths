@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,14 +16,14 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
     public GameSettings CurrentGameSettings;
     private WorldGenSettingSO _settings;
     [SerializeField] private PlayerManager _playerPrefab;
+    private Coroutine _bootRoutine;
     // TODO remove this
     private string _upgradeTreeName = "DefaultTree"; // Would depend on what the player chooses for tools etc
 
-    // Todo get this in a proper way
-    private string gameplaySceneName = "PlayScene";
     public string GetUpgradeTreeName() => _upgradeTreeName;
     
     private void OnEnable() {
+        Debug.Log("GameSetupManager Enable!!");
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
     private void OnDisable() {
@@ -31,15 +32,19 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
         // Check if we just loaded the Gameplay Scene
-        if (scene.name == gameplaySceneName) {
-            StartCoroutine(BootSequence());
+        if (scene.name == ResourceSystem.ScenePlayName) {
+            if (_bootRoutine != null) 
+                return; // already running just return 
+            _bootRoutine = StartCoroutine(BootSequence());
         }
         // Actually this is fine if we set App.Backdrop.Require before we get here
     }
     private IEnumerator BootSequence() {
-        Debug.Log("boot seq start");
-
-        SetupSettings(true);
+        Debug.Log($"boot seq start: {GetInstanceID()}");
+        var s = NewSeed();
+        UnityEngine.Random.InitState(s);
+        
+        SetupSettings(true,s);
 
         yield return null;
 
@@ -63,19 +68,35 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
         bw.PushBiomesToMaterials(WorldGenSettings);
 
         // Spawn player
-        Instantiate(_playerPrefab, w.PlayerSpawn,Quaternion.identity);
+        var p = Instantiate(_playerPrefab, w.PlayerSpawn,Quaternion.identity);
+        yield return null;
 
+        p.PlayerLayerController.PutPlayerInSub();// Is it that easy? lol
+        
         yield return null;// App.Backdrop.Release();
+        
+        _bootRoutine = null;
+
+    }
+    private int NewSeed() {
+        byte[] bytes = new byte[4];
+        using (var rng = RandomNumberGenerator.Create()) {
+            rng.GetBytes(bytes);
+        }
+        int seed = BitConverter.ToInt32(bytes, 0);
+        // make non-negative
+        return seed & 0x7FFFFFFF;
     }
 
     private void LogError(object script) {
         Debug.LogError($"Coudn't find script {script}!!");
     }
 
-    private void SetupSettings(bool randomizeBiomes) {
+    private void SetupSettings(bool randomizeBiomes,int seed = 0) {
+
         _settings = ResourceSystem.GetMainMap(); // We'll have to properly set this up later with nice menu icons etc..
 
-        _worldGenSettings = WorldGenSettings.FromSO(_settings, randomizeBiomes); // This does most the heavy lifting for us
+        _worldGenSettings = WorldGenSettings.FromSO(_settings, randomizeBiomes, seed); // This does most the heavy lifting for us
     }
 
 
@@ -124,6 +145,7 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
     }
 }
 
+// User defines this if they want, any empty should not be used
 [Serializable]
 public class GameSettings {
     public int WorldSeed;
@@ -140,10 +162,6 @@ public class GameSettings {
     public GameSettings(int worldSeed, ushort[] enabledModifierIds) {
         WorldSeed = worldSeed;
         EnabledModifierIds = enabledModifierIds;
-    }
-    public GameSettings(WorldGenSettingSO worldGenData) {
-        WorldSeed = worldGenData.seed;
-        EnabledModifierIds = Array.Empty<ushort>();
     }
 }
 

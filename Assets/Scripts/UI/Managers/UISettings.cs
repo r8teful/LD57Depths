@@ -1,6 +1,4 @@
-﻿using System;
-using TMPro;
-using Unity.VisualScripting;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 

@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,7 +11,7 @@ public class MainMenu : MonoBehaviour {
     [SerializeField] private TMP_InputField _addressField;
 
     private void OnEnable() {
-        _buttonPlay.onClick.AddListener(OnHostClicked);
+        _buttonPlay.onClick.AddListener(OnPlayClicked);
         _buttonSettings.onClick.AddListener(OnSettingsClicked);
     }
     private void Start() {
@@ -24,12 +23,11 @@ public class MainMenu : MonoBehaviour {
     }
 
     private void OnDisable() {
-        _buttonPlay.onClick.RemoveListener(OnHostClicked);
-        // Unsubscribe from client connection events to avoid memory leaks.
+        _buttonPlay.onClick.RemoveListener(OnPlayClicked);
     }
 
-    // Starting new hosting game
-    public void OnHostClicked() {
+    public void OnPlayClicked() {
+        Debug.Log("play cliked");
         SceneManager.LoadScene(1);
     }
     public void OnJoinClicked() {

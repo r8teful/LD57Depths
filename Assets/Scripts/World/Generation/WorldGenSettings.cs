@@ -47,10 +47,10 @@ public class WorldGenSettings {
 
     public WorldGenSettings() { }
 
-    public static WorldGenSettings FromSO(WorldGenSettingSO so, bool randomizeBiomes = true) {
+    public static WorldGenSettings FromSO(WorldGenSettingSO so, bool randomizeBiomes = true, int seed = 0) {
         Debug.Log("generating runinstance of worldSettings!"); 
         var s = new WorldGenSettings();
-        s.seed = so.seed;
+        s.seed = seed;
         s.id = so.ID;
 
         s.trenchBaseWidth = so.trenchBaseWidth;
@@ -105,7 +105,7 @@ public class WorldGenSettings {
         //var placedBiomes = new List<WorldGenBiomeData>();
         // Just use random placement for now
         if (randomizeBiomes) {
-            System.Random rng = new System.Random();
+            System.Random rng = new System.Random(settings.seed);
             settings.biomes = settings.biomes.OrderBy(e => rng.Next()).ToList(); // Randomize list
         }
         var currentLayer = 0;
@@ -115,8 +115,7 @@ public class WorldGenSettings {
         float hardnessIncrease = 3f; // how much the hardness increases each biome. Should be modifiable by the player 
         foreach (var biome in settings.biomes) {
             // Place biomes one by one, selecting either left or right side of trench
-            bool firstLayerPlacement = amountPlaced % 2 == 0;  
-          
+            bool firstLayerPlacement = amountPlaced % 2 == 0;
             // X placement
             var edgePos = firstLayerPlacement ? -biome.HorSize : biome.HorSize; // Place it on the very edge
 

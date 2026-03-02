@@ -178,10 +178,12 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
             sprite.flipX = true;
             _bobHand.gameObject.transform.parent.localScale = new Vector3(-1, 1, 1);
             _bobBackVisual.localScale = new Vector3(-1, 1, 1);
+            playerSwimCollider.transform.localScale =  new Vector3(-1, 1, 1);
         } else {             
             sprite.flipX = false;
             _bobHand.gameObject.transform.parent.localScale = new Vector3(1, 1, 1);
             _bobBackVisual.localScale = new Vector3(1, 1, 1);
+            playerSwimCollider.transform.localScale =  new Vector3(1, 1, 1);
         }
     }
     private void ChangeBackSprite() {
