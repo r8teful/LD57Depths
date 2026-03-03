@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
     List<ContactPoint2D> _contactsMostRecent = new List<ContactPoint2D>(); // Store the contacts we hit on collision enter
     private bool _dashUnlocked = false;
     private float _cachedSwimSpeed;
+    private float _waterDifficulty;
 
     public List<ContactPoint2D> ContactsMostRecent { get => _contactsMostRecent; set => _contactsMostRecent = value; }
     public int InitializationOrder => 998;
@@ -51,6 +52,11 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
         // Subscribe to the event to recalculate stats when a NEW upgrade is bought
         //MiningLazer.OnPlayerKnockbackRequested += OnMiningKnockback;
         PlayerLayerController.OnPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
+        PlayerWorldLayerController.OnPlayerWorldLayerChange += PlayerLayerChanged;
+    }
+
+    private void PlayerLayerChanged(int index) {
+        _waterDifficulty = index + 1; // treat index as a multiplier
     }
 
     // Called every frame from lazer
@@ -130,10 +136,9 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
             return;
         }
 #endif
-       // float waterDifficulty = 0.5f; // Boom 
-        float waterDifficulty = 1; 
-        accelerationForce *= waterDifficulty;
-        _cachedSwimSpeed  *= waterDifficulty;
+       // float waterDifficulty = 0.5f; // Boom  
+        accelerationForce *= _waterDifficulty;
+        _cachedSwimSpeed  *= _waterDifficulty;
         Vector2 moveDirection = _currentInput.normalized;
 
         if (moveDirection != Vector2.zero) {

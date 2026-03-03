@@ -1139,3 +1139,11 @@ Just play the game with all these things in mind and then you write down what yo
 
 Make you go much slower in the next level, if players try to go their they'll be like what the fuck
 
+
+
+
+
+
+
+OMG you can literally just layer the effects ontop of eachother, to be fair, it would be a bit less efficiant. But omg you can just have different effects and put them ontop. For the world sprite, and as long as the sorting order is how you want it it will simply overwrite the stuff damn
+

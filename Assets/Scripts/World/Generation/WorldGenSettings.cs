@@ -24,7 +24,9 @@ public class WorldGenSettings {
     public float caveWorleyWeight;
     public List<WorldGenOre> worldOres;
     public Dictionary<BiomeType, float> BiomeTileHardness;
-    
+
+    public const int TotalLayers = 3;
+    public float[] WorldLayerYPositions;
     public float MaxDepth { 
         get { 
             // 90% of the max theoretical depth, shader also uses 90%
@@ -33,11 +35,28 @@ public class WorldGenSettings {
         } 
     }
 
-    public float GetWorldLayerYPos(int number) {
-        int totalLayers = 3; // We'll have to check how many this will be later 
-        return MaxDepth * ((float)Mathf.Abs(number - totalLayers) / totalLayers);
+    public float[] GenerateLayerYPositions() {
+        float[] positions = new float[TotalLayers];
+
+        for (int i = 0; i < TotalLayers; i++) {
+            positions[i] = MaxDepth * ((float)Mathf.Abs(i - TotalLayers) / TotalLayers);
+        }
+
+        return positions;
     }
 
+    public float GetWorldLayerYPos(int index) {
+        return WorldLayerYPositions[index];
+    }
+
+    public int GetLayerIndexFromY(float y) {
+        float bandHeight = MaxDepth / TotalLayers;
+
+        // convert Y into band index
+        int index = TotalLayers - 1 - Mathf.FloorToInt(y / bandHeight);
+
+        return Mathf.Clamp(index, 0, TotalLayers - 1);
+    }
 
     public List<WorldGenBiomeData> biomes = new List<WorldGenBiomeData>();
 
@@ -52,7 +71,6 @@ public class WorldGenSettings {
         var s = new WorldGenSettings();
         s.seed = seed;
         s.id = so.ID;
-
         s.trenchBaseWidth = so.trenchBaseWidth;
         s.trenchWidenFactor = so.trenchWidenFactor;
         s.trenchEdgeNoiseFrequency = so.trenchEdgeNoiseFrequency;
@@ -64,6 +82,7 @@ public class WorldGenSettings {
         s.caveOctavesRidge = so.caveOctavesRidge;
         s.cavewWarpamp = so.cavewWarpamp;
         s.caveWorleyWeight = so.caveWorleyWeight;
+        s.WorldLayerYPositions = s.GenerateLayerYPositions();
 
         s.biomes = new List<WorldGenBiomeData>();
         s.worldOres = new List<WorldGenOre>();
