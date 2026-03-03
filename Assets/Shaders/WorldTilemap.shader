@@ -19,7 +19,6 @@ Shader "Custom/WorldTilemap"
             #pragma vertex vert
             #pragma fragment frag
             #pragma require 2darray
-
             #include "UnityCG.cginc"
 
             struct appdata_t
@@ -46,6 +45,7 @@ Shader "Custom/WorldTilemap"
             {
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
+                o.pos = UnityPixelSnap(o.pos); // This might or might not work 
                 o.uv = v.texcoord;
                 o.color = v.color;
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;

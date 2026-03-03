@@ -49,8 +49,15 @@ public class PlayerCameraController : MonoBehaviour {
 
     private void SetCameraLayerMask(VisibilityLayerType layerType) {
         // This simply toggles so we got to hope it never does the same twice
-        int mask = LayerMask.GetMask("Default", "NoPlayerCollisions", "MiningHit");
-        _playerCameraRest.cullingMask ^= mask;
+        int mask = LayerMask.GetMask("Default", "NoPlayerCollisions", "MiningHit", "InteractablesExterior");
+        //_playerCameraRest.cullingMask ^= mask;
+        if (layerType == VisibilityLayerType.Interior) {
+            // remove mask (outside stuff)
+            _playerCameraRest.cullingMask &= ~mask;
+        } else {
+            // show outside interactables again
+            _playerCameraRest.cullingMask |= mask;
+        }
     }
 
     private void SetCameraZoom(float size, float time) {

@@ -53,7 +53,7 @@ public class SubItemGainVisualSpawner : MonoBehaviour {
         _accumulatedQuantity = 0.0;
         _isTransferring = true;
 
-        _sound = AudioController.Instance.PlaySound2D("ItemAdd", 0.1f, looping: true) as AudioSource;      
+        _sound = AudioController.Instance.PlaySound2D("ItemAdd", 0.04f, looping: true);      
         _transferCoroutine = StartCoroutine(TransferLoop());
         if (PlayerManager.Instance == null) return;
         //_spawnedParticles = Instantiate(_gainParticles, PlayerManager.Instance.transform).GetComponent<ParticleAttractor>();

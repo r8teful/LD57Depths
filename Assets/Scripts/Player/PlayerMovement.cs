@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.SimpleLocalization.Scripts;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 public class PlayerMovement : MonoBehaviour, IPlayerModule {
@@ -125,8 +126,8 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
         _cachedSwimSpeed = _playerStats.GetStat(StatType.PlayerSpeedMax);
 #if UNITY_EDITOR
         if (DEBUGIsGOD) {
-            _cachedSwimSpeed *= 5;
-            accelerationForce *= 5;
+            rb.MovePosition(rb.position + 20 * Time.fixedDeltaTime * _currentInput.normalized);
+            return;
         }
 #endif
        // float waterDifficulty = 0.5f; // Boom 

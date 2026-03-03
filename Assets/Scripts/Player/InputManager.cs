@@ -66,37 +66,41 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         _player = playerParent;
         _playerAbilities = playerParent.PlayerAbilities;
         _playerMovement = playerParent.PlayerMovement;
-        _interactableLayerMask = 1 << LayerMask.NameToLayer("Interactables"); // Don't ask me why, its in the unity documentation
+        _interactableLayerMask = (1 << LayerMask.NameToLayer("InteractablesInterior")) |
+                                 (1 << LayerMask.NameToLayer("InteractablesExterior")); // Don't ask me why, its in the unity documentation
         SetupInputs();
         SubscribeToEvents();
     }
     private void SetupInputs() {
         _playerInput = GetComponent<PlayerInput>();
-        if (_playerInput != null) {
-            _interactAction = _playerInput.actions.FindAction("Interact",true); // E
-            _playerShootAction = _playerInput.actions.FindAction("Shoot",true);
-            _playerMoveAction = _playerInput.actions.FindAction("Move",true);
-            _playerAbilityAction = _playerInput.actions.FindAction("Ability",true);
-            _playerAimAction = _playerInput.actions.FindAction("Aim",true);
-            //_playerSwitchAction = _playerInput.actions.FindAction("SwitchTool",true);
-            _playerDashAction = _playerInput.actions.FindAction("Dash",true);
-            _cancelAction = _playerInput.actions.FindAction("Cancel",true);
-            _UItoggleInventoryAction = _playerInput.actions.FindAction("UI_Toggle",true); // I
-            _uiInteractAction = _playerInput.actions.FindAction("UI_Interact",true); // LMB
-            _uiAltInteractAction = _playerInput.actions.FindAction("UI_AltInteract",true); // RMB
-            _uiNavigateAction = _playerInput.actions.FindAction("UI_Navigate",true);
-            _uiPointAction = _playerInput.actions.FindAction("UI_Point",true);
-            _uiTabLeft = _playerInput.actions.FindAction("UI_TabLeft",true); // Opening containers
-            _uiTabRight = _playerInput.actions.FindAction("UI_TabRight",true); // Opening containers
-
-            _uiPan = _playerInput.actions.FindAction("UI_PanAction",true); // Start Moving upgrade view
-            _uiZoom = _playerInput.actions.FindAction("UI_Scroll",true); // Zooming upgrade view
-            _uiEscape = _playerInput.actions.FindAction("UI_Pause",true); 
-            _hotbarSelection = _playerInput.actions.FindAction("HotbarSelect",true);
-            _useItemAction = _playerInput.actions.FindAction("Shoot",true);
-        } else {
-            Debug.LogWarning("PlayerInput component not found on player. Mouse-only or manual input bindings needed.", gameObject);
+        if (_playerInput == null) {
+            Debug.LogError("PlayerInput component not found on player. Mouse-only or manual input bindings needed.", gameObject);
+        } 
+        if( _playerInput.actions == null) {
+            Debug.LogError("Actions not found on player!!");
         }
+        _interactAction = _playerInput.actions.FindAction("Interact",true); // E
+        _playerShootAction = _playerInput.actions.FindAction("Shoot",true);
+        _playerMoveAction = _playerInput.actions.FindAction("Move",true);
+        _playerAbilityAction = _playerInput.actions.FindAction("Ability",true);
+        _playerAimAction = _playerInput.actions.FindAction("Aim",true);
+        //_playerSwitchAction = _playerInput.actions.FindAction("SwitchTool",true);
+        _playerDashAction = _playerInput.actions.FindAction("Dash",true);
+        _cancelAction = _playerInput.actions.FindAction("Cancel",true);
+        _UItoggleInventoryAction = _playerInput.actions.FindAction("UI_Toggle",true); // I
+        _uiInteractAction = _playerInput.actions.FindAction("UI_Interact",true); // LMB
+        _uiAltInteractAction = _playerInput.actions.FindAction("UI_AltInteract",true); // RMB
+        _uiNavigateAction = _playerInput.actions.FindAction("UI_Navigate",true);
+        _uiPointAction = _playerInput.actions.FindAction("UI_Point",true);
+        _uiTabLeft = _playerInput.actions.FindAction("UI_TabLeft",true); // Opening containers
+        _uiTabRight = _playerInput.actions.FindAction("UI_TabRight",true); // Opening containers
+
+        _uiPan = _playerInput.actions.FindAction("UI_PanAction",true); // Start Moving upgrade view
+        _uiZoom = _playerInput.actions.FindAction("UI_Scroll",true); // Zooming upgrade view
+        _uiEscape = _playerInput.actions.FindAction("UI_Pause",true); 
+        _hotbarSelection = _playerInput.actions.FindAction("HotbarSelect",true);
+        _useItemAction = _playerInput.actions.FindAction("Shoot",true);
+        
     }
 
 

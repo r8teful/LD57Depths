@@ -79,7 +79,7 @@ Coding:
 
 * The other upgrades, like the block oxygen, lazer blast, lazer chain, make them better, it feels wrong, it just costs like 2 iron to buy, its not satisfying, make it cost somewhat mored
 * crit damage?
-* Biome placement should not change with same seed -> Maybe fixed it need to check!! 
+* Biome placement should not change with same seed -> Maybe fixed it need to check!!
 
 
 
@@ -98,19 +98,21 @@ FOR POLISED DEMO:
 * Needs proper game start animation
 * Needs music
 * Some kind of animation when going into the submarine?
-* Just show the entire upgrade on the screen?!?
-* The pitch is a bit too loud and not very soothing 
-* Make big nodes have cool particles as well, also maybe the sheen
+* The pitch is a bit too loud and not very soothing
 * Decide what the fuck you want to do with the stone upgrade
 * Lazer chain is a level 2 thing
-* Fix hitbox
-* Remove biome essence
-* Just have sub move upgrade be one upgrade. Why have it be 3? You just want it to cost lots of gold, that's what you are aiming for.
+* Add upgrades that you'll be able to get for level 2
 * Sub UI needs to be updated. Zone ui should show appropriate resources
 * Make lazer not go so thick.
 * Make you go much slower in the next level, if players try to go their they'll be like what the fuck
+* Environment should feel ALIVE, it feels DEAD. Make fish swim around, little blobs here and there. Make the plants move. MAKE IT LOOK ALIVE. POLISH THE ENVIRONMENT 
+* Hide exploration structures inside submarin
+* Big button should be dark green when you can't purchase
+* lazer can go into blocks if player gets positioned correctly
 
+For web build
 
-
-
-
+* Can't fullscreen properly
+* Loop audio is weird on web build it leaves a tiny gap where there is no sound. It's a thing https://discussions.unity.com/t/seamless-audio-looping-in-webgl/1497212/3
+* A lot of weird tilemap tearing
+* All the start of the sounds seem to be getting cut. Same here, first 1024 samples of a sound gets cut and fucked with, so just have a slight pause before the audio actually starts playing

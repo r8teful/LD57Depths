@@ -17,6 +17,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     private bool _oxygenDepleted;
     [SerializeField] private LowOxygenVisual _lowoxygenVisual;
     private LowOxygenVisual _lowoxygenVisualInstance;
+    private bool _infOx;
 
     public static event Action<float, float> OnOxygenChanged;
     public static event Action OnFlashStart;
@@ -65,6 +66,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
         }
     }
     private bool ShouldDepleteOxygen() {
+        if (_infOx) return false;
         if (_cachedState == PlayerState.Swimming) {
             if (_isInsideOxygenZone) {
                 return false;
@@ -129,9 +131,20 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
         CurrentOxygen = 1;
         playerHealth = 1;
     }
-    public void DEBUGinfOx() {
-        maxOxygen = 9999999;
-        CurrentOxygen = 999999;
+    public void DEBUGToggleinfOx() {
+        if (_infOx) {
+            // turn off 
+            maxOxygen = _player.PlayerStats.GetStat(StatType.PlayerOxygenMax);
+            CurrentOxygen = maxOxygen;
+            _infOx = false;
+        } else {
+            maxOxygen = 9999999;
+            CurrentOxygen = 999999;
+            if(_lowoxygenVisualInstance != null) {
+                _lowoxygenVisualInstance.CancelAndRemove();
+            }
+            _infOx = true;
+        }
     }
 
 }
