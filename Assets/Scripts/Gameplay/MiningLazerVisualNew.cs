@@ -137,11 +137,13 @@ public class MiningLazerVisualNew : MonoBehaviour {
     }
     void CreateLaserEffect(Vector3 start, Vector3 end, bool isAbility) {
         var dmg = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
-        var lineWidth = Mathf.Min(Mathf.Max(dmg * 0.05f,0.04f), 1f);
+        var lineWidth = Mathf.Min(Mathf.Max(dmg * 0.04f,0.04f), 0.4f);
+        float whitening = Math.Min(dmg * 0.04f, 0.3f);
+        lineRenderer.material.SetFloat("_Whitening", whitening); 
         lineRenderer.SetPosition(0, start);
         lineRenderer.SetPosition(1, end);
         lineRenderer.startWidth = lineWidth;
-        lineRenderer.endWidth = lineWidth * 0.7f;
+        lineRenderer.endWidth = lineWidth * 0.85f;
         Vector3 midpoint = (start + end) / 2;
         Vector3 direction = (end - start).normalized;
         float distance = (end - start).magnitude;

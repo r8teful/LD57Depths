@@ -44,8 +44,6 @@ POLISH NEEDED FOR DEMO:
 Steamdeck notes:
 
 * Icons not updating correctly for controller
-* Should a start menu with settings to change full screen mode etc...
-* Also the block texture seems zoomed in... - WHY!? This also happens in windows build
 
 **Smaller visual stuff:**
 
@@ -63,17 +61,14 @@ UX:
 
 * Not sure what to do at the start, needs a bit more handholding. Arrow pointing at upgrade machine!?
 * Forget to use lazer blast \& what button it needs to activate
-* UI Doesn't tell you anything, it needs to be clear how to progress further!!
 * A machine that shows the biome artifacts and which one's you've gotten
 
 Misc:
 
 * Should not fix the upgrade panel from the upgrade panel
 * Cactus particle effect?? When you turn into one
-* MAKE SETTINGS (good for debugging, like disabling the background, fullscreen modes etc
-* ^^^^
 * Chest should explode into lil pickups which then give you that same pickup sound
-* Big node doesn't really look like you can buy it
+* Escape on upgrade menu doesn't close popup
 
 Coding:
 
@@ -98,13 +93,12 @@ FOR POLISED DEMO:
 * Needs proper game start animation
 * Needs music
 * Some kind of animation when going into the submarine?
-* The pitch is a bit too loud and not very soothing
+* Make pitch more soothing
 * Decide what the fuck you want to do with the stone upgrade
 * Lazer chain is a level 2 thing
 * Add upgrades that you'll be able to get for level 2
 * Sub UI needs to be updated. Zone ui should show appropriate resources
-* Make lazer not go so thick.
-* Fade out layer when going into it. Also test the speed is working
+* Fade out layer when going into next zone. Also test the speed is working
 * Environment should feel ALIVE, it feels DEAD. Make fish swim around, little blobs here and there. Make the plants move. MAKE IT LOOK ALIVE. POLISH THE ENVIRONMENT 
 
 For web build

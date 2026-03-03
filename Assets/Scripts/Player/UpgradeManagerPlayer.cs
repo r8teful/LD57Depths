@@ -26,11 +26,6 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
         var lvl = GetCurrentLevel(node);
         return node.GetStage(lvl);
     }
-    
-    private void OnUpgradePurchase(UpgradeNodeSO recipe) {
-        Debug.Log($"Successfully purchased upgrade: {recipe.name}");
-        OnUpgradePurchased?.Invoke(recipe);
-    }
 
     public int InitializationOrder => 10;
 

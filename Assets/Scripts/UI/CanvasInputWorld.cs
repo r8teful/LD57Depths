@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class CanvasInputWorld : MonoBehaviour {
@@ -9,11 +10,10 @@ public class CanvasInputWorld : MonoBehaviour {
         GetComponent<Canvas>().sortingOrder = 99;
         GetComponent<Canvas>().sortingLayerName = "NoTilemapShadow";
     }
-    // Don't think we actually have to do this because it is a child but eh I've written it now
-    public void OnDestroy() {
-        if (_instantiatedPrompt != null) {
-            Destroy(_instantiatedPrompt.gameObject );
-        }
+    
+
+    internal void Destroy() {
+        _instantiatedPrompt.Destroy(() => Destroy(gameObject));
     }
 
     // Positions the prompt to be in a different position so the player can press the button again and carry out the action

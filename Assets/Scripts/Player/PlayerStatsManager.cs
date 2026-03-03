@@ -229,7 +229,7 @@ public class PlayerStatsManager : MonoBehaviour, IPlayerModule {
     public MiningToolData GetToolData() {
         return new MiningToolData {
             ToolRange = GetStat(StatType.MiningRange),
-            ToolWidth = Mathf.Min(GetStat(StatType.MiningDamage) * 0.02f, 1f), //_isUsingAbility ? Mathf.Min(DamagePerHit * 0.3f, 0.6f) : 0.05f * DamagePerHit, // OLD
+            ToolWidth = 100f,//Mathf.Min(GetStat(StatType.MiningDamage) * 0.02f, 0.001f), //_isUsingAbility ? Mathf.Min(DamagePerHit * 0.3f, 0.6f) : 0.05f * DamagePerHit, // OLD
             toolTier = 0 //TODO
         };
     }

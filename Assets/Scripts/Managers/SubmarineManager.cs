@@ -21,6 +21,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     [SerializeField] private Transform _cutsceneCameraPosUpgradeMachine;
     [SerializeField] private Transform _cutsceneCameraPosControlPanel; 
     [SerializeField] private SpriteRenderer _upgradeMachine; 
+    [SerializeField] private SpriteRenderer _subControlPanel; 
     
     protected override void Awake() {
         base.Awake();
@@ -61,7 +62,13 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
                 onStart: () => {
                     GameCutsceneManager.Instance.StartSubUpgradeCutscene(
                         cameraPos,
-                        () => _upgradeMachine.sprite = effect.SpriteInterior
+                        () => {
+                            if(ID == ResourceSystem.SubUpgradePanel)
+                                _upgradeMachine.sprite = effect.SpriteInterior;    
+                            if(ID == ResourceSystem.SubUpgradeControlPanel)
+                                _subControlPanel.sprite = effect.SpriteInterior;    
+                        }
+                
                         );
                 },
             onFinish: () => {

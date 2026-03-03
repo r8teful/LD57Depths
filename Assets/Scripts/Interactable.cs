@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using Sirenix.OdinInspector;
+using DG.Tweening;
 
 public class Interactable : MonoBehaviour, IInteractable {
     [Tooltip("The icon to display on the interaction popup.")]
@@ -62,14 +63,16 @@ public class Interactable : MonoBehaviour, IInteractable {
                 OnSetInteractable?.Invoke();
             }
             if (_useOutline) {
+                _outlineMat.DOFade(1, 0.3f); // this makes such a difference omg
                 _outlineMat.SetInt("_Enabled", 1);
             }
         } else {
             if (instantiatedPopup != null) {
-                Destroy(instantiatedPopup.gameObject);
+                instantiatedPopup.Destroy();
                 instantiatedPopup = null; // Clear the reference
             }
             if (_useOutline) {
+                _outlineMat.DOFade(0, 0.3f);
                 _outlineMat.SetInt("_Enabled", 0);
             }
             // Invoke the event for when interaction ceases.

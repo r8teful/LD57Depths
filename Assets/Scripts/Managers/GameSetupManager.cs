@@ -20,6 +20,8 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
     // TODO remove this
     private string _upgradeTreeName = "DefaultTree"; // Would depend on what the player chooses for tools etc
 
+    public static event Action OnSetupComplete;
+
     public string GetUpgradeTreeName() => _upgradeTreeName;
     
     private void OnEnable() {
@@ -76,7 +78,7 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
         yield return null;// App.Backdrop.Release();
         
         _bootRoutine = null;
-
+        OnSetupComplete?.Invoke();
     }
     private int NewSeed() {
         byte[] bytes = new byte[4];
