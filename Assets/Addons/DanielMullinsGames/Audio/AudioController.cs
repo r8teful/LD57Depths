@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections;
 using System.Collections.Generic;
-using Pixelplacement;
+using DG.Tweening;
 
 public class AudioController : PersistentSingleton<AudioController> {
     public AudioSource BaseLoopSource
@@ -158,7 +158,7 @@ public class AudioController : PersistentSingleton<AudioController> {
 
     public void FadeSourceVolume(AudioSource source, float volume, float duration, bool obeyTimescale = true)
     {
-        Tween.Volume(source, volume, duration, 0f, obeyTimescale: obeyTimescale);
+        source.DOFade(volume, duration);
     }
 
     public AudioClip GetLoopClip(string loopId)
@@ -440,7 +440,8 @@ public class AudioController : PersistentSingleton<AudioController> {
         StopAllCoroutines();
         foreach (AudioSource loopSource in loopSources)
         {
-            Tween.Cancel(loopSource.GetInstanceID());
+            //Tween.Cancel(loopSource.GetInstanceID());
+            DOTween.Kill(loopSource.GetInstanceID());
         }
         Fading = false;
     }
@@ -464,8 +465,8 @@ public class AudioController : PersistentSingleton<AudioController> {
     private IEnumerator DoFadeToVolume(float duration, float volume, int sourceIndex = 0)
     {
         Fading = true;
-
-        Tween.Volume(loopSources[sourceIndex], volume, duration, 0f, Tween.EaseInOut);
+        loopSources[sourceIndex].DOFade(volume, duration).SetEase(Ease.InOutSine);
+        //Tween.Volume(loopSources[sourceIndex], volume, duration, 0f, Tween.EaseInOut);
         yield return new WaitForSeconds(duration);
 
         Fading = false;

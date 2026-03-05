@@ -16,7 +16,7 @@ public class SubVisualUpgradeable : MonoBehaviour {
     }
     private void OnDestroy() {
         GameSetupManager.OnSetupComplete -= MyAwake;
-        if (PlayerManager.Instance == null)
+        if (PlayerManager.Instance != null)
             PlayerManager.Instance.UpgradeManager.OnUpgradePurchased -= UpgradePurchased;
     }
 

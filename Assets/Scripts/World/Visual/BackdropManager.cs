@@ -1,4 +1,4 @@
-﻿using Pixelplacement;
+﻿using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 
@@ -14,7 +14,7 @@ public class BackdropManager : Singleton<BackdropManager> {
         if (_backdrop == null) GetCanvas();
         _backdrop.transform.SetAsLastSibling();
         if (withFade) {
-            Tween.CanvasGroupAlpha(_backdrop, 1, _fadeDuration, 0,Tween.EaseOutStrong);
+            _backdrop.DOFade(1,_fadeDuration).SetEase(Ease.OutQuad);
             yield return new WaitForSeconds(_fadeDuration);
         } else {
             _backdrop.alpha = 1;
@@ -25,7 +25,7 @@ public class BackdropManager : Singleton<BackdropManager> {
         if (_backdrop == null) GetCanvas();
         _backdrop.transform.SetAsLastSibling();
         if (withFade) {
-            Tween.CanvasGroupAlpha(_backdrop, 0, _fadeDuration, 0,Tween.EaseInStrong);
+            _backdrop.DOFade(0, _fadeDuration).SetEase(Ease.InQuad);
             yield return new WaitForSeconds(_fadeDuration);
         } else {
             _backdrop.alpha = 0;

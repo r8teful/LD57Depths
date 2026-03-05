@@ -1,6 +1,4 @@
-using Pixelplacement;
 using UnityEngine;
-using static Pixelplacement.Tween;
 
 [RequireComponent(typeof(Light))]
 
@@ -57,6 +55,8 @@ public class FlickeringLight : MonoBehaviour {
     private void StartSmoothTransition() {
         //StopAllCoroutines();  // Stop any other running coroutines if necessary
         //StartCoroutine(SmoothTransition());
-        LightIntensity(_targetLight,_maxIntensity,_smoothTransitionSpeed,0,Tween.EaseLinear,LoopType.PingPong);
+
+        // Todo write it with DG.tween instead
+        //LightIntensity(_targetLight,_maxIntensity,_smoothTransitionSpeed,0,Tween.EaseLinear,LoopType.PingPong);
     }
 }

@@ -5,16 +5,22 @@ public class TilePlant : MonoBehaviour, ITileChangeReactor {
     [SerializeField] private float groundCheckDistance = 0.6f;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform offset;
+    [SerializeField] private ParticleSystem DestroryParticles;
     private bool isGrounded = true; // Server state
     private Rigidbody2D rb;
     private Vector3Int cellPos;
     private GameObject spriteGameobject;
-
+    
     
     public void OnTileChangedNearby(Vector3Int cellPosition, int newTileID) {
         if (newTileID == 0) {
             if(cellPosition == cellPos) {
                 Debug.Log("on tile!!");
+                if (DestroryParticles != null) { 
+                    DestroryParticles.transform.SetParent(null,true);
+                    DestroryParticles.Play();
+                }
+
                 Destroy(gameObject); // This might need to be a pool aswell later
                 //var item = App.ResourceSystem.GetItemByID(ResourceSystem.BiomeEssenceID);
                 //WorldTileManager.Instance.SpawnDropOne(spriteGameobject.transform.position, 1, item);

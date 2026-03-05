@@ -102,4 +102,8 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     internal void RemoveAllUpgrades() {
         _subUpgrades.Clear();
     }
+
+    internal void FixControlPanel() {
+
+    }
 }

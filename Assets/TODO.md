@@ -53,9 +53,8 @@ Steamdeck notes:
 * New color node with one upgrade but not getting one upgrade
 * Hitstop when buying a node!?
 * Change popup particle colour to match the purchase particle color
-* Animate interaction (fade in, move up slightly)
 * Screenshake?
-* Add MORE POLISH. NOTHING should instantly appear, it should have MOVEMENT
+* Add MORE POLISH. NOTHING should instantly appear or disappear, it should have MOVEMENT
 
 UX:
 
@@ -91,19 +90,22 @@ ADD MORE STUFF!
 FOR POLISED DEMO:
 
 * Needs proper game start animation
-* Needs music
+* Needs music AND AMBIENT, blobby watery noises
 * Some kind of animation when going into the submarine?
+* Particles spawn when destroying a plant
 * Make pitch more soothing
 * Decide what the fuck you want to do with the stone upgrade
 * Lazer chain is a level 2 thing
 * Add upgrades that you'll be able to get for level 2
 * Sub UI needs to be updated. Zone ui should show appropriate resources
 * Fade out layer when going into next zone. Also test the speed is working
-* Environment should feel ALIVE, it feels DEAD. Make fish swim around, little blobs here and there. Make the plants move. MAKE IT LOOK ALIVE. POLISH THE ENVIRONMENT 
+* Make all plants have the moving shader
+* Environment should feel ALIVE, it feels DEAD. Make fish swim around, little blobs here and there. Make the plants move. MAKE IT LOOK ALIVE. POLISH THE ENVIRONMENT
+* Opening a chest should feel EXITING! WOOO DOPAMINE HIT THEM WITH IT, give it more particles, give it sounds give it everything. Make it THE BEST FEELING!!
+* Make bubbles fade out a bit later 
 
 For web build
 
-* Can't fullscreen properly
-* Loop audio is weird on web build it leaves a tiny gap where there is no sound. It's a thing https://discussions.unity.com/t/seamless-audio-looping-in-webgl/1497212/3
-* A lot of weird tilemap tearing -> CHECK IF FIXED ON BUILD 
-* All the start of the sounds seem to be getting cut. Same here, first 1024 samples of a sound gets cut and fucked with, so just have a slight pause before the audio actually starts playing
+* Gain looping audio still a bit glitched 
+* Can't fullscreen properly, might jst have to put the non simplified mode?
+* A lot of weird tilemap tearing -> CHECK IF FIXED ON BUILD

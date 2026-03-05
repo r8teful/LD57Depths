@@ -1141,9 +1141,39 @@ Make you go much slower in the next level, if players try to go their they'll be
 
 
 
-
-
-
-
 OMG you can literally just layer the effects ontop of eachother, to be fair, it would be a bit less efficiant. But omg you can just have different effects and put them ontop. For the world sprite, and as long as the sorting order is how you want it it will simply overwrite the stuff damn
+
+
+
+All you really need is to polish the ui nodes a bit more, don't have any loose bits that don't make sense. Also submarine control panel needs to be updated a bit. Other than that, you have the entire first layer done. 
+
+
+
+
+
+Layers
+
+4\. 1st Synth lead
+
+5\. 2nd synth lead -> Just filling the empty space, 1st isn't playing
+
+3\. Plinky plonky sounds
+
+2\. Strings 
+
+1. Fade in out occelating between 2-3 chords
+
+0\. Deep base line following the chords
+
+
+
+
+
+
+
+
+
+
+
+
 

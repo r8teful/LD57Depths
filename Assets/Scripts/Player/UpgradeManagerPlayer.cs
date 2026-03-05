@@ -90,6 +90,15 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
         return true;
     }
 
+    public void PurchaseNodeDebug(UpgradeNodeSO node) {
+        var state = _nodeStates[node.ID];
+        UpgradeStage stage = node.stages[state.CurrentLevel];
+        foreach (var effect in stage.effects) {
+            effect.Execute(new(_player));
+        }
+        OnUpgradePurchased?.Invoke(node);
+    }
+
     private void HandlePurchaseFail() {
         if (PopupManager.Instance == null) return;
         if (PopupManager.Instance.CurrentPopup == null) return;

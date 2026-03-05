@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Steamworks;
+using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 public static class App {
@@ -11,6 +12,8 @@ public static class App {
     //public static EventManager EventManager;
     public static bool isEditor;
     public static bool isDebugMode;
+
+    public static bool SteamConnection { get; private set; }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Boostrap() {
@@ -31,6 +34,22 @@ public static class App {
         Backdrop = app.GetComponentInChildren<BackdropManager>();
         CursorManager = app.GetComponentInChildren<CursorManager>();
         Cursor.SetCursor(Resources.Load<Texture2D>("cursorMenu"), new Vector2(3, 3), CursorMode.Auto);
+#if UNITY_STANDALONE
+        try {
+            SteamClient.Init(3639640);
+            SteamConnection = true;
+        } catch (Exception e) {
+            Debug.Log(e);
+            SteamConnection = false;
+            // Something went wrong - it's one of these:
+            //
+            //     Steam is closed?
+            //     Can't find steam_api dll?
+            //     Don't have permission to play app?
+            //
+        }
+#endif
+
         Application.quitting += Shutdown;
 #if UNITY_EDITOR
         isEditor = true;
