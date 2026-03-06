@@ -297,6 +297,11 @@ public class AudioController : PersistentSingleton<AudioController> {
 
     public void MuffleLoop(float cutoff, int loopIndex = 0)
     {
+        var loop = loopSources[loopIndex];
+        if (loop == null) {
+            Debug.LogWarning($"Loop on index {loopIndex} is null!");
+            return;
+        }
         MuffleSource(loopSources[loopIndex], cutoff);
     }
 
@@ -495,6 +500,13 @@ public class AudioController : PersistentSingleton<AudioController> {
     internal void OnMusicVolumeChange(float newValue) {
         currentSFXMixer.audioMixer.SetFloat("Music", Mathf.Log10(newValue) * 20);
     }
+    internal void OnAmbienceVolumeChange(float newValue) {
+        currentSFXMixer.audioMixer.SetFloat("Ambience", Mathf.Log10(newValue) * 20);
+    }
+    internal void OnMasterVolumeChange(float newValue) {
+        currentSFXMixer.audioMixer.SetFloat("Master", Mathf.Log10(newValue) * 20);
+    }
+
 
     internal bool TryGetSfxVolume(out float sfx) {
         sfx = 0;
@@ -512,4 +524,21 @@ public class AudioController : PersistentSingleton<AudioController> {
         }
         return false;
     }
+    internal bool TryGetAmbienceVolume(out float ambience) {
+        ambience = 0;
+        if (currentSFXMixer.audioMixer.GetFloat("Ambience", out var v)) {
+            ambience = v;
+            return true;
+        }
+        return false;
+    }
+    internal bool TryGetMasterVolume(out float ambience) {
+        ambience = 0;
+        if (currentSFXMixer.audioMixer.GetFloat("Master", out var v)) {
+            ambience = v;
+            return true;
+        }
+        return false;
+    }
+
 }

@@ -27,9 +27,9 @@ public class StructureManager : MonoBehaviour {
 
         // 40 seems a bit too dense, 70 good for only chests, but would need spots for other exploration entities 
         var chestPositions = RandomnessHelpers.PoissonDisc(width, Mathf.Abs(settings.MaxDepth), 65, settings.seed); // just guessing values
-        var shrinePositions = RandomnessHelpers.PoissonDisc(width, Mathf.Abs(settings.MaxDepth), 65, settings.seed * 235); 
-        var eventCavePositions = RandomnessHelpers.PoissonDisc(width, Mathf.Abs(settings.MaxDepth), 65, settings.seed * 723);
-
+        var shrinePositions = RandomnessHelpers.PoissonDisc(width, Mathf.Abs(settings.MaxDepth), 65, settings.seed * 235);
+        //var eventCavePositions = RandomnessHelpers.PoissonDisc(width, Mathf.Abs(settings.MaxDepth), 65, settings.seed * 723);
+        var eventCavePositions = new List<Vector2>();
         // Convert lists into int and offset, then we check and remove invalid points
         float halfWidth = width * 0.5f;
         float depthAbs = Mathf.Abs(settings.MaxDepth);

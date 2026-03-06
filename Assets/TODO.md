@@ -55,6 +55,7 @@ Steamdeck notes:
 * Change popup particle colour to match the purchase particle color
 * Screenshake?
 * Add MORE POLISH. NOTHING should instantly appear or disappear, it should have MOVEMENT
+* Add fog? Just some pixelated transparent noise, could add some more depth to the background
 
 UX:
 
@@ -89,7 +90,7 @@ ADD MORE STUFF!
 
 FOR POLISED DEMO:
 
-* Needs proper game start animation
+* Particle for fixing something in the submarine
 * Needs music AND AMBIENT, blobby watery noises
 * Some kind of animation when going into the submarine?
 * Particles spawn when destroying a plant
@@ -102,10 +103,9 @@ FOR POLISED DEMO:
 * Make all plants have the moving shader
 * Environment should feel ALIVE, it feels DEAD. Make fish swim around, little blobs here and there. Make the plants move. MAKE IT LOOK ALIVE. POLISH THE ENVIRONMENT
 * Opening a chest should feel EXITING! WOOO DOPAMINE HIT THEM WITH IT, give it more particles, give it sounds give it everything. Make it THE BEST FEELING!!
-* Make bubbles fade out a bit later 
 
 For web build
 
-* Gain looping audio still a bit glitched 
+* Gain looping audio still a bit glitched
 * Can't fullscreen properly, might jst have to put the non simplified mode?
 * A lot of weird tilemap tearing -> CHECK IF FIXED ON BUILD

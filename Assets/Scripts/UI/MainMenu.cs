@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,6 +8,9 @@ public class MainMenu : MonoBehaviour {
     [SerializeField] private  Button _buttonPlay;
     [SerializeField] private  Button _buttonSettings;
     [SerializeField] private UISettings _settings; 
+    [SerializeField] private Transform _cameraTrans; 
+    [SerializeField] private Transform _logoTrans; 
+
 
     [SerializeField] private TMP_InputField _addressField;
 
@@ -15,7 +19,31 @@ public class MainMenu : MonoBehaviour {
         _buttonSettings.onClick.AddListener(OnSettingsClicked);
     }
     private void Start() {
+        if(AudioController.Instance == null) {
+            Debug.LogError("Can't find audiocntroller!");
+            return;
+        }
+        AudioController.Instance.SetLoopAndPlay("MainMenu");
         _settings.Hide();
+        IntroAnimation();
+    }
+    private void IntroAnimation() {
+        Sequence introSeq = DOTween.Sequence();
+        float targetZ = -14;
+        float targetY = 8.17f;
+        // Camera 
+        var p = _cameraTrans.position;
+        p.z = 13;
+        _cameraTrans.position = p;
+
+        // Logo
+        var l = _logoTrans.position;
+        l.y = 18.93f;
+        _logoTrans.position = l;
+        introSeq.Append(_cameraTrans.DOLocalMoveZ(targetZ, 7).SetEase(Ease.OutCubic));
+        // Insert lets us have the logo be placed while the camera is still moving without having to have a coroutine to delay the call
+        introSeq.Insert(3,_logoTrans.DOLocalMoveY(targetY, 4).SetEase(Ease.OutBack));
+
     }
 
     private void OnSettingsClicked() {
@@ -28,6 +56,7 @@ public class MainMenu : MonoBehaviour {
 
     public void OnPlayClicked() {
         Debug.Log("play cliked");
+        AudioController.Instance.SetLoopVolume(0, 4); // Stop main menu music
         SceneManager.LoadScene(1);
     }
     public void OnJoinClicked() {

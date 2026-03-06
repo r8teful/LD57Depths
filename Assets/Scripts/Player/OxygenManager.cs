@@ -100,6 +100,9 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
                 // First time reaching here spawn the depleting effect
                 _oxygenDepleted = true;
                 _lowoxygenVisualInstance = Instantiate(_lowoxygenVisual);
+                // Muffle both ambience and music
+                AudioController.Instance.MuffleLoop(300f,0);
+                AudioController.Instance.MuffleLoop(300f,1);
             }
         }
     }
@@ -110,6 +113,8 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
             // Remove low oxygen effect 
             _oxygenDepleted = false;
             _lowoxygenVisualInstance.CancelAndRemove();
+            AudioController.Instance.UnMuffleLoop(0);
+            AudioController.Instance.UnMuffleLoop(1);
         }
         CurrentOxygen += oxygenDepletionRate * 50 * Time.deltaTime;
         playerHealth = maxHealth;

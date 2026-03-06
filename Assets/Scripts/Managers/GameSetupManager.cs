@@ -74,7 +74,7 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
         yield return null;
 
         p.PlayerLayerController.PutPlayerInSub();// Is it that easy? lol
-        
+        AudioController.Instance.SetLoopAndPlay("Ambience", 1);
         yield return null;// App.Backdrop.Release();
         
         _bootRoutine = null;

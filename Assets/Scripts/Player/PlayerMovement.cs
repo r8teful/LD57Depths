@@ -56,7 +56,17 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
     }
 
     private void PlayerLayerChanged(int index) {
-        _waterDifficulty = index + 1; // treat index as a multiplier
+        if(index == 0) {
+            _waterDifficulty = 1; // treat index as a multiplier
+        } else if(index == 1) {
+            _waterDifficulty = 0.3f;
+        } else if (index ==2) {
+            _waterDifficulty = 0.2f;
+        } else if (index ==3) {
+            _waterDifficulty = 0.1f;
+        } else {
+            _waterDifficulty = 1;
+        }
     }
 
     // Called every frame from lazer
@@ -136,8 +146,9 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
             return;
         }
 #endif
-       // float waterDifficulty = 0.5f; // Boom  
+        // float waterDifficulty = 0.5f; // Boom  
         accelerationForce *= _waterDifficulty;
+        Debug.Log(_waterDifficulty);
         _cachedSwimSpeed  *= _waterDifficulty;
         Vector2 moveDirection = _currentInput.normalized;
 

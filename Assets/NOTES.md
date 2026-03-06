@@ -1145,7 +1145,7 @@ OMG you can literally just layer the effects ontop of eachother, to be fair, it 
 
 
 
-All you really need is to polish the ui nodes a bit more, don't have any loose bits that don't make sense. Also submarine control panel needs to be updated a bit. Other than that, you have the entire first layer done. 
+All you really need is to polish the ui nodes a bit more, don't have any loose bits that don't make sense. Also submarine control panel needs to be updated a bit. Other than that, you have the entire first layer done.
 
 
 
@@ -1159,7 +1159,7 @@ Layers
 
 3\. Plinky plonky sounds
 
-2\. Strings 
+2\. Strings
 
 1. Fade in out occelating between 2-3 chords
 
@@ -1168,6 +1168,28 @@ Layers
 
 
 
+
+Melody is the thing you remember and can sing along with, if you have a slow melody it fits with a more atosmpheric sound
+
+
+
+You just feel it out. And think OUTSIDE of what you've made, that is how you get variation in the song. You don't just stick to one loop expanding and expanding it breathes comes and goes, changes, that's how it becomes good and not repetative. Also you kind of what it to be soothing and predictable, but not repetative
+
+
+
+FIRST 6 SECONDS: Just fade in and out, and delay lead ish
+
+After: Base, beh doh beh doh sound, really high pitch plinky plonky
+
+After: Synth
+
+
+
+Song should be longer, almost like it should be a bit slower, like you need to be more comfortable with the notes before it gets to move on. Like it is moving along a bit too quickly now. 
+
+
+
+There is empty space, a lot of it. Look at the spectral graph. You could fill that extra space with more sounds. Try it out. But tomorrow
 
 
 
