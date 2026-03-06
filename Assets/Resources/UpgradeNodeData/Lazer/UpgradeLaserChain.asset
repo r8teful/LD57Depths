@@ -16,6 +16,7 @@ MonoBehaviour:
   uniqueID: 100
   description: 
   icon: {fileID: 635439231, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
+  IsCool: 0
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 7df2eb582e9fdb64aa47295b0b9300cc, type: 2}
   UnlockedAtFirstPrereqStage: 1
@@ -24,5 +25,5 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 62653efa439771e4e9915c0fedb5a411, type: 2}
     costMultiplier: 1
     costTier: 10
-    upgradeItemPool: {fileID: 11400000, guid: 2578a8b93b92f144997963031306a875, type: 2}
+    upgradeItemPool: {fileID: 11400000, guid: c8505d26704f39c49ad4623ac0fd7558, type: 2}
     extraData: {fileID: 0}

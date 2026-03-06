@@ -37,8 +37,11 @@ public class UISettings : MonoBehaviour {
         _backgroundFancy.onValueChanged.AddListener(OnBackgroundFancyChanage);
     }
 
-    
 
+    private void Start() {
+        OnDebugMenuChange(false);
+        ShowPanel(_containerGame);
+    }
     private void OnDebugMenuChange(bool isActive) {
         if (UIManager.Instance == null) return;
         if (isActive) {
@@ -55,9 +58,6 @@ public class UISettings : MonoBehaviour {
         }
     }
 
-    private void Start() {
-        ShowPanel(_containerGame);
-    }
 
     private void ShowPanel(GameObject panelToShow) {
         _containerGame.SetActive(false);

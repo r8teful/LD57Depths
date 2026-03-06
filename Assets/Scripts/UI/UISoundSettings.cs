@@ -43,7 +43,7 @@ public class UISoundSettings : MonoBehaviour {
         if (_audio.TryGetAmbienceVolume(out float ambience)) {
             _ambienceSlider.value = Mathf.Pow(10, ambience / 20);
         }
-        if (_audio.TryGetAmbienceVolume(out float master)) {
+        if (_audio.TryGetMasterVolume(out float master)) {
             _masterSlider.value = Mathf.Pow(10, master / 20);
         }
     }

@@ -103,9 +103,9 @@ FOR POLISED DEMO:
 * Make all plants have the moving shader
 * Environment should feel ALIVE, it feels DEAD. Make fish swim around, little blobs here and there. Make the plants move. MAKE IT LOOK ALIVE. POLISH THE ENVIRONMENT
 * Opening a chest should feel EXITING! WOOO DOPAMINE HIT THEM WITH IT, give it more particles, give it sounds give it everything. Make it THE BEST FEELING!!
+* POLISH UI -> Buff icon ugly AF
 
 For web build
 
 * Gain looping audio still a bit glitched
 * Can't fullscreen properly, might jst have to put the non simplified mode?
-* A lot of weird tilemap tearing -> CHECK IF FIXED ON BUILD
