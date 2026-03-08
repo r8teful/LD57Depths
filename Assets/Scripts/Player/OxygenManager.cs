@@ -7,7 +7,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     private float maxOxygen;
     private float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
     private float currentOxygen;
-    private float maxHealth = 7; // amount in seconds the player can survive with 0 oxygen 
+    private float maxHealth = 2.362f; // amount in seconds the player can survive with 0 oxygen 
     private float playerHealth;
     private PlayerManager _player;
     private bool _isInsideOxygenZone;
@@ -80,9 +80,11 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     }
 
     void DepleteOxygen() {
+        // Say warning is at 10 oxygen, that would give us 10 seconds to get to the ship. Assuming depletion is always at 1/s
+        var warningOxygen = maxOxygen * 0.2f * oxygenDepletionRate; 
         CurrentOxygen -= oxygenDepletionRate * Time.deltaTime;
         OnOxygenChanged?.Invoke(CurrentOxygen, maxOxygen);
-        if (CurrentOxygen <= maxOxygen * 0.2f && !peepPlayed) { // 20% max oxygen
+        if (CurrentOxygen <= warningOxygen && !peepPlayed) { // 20% max oxygen
             if (AudioController.Instance != null) AudioController.Instance.PlaySound2D("PeepPeep", 1f);
             OnFlashStart?.Invoke();
             peepPlayed = true;
@@ -95,14 +97,12 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
                 _player.PlayerLayerController.PutPlayerInSub();
                 Resurect();
             }
-        } else if(CurrentOxygen <= maxOxygen * 0.2f) {
+        } else if(CurrentOxygen <= warningOxygen) {
             if (!_oxygenDepleted) {
                 // First time reaching here spawn the depleting effect
                 _oxygenDepleted = true;
                 _lowoxygenVisualInstance = Instantiate(_lowoxygenVisual);
-                // Muffle both ambience and music
-                AudioController.Instance.MuffleLoop(300f,0);
-                AudioController.Instance.MuffleLoop(300f,1);
+                _lowoxygenVisualInstance.Play(warningOxygen); // Visual also changes sounds
             }
         }
     }

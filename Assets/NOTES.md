@@ -1197,25 +1197,25 @@ There is empty space, a lot of it. Look at the spectral graph. You could fill th
 
 * Stop parallax when in settings
 * Bubbling is a bit intense
-* Title card for when entering a biome
+* Title card for when entering a biome -> Give it a cool sound effect, like buh bih beh bah buhh or du di de da daaa
 * Add more descriptions to nodes
 * Interact button hint for closing ui
-* More effort should equal to more rewards -> give more stone when 
+* More effort should equal to more rewards -> give more stone when
 * Particle effect for exploration particles
 * Chunks are huge from chest
 * Frustrating to upgrade max speed because you slide too much
-* Tries to get gold before the iron!?!? 
-* Above here then leads to her becoming frustrated because she's not progressing 
+* Tries to get gold before the iron!?!?
+* Above here then leads to her becoming frustrated because she's not progressing
 * Never looks what the cost of an upgrade is
 * Does the first damage upgrade of the iron and then never goes back to the iron zone so the damage kind of gets stuck there until she's gone back
-* Artifact is un minable 
-* Time doesn't matter because you can't tell how long it is 
+* Artifact is un minable
+* Time doesn't matter because you can't tell how long it is
 * Feels like magnetism isn't actually helping its just making them shoot past
-* Shoot 
+* Shoot
 * Keeps going to far and pushing the oxygen -> Try with less leeway
 * Make everything feel special - > More visual effects
 * Have the next damage node unlock because its easy to just get stuck
-* Lots of nodes being upgraded feels like you are strong, you don't think 
+* Lots of nodes being upgraded feels like you are strong, you don't think
 * increase interaction range for hatch
 * Remove question marks
 * Clock sound
@@ -1236,22 +1236,7 @@ Not like:
 
 * Chest
 * I felt aimless like it didn't have a purpose -> Crash comic at the start
-* Oxygen is knocked out is unclear 
+* Oxygen is knocked out is unclear
 * More of a reason to go into the biome
 * Would be great if exploration entities didn't spawn in the air
 * Not enough detail in the submarine
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

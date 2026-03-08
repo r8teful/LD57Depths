@@ -6,8 +6,8 @@ using UnityEngine.Rendering.Universal;
 
 // This gets spawned as soon as the player is low enough on oxygen
 public class LowOxygenVisual : MonoBehaviour {
-    public float rampUpDuration = 10f;        // normal ramp in time
-    public float rampDownDuration = 0.4f;    // faster ramp out on cancel
+    private float _rampUpDuration = 10f;        // normal ramp in time
+    private float _rampDownDuration = 0.4f;    // faster ramp out on cancel
 
 
     [Header("Effect Targets (applied in profile)")]
@@ -93,13 +93,11 @@ public class LowOxygenVisual : MonoBehaviour {
         }
     }
 
-    public void Play() {
+    public void Play(float rampUp = 10) {
+        _rampUpDuration = rampUp;
         if (_activeCoroutine != null) StopCoroutine(_activeCoroutine);
         _isCancelling = false;
-        _activeCoroutine = StartCoroutine(RampVolumeWeight(0f, 1f, rampUpDuration, curve, onComplete: null));
-    }
-    void Start() {
-        Play();
+        _activeCoroutine = StartCoroutine(RampVolumeWeight(0f, 1f, _rampUpDuration, curve, onComplete: null,1, 0.6f));
     }
 
     public void CancelAndRemove() {
@@ -109,18 +107,22 @@ public class LowOxygenVisual : MonoBehaviour {
         // stop any existing ramp coroutine and start ramp down from current weight
         if (_activeCoroutine != null) StopCoroutine(_activeCoroutine);
         float startWeight = _volume != null ? _volume.weight : 0f;
-        _activeCoroutine = StartCoroutine(RampVolumeWeight(startWeight, 0f, rampDownDuration, curve, onComplete: () => {
+        _activeCoroutine = StartCoroutine(RampVolumeWeight(startWeight, 0f, _rampDownDuration, curve, onComplete: () => {
             // cleanup: destroy object
             if (this != null) Destroy(gameObject);
-        }));
+        },0.6f,1f));
     }
 
-    IEnumerator RampVolumeWeight(float from, float to, float duration, AnimationCurve curve, System.Action onComplete) {
+    IEnumerator RampVolumeWeight(float from, float to, float duration, AnimationCurve curve, System.Action onComplete,
+    float pitchFrom,
+    float pitchTo) {
         if (_volume == null) yield break;
         float elapsed = 0f;
         // if duration is effectively zero, snap
         if (duration <= 0.0001f) {
             _volume.weight = to;
+            AudioController.Instance.SetLoopPitchAll(pitchTo);
+            //AudioController.Instance.SetLowpassCutoff(Mathf.LerpUnclamped(from, to, 1f));
             onComplete?.Invoke();
             yield break;
         }
@@ -130,8 +132,14 @@ public class LowOxygenVisual : MonoBehaviour {
             float t = Mathf.Clamp01(elapsed / duration);
             float curveT = curve != null ? curve.Evaluate(t) : t;
             _volume.weight = Mathf.LerpUnclamped(from, to, curveT);
+            AudioController.Instance.SetLoopPitchAll(Mathf.LerpUnclamped(pitchFrom, pitchTo, curveT));
+            //AudioController.Instance.SetLowpassCutoff(Mathf.LerpUnclamped(from, 300f, curveT));
+
             yield return null;
         }
+        AudioController.Instance.SetLoopPitchAll(pitchTo);
+        //AudioController.Instance.SetLowpassCutoff(300f);
+
 
         _volume.weight = to;
         onComplete?.Invoke();

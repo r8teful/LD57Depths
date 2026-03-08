@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 // Pause menu, settings, etc
@@ -25,6 +26,7 @@ public class UISettings : MonoBehaviour {
     private bool didSave;
     private bool _fromPause;
 
+    public UnityEvent<bool> OnSettingChange;
     private void Awake() {
         _buttonGame.onClick.AddListener(() => ShowPanel(_containerGame));
         _buttonVideo.onClick.AddListener(() => ShowPanel(_containerVideo));
@@ -114,9 +116,11 @@ public class UISettings : MonoBehaviour {
     internal void Show(bool fromPause) {
         _fromPause = fromPause;
         _containerMain.SetActive(true);
+        OnSettingChange?.Invoke(true);
     }
     internal void Hide() {
         TryRevert();
         _containerMain.SetActive(false);
+        OnSettingChange?.Invoke(false);
     }
 }

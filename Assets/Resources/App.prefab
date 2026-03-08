@@ -167,6 +167,7 @@ MonoBehaviour:
   - {fileID: 4046154845122264840}
   - {fileID: 8703731461765780724}
   SFXMixer: {fileID: -6496454409046839794, guid: 2e34245c018982a489d8750eca6c641f, type: 2}
+  mainMixer: {fileID: 24100000, guid: 2e34245c018982a489d8750eca6c641f, type: 2}
 --- !u!114 &4564868245224107430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -315,7 +316,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.426
   m_Pitch: 1
   Loop: 1
   Mute: 0

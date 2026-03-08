@@ -14,7 +14,8 @@ public class BiomeDataSO : ScriptableObject, IIdentifiable {
 
     // Permanent ability and buff gained when finding artifact
     public AbilitySO BiomePermanentAbility; 
-    public BuffSO BiomePermanentBuff;                                    
+    public BuffSO BiomePermanentBuff;
 
+    public Color BiomeTextColour;
     public ushort ID => (ushort)BiomeType;
 }

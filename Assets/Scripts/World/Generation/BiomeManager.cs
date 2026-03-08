@@ -49,7 +49,7 @@ public class BiomeManager : StaticInstance<BiomeManager>
     private WorldManager _worldManager;
     private ChunkManager _chunkManager;
     private int chunkSize;
-    public event Action<BiomeType, BiomeType> OnNewClientBiome;
+    public event Action<BiomeType, BiomeType> OnNewPlayerBiome;
     // Server-side cache of calculated biome data per chunk
     private Dictionary<Vector2Int, BiomeChunkInfo> serverBiomeData = new Dictionary<Vector2Int, BiomeChunkInfo>();
     private BiomeType _currentClientBiome;
@@ -107,7 +107,7 @@ public class BiomeManager : StaticInstance<BiomeManager>
                     // Only set if we are in a biome that we know of
                     if (newBiome.dominantBiome != BiomeType.None) {
                         Debug.Log("Entered new biome!: " + newBiome.dominantBiome.ToString());
-                        OnNewClientBiome?.Invoke(_currentClientBiome, newBiome.dominantBiome);
+                        OnNewPlayerBiome?.Invoke(_currentClientBiome, newBiome.dominantBiome);
                         _currentClientBiome = newBiome.dominantBiome;
                     }
                 }

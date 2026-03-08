@@ -9,12 +9,12 @@ public class BiomeBuffSpawner : MonoBehaviour, IInitializableAbility {
     public void Init(AbilityInstance instance, PlayerManager player) {
         _player = player;
         _instance = instance;
-        BiomeManager.Instance.OnNewClientBiome += NewClientBiome;
+        BiomeManager.Instance.OnNewPlayerBiome += NewClientBiome;
     }
 
     private void OnDestroy() {
         if(BiomeManager.Instance != null){
-            BiomeManager.Instance.OnNewClientBiome -= NewClientBiome;
+            BiomeManager.Instance.OnNewPlayerBiome -= NewClientBiome;
         }
     }
 
@@ -28,7 +28,7 @@ public class BiomeBuffSpawner : MonoBehaviour, IInitializableAbility {
             return;
         }
 
-        var b = App.ResourceSystem.GetBiomeData((ushort)newB);
+        var b = App.ResourceSystem.GetBiomeData(newB);
         if (b == null) return;
 
         if (b.BiomeTempAbility != null) {

@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 // Links ingame to UI
 [RequireComponent(typeof(Interactable))]

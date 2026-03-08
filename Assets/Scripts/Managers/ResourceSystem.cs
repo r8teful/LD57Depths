@@ -199,6 +199,10 @@ public class ResourceSystem {
         }
         return buff;
     }
+    public BiomeDataSO GetBiomeData(BiomeType b) {
+        return GetBiomeData((ushort)b);
+    }
+
     public BiomeDataSO GetBiomeData(ushort id) {
         if (id == InvalidID || !_biomeLookupByID.TryGetValue(id, out BiomeDataSO biome)) {
             Debug.LogWarning($"biome ID {id} not found in database.");
@@ -444,6 +448,10 @@ public class ResourceSystem {
             default:
                 return null;
         }
+    }
+
+    internal static string BiomeToString(BiomeType to) {
+        return to.ToString(); // idk needs localization 
     }
 }
 

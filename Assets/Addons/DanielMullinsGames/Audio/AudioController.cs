@@ -18,8 +18,7 @@ public class AudioController : PersistentSingleton<AudioController> {
 
     [SerializeField]
     private List<AudioSource> loopSources = default;
-    [SerializeField]
-    private AudioMixerGroup SFXMixer;
+    [SerializeField] private AudioMixerGroup SFXMixer;
     private List<AudioClip> sfx = new List<AudioClip>();
     private List<AudioClip> loops = new List<AudioClip>();
 
@@ -282,6 +281,10 @@ public class AudioController : PersistentSingleton<AudioController> {
 
     private void MuffleSource(AudioSource source, float cutoff = 300f)
     {
+        if (source == null) {
+            Debug.LogWarning($"Trying to muffle null source!");
+            return;
+        }
         var filter = source.gameObject.AddComponent<AudioLowPassFilter>();
         filter.cutoffFrequency = cutoff;
     }
@@ -297,11 +300,6 @@ public class AudioController : PersistentSingleton<AudioController> {
 
     public void MuffleLoop(float cutoff, int loopIndex = 0)
     {
-        var loop = loopSources[loopIndex];
-        if (loop == null) {
-            Debug.LogWarning($"Loop on index {loopIndex} is null!");
-            return;
-        }
         MuffleSource(loopSources[loopIndex], cutoff);
     }
 
@@ -541,4 +539,10 @@ public class AudioController : PersistentSingleton<AudioController> {
         return false;
     }
 
+    internal void SetLoopPitchAll(float v) {
+        foreach (var loop in loopSources) {
+            if(loop == null) continue;
+            loop.pitch = v;
+        }
+    }
 }

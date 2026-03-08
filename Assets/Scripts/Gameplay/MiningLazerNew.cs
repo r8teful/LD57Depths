@@ -138,10 +138,10 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifi
                 // Crit!
                 damage *= critMult;
                 _damageContainer.crit = true;
-                Debug.Log("crit hit!!!");
+                //Debug.Log("crit hit!!!");
                 WorldJuiceCreator.Instance.SpawnCrit(hit.point);
             } else {
-                Debug.Log("no crit ):");
+                //Debug.Log("no crit ):");
                 _damageContainer.crit = false;
 
             }

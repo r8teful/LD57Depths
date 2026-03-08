@@ -12,7 +12,7 @@ public class Artifact : MonoBehaviour {
         _footprintRect = new RectInt(data.bottomLeftAnchor, Vector2Int.one * 3);
         _breakCount = 0;
         _breakReq = _footprintRect.width * _footprintRect.height; // TODO this will not work if some areas are air
-        biomeData = App.ResourceSystem.GetBiomeData((ushort)biome);
+        biomeData = App.ResourceSystem.GetBiomeData(biome);
         ChunkManager.OnTileChanged += TileChanged;
     }
     private void OnDisable() {

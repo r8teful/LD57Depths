@@ -27,6 +27,17 @@ public class WorldGenSettings {
 
     public const int TotalLayers = 3;
     public float[] WorldLayerYPositions;
+
+    public List<WorldGenBiomeData> biomes = new List<WorldGenBiomeData>();
+    // Runtime-only:
+    [NonSerialized] public Material worldGenSquareSprite;
+    [NonSerialized] public Vector3 runtimeCameraPosition; // for parallax
+
+    public int GetBiomeProgressionIndex(BiomeType b) {
+        var biome = biomes.FirstOrDefault(s => s.BiomeType == b);
+        if (biome == null) return 0;
+        return biome.ProgressionIndex;
+    }
     public float MaxDepth { 
         get { 
             // 90% of the max theoretical depth, shader also uses 90%
@@ -58,12 +69,7 @@ public class WorldGenSettings {
         return Mathf.Clamp(index, 0, TotalLayers - 1);
     }
 
-    public List<WorldGenBiomeData> biomes = new List<WorldGenBiomeData>();
-
-    // Runtime-only:
-    [NonSerialized] public Material worldGenSquareSprite;
-    [NonSerialized] public Vector3 runtimeCameraPosition; // for parallax
-
+   
     public WorldGenSettings() { }
 
     public static WorldGenSettings FromSO(WorldGenSettingSO so, bool randomizeBiomes = true, int seed = 0) {

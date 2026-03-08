@@ -16,9 +16,10 @@ MonoBehaviour:
   uniqueID: 13
   description: 
   icon: {fileID: 1054548254, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
+  IsCool: 0
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 1c854624ced58d947a611ed9aac8d10d, type: 2}
-  UnlockedAtFirstPrereqStage: 0
+  UnlockedAtFirstPrereqStage: 1
   stages:
   - effects:
     - {fileID: 11400000, guid: 5bed1eba18917b0409e2f3c13ecd7b43, type: 2}

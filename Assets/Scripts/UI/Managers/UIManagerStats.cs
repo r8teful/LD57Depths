@@ -14,6 +14,7 @@ public class UIManagerStats : MonoBehaviour {
     [SerializeField] Transform _iconContainerActive;
     [SerializeField] Transform _statDisplayElements;
     [SerializeField] Transform _abilityDisplayElements;
+    [SerializeField] UIBiomeText _biomeTextPrefab;
     private PlayerManager _player;
 
     internal void Init(PlayerManager player) {
@@ -23,11 +24,25 @@ public class UIManagerStats : MonoBehaviour {
         _playerStats.OnStatChanged += StatChange;
         player.PlayerAbilities.OnAbilityAdd += OnAddAbility;
         player.PlayerAbilities.OnabilityRemove += OnRemoveAbility;
+        if(BiomeManager.Instance != null) {
+            BiomeManager.Instance.OnNewPlayerBiome += OnNewBiome;
+        } else {
+            Debug.LogWarning("BiomeManager instance is null!");
+        }
         _player = player;
         RebuildBuffList();
         CreateStatDisplays();
     }
-    
+
+    private void OnNewBiome(BiomeType from, BiomeType to) {
+        if    (to == BiomeType.None || to == BiomeType.Trench 
+            || to == BiomeType.Trench1 || to == BiomeType.Trench2 
+            || to == BiomeType.Trench3 || to == BiomeType.Surface)
+            return;
+        var b = Instantiate(_biomeTextPrefab, transform); // we could just reuse the component but eh
+        b.StartAnim(to);// Text prefab handles destruction, animation, etc
+    }
+
     private void BuffListChange() {
         Debug.Log("BUFF LIST CHANGE!!");
         RebuildBuffList();
@@ -69,6 +84,10 @@ public class UIManagerStats : MonoBehaviour {
         }
         _player.PlayerAbilities.OnabilityRemove -= OnRemoveAbility;
         _player.PlayerAbilities.OnAbilityAdd -= OnAddAbility;
+        
+        if (BiomeManager.Instance != null) {
+            BiomeManager.Instance.OnNewPlayerBiome -= OnNewBiome;
+        }
     }
     private void RefreshTimes() {
         var snapshots = _playerStats.GetBuffSnapshots();

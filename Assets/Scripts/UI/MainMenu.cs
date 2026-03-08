@@ -1,6 +1,7 @@
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -9,7 +10,7 @@ public class MainMenu : MonoBehaviour {
     [SerializeField] private  Button _buttonSettings;
     [SerializeField] private UISettings _settings; 
     [SerializeField] private Transform _cameraTrans; 
-    [SerializeField] private Transform _logoTrans; 
+    [SerializeField] private Transform _logoTrans;
 
 
     [SerializeField] private TMP_InputField _addressField;
@@ -47,7 +48,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     private void OnSettingsClicked() {
-        _settings.Show(false);
+        _settings.Show(fromPause: false);
     }
 
     private void OnDisable() {

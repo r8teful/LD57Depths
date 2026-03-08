@@ -66,10 +66,17 @@ public class WorldTileManager : StaticInstance<WorldTileManager> {
     }
     
     // its a list incase we want different drops from the same tile, right now we just add one 
-    public List<DropInfo> GetDropData(TileSO tile) {
+    public List<DropInfo> GetDropData(TileSO tile, BiomeType tileBiome) {
         var dropData = new List<DropInfo>();
         var drop = tile.drop;
+        // We want to look what position this biome is in the biome sequence and then use that in the calculation
         int maxDropAmount = 1;
+        if(GameSetupManager.Instance != null) {
+            var i = GameSetupManager.Instance.WorldGenSettings.GetBiomeProgressionIndex(tileBiome);
+            // Do something with i
+            Debug.Log("Progression index: " + i);
+            maxDropAmount *= (i + 1); // just multiply? lol first biome has index 1 so we add 1 to 
+        }
         int dropAmount = 1;
         if (_tileUpgradeData.TryGetValue(tile.ID, out TileUpgradeData tileUpgradeData)) {
             maxDropAmount += tileUpgradeData.DropIncrease;

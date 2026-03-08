@@ -56,6 +56,7 @@ Steamdeck notes:
 * Screenshake?
 * Add MORE POLISH. NOTHING should instantly appear or disappear, it should have MOVEMENT
 * Add fog? Just some pixelated transparent noise, could add some more depth to the background
+* Make buttons pop in, like the stardewvalley menu 
 
 UX:
 
@@ -109,3 +110,52 @@ For web build
 
 * Gain looping audio still a bit glitched
 * Can't fullscreen properly, might jst have to put the non simplified mode?
+
+
+
+RIK TODO:
+
+* Polish exploration entities
+
+&nbsp;	- Make ui look nice
+
+&nbsp;	- Add sound effects
+
+&nbsp;	- Add particles
+
+
+
+For index: Biomes, artifacts, ores?
+
+#### Lucy playtest V0.0.4
+
+* Bubbling is a bit intense
+* Title card for when entering a biome -> Give it a cool sound effect, like buh bih beh bah buhh or du di de da daaa
+* Add more descriptions to nodes
+* Interact button hint for closing ui
+* Particle effect for exploration entities
+* Chunks are huge from chest
+* Frustrating to upgrade max speed because you slide too much
+* Feels like magnetism isn't actually helping its just making them shoot past
+* Make everything feel special - > More visual effects
+* Lots of nodes being upgraded feels like you are strong, you don't think about 
+* increase interaction range for hatch
+* Remove question marks
+* Clock sound
+
+
+
+Not like:
+
+* Chest
+* I felt aimless like it didn't have a purpose -> Crash comic at the start
+* More of a reason to go into the biome
+* Would be great if exploration entities didn't spawn in the air
+* Not enough detail in the submarine
+
+
+
+
+
+
+

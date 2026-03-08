@@ -1,11 +1,19 @@
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ParallaxUI : MonoBehaviour {
     public Transform[] layers; 
-    public float parallaxStrength = 10f; 
-
+    public float parallaxStrength = 10f;
+    public UnityEvent<bool> OnSettingChange;
     private Vector3[] initialPositions;
     private Vector3 lastMousePosition;
+    private bool _shouldParallax;
+
+    // from inspector
+    public void SettingChange(bool isOpen) {
+        _shouldParallax = !isOpen;
+    }
 
     void Start() {
         initialPositions = new Vector3[layers.Length];
@@ -16,6 +24,7 @@ public class ParallaxUI : MonoBehaviour {
     }
 
     void Update() {
+        if (!_shouldParallax) return;
         Vector3 mouseDelta = (Input.mousePosition - lastMousePosition) * 0.001f; // Scale down effect
         lastMousePosition = Input.mousePosition;
 

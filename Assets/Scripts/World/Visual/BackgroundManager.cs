@@ -37,12 +37,12 @@ public class BackgroundManager : MonoBehaviour {
         _blackSprite.enabled = false;
         biomeManager = bio;
 
-        biomeManager.OnNewClientBiome += NewClientBiome;
+        biomeManager.OnNewPlayerBiome += NewClientBiome;
         // Spawn particle systems
         //SpawnTrashParticles();
     }
     private void OnDestroy() {
-        biomeManager.OnNewClientBiome -= NewClientBiome;
+        biomeManager.OnNewPlayerBiome -= NewClientBiome;
     }
 
     private void NewClientBiome(BiomeType biomeOld, BiomeType biomeNew) {

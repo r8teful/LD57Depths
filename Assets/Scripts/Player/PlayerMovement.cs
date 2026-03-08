@@ -1,5 +1,4 @@
-﻿using Assets.SimpleLocalization.Scripts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 public class PlayerMovement : MonoBehaviour, IPlayerModule {
@@ -148,7 +147,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
 #endif
         // float waterDifficulty = 0.5f; // Boom  
         accelerationForce *= _waterDifficulty;
-        Debug.Log(_waterDifficulty);
+        //Debug.Log(_waterDifficulty);
         _cachedSwimSpeed  *= _waterDifficulty;
         Vector2 moveDirection = _currentInput.normalized;
 

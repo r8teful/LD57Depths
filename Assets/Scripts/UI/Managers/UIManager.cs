@@ -96,7 +96,7 @@ public class UIManager : Singleton<UIManager> {
     private void Pause() {
         Time.timeScale = 0f;
         
-        AudioListener.pause = true; 
+        //AudioListener.pause = true; 
         //Cursor.lockState = CursorLockMode.None;
         //Cursor.visible = true;
 
@@ -107,7 +107,7 @@ public class UIManager : Singleton<UIManager> {
 
     public void Unpause() {
         Time.timeScale = 1f;
-        AudioListener.pause = false;
+        //AudioListener.pause = false;
 
         //Cursor.lockState = CursorLockMode.Locked;
         //Cursor.visible = false;

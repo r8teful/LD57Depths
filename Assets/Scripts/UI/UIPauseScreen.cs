@@ -63,6 +63,7 @@ public class UIPauseScreen : MonoBehaviour {
     }
 
     public void OnSettingOpen() {
+        transform.SetAsLastSibling(); // ensures we are on top
         _containerPause.gameObject.SetActive(false);
         _settings.Show(fromPause: true);
     }

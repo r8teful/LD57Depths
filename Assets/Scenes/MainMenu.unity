@@ -1155,6 +1155,21 @@ MonoBehaviour:
   - {fileID: 232018260}
   - {fileID: 1305569029}
   parallaxStrength: 10
+  OnSettingChange:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 194881545}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!4 &811202124
 Transform:
   m_ObjectHideFlags: 0
@@ -1683,11 +1698,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 12512354378260685, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 336
       objectReference: {fileID: 0}
     - target: {fileID: 12512354378260685, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -67.837
       objectReference: {fileID: 0}
     - target: {fileID: 12512354378260685, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1700,6 +1715,34 @@ PrefabInstance:
     - target: {fileID: 12512354378260685, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 369151425536018380, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
+      propertyPath: OnSettingChange.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 369151425536018380, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
+      propertyPath: OnSettingChange.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 369151425536018380, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
+      propertyPath: OnSettingChange.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 811202123}
+    - target: {fileID: 369151425536018380, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
+      propertyPath: OnSettingChange.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 369151425536018380, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
+      propertyPath: OnSettingChange.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SettingChange
+      objectReference: {fileID: 0}
+    - target: {fileID: 369151425536018380, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
+      propertyPath: OnSettingChange.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ParallaxUI, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 369151425536018380, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
+      propertyPath: OnSettingChange.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 597413950295806938, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
       propertyPath: m_AnchorMax.y

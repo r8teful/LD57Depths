@@ -65,14 +65,14 @@ public class WorldLightingManager : MonoBehaviour {
 
         // Subscribe to change lighting when entering interiors
         PlayerLayerController.OnPlayerVisibilityChanged += PlayerVisibilityLayerChanged;
-        _worldManager.BiomeManager.OnNewClientBiome += SetNewBiomeLight;
+        _worldManager.BiomeManager.OnNewPlayerBiome += SetNewBiomeLight;
         // Setup starting light
         _currentClientBiome = BiomeType.Trench; // Or biome we left off at
         SetNewBiomeLightInstant(_currentClientBiome);
     }
     public void OnDestroy() {
         PlayerLayerController.OnPlayerVisibilityChanged -= PlayerVisibilityLayerChanged;
-        _worldManager.BiomeManager.OnNewClientBiome -= SetNewBiomeLight;
+        _worldManager.BiomeManager.OnNewPlayerBiome -= SetNewBiomeLight;
     }
 
     private void PlayerVisibilityLayerChanged(VisibilityLayerType layer) {

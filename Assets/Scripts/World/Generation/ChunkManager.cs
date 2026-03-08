@@ -593,7 +593,7 @@ public class ChunkManager : MonoBehaviour {
             chunk.tileDurability[localX, localY] = -1;
             // TODO air tile type should be of the dominant biome of the chunk 
             ServerRequestModifyTile(cellPos, ResourceSystem.AirID);
-            SpawnDrops(targetTile, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Drop at cell center
+            SpawnDrops(targetTile, tileBiome, _worldManager.CellToWorld(cellPos) + new Vector3(0.5f, 0.5f, 0)); // Drop at cell center
 
             _lightManager.RequestLightUpdate();
             if (targetTile.breakEffectPrefab != null)
@@ -607,12 +607,11 @@ public class ChunkManager : MonoBehaviour {
         }
         
     }
-    // --- Server-side method to handle spawning drops ---
     // We might want to move this to WorldManager but eh
-    private void SpawnDrops(TileSO sourceTile, Vector3 position) {
+    private void SpawnDrops(TileSO sourceTile, BiomeType tileBiome, Vector3 position) {
         if (sourceTile.drop == null) return;
         // Query dropmanager for drops
-        var dropData = WorldTileManager.Instance.GetDropData(sourceTile);
+        var dropData = WorldTileManager.Instance.GetDropData(sourceTile, tileBiome);
         foreach (var drop in dropData) {
             // WorldDropManager handles drop gameobjects
             if (drop.Amount == 1) { 
