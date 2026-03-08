@@ -228,7 +228,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         _currentContext = PlayerInteractionContext.UsingToolOnWorld;
     }
     private void CheckForNearbyInteractables() {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, _interactionRadius, _interactableLayerMask);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, _interactionRadius*4f, _interactableLayerMask);
         IInteractable closestInteractable = FindClosestInteractable(colliders);
 
         if (closestInteractable != _currentInteractable) {
@@ -249,19 +249,26 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     private IInteractable FindClosestInteractable(Collider2D[] colliders) {
         if (colliders == null || colliders.Length == 0)
             return null;
+        // Remove too big colliders
 
-        // 1) Sort colliders by distance to this object
+        // Sort colliders by distance to this object
         var sorted = colliders
             .OrderBy(c => Vector2.SqrMagnitude((Vector2)transform.position - (Vector2)c.transform.position));
 
-        // 2) For each collider, check all its IInteractable components
+        // For each collider, check all its IInteractable components
         foreach (var col in sorted) {
-            // 3) GetComponents returns every IInteractable on that GameObject
+            // GetComponents returns every IInteractable on that GameObject
             var interactables = col.GetComponents<IInteractable>();
             foreach (var interactable in interactables) {
-                // 4) Return the first one we can actually interact with
-                if (interactable.CanInteract)
-                    return interactable;
+                float effectiveRange = interactable.InteractionRangeOverride < 0 ?
+                                       _interactionRadius : interactable.InteractionRangeOverride;
+                float distance = Vector2.Distance(transform.position, col.transform.position);
+
+                if (distance <= effectiveRange) {
+                    // Return the first one we can actually interact with
+                    if (interactable.CanInteract)
+                        return interactable;
+                }
             }
         }
         return null;

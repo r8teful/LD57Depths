@@ -3959,6 +3959,94 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UIBoarderWhit
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 326
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b5d56fc97a083344857f687643e8799
+      internalID: -1985720069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIBoarderWhiteFill
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 326
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98f929e83b3f93b47bbfbd8148fb4575
+      internalID: -1427946143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TriangleV
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 518
+        width: 7
+        height: 4
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b2e45a1de8189044d99fee5b21cf8876
+      internalID: 146604514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TriangleSprite
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 524
+        width: 5
+        height: 3
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 686cd4c550c3c6f4eb4177cc4210d920
+      internalID: 149538585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -4066,13 +4154,17 @@ TextureImporter:
       TrenchProgression3: 1054361870
       TrenchProgression4: 1361359748
       TrenchWhole: 1359521255
+      TriangleSprite: 149538585
+      TriangleV: 146604514
       UIAbilityActiveBoarder: -1507697884
       UIArrow2: -923879406
       UIBoarderBackground: 398889071
       UIBoarderBigBlue: 1025421921
       UIBoarderBigGreen: -702740983
       UIBoarderBigOrange: 276201666
+      UIBoarderWhit: -1985720069
       UIBoarderWhite: 1126861340
+      UIBoarderWhiteFill: -1427946143
       UIBrimstone0: -917287309
       UIBrimstone1: -526431394
       UIBrimstone3: -1724539373

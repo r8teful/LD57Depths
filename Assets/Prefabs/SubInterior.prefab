@@ -5939,6 +5939,7 @@ MonoBehaviour:
   popupPosition: {fileID: 2616920178592729114}
   _useOutline: 1
   _spriteRenderer: {fileID: 1147580245095045659}
+  InteractRangeOverride: -1
 --- !u!1 &4782832984471028093
 GameObject:
   m_ObjectHideFlags: 0
@@ -6596,6 +6597,7 @@ MonoBehaviour:
   popupPosition: {fileID: 3141793934502187820}
   _useOutline: 1
   _spriteRenderer: {fileID: 5229215333937229237}
+  InteractRangeOverride: -1
 --- !u!114 &3019531992173901267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6905,6 +6907,7 @@ MonoBehaviour:
   popupPosition: {fileID: 4626099869727053461}
   _useOutline: 1
   _spriteRenderer: {fileID: 6845955002950831498}
+  InteractRangeOverride: -1
 --- !u!61 &2104683083912923185
 BoxCollider2D:
   m_ObjectHideFlags: 0

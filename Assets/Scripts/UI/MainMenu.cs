@@ -1,7 +1,6 @@
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -11,6 +10,9 @@ public class MainMenu : MonoBehaviour {
     [SerializeField] private UISettings _settings; 
     [SerializeField] private Transform _cameraTrans; 
     [SerializeField] private Transform _logoTrans;
+    
+    [SerializeField] private GameObject _containerNewGame;
+    [SerializeField] private GameObject _containerContinueGame;
 
 
     [SerializeField] private TMP_InputField _addressField;
@@ -28,6 +30,7 @@ public class MainMenu : MonoBehaviour {
         _settings.Hide();
         IntroAnimation();
     }
+
     private void IntroAnimation() {
         Sequence introSeq = DOTween.Sequence();
         float targetZ = -14;

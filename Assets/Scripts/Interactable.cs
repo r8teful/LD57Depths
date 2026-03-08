@@ -20,6 +20,8 @@ public class Interactable : MonoBehaviour, IInteractable {
     public event Action OnCeaseInteractable;
     public event Action OnSetInteractable;
 
+    public float InteractRangeOverride = -1;
+    public float InteractionRangeOverride => InteractRangeOverride;
     // --- Interface Implementation ---
     public Sprite InteractIcon => interactIcon;
 
@@ -27,6 +29,7 @@ public class Interactable : MonoBehaviour, IInteractable {
         get => isInteractionEnabled;
         set => isInteractionEnabled = value;
     }
+
 
     // --- Private State ---
 

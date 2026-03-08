@@ -4,12 +4,12 @@ using UnityEngine;
 public class DiscoveryManager : StaticInstance<DiscoveryManager> {
 
     // This is the magic. It's a HashSet that automatically syncs from server to clients.
-    private readonly HashSet<ushort> _discoveredResourceIds = new HashSet<ushort>();
-    private readonly HashSet<ushort> _discoveredBiomeIds = new HashSet<ushort>();
+    private HashSet<ushort> _discoveredResourceIds = new HashSet<ushort>();
+    private HashSet<ushort> _discoveredBiomeIds = new HashSet<ushort>();
 
     // We still need an event for the UI to listen to, but it's triggered by the SyncHashSet's own callback.
-    public static event System.Action<ushort> OnResourceDiscovered;
-    public static event System.Action<ushort> OnBiomeDiscovered;
+    public event System.Action<ushort> OnResourceDiscovered;
+    public event System.Action<ushort> OnBiomeDiscovered;
 
     public void ServerDiscoverResource(ushort resourceId) {
         if (_discoveredResourceIds.Add(resourceId)) {

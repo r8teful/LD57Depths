@@ -1240,3 +1240,68 @@ Not like:
 * More of a reason to go into the biome
 * Would be great if exploration entities didn't spawn in the air
 * Not enough detail in the submarine
+
+
+
+Menu flow:
+
+1. Start game
+
+&nbsp;	- New game
+
+&nbsp;	- Continue
+
+&nbsp;	- Challenge whatever
+
+1. Stats
+   	- General, playtime, blocks mined etc...
+   	- Collectibles
+2. Settings
+3. Exit
+
+
+
+
+
+
+
+What would we need to save? 
+
+
+
+Game:
+
+1. Modifiers
+
+2\. Seed
+
+
+
+World:
+
+1. Entities
+2. Structures
+3. Ores and tiles (durabilities we could just skip its not important I think)
+4. Sub position 
+
+
+
+Character:
+
+1. Upgrades
+2. Shrine upgrades
+3. Resources
+
+
+
+Handle special cases
+
+1. What happens when the player quits unexpectedly? 
+2. Simply save the state when player EXITS the sub, this way, all the resources inside the sub can be saved 
+
+3\. Also save when they are just entering, so if they quit when still transferring it would just save all the stuff into the sub
+
+
+
+
+

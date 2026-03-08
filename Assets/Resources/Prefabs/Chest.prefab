@@ -297,6 +297,18 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 6860290665098569080, guid: 389f92e04aa464c459d7aeb6958ade91, type: 3}
+      propertyPath: TrailModule.textureMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6860290665098569080, guid: 389f92e04aa464c459d7aeb6958ade91, type: 3}
+      propertyPath: TrailModule.textureScale.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6860290665098569080, guid: 389f92e04aa464c459d7aeb6958ade91, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 9.02
+      objectReference: {fileID: 0}
     - target: {fileID: 7758901675290398357, guid: 389f92e04aa464c459d7aeb6958ade91, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.82

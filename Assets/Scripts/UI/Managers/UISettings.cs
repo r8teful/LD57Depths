@@ -12,12 +12,6 @@ public class UISettings : MonoBehaviour {
     [SerializeField] private Button _buttonAudio;
     [SerializeField] private Button _buttonApplyVideo;
     [SerializeField] private Button _buttonBack;
-
-    [SerializeField] private GameObject _containerMain;
-    [SerializeField] private GameObject _containerGame;
-    [SerializeField] private GameObject _containerVideo;
-    [SerializeField] private GameObject _containerGraphics;
-    [SerializeField] private GameObject _containerAudio;
     
     // Actual setting stuff
     [SerializeField] private Toggle _debugMenu;
@@ -28,10 +22,6 @@ public class UISettings : MonoBehaviour {
 
     public UnityEvent<bool> OnSettingChange;
     private void Awake() {
-        _buttonGame.onClick.AddListener(() => ShowPanel(_containerGame));
-        _buttonVideo.onClick.AddListener(() => ShowPanel(_containerVideo));
-        _buttonGraphics.onClick.AddListener(() => ShowPanel(_containerGraphics));
-        _buttonAudio.onClick.AddListener(() => ShowPanel(_containerAudio));
         _buttonBack.onClick.AddListener(OnBackButtonClicked);
         _buttonApplyVideo.onClick.AddListener(OnApplyVideoClick);
         _screenModeDropdown.onValueChanged.AddListener(OnScreenModeSet);
@@ -42,7 +32,6 @@ public class UISettings : MonoBehaviour {
 
     private void Start() {
         OnDebugMenuChange(false);
-        ShowPanel(_containerGame);
     }
     private void OnDebugMenuChange(bool isActive) {
         if (UIManager.Instance == null) return;
@@ -60,14 +49,6 @@ public class UISettings : MonoBehaviour {
         }
     }
 
-
-    private void ShowPanel(GameObject panelToShow) {
-        _containerGame.SetActive(false);
-        _containerVideo.SetActive(false);
-        _containerGraphics.SetActive(false);
-        _containerAudio.SetActive(false);
-        panelToShow.SetActive(true);
-    }
     private void OnBackButtonClicked() {
         if (_fromPause) {
             // do nothing because pause screen will manage it 
@@ -115,12 +96,12 @@ public class UISettings : MonoBehaviour {
 
     internal void Show(bool fromPause) {
         _fromPause = fromPause;
-        _containerMain.SetActive(true);
+        //_containerMain.SetActive(true);
         OnSettingChange?.Invoke(true);
     }
     internal void Hide() {
         TryRevert();
-        _containerMain.SetActive(false);
+        //_containerMain.SetActive(false);
         OnSettingChange?.Invoke(false);
     }
 }

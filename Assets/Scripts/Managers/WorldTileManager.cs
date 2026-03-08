@@ -59,10 +59,11 @@ public class WorldTileManager : StaticInstance<WorldTileManager> {
         }
     }
     public float GetDurabilityIncrease(ushort tile) {
+        // Removing increasing for now but we might want to add it back later with difficulty modifiers or something idk
+        return 1; // no increase, so just 1 (because its mult)
         if(_tileUpgradeData.TryGetValue(tile, out var data)) {
             return data.DurabilityIncrease;
         }
-        return 1; // no increase, so just 1 (because its mult)
     }
     
     // its a list incase we want different drops from the same tile, right now we just add one 

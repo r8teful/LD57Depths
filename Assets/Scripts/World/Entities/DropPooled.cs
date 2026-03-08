@@ -10,6 +10,7 @@ public class DropPooled : MonoBehaviour {
     [SerializeField] private SpriteRenderer spriteRenderer;
     private Rigidbody2D _rb;
     private float _gravityScaleCached;
+    private bool _isMagnetizing;
 
     private void Awake() {
         _rb = GetComponent<Rigidbody2D>();
@@ -30,13 +31,33 @@ public class DropPooled : MonoBehaviour {
         transform.rotation = Quaternion.identity;
         IsPicked = false;
     }
+    
+    public void OnMagnetizeTick(Vector2 toCenter, float strength) {
+        Vector2 desiredVelocity = toCenter.normalized * strength;
+    
+        // The "error" between where we're going vs where we want to go
+        Vector2 steeringForce = desiredVelocity - _rb.linearVelocity;
+    
+        _rb.AddForce(_rb.mass * steeringForce, ForceMode2D.Force);
+    }
+    //private void FixedUpdate() {
+    //    if (!_isMagnetizing) return;
+    //    OnMagnetizeTick()
+    //}
 
     public void OnStartMagnetizing(Vector2 toCenter,float strength) {
         //_rb.angularVelocity = 0f;
         _rb.freezeRotation = true;
         _rb.gravityScale = 0;
         // finally apply force to change velocity towards desired velocity
-        _rb.AddForce(_rb.mass * strength * toCenter, ForceMode2D.Force);
+        //_rb.AddForce(_rb.mass * strength * toCenter, ForceMode2D.Force);
+
+        Vector2 desiredVelocity = toCenter.normalized * strength;
+
+        // The "error" between where we're going vs where we want to go
+        Vector2 steeringForce = desiredVelocity - _rb.linearVelocity;
+
+        _rb.AddForce(_rb.mass * steeringForce, ForceMode2D.Force);
     }
 
     public void OnStopMagnetizing() {

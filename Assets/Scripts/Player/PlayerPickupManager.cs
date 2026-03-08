@@ -66,7 +66,7 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
 
             current.Add(item);
             Vector2 toCenter = (center - (Vector2)item.transform.position);
-            item.OnStartMagnetizing(toCenter, _magnetStrength);
+            item.OnStartMagnetizing(toCenter, _magnetStrength*6);
         }
 
         // Any previously magnetized item that is not in the current set (or null) has been "lost"
