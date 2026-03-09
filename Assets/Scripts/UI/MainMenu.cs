@@ -6,20 +6,22 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour {
     [SerializeField] private  Button _buttonPlay;
+    [SerializeField] private  Button _buttonPlayBack;
+    [SerializeField] private  Button _buttonNewGame;
     [SerializeField] private  Button _buttonSettings;
     [SerializeField] private UISettings _settings; 
     [SerializeField] private Transform _cameraTrans; 
     [SerializeField] private Transform _logoTrans;
     
-    [SerializeField] private GameObject _containerNewGame;
-    [SerializeField] private GameObject _containerContinueGame;
-
+    [SerializeField] private GameObject _containerStartGame;
 
     [SerializeField] private TMP_InputField _addressField;
 
     private void OnEnable() {
         _buttonPlay.onClick.AddListener(OnPlayClicked);
+        _buttonPlayBack.onClick.AddListener(OnPlayBackClicked);
         _buttonSettings.onClick.AddListener(OnSettingsClicked);
+        _buttonNewGame.onClick.AddListener(OnStartNewGameClicked);
     }
     private void Start() {
         if(AudioController.Instance == null) {
@@ -28,6 +30,7 @@ public class MainMenu : MonoBehaviour {
         }
         AudioController.Instance.SetLoopAndPlay("MainMenu");
         _settings.Hide();
+        _containerStartGame.SetActive(false);
         IntroAnimation();
     }
 
@@ -60,6 +63,15 @@ public class MainMenu : MonoBehaviour {
 
     public void OnPlayClicked() {
         Debug.Log("play cliked");
+        _containerStartGame.SetActive(true);
+    }
+    public void OnPlayBackClicked() {
+        _containerStartGame.SetActive(false);
+    }
+    public void OnStartNewGameClicked() {
+        StartNewGame();
+    }
+    private void StartNewGame() {
         AudioController.Instance.SetLoopVolume(0, 4); // Stop main menu music
         SceneManager.LoadScene(1);
     }
