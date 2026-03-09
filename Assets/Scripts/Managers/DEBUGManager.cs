@@ -193,11 +193,6 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     }
     [ConsoleCommand("gotoBiome",value: "bio,fungal,forest,desert")]
     private void debugGotoBiome(string biome) {
-        var settings = GameSetupManager.Instance.CurrentGameSettings;
-        if(settings == null) {
-            Debug.LogError("Couldnt get host settings!");
-            return;
-        }
         BiomeType biomeType = BiomeType.None;
         if(biome == "bio") {
             biomeType = BiomeType.Bioluminescent;

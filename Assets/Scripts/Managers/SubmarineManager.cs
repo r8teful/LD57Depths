@@ -27,7 +27,17 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
         base.Awake();
         subInventory = new InventoryManager();
         itemGainSpawner.Init(subInventory);
+        GameSetupManager.OnSetupComplete += MyStart;
     }
+    private void OnDestroy() {
+        GameSetupManager.OnSetupComplete -= MyStart;
+    }
+
+    private void MyStart() {
+        var y = GameSetupManager.Instance.WorldGenSettings.MaxDepth;
+        submarineExterior.transform.position = new Vector3(0, y);
+    }
+
     public void MoveSub(int index) {
         submarineExterior.transform.position = new(0, GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(index));
         SetSubPosIndex(index);
@@ -36,11 +46,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
         _currentZoneIndex = index;
         OnSubMoved?.Invoke();
     }
-
-    public void Start() {
-        var y = GameSetupManager.Instance.WorldGenSettings.MaxDepth;
-        submarineExterior.transform.position = new Vector3(0, y);
-    }
+    
 
     internal void NewSubUpgrade(SubUpgradeEffect effect) {
         if (effect.isMajor) {

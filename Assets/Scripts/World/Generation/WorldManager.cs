@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 // Handles visual display of the world, also acts as a central part for references 
 public class WorldManager : StaticInstance<WorldManager> {
     // --- Managers ---
-    public WorldDataManager WorldDataManager;
+    public SaveDataBuilder WorldDataManager;
     public WorldGen WorldGen;
     public ChunkManager ChunkManager;
     public BiomeManager BiomeManager;

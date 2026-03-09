@@ -71,7 +71,7 @@ public class WorldGenData {
    
     public WorldGenData() { }
 
-    public static WorldGenData FromSO(WorldGenSettingSO so, bool randomizeBiomes = true, int seed = 0) {
+    public static WorldGenData FromSO(WorldGenSettingSO so, bool randomizeBiomes = true, int seed = 1) {
         Debug.Log("generating runinstance of worldSettings!"); 
         var s = new WorldGenData();
         s.seed = seed;

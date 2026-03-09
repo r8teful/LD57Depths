@@ -6,8 +6,9 @@ using UnityEngine.SceneManagement;
 
 [DefaultExecutionOrder(-100)]
 public class GameSetupManager : PersistentSingleton<GameSetupManager> {
-    public WorldGenData WorldGenSettings => CurrentGameSettings.WorldGenSettings;
-    public GameSettings CurrentGameSettings;
+    public WorldGenData WorldGenSettings => _currentGameSettings.WorldGenSettings;
+    private GameSettings _currentGameSettings;
+    public GameSettings CurrentGameSettings => _currentGameSettings;
     [SerializeField] private PlayerManager _playerPrefab;
     private Coroutine _bootRoutine;
     // TODO remove this
@@ -26,7 +27,7 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
     }
 
     public void Begin(GameSettings settings) {
-        CurrentGameSettings = settings;
+        _currentGameSettings = settings;
         if(SceneManager.GetActiveScene().buildIndex == 0) {
             // From main menu 
             AudioController.Instance.SetLoopVolume(0, 4); // Stop main menu music
@@ -38,9 +39,9 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
         if (scene.name == ResourceSystem.ScenePlayName) {
             if (_bootRoutine != null) 
                 return; // already running just return 
-            if (CurrentGameSettings == null) {
+            if (_currentGameSettings == null) {
                 // We've run this scene from the editor, or something went very wrong. Just create one here
-                CurrentGameSettings = new GameSettings(true);
+                _currentGameSettings = new GameSettings(true);
             }
             _bootRoutine = StartCoroutine(BootSequence());
         }

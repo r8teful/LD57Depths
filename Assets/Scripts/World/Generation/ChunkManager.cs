@@ -1,8 +1,11 @@
+using Newtonsoft.Json;
+using r8teful;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Overlays;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 // Represents the runtime data for a single chunk (tile references)
@@ -109,7 +112,7 @@ struct TileKey {
     public TileKey(ushort t, byte tex) { tileID = t; textureIndex = tex; }
 }
 
-public class ChunkManager : MonoBehaviour {
+public class ChunkManager : MonoBehaviour, ISaveable {
     [SerializeField] private bool useSave = false;
 
     // Add more TileBase fields for other tile types
@@ -786,5 +789,90 @@ public class ChunkManager : MonoBehaviour {
 
     internal bool HasGeneratedBiomeArtifact(BiomeType b) {
         return false;// todo
+    }
+
+    public void OnSave(r8teful.SaveData data) {
+        foreach (KeyValuePair<Vector2Int, ChunkData> chunkPair in worldChunks) {
+            // Only save chunks that have been generated/loaded AND potentially modified
+            if (chunkPair.Value.hasBeenGenerated) // Or save all in worldChunks if memory isn't a concern
+            {
+                Vector2Int chunkCoord = chunkPair.Key;
+                ChunkData chunkData = chunkPair.Value;
+
+                ChunkSaveData chunkSave = new ChunkSaveData(CHUNK_SIZE * CHUNK_SIZE);
+                for (int y = 0; y < CHUNK_SIZE; y++) {
+                    for (int x = 0; x < CHUNK_SIZE; x++) {
+                        var tileID = chunkData.tiles[x, y];
+                        if (tileID != ResourceSystem.InvalidID) {
+                            chunkSave.tileIds.Add(tileID);
+                            chunkSave.tileDurabilities.Add(chunkData.tileDurability[x, y]);
+                        } else {
+                            Debug.LogWarning($"Tile at [{x},{y}] in chunk {chunkCoord} has no ID mapping! Saving as air (ID 0).");
+                            chunkSave.tileIds.Add(0); // Save as air/null ID
+                        }
+                    }
+                }
+                // Use a string key for better compatibility e.g. "x,y"
+                string chunkKey = $"{chunkCoord.x},{chunkCoord.y}";
+                data.world.savedChunks.Add(chunkKey, chunkSave);
+            }
+        }
+    }
+
+    public void OnLoad(r8teful.SaveData data) {
+        WorldSaveData loadData = data.world;
+        if (loadData == null && loadData.savedChunks == null) {
+            Debug.LogError("Failed to deserialize world data or data was empty.");
+        }
+        _worldManager.ClearAllData();
+        foreach (KeyValuePair<string, ChunkSaveData> savedChunkPair in loadData.savedChunks) {
+            // Parse the string key back to Vector2Int
+            string[] keyParts = savedChunkPair.Key.Split(',');
+            if (keyParts.Length == 2 && int.TryParse(keyParts[0], out int x) && int.TryParse(keyParts[1], out int y)) {
+                Vector2Int chunkCoord = new Vector2Int(x, y);
+                ChunkSaveData chunkSave = savedChunkPair.Value;
+                if (chunkSave.tileIds.Count == CHUNK_SIZE * CHUNK_SIZE && chunkSave.tileDurabilities.Count == CHUNK_SIZE * CHUNK_SIZE) {
+                    ChunkData newChunk = new ChunkData(CHUNK_SIZE, CHUNK_SIZE);
+                    int tileIndex = 0;
+                    for (int localY = 0; localY < CHUNK_SIZE; localY++) {
+                        for (int localX = 0; localX < CHUNK_SIZE; localX++) {
+                            ushort tileId = chunkSave.tileIds[tileIndex];
+                            if (tileId != ResourceSystem.InvalidID) {
+                                newChunk.tiles[localX, localY] = tileId;
+                                newChunk.tileDurability[localX, localY] = chunkSave.tileDurabilities[tileIndex];
+                                tileIndex++;
+                            } else {
+                                Debug.LogWarning($"Unknown Tile ID {tileId} found in chunk {chunkCoord} during load. Setting to null/air.");
+                                newChunk.tiles[localX, localY] = 0;
+                            }
+                        }
+                    }
+                    newChunk.hasBeenGenerated = true; // Mark as loaded/existing
+                    newChunk.isModified = false; // Reset modified flag on load
+                    AddChunkData(chunkCoord, newChunk);
+                } else {
+                    Debug.LogWarning($"Chunk {chunkCoord} has incorrect tile count ({chunkSave.tileIds.Count}) in save file. Skipping load for this chunk.");
+                }
+            } else {
+                Debug.LogWarning($"Invalid chunk key format '{savedChunkPair.Key}' in save file. Skipping.");
+            }
+
+        }
+
+        // --- Load Player Position ---
+        // if (playerTransform != null) {
+        // Ensure player doesn't fall through floor on load - may need adjustments
+        //playerTransform.position = loadData.playerPosition;
+        // Force physics update or short disable/enable of Rigidbody could be needed
+        // e.g. playerTransform.GetComponent<Rigidbody2D>()?.Sleep();
+        // e.g. playerTransform.GetComponent<Rigidbody2D>()?.WakeUp();
+
+        //}
+        // Update current chunk coord AFTER potentially moving player
+
+        //currentPlayerChunkCoord = WorldToChunkCoord(playerTransform != null ? playerTransform.position : Vector3.zero);
+
+        Debug.Log($"World loaded successfully");
+        
     }
 }

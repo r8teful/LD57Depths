@@ -8,6 +8,8 @@ public class MainMenu : MonoBehaviour {
     [SerializeField] private  Button _buttonPlay;
     [SerializeField] private  Button _buttonPlayBack;
     [SerializeField] private  Button _buttonNewGame;
+    [SerializeField] private  Button _buttonContinue;
+    [SerializeField] private  Button _buttonChallenge;
     [SerializeField] private  Button _buttonSettings;
     [SerializeField] private UISettings _settings; 
     [SerializeField] private Transform _cameraTrans; 
@@ -31,6 +33,8 @@ public class MainMenu : MonoBehaviour {
         AudioController.Instance.SetLoopAndPlay("MainMenu");
         _settings.Hide();
         _containerStartGame.SetActive(false);
+        _buttonContinue.interactable = false;
+        _buttonChallenge.interactable = false;
         IntroAnimation();
     }
 

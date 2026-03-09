@@ -1,9 +1,11 @@
+using Newtonsoft.Json;
+using r8teful;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class EntityManager : StaticInstance<EntityManager> {
+public class EntityManager : StaticInstance<EntityManager>, ISaveable {
     [Header("References")]
     [SerializeField] private ChunkManager chunkManager;
     [SerializeField] private WorldManager worldManager;
@@ -234,5 +236,21 @@ public class EntityManager : StaticInstance<EntityManager> {
         }
     }
 
-   
+    public void OnSave(SaveData data) {
+        var pEntities= persistentEntityDatabase.ToList();
+        var entities = JsonConvert.SerializeObject(pEntities, Formatting.Indented, new JsonSerializerSettings {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
+        // write entity string to data
+    }
+
+    // todo
+    public void OnLoad(SaveData data) {
+        //string dataString = data.entities;
+        string dataString = "";
+        var entities =  JsonConvert.DeserializeObject<List<PersistentEntityData>>(dataString, new JsonSerializerSettings {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
+        //persistentEntityDatabase = entities.ToDictionary(something);
+    }
 }

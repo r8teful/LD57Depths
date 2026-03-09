@@ -1,4 +1,5 @@
-﻿using System;
+﻿using r8teful;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -11,7 +12,7 @@ public class GameSettings {
 
     }
 
-    public GameSettings(bool createRandomSeed) : this(createRandomSeed ? NewSeed() : 0) {
+    public GameSettings(bool createRandomSeed) : this(createRandomSeed ? NewSeed() : 1) {
     }
     public GameSettings(int seed) : this(ResourceSystem.GetMainMap(),seed) {
     }

@@ -296,6 +296,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1133781714}
     m_Modifications:
+    - target: {fileID: 117847488861825101, guid: ffab04fe0263c814b9080f1bde38d155, type: 3}
+      propertyPath: DefaultColor
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2825259571136834365, guid: ffab04fe0263c814b9080f1bde38d155, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -670,12 +674,14 @@ MonoBehaviour:
   _buttonPlay: {fileID: 1796684872}
   _buttonPlayBack: {fileID: 5759961428194687800}
   _buttonNewGame: {fileID: 192444718}
+  _buttonContinue: {fileID: 1080170699}
+  _buttonChallenge: {fileID: 12206123}
   _buttonSettings: {fileID: 2041428162}
   _settings: {fileID: 1109950697}
   _cameraTrans: {fileID: 8753529781854443748}
   _logoTrans: {fileID: 1404723641}
   _containerStartGame: {fileID: 1813277506}
-  _seedField: {fileID: 0}
+  _seedField: {fileID: 990333237}
 --- !u!4 &194881547
 Transform:
   m_ObjectHideFlags: 0
