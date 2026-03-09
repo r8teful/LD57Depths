@@ -16,10 +16,21 @@ public class SubPortal : MonoBehaviour {
         if (_interactable != null) {
             _interactable.OnInteract += HandleInteraction;
         }
+        PlayerLayerController.OnPlayerVisibilityChanged += OnPlayerChange;
     }
+
     private void OnDisable() {
         if (_interactable != null) {
             _interactable.OnInteract -= HandleInteraction;
+        }
+        PlayerLayerController.OnPlayerVisibilityChanged -= OnPlayerChange;
+    }
+
+    private void OnPlayerChange(VisibilityLayerType layer) {
+        if(layer == VisibilityLayerType.Exterior) {
+            _interactable.CanInteract = IsEntrance;
+        } else if(layer == VisibilityLayerType.Interior) {
+            _interactable.CanInteract = !IsEntrance;
         }
     }
 

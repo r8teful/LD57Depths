@@ -1732,6 +1732,7 @@ MonoBehaviour:
   _buttonAudio: {fileID: 2829169834791260187}
   _buttonApplyVideo: {fileID: 6377339358502247621}
   _buttonBack: {fileID: 5240178808011843720}
+  _settingContainer: {fileID: 3105868312217507921}
   _debugMenu: {fileID: 4430860317514255207}
   _backgroundFancy: {fileID: 389114720642009571}
   OnSettingChange:
@@ -4855,6 +4856,42 @@ PrefabInstance:
     - target: {fileID: 1212320054696659573, guid: d43e1f26ccda5e74c833a9749c374a59, type: 3}
       propertyPath: m_Name
       value: DebugStats
+      objectReference: {fileID: 0}
+    - target: {fileID: 5520564878594534231, guid: d43e1f26ccda5e74c833a9749c374a59, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5520564878594534231, guid: d43e1f26ccda5e74c833a9749c374a59, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5520564878594534231, guid: d43e1f26ccda5e74c833a9749c374a59, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5520564878594534231, guid: d43e1f26ccda5e74c833a9749c374a59, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5520564878594534231, guid: d43e1f26ccda5e74c833a9749c374a59, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7667357936337676600, guid: d43e1f26ccda5e74c833a9749c374a59, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7667357936337676600, guid: d43e1f26ccda5e74c833a9749c374a59, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7667357936337676600, guid: d43e1f26ccda5e74c833a9749c374a59, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7667357936337676600, guid: d43e1f26ccda5e74c833a9749c374a59, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8805916108850351570, guid: d43e1f26ccda5e74c833a9749c374a59, type: 3}
       propertyPath: m_Pivot.x

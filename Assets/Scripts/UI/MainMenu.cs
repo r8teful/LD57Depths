@@ -15,7 +15,7 @@ public class MainMenu : MonoBehaviour {
     
     [SerializeField] private GameObject _containerStartGame;
 
-    [SerializeField] private TMP_InputField _addressField;
+    [SerializeField] private TMP_InputField _seedField;
 
     private void OnEnable() {
         _buttonPlay.onClick.AddListener(OnPlayClicked);
@@ -54,6 +54,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     private void OnSettingsClicked() {
+        Debug.Log("Setting Click");
         _settings.Show(fromPause: false);
     }
 
@@ -73,6 +74,9 @@ public class MainMenu : MonoBehaviour {
     }
     private void StartNewGame() {
         AudioController.Instance.SetLoopVolume(0, 4); // Stop main menu music
+        if(_seedField.text != string.Empty) {
+
+        }
         SceneManager.LoadScene(1);
     }
     public void OnJoinClicked() {

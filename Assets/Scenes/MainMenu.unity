@@ -782,6 +782,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &272526580 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3105868312217507921, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
+  m_PrefabInstance: {fileID: 1109950695}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &287072219
 GameObject:
   m_ObjectHideFlags: 0
@@ -2975,6 +2980,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 369151425536018380, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
+      propertyPath: _settingContainer
+      value: 
+      objectReference: {fileID: 272526580}
     - target: {fileID: 369151425536018380, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
       propertyPath: OnSettingChange.m_PersistentCalls.m_Calls.Array.size
       value: 1

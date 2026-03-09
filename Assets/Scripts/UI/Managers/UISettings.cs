@@ -12,6 +12,8 @@ public class UISettings : MonoBehaviour {
     [SerializeField] private Button _buttonAudio;
     [SerializeField] private Button _buttonApplyVideo;
     [SerializeField] private Button _buttonBack;
+
+    [SerializeField] private GameObject _settingContainer;
     
     // Actual setting stuff
     [SerializeField] private Toggle _debugMenu;
@@ -96,12 +98,12 @@ public class UISettings : MonoBehaviour {
 
     internal void Show(bool fromPause) {
         _fromPause = fromPause;
-        //_containerMain.SetActive(true);
+        _settingContainer.SetActive(true);
         OnSettingChange?.Invoke(true);
     }
     internal void Hide() {
         TryRevert();
-        //_containerMain.SetActive(false);
+        _settingContainer.SetActive(false);
         OnSettingChange?.Invoke(false);
     }
 }
