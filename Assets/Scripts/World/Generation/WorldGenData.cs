@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 // Runtime data of a world gen setting
 [Serializable]
-public class WorldGenSettings {
+public class WorldGenData {
     // Base authoring values
     public int seed;
     public ushort id;
@@ -32,7 +32,6 @@ public class WorldGenSettings {
     // Runtime-only:
     [NonSerialized] public Material worldGenSquareSprite;
     [NonSerialized] public Vector3 runtimeCameraPosition; // for parallax
-
     public int GetBiomeProgressionIndex(BiomeType b) {
         var biome = biomes.FirstOrDefault(s => s.BiomeType == b);
         if (biome == null) return 0;
@@ -70,11 +69,11 @@ public class WorldGenSettings {
     }
 
    
-    public WorldGenSettings() { }
+    public WorldGenData() { }
 
-    public static WorldGenSettings FromSO(WorldGenSettingSO so, bool randomizeBiomes = true, int seed = 0) {
+    public static WorldGenData FromSO(WorldGenSettingSO so, bool randomizeBiomes = true, int seed = 0) {
         Debug.Log("generating runinstance of worldSettings!"); 
-        var s = new WorldGenSettings();
+        var s = new WorldGenData();
         s.seed = seed;
         s.id = so.ID;
         s.trenchBaseWidth = so.trenchBaseWidth;
@@ -112,7 +111,7 @@ public class WorldGenSettings {
         return s;
     }
 
-    private static void PlaceOres(WorldGenSettings s) {
+    private static void PlaceOres(WorldGenData s) {
         List<WorldGenBiomeData> biomes = s.biomes;
         // Progression index indicates what ORE should be there
         foreach (var biome in biomes) {
@@ -125,7 +124,7 @@ public class WorldGenSettings {
         }
     }
 
-    private static void PlaceBiomes(WorldGenSettings settings, bool randomizeBiomes = true) {
+    private static void PlaceBiomes(WorldGenData settings, bool randomizeBiomes = true) {
         // Start from the bottom, using the pool (or weighted chance based) of that layer, (if we are having that some biomes appear at the top)
         //var placedBiomes = new List<WorldGenBiomeData>();
         // Just use random placement for now
@@ -353,7 +352,7 @@ public class WorldGenOre {
     public Vector2 oreStart;
     public Color DebugColor = Color.white;
 
-    public static WorldGenOre FromSO(WorldGenOreSO ore, WorldGenSettings settings) {
+    public static WorldGenOre FromSO(WorldGenOreSO ore, WorldGenData settings) {
         WorldGenOre o = new();
         o.oreTile = ore.oreTile;
         o.oreStage = ore.oreStage;

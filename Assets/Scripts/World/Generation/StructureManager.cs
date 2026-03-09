@@ -5,7 +5,7 @@ using UnityEngine;
 // Holds runtime data for structures
 public class StructureManager : MonoBehaviour {
     public List<StructurePlacementResult> StructurePlacements = new List<StructurePlacementResult>();
-    private WorldGenSettings _cachedSettings;
+    private WorldGenData _cachedSettings;
 
     public void AddStructureData(StructurePlacementResult placement) {
         StructurePlacements.Add(placement);
@@ -19,7 +19,7 @@ public class StructureManager : MonoBehaviour {
         return structure;
     }
     
-    public void GenerateExplorationEntities(WorldGenSettings settings) {
+    public void GenerateExplorationEntities(WorldGenData settings) {
         float width = 500f;
         _cachedSettings = settings;
         // this will only create within a certain area, much like the artifacts, but its okay for now

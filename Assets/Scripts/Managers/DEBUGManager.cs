@@ -2,6 +2,7 @@ using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Linq;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 public class DEBUGManager : StaticInstance<DEBUGManager> {
@@ -197,20 +198,24 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
             Debug.LogError("Couldnt get host settings!");
             return;
         }
-        int index = 0;
+        BiomeType biomeType = BiomeType.None;
         if(biome == "bio") {
-            index = 0;
+            biomeType = BiomeType.Bioluminescent;
         }
         if (biome == "fungal") {
-            index = 1;
+            biomeType = BiomeType.Fungal;
         }
         if (biome == "forest") {
-            index = 2;
+            biomeType = BiomeType.Forest;
         }
         if (biome == "desert") {
-            index = 3;
+            biomeType = BiomeType.Deadzone;
         }
-        var worldBiome = App.ResourceSystem.GetWorldGenByID(settings.WorldGenID).biomes[index];
+        if (biome == "deadzone") {
+            biomeType = BiomeType.Deadzone;
+        }
+        var worldBiome = GameSetupManager.Instance.WorldGenSettings.biomes.FirstOrDefault(b => b.BiomeType == biomeType);
+        if (worldBiome == null) return;
         _player.gameObject.transform.position = 
             new(worldBiome.XOffset, worldBiome.YStart + worldBiome.YHeight * 0.5f);
     }

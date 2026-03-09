@@ -73,11 +73,15 @@ public class MainMenu : MonoBehaviour {
         StartNewGame();
     }
     private void StartNewGame() {
-        AudioController.Instance.SetLoopVolume(0, 4); // Stop main menu music
         if(_seedField.text != string.Empty) {
-
+            if(int.TryParse(_seedField.text,out var seed)){
+                var s = new GameSettings(seed);
+                GameSetupManager.Instance.Begin(s);
+                return;
+            }
         }
-        SceneManager.LoadScene(1);
+        var settings = new GameSettings(true); // Creates a random seed for us
+        GameSetupManager.Instance.Begin(settings);
     }
     public void OnJoinClicked() {
         //SceneManager.LoadScene(1);
