@@ -35,7 +35,7 @@ public static class App {
         Cursor.SetCursor(Resources.Load<Texture2D>("cursorMenu"), new Vector2(3, 3), CursorMode.Auto);
 #if UNITY_STANDALONE
         try {
-            SteamClient.Init(3639640);
+            //SteamClient.Init(3639640);
             SteamConnection = true;
         } catch (Exception e) {
             Debug.Log(e);
