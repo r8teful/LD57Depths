@@ -32,14 +32,14 @@ public class BackgroundWorldTexturesHandler : StaticInstance<BackgroundWorldText
        
     }
   
-    public void PushBiomesToMaterials(WorldGenSettings settings) {
+    public void PushBiomesToMaterials(WorldGenData settings) {
         var index = 0;
         foreach (var mat in layerMaterials) {
             PushBiomeToLayerMaterial(settings, mat, index); // todo set current index where we start!
             index++;
         }
     }
-    public void PushBiomeToLayerMaterial(WorldGenSettings settings, Material mat,int matIndex) {
+    public void PushBiomeToLayerMaterial(WorldGenData settings, Material mat,int matIndex) {
         if (mat == null) return;
 
         // push per-biome arrays (if not already pushed globally)

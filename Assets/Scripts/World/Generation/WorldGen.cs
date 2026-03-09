@@ -46,7 +46,7 @@ public class WorldGen : MonoBehaviour {
     private ChunkManager chunkManager;
     private List<WorldSpawnEntitySO> worldSpawnEntities;
     private Camera _renderCamera; // Orthographic camera for rendering chunks
-    private WorldGenSettings _cachedSettings;
+    private WorldGenData _cachedSettings;
     private RenderTexture _renderTexture; // Target 96x96 RenderTexture
 
     public const int CHUNK_TILE_DIMENSION = 16; // Size of a chunk in tiles (e.g., 16x16)
@@ -76,7 +76,7 @@ public class WorldGen : MonoBehaviour {
         public JobHandle CombinedHandle; // To depend on previous jobs
     }
 
-    public void Init(RenderTexture renderTexture, WorldGenSettings settings, WorldManager worldmanager, ChunkManager chunkManager,Camera renderCamera) {
+    public void Init(RenderTexture renderTexture, WorldGenData settings, WorldManager worldmanager, ChunkManager chunkManager,Camera renderCamera) {
         _renderTexture = renderTexture;
         this.worldmanager = worldmanager;
         this.chunkManager = chunkManager;

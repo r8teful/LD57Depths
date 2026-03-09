@@ -1,20 +1,13 @@
-﻿using Sirenix.OdinInspector;
-using System;
+﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
 [DefaultExecutionOrder(-100)]
 public class GameSetupManager : PersistentSingleton<GameSetupManager> {
-    [ShowInInspector]
-    private WorldGenSettings _worldGenSettings;
-    public WorldGenSettings WorldGenSettings => _worldGenSettings;
+    public WorldGenData WorldGenSettings => CurrentGameSettings.WorldGenSettings;
     public GameSettings CurrentGameSettings;
-    private WorldGenSettingSO _settings;
     [SerializeField] private PlayerManager _playerPrefab;
     private Coroutine _bootRoutine;
     // TODO remove this
@@ -32,21 +25,30 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    public void Begin(GameSettings settings) {
+        CurrentGameSettings = settings;
+        if(SceneManager.GetActiveScene().buildIndex == 0) {
+            // From main menu 
+            AudioController.Instance.SetLoopVolume(0, 4); // Stop main menu music
+        }
+        SceneManager.LoadScene(1);
+    }
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-        // Check if we just loaded the Gameplay Scene
         if (scene.name == ResourceSystem.ScenePlayName) {
             if (_bootRoutine != null) 
                 return; // already running just return 
+            if (CurrentGameSettings == null) {
+                // We've run this scene from the editor, or something went very wrong. Just create one here
+                CurrentGameSettings = new GameSettings(true);
+            }
             _bootRoutine = StartCoroutine(BootSequence());
         }
-        // Actually this is fine if we set App.Backdrop.Require before we get here
     }
     private IEnumerator BootSequence() {
         Debug.Log($"boot seq start: {GetInstanceID()}");
-        var s = NewSeed();
-        UnityEngine.Random.InitState(s);
         
-        SetupSettings(true,s);
+        //SetupSettings(true,s);
 
         yield return null;
 
@@ -80,36 +82,21 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
         _bootRoutine = null;
         OnSetupComplete?.Invoke();
     }
-    private int NewSeed() {
-        byte[] bytes = new byte[4];
-        using (var rng = RandomNumberGenerator.Create()) {
-            rng.GetBytes(bytes);
-        }
-        int seed = BitConverter.ToInt32(bytes, 0);
-        // make non-negative
-        return seed & 0x7FFFFFFF;
-    }
+ 
 
     private void LogError(object script) {
         Debug.LogError($"Coudn't find script {script}!!");
     }
 
-    private void SetupSettings(bool randomizeBiomes,int seed = 0) {
-
-        _settings = ResourceSystem.GetMainMap(); // We'll have to properly set this up later with nice menu icons etc..
-
-        _worldGenSettings = WorldGenSettings.FromSO(_settings, randomizeBiomes, seed); // This does most the heavy lifting for us
-    }
-
 
     public void OnDrawGizmos() {
-        if (_worldGenSettings == null)
+        if (WorldGenSettings == null)
             return;
-        foreach (var ore in _worldGenSettings.worldOres) {
+        foreach (var ore in WorldGenSettings.worldOres) {
             //Vector2 center = new Vector2(0, _worldGenSettings.MaxDepth);
             Vector2 center = ore.oreStart;
             var color = ore.DebugColor;
-            var targetR = ore.WorldDepthBandProcent * Mathf.Abs(_worldGenSettings.MaxDepth);
+            var targetR = ore.WorldDepthBandProcent * Mathf.Abs(WorldGenSettings.MaxDepth);
             float bandWidth = targetR * ore.widthPercent; 
             DrawWireCircle(center, targetR, color);
 
@@ -140,30 +127,6 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
             Gizmos.DrawLine(prevPoint, nextPoint);
             prevPoint = nextPoint;
         }
-    }
-
-    internal void RebuildSettings() {
-        SetupSettings(false);
-    }
-}
-
-// User defines this if they want, any empty should not be used
-[Serializable]
-public class GameSettings {
-    public int WorldSeed;
-    public ushort WorldGenID;
-    public ushort[] EnabledModifierIds = Array.Empty<ushort>();
-    public List<AbilitySO> AvailableAbilities;
-    public List<EventCaveSO> AvailableEventcaves; // Either take all from resource system or just setting defined idk
-
-    public HashSet<ushort> AvailableAbilityIDs 
-        => AvailableAbilities.Select(a => a.ID).ToHashSet();
-    public HashSet<ushort> AvailableEventCaveIDs
-        => AvailableEventcaves.Select(a => a.ID).ToHashSet();
-
-    public GameSettings(int worldSeed, ushort[] enabledModifierIds) {
-        WorldSeed = worldSeed;
-        EnabledModifierIds = enabledModifierIds;
     }
 }
 

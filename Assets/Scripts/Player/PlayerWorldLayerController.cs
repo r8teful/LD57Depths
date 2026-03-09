@@ -3,7 +3,7 @@ using UnityEngine;
 
 // Tracks the players Y position and handles the layer shaders
 public class PlayerWorldLayerController : StaticInstance<PlayerWorldLayerController> {
-    private WorldGenSettings _settings;
+    private WorldGenData _settings;
 
     public static event Action<int> OnPlayerWorldLayerChange;
     private int _currentPlayerLayer  = -1;

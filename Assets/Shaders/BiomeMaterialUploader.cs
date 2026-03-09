@@ -16,7 +16,7 @@ public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
         base.Awake();
 
     }
-    public void PushBiomesToMaterial(WorldGenSettings settings) {
+    public void PushBiomesToMaterial(WorldGenData settings) {
         Debug.Log("Pushing..,");
 
         

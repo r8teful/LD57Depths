@@ -7,6 +7,9 @@ public class MusicManager : StaticInstance<MusicManager> {
         base.Awake();
         GameSetupManager.OnSetupComplete += SetupComplete;
     }
+    private void OnDestroy() {
+        GameSetupManager.OnSetupComplete -= SetupComplete;
+    }
 
     // BEWARE!! if you directly start playing a song when the main menu music is still fading out it breaks for some reason
     private void SetupComplete() {

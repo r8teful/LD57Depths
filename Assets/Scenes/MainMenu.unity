@@ -675,7 +675,7 @@ MonoBehaviour:
   _cameraTrans: {fileID: 8753529781854443748}
   _logoTrans: {fileID: 1404723641}
   _containerStartGame: {fileID: 1813277506}
-  _addressField: {fileID: 0}
+  _seedField: {fileID: 0}
 --- !u!4 &194881547
 Transform:
   m_ObjectHideFlags: 0
@@ -2369,14 +2369,14 @@ MonoBehaviour:
   m_VerticalScrollbarEventHandler: {fileID: 0}
   m_LayoutGroup: {fileID: 0}
   m_ScrollSensitivity: 1
-  m_ContentType: 0
+  m_ContentType: 2
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 0
+  m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
-  m_CharacterValidation: 0
+  m_CharacterValidation: 2
   m_RegexValue: 
   m_GlobalPointSize: 19.1
   m_CharacterLimit: 9

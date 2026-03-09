@@ -26,7 +26,8 @@ public class WorldGenOreSO : ScriptableObject {
     private void OnValidate() {
         if (!Application.isPlaying) return;
         if (GameSetupManager.Instance == null) return;
-        GameSetupManager.Instance.RebuildSettings();
+        // Changed things so this doesn't work anymore
+        //GameSetupManager.Instance.RebuildSettings();
     }
 #endif
 }
