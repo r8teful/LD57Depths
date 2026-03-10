@@ -10,7 +10,7 @@ public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
     [Button]
     public void DebugUpdate() {
         // this obviously doesn't work in edit mode because we don't have the instance
-        PushBiomesToMaterial(GameSetupManager.Instance.WorldGenSettings);
+        PushBiomesToMaterial(GameManager.Instance.WorldGenSettings);
     }
     protected override void Awake() {
         base.Awake();

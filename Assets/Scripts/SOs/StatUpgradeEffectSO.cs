@@ -20,7 +20,7 @@ public class StatUpgradeEffectSO : UpgradeEffect {
 
     public override UIExecuteStatus GetExecuteStatus() {
         StatModifier tempMod = new(modificationValue, upgradeType, increaseType, this);
-        var playerStats = PlayerManager.LocalInstance.PlayerStats;
+        var playerStats = PlayerManager.Instance.PlayerStats;
         if(playerStats == null) {
             Debug.LogError("Couldnt find player stats!");
             return null;

@@ -32,7 +32,7 @@ public class GameSettings {
 
     //public ChallengeDefinition Challenge;       // predefined, not player-authored
 
-    public WorldSaveData SaveToLoad; 
+    public SaveData SaveToLoad; 
     
     public ushort[] EnabledModifierIds = Array.Empty<ushort>();
 

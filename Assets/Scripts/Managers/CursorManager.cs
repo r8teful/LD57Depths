@@ -5,7 +5,7 @@ public class CursorManager : MonoBehaviour {
     public Texture2D CursorMenu;
     public Texture2D CursorCrosshair;
     private void OnEnable() {
-        Debug.Log("GameSetupManager Enable!!");
+        Debug.Log("cursor Enable!!");
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 

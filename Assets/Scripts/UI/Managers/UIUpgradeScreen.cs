@@ -37,7 +37,7 @@ public class UIUpgradeScreen : MonoBehaviour {
     }
     internal void Init(UIManager UIManager, PlayerManager client) {
         _UIManagerParent = UIManager;
-        _treeData = App.ResourceSystem.GetTreeByName(GameSetupManager.Instance.GetUpgradeTreeName()); // This will obviously have to come from some sort of "game selection" manager
+        _treeData = App.ResourceSystem.GetTreeByName(GameManager.Instance.GetUpgradeTreeName()); // This will obviously have to come from some sort of "game selection" manager
        
         UpgradeTreeInstance = InstantiateTree(_treeData, _upgradePanelTree.transform, client);
         PanAndZoom.Init(client.InputManager);

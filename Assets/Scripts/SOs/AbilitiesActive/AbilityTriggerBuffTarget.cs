@@ -24,7 +24,7 @@ public class AbilityTriggerBuffTarget : ScriptableObject, IEffectActive, IEffect
 
     public float GetEffectiveStat(StatType stat, StatModifier tempMod = null) {
         var id = _targetAbility.ID;
-        var ab = PlayerManager.LocalInstance.PlayerAbilities.GetAbilityInstance(id);
+        var ab = PlayerManager.Instance.PlayerAbilities.GetAbilityInstance(id);
         return ab.GetEffectiveStat(stat, tempMod);
     }
 }

@@ -10,11 +10,11 @@ public class SubVisualUpgradeable : MonoBehaviour {
         if (_spriteRenderer == null) {
             Debug.LogError("Script needs renderer component to work!");
         }
-        GameSetupManager.OnSetupComplete += MyAwake;
+        GameManager.OnSetupComplete += MyAwake;
 
     }
     private void OnDestroy() {
-        GameSetupManager.OnSetupComplete -= MyAwake;
+        GameManager.OnSetupComplete -= MyAwake;
         if (PlayerManager.Instance != null)
             PlayerManager.Instance.UpgradeManager.OnUpgradePurchased -= UpgradePurchased;
     }

@@ -23,7 +23,7 @@ public class StatModAbilityEffectSO : UpgradeEffect {
 
     public override UIExecuteStatus GetExecuteStatus() { 
         // First we need the current multiplier value, which we need to pull from our targetAbility instance
-        var abilityInstance = PlayerManager.LocalInstance.PlayerAbilities.GetAbilityInstance(targetAbility.ID);
+        var abilityInstance = PlayerManager.Instance.PlayerAbilities.GetAbilityInstance(targetAbility.ID);
         if(abilityInstance == null) {
             //Debug.LogError("Can't get target ability for upgrade. We probably don't have it unlocked yet");
             return null;

@@ -62,7 +62,7 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
         // Basically the generation/registration part is separated from the activation part
 
         foreach (ulong id in entityIds) {
-            RequestEntityActivation(id); // Assuming we're always going to want to activate it and its not already activated
+            RequestEntityActivation(id); // This only spawns if data.activeInstance is null
         }
     }
     public void RemoveEntitieAtChunk(Vector2Int chunkCoord) {
@@ -94,6 +94,10 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
             // Optionally: Send error back to client? TargetRpc...?
             return;
         }
+        if(data.activeInstance != null) {
+            // Already spawed
+            return;
+        }
         GameObject prefab = App.ResourceSystem.GetEntityByID(data.entityID).entityPrefab;
         if (prefab == null) {
             Debug.LogError($"Cannot activate entity {persistentId}: Prefab missing for type {data.entityID}");
@@ -102,6 +106,7 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
         // Instantiate and apply data
         Vector3 spawnPos = new Vector3(data.cellPos.x + 0.5f, data.cellPos.y + 0.5f, 0f); // Spawn in the centre of the tile
         GameObject instance = Instantiate(prefab, spawnPos, data.rotation,transform);
+        Debug.Log($"Instsantiting instance {prefab} with ID: {data.entityID} at {spawnPos}");
         data.activeInstance = instance; // LINK
         //instance.transform.localScale = data.scale;
         ApplyDataToInstance(instance, data); // Apply health, growth etc.

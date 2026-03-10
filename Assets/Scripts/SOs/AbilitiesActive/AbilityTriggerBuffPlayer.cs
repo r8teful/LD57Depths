@@ -10,10 +10,10 @@ public class AbilityTriggerBuffPlayer : ScriptableObject, IEffectActive, IEffect
 
         buffinst.IncreaseBuffPower(source);
 
-        PlayerManager.LocalInstance.PlayerStats.TriggerBuff(buffinst);
+        PlayerManager.Instance.PlayerStats.TriggerBuff(buffinst);
     }
 
     public float GetEffectiveStat(StatType stat, StatModifier tempMod = null) {
-        return PlayerManager.LocalInstance.PlayerStats.GetStat(stat);
+        return PlayerManager.Instance.PlayerStats.GetStat(stat);
     }
 }

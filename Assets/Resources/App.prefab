@@ -116,6 +116,7 @@ GameObject:
   - component: {fileID: 2982994129555246514}
   - component: {fileID: 4046154845122264840}
   - component: {fileID: 8703731461765780724}
+  - component: {fileID: 3318319728967139892}
   m_Layer: 0
   m_Name: App
   m_TagString: Untagged
@@ -167,7 +168,6 @@ MonoBehaviour:
   - {fileID: 4046154845122264840}
   - {fileID: 8703731461765780724}
   SFXMixer: {fileID: -6496454409046839794, guid: 2e34245c018982a489d8750eca6c641f, type: 2}
-  mainMixer: {fileID: 24100000, guid: 2e34245c018982a489d8750eca6c641f, type: 2}
 --- !u!114 &4564868245224107430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,17 +180,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3780eacc08a53b9448f26f1b4934c90d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentGameSettings:
-    WorldSeed: 0
-    WorldGenID: 0
-    EnabledModifierIds: 
-    AvailableAbilities:
-    - {fileID: 11400000, guid: e9befdab8625c3a438c015a4cae76e3d, type: 2}
-    - {fileID: 11400000, guid: 0e621cfbd16e0d14a9bcc5b584f383ca, type: 2}
-    - {fileID: 11400000, guid: e55b0353d027f6a4d97b63126a073fd3, type: 2}
-    - {fileID: 11400000, guid: ce92d135c11653140b6fee0b1ef8e5f9, type: 2}
-    - {fileID: 11400000, guid: ddcffc22d5a6c1843b12b12a21c04d49, type: 2}
-    AvailableEventcaves: []
   _playerPrefab: {fileID: 1329228130332512456, guid: c70c5420e5790ed4fb976e670d2c6eeb, type: 3}
 --- !u!114 &2982994129555246514
 MonoBehaviour:
@@ -400,3 +389,15 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &3318319728967139892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9006661589842215164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54f5c87864cbac240bee74dfaeeca633, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveDataBuilder

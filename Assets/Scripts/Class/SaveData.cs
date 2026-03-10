@@ -14,17 +14,23 @@ namespace r8teful {
         //public SettingsSave settings = new();
 
         // Run specific (wiped when new run is started)
-        public PlayerSaveData player = new();
-        public WorldSaveData world = new();
+        public BobSaveData bobData = new();
+        public WorldSaveData worldData = new();
 
-
+        public bool HasRunData {
+            get {
+                //if (worldData.savedChunks == null) return false;
+                if (bobData.nodeSaveData == null) return false;
+                //if (worldData.savedChunks.Count == 0 ) return false;
+                if (bobData.nodeSaveData.Count  == 0) return false;
+                return true;
+            } 
+        }
     }
     [System.Serializable]
-    public class  PlayerSaveData {
-        //List<>
-        // upgrades, et    
+    public class  BobSaveData {
+        public Dictionary<ushort, int> nodeSaveData;
     }
-
     [System.Serializable]
     public class ChunkSaveData {
         public List<ushort> tileIds; // Flattened list of Tile IDs
@@ -38,6 +44,7 @@ namespace r8teful {
     [System.Serializable]
     public class WorldSaveData {
         // Use string keys for JSON compatibility across different serializers more easily
+        public int Seed = 1;
         public Dictionary<string, ChunkSaveData> savedChunks;
         public Dictionary<string, PersistentEntityData> savedInteriorEntities;
         

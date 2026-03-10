@@ -11,6 +11,8 @@ public static class App {
     //public static EventManager EventManager;
     public static bool isEditor;
     public static bool isDebugMode;
+    public static bool saveDataExists;
+    public static bool SaveRunDataExists;
 
     public static bool SteamConnection { get; private set; }
 
@@ -33,6 +35,12 @@ public static class App {
         Backdrop = app.GetComponentInChildren<BackdropManager>();
         CursorManager = app.GetComponentInChildren<CursorManager>();
         Cursor.SetCursor(Resources.Load<Texture2D>("cursorMenu"), new Vector2(3, 3), CursorMode.Auto);
+        
+        if (SaveManager.TryLoad(out var data)) {
+            saveDataExists = true;
+            SaveRunDataExists = data.HasRunData;
+        }
+
 #if UNITY_STANDALONE
         try {
             //SteamClient.Init(3639640);

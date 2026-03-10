@@ -88,8 +88,8 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
     private bool TryCreateChestReward(int rewardsMade) {
         List<ItemQuantity> items = new List<ItemQuantity>();
         // Todo make some kind of function that calculates some reasonable resources 
-        if (UpgradeManagerPlayer.Instance == null) return false;
-        var nodes = UpgradeManagerPlayer.Instance.GetUpgradesForChests();
+        if (PlayerManager.Instance.UpgradeManager == null) return false;
+        var nodes = PlayerManager.Instance.UpgradeManager.GetUpgradesForChests();
         items.AddRange(RandomnessHelpers.GetChestRewards(nodes)); 
 
         int XpToGain = 0;
@@ -154,7 +154,7 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
     }
 
     private IExecutable TryGetTreeUpgradeReward(int costValue,int rewardNumber) {
-        var tree = App.ResourceSystem.GetTreeByName(GameSetupManager.Instance.GetUpgradeTreeName());
+        var tree = App.ResourceSystem.GetTreeByName(GameManager.Instance.GetUpgradeTreeName());
         var upgrade = tree.GetUpgradeWithValue(costValue, pickedUpgradeNodeIDs);
         if(upgrade == null) return null;
         //pickedUpgradeNodeIDs.Add(upgrade.ID);

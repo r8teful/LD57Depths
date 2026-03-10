@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using r8teful;
 using Sirenix.OdinInspector;
 using System;
@@ -128,8 +127,9 @@ public class ChunkManager : MonoBehaviour, ISaveable {
 
     public const int CHUNK_SIZE = 16; // Size of chunks (16x16 tiles) - Power of 2 often good
     public int GetChunkSize() => CHUNK_SIZE;
-    public bool DidOnStart() => _didOnStart;
-    private bool _didOnStart;
+    public bool IsGenerating => _worldManager.IsSettingTiles || _chunkRequestActive;
+    public bool HasStartedLoadingRoutine => _hasStartedLoadingRoutine;
+    private bool _chunkRequestActive;
     public Dictionary<Vector2Int, ChunkData> GetWorldChunks() => worldChunks; // Used by save manager
 
     // Instead of creating 30 diffierent combinations of tile visual and tile data we create them as we need and put them in here
@@ -144,6 +144,7 @@ public class ChunkManager : MonoBehaviour, ISaveable {
     private WorldManager _worldManager;
     private EntityManager _entitySpawner;
     private WorldLightingManager _lightManager;
+    private bool _hasStartedLoadingRoutine = false;
 
     public static event Action<Vector3Int, ushort> OnTileChanged;
 
@@ -153,7 +154,7 @@ public class ChunkManager : MonoBehaviour, ISaveable {
         DebugForceChunkLoad();
     }
     private void DebugForceChunkLoad() {
-        Vector2Int newClientChunkCoord = WorldToChunkCoord(PlayerManager.LocalInstance.transform.position);
+        Vector2Int newClientChunkCoord = WorldToChunkCoord(PlayerManager.Instance.transform.position);
         for (int xOffset = -loadDistance; xOffset <= loadDistance; xOffset++) {
             for (int yOffset = -loadDistance; yOffset <= loadDistance; yOffset++) {
                 Vector2Int chunkCoord = new Vector2Int(newClientChunkCoord.x + xOffset, newClientChunkCoord.y + yOffset);
@@ -172,19 +173,17 @@ public class ChunkManager : MonoBehaviour, ISaveable {
         }
         _entitySpawner = EntityManager.Instance;
         _lightManager = FindFirstObjectByType<WorldLightingManager>();
-        _didOnStart = true;
         //StartCoroutine(ClientCurrentChunkLoadingRoutine());
        StartCoroutine(ClientChunkLoadingRoutine());
     }
-    // --- Client-Side Chunk VISUAL Loading ---
-    // This routine runs on each client (including host) to manage visuals
+    
     private IEnumerator ClientChunkLoadingRoutine() {
         //Debug.Log("Chunk loading");
         HashSet<Vector2Int> clientActiveVisualChunks = new HashSet<Vector2Int>();
         Vector2Int clientCurrentChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
         
-        yield return new WaitUntil(() => PlayerManager.LocalInstance != null); 
-        Transform localPlayerTransform = PlayerManager.LocalInstance.transform;
+        yield return new WaitUntil(() => PlayerManager.Instance != null); 
+        Transform localPlayerTransform = PlayerManager.Instance.transform;
         // Temporary list for batching requests
         List<Vector2Int> chunksToRequestBatch = new List<Vector2Int>();
         while (true) {
@@ -216,6 +215,8 @@ public class ChunkManager : MonoBehaviour, ISaveable {
                     }
                 }
                 if(chunksToRequestBatch.Count > 0) {
+                    _chunkRequestActive = true;
+                    _hasStartedLoadingRoutine = true;
                     ServerRequestChunkDataBatch(chunksToRequestBatch,newClientChunkCoord);
                 }
                 // Visually deactivate chunks we no longer need
@@ -235,8 +236,8 @@ public class ChunkManager : MonoBehaviour, ISaveable {
         Vector2Int clientCurrentChunkCoord = new Vector2Int(int.MinValue, int.MinValue);
 
         // Wait for the local player to exist
-        yield return new WaitUntil(() => PlayerManager.LocalInstance != null);
-        Transform localPlayerTransform = PlayerManager.LocalInstance.transform;
+        yield return new WaitUntil(() => PlayerManager.Instance != null);
+        Transform localPlayerTransform = PlayerManager.Instance.transform;
 
         while (true) {
             if (localPlayerTransform == null) { // safety if player despawns
@@ -417,6 +418,7 @@ public class ChunkManager : MonoBehaviour, ISaveable {
         _worldManager.SetOreIEnumerator(ores);
         _lightManager.RequestLightUpdate();
 
+        _chunkRequestActive = false;
         //DebugShowBiomeData(chunks);
         // for (int i = 0; i < chunk.TileIds.Count; i++) {
         //     tilesToSet[i] = App.ResourceSystem.GetTileByID(chunk.TileIds[i]);
@@ -570,7 +572,7 @@ public class ChunkManager : MonoBehaviour, ISaveable {
         BiomeType tileBiome = (BiomeType)chunk.biomeID[localX, localY];
         if (tileBiome != BiomeType.None && tileBiome != BiomeType.Trench) {
             // Tile durability should depend on the biome tile durability set in the 
-            if (GameSetupManager.Instance.WorldGenSettings.BiomeTileHardness.TryGetValue(tileBiome, out var mult)) {
+            if (GameManager.Instance.WorldGenSettings.BiomeTileHardness.TryGetValue(tileBiome, out var mult)) {
                 biomeExtraDurMult = mult;
             }
         }
@@ -814,13 +816,13 @@ public class ChunkManager : MonoBehaviour, ISaveable {
                 }
                 // Use a string key for better compatibility e.g. "x,y"
                 string chunkKey = $"{chunkCoord.x},{chunkCoord.y}";
-                data.world.savedChunks.Add(chunkKey, chunkSave);
+                data.worldData.savedChunks.Add(chunkKey, chunkSave);
             }
         }
     }
 
     public void OnLoad(r8teful.SaveData data) {
-        WorldSaveData loadData = data.world;
+        WorldSaveData loadData = data.worldData;
         if (loadData == null && loadData.savedChunks == null) {
             Debug.LogError("Failed to deserialize world data or data was empty.");
         }

@@ -28,19 +28,19 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
         base.Awake();
         subInventory = new InventoryManager();
         itemGainSpawner.Init(subInventory);
-        GameSetupManager.OnSetupComplete += MyStart;
+        GameManager.OnSetupComplete += MyStart;
     }
     private void OnDestroy() {
-        GameSetupManager.OnSetupComplete -= MyStart;
+        GameManager.OnSetupComplete -= MyStart;
     }
 
     private void MyStart() {
-        var y = GameSetupManager.Instance.WorldGenSettings.MaxDepth;
+        var y = GameManager.Instance.WorldGenSettings.MaxDepth;
         submarineExterior.transform.position = new Vector3(0, y);
     }
 
     public void MoveSub(int index) {
-        submarineExterior.transform.position = new(0, GameSetupManager.Instance.WorldGenSettings.GetWorldLayerYPos(index));
+        submarineExterior.transform.position = new(0, GameManager.Instance.WorldGenSettings.GetWorldLayerYPos(index));
         SetSubPosIndex(index);
     }
     internal void SetSubPosIndex(int index) {

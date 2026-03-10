@@ -72,10 +72,10 @@ public class WorldTileManager : StaticInstance<WorldTileManager> {
         var drop = tile.drop;
         // We want to look what position this biome is in the biome sequence and then use that in the calculation
         int maxDropAmount = 1;
-        if(GameSetupManager.Instance != null) {
-            var i = GameSetupManager.Instance.WorldGenSettings.GetBiomeProgressionIndex(tileBiome);
+        if(GameManager.Instance != null) {
+            var i = GameManager.Instance.WorldGenSettings.GetBiomeProgressionIndex(tileBiome);
             // Do something with i
-            Debug.Log("Progression index: " + i);
+            //Debug.Log("Progression index: " + i);
             maxDropAmount *= (i + 1); // just multiply? lol first biome has index 1 so we add 1 to 
         }
         int dropAmount = 1;
@@ -84,7 +84,7 @@ public class WorldTileManager : StaticInstance<WorldTileManager> {
         }
         if(maxDropAmount > 1) {
             // We can possibly drop more than one, get the random drop amount based on luck
-            var luck = PlayerManager.LocalInstance.PlayerStats.GetStat(StatType.Luck);
+            var luck = PlayerManager.Instance.PlayerStats.GetStat(StatType.Luck);
             dropAmount = RandomnessHelpers.GetDropScewed(maxDropAmount, luck);
         }
         dropData.Add(new(drop,dropAmount));

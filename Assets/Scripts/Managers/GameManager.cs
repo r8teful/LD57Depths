@@ -1,12 +1,12 @@
-﻿using System;
+﻿using r8teful;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-
-[DefaultExecutionOrder(-100)]
-public class GameSetupManager : PersistentSingleton<GameSetupManager> {
-    public WorldGenData WorldGenSettings => _currentGameSettings.WorldGenSettings;
+[DefaultExecutionOrder(-100)] // Handles starting of games, saving of games, continueing of games etc
+public class GameManager : PersistentSingleton<GameManager> {
+    public WorldGenData WorldGenSettings => _currentGameSettings?.WorldGenSettings;
     private GameSettings _currentGameSettings;
     public GameSettings CurrentGameSettings => _currentGameSettings;
     [SerializeField] private PlayerManager _playerPrefab;
@@ -48,16 +48,19 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
     }
     private IEnumerator BootSequence() {
         Debug.Log($"boot seq start: {GetInstanceID()}");
+        SaveData saveData = _currentGameSettings.SaveToLoad;
         
         //SetupSettings(true,s);
-
+        
         yield return null;
 
         // Apparently this is fine? They're singletons anyway and we're on a loading screen so I feel like no one will notice
         WorldManager w = FindFirstObjectByType<WorldManager>();
         if (w == null) 
             LogError(w);
+        
         w.Init(this);
+        
         yield return null;
         
         // This just does biomes. Not caves or anything 
@@ -74,17 +77,56 @@ public class GameSetupManager : PersistentSingleton<GameSetupManager> {
 
         // Spawn player
         var p = Instantiate(_playerPrefab, w.PlayerSpawn,Quaternion.identity);
+        p.Init(saveData); // Player handles setup of player modules and loading of saveData.BobData
+        
         yield return null;
+        // Wait for chunk manager to generate the world
+        var chunkM = FindFirstObjectByType<ChunkManager>();
+        if (chunkM == null)
+            LogError(chunkM);
+        if (saveData != null) {
+            chunkM.OnLoad(saveData);
+        }
+
+
+        yield return new WaitUntil(() => chunkM.HasStartedLoadingRoutine);
+        //yield return new WaitUntil(()=> !chunkM.IsGenerating(),new TimeSpan(0,2,0),()=> Debug.LogError("Took too long to generate!"));
+        yield return null;
+        yield return new WaitWhile(()=> chunkM.IsGenerating);
+        Debug.Log("finished generating chunks");
 
         p.PlayerLayerController.PutPlayerInSub();// Is it that easy? lol
+
+
         AudioController.Instance.SetLoopAndPlay("Ambience", 1);
         yield return null;// App.Backdrop.Release();
         
         _bootRoutine = null;
+        Debug.Log("Boot sequence complete!");
         OnSetupComplete?.Invoke();
     }
- 
 
+    private void Save() {
+        SaveData saveData = new SaveData();
+
+        // Trigger save for monobehaviours
+        if (PlayerManager.Instance != null) {
+            PlayerManager.Instance.UpgradeManager.OnSave(saveData);
+        } else {
+            Debug.LogWarning("Player not found, will not save run state");
+        }
+
+
+        // Save manager will write meta files and save into memory
+        SaveManager.Save(saveData);
+    }
+    public void TriggerSave() {
+        Save();
+    }
+
+    public void Load() {
+
+    }
     private void LogError(object script) {
         Debug.LogError($"Coudn't find script {script}!!");
     }

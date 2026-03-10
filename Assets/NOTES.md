@@ -427,8 +427,6 @@ Biomes need to be EXCITING, you want to go back to them, because they are so goo
 
 
 
-\-
-
 
 
 What could make something good in this game? S
@@ -519,32 +517,6 @@ Things we have to think about with world init order
 
 * We need to wait for world gen to finish generating the initial state before putting player in control. This will require the following:
 * EntityManager needs to be setup because WorldGen needs to send the entities to them
-
-
-
-
-
-
-
-
-
-BRUH.
-
-X = distance to center
-
-Y = chance
-
-t = ratio: 0 - 1 depending on distance
-
-r = target radius
-
-d = maxDepth
-
-n = depthRATIO
-
-b = bandwidth
-
-p = widthPrecent -> Basically determines how flat the curve is
 
 
 
@@ -1265,11 +1237,11 @@ Menu flow:
 
 
 
-Think about it. When we want to have options for the world in the new game option. You want players to have CONTROL over how the world looks like. I guess you can have both, you could have presets, and you could have where you build your own preset with options for cave size, trench size, etc 
+Think about it. When we want to have options for the world in the new game option. You want players to have CONTROL over how the world looks like. I guess you can have both, you could have presets, and you could have where you build your own preset with options for cave size, trench size, etc
 
 
 
-Holy shit we have ONE main function that is Begin(GameSettings s) in game setup. I'm getting lost in the WorldGenData, you simply need to have different ways you can make it. you need a structured way to LOAD the settings. Buy default, just read Resources.GetMainMap. It's that easy, then create the worldGenData with that Scriptable object, set the seed, and put that into GameSettings. And gamesettings gets passed into Begin 
+Holy shit we have ONE main function that is Begin(GameSettings s) in game setup. I'm getting lost in the WorldGenData, you simply need to have different ways you can make it. you need a structured way to LOAD the settings. Buy default, just read Resources.GetMainMap. It's that easy, then create the worldGenData with that Scriptable object, set the seed, and put that into GameSettings. And gamesettings gets passed into Begin
 
 
 
@@ -1281,7 +1253,7 @@ When we save the following should happen
 
 
 
-SaveDataBuilder loops through all the ISaveable scripts and tells them to populate the SaveData class. 
+SaveDataBuilder loops through all the ISaveable scripts and tells them to populate the SaveData class.
 
 
 
@@ -1324,6 +1296,36 @@ Handle special cases
 2. Simply save the state when player EXITS the sub, this way, all the resources inside the sub can be saved
 
 3\. Also save when they are just entering, so if they quit when still transferring it would just save all the stuff into the sub
+
+
+
+Upgrade:
+
+Basically you need to rebuild \_nodeStates when starting. Doing this you'll simply need the stage each node has. So you'll save the node ID, and then its stage int 
+
+
+
+
+
+Lucy. 
+
+Make the stone one pixel or have the other drops have more detail
+
+Make an "don't loose all things" upgrade
+
+Annoying that the music slows down when low on oxygen
+
+Path lights up when you run out of time
+
+Cost on popup should disappear when node is complete
+
+Escape closes a menu, Escape without a menu opens settings
+
+
+
+
+
+
 
 
 

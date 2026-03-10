@@ -7,13 +7,13 @@ using UnityEngine.Tilemaps;
 // Handles visual display of the world, also acts as a central part for references 
 public class WorldManager : StaticInstance<WorldManager> {
     // --- Managers ---
-    public SaveDataBuilder WorldDataManager;
     public WorldGen WorldGen;
     public ChunkManager ChunkManager;
     public BiomeManager BiomeManager;
     public StructureManager StructureManager;
     [SerializeField] private RenderTexture worldRenderTexture;
     [SerializeField] private Transform _worldRoot; // All world entities have this as their parent, used for hiding when entering sub or other interiors
+    [SerializeField] private Transform _submarineInside; 
     [SerializeField] private Camera _worldGenCamera;
     public int GetChunkSize() => ChunkManager.GetChunkSize();
     public Transform GetWorldRoot() => _worldRoot;
@@ -37,13 +37,15 @@ public class WorldManager : StaticInstance<WorldManager> {
         //WorldGen.InitializeNoise();
     }
     [SerializeField] private bool DEBUGConstantNewGen;
-    private GameSetupManager _gameSetupManager;
+    private GameManager _gameSetupManager;
+    private bool _isSettingTiles;
+    public bool IsSettingTiles => _isSettingTiles;
 
     private void Update() {
         if (DEBUGConstantNewGen && Time.frameCount % Mathf.RoundToInt(1f / (Time.deltaTime * 2)) == 0)
             DEBUGNEWGEN();
     }
-    public void Init(GameSetupManager setupManager) {
+    public void Init(GameManager setupManager) {
         _gameSetupManager = setupManager;
         WorldGen.Init(worldRenderTexture, setupManager.WorldGenSettings, this, ChunkManager, _worldGenCamera);
         BiomeManager.Init(this);
@@ -71,7 +73,7 @@ public class WorldManager : StaticInstance<WorldManager> {
     }
 
     private void SpawnStructures() {
-        var settings = GameSetupManager.Instance.WorldGenSettings;
+        var settings = GameManager.Instance.WorldGenSettings;
         foreach(var biome in settings.biomes) {
             StructureManager.GenerateArtifact(biome);
         }
@@ -83,6 +85,7 @@ public class WorldManager : StaticInstance<WorldManager> {
         var maxDepth = _gameSetupManager.WorldGenSettings.MaxDepth;
         // Depths is in blocks, so times it with grid size to get world space pos
         PlayerSpawn = new Vector3(0, maxDepth + offset);
+        _submarineInside.transform.position = PlayerSpawn;
     }
 
     public void MoveCamToChunkCoord(Vector2Int chunkCoord) {
@@ -112,6 +115,7 @@ public class WorldManager : StaticInstance<WorldManager> {
         mainTilemap.SetTilesBlock(chunkBounds, tilesToSet);
     }
     public void SetTileIEnumerator(Dictionary<BoundsInt, TileBase[]> tilesToSet, Dictionary<BoundsInt, TileBase[]> tilesShading) {
+        _isSettingTiles = true;
         StartCoroutine(SetWorldTiles(tilesToSet, tilesShading));
     }
     internal void SetOreIEnumerator(Dictionary<BoundsInt, TileBase[]> ores) {
@@ -126,6 +130,7 @@ public class WorldManager : StaticInstance<WorldManager> {
             overlayTilemapShading.SetTilesBlock(kvp.Key, kvp.Value);
             yield return null; // pause one frame
         }
+        _isSettingTiles = false;
     }
     private IEnumerator SetWorldOres(Dictionary<BoundsInt, TileBase[]> oresToSet) {
         foreach (var kvp in oresToSet) {

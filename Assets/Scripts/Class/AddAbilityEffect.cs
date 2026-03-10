@@ -8,7 +8,7 @@ public class AddAbilityEffect : IExecutable {
     }
 
     public void Execute(ExecutionContext context) {
-        PlayerManager.LocalInstance.PlayerAbilities.AddAbility(abilityToUnlock);
+        PlayerManager.Instance.PlayerAbilities.AddAbility(abilityToUnlock);
 
     }
 

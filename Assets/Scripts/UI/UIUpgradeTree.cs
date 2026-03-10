@@ -156,7 +156,7 @@ public class UIUpgradeTree : MonoBehaviour {
         return adj;
     }
     internal void OnUpgradeButtonClicked(UIUpgradeNode uIUpgradeNode, UpgradeNodeSO upgradeNode) {
-      if (UpgradeManagerPlayer.Instance.TryPurchaseUpgrade(upgradeNode)) {
+      if (PlayerManager.Instance.UpgradeManager.TryPurchaseUpgrade(upgradeNode)) {
             // Purchased succefully!
             uIUpgradeNode.OnUpgraded(_upgradeBoughtThisVisit);
             OnUpgradeButtonPurchased.Invoke();

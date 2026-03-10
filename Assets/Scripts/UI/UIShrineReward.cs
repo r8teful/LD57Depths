@@ -12,7 +12,7 @@ public class UIShrineReward : MonoBehaviour, IUIReward {
         if (reward is ShrineRewardEffect shrineReward) {
             DestroyChildren();
             var mod = shrineReward.GetModifier;
-            var playerStats = PlayerManager.LocalInstance.PlayerStats;
+            var playerStats = PlayerManager.Instance.PlayerStats;
             if (playerStats == null) {
                 Debug.LogError("Couldnt find player stats!");
                 return;

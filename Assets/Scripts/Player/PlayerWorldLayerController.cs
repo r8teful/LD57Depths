@@ -10,8 +10,8 @@ public class PlayerWorldLayerController : StaticInstance<PlayerWorldLayerControl
     private int _previousPlayerLayer = -1;
 
     private void Start() {
-        if (GameSetupManager.Instance == null) return;
-        _settings = GameSetupManager.Instance.WorldGenSettings;
+        if (GameManager.Instance == null) return;
+        _settings = GameManager.Instance.WorldGenSettings;
     }
 
     private void FixedUpdate() {

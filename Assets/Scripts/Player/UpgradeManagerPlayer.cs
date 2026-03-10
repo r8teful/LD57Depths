@@ -1,4 +1,5 @@
 ﻿using r8teful;
+using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,11 +8,12 @@ using UnityEngine;
 public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
 
     private PlayerManager _player;
-
+    [ShowInInspector]
     private Dictionary<ushort, UpgradeNode> _nodeStates = new Dictionary<ushort, UpgradeNode>();
+    [ShowInInspector]
+    private Dictionary<ushort, int> _loadedNodeStates = new Dictionary<ushort, int>();
     private UpgradeTreeDataSO _cachedTree;
     private readonly Dictionary<ValueKey, IValueModifiable> _valueModifierScipts = new Dictionary<ValueKey, IValueModifiable>();
-    public static UpgradeManagerPlayer Instance { get; private set; }
     public event Action<UpgradeNodeSO> OnUpgradePurchased;
     private int _highestCostTierPurchased; // used for chest loot
     public UpgradeNode GetUpgradeNode(ushort id) {
@@ -31,19 +33,24 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
     public int InitializationOrder => 10;
 
     public void InitializeOnOwner(PlayerManager playerParent) {
-        Instance = this;
+        // Init is called after OnLoad
         _player = playerParent;
         InitUpgradeNodes();
     }
     private void InitUpgradeNodes() {
-        // Basically will just just init all the nodes into its runtime data which will also be the recipes based on the tree we have
-        _cachedTree = App.ResourceSystem.GetTreeByName(GameSetupManager.Instance.GetUpgradeTreeName());
-        foreach(var node in _cachedTree.nodes) {
-            // We're starting fresh so basically look at the first stage (if there is one)
-            // and take that stages tier and upgrade pool, then 
-            var cost = node.GetStageCost(0,_cachedTree);
-            var tier = node.GetStageTier(0);
-            _nodeStates.Add(node.ID, new(node.ID, cost,tier));
+        _cachedTree = App.ResourceSystem.GetTreeByName(GameManager.Instance.GetUpgradeTreeName());
+        foreach (var node in _cachedTree.nodes) {
+            int stage = 0;
+            // Take the loaded state if we have any, otherwise just default to 0
+            if (_loadedNodeStates != null && _loadedNodeStates.TryGetValue(node.ID, out var loadedStage))
+                stage = loadedStage;
+
+            var cost = node.GetStageCost(stage, _cachedTree);
+            var tier = node.GetStageTier(stage);
+            if(tier == null) {
+                Debug.Log("What is going on");
+            }
+            _nodeStates.Add(node.ID, new(node.ID,stage, cost, tier));
         }
     }
     
@@ -231,10 +238,16 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
     }
 
     public void OnSave(SaveData data) {
-    
+        Dictionary<ushort, int> nodeSaveData = new Dictionary<ushort, int>();
+        foreach(var node in _nodeStates) {
+            nodeSaveData.Add(node.Key, node.Value.CurrentStage);
+        }
+        data.bobData.nodeSaveData = nodeSaveData; // Will it be this easy?
     }
-
+    // Called before init
     public void OnLoad(SaveData data) {
-
+        if (data == null) return;
+        if(data.bobData == null) return; 
+        _loadedNodeStates = data.bobData.nodeSaveData;
     }
 }

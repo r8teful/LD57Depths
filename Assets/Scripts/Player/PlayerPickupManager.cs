@@ -34,6 +34,7 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
         }
     }
     private void FixedUpdate() {
+        if (_player == null) return;
         if (!_player.PlayerMovement.CanPickup()) return;
         MagnetCheck();
     }
@@ -134,8 +135,8 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
     }
 
     public void Register() {
-        UpgradeManagerPlayer.Instance.RegisterValueModifierScript(ValueKey.MagnetismPickup, this);
-        UpgradeManagerPlayer.Instance.RegisterValueModifierScript(ValueKey.MagnetismStrength, this);
+        PlayerManager.Instance.UpgradeManager.RegisterValueModifierScript(ValueKey.MagnetismPickup, this);
+        PlayerManager.Instance.UpgradeManager.RegisterValueModifierScript(ValueKey.MagnetismStrength, this);
     }
 
     public void ReturnValuesToBase() {

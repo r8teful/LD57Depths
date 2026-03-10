@@ -11,12 +11,16 @@ public class UpgradeNode {
     public bool IsMaxed(int maxStages) => CurrentStage >= maxStages;
 
     // Constructor
-    public UpgradeNode(ushort id) {
+    public UpgradeNode(ushort id,int stage) {
         NodeID = id;
-        CurrentStage = 0;
+        CurrentStage = stage;
     }
 
-    public UpgradeNode(ushort id, float cost,UpgradeTierSO tier) : this(id) {
+    public UpgradeNode(ushort id, int stage,float cost, UpgradeTierSO tier) : this(id,stage) {
+        if (tier == null) {
+            requiredItems.Clear();
+            return;
+        }
         UpdateNodeCost(cost, tier.Items);
     }
 
@@ -29,7 +33,10 @@ public class UpgradeNode {
     internal void UpdateNodeCost(UpgradeNodeSO node, UpgradeTreeDataSO tree) {
         var cost = node.GetStageCost(CurrentStage, tree);
         var tier = node.GetStageTier(CurrentStage);
-        if (tier == null) return; // final tier reached, no need to change costs
+        if (tier == null) {
+            requiredItems.Clear();
+            return; // final tier reached, no need to change costs
+        } 
         UpdateNodeCost(cost, tier.Items);
     }
     public bool CanAfford(InventoryManager inv) {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using r8teful;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -13,7 +14,6 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
     public PlayerLayerController PlayerLayerController { get; private set; }
     public PlayerMovement PlayerMovement { get; private set; }
     public ItemTransferManager ItemTransferManager { get; private set; }
-    public static PlayerManager LocalInstance { get; private set; } // Singleton for local player
     public PlayerStatsManager PlayerStats { get; private set; } 
     public OxygenManager OxygenManager { get; private set; }
     public PlayerAbilities PlayerAbilities { get; private set; } 
@@ -27,22 +27,14 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
     public bool IsInitialized => _isInitialized;
     private bool _isInitialized = false;
 
-    // To avoid any wierd bugs, this should be the only OnStartClient on the player
-    public void Start() {
-        _worldManager = FindFirstObjectByType<WorldManager>();
-        LocalInstance = this;
-        InitializePlayer();
-        _isInitialized = true;
-        // Subscribe to other clients joining so we can properly initialize our local version of them
 
+    public void Init(SaveData data) {
+        Debug.Log("Starting Player Initialization...");
+        _worldManager = FindFirstObjectByType<WorldManager>();
+        _isInitialized = true;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         DEBUGManager.Instance.RegisterOwningPlayer(this);
 #endif
-    }
-
-    private void InitializePlayer() {
-        Debug.Log("Starting Player Initialization...");
-
         gameObject.name = $"PlayerBob";
         // Add local behaviours that are required for the player.
         InputManager = gameObject.AddComponent<InputManager>();
@@ -65,7 +57,9 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
         ItemTransferManager = GetComponent<ItemTransferManager>();
 
         InventoryN.Initialize(); // We have to do this first before everything else, then spawn the UI manager, and then start the other inits 
-        
+
+        UpgradeManager.OnLoad(data); // Load the data.
+
         // Initialize all modules in the determined order.
         foreach (var module in _modules) {
             module.InitializeOnOwner(this);

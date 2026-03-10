@@ -15,13 +15,13 @@ public class TilePlant : MonoBehaviour, ITileChangeReactor {
     public void OnTileChangedNearby(Vector3Int cellPosition, int newTileID) {
         if (newTileID == 0) {
             if(cellPosition == cellPos) {
-                Debug.Log("on tile!!");
+                Debug.Log($"OnTileChangedNearby firing for {gameObject.name} (id={gameObject.GetInstanceID()}) — cell {cellPosition}");
                 if (DestroryParticles != null) { 
                     DestroryParticles.transform.SetParent(null,true);
                     DestroryParticles.Play();
                 }
 
-                Destroy(gameObject); // This might need to be a pool aswell later
+                Destroy(gameObject,0.02f); // This might need to be a pool aswell later
                 //var item = App.ResourceSystem.GetItemByID(ResourceSystem.BiomeEssenceID);
                 //WorldTileManager.Instance.SpawnDropOne(spriteGameobject.transform.position, 1, item);
             }

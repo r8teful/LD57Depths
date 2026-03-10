@@ -297,7 +297,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifi
     }
 
     public void Register() {
-        UpgradeManagerPlayer.Instance.RegisterValueModifierScript(ValueKey.LazerChainAmount, this);
+        PlayerManager.Instance.UpgradeManager.RegisterValueModifierScript(ValueKey.LazerChainAmount, this);
     }
 
     public float GetValueNow(ValueKey key) {

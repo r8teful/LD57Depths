@@ -7,7 +7,7 @@ public class AbilityUnlockEffectSO : UpgradeEffect {
     public AbilitySO abilityToUnlock;
     public override void Execute(ExecutionContext context) {
         // Unlock the ability
-        PlayerManager.LocalInstance.PlayerAbilities.AddAbility(abilityToUnlock);
+        PlayerManager.Instance.PlayerAbilities.AddAbility(abilityToUnlock);
     }
 
     public override UIExecuteStatus GetExecuteStatus() {

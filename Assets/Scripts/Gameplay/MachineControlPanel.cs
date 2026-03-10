@@ -11,7 +11,7 @@ public class MachineControlPanel : MonoBehaviour {
 
     private void Awake() {
         _interactable = GetComponent<Interactable>(); 
-        GameSetupManager.OnSetupComplete += MyAwake;
+        GameManager.OnSetupComplete += MyAwake;
     }
 
     private void MyAwake() {

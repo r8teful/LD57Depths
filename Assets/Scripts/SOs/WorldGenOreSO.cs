@@ -25,7 +25,7 @@ public class WorldGenOreSO : ScriptableObject {
 #if UNITY_EDITOR
     private void OnValidate() {
         if (!Application.isPlaying) return;
-        if (GameSetupManager.Instance == null) return;
+        if (GameManager.Instance == null) return;
         // Changed things so this doesn't work anymore
         //GameSetupManager.Instance.RebuildSettings();
     }

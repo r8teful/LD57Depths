@@ -105,7 +105,7 @@ public class PlayerAbilities : MonoBehaviour, IPlayerModule {
 
     internal bool TryGetUpgradeableAbilities(out List<AbilityInstance> a) {
         a = new List<AbilityInstance>();
-        var available = GameSetupManager.Instance.CurrentGameSettings.AvailableAbilities;
+        var available = GameManager.Instance.CurrentGameSettings.AvailableAbilities;
         foreach (var ability in available) {
             if(_abilities.TryGetValue(ability.ID, out var instance)) {
                 a.Add(instance);

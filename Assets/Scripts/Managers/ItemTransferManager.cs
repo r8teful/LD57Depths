@@ -123,7 +123,7 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
     }
 
     public void Register() {
-        UpgradeManagerPlayer.Instance.RegisterValueModifierScript(ValueKey.ItemTransferRate, this);
+        PlayerManager.Instance.UpgradeManager.RegisterValueModifierScript(ValueKey.ItemTransferRate, this);
     }
 
     public float GetValueNow(ValueKey key) 

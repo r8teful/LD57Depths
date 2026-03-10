@@ -31,7 +31,7 @@ public class IceBounce : MonoBehaviour {
     }
     private void Start() {
         // Playermovement is not initialized in our init functoin, so wait until start to get the reference
-        if (rb == null) rb = PlayerManager.LocalInstance.PlayerMovement.GetRigidbody();
+        if (rb == null) rb = PlayerManager.Instance.PlayerMovement.GetRigidbody();
     }
     private void OnDestroy() {
         Debug.Log("Ice bounce GONE!");

@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using UnityEngine;
+using Newtonsoft.Json;
 public class SaveManager {
     const string SAVE_FILE = "GameSave.json";
     static string SaveFilePath =>
@@ -19,20 +20,25 @@ public class SaveManager {
         data.buildType = "full";
 #endif
 
-        Directory.CreateDirectory(Path.GetDirectoryName(SaveFilePath)!);
-        File.WriteAllText(SaveFilePath, JsonUtility.ToJson(data, prettyPrint: true));
+        Directory.CreateDirectory(Path.GetDirectoryName(SaveFilePath));
+        Debug.Log("Saved data into: " + SaveFilePath);
+        //File.WriteAllText(SaveFilePath, JsonUtility.ToJson(data, prettyPrint: true));
+        File.WriteAllText(SaveFilePath, JsonConvert.SerializeObject(data,Formatting.Indented));
     }
 
-    public static SaveData Load() {
-        if (!File.Exists(SaveFilePath))
-            return new SaveData();
+    public static bool TryLoad(out SaveData data) {
+        if (!File.Exists(SaveFilePath)) {
+            data = new SaveData();
+            return false;
+        }
 
         var raw = File.ReadAllText(SaveFilePath);
-        var data = JsonUtility.FromJson<SaveData>(raw);
+        //var data = JsonUtility.FromJson<SaveData>(raw);
+        data = JsonConvert.DeserializeObject<SaveData>(raw);
 
         //data = MigrateIfNeeded(data);  // handle schema upgrades
         CurrentSave = data;
-        return data;
+        return true;
     }
 
 }

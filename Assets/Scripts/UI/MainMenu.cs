@@ -1,14 +1,19 @@
 using DG.Tweening;
+using r8teful;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static ButtonMenuVisual;
 
 public class MainMenu : MonoBehaviour {
     [SerializeField] private  Button _buttonPlay;
     [SerializeField] private  Button _buttonPlayBack;
     [SerializeField] private  Button _buttonNewGame;
-    [SerializeField] private  Button _buttonContinue;
+    [SerializeField] private  Button _buttonContinueTab;
+    [SerializeField] private  Button _buttonContinueGame;
+    [SerializeField] private ButtonMenuVisual _buttonContinueTabVisual;
     [SerializeField] private  Button _buttonChallenge;
     [SerializeField] private  Button _buttonSettings;
     [SerializeField] private UISettings _settings; 
@@ -24,7 +29,10 @@ public class MainMenu : MonoBehaviour {
         _buttonPlayBack.onClick.AddListener(OnPlayBackClicked);
         _buttonSettings.onClick.AddListener(OnSettingsClicked);
         _buttonNewGame.onClick.AddListener(OnStartNewGameClicked);
+        _buttonContinueGame.onClick.AddListener(OnContinueGameClicked);
     }
+
+
     private void Start() {
         if(AudioController.Instance == null) {
             Debug.LogError("Can't find audiocntroller!");
@@ -33,9 +41,13 @@ public class MainMenu : MonoBehaviour {
         AudioController.Instance.SetLoopAndPlay("MainMenu");
         _settings.Hide();
         _containerStartGame.SetActive(false);
-        _buttonContinue.interactable = false;
+        ButtonContinueState(App.SaveRunDataExists);
         _buttonChallenge.interactable = false;
         IntroAnimation();
+    }
+    private void ButtonContinueState(bool interactable) {
+        _buttonContinueTab.interactable = interactable;
+        _buttonContinueTabVisual.ChangeStateColor(interactable?  ButtonColor.Green : ButtonColor.Dissabled);
     }
 
     private void IntroAnimation() {
@@ -66,6 +78,21 @@ public class MainMenu : MonoBehaviour {
         _buttonPlay.onClick.RemoveListener(OnPlayClicked);
     }
 
+    private void OnContinueGameClicked() {
+        // ensure save data still exists
+        Debug.Log("Continue clicked!!");
+        if(App.SaveRunDataExists) {
+            var seed = SaveManager.CurrentSave.worldData.Seed;
+            var settings = new GameSettings(seed); // also other related things (like world pattern whatever) 
+            settings.SaveToLoad = SaveManager.CurrentSave; // This should be valid if App.SaveRunDataExists is true
+            GameManager.Instance.Begin(settings);
+        } else {
+            // can't load, go back?
+            _buttonContinueTab.interactable = false;
+
+        }
+        
+    }
     public void OnPlayClicked() {
         Debug.Log("play cliked");
         _containerStartGame.SetActive(true);
@@ -73,19 +100,16 @@ public class MainMenu : MonoBehaviour {
     public void OnPlayBackClicked() {
         _containerStartGame.SetActive(false);
     }
-    public void OnStartNewGameClicked() {
-        StartNewGame();
-    }
-    private void StartNewGame() {
+    private void OnStartNewGameClicked() {
         if(_seedField.text != string.Empty) {
             if(int.TryParse(_seedField.text,out var seed)){
                 var s = new GameSettings(seed);
-                GameSetupManager.Instance.Begin(s);
+                GameManager.Instance.Begin(s);
                 return;
             }
         }
         var settings = new GameSettings(true); // Creates a random seed for us
-        GameSetupManager.Instance.Begin(settings);
+        GameManager.Instance.Begin(settings);
     }
     public void OnJoinClicked() {
         //SceneManager.LoadScene(1);

@@ -30,7 +30,7 @@ public abstract class UIRewardScreenBase : MonoBehaviour {
     // 3. Show rewards
     // 4. Handle whatever happends when we click on one of the rewards
     public void ShowScreen() {
-        var rewards = PlayerManager.LocalInstance.PlayerReward.UpgradeEffects;
+        var rewards = PlayerManager.Instance.PlayerReward.UpgradeEffects;
         SpawnRewardVisuals(rewards);
         _screenContainer.gameObject.SetActive(true);
     }

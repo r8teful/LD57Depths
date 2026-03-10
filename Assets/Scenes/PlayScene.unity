@@ -420,7 +420,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6577536551770996436, guid: b5fbf8417053cf343a54a8bfb1069a55, type: 3}
       propertyPath: playButtonTime
-      value: 639087477473928625
+      value: 639087603219507081
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -571,13 +571,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e7ebccb4c4a9734b9a69dbab69acd44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WorldDataManager: {fileID: 0}
   WorldGen: {fileID: 187924545}
   ChunkManager: {fileID: 953411378}
   BiomeManager: {fileID: 22968115}
   StructureManager: {fileID: 0}
   worldRenderTexture: {fileID: 8400000, guid: 60924393ab585ae4496942c26820c127, type: 2}
   _worldRoot: {fileID: 1903222420}
+  _submarineInside: {fileID: 1724639416}
   _worldGenCamera: {fileID: 763869003}
   mainTilemap: {fileID: 1696825754}
   overlayTilemapOre: {fileID: 1897623370}
@@ -4399,7 +4399,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!43 &1926285428
+--- !u!43 &1947415764
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

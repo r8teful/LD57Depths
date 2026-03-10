@@ -93,6 +93,11 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
             tilemap.SetTile(tilePos, tile);
         }
     }
+    [ConsoleCommand("save")]
+    private void save() {
+        GameManager.Instance.TriggerSave();
+    }
+
     [ConsoleCommand("give", value: "itemID, amount")]
     private void debugGive(int i, int j) {
         _player.InventoryN.DEBUGGIVE(i,j);
@@ -159,11 +164,11 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     }
     [ConsoleCommand("giveMineDamage")]
     private void debugAddDamage(float v) {
-        PlayerManager.LocalInstance.PlayerStats.DEBUGADDSTAT(StatType.MiningDamage,v);
+        PlayerManager.Instance.PlayerStats.DEBUGADDSTAT(StatType.MiningDamage,v);
     }
     [ConsoleCommand("giveMineRange")]
     private void debugSetRange(float v) {
-        PlayerManager.LocalInstance.PlayerStats.DEBUGADDSTAT(StatType.MiningRange, v);
+        PlayerManager.Instance.PlayerStats.DEBUGADDSTAT(StatType.MiningRange, v);
     }
    
     [ConsoleCommand("toggleGod")]
@@ -207,7 +212,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
         }
         if(PlayerManager.Instance.PlayerLayerController.CurrentLayer == VisibilityLayerType.Interior)
             PlayerManager.Instance.PlayerLayerController.PutPlayerOutsideSub();
-        var worldBiome = GameSetupManager.Instance.WorldGenSettings.biomes.FirstOrDefault(b => b.BiomeType == biomeType);
+        var worldBiome = GameManager.Instance.WorldGenSettings.biomes.FirstOrDefault(b => b.BiomeType == biomeType);
         if (worldBiome == null) return;
         _player.gameObject.transform.position = 
             new(worldBiome.XOffset, worldBiome.YStart + worldBiome.YHeight * 0.5f);

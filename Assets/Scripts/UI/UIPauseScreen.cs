@@ -23,8 +23,8 @@ public class UIPauseScreen : MonoBehaviour {
         _buttonSettingBack.onClick.AddListener(OnSettingBack);
     }
     private void Start() {
-        if (GameSetupManager.Instance == null) return;
-        _seedNumber.text = GameSetupManager.Instance.WorldGenSettings.seed.ToString();
+        if (GameManager.Instance == null) return;
+        _seedNumber.text = GameManager.Instance.WorldGenSettings.seed.ToString();
     }
 
 

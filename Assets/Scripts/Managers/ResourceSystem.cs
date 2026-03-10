@@ -226,7 +226,7 @@ public class ResourceSystem {
     }
     public AbilitySO GetRandomAvailableAbility(HashSet<ushort> exluded) {
         var rnd = new System.Random();
-        var available = GameSetupManager.Instance.CurrentGameSettings.AvailableAbilityIDs;
+        var available = GameManager.Instance.CurrentGameSettings.AvailableAbilityIDs;
         var validEntries = available
             .Where(a => !exluded.Contains(a))
             .ToArray();
@@ -236,7 +236,7 @@ public class ResourceSystem {
     }
     public EventCaveSO GetRandomAvailableCave(HashSet<ushort> exluded) {
         var rnd = new System.Random();
-        var available = GameSetupManager.Instance.CurrentGameSettings.AvailableEventCaveIDs;
+        var available = GameManager.Instance.CurrentGameSettings.AvailableEventCaveIDs;
         var validEntries = available
             .Where(a => !exluded.Contains(a))
             .ToArray();
