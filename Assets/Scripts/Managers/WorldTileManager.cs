@@ -138,7 +138,7 @@ public class WorldTileManager : StaticInstance<WorldTileManager> {
             }
         }
     }
-    /// <summary>
+        /// <summary>
     /// Call this from your PlayerPickupManager when the item is collected.
     /// </summary>
     public void ReturnToPool(DropPooled drop) {

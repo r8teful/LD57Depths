@@ -1,11 +1,29 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 [RequireComponent(typeof(Interactable))]
 public class MachineUpgradeTable : MonoBehaviour {
     private Interactable _interactable;
+    [SerializeField] private UpgradeNodeSO _nodeToFix;
+    [SerializeField] private Animator _animator;
 
     private void Awake() {
         _interactable = GetComponent<Interactable>();
+        GameSetupManager.OnSetupComplete += MyAwake;
+    }
+
+    private void MyAwake() {
+        if (SubmarineManager.Instance == null) {
+            Debug.LogError("Can't find player!!");
+        }
+        SubmarineManager.Instance.OnSubUpgrade += UpgradePurchased;
+    }
+
+    private void UpgradePurchased(ushort id) {
+        if(_nodeToFix.ID == id) {
+            if (_animator != null)
+                _animator.Play("Fixed"); // todo add this
+        }
     }
 
     private void OnEnable() {

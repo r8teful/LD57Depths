@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class ChestRewardEffect : IExecutable {
     private readonly List<ItemQuantity> itemsToGain;
@@ -12,8 +13,13 @@ public class ChestRewardEffect : IExecutable {
     }
 
     public void Execute(ExecutionContext context) {
+        if (context.Player == null) { 
+            Debug.LogError("Need player!");
+        }
         foreach (var item in itemsToGain) {
             context.Player.InventoryN.AddItem(item.item.ID, item.quantity);
+            //WorldTileManager.Instance.SpawnDrop(context.Player.transform.position,item.quantity,item.item);
+            AudioController.Instance.PlaySound2D("popPickupChest", 0.1f);
         }
         RewardEvents.TriggerGainXP(xp);
     }

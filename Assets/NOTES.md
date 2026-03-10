@@ -1247,15 +1247,17 @@ Menu flow:
 
 1. Start game
 
-&nbsp;	- New game
+ 	- New game
 
-&nbsp;	- Continue
+ 	- Continue
 
-&nbsp;	- Challenge whatever
+ 	- Challenge whatever
 
 1. Stats
-   	- General, playtime, blocks mined etc...
-   	- Collectibles
+
+   * General, playtime, blocks mined etc...
+   * Collectibles
+
 2. Settings
 3. Exit
 
@@ -1263,9 +1265,31 @@ Menu flow:
 
 
 
+Think about it. When we want to have options for the world in the new game option. You want players to have CONTROL over how the world looks like. I guess you can have both, you could have presets, and you could have where you build your own preset with options for cave size, trench size, etc 
 
 
-What would we need to save? 
+
+Holy shit we have ONE main function that is Begin(GameSettings s) in game setup. I'm getting lost in the WorldGenData, you simply need to have different ways you can make it. you need a structured way to LOAD the settings. Buy default, just read Resources.GetMainMap. It's that easy, then create the worldGenData with that Scriptable object, set the seed, and put that into GameSettings. And gamesettings gets passed into Begin 
+
+
+
+We have a ISaveable that appropriate monobehaviours implement
+
+
+
+When we save the following should happen
+
+
+
+SaveDataBuilder loops through all the ISaveable scripts and tells them to populate the SaveData class. 
+
+
+
+
+
+
+
+What would we need to save?
 
 
 
@@ -1282,7 +1306,7 @@ World:
 1. Entities
 2. Structures
 3. Ores and tiles (durabilities we could just skip its not important I think)
-4. Sub position 
+4. Sub position
 
 
 
@@ -1296,10 +1320,12 @@ Character:
 
 Handle special cases
 
-1. What happens when the player quits unexpectedly? 
-2. Simply save the state when player EXITS the sub, this way, all the resources inside the sub can be saved 
+1. What happens when the player quits unexpectedly?
+2. Simply save the state when player EXITS the sub, this way, all the resources inside the sub can be saved
 
 3\. Also save when they are just entering, so if they quit when still transferring it would just save all the stuff into the sub
+
+
 
 
 

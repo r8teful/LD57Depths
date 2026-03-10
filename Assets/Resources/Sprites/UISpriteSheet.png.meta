@@ -531,10 +531,10 @@ TextureImporter:
       name: OxygenBoarder
       rect:
         serializedVersion: 2
-        x: 183
-        y: 524
-        width: 9
-        height: 49
+        x: 353
+        y: 295
+        width: 11
+        height: 51
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 2, y: 3, z: 3, w: 3}
@@ -4069,6 +4069,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UIArrowBig
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 302
+        width: 21
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9674c92dee7219641b20c58675a63dfc
+      internalID: 1880573985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -4184,6 +4206,7 @@ TextureImporter:
       TriangleV: 146604514
       UIAbilityActiveBoarder: -1507697884
       UIArrow2: -923879406
+      UIArrowBig: 1880573985
       UIBoarderBackground: 398889071
       UIBoarderBigBlue: 1025421921
       UIBoarderBigGreen: -702740983

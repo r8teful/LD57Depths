@@ -9,6 +9,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     public int CurrentZoneIndex => _currentZoneIndex;
 
     public event Action OnSubMoved; // Used by map 
+    public event Action<ushort> OnSubUpgrade; 
     public GameObject submarineExterior;
     public Transform InteriorSpawnPoint;
     [ShowInInspector]
@@ -68,14 +69,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
                 onStart: () => {
                     GameCutsceneManager.Instance.StartSubUpgradeCutscene(
                         cameraPos,
-                        () => {
-                            if(ID == ResourceSystem.SubUpgradePanel)
-                                _upgradeMachine.sprite = effect.SpriteInterior;    
-                            if(ID == ResourceSystem.SubUpgradeControlPanel)
-                                _subControlPanel.sprite = effect.SpriteInterior;    
-                        }
-                
-                        );
+                        () => OnSubUpgrade?.Invoke(ID));
                 },
             onFinish: () => {
 

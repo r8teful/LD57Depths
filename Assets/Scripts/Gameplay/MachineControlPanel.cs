@@ -6,23 +6,25 @@ public class MachineControlPanel : MonoBehaviour {
     private Interactable _interactable;
     [SerializeField] private UpgradeNodeSO _nodeToInteract;
     [SerializeField] private ParticleSystem _brokenParticles;
+    [SerializeField] private Animator _animatorMachine;
+
     private void Awake() {
         _interactable = GetComponent<Interactable>(); 
         GameSetupManager.OnSetupComplete += MyAwake;
-
     }
 
     private void MyAwake() {
-        if (PlayerManager.Instance == null) {
+        if (SubmarineManager.Instance == null) {
             Debug.LogError("Can't find player!!");
         }
-        PlayerManager.Instance.UpgradeManager.OnUpgradePurchased += UpgradePurchased;
+        SubmarineManager.Instance.OnSubUpgrade += UpgradePurchased;
     }
 
-    private void UpgradePurchased(UpgradeNodeSO sO) {
-        if (sO == _nodeToInteract) {
+    private void UpgradePurchased(ushort ID) {
+        if (ID == _nodeToInteract.ID) {
             _interactable.CanInteract = true;
             _brokenParticles.Stop(true,ParticleSystemStopBehavior.StopEmitting);
+            _animatorMachine.Play("Fixed");
         }
     }
 

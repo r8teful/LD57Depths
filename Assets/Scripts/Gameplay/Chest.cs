@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 
-[RequireComponent(typeof(Interactable))]
 public class Chest : MonoBehaviour {
     [SerializeField] private Interactable _interactable;
     [SerializeField] private ParticleSystem _openParticles;
     [SerializeField] private Animator _animator;
     private bool _opened = false;
+    private AudioSource _audio;
 
     private void Awake() {
         _interactable.OnInteract += OnInteract;
@@ -22,10 +23,14 @@ public class Chest : MonoBehaviour {
 
         GameSequenceManager.Instance.AddEvent(shouldPause: true,
            onStart: () => {
+               _audio = AudioController.Instance.PlaySound2D("Reward2", looping: true);
                p.PlayerReward.GenerateRewardsChest();
                RewardEvents.TriggerOpenChest();
            },
            onFinish: () => {
+               _audio.DOFade(0, 0.5f).OnComplete(()=> Destroy(_audio));
+               AudioController.Instance.PlaySound2D("RewardPickup2");
+               Debug.Log("On finish!");
                // This logic is handled by CommitLevelUp below which is called from UI
            }
        );
