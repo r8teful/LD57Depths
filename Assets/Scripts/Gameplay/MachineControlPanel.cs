@@ -10,15 +10,9 @@ public class MachineControlPanel : MonoBehaviour {
     [SerializeField] private Animator _animatorMachine;
 
     private void Awake() {
-        _interactable = GetComponent<Interactable>(); 
-        GameManager.OnSetupComplete += MyAwake;
-    }
-
-    private void MyAwake() {
-        if (SubmarineManager.Instance == null) {
-            Debug.LogError("Can't find player!!");
-        }
-        SubmarineManager.Instance.OnSubUpgrade += UpgradePurchased;
+        _interactable = GetComponent<Interactable>();
+        Debug.Log("Machine Panel awake!");
+        SubmarineManager.OnSubUpgrade += UpgradePurchased;
     }
 
     private void UpgradePurchased(ushort ID) {
@@ -42,6 +36,7 @@ public class MachineControlPanel : MonoBehaviour {
             _interactable.OnInteract -= HandleInteraction;
             _interactable.OnCeaseInteractable -= CloseControlPanelUI;
         }
+        SubmarineManager.OnSubUpgrade -= UpgradePurchased;
     }
     private void Start() {
         // Unless we've already unlocked it (save manager would need to tell us)

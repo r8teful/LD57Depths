@@ -37,14 +37,40 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
         _player = playerParent;
         InitUpgradeNodes();
     }
+    // Basically just init but we have to run it later because some effect require references (like abilities, stats, etc...)
+    public void ExecuteStageEffects() {
+        foreach (var node in _cachedTree.nodes) {
+            int stage = 0;
+            // Take the loaded state if we have any, otherwise just default to 0
+            if (_loadedNodeStates != null && _loadedNodeStates.TryGetValue(node.ID, out var loadedStage)) {
+                stage = loadedStage;
+            }
+            // Apply effects for all previously purchased stages
+            for (int i = 0; i < stage; i++) {
+                // Safety check in case the ScriptableObject was changed/shrunk after a save
+                if (i < node.stages.Count) {
+                    UpgradeStage purchasedStage = node.stages[i];
+                    foreach (var effect in purchasedStage.effects) {
+                        effect.Execute(new(_player));
+                    }
+                    // Restore highest cost tier purchased from the save data
+                    if (purchasedStage.costTier > _highestCostTierPurchased) {
+                        _highestCostTierPurchased = purchasedStage.costTier;
+                    }
+                } else {
+                    Debug.LogWarning($"Save data says stage {stage} but node only has {node.stages.Count} stages!");
+                }
+            }
+        }
+    }
     private void InitUpgradeNodes() {
         _cachedTree = App.ResourceSystem.GetTreeByName(GameManager.Instance.GetUpgradeTreeName());
         foreach (var node in _cachedTree.nodes) {
             int stage = 0;
             // Take the loaded state if we have any, otherwise just default to 0
-            if (_loadedNodeStates != null && _loadedNodeStates.TryGetValue(node.ID, out var loadedStage))
+            if (_loadedNodeStates != null && _loadedNodeStates.TryGetValue(node.ID, out var loadedStage)) {
                 stage = loadedStage;
-
+            }
             var cost = node.GetStageCost(stage, _cachedTree);
             var tier = node.GetStageTier(stage);
             if(tier == null) {

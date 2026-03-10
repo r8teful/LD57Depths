@@ -9,16 +9,11 @@ public class MachineUpgradeTable : MonoBehaviour {
     [SerializeField] private ParticleSystem _fixParticles;
 
     private void Awake() {
+        Debug.Log("Machine upgrade table awake!");
         _interactable = GetComponent<Interactable>();
-        GameManager.OnSetupComplete += MyAwake;
+        SubmarineManager.OnSubUpgrade += UpgradePurchased;
     }
 
-    private void MyAwake() {
-        if (SubmarineManager.Instance == null) {
-            Debug.LogError("Can't find player!!");
-        }
-        SubmarineManager.Instance.OnSubUpgrade += UpgradePurchased;
-    }
 
     private void UpgradePurchased(ushort id) {
         if(_nodeToFix.ID == id) {
@@ -40,7 +35,9 @@ public class MachineUpgradeTable : MonoBehaviour {
         if (_interactable != null) {
             _interactable.OnInteract -= HandleInteraction;
             _interactable.OnCeaseInteractable -= CloseUpgradePanelUI;
+
         }
+            SubmarineManager.OnSubUpgrade -= UpgradePurchased;
     }
 
     private void HandleInteraction(PlayerManager interactor) {

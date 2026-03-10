@@ -15,7 +15,7 @@ public class GameManager : PersistentSingleton<GameManager> {
     private string _upgradeTreeName = "DefaultTree"; // Would depend on what the player chooses for tools etc
 
     public static event Action OnSetupComplete;
-
+    public bool IsBooting => _bootRoutine != null;
     public string GetUpgradeTreeName() => _upgradeTreeName;
     
     private void OnEnable() {

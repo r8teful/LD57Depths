@@ -9,7 +9,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     public int CurrentZoneIndex => _currentZoneIndex;
 
     public event Action OnSubMoved; // Used by map 
-    public event Action<ushort> OnSubUpgrade; 
+    public static event Action<ushort> OnSubUpgrade; 
     public GameObject submarineExterior;
     public Transform InteriorSpawnPoint;
     [ShowInInspector]
@@ -56,8 +56,12 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
                 Debug.LogError("Sub recipe already purchased! Did you assigned a unique ID?");
                 return;
             }
-            HandleCutscene(effect.upgrade.ID, effect,ResourceSystem.SubUpgradePanel, _cutsceneCameraPosUpgradeMachine);
-            HandleCutscene(effect.upgrade.ID, effect,ResourceSystem.SubUpgradeControlPanel, _cutsceneCameraPosControlPanel);
+            if (GameManager.Instance.IsBooting) {
+                OnSubUpgrade?.Invoke(effect.upgrade.ID); // skip the cutscene
+            } else {
+                HandleCutscene(effect.upgrade.ID, effect, ResourceSystem.SubUpgradePanel, _cutsceneCameraPosUpgradeMachine);
+                HandleCutscene(effect.upgrade.ID, effect,ResourceSystem.SubUpgradeControlPanel, _cutsceneCameraPosControlPanel);
+            }
         }
         // TODO update visual of the sub based on effect sprites
 

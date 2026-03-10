@@ -66,6 +66,7 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
             //Debug.Log($"Initialized Module: {module.GetType().Name} (Order: {module.InitializationOrder})");
 
         }
+        UpgradeManager.ExecuteStageEffects();
         ItemTransferManager.InitLate(this); // need to init twice, once before inventory, due to regist, then after inv 
         PlayerCamera = Camera.main.gameObject.GetComponent<PlayerCameraController>(); // Should work
         if (PlayerCamera == null) Debug.LogError("Coudn't find cameraController on main camera!");
