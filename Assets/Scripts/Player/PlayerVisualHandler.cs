@@ -27,6 +27,7 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
     public event Action<bool> OnFlipChange;
     public int InitializationOrder => 2;
     private bool hasInitializedNonOwner; // Sometimes the init function gets called twice so this is just for that
+    private bool _isGodMode;
 
     private bool HasCactus => _localPlayer.PlayerAbilities.HasAbility(ResourceSystem.CactusAbilityID);
     public void InitializeOnOwner(PlayerManager playerParent) {
@@ -142,7 +143,8 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
                 break;
             case PlayerState.Swimming:
                 // Horizontal
-                playerSwimCollider.enabled = true;
+                if (!_isGodMode) 
+                    playerSwimCollider.enabled = true;                
                 playerWalkCollider.enabled = false;
                 break;
             case PlayerState.Grounded:
@@ -278,24 +280,8 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
         }
     }
 
-    internal void DEBUGToggleHitbox(PlayerState state) {
-        switch (state) {
-            case PlayerState.Swimming:
-                if (playerSwimCollider.enabled) {
-                    playerSwimCollider.enabled = false;
-                } else {
-                    playerSwimCollider.enabled = true;
-                }
-                break;
-            case PlayerState.Grounded:
-                if (playerWalkCollider.enabled) {
-                    playerWalkCollider.enabled = false;
-                } else {
-                    playerWalkCollider.enabled = true;
-                }
-                break;
-            default:
-                break;
-        }
+    internal void DEBUGSetGodMode(bool v) {
+        playerSwimCollider.enabled = !v;
+        _isGodMode = v;
     }
 }

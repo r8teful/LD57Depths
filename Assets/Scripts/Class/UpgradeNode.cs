@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class UpgradeNode {
     public ushort NodeID;
-    public int CurrentLevel;
+    public int CurrentStage;
 
     public List<ItemQuantity> requiredItems = new List<ItemQuantity>(); // set by the tree
 
-    public bool IsMaxed(int maxStages) => CurrentLevel >= maxStages;
+    public bool IsMaxed(int maxStages) => CurrentStage >= maxStages;
 
     // Constructor
     public UpgradeNode(ushort id) {
         NodeID = id;
-        CurrentLevel = 0;
+        CurrentStage = 0;
     }
 
     public UpgradeNode(ushort id, float cost,UpgradeTierSO tier) : this(id) {
@@ -27,8 +27,8 @@ public class UpgradeNode {
     }
 
     internal void UpdateNodeCost(UpgradeNodeSO node, UpgradeTreeDataSO tree) {
-        var cost = node.GetStageCost(CurrentLevel, tree);
-        var tier = node.GetStageTier(CurrentLevel);
+        var cost = node.GetStageCost(CurrentStage, tree);
+        var tier = node.GetStageTier(CurrentStage);
         if (tier == null) return; // final tier reached, no need to change costs
         UpdateNodeCost(cost, tier.Items);
     }

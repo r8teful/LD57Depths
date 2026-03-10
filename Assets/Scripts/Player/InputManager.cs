@@ -1,10 +1,12 @@
-﻿using Sirenix.OdinInspector;
+﻿using Anarkila.DeveloperConsole;
+using Sirenix.OdinInspector;
 using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 public enum PlayerInteractionContext {
     None,                 // Default state, no specific interaction available
+    Console,              // Console is open
     InteractingWithUI,    // Mouse is over any UI element
     WorldInteractable,    // Player is near an object they can interact with (e.g., "Press E to open")
     UsingToolOnWorld      // Lowest priority: The default game world interaction (mining, placing)
@@ -193,6 +195,8 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         UpdateCursor();
         //UpdatePlayerFeedback();
         // Handle interaction input
+        if (_currentContext == PlayerInteractionContext.Console) 
+            return;
         if (_currentInteractable != null && _interactAction.WasPerformedThisFrame()) {
             _currentInteractable.Interact(_player);
         }
@@ -207,6 +211,10 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     }
 
     private void UpdateInteractionContext() {
+        if (ConsoleManager.IsConsoleOpen()) {
+            _currentContext = PlayerInteractionContext.Console;
+            return;
+        }
         if(_playerMovement.GetState == PlayerMovement.PlayerState.None) {
             _currentContext = PlayerInteractionContext.None;
         }

@@ -1,9 +1,10 @@
-﻿using System;
+﻿using r8teful;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 // Has to hold upgrade info! . Also holds the entire upgrade tree state it feels like that should be its own script 
-public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
+public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
 
     private PlayerManager _player;
 
@@ -77,11 +78,11 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
 
         // This will succeed because CanAfford checks it
         SubmarineManager.Instance.SubInventory.RemoveItems(state.requiredItems);
-        UpgradeStage stage = node.stages[state.CurrentLevel];
+        UpgradeStage stage = node.stages[state.CurrentStage];
         foreach (var effect in stage.effects) {
             effect.Execute(new(_player)); 
         }
-        state.CurrentLevel++;
+        state.CurrentStage++;
         if(stage.costTier > _highestCostTierPurchased) {
             _highestCostTierPurchased = stage.costTier;
         }
@@ -92,7 +93,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
 
     public void PurchaseNodeDebug(UpgradeNodeSO node) {
         var state = _nodeStates[node.ID];
-        UpgradeStage stage = node.stages[state.CurrentLevel];
+        UpgradeStage stage = node.stages[state.CurrentStage];
         foreach (var effect in stage.effects) {
             effect.Execute(new(_player));
         }
@@ -194,12 +195,12 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
 
 
     public int GetCurrentLevel(UpgradeNodeSO node) {
-        return _nodeStates.TryGetValue(node.ID, out var state) ? state.CurrentLevel : 0;
+        return _nodeStates.TryGetValue(node.ID, out var state) ? state.CurrentStage : 0;
     }
 
     public bool IsNodeCompleted(UpgradeNodeSO node) {
         if (!_nodeStates.TryGetValue(node.ID, out var state)) return false;
-        return state.CurrentLevel >= node.MaxLevel;
+        return state.CurrentStage >= node.MaxLevel;
     }
 
 
@@ -227,5 +228,13 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule {
     internal List<IngredientStatus> GetIngredientStatuses(UpgradeNodeSO node) {
         return GetUpgradeNode(node.ID).
             GetIngredientStatuses(SubmarineManager.Instance.SubInventory);
+    }
+
+    public void OnSave(SaveData data) {
+    
+    }
+
+    public void OnLoad(SaveData data) {
+
     }
 }

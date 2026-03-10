@@ -165,11 +165,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     private void debugSetRange(float v) {
         PlayerManager.LocalInstance.PlayerStats.DEBUGADDSTAT(StatType.MiningRange, v);
     }
-    [ConsoleCommand("toggleHitbox")]
-    private void debugToggleHitbox() {
-        _player.PlayerMovement.DEBUGToggleHitbox();
-    }
-
+   
     [ConsoleCommand("toggleGod")]
     private void debugToggleGOD() {
         _player.PlayerMovement.DEBUGToggleGodMove();
@@ -209,6 +205,8 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
         if (biome == "deadzone") {
             biomeType = BiomeType.Deadzone;
         }
+        if(PlayerManager.Instance.PlayerLayerController.CurrentLayer == VisibilityLayerType.Interior)
+            PlayerManager.Instance.PlayerLayerController.PutPlayerOutsideSub();
         var worldBiome = GameSetupManager.Instance.WorldGenSettings.biomes.FirstOrDefault(b => b.BiomeType == biomeType);
         if (worldBiome == null) return;
         _player.gameObject.transform.position = 

@@ -212,24 +212,13 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
         
     }
 
-
-   
-   
-   
-    internal void DEBUGToggleHitbox() {
-        _visualHandler.DEBUGToggleHitbox(_currentState);
-    }
-
     internal void DEBUGToggleGodMove() {
         if (!DEBUGIsGOD) {
             DEBUGIsGOD = true;
-            DEBUGToggleHitbox();
+            _visualHandler.DEBUGSetGodMode(true);
         } else {
             DEBUGIsGOD = false;
-            DEBUGExitGodMove();
+            _visualHandler.DEBUGSetGodMode(false);
         }
-    }
-    private void DEBUGExitGodMove() {
-        DEBUGToggleHitbox();
     }
 }

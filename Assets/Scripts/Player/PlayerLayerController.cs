@@ -25,6 +25,10 @@ public class PlayerLayerController : MonoBehaviour, IPlayerModule {
         MovePlayerToPos(SubmarineManager.Instance.InteriorSpawnPoint.position);
         OnPlayerVisibilityChanged?.Invoke(_currentLayer);
     }
+    public void PutPlayerOutsideSub() {
+        _currentLayer = VisibilityLayerType.Exterior;
+        OnPlayerVisibilityChanged?.Invoke(_currentLayer);
+    }
 
     public void PortalInteraction(SubPortal portal) {
         // Invert

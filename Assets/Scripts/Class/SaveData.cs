@@ -9,18 +9,19 @@ namespace r8teful {
         public string gameVersion = "";  // e.g. "0.4.1"
         public long lastSavedUtc = 0;
 
-        // Stats 
+        // Persistant progression
         public float playTimeHours = 0f;
+        //public SettingsSave settings = new();
 
-        // State
+        // Run specific (wiped when new run is started)
         public PlayerSaveData player = new();
         public WorldSaveData world = new();
-        //public SettingsSave settings = new();
 
 
     }
     [System.Serializable]
     public class  PlayerSaveData {
+        //List<>
         // upgrades, et    
     }
 

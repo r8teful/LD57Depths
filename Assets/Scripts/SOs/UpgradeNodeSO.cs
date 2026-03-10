@@ -20,7 +20,7 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
     [Tooltip("ANY of these prerequisite nodes must be fully unlocked before this one can be started.")]
     public List<UpgradeNodeSO> prerequisiteNodesAny;
     public bool UnlockedAtFirstPrereqStage;
-    public List<UpgradeStage> stages =   new List<UpgradeStage>();
+    public List<UpgradeStage> stages = new List<UpgradeStage>();
     public int MaxLevel => stages.Count;
 
     public ushort ID => uniqueID;
@@ -34,9 +34,9 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
             currentStageLevel, c.baseValue, c.linearIncrease, c.expIncrease);
         return baseCost * stage.costMultiplier;
     }
-    public UpgradeTierSO GetStageTier(int tier) {
-        if (stages.Count <= tier) return null;
-        return stages[tier].upgradeItemPool;
+    public UpgradeTierSO GetStageTier(int stageNum) {
+        if (stages.Count <= stageNum) return null;
+        return stages[stageNum].upgradeItemPool;
     }
     public UpgradeStage GetStage(int stage) {
         if (stages.Count <= stage) return null;
