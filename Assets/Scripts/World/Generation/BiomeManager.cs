@@ -59,6 +59,7 @@ public class BiomeManager : StaticInstance<BiomeManager>
         _worldManager = parent;
         _chunkManager = parent.ChunkManager;
         chunkSize = _worldManager.GetChunkSize();
+        StartCoroutine(ClientMovingRoutine());
     }
     // Not having multiplayer atm 
     //public override void OnStartClient() {
@@ -71,11 +72,6 @@ public class BiomeManager : StaticInstance<BiomeManager>
     //    StartCoroutine(ClientMovingRoutine());
     //    StartCoroutine(Routine());
     //}
-
-    // For some fucking reason if we have this in awake it never fucking finds NEtworkedPlayer.LocalInstance!?!?
-    private void Start() {
-        StartCoroutine(ClientMovingRoutine());
-    }
 
     private IEnumerator ClientMovingRoutine() {
         var checkInterval = 0.2f;

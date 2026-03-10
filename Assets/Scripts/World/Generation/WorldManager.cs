@@ -48,7 +48,6 @@ public class WorldManager : StaticInstance<WorldManager> {
     public void Init(GameManager setupManager) {
         _gameSetupManager = setupManager;
         WorldGen.Init(worldRenderTexture, setupManager.WorldGenSettings, this, ChunkManager, _worldGenCamera);
-        BiomeManager.Init(this);
         SetSubAndPlayerSpawn();
         mainTilemap.ClearAllTiles(); // Start with a clear visual map
         StructureManager = gameObject.AddComponent<StructureManager>();
@@ -234,8 +233,7 @@ public class WorldManager : StaticInstance<WorldManager> {
         }
     }
 
-    internal void ClearAllData() {
-        ChunkManager.ClearWorldChunks();
+    internal void ClearAllTiles() {
         mainTilemap.ClearAllTiles(); // Clear the visual tilemap
     }
 

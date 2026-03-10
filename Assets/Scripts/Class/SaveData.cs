@@ -34,9 +34,20 @@ namespace r8teful {
     [System.Serializable]
     public class ChunkSaveData {
         public List<ushort> tileIds; // Flattened list of Tile IDs
-        public List<float> tileDurabilities; // Save durability state
-        public ChunkSaveData() { tileIds = new List<ushort>(); }
-        public ChunkSaveData(int capacity) { tileIds = new List<ushort>(capacity); }
+        public List<ushort> oreIds; 
+        public List<byte> biomeId; 
+
+        public ChunkSaveData() { 
+            tileIds = new List<ushort>();
+            oreIds = new List<ushort>();
+            biomeId = new List<byte>(); 
+        }
+
+        public ChunkSaveData(int capacity) { 
+            tileIds = new List<ushort>(capacity);
+            oreIds = new List<ushort>(capacity);
+            biomeId = new List<byte>(capacity); 
+        }
         // Todo add entities
     }
 

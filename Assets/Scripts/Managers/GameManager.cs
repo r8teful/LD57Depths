@@ -87,13 +87,17 @@ public class GameManager : PersistentSingleton<GameManager> {
         if (saveData != null) {
             chunkM.OnLoad(saveData);
         }
-
+        chunkM.Init(w);
 
         yield return new WaitUntil(() => chunkM.HasStartedLoadingRoutine);
         //yield return new WaitUntil(()=> !chunkM.IsGenerating(),new TimeSpan(0,2,0),()=> Debug.LogError("Took too long to generate!"));
         yield return null;
         yield return new WaitWhile(()=> chunkM.IsGenerating);
         Debug.Log("finished generating chunks");
+
+        var biomeM = FindFirstObjectByType<BiomeManager>();
+        biomeM.Init(w);
+
 
         p.PlayerLayerController.PutPlayerInSub();// Is it that easy? lol
 
@@ -112,10 +116,17 @@ public class GameManager : PersistentSingleton<GameManager> {
         // Trigger save for monobehaviours
         if (PlayerManager.Instance != null) {
             PlayerManager.Instance.UpgradeManager.OnSave(saveData);
+
+            if (ChunkManager.Instance != null) {
+                ChunkManager.Instance.OnSave(saveData);
+            } else {
+                Debug.LogWarning("Chunk manager not found!");
+            }
         } else {
             Debug.LogWarning("Player not found, will not save run state");
         }
-
+        // We write seed
+        saveData.worldData.Seed = WorldGenSettings.seed;
 
         // Save manager will write meta files and save into memory
         SaveManager.Save(saveData);
