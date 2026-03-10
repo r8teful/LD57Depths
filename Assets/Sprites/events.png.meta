@@ -93,6 +93,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -185,7 +198,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: events_4
+      name: shrineGold
       rect:
         serializedVersion: 2
         x: 86
@@ -210,8 +223,8 @@ TextureImporter:
       name: events_5
       rect:
         serializedVersion: 2
-        x: 111
-        y: 9
+        x: 112
+        y: 10
         width: 11
         height: 14
       alignment: 0
@@ -229,13 +242,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: events_6
+      name: shrineGray
       rect:
         serializedVersion: 2
-        x: 127
+        x: 126
         y: 0
-        width: 21
-        height: 14
+        width: 23
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -270,9 +283,9 @@ TextureImporter:
       events_1: 1050650354
       events_2: -1175317195
       events_3: -655221349
-      events_4: -2075485406
       events_5: -1653430345
-      events_6: 1726495633
+      shrineGold: -2075485406
+      shrineGray: 1726495633
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

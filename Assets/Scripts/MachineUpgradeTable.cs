@@ -6,6 +6,7 @@ public class MachineUpgradeTable : MonoBehaviour {
     private Interactable _interactable;
     [SerializeField] private UpgradeNodeSO _nodeToFix;
     [SerializeField] private Animator _animator;
+    [SerializeField] private ParticleSystem _fixParticles;
 
     private void Awake() {
         _interactable = GetComponent<Interactable>();
@@ -21,8 +22,10 @@ public class MachineUpgradeTable : MonoBehaviour {
 
     private void UpgradePurchased(ushort id) {
         if(_nodeToFix.ID == id) {
-            if (_animator != null)
+            if (_animator != null) {
                 _animator.Play("Fixed"); // todo add this
+                _fixParticles.Play();
+            }
         }
     }
 

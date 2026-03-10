@@ -6,6 +6,7 @@ public class MachineControlPanel : MonoBehaviour {
     private Interactable _interactable;
     [SerializeField] private UpgradeNodeSO _nodeToInteract;
     [SerializeField] private ParticleSystem _brokenParticles;
+    [SerializeField] private ParticleSystem _fixParticles;
     [SerializeField] private Animator _animatorMachine;
 
     private void Awake() {
@@ -25,6 +26,7 @@ public class MachineControlPanel : MonoBehaviour {
             _interactable.CanInteract = true;
             _brokenParticles.Stop(true,ParticleSystemStopBehavior.StopEmitting);
             _animatorMachine.Play("Fixed");
+            _fixParticles.Play();
         }
     }
 

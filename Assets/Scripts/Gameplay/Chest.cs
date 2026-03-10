@@ -4,6 +4,7 @@ using UnityEngine;
 public class Chest : MonoBehaviour {
     [SerializeField] private Interactable _interactable;
     [SerializeField] private ParticleSystem _openParticles;
+    [SerializeField] private ParticleSystem _destroyParticles;
     [SerializeField] private Animator _animator;
     private bool _opened = false;
     private AudioSource _audio;
@@ -18,7 +19,7 @@ public class Chest : MonoBehaviour {
     private void OnInteract(PlayerManager p) {
         if(_opened) return;
         _interactable.CanInteract = false;
-        _openParticles.Play();
+        //_openParticles.Play();
         _animator.Play("Opening");
 
         GameSequenceManager.Instance.AddEvent(shouldPause: true,
@@ -28,7 +29,8 @@ public class Chest : MonoBehaviour {
                RewardEvents.TriggerOpenChest();
            },
            onFinish: () => {
-               _audio.DOFade(0, 0.5f).OnComplete(()=> Destroy(_audio));
+               _destroyParticles.Play();
+               _audio.DOFade(0, 0.5f).OnComplete(()=> { Destroy(_audio); Destroy(gameObject); });
                AudioController.Instance.PlaySound2D("RewardPickup2");
                Debug.Log("On finish!");
                // This logic is handled by CommitLevelUp below which is called from UI

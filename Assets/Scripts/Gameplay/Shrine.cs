@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class Shrine : MonoBehaviour {
     [SerializeField] private Interactable _interactable;
+    [SerializeField] private ParticleSystem _usedParticle;
+    [SerializeField] private ParticleSystem _passiveParticles;
+    [SerializeField] private Sprite _usedSprite;
+    [SerializeField] private SpriteRenderer _sprite;
     private bool _hasUsed = false;
     private AudioSource _audio;
 
@@ -26,6 +30,10 @@ public class Shrine : MonoBehaviour {
            onFinish: () => {
                _audio.DOFade(0, 0.5f).OnComplete(() => Destroy(_audio));
                AudioController.Instance.PlaySound2D("RewardPickup2");
+               _sprite.sprite = _usedSprite;
+               _sprite.color = Color.white;
+               _usedParticle.Play();
+               _passiveParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
                // This logic is handled by CommitLevelUp below which is called from UI
            }
      );

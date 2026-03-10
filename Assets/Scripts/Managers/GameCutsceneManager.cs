@@ -26,6 +26,7 @@ public class GameCutsceneManager : Singleton<GameCutsceneManager> {
         // callback that will change the actual sprite
         onUpgradeAction?.Invoke();
         // move camera back
+        yield return new WaitForSeconds(time*0.5f);
 
         player.PlayerCamera.SetCameraPosRelative(originalCamPos,time*0.5f);
         yield return new WaitForSeconds(time * 0.5f);
