@@ -19,6 +19,7 @@ Steamdeck notes:
 * Add fog? Just some pixelated transparent noise, could add some more depth to the background
 * Make menu buttons pop in, like the stardewvalley menu
 * Upgrade progress should look animated / cooler, more exciting!!
+* When an upgrade is maxed the popup could be looking cooler like bigger text where your current upgrade amount is shown or something like that
 
 UX:
 
@@ -108,3 +109,4 @@ Not like:
 * More of a reason to go into the biome
 * Would be great if exploration entities didn't spawn in the air
 * Not enough detail in the submarine
+

@@ -1,4 +1,5 @@
 using Sirenix.OdinInspector;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +20,10 @@ public class ButtonMenuVisual: MonoBehaviour {
     [SerializeField] private Color ColorOrange;
     [SerializeField] private Sprite SpriteGreen;
     [SerializeField] private Color ColorGreen;
+
+    // Red
+    [SerializeField] private Sprite SpriteRed;
+    [SerializeField] private Color ColorRed;
     private void OnValidate() {
         ChangeStateSize(Size);
         ChangeStateColor(DefaultColor);
@@ -31,9 +36,10 @@ public class ButtonMenuVisual: MonoBehaviour {
     }
 
     public enum ButtonColor {
-        Dissabled,
-        Green,
-        Orange
+        Dissabled = 0,
+        Green = 1,
+        Orange = 2,
+        Red = 3
     }
     public enum ButtonSize {
         Small,
@@ -61,6 +67,10 @@ public class ButtonMenuVisual: MonoBehaviour {
                 sprite = SpriteOrange;
                 color = ColorOrange;
                 break;
+            case ButtonColor.Red:
+                sprite = SpriteRed;
+                color = ColorRed;
+                break;
             default:
                 break;
         }
@@ -83,5 +93,9 @@ public class ButtonMenuVisual: MonoBehaviour {
             default:
                 break;
         }
+    }
+
+    internal void SetText(string text) {
+        _text.text = text;
     }
 }

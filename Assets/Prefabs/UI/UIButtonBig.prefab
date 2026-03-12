@@ -144,7 +144,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -8, y: -103}
-  m_SizeDelta: {x: 540, y: 102}
+  m_SizeDelta: {x: 0, y: 102}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3198710282498340930
 CanvasRenderer:
@@ -263,6 +263,8 @@ MonoBehaviour:
   ColorOrange: {r: 1, g: 0.91477275, b: 0.85, a: 1}
   SpriteGreen: {fileID: 1170321897, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   ColorGreen: {r: 0.79607844, g: 1, b: 0.8980392, a: 1}
+  SpriteRed: {fileID: 1634354981, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  ColorRed: {r: 1, g: 0.8256904, b: 0.78301877, a: 1}
 --- !u!114 &7149383785660547444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,6 +316,7 @@ GameObject:
   - component: {fileID: 2825259571136834365}
   - component: {fileID: 4159671618230721922}
   - component: {fileID: 5721439550604301287}
+  - component: {fileID: 6265091162787820805}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -440,3 +443,16 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6265091162787820805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7905901170007017159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cdfc51a69dddcc4685dc98c3f13c7e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  LocalizationKey: 

@@ -537,7 +537,7 @@ TextureImporter:
         height: 51
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 2, y: 3, z: 3, w: 3}
+      border: {x: 3, y: 3, z: 6, w: 3}
       customData: 
       outline: []
       physicsShape: []
@@ -1917,10 +1917,10 @@ TextureImporter:
       name: IconWeb
       rect:
         serializedVersion: 2
-        x: 48
-        y: 469
-        width: 11
-        height: 11
+        x: 44
+        y: 465
+        width: 19
+        height: 19
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -4078,7 +4078,7 @@ TextureImporter:
         width: 21
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -4087,6 +4087,50 @@ TextureImporter:
       bones: []
       spriteID: 9674c92dee7219641b20c58675a63dfc
       internalID: 1880573985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IconLanguage
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 404
+        width: 26
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6889e5dac37f34d4daa3db31aecef8db
+      internalID: -1564167215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonRed
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 293
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d91f56a64c2419346bbd318964473854
+      internalID: 1634354981
       vertices: []
       indices: 
       edges: []
@@ -4114,6 +4158,7 @@ TextureImporter:
       ButtonGreedDark: -978120224
       ButtonGreenBright: 1170321897
       ButtonOrange: 1363531171
+      ButtonRed: 1634354981
       ButtonUpgradeBlueActive: 624703488
       ButtonUpgradeBlueInactive: -176935646
       ButtonUpgradeBluePressed: -2138730293
@@ -4140,6 +4185,7 @@ TextureImporter:
       IconHome: 2058519534
       IconInstagram: 425630960
       IconInv: -2061626415
+      IconLanguage: -1564167215
       IconLeaf: 1187898083
       IconLocation: -589336291
       IconLook: 54682694
