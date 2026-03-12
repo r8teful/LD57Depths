@@ -16,6 +16,6 @@ public class TileUpgradeEffectSO : UpgradeEffect {
         int startProcent = 100;
         int currentProcent = Mathf.RoundToInt(current * 100f) + startProcent;
         int nextProcent = Mathf.RoundToInt(next * 100f) + startProcent;
-        return new StatChangeStatus("Copper", $"{currentProcent}%", $"{nextProcent}%", true); 
+        return new StatChangeStatus("Copper", $"{currentProcent}%", $"{nextProcent}%", false); 
     }
 }

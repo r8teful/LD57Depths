@@ -1301,35 +1301,39 @@ Handle special cases
 
 Upgrade:
 
-Basically you need to rebuild \_nodeStates when starting. Doing this you'll simply need the stage each node has. So you'll save the node ID, and then its stage int 
+Basically you need to rebuild \_nodeStates when starting. Doing this you'll simply need the stage each node has. So you'll save the node ID, and then its stage int
 
 
 
+Structures:
+
+How will that work? Structures will have to know if they've been used or not. Would it not be better if you have the entity manager handles this. Because then you can save their state in persistantEntityData and incase you need any other things saved like that it would be easier later. Kind of how you are saving the tiles straight into the chunks, you'd also put the actual script right into the entitymanager 
 
 
-Lucy. 
+
+I like the idea. Let us properly set the world entities then... 
+
+
+
+Artifact doesn't need to know what biome it is in, simply check what biome the player is in when they destroy an artifact. ask biome manager what biome we are in, and then apply the appropriate effect. Or just store it as biome specific data
+
+
+
+When we make the world from scratch, we always create new entity data in that chunk. Basically when we've gone over the chunk we shouldn't care about spawning new instances because we've already done it. But that logic also goes for the tiles, so if 
+
+
+
+Lucy.
 
 Make the stone one pixel or have the other drops have more detail
 
-Make an "don't loose all things" upgrade
+Upgrade: "don't loose all things" 
 
 Annoying that the music slows down when low on oxygen
 
-Path lights up when you run out of time
+Upgrade: Path lights up when you run out of time
 
 Cost on popup should disappear when node is complete
 
 Escape closes a menu, Escape without a menu opens settings
-
-
-
-
-
-
-
-
-
-
-
-
 

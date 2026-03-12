@@ -121,7 +121,7 @@ public class LowOxygenVisual : MonoBehaviour {
         // if duration is effectively zero, snap
         if (duration <= 0.0001f) {
             _volume.weight = to;
-            AudioController.Instance.SetLoopPitchAll(pitchTo);
+            AudioController.Instance.SetLoopPitch(pitchTo,loopIndex: 1);
             //AudioController.Instance.SetLowpassCutoff(Mathf.LerpUnclamped(from, to, 1f));
             onComplete?.Invoke();
             yield break;
@@ -132,12 +132,12 @@ public class LowOxygenVisual : MonoBehaviour {
             float t = Mathf.Clamp01(elapsed / duration);
             float curveT = curve != null ? curve.Evaluate(t) : t;
             _volume.weight = Mathf.LerpUnclamped(from, to, curveT);
-            AudioController.Instance.SetLoopPitchAll(Mathf.LerpUnclamped(pitchFrom, pitchTo, curveT));
+            AudioController.Instance.SetLoopPitch(Mathf.LerpUnclamped(pitchFrom, pitchTo, curveT), loopIndex: 1);
             //AudioController.Instance.SetLowpassCutoff(Mathf.LerpUnclamped(from, 300f, curveT));
 
             yield return null;
         }
-        AudioController.Instance.SetLoopPitchAll(pitchTo);
+        AudioController.Instance.SetLoopPitch(pitchTo, loopIndex: 1);
         //AudioController.Instance.SetLowpassCutoff(300f);
 
 

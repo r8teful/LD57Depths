@@ -33,7 +33,11 @@ public class StatModifier {
         }
         int currentProcent = Mathf.RoundToInt(currentIncrease * 100f);
         int nextProcent = Mathf.RoundToInt(nextIncrease * 100f);
-        return new(statName, $"{currentProcent}%", $"{nextProcent}%", ResourceSystem.IsLowerBad(Stat));
+        // check if the next procent is actually lower (bad and pass that not just if the lower is bad
+        bool isBadChange =
+            (nextProcent < currentProcent && ResourceSystem.IsLowerBad(Stat)) ||
+            (nextProcent > currentProcent && !ResourceSystem.IsLowerBad(Stat));
+        return new(statName, $"{currentProcent}%", $"{nextProcent}%", isBadChange);
 
     }
     // could combine the two if we simply made an interface that was like "IStatHoldable" or something but eh cba
@@ -44,8 +48,10 @@ public class StatModifier {
 
         int currentProcent = Mathf.RoundToInt(currentIncrease * 100f);
         int nextProcent = Mathf.RoundToInt(nextIncrease * 100f);
-        var isLowerBad = ResourceSystem.IsLowerBad(Stat);
-        return new(statName, $"{currentProcent}%", $"{nextProcent}%", isLowerBad);
+        bool isBadChange =
+            (nextProcent < currentProcent && ResourceSystem.IsLowerBad(Stat)) ||
+            (nextProcent > currentProcent && !ResourceSystem.IsLowerBad(Stat));
+        return new(statName, $"{currentProcent}%", $"{nextProcent}%", isBadChange);
     }
   
 }

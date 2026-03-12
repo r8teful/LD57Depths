@@ -539,10 +539,8 @@ public class AudioController : PersistentSingleton<AudioController> {
         return false;
     }
 
-    internal void SetLoopPitchAll(float v) {
-        foreach (var loop in loopSources) {
-            if(loop == null) continue;
-            loop.pitch = v;
-        }
+    internal void SetLoopPitch(float v,int loopIndex = 0 ) {
+        if (loopIndex > loopSources.Count - 1) return;
+        loopSources[loopIndex].pitch = v;
     }
 }

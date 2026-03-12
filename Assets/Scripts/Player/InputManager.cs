@@ -135,11 +135,19 @@ public class InputManager : MonoBehaviour, IPlayerModule {
 
     private void OnEscape(InputAction.CallbackContext context) {
         // If any ui open, close it 
+        
         if (_UIManager.TryCloseAnyOpenUI()) {
             return;
         }
+        ClearInteractable();
         // Nothing to close open pause
         _UIManager.PausePanelUIToggle();
+    }
+
+    private void UIHandleCloseAction(InputAction.CallbackContext context) {
+        // E.g., Escape key or Gamepad B/Start 
+        //_inventoryUIManager.HandleCloseAction(context); // For UI related
+        //ClearInteractable(); // Also clear interactable
     }
 
     private void OnPanStop(InputAction.CallbackContext context) {
@@ -442,11 +450,6 @@ public class InputManager : MonoBehaviour, IPlayerModule {
        // _inventoryUIManager.HandleToggleInventory();
     }
 
-    private void UIHandleCloseAction(InputAction.CallbackContext context) {
-        // E.g., Escape key or Gamepad B/Start 
-        //_inventoryUIManager.HandleCloseAction(context); // For UI related
-        ClearInteractable(); // Also clear interactable
-    }
     private void HandleCancelAction(InputAction.CallbackContext context) {
     }
     #endregion

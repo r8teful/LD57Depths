@@ -47,11 +47,21 @@ public class UpgradeNodeVisualData {
         _currentUpgradeStage = _upgradeManager.GetUpgradeStage(_node);
         if (_currentUpgradeStage != null) {
             // Probably no stages. simply return
+            bool isComplete = _upgradeManager.IsNodeCompleted(_node);
             StatChangeStatuses = _currentUpgradeStage.GetStatStatuses();
+            if(StatChangeStatuses != null&& StatChangeStatuses.Count > 0) {
+                if (isComplete) {
+                    foreach (var stat in StatChangeStatuses) {
+                        if (stat == null) continue;
+                        stat.ValueNext = ""; // Just set next value to nonde
+                    }
+                }
+
+            }
             if (_currentUpgradeStage.extraData != null) {
                 // Take extra icon from it
                 if (_currentUpgradeStage.extraData is UpgradeStageSubData s)
-                    IconExtra = _upgradeManager.IsNodeCompleted(_node) ? s.UpgradeIconComplete : s.UpgradeIcon;
+                    IconExtra = isComplete ? s.UpgradeIconComplete : s.UpgradeIcon;
             }
         }
         // Wow this is so much better almost like I know what I'm doing!!

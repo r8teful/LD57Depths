@@ -339,6 +339,17 @@ public class ResourceSystem {
             StatType.PlayerOxygenMax => true,
             StatType.Knockback => false,
             StatType.MiningFalloff => false,
+            StatType.MiningCombo => true,
+            StatType.MiningCritDamage => true,
+            StatType.MiningCritChance => true,
+            StatType.PlayerDrag => true,
+            StatType.Cooldown => true,
+            StatType.Duration => true,
+            StatType.Size => true,
+            StatType.ProjectileCount => true,
+            StatType.ProjectileSpeed => true,
+            StatType.ProjectileBounces => true,
+            StatType.Luck => true,
             _ => true,
         };
     }

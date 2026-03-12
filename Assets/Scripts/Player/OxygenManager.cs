@@ -114,7 +114,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
             _oxygenDepleted = false;
             _lowoxygenVisualInstance.CancelAndRemove();
             AudioController.Instance.UnMuffleLoop(0);
-            AudioController.Instance.UnMuffleLoop(1);
+            AudioController.Instance.UnMuffleLoop(1); 
         }
         CurrentOxygen += oxygenDepletionRate * 50 * Time.deltaTime;
         playerHealth = maxHealth;

@@ -21,7 +21,7 @@ public class StatModAbilityEffectSO : UpgradeEffect {
         return new StatModifier(modificationValue, upgradeType, increaseType, this);
     }
 
-    public override UIExecuteStatus GetExecuteStatus() { 
+    public override UIExecuteStatus GetExecuteStatus() {
         // First we need the current multiplier value, which we need to pull from our targetAbility instance
         var abilityInstance = PlayerManager.Instance.PlayerAbilities.GetAbilityInstance(targetAbility.ID);
         if(abilityInstance == null) {

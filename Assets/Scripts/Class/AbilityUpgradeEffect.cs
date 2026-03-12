@@ -22,7 +22,9 @@
        
         var currentValue = _ability.GetEffectiveStat(statModifier.Stat);
         var nextValue = _ability.GetEffectiveStat(statModifier.Stat, statModifier);
-
-        return new StatChangeStatus(statName, currentValue.ToString("F2"), nextValue.ToString("F2"), ResourceSystem.IsLowerBad(statModifier.Stat));
+        bool isBadChange =
+            (currentValue < nextValue && ResourceSystem.IsLowerBad(statModifier.Stat)) ||
+            (currentValue > nextValue && !ResourceSystem.IsLowerBad(statModifier.Stat));
+        return new StatChangeStatus(statName, currentValue.ToString("F2"), nextValue.ToString("F2"), isBadChange);
     }
 }

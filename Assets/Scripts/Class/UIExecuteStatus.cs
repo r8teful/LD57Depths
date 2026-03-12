@@ -2,10 +2,10 @@
 [System.Serializable]
 public abstract class UIExecuteStatus { }
 public class StatChangeStatus : UIExecuteStatus {
-    public string StatName { get; }
-    public string ValueNow { get; }
-    public string ValueNext { get; }
-    public bool IsBadChange { get; }
+    public string StatName { get; set; }
+    public string ValueNow { get; set; }
+    public string ValueNext { get; set; }
+    public bool IsBadChange { get; set; }
     public StatChangeStatus(string statName, float valueNow, float valueNext, bool isBadChange) {
         StatName = statName;
         ValueNow = valueNow.ToString("F2");

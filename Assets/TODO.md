@@ -31,14 +31,13 @@ Misc:
 
 * Should not fix the upgrade panel from the upgrade panel
 * Cactus particle effect?? When you turn into one
-* Chest should explode into lil pickups which then give you that same pickup sound <-- DO THIS
-* Escape on upgrade menu doesn't close popup
+* Upgrade: "don't loose all things"
+* Upgrade: Path lights up when you run out of time
 
 Coding:
 
 * The other upgrades, like the block oxygen, lazer blast, lazer chain, make them better, it feels wrong, it just costs like 2 iron to buy, its not satisfying, make it cost somewhat mored
 * crit damage?
-* Biome placement should not change with same seed -> Maybe fixed it need to check!!
 * Implement ONE event
 * Don't let submarine spawn inside a rock, or inside a cave
 
@@ -46,10 +45,8 @@ Coding:
 
 FOR POLISED DEMO:
 
-* Particle for fixing something in the submarine
 * Add one more song
 * Some kind of animation when going into the submarine?
-* Particles spawn when destroying a plant
 * Make pitch more soothing
 * Add upgrades that you'll be able to get for level 2
 * Sub UI needs to be updated. Zone ui should show appropriate resources
@@ -62,6 +59,7 @@ For web build
 
 * Gain looping audio still a bit glitched
 * Can't fullscreen properly, might jst have to put the non simplified mode?
+* Make the stone one pixel or have the other drops have more detail
 
 
 
@@ -79,9 +77,8 @@ RIK TODO:
 
 * Add menu stuff
 * Saving? Start doing steam demo stuff Yeah do saving stuff I'm in the mood actually with all this bullshit architecture backend stuff
-* Save entities -> Also world entities
+* Save shrine stuff (not saved properly now)
 * Make sure all run specific data is whipped when creating new game
-* If you want to save while on your adventure, it will be quite harder because there are so many more things you'll have to consider. Is the player opening a chest? Has the player activated a buff? Etc etc. it will be a nightmare
 
 
 
