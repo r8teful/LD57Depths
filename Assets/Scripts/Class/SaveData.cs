@@ -30,6 +30,11 @@ namespace r8teful {
     [System.Serializable]
     public class  BobSaveData {
         public Dictionary<ushort, int> nodeSaveData;
+        public Dictionary<ushort, int> inventorySaveData;
+        public BobSaveData() {
+            nodeSaveData = new Dictionary<ushort, int>();
+            inventorySaveData = new Dictionary<ushort, int>();
+        }
     }
     [System.Serializable]
     public class ChunkSaveData {

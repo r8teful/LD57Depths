@@ -21,7 +21,7 @@ public class SaveManager {
 #endif
 
         Directory.CreateDirectory(Path.GetDirectoryName(SaveFilePath));
-        Debug.Log("Saved data into: " + SaveFilePath);
+        Debug.Log("<color=Green>Saved data into: " + SaveFilePath);
         //File.WriteAllText(SaveFilePath, JsonUtility.ToJson(data, prettyPrint: true));
         File.WriteAllText(SaveFilePath, JsonConvert.SerializeObject(data,Formatting.Indented));
     }

@@ -75,10 +75,13 @@ RIK TODO:
 
  	- Add particles
 
-&nbsp;	SHING sound effect, shiny something like that when UI opens. P I K U  
+ 	SHING sound effect, shiny something like that when UI opens. P I K U
 
 * Add menu stuff
 * Saving? Start doing steam demo stuff Yeah do saving stuff I'm in the mood actually with all this bullshit architecture backend stuff
+* Save inventory
+* Save entities
+* Make sure all run specific data is whipped when creating new game
 
 
 

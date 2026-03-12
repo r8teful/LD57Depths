@@ -81,10 +81,11 @@ public class MainMenu : MonoBehaviour {
     private void OnContinueGameClicked() {
         // ensure save data still exists
         Debug.Log("Continue clicked!!");
-        if(App.SaveRunDataExists) {
-            var seed = SaveManager.CurrentSave.worldData.Seed;
+        if(App.SaveRunDataExists && SaveManager.TryLoad(out var saveData)) {  // We have to reload the save data here if we try and load again after quiting 
+            
+            var seed = saveData.worldData.Seed;
             var settings = new GameSettings(seed); // also other related things (like world pattern whatever) 
-            settings.SaveToLoad = SaveManager.CurrentSave; // This should be valid if App.SaveRunDataExists is true
+            settings.SaveToLoad = saveData; // This should be valid if App.SaveRunDataExists is true
             GameManager.Instance.Begin(settings);
         } else {
             // can't load, go back?

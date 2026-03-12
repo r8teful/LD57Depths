@@ -1,10 +1,11 @@
+using r8teful;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 // This is on the interior instance
-public class SubmarineManager : StaticInstance<SubmarineManager> {
+public class SubmarineManager : StaticInstance<SubmarineManager>, ISaveable {
      private int _currentZoneIndex;
     public int CurrentZoneIndex => _currentZoneIndex;
 
@@ -26,8 +27,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     
     protected override void Awake() {
         base.Awake();
-        subInventory = new InventoryManager();
-        itemGainSpawner.Init(subInventory);
+        subInventory = new InventoryManager(); // will get overwritten in OnLoad if we have save data
         GameManager.OnSetupComplete += MyStart;
     }
     private void OnDestroy() {
@@ -35,6 +35,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
     }
 
     private void MyStart() {
+        itemGainSpawner.Init(subInventory); // We init it here because inventory will be already properly loaded
         var y = GameManager.Instance.WorldGenSettings.MaxDepth;
         submarineExterior.transform.position = new Vector3(0, y);
     }
@@ -109,5 +110,20 @@ public class SubmarineManager : StaticInstance<SubmarineManager> {
 
     internal void FixControlPanel() {
 
+    }
+
+    public void OnSave(SaveData data) {
+        Dictionary<ushort, int> inventorySaveData = new Dictionary<ushort, int>();
+        foreach (var slot in subInventory.Slots) {
+            inventorySaveData.Add(slot.Key, slot.Value.quantity);
+        }
+        data.bobData.inventorySaveData = inventorySaveData; 
+    }
+
+    public void OnLoad(SaveData data) {
+        if (data == null) return;
+        if (data.bobData == null) return;
+        subInventory ??= new(); // if this would be the case ui would be broken becuase they subscribe when 
+        subInventory.LoadFromSave(data.bobData.inventorySaveData);
     }
 }

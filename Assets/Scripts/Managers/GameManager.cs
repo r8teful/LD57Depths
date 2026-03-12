@@ -97,6 +97,14 @@ public class GameManager : PersistentSingleton<GameManager> {
 
         var biomeM = FindFirstObjectByType<BiomeManager>();
         biomeM.Init(w);
+        yield return null;
+        
+        var sub = FindFirstObjectByType<SubmarineManager>();
+        if (sub == null)
+            LogError(sub);
+        if (saveData != null) {
+            sub.OnLoad(saveData);
+        }
 
 
         p.PlayerLayerController.PutPlayerInSub();// Is it that easy? lol
@@ -121,6 +129,11 @@ public class GameManager : PersistentSingleton<GameManager> {
                 ChunkManager.Instance.OnSave(saveData);
             } else {
                 Debug.LogWarning("Chunk manager not found!");
+            }
+            if (SubmarineManager.Instance != null) {
+                SubmarineManager.Instance.OnSave(saveData);
+            } else {
+                Debug.LogWarning("SubmarineManager manager not found!");
             }
         } else {
             Debug.LogWarning("Player not found, will not save run state");

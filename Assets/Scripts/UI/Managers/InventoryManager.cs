@@ -16,6 +16,15 @@ public class InventoryManager {
     public InventoryManager() {
         Slots = new Dictionary<ushort, InventorySlot>();
     }
+    // For loading. We can't make a new Slots object because if we've subscribed to slot events before it would overrwrite
+    public void LoadFromSave(Dictionary<ushort, int> itemQuantities) {
+        foreach (var item in itemQuantities) {
+            if (!Slots.ContainsKey(item.Key)) {
+                Slots.Add(item.Key, new(item.Key, item.Value));
+                OnSlotNew?.Invoke(item.Key, item.Value); // so UI updates aswell 
+            }
+        }
+    }
 
     public bool AddItem(ushort itemIDToAdd, int quantityToAdd = 1) {
         if (itemIDToAdd == ResourceSystem.InvalidID || quantityToAdd <= 0) {
