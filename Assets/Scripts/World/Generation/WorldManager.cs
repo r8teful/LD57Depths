@@ -10,7 +10,6 @@ public class WorldManager : StaticInstance<WorldManager> {
     public WorldGen WorldGen;
     public ChunkManager ChunkManager;
     public BiomeManager BiomeManager;
-    public StructureManager StructureManager;
     [SerializeField] private RenderTexture worldRenderTexture;
     [SerializeField] private Transform _worldRoot; // All world entities have this as their parent, used for hiding when entering sub or other interiors
     [SerializeField] private Transform _submarineInside; 
@@ -50,9 +49,6 @@ public class WorldManager : StaticInstance<WorldManager> {
         WorldGen.Init(worldRenderTexture, setupManager.WorldGenSettings, this, ChunkManager, _worldGenCamera);
         SetSubAndPlayerSpawn();
         mainTilemap.ClearAllTiles(); // Start with a clear visual map
-        StructureManager = gameObject.AddComponent<StructureManager>();
-        //if (useSave) WorldDataManager.LoadWorld(); // Load happens only on server
-        SpawnStructures();
         PlayerLayerController.OnPlayerVisibilityChanged += PlayerLayerChange;
     }
     private void OnDestroy() {
@@ -69,14 +65,6 @@ public class WorldManager : StaticInstance<WorldManager> {
             mainTilemap.GetComponent<TilemapCollider2D>().enabled = false;
 
         }
-    }
-
-    private void SpawnStructures() {
-        var settings = GameManager.Instance.WorldGenSettings;
-        foreach(var biome in settings.biomes) {
-            StructureManager.GenerateArtifact(biome);
-        }
-        StructureManager.GenerateExplorationEntities(settings);
     }
 
     private void SetSubAndPlayerSpawn() {

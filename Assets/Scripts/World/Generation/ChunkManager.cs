@@ -4,7 +4,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.Overlays;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 // Represents the runtime data for a single chunk (tile references)
@@ -86,21 +85,18 @@ public struct ChunkPayload {
     public List<ushort> TileIds;
     public List<ushort> OreIds;
     public List<float> Durabilities;
-    public List<ulong> EntityPersistantIds;
 
-    public ChunkPayload(Vector2Int chunkCoord, List<ushort> tileIds, List<ushort> oreIds, List<float> durabilities, List<ulong> entityIds) {
+    public ChunkPayload(Vector2Int chunkCoord, List<ushort> tileIds, List<ushort> oreIds, List<float> durabilities) {
         ChunkCoord = chunkCoord;
         TileIds = tileIds;
         OreIds = oreIds;
         Durabilities = durabilities;
-        EntityPersistantIds = entityIds;
     }
-    public ChunkPayload(ChunkPayload fromJobs, List<ulong> entityIds) {
+    public ChunkPayload(ChunkPayload fromJobs) {
         ChunkCoord = fromJobs.ChunkCoord;
         TileIds = fromJobs.TileIds;
         OreIds = fromJobs.OreIds;
         Durabilities = fromJobs.Durabilities;
-        EntityPersistantIds = entityIds;
     }
 }
 // tileID is tied to the data like durability and drops, while textureIndex determines how it looks like
@@ -298,10 +294,8 @@ public class ChunkManager : StaticInstance<ChunkManager>, ISaveable {
                     oreIDs.Add(chunkData.oreID[x, y]);
                 }
             }
-            // This entitySpawner gets the ids for the chunk through ServerGenerateChunkData
-            var entityIds = _entitySpawner.GetEntityIDsByChunkCoord(kvp.Key);
 
-            dataToSend.Add(new ChunkPayload(kvp.Key, tileIds, oreIDs, durabilities, entityIds));
+            dataToSend.Add(new ChunkPayload(kvp.Key, tileIds, oreIDs, durabilities));
         }
         if(dataToSend.Count > 0) {
             // Only actually send if we added existing data to the list
@@ -309,7 +303,7 @@ public class ChunkManager : StaticInstance<ChunkManager>, ISaveable {
         }
     }
 
-    private void OnChunkGenerationComplete(List<ChunkPayload> payloadData, Dictionary<Vector2Int, ChunkData> severData, Dictionary<Vector2Int,List<EntitySpawnInfo>> entities) {
+    private void OnChunkGenerationComplete(List<ChunkPayload> payloadData, Dictionary<Vector2Int, ChunkData> severData) {
         // Store data on server
         foreach (var data in severData) {
             data.Value.hasBeenGenerated = true;
@@ -320,12 +314,7 @@ public class ChunkManager : StaticInstance<ChunkManager>, ISaveable {
             data.Value.hasBeenGenerated = true;
             _worldManager.BiomeManager.AddNewData(data.Key, data.Value);
         }
-        // Dont need to do this because its already in ChunkPayLoad
-        //foreach(var data in entities) {
-        //    _entitySpawner.AddGeneratedEntityData(data.Key, data.Value);
-        //}
-        // FINALLY, we add persistant to the chunkPayLoad and send final result to client
-
+       
         ReceiveChunkDataMultiple(payloadData); // send it to requesting client
     }
     // --- Target RPC to send chunk data to a specific client ---
@@ -405,10 +394,7 @@ public class ChunkManager : StaticInstance<ChunkManager>, ISaveable {
             tiles.Add(chunkBounds, tilesToSet);
             ores.Add(chunkBounds, oresToSet);
             tilesShading.Add(chunkBounds, tilesShadingToSet);
-            // Entities!!
-            if (chunkPayload.EntityPersistantIds != null) {
-                _entitySpawner.ProcessReceivedEntityIds(chunkPayload.ChunkCoord, chunkPayload.EntityPersistantIds);
-            }
+            _entitySpawner.ActivateEntitiesAtChunk(chunkPayload.ChunkCoord);
         }
         _worldManager.SetTileIEnumerator(tiles, tilesShading);
         _worldManager.SetOreIEnumerator(ores);
@@ -719,6 +705,10 @@ public class ChunkManager : StaticInstance<ChunkManager>, ISaveable {
         int chunkY = Mathf.FloorToInt((float)cellPosition.y / CHUNK_SIZE);
         return new Vector2Int(chunkX, chunkY);
     }
+    public Vector2Int CellToChunkCoord(Vector2Int cellPosition) {
+        return CellToChunkCoord((Vector3Int)cellPosition);
+    }
+
 
     // Gets the cell coordinate of the bottom-left tile OF a chunk
     public Vector3Int ChunkCoordToCellOrigin(Vector2Int chunkCoord) {

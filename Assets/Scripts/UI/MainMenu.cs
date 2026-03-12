@@ -1,9 +1,6 @@
 using DG.Tweening;
-using r8teful;
-using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static ButtonMenuVisual;
 

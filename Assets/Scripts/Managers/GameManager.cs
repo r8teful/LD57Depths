@@ -17,7 +17,7 @@ public class GameManager : PersistentSingleton<GameManager> {
     public static event Action OnSetupComplete;
     public bool IsBooting => _bootRoutine != null;
     public string GetUpgradeTreeName() => _upgradeTreeName;
-    
+
     private void OnEnable() {
         Debug.Log("GameSetupManager Enable!!");
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -75,6 +75,26 @@ public class GameManager : PersistentSingleton<GameManager> {
             LogError(bw);
         bw.PushBiomesToMaterials(WorldGenSettings);
 
+        // Spawn structures 
+        var str = FindFirstObjectByType<StructureManager>();
+        if (str == null)
+            LogError(str);
+        if(saveData != null) {
+            if(!saveData.HasRunData) 
+                str.SpawnStructures(); // only spawn new structures if we're actually making a new world
+        } else {
+            str.SpawnStructures(); 
+
+        }
+            var e = FindFirstObjectByType<EntityManager>();
+        if (e == null)
+            LogError(e);
+        if (saveData != null) {
+            Debug.Log($"Loading entities...");
+            e.OnLoad(saveData);
+        }
+
+        Debug.Log($"Spawning Player");
         // Spawn player
         var p = Instantiate(_playerPrefab, w.PlayerSpawn,Quaternion.identity);
         p.Init(saveData); // Player handles setup of player modules and loading of saveData.BobData
@@ -85,11 +105,13 @@ public class GameManager : PersistentSingleton<GameManager> {
         if (chunkM == null)
             LogError(chunkM);
         if (saveData != null) {
+            Debug.Log($"Loading chunkData...");
             chunkM.OnLoad(saveData);
         }
         chunkM.Init(w);
 
         yield return new WaitUntil(() => chunkM.HasStartedLoadingRoutine);
+        Debug.Log($"Generating Chunks...");
         //yield return new WaitUntil(()=> !chunkM.IsGenerating(),new TimeSpan(0,2,0),()=> Debug.LogError("Took too long to generate!"));
         yield return null;
         yield return new WaitWhile(()=> chunkM.IsGenerating);
@@ -135,6 +157,11 @@ public class GameManager : PersistentSingleton<GameManager> {
             } else {
                 Debug.LogWarning("SubmarineManager manager not found!");
             }
+            if (EntityManager.Instance != null) {
+                EntityManager.Instance.OnSave(saveData);
+            } else {
+                Debug.LogWarning("EntityManager manager not found!");
+            }
         } else {
             Debug.LogWarning("Player not found, will not save run state");
         }
@@ -152,7 +179,7 @@ public class GameManager : PersistentSingleton<GameManager> {
 
     }
     private void LogError(object script) {
-        Debug.LogError($"Coudn't find script {script}!!");
+        Debug.LogError($"Coudn't find script of type {script.GetType()}!!");
     }
 
 

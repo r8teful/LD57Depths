@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace r8teful {
     public class SaveData {
@@ -19,10 +18,8 @@ namespace r8teful {
 
         public bool HasRunData {
             get {
-                //if (worldData.savedChunks == null) return false;
-                if (bobData.nodeSaveData == null) return false;
-                //if (worldData.savedChunks.Count == 0 ) return false;
-                if (bobData.nodeSaveData.Count  == 0) return false;
+                if (worldData.savedChunks == null || worldData.savedChunks.Count == 0) return false;
+                if (bobData.nodeSaveData == null || bobData.nodeSaveData.Count == 0) return false;
                 return true;
             } 
         }
@@ -61,11 +58,14 @@ namespace r8teful {
     public class WorldSaveData {
         // Use string keys for JSON compatibility across different serializers more easily
         public int Seed = 1;
-        public Dictionary<string, ChunkSaveData> savedChunks;
-        public Dictionary<string, PersistentEntityData> savedInteriorEntities;
+        public Dictionary<string, ChunkSaveData> savedChunks; // string is chunk ID
+        public Dictionary<ulong, PersistentEntityData> savedEntities; // ulong is persistantEntityID 
+        public ulong nextPersistentEntityId; 
         
         public WorldSaveData() {
             savedChunks = new Dictionary<string, ChunkSaveData>();
+            savedEntities = new Dictionary<ulong, PersistentEntityData>();
+            nextPersistentEntityId = 0;
         }
     }
 }

@@ -6,7 +6,17 @@ public class Chest : MonoBehaviour {
     [SerializeField] private ParticleSystem _openParticles;
     [SerializeField] private ParticleSystem _destroyParticles;
     [SerializeField] private Animator _animator;
-    private bool _opened = false;
+    private bool _hasUsed = false;
+    public bool HasUsed {
+        get {
+            return _hasUsed;
+        }
+        set {
+            _hasUsed = value;
+            if (_interactable != null)
+                _interactable.CanInteract = !value;
+        } 
+    } 
     private AudioSource _audio;
 
     private void Awake() {
@@ -15,10 +25,10 @@ public class Chest : MonoBehaviour {
     private void OnDestroy() {
         _interactable.OnInteract -= OnInteract;
     }
-
+   
     private void OnInteract(PlayerManager p) {
-        if(_opened) return;
-        _interactable.CanInteract = false;
+        if(_hasUsed) return;
+        HasUsed = true;
         //_openParticles.Play();
         _animator.Play("Opening");
 
@@ -40,5 +50,9 @@ public class Chest : MonoBehaviour {
 
     public void Init(StructurePlacementResult data) {
         transform.position = new(data.bottomLeftAnchor.x, data.bottomLeftAnchor.y, 0);
+    }
+
+    internal void SetInteractable(bool isEntityUsed) {
+        HasUsed = isEntityUsed;
     }
 }

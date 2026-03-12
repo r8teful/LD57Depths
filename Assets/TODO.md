@@ -79,9 +79,9 @@ RIK TODO:
 
 * Add menu stuff
 * Saving? Start doing steam demo stuff Yeah do saving stuff I'm in the mood actually with all this bullshit architecture backend stuff
-* Save inventory
-* Save entities
+* Save entities -> Also world entities
 * Make sure all run specific data is whipped when creating new game
+* If you want to save while on your adventure, it will be quite harder because there are so many more things you'll have to consider. Is the player opening a chest? Has the player activated a buff? Etc etc. it will be a nightmare
 
 
 

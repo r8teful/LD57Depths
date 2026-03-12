@@ -8,13 +8,56 @@ public abstract class EntitySpecificData {
     public abstract void ApplyTo(GameObject go);
 }
 
-public class GrowthEntityData : EntitySpecificData {
-    public int GrowthStage;
-    public GrowthEntityData(int stage) {
-        GrowthStage = stage;
+public class IsUsed : EntitySpecificData {
+    public bool IsEntityUsed;
+    public IsUsed(bool isUsed) {
+        IsEntityUsed = isUsed;
     }
     public override void ApplyTo(GameObject go) {
-       // todo
-        // go.GetComponent<GrowableEntity>().SetGrowthStage(GrowthStage);
+        // Try chest
+        var chest = go.GetComponent<Chest>();
+        if (chest == null) chest = go.GetComponentInChildren<Chest>();
+        if (chest != null) {
+            chest.SetInteractable(IsEntityUsed);
+            return;
+        }
+        // Try shrine
+        var shrine = go.GetComponent<Shrine>();
+        if (shrine == null) shrine = go.GetComponentInChildren<Shrine>();
+        if (shrine != null) {
+            shrine.SetInteractable(IsEntityUsed);
+            return;
+        }
+        Debug.LogError("Could not apply IsUsed specific data to instance!");
+    }
+    public void TrySave(GameObject go) {
+
+        // Try chest
+        var chest = go.GetComponent<Chest>();
+        if (chest == null) chest = go.GetComponentInChildren<Chest>();
+        if (chest != null) {
+            IsEntityUsed = chest.HasUsed;
+            return;
+        }
+        // Try shrine
+        var shrine = go.GetComponent<Shrine>();
+        if (shrine == null) shrine = go.GetComponentInChildren<Shrine>();
+        if (shrine != null) {
+            IsEntityUsed = shrine.HasUsed;
+            return;
+        }
+        Debug.LogError("Could not apply IsUsed specific data to instance!");
+    }
+}
+public class ArtifactData : EntitySpecificData {
+    public byte BiomeIndex;
+    public ArtifactData(BiomeType b) {
+        BiomeIndex = (byte)b;
+    }
+    public override void ApplyTo(GameObject go) {
+        var g = go.GetComponent<Artifact>();
+        if (g == null) g = go.GetComponentInChildren<Artifact>();
+        if (g == null) Debug.LogError("Can't find artifact script!");
+        g.Init((BiomeType)BiomeIndex);
     }
 }

@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 // Holds runtime data for structures
-public class StructureManager : MonoBehaviour {
+public class StructureManager : StaticInstance<StructureManager> {
     public List<StructurePlacementResult> StructurePlacements = new List<StructurePlacementResult>();
     private WorldGenData _cachedSettings;
 
+    public void SpawnStructures() {
+        var settings = GameManager.Instance.WorldGenSettings;
+        foreach (var biome in settings.biomes) {
+            GenerateArtifact(biome);
+        }
+        GenerateExplorationEntities(settings);
+    }
     public void AddStructureData(StructurePlacementResult placement) {
         StructurePlacements.Add(placement);
     }
@@ -15,7 +22,12 @@ public class StructureManager : MonoBehaviour {
         Debug.Log($"generated new artifact for biome {biome.BiomeType} at {pos}");
         StructurePlacementResult structure = new(pos, ResourceSystem.StructureArtifactID);
         StructurePlacements.Add(structure);
-        Instantiate(App.ResourceSystem.GetPrefab<Artifact>("Artifact"),transform).Init(structure,biome.BiomeType);
+
+        var chunk = ChunkManager.Instance.CellToChunkCoord(pos);
+        EntitySpawnInfo entity = new(2020, new(pos.x, pos.y, 0), Quaternion.identity);
+        var artifactData = new ArtifactData(biome.BiomeType);
+        EntityManager.Instance.AddGeneratedEntityData(chunk, entity,artifactData);
+        //Instantiate(App.ResourceSystem.GetPrefab<Artifact>("Artifact"),transform).Init(structure,biome.BiomeType);
         return structure;
     }
     
@@ -60,18 +72,34 @@ public class StructureManager : MonoBehaviour {
             // Also don't know if its performant to spawn all these things but also I don't think it is that performant heavy
             // If its a problem simply integrate this into the entity manager 
             StructurePlacementResult structure = new(pos, ResourceSystem.StructureChestID);
+
+            var chestData = new IsUsed(false);
+
+            var chunk = ChunkManager.Instance.CellToChunkCoord(pos);
+            EntitySpawnInfo entity = new(2000, new(pos.x, pos.y, 0), Quaternion.identity); // chest ID is 2000 (will fix later)
+            EntityManager.Instance.AddGeneratedEntityData(chunk, entity, chestData);
+
             StructurePlacements.Add(structure);
-            Instantiate(App.ResourceSystem.GetPrefab<Chest>("Chest"),transform).Init(structure);
+            // Instantiate(App.ResourceSystem.GetPrefab<Chest>("Chest"),transform).Init(structure); // init just sets position which would be handled by entitymanager
         }
         foreach (var pos in shrineP) {
             StructurePlacementResult structure = new(pos, ResourceSystem.StructureShrineID);
             StructurePlacements.Add(structure);
-            Instantiate(App.ResourceSystem.GetPrefab<Shrine>("Shrine"), transform).Init(structure);
+
+            var shrineData = new IsUsed(false);
+            var chunk = ChunkManager.Instance.CellToChunkCoord(pos);
+            EntitySpawnInfo entity = new(2010, new(pos.x, pos.y, 0), Quaternion.identity); // shrine ID is 2010 (will fix later)
+            EntityManager.Instance.AddGeneratedEntityData(chunk, entity, shrineData);
+            
+            //Instantiate(App.ResourceSystem.GetPrefab<Shrine>("Shrine"), transform).Init(structure);
         }
         foreach (var pos in eventP) {
             StructurePlacementResult structure = new(pos, ResourceSystem.StructureEventCaveID);
             StructurePlacements.Add(structure);
             Instantiate(App.ResourceSystem.GetPrefab<EventCave>("EventCave"), transform).Init(structure);
+        }
+        if(EntityManager.Instance == null || ChunkManager.Instance == null) {
+            Debug.LogError("Can't find managers!!");
         }
     }
 

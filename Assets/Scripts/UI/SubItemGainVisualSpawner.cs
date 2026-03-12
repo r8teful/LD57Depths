@@ -36,8 +36,10 @@ public class SubItemGainVisualSpawner : MonoBehaviour {
 
 
     private void OnDestroy() {
-        _inv.OnSlotNew -= SlotNew;
-        _inv.OnSlotChanged -= SlotChanged;
+        if( _inv != null) {
+            _inv.OnSlotNew -= SlotNew;
+            _inv.OnSlotChanged -= SlotChanged;
+        }
         ItemTransferManager.OnTransferStart -= TransferStart;
         ItemTransferManager.OnTransferCompleteAll -= TransferStop;
         ItemTransferManager.TransferSpeedChange -= TransferSpeedChange;

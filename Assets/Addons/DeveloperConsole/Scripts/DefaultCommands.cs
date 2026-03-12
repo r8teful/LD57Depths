@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace Anarkila.DeveloperConsole {
+﻿namespace Anarkila.DeveloperConsole {
 
     /// <summary>
     /// This class implements default Developer Console commands

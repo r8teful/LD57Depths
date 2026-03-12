@@ -61,7 +61,7 @@ public class WorldGen : MonoBehaviour {
     private struct ReadbackContext {
         public List<Vector2Int> ChunksToRequestBatch;
         public Vector2Int RenderAreaOriginChunkCoord; // Bottom-left chunk coord of the 6x6 render area
-        public System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>, Dictionary<Vector2Int, List<EntitySpawnInfo>>> OnCompleteCallback;
+        public System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>> OnCompleteCallback;
     }
     private struct ChunkProcessingJobData {
         public Vector2Int ChunkCoord;
@@ -98,7 +98,10 @@ public class WorldGen : MonoBehaviour {
         // Note: Unity.Mathematics.noise doesn't *directly* use this Random object for per-call randomness,
         // but we use it here to get deterministic offsets for the noise input coordinates.
     }
-    
+    public delegate void ChunkProcessingComplete(
+    List<ChunkPayload> payloads,
+    Dictionary<Vector2Int, ChunkData> chunks
+    );
     /// <summary>
     /// Generates chunk data for the requested chunks using GPU rendering and async readback.
     /// </summary>
@@ -106,12 +109,11 @@ public class WorldGen : MonoBehaviour {
     /// <param name="newClientChunkCoord">The chunk coordinate the player/client is currently in or moving to. This will be the center of the 6x6 render area.</param>
     /// <param name="onGenerationComplete">Callback action that receives the list of generated ChunkData.</param>
     public IEnumerator GenerateChunkAsync(List<Vector2Int> chunksToRequestBatch, Vector2Int newClientChunkCoord, 
-            System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>,
-            Dictionary<Vector2Int, List<EntitySpawnInfo>>> onGenerationComplete) {
+            System.Action<List<ChunkPayload>,Dictionary<Vector2Int,ChunkData>> onGenerationComplete) {
 
         if (_isProcessingChunks) {
             Debug.LogWarning("Chunk generation already in progress. Request ignored.");
-            onGenerationComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>(),new Dictionary<Vector2Int, List<EntitySpawnInfo>>()); // Return empty list
+            onGenerationComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>()); // Return empty list
             yield break;
         }
         _isProcessingChunks = true;
@@ -248,31 +250,26 @@ public class WorldGen : MonoBehaviour {
         }
 
         // Invoke the callback with the generated chunk data
-        
-        StartCoroutine(ProcessChunksWithJobs(generatedChunks, (processedPayloads,processedChunks,entities) => {
+        StartCoroutine(ProcessChunksWithJobs(generatedChunks, (processedPayloads,processedChunks) => {
             // World gen complete, send them over the network.
             _isProcessingChunks = false; // Allow next request
             if (processedPayloads.Count > 0) {
-                // TODO
-                context.OnCompleteCallback?.Invoke(processedPayloads, processedChunks, entities);
+                context.OnCompleteCallback?.Invoke(processedPayloads, processedChunks);
                 //TargetReceiveChunkDataMultiple(requester, processedPayloads);
                 //Debug.Log($"Sent {processedPayloads.Count} processed chunks to player");
-            } 
+            } else {
+                Debug.LogWarning("No payloads to send!");
+                context.OnCompleteCallback?.Invoke(processedPayloads, processedChunks);
+            }
         }));
     }
-
-
+  
     // We can always extend this later if there is a bottleneck somewhere
     private IEnumerator ProcessChunksWithJobs(
         Dictionary<Vector2Int,ChunkData> initialChunks, // Chunk inputs that might get modified
-        System.Action<
-            List<ChunkPayload>, // Callback action with the data that the worldgen generated
-            Dictionary<Vector2Int,ChunkData>,  // Chunkcoord to chunkdata, containing the generated chunks 
-            Dictionary<Vector2Int, List<EntitySpawnInfo>>
-            > onProcessingComplete) { // Chunkcoord with entity data incase we need to spawn any entitys in that chunk
-        
+        ChunkProcessingComplete onProcessingComplete) { 
         if (initialChunks == null || initialChunks.Count == 0) {
-            onProcessingComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>(), new Dictionary<Vector2Int, List<EntitySpawnInfo>>());
+            onProcessingComplete?.Invoke(new List<ChunkPayload>(), new Dictionary<Vector2Int, ChunkData>());
             yield break;
         }
 
@@ -363,7 +360,6 @@ public class WorldGen : MonoBehaviour {
     
         // --- 3. Process Results and Dispose NativeArrays ---
         Dictionary<Vector2Int, ChunkData> chunksToSend = new Dictionary<Vector2Int, ChunkData>(); // For server
-        Dictionary<Vector2Int, List<EntitySpawnInfo>> entitySpawnInfos = new Dictionary<Vector2Int, List<EntitySpawnInfo>>();
         Dictionary<Vector2Int, ChunkPayload> payloadsToSend = new Dictionary<Vector2Int, ChunkPayload>();
         foreach (var data in jobDataList) {
             // Make sure to complete specific handles if you didn't use CompleteAll
@@ -421,21 +417,18 @@ public class WorldGen : MonoBehaviour {
         }
 
         // Entities
-        Dictionary<Vector2Int,List<ulong>> entityIdsDict = new Dictionary<Vector2Int,List<ulong>>();
         List<ChunkPayload> clientPayload = new List<ChunkPayload>();
         foreach (var chunks in chunksToSend) {
             var entityInChunk = SpawnEntitiesInChunk(chunks.Value, chunks.Key, chunkManager);
-            entitySpawnInfos.Add(chunks.Key, entityInChunk);
             yield return null; // Wait a frame
             // Now we have the enemy info, get the persistant IDs from EntityManager
-            entityIdsDict.Add(chunks.Key, EntityManager.Instance.AddGeneratedEntityData(chunks.Key, entityInChunk));
+            EntityManager.Instance.AddGeneratedEntityData(chunks.Key, entityInChunk);
         }
-        foreach(var data in payloadsToSend) {
-            var entityList = entityIdsDict.TryGetValue(data.Key, out var entities);
-            clientPayload.Add(new ChunkPayload(data.Value, entities));
+        foreach (var data in payloadsToSend) {
+            clientPayload.Add(new ChunkPayload(data.Value));
         }
         //Debug.Log($"All chunk processing jobs complete. {clientPayload.Count} payloads ready.");
-        onProcessingComplete?.Invoke(clientPayload, chunksToSend,entitySpawnInfos);
+        onProcessingComplete?.Invoke(clientPayload, chunksToSend);
     }
 
     private NativeArray<OreDefinition> GetOreDefinitions() {
@@ -477,7 +470,7 @@ public class WorldGen : MonoBehaviour {
         {
             durabilities.Add(-1);
         }
-        return new ChunkPayload(data.ChunkCoord, finalTileIdsList, finalOreIdsList, durabilities, null);
+        return new ChunkPayload(data.ChunkCoord, finalTileIdsList, finalOreIdsList, durabilities);
     }
 
     /*
@@ -555,7 +548,11 @@ public class WorldGen : MonoBehaviour {
         }
     }*/
     private void SpawnStructuresInChunk(ChunkData chunkData, Vector2Int chunkCoord, ChunkPayload chunkPayload) {
-        var structures = worldmanager.StructureManager.StructurePlacements;
+        if(StructureManager.Instance == null) {
+            Debug.LogError("Can't spawn structures in chunk because the reference is null!");
+            return;
+        }
+        var structures = StructureManager.Instance.StructurePlacements;
 
         var chunkRect = ChunkCoordToRect(chunkCoord);
 

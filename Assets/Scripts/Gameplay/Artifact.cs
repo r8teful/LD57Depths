@@ -7,12 +7,16 @@ public class Artifact : MonoBehaviour {
     private int _breakCount;
     private int _breakReq;
     private bool _revealed;
-    internal void Init(StructurePlacementResult data, BiomeType biome) {
-        transform.position = new(data.bottomLeftAnchor.x, data.bottomLeftAnchor.y,0);
-        _footprintRect = new RectInt(data.bottomLeftAnchor, Vector2Int.one * 3);
+   
+    internal void Init(BiomeType biome) {
+        // position is shifted 0.5 up and right, basically we could simply floor the position and get the bottom left anchor that way
+        Vector2Int bottomLeft = new Vector2Int(Mathf.FloorToInt(transform.position.x), Mathf.FloorToInt(transform.position.y));
+        _footprintRect = new RectInt(bottomLeft, Vector2Int.one * 3);
         _breakCount = 0;
         _breakReq = _footprintRect.width * _footprintRect.height; // TODO this will not work if some areas are air
         biomeData = App.ResourceSystem.GetBiomeData(biome);
+    }
+    private void OnEnable() {
         ChunkManager.OnTileChanged += TileChanged;
     }
     private void OnDisable() {

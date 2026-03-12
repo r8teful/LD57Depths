@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using r8teful;
 using System;
 using System.Collections.Generic;
@@ -10,13 +9,15 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
     [SerializeField] private ChunkManager chunkManager;
     [SerializeField] private WorldManager worldManager;
     [SerializeField] private BiomeManager biomeManager;
-    [SerializeField] private List<RuntimeSpawnEntitySO> entitySpawnList;
 
 
     // Key: Persistent Entity ID, Value: How many active chunks require it
     private Dictionary<Vector2Int, List<ulong>> entityIdsByByChunkCoord = new Dictionary<Vector2Int, List<ulong>>(); // Like worldChunks but for entities
     private Dictionary<ulong, PersistentEntityData> persistentEntityDatabase = new Dictionary<ulong, PersistentEntityData>();
     private ulong nextPersistentEntityId = 1; // Counter for assigning unique IDs
+    
+    // runtime
+    private HashSet<ulong> _currentSpawnedEntities = new HashSet<ulong>();
 
     private ulong GetNextPersistentEntityId() { return nextPersistentEntityId++; }
     public List<ulong> GetEntityIDsByChunkCoord(Vector2Int chunkCoord) {
@@ -37,22 +38,33 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
         }
     }
 
-    // Adds data to a persistent database, doesn't get spawned yet because that is client only
-    public List<ulong> AddGeneratedEntityData(Vector2Int chunkCoord, List<EntitySpawnInfo> entityList) {
-        if (entityList == null || entityList.Count == 0) return new List<ulong>();
+    public void AddGeneratedEntityData(Vector2Int chunkCoord, List<EntitySpawnInfo> entityList) {
+        if (entityList == null || entityList.Count == 0) return;
         if (!entityIdsByByChunkCoord.ContainsKey(chunkCoord)) {
             entityIdsByByChunkCoord[chunkCoord] = new List<ulong>();
         }
         foreach (EntitySpawnInfo info in entityList) {
             // Add to the main persistent database
-            PersistentEntityData newEntityData = ServerAddNewPersistentEntity(info.entityID, info.cellPos, info.rotation);
+            PersistentEntityData newEntityData = AddNewPersistentEntity(info.entityID, info.cellPos, info.rotation);
             if (newEntityData != null) {
                 // Add the ID to this chunk's list
                 entityIdsByByChunkCoord[chunkCoord].Add(newEntityData.persistentId);
             }
         }
-        return entityIdsByByChunkCoord[chunkCoord];
     }
+    public void AddGeneratedEntityData(Vector2Int chunkCoord,EntitySpawnInfo info, EntitySpecificData specificData = null) {
+        if (info.entityID == ResourceSystem.InvalidID) return;
+        if (!entityIdsByByChunkCoord.ContainsKey(chunkCoord)) {
+            entityIdsByByChunkCoord[chunkCoord] = new List<ulong>();
+        }
+        // Add to the main persistent database
+        PersistentEntityData newEntityData = AddNewPersistentEntity(info.entityID, info.cellPos, info.rotation, specificData);
+        if (newEntityData != null) {
+            // Add the ID to this chunk's list
+            entityIdsByByChunkCoord[chunkCoord].Add(newEntityData.persistentId);
+        }
+    }
+
     // Called by WorldGenerator's TargetRPC
     public void ProcessReceivedEntityIds(Vector2Int chunkCoord, List<ulong> entityIds) {
         if (entityIds == null)
@@ -72,12 +84,18 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
             }
         }
     }
+    public void ActivateEntitiesAtChunk(Vector2Int chunkCoord) {
+        if (entityIdsByByChunkCoord.TryGetValue(chunkCoord, out List<ulong> entityIds)) {
+            foreach (ulong id in entityIds) {
+                RequestEntityActivation(id);
+            }
+        }
+    }
 
-    public PersistentEntityData ServerAddNewPersistentEntity(ushort id, Vector3Int pos, Quaternion rot, EntitySpecificData entityData = null) {
+    public PersistentEntityData AddNewPersistentEntity(ushort id, Vector3Int pos, Quaternion rot, EntitySpecificData entityData = null) {
+        
         ulong uniqueID = GetNextPersistentEntityId();
-        // Instead of creating the data like this, you can let the entity themeselves handle the setup of the data
-        // Right now its not worth the effort because we just have 2 entities that actually store specific data, but could be good for later
-        //EntitySpecificData e = App.ResourceSystem.GetEntityByID(id).CreateDefaultSpecificData(); // Something like that
+        
 
         PersistentEntityData newEntityData = new(uniqueID, id, pos, rot, entityData);
         persistentEntityDatabase.Add(uniqueID, newEntityData);
@@ -95,10 +113,11 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
             return;
         }
         if(data.activeInstance != null) {
-            // Already spawed
+            // Already spawned
             return;
         }
-        GameObject prefab = App.ResourceSystem.GetEntityByID(data.entityID).entityPrefab;
+        var entitySO = App.ResourceSystem.GetEntityByID(data.entityID);
+        GameObject prefab = entitySO.entityPrefab;
         if (prefab == null) {
             Debug.LogError($"Cannot activate entity {persistentId}: Prefab missing for type {data.entityID}");
             return;
@@ -106,13 +125,16 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
         // Instantiate and apply data
         Vector3 spawnPos = new Vector3(data.cellPos.x + 0.5f, data.cellPos.y + 0.5f, 0f); // Spawn in the centre of the tile
         GameObject instance = Instantiate(prefab, spawnPos, data.rotation,transform);
-        Debug.Log($"Instsantiting instance {prefab} with ID: {data.entityID} at {spawnPos}");
+        //Debug.Log($"Instsantiting instance {prefab} with ID: {data.entityID} at {spawnPos}");
         data.activeInstance = instance; // LINK
-        //instance.transform.localScale = data.scale;
+        _currentSpawnedEntities.Add(data.persistentId);
+
         ApplyDataToInstance(instance, data); // Apply health, growth etc.
-        // Link instance BEFORE spawn
+        // Link instance on destroyed so we can remove it from our registry
         if (instance.TryGetComponent<DestroyEntityCallback>(out var entityDestroyCallback)) {
             entityDestroyCallback.OnDestroyed += HandleEntityDestroyed;
+        } else {
+            Debug.LogWarning($"Entity {entitySO.entityName} doesn't have destroyEntityCallback! You should add it just in case the object gets destroyed");
         }
     }
 
@@ -126,13 +148,14 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
         var nob = data.activeInstance;
         if (nob != null) {
             // Save state just before despawning
-            UpdateDataFromInstance(nob, data);
+            SaveDataFromInstance(nob, data);
 
             // Unsubscribe FIRST
             if (nob.TryGetComponent<DestroyEntityCallback>(out var entityDestroyCallback)) {
                 entityDestroyCallback.OnDestroyed -= HandleEntityDestroyed;
             }
             Destroy(nob); // This could also return it to the object pool or something
+            _currentSpawnedEntities.Remove(data.persistentId);
         }
         // Clear link in persistent data regardless
         data.activeInstance = null;
@@ -162,40 +185,30 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
 
     private void ApplyDataToInstance(GameObject instance, PersistentEntityData data) {
         if (instance == null || data == null) return;
-        /* TODO obviously
-        // Apply Health (Example: using a standard Health component)
-        HealthComponent health = instance.GetComponent<HealthComponent>(); // Assume you have this
-        if (health != null) {
-            health.ServerSetCurrentHealth(data.currentHealth); // Method needed on HealthComponent
+        if(data.specificData == null) {
+            return;
         }
-
-        // Apply Growth (Example)
-        PlantGrowthComponent growth = instance.GetComponent<PlantGrowthComponent>();
-        if (growth != null) {
-            growth.ServerSetGrowth(data.growthStage); // Method needed on growth component
-        }
-        */
-        // Apply custom name, inventory, etc. to corresponding components
+        // Specific data already exists, apply it 
+        data.specificData.ApplyTo(instance);
     }
-    // Update persistent data FROM an active NetworkObject instance (before deactivating)
-    private void UpdateDataFromInstance(GameObject nob, PersistentEntityData data) {
+
+    // Update persistent data FROM an entity
+    private void SaveDataFromInstance(GameObject nob, PersistentEntityData data) {
         if (nob == null || data == null) return;
         // Update Core State
-        //data.cellPos = Mathf.FloorToInt(nob.transform.position);
+        data.cellPos = new(Mathf.FloorToInt(nob.transform.position.x), Mathf.FloorToInt(nob.transform.position.y));
         data.rotation = nob.transform.rotation;
-        //data.scale = nob.transform.localScale;
-        /* todo
-        // Update Health
-        HealthComponent health = nob.GetComponent<HealthComponent>();
-        if (health != null) {
-            data.currentHealth = health.CurrentHealth; // Assume property/getter exists
-        }
 
-        // Update Growth
-        PlantGrowthComponent growth = nob.GetComponent<PlantGrowthComponent>();
-        if (growth != null) {
-            data.growthStage = growth.CurrentGrowth; // Assume property/getter exists
-        }*/
+        if (data.specificData == null) return;
+        if(data.specificData is ArtifactData a){
+            // Biome data doeesn't change at runtime so no need to save or change the persistanententityData
+            return;
+        }
+        if(data.specificData is IsUsed i) {
+            i.TrySave(nob);
+            return;
+        }
+        Debug.LogError("Entity had specific Data but it could not be applied!");
     }
 
     // Helper needed for HandleUnexpectedDespawn
@@ -242,20 +255,43 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
     }
 
     public void OnSave(SaveData data) {
-        var pEntities= persistentEntityDatabase.ToList();
-        var entities = JsonConvert.SerializeObject(pEntities, Formatting.Indented, new JsonSerializerSettings {
-            TypeNameHandling = TypeNameHandling.Auto
-        });
+        if (data == null|| data.worldData == null) return;
+        // Make sure we save entity specific data in the database of all active entities
+        foreach (var spawnedEntity in _currentSpawnedEntities) { 
+            if(persistentEntityDatabase.TryGetValue(spawnedEntity, out var entityData)){
+                SaveDataFromInstance(entityData.activeInstance, entityData);
+            } else {
+                Debug.LogError("Could not find persistant entity in database, did we remove it?");
+            }
+        }
+        data.worldData.savedEntities = persistentEntityDatabase; // same data as in save, don't have to do anything complicated here 
+        data.worldData.nextPersistentEntityId = nextPersistentEntityId;
+        //var entities = JsonConvert.SerializeObject(pEntities, Formatting.Indented, new JsonSerializerSettings {
+        //    TypeNameHandling = TypeNameHandling.Auto
+        //});
         // write entity string to data
     }
 
-    // todo
     public void OnLoad(SaveData data) {
         //string dataString = data.entities;
-        string dataString = "";
-        var entities =  JsonConvert.DeserializeObject<List<PersistentEntityData>>(dataString, new JsonSerializerSettings {
-            TypeNameHandling = TypeNameHandling.Auto
-        });
-        //persistentEntityDatabase = entities.ToDictionary(something);
+        foreach (var entity in data.worldData.savedEntities) {
+            // Create persistent database from save
+            if (!persistentEntityDatabase.ContainsKey(entity.Value.persistentId)) {
+                persistentEntityDatabase.Add(entity.Value.persistentId, entity.Value);
+            } else {
+                Debug.LogWarning("Persistant ID already exists in data base! Did you forget to clear the database?");
+            }
+            // Create chunk coord mapping 
+            if (chunkManager != null) {
+                var chunkCoord = chunkManager.CellToChunkCoord(entity.Value.cellPos);
+
+                if (!entityIdsByByChunkCoord.ContainsKey(chunkCoord)) {
+                    entityIdsByByChunkCoord.Add(chunkCoord, new() { entity.Value.persistentId }); // Chunk choord doesn't exist yet, add new
+                } else {
+                    entityIdsByByChunkCoord[chunkCoord].Add(entity.Value.persistentId); // Add to the already existing list
+                }
+            }
+        }
+        nextPersistentEntityId = data.worldData.nextPersistentEntityId;
     }
 }

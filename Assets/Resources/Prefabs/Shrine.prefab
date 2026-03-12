@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 1193267211146071210}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.07, y: 1.85, z: 0}
+  m_LocalPosition: {x: 2.57, y: 1.35, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -118,7 +118,7 @@ Transform:
   m_GameObject: {fileID: 4088109520478098969}
   serializedVersion: 2
   m_LocalRotation: {x: -1, y: 0, z: 0, w: 0}
-  m_LocalPosition: {x: 3.081, y: 1.86, z: -0.87}
+  m_LocalPosition: {x: 2.581, y: 1.36, z: -0.87}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4990,7 +4990,7 @@ Transform:
   m_GameObject: {fileID: 5145024858163444677}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.99, y: 1.86, z: 0}
+  m_LocalPosition: {x: 2.49, y: 1.36, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5069,6 +5069,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5199328303575127395}
   - component: {fileID: 2119563253440151022}
+  - component: {fileID: 4689613485014730356}
   m_Layer: 8
   m_Name: Shrine
   m_TagString: Untagged
@@ -5113,6 +5114,19 @@ MonoBehaviour:
   _passiveParticles: {fileID: 5870145940868512520}
   _usedSprite: {fileID: 1726495633, guid: f122392e82370fb46b223396d2d1b404, type: 3}
   _sprite: {fileID: 627790587321814870}
+--- !u!114 &4689613485014730356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5165155546490969106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a11f4c85337a51541b66f6a3dcaeb729, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DestroyEntityCallback
+  IsDestroyedPermanently: 1
 --- !u!1 &5744167335185397548
 GameObject:
   m_ObjectHideFlags: 0
@@ -5138,7 +5152,7 @@ Transform:
   m_GameObject: {fileID: 5744167335185397548}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.5, y: 3.7, z: 0}
+  m_LocalPosition: {x: 2, y: 3.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5162,11 +5176,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1723898074889984714, guid: 8577fc283650a8d41bc86bdd33fe609a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.12
+      value: 2.62
       objectReference: {fileID: 0}
     - target: {fileID: 1723898074889984714, guid: 8577fc283650a8d41bc86bdd33fe609a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.89
+      value: 1.39
       objectReference: {fileID: 0}
     - target: {fileID: 1723898074889984714, guid: 8577fc283650a8d41bc86bdd33fe609a, type: 3}
       propertyPath: m_LocalPosition.z

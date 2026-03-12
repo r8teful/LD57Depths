@@ -79,6 +79,9 @@ public class PersistentEntityData {
         this.rotation = rotation;
         specificData = entitySpecific;
     }
+
+    public PersistentEntityData() {
+    }
 }
 public struct EntitySpawnInfo {
     public ushort entityID; // So I don't have to set each entity into the inspector
