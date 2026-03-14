@@ -26,10 +26,15 @@ public class ButtonEffectJuice : MonoBehaviour, IPointerEnterHandler {
         } else {
             trans = _button.transform;
         }
-        trans.localScale = Vector3.one;
-        trans.localRotation = Quaternion.identity;
-        trans.DOPunchScale(new(scale, scale, scale), 0.2f,vibrato,elasticity).SetUpdate(true);
-        trans.DOPunchRotation(new(0, 0, Random.Range(-2f,2f)), 0.2f,vibrato,elasticity).SetUpdate(true);
+        trans.DOKill();
+        trans.DOPunchScale(new(scale, scale, scale), 0.2f,vibrato,elasticity).SetUpdate(true).OnKill(() => {
+            trans.localScale = Vector3.one;
+            trans.localRotation = Quaternion.identity;
+        }); 
+        trans.DOPunchRotation(new(0, 0, Random.Range(-2f,2f)), 0.2f,vibrato,elasticity).SetUpdate(true).OnComplete(() => {
+            trans.localScale = Vector3.one;
+            trans.localRotation = Quaternion.identity;
+        });
     }
 
     public void OnPointerEnter(PointerEventData eventData) {

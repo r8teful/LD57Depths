@@ -20,22 +20,26 @@ public class PlayerLayerController : MonoBehaviour, IPlayerModule {
     }
 
     public void PutPlayerInSub() {
-        _currentLayer = VisibilityLayerType.Interior;
-        SubmarineManager.Instance.MoveInterior(_currentLayer);
-        MovePlayerToPos(SubmarineManager.Instance.InteriorSpawnPoint.position);
-        OnPlayerVisibilityChanged?.Invoke(_currentLayer);
+        ChangeLayer(VisibilityLayerType.Interior, SubmarineManager.Instance.InteriorSpawnPoint);
     }
     public void PutPlayerOutsideSub() {
-        _currentLayer = VisibilityLayerType.Exterior;
-        OnPlayerVisibilityChanged?.Invoke(_currentLayer);
+        // This doesn't change the player position but because the inside of the sub is right where the outside one is it works ( I think)
+        ChangeLayer(VisibilityLayerType.Interior);
     }
 
     public void PortalInteraction(SubPortal portal) {
         // Invert
-        _currentLayer = _currentLayer == VisibilityLayerType.Exterior ? VisibilityLayerType.Interior : VisibilityLayerType.Exterior;
-        SubmarineManager.Instance.MoveInterior(_currentLayer);
-        MovePlayerToPos(portal.PortalDestination.transform.position);
-        OnPlayerVisibilityChanged?.Invoke(_currentLayer);
+        var newLayer = _currentLayer == VisibilityLayerType.Exterior ? VisibilityLayerType.Interior : VisibilityLayerType.Exterior;
+        ChangeLayer(newLayer,portal.PortalDestination);
+    }
+    private void ChangeLayer(VisibilityLayerType layer, Transform setPlayerPos = null) {
+        App.Backdrop.DoWaveTransition(layer == VisibilityLayerType.Interior, () => {
+            _currentLayer = layer;
+            SubmarineManager.Instance.MoveInterior(_currentLayer);
+            if(setPlayerPos != null) MovePlayerToPos((Vector3)setPlayerPos.position);
+            OnPlayerVisibilityChanged?.Invoke(_currentLayer);
+        }
+     );
     }
 
     private void MovePlayerToPos(Vector3 worldSpawnPosition) {

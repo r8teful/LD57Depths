@@ -110,50 +110,6 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: InvMain
-      rect:
-        serializedVersion: 2
-        x: 9
-        y: 612
-        width: 118
-        height: 81
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 13, y: 10, z: 10, w: 9}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8ce38485119b5954d853b38ee79d16a4
-      internalID: 842701494
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: PopupBox
-      rect:
-        serializedVersion: 2
-        x: 135
-        y: 627
-        width: 64
-        height: 31
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 2, y: 5, z: 5, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8944181c3889f4947bd74b2f6d1bd31e
-      internalID: 2098033918
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: IconFish
       rect:
         serializedVersion: 2
@@ -572,28 +528,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PopupTop
-      rect:
-        serializedVersion: 2
-        x: 135
-        y: 660
-        width: 64
-        height: 15
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 7, y: 3, z: 2, w: 6}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0c27211f0b71e434994b3df6998e98a3
-      internalID: 1523963916
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: InvSelectionBoarder
       rect:
         serializedVersion: 2
@@ -677,28 +611,6 @@ TextureImporter:
       bones: []
       spriteID: aaa1067abe2ca964eba3a4219cdd6fe9
       internalID: 54682694
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InvTiny
-      rect:
-        serializedVersion: 2
-        x: 207
-        y: 639
-        width: 64
-        height: 36
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 2, y: 2, z: 2, w: 2}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: de951d7cdf720c84280d90cb587a623d
-      internalID: 164083627
       vertices: []
       indices: 
       edges: []
@@ -3457,8 +3369,8 @@ TextureImporter:
       name: PopupWhole
       rect:
         serializedVersion: 2
-        x: 136
-        y: 678
+        x: 9
+        y: 672
         width: 25
         height: 14
       alignment: 0
@@ -4157,6 +4069,72 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: PopupWhole2
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 652
+        width: 29
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 7, y: 6, z: 6, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 07c7a5f8cfd8f6f40bcdc898e59c2fff
+      internalID: -169271006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UITextInputBox
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 342
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca8e8da1063caf44bb6526e109b8246a
+      internalID: -546835013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LockIcon
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 504
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e4b2b1fc0d560e4eab8eadf1799b029
+      internalID: 460111579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -4230,6 +4208,7 @@ TextureImporter:
       InvTiny: 164083627
       InventoryTabButtonActive: 726674937
       InventoryTabButtonInactive: -692597868
+      LockIcon: 460111579
       LowOxygenWarningExp: 116287778
       OxygenBoarder: -268757789
       OxygenBoarder_Blue: 1579109010
@@ -4237,6 +4216,7 @@ TextureImporter:
       PopupBox: 2098033918
       PopupTop: 1523963916
       PopupWhole: -523195754
+      PopupWhole2: -169271006
       RikUISpriteSheet_16: -1480687458
       Speed: -2053248459
       SubFixCable_0: 518516892
@@ -4309,6 +4289,7 @@ TextureImporter:
       UISpriteSheet_54: -533429258
       UISpriteSheet_64: -1432685473
       UISpriteSheet_9: -2063990694
+      UITextInputBox: -546835013
       UIXPBoarder: 1438147028
       UpgradeAccuracy: 1441869239
       UpgradeBar0: 1275372579

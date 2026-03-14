@@ -1,7 +1,5 @@
 ﻿using Assets.SimpleLocalization.Scripts;
-using System;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 // Basically how this will work: 
@@ -106,4 +104,4 @@ public class UpgradeNodeVisualData {
    
 }
 
-public enum UpgradeNodeState { Purchased, Purchasable, Unlocked, Locked }
+public enum UpgradeNodeState { Purchased, Purchasable, Unlocked, Locked, LockedDemo}

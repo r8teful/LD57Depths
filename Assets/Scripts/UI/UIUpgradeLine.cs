@@ -10,11 +10,13 @@ public class UIUpgradeLine : MonoBehaviour {
     private Color _lineNotAvailableColor;
     private UpgradeNodeState _upgradeNodeStateFrom;
     private bool _isToPurchasedOnce;
+    private bool _isFromPurchasedOnce;
     private UpgradeNodeState _upgradeNodeStateTo;
     private UILineRenderer _line;
     private Material _mat;
     private UIUpgradeNode _from;
     private UIUpgradeNode _to;
+    private bool _imLocked;
 
     private void Awake() {
         ColorUtility.TryParseHtmlString(LINE_PURCHASED_HEX, out _linePurchasedColor);
@@ -31,6 +33,10 @@ public class UIUpgradeLine : MonoBehaviour {
         _line.material = new(_mat); // apply
         _line.material.SetFloat("_Tilt",GetTiltValue(from.transform.position, to.transform.position));
         // Init with initial node states
+        if(DemoManager.Instance != null) {
+            // playing demo, see if our to node is locked, if it is we should display a dotted line but only when from is unlocked
+            _imLocked = DemoManager.Instance.LockedNodes.Contains(from.IDBoundNode);
+        }
         _upgradeNodeStateFrom = from.GetState;
         _upgradeNodeStateTo = to.GetState;
         UpdateColor();
@@ -47,9 +53,15 @@ public class UIUpgradeLine : MonoBehaviour {
 
     private void StateChangeFrom(UpgradeNodeState state, bool isPurchasedOnce) {
         _upgradeNodeStateFrom = state;
+        _isFromPurchasedOnce = isPurchasedOnce;
         UpdateColor();
     }
     private void UpdateColor() {
+        if (_imLocked && _upgradeNodeStateFrom != UpgradeNodeState.Locked) {
+            _line.color = Color.gray; // ugh ugly gray go buy the fullHgame!!
+            _line.material.SetFloat("_Intensity", 0);
+            return;
+        }
         if (_upgradeNodeStateTo == UpgradeNodeState.Locked) {
             var c = Color.red;
             c.a = 0;

@@ -18,6 +18,7 @@ public class GameManager : PersistentSingleton<GameManager> {
     public bool IsBooting => _bootRoutine != null;
     public string GetUpgradeTreeName() => _upgradeTreeName;
 
+    public bool DebugPlayDemo;
     private void OnEnable() {
         Debug.Log("GameSetupManager Enable!!");
         SceneManager.sceneLoaded += OnSceneLoaded;

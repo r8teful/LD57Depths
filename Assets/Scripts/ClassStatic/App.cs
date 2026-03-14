@@ -8,11 +8,13 @@ public static class App {
     public static AudioController AudioController;
     public static ResourceSystem ResourceSystem;
     public static CursorManager CursorManager;
+    public static GameManager GameManager;
     //public static EventManager EventManager;
     public static bool isEditor;
     public static bool isDebugMode;
     public static bool saveDataExists;
     public static bool SaveRunDataExists;
+    public static bool isDemo;
 
     public static bool SteamConnection { get; private set; }
 
@@ -29,7 +31,7 @@ public static class App {
         Debug.Log("Initialised persistent managers");
         Object.DontDestroyOnLoad(app);
         //EventManager  = app.GetComponentInChildren<EventManager>();
-        //GameManager = app.GetComponentInChildren<GameManager>();
+        GameManager = app.GetComponentInChildren<GameManager>();
         AudioController = app.GetComponentInChildren<AudioController>();
         //SaveManager = app.GetComponentInChildren<SaveManager>();
         Backdrop = app.GetComponentInChildren<BackdropManager>();
@@ -39,6 +41,7 @@ public static class App {
         if (SaveManager.TryLoad(out var data)) {
             saveDataExists = true;
             SaveRunDataExists = data.HasRunData;
+            isDemo = data.buildType == "demo" || GameManager.DebugPlayDemo;
         }
 
 #if UNITY_STANDALONE

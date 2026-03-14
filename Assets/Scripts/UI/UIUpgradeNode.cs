@@ -23,13 +23,14 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     [SerializeField] private UIParticle _purchasableParticleCool;
     [SerializeField] private UIParticle _purchasableParticleBigNode;
     [SerializeField] private GameObject _coolBackground;
+    [SerializeField] private GameObject _lockedOverlayRect;
     [SerializeField] private RectTransform _visualRect;
     [SerializeField] private Material _sheenMat;
     private Material _defaultMat;
     [SerializeField] private Gradient _coolGradient;
 
     //[SerializeField] private TextMeshProUGUI _stageText;
-    public ushort IDBoundNode = ResourceSystem.InvalidID; // Should match the NODE that its connected to 
+    public ushort IDBoundNode = ResourceSystem.InvalidID; // Set in inspector. Should match the NODE that its connected to 
     private Image _iconImage;
     private Image _imageCurrent;
     private CanvasGroup _canvasGroup;
@@ -76,6 +77,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         _canvasGroup = GetComponent<CanvasGroup>();
         _canvasGroup.alpha = 1;
         _coolBackground.SetActive(false);
+        _lockedOverlayRect.SetActive(false);
         _button.onClick.AddListener(OnUpgradeButtonClicked);
     }
     private void OnDestroy() {
@@ -206,10 +208,14 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         var state = _visualData.State;
         //Debug.Log($" node: {gameObject.name} is updating its state to: {state}");
         // If this button is currently selected, show the manual Pressed sprite and early return.
+        SetSprite(state);
+
+        if (HandleDemoLockedState(state)) {
+            return;
+        }
         if (_isSelected) {
             // Highlit it?? idk
         }
-        SetSprite(state);
         HandleParticles(state);
         //HandleShaderState(state);
 
@@ -276,6 +282,21 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         }
         OnStateChange?.Invoke(state,_visualData.LevelCurrent>0);
 
+    }
+
+    private bool HandleDemoLockedState(UpgradeNodeState state) {
+        if (DemoManager.Instance == null) return false;
+        if (DemoManager.Instance.LockedNodes.Contains(IDBoundNode) && state != UpgradeNodeState.Locked) {
+                // We're locked and there is nothing you can do!! ( only buy the game ofcourse) 
+                _canvasGroup.alpha = 1;
+                // we can set the icon here aswell
+                _lockedOverlayRect.SetActive(true);
+                _iconImage.color = Color.gray;
+                _button.interactable = false;
+                OnStateChange?.Invoke(state, _visualData.LevelCurrent > 0);
+                return true;
+            }
+        return false;
     }
 
     private void HandleShaderState(UpgradeNodeState state) {

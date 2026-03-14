@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,9 +7,10 @@ public class UIPopupUpgradeBar : MonoBehaviour {
     [SerializeField] private Image _upgradeBarDivider; // Instantiates these
     [SerializeField] private Transform _dividerLayout; 
     public void UpdateVisuals(int maxLevel, int currLevel) {
+        _barProgressImage.fillAmount = 0;
         if (maxLevel > 0) {
             float raw = (float)currLevel / maxLevel;
-            _barProgressImage.fillAmount = raw;
+            _barProgressImage.DOFillAmount(raw, 0.5f).SetEase(Ease.OutBack);
         } else {
             _barProgressImage.fillAmount = 0;
         }
