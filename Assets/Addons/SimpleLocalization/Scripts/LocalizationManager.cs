@@ -110,6 +110,9 @@ namespace Assets.SimpleLocalization.Scripts
         /// </summary>
         public static string Localize(string localizationKey)
         {
+            if(localizationKey == null) {
+                return string.Empty;
+            }
             if (Dictionary.Count == 0)
             {
                 Read();

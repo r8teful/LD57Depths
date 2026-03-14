@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
   m_Name: UpgradeLazerHandling2
   m_EditorClassIdentifier: 
-  nodeName: Lazer Handling
+  nodeKey: U.LazerHandling
+  nodeStageNum: 2
   uniqueID: 21
   description: 
   icon: {fileID: -240984915, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
+  IsCool: 0
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 3de091d34e60f6b448456c2eef1617da, type: 2}
   UnlockedAtFirstPrereqStage: 0

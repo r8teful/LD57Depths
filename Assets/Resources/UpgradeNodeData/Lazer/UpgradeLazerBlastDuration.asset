@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
   m_Name: UpgradeLazerBlastDuration
   m_EditorClassIdentifier: 
-  nodeName: Blast Duration
+  nodeKey: U.LazerBlast.Duration
+  nodeStageNum: 0
   uniqueID: 70
   description: 
   icon: {fileID: -1258054087, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
+  IsCool: 0
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 87bdf022cae5b9e40aaf9a007cdd5f3c, type: 2}
   UnlockedAtFirstPrereqStage: 1
@@ -25,13 +27,16 @@ MonoBehaviour:
     costMultiplier: 1
     costTier: 5
     upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}
+    extraData: {fileID: 0}
   - effects:
     - {fileID: 11400000, guid: 8286ad628df742c499513867ae521d95, type: 2}
     costMultiplier: 1
     costTier: 6
     upgradeItemPool: {fileID: 11400000, guid: 252630a728eb6594c979e7727659293c, type: 2}
+    extraData: {fileID: 0}
   - effects:
     - {fileID: 11400000, guid: 8286ad628df742c499513867ae521d95, type: 2}
     costMultiplier: 1
     costTier: 7
     upgradeItemPool: {fileID: 11400000, guid: 252630a728eb6594c979e7727659293c, type: 2}
+    extraData: {fileID: 0}

@@ -7,11 +7,13 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
     [BoxGroup("Identification")]
     [HorizontalGroup("Identification/Left")]
     [VerticalGroup("Identification/Left/2")]
-    public string nodeName;
+    public string nodeKey;
+    [VerticalGroup("Identification/Left/2")]
+    public int nodeStageNum; // For example if this is the second node of the Lazer Upgrade it will simply but the 2 after the key value
     [VerticalGroup("Identification/Left/2")]
     [SerializeField] private ushort uniqueID;
     [VerticalGroup("Identification/Left/2")]
-    public string description;
+    public string descriptionKey;
     [VerticalGroup("Identification/Left/1")]
     [PreviewField(75), HideLabel,LabelWidth(0)]
     public Sprite icon;

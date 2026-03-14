@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
   m_Name: UpgradeMagnetismStrength1
   m_EditorClassIdentifier: 
-  nodeName: Magnetism Strength
+  nodeKey: U.Magnetism.Strength
+  nodeStageNum: 0
   uniqueID: 730
   description: 
   icon: {fileID: 1662966539, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
+  IsCool: 0
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: f2266ccd8a0e6d64c94a903011ba3866, type: 2}
   UnlockedAtFirstPrereqStage: 1

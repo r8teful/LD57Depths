@@ -20,6 +20,7 @@ Steamdeck notes:
 * Make menu buttons pop in, like the stardewvalley menu
 * Upgrade progress should look animated / cooler, more exciting!!
 * When an upgrade is maxed the popup could be looking cooler like bigger text where your current upgrade amount is shown or something like that
+* Update the ui with lucys new stuff 
 
 UX:
 
@@ -79,6 +80,7 @@ RIK TODO:
 * Add menu stuff
 * Saving? Start doing steam demo stuff Yeah do saving stuff I'm in the mood actually with all this bullshit architecture backend stuff
 * Save shrine stuff (not saved properly now)
+* Save artifact mining state so that you can mine half, then quit, and then it would still count. Or just implement so that it gives you the buff if all the tiles are air non solid or whatever 
 * Make sure all run specific data is whipped when creating new game
 
 

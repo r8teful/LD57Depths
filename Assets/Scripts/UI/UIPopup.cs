@@ -77,7 +77,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         // Name and description
         nameText.text = data.title;
         descriptionText.text = data.description;
-        if(data.description == string.Empty) {
+        if(data.description == null || data.description == string.Empty || data.description == "") {
             _descriptionDivider.gameObject.SetActive(false);
         }
         // Destroy old

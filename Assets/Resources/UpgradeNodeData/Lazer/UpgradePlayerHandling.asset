@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
   m_Name: UpgradePlayerHandling
   m_EditorClassIdentifier: 
-  nodeName: Movement Control
+  nodeKey: U.MovementControl
+  nodeStageNum: 0
   uniqueID: 200
   description: 
   icon: {fileID: -214789424, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
+  IsCool: 0
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: cdf389641a0aeef4bb3b6416de14163c, type: 2}
   UnlockedAtFirstPrereqStage: 1

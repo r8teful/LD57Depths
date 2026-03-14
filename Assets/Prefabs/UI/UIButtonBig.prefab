@@ -76,7 +76,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.16
+  m_PixelsPerUnitMultiplier: 0.2
 --- !u!114 &3868371421370839820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,7 +118,6 @@ GameObject:
   - component: {fileID: 2027460509503976638}
   - component: {fileID: 117847488861825101}
   - component: {fileID: 7149383785660547444}
-  - component: {fileID: 283439453142922715}
   m_Layer: 5
   m_Name: UIButtonBig
   m_TagString: Untagged
@@ -144,7 +143,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -8, y: -103}
-  m_SizeDelta: {x: 0, y: 102}
+  m_SizeDelta: {x: 285.34, y: 102}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3198710282498340930
 CanvasRenderer:
@@ -291,20 +290,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &283439453142922715
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4739607249889882928}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
-  m_HorizontalFit: 2
-  m_VerticalFit: 0
 --- !u!1 &7905901170007017159
 GameObject:
   m_ObjectHideFlags: 0

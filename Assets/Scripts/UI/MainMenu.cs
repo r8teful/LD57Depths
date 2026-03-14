@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,14 +11,18 @@ public class MainMenu : MonoBehaviour {
     [SerializeField] private  Button _buttonNewGame;
     [SerializeField] private  Button _buttonContinueTab;
     [SerializeField] private  Button _buttonContinueGame;
+    [SerializeField] private  Button _buttonExit;
     [SerializeField] private ButtonMenuVisual _buttonContinueTabVisual;
     [SerializeField] private  Button _buttonChallenge;
     [SerializeField] private  Button _buttonSettings;
+    [SerializeField] private  Button _buttonLanguage;
+    [SerializeField] private  Button _buttonLanguageBack;
     [SerializeField] private UISettings _settings; 
     [SerializeField] private Transform _cameraTrans; 
     [SerializeField] private Transform _logoTrans;
     
     [SerializeField] private GameObject _containerStartGame;
+    [SerializeField] private GameObject _containerLanguage;
 
     [SerializeField] private TMP_InputField _seedField;
 
@@ -27,8 +32,32 @@ public class MainMenu : MonoBehaviour {
         _buttonSettings.onClick.AddListener(OnSettingsClicked);
         _buttonNewGame.onClick.AddListener(OnStartNewGameClicked);
         _buttonContinueGame.onClick.AddListener(OnContinueGameClicked);
+        _buttonLanguage.onClick.AddListener(OnLanguageClicked);
+        _buttonLanguageBack.onClick.AddListener(OnLanguageBackClicked);
+#if !UNITY_WEBGL
+        _buttonExit.onClick.AddListener(OnExitClicked);
+#else
+        _buttonExit.gameObject.SetActive(false);
+
+#endif
     }
 
+    private void OnDisable() {
+        _buttonPlay.onClick.RemoveListener(OnPlayClicked);
+        _buttonPlayBack.onClick.RemoveListener(OnPlayBackClicked);
+        _buttonSettings.onClick.RemoveListener(OnSettingsClicked);
+        _buttonNewGame.onClick.RemoveListener(OnStartNewGameClicked);
+        _buttonContinueGame.onClick.RemoveListener(OnContinueGameClicked);
+        _buttonLanguage.onClick.RemoveListener(OnLanguageClicked);
+        _buttonLanguageBack.onClick.RemoveListener(OnLanguageBackClicked);
+#if !UNITY_WEBGL
+        _buttonExit.onClick.RemoveListener(OnExitClicked);
+#endif
+    }
+
+    private void OnExitClicked() {
+        Application.Quit();
+    }
 
     private void Start() {
         if(AudioController.Instance == null) {
@@ -71,9 +100,6 @@ public class MainMenu : MonoBehaviour {
         _settings.Show(fromPause: false);
     }
 
-    private void OnDisable() {
-        _buttonPlay.onClick.RemoveListener(OnPlayClicked);
-    }
 
     private void OnContinueGameClicked() {
         // ensure save data still exists
@@ -109,8 +135,12 @@ public class MainMenu : MonoBehaviour {
         var settings = new GameSettings(true); // Creates a random seed for us
         GameManager.Instance.Begin(settings);
     }
-    public void OnJoinClicked() {
-        //SceneManager.LoadScene(1);
+
+    private void OnLanguageBackClicked() {
+        _containerLanguage.SetActive(false);
+    }
+    private void OnLanguageClicked() {
+        _containerLanguage.SetActive(true);
     }
 
     public void OnButtonYouTubeClick() {

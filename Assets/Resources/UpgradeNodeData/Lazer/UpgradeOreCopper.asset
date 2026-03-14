@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
   m_Name: UpgradeOreCopper
   m_EditorClassIdentifier: 
-  nodeName: Copper
+  nodeKey: U.Ore.Copper
+  nodeStageNum: 0
   uniqueID: 810
   description: 
   icon: {fileID: 776407073, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  IsCool: 0
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 9348d0b602d93da44aadd969b4c0a679, type: 2}
   UnlockedAtFirstPrereqStage: 1
@@ -25,8 +27,10 @@ MonoBehaviour:
     costMultiplier: 1
     costTier: 4
     upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}
+    extraData: {fileID: 0}
   - effects:
     - {fileID: 11400000, guid: d7dc809899a1b964088ce27b69e01be9, type: 2}
     costMultiplier: 1
     costTier: 5
     upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}
+    extraData: {fileID: 0}

@@ -80,6 +80,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
     private void OnDestroy() {
         _button.onClick.RemoveListener(OnUpgradeButtonClicked);
+        _visualData.OnDestroy();
     }
     public void InspectorBigChange() {
         if (IsBig) {
@@ -99,7 +100,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
        
         UpdateVisual();
     }
-
     private void HandleButtonMaterial() {
         if (_visualData.IsCool) {
             _defaultMat = _imageCurrent.material; // revert back to this when we purchase 

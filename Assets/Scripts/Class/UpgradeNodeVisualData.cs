@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Assets.SimpleLocalization.Scripts;
+using System;
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 // Basically how this will work: 
@@ -34,14 +37,26 @@ public class UpgradeNodeVisualData {
          _upgradeManager = upgradeManager;
         _node = node;
         Icon = node.icon;
-        Title = node.nodeName;
         IsCool = node.IsCool;
-        if (_currentUpgradeStage == null) {
-            Description = node.description;
-        }
         RefreshRecipeData();
+        OnLocalize();
+        LocalizationManager.OnLocalizationChanged += OnLocalize;
+    }
+    internal void OnDestroy() {
+        LocalizationManager.OnLocalizationChanged -= OnLocalize;
     }
 
+    private void OnLocalize() {
+        if (_node.nodeStageNum > 0) {
+            Title = LocalizationManager.Localize(_node.nodeKey, _node.nodeStageNum);
+        } else {
+            Title = LocalizationManager.Localize(_node.nodeKey); // Normal without a number at the end
+        }
+        // Desc
+        if (_currentUpgradeStage == null) {
+            Description = LocalizationManager.Localize(_node.descriptionKey);
+        }
+    }
 
     private void RefreshRecipeData() {
         _currentUpgradeStage = _upgradeManager.GetUpgradeStage(_node);
@@ -87,6 +102,8 @@ public class UpgradeNodeVisualData {
         // As long as we call RefreshRecipeData before this these variables should be correct
         return LevelCurrent == LevelMax;
     }
+
+   
 }
 
 public enum UpgradeNodeState { Purchased, Purchasable, Unlocked, Locked }
