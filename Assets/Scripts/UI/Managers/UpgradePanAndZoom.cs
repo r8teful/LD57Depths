@@ -117,7 +117,7 @@ public class UpgradePanAndZoom : MonoBehaviour {
         treeContainer.localScale = Vector3.one * newScale;
         treeContainer.localPosition -= (Vector3)positionOffset;
 
-        ApplyElasticBounds(true);
+        //ApplyElasticBounds(true);
     }
 
     private void HandlePan() {
@@ -126,6 +126,7 @@ public class UpgradePanAndZoom : MonoBehaviour {
         Vector2 delta = localPointerPosition - lastPointerPosition;
         treeContainer.anchoredPosition += delta * panSpeed;
         lastPointerPosition = localPointerPosition;
+        ClampToParentBounds(treeContainer, viewportRect);
     }
 
     private Vector2 GetBoundsMin() {
@@ -217,7 +218,7 @@ public class UpgradePanAndZoom : MonoBehaviour {
             yield return null;
         }
         treeContainer.anchoredPosition = targetPosition;
-        ApplyElasticBounds(true);
+       // ApplyElasticBounds(true);
     }
 
   
@@ -243,7 +244,8 @@ public class UpgradePanAndZoom : MonoBehaviour {
         // Bounds of child relative to parent's local space
         Bounds childBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(parent, child);
         // Convert Bounds -> Rect (in parent's local space)
-        Rect childRect = new Rect(childBounds.min.x, childBounds.min.y, childBounds.size.x, childBounds.size.y);
+        var padding = 0.1f;
+        Rect childRect = new Rect(childBounds.min.x, childBounds.min.y, childBounds.size.x * padding, childBounds.size.y * padding);
 
         // ^ ^ ^ ^ ^ Do the above if you want the children to determine the bounds  
 

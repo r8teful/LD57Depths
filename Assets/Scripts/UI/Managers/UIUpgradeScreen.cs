@@ -7,7 +7,8 @@ public class UIUpgradeScreen : MonoBehaviour {
     private RectTransform _upgradePanelRect;
     [SerializeField] private GameObject _upgradePanelTree;
     [SerializeField] private UpgradeTreeController _upgradeTreeController;
-    public UpgradePanAndZoom PanAndZoom;
+    //public UpgradePanAndZoom PanAndZoom;
+    public PanAndZoomController PanAndZoom;
     private UIManager _UIManagerParent;
     private UpgradeTreeDataSO _treeData;
     public UIUpgradeTree UpgradeTreeInstance { get; private set; }
@@ -40,7 +41,8 @@ public class UIUpgradeScreen : MonoBehaviour {
         _treeData = App.ResourceSystem.GetTreeByName(GameManager.Instance.GetUpgradeTreeName()); // This will obviously have to come from some sort of "game selection" manager
        
         UpgradeTreeInstance = InstantiateTree(_treeData, _upgradePanelTree.transform, client);
-        PanAndZoom.Init(client.InputManager);
+        //PanAndZoom.Init(client.InputManager);
+        PanAndZoom.Init(client.InputManager, UpgradeTreeInstance);
         _upgradeTreeController.Init(client, UpgradeTreeInstance);    
     }
     private UIUpgradeTree InstantiateTree(UpgradeTreeDataSO treeData, Transform transformParent, PlayerManager player) {

@@ -151,14 +151,17 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     }
 
     private void OnPanStop(InputAction.CallbackContext context) {
-        _UIManager.UpgradeScreen.PanAndZoom.OnPanStop();
+        //_UIManager.UpgradeScreen.PanAndZoom.OnPanStop();
+        _UIManager.UpgradeScreen.PanAndZoom.OnPanEnd();
     }
 
     private void OnPanStart(InputAction.CallbackContext obj) {
+        //_UIManager.UpgradeScreen.PanAndZoom.OnPanStart();
         _UIManager.UpgradeScreen.PanAndZoom.OnPanStart();
      }
 
     private void OnZoom(InputAction.CallbackContext context) {
+       // _UIManager.UpgradeScreen.PanAndZoom.OnZoom(context.ReadValue<Vector2>().y);
         _UIManager.UpgradeScreen.PanAndZoom.OnZoom(context.ReadValue<Vector2>().y);
     }
 

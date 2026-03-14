@@ -46,13 +46,14 @@ public class GameManager : PersistentSingleton<GameManager> {
                 // We've run this scene from the editor, or something went very wrong. Just create one here
                 _currentGameSettings = new GameSettings(true);
             }
-            _bootRoutine = StartCoroutine(BootSequence());
+            _bootRoutine = StartCoroutine(BootSequence(loadPlayScene: false));
         }
     }
-    private IEnumerator BootSequence() {
+    private IEnumerator BootSequence(bool loadPlayScene = true) {
         yield return App.Backdrop.Require();
-
-        SceneManager.LoadScene(1); // here you'd do async or something if you're showing the lore
+        if (loadPlayScene) { // we only have to load if if we are calling from main menu 
+            SceneManager.LoadScene(1); // here you'd do async or something if you're showing the lore
+        }
 
         Debug.Log($"boot seq start: {GetInstanceID()}");
         SaveData saveData = _currentGameSettings.SaveToLoad;

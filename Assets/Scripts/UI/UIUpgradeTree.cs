@@ -161,6 +161,8 @@ public class UIUpgradeTree : MonoBehaviour {
             uIUpgradeNode.OnUpgraded(_upgradeBoughtThisVisit);
             OnUpgradeButtonPurchased.Invoke();
             StartSimpleRipple(upgradeNode.ID, _adjacencyDict, _nodeMap);
+            
+            PlayerManager.Instance.UiManager.UpgradeScreen.PanAndZoom.RecalculateContentBounds();
             _upgradeBoughtThisVisit++;
         } 
     }
@@ -181,7 +183,13 @@ public class UIUpgradeTree : MonoBehaviour {
         }
         Debug.Log($"Update: {_nodeMap.Count} nodes");
     }
-
+    // What a cool function!
+    internal IEnumerable<UIUpgradeNode> GetVisibleNodes() {
+        foreach (UIUpgradeNode node in _nodeMap.Values) {
+            if (node.GetState != UpgradeNodeState.Locked)
+                yield return node;
+        }
+    }
     internal IEnumerator OnPanSelect(UIUpgradeNode uIUpgradeNode) {
         yield return _player.UiManager.UpgradeScreen.PanAndZoom.FocusOnNode(uIUpgradeNode.Rect);
     }
