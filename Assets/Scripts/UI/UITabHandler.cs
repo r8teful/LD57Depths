@@ -74,7 +74,7 @@ public class UITabHandler : MonoBehaviour {
 
         RectTransform targetButtonRect = _tabs[index].tabButton.GetComponent<RectTransform>();
         _activeTabIndicator.DOKill();
-        _activeTabIndicator.transform.DOMoveX(targetButtonRect.position.x, 0.2f).SetEase(Ease.OutBack);
+        _activeTabIndicator.transform.DOMoveX(targetButtonRect.position.x, 0.2f).SetEase(Ease.OutBack).SetUpdate(true);
         //_activeTabIndicator.position = targetButtonRect.position;
     }
 }

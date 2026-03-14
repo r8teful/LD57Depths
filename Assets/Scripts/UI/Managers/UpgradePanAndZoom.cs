@@ -241,13 +241,13 @@ public class UpgradePanAndZoom : MonoBehaviour {
         if (child == null || parent == null) return false;
 
         // Bounds of child relative to parent's local space
-        //Bounds childBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(parent, child);
+        Bounds childBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(parent, child);
         // Convert Bounds -> Rect (in parent's local space)
-        //Rect childRect = new Rect(childBounds.min.x, childBounds.min.y, childBounds.size.x, childBounds.size.y);
+        Rect childRect = new Rect(childBounds.min.x, childBounds.min.y, childBounds.size.x, childBounds.size.y);
 
         // ^ ^ ^ ^ ^ Do the above if you want the children to determine the bounds  
 
-        Rect childRect = GetChildRectInParentSpace(child, parent);
+        //Rect childRect = GetChildRectInParentSpace(child, parent);
         // Parent rect in parent local space
         Rect parentRect = parent.rect;
 

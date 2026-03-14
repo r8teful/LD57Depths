@@ -1,12 +1,14 @@
 ﻿using DG.Tweening;
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class BackdropManager : Singleton<BackdropManager> {
 
-    public RectTransform _backdropRect; 
-    public CanvasGroup  _backdrop; 
+    public RectTransform _backdropRect;
+    public CanvasGroup  _backdrop;
+    public TextMeshProUGUI _loadingText;
     private float _fadeDuration = 0.1f;
     
     public void DoWaveTransition(bool isReverce, Action onComplete) {
@@ -29,8 +31,10 @@ public class BackdropManager : Singleton<BackdropManager> {
         if (_backdrop == null) yield break;
         _backdrop.transform.SetAsLastSibling();
         if (withFade) {
-            _backdrop.DOFade(1,_fadeDuration).SetEase(Ease.OutQuad);
-            yield return new WaitForSeconds(_fadeDuration);
+            _backdrop.DOFade(1, _fadeDuration).SetEase(Ease.OutQuad).SetUpdate(true);
+            if(_loadingText !=null)
+                _loadingText.DOFade(0, 4f).SetEase(Ease.OutQuint).SetLoops(-1, LoopType.Yoyo).SetUpdate(true);
+            yield return new WaitForSecondsRealtime(_fadeDuration);
         } else {
             _backdrop.alpha = 1;
         }
@@ -40,8 +44,10 @@ public class BackdropManager : Singleton<BackdropManager> {
         if (_backdrop == null) yield break;
         _backdrop.transform.SetAsLastSibling();
         if (withFade) {
-            _backdrop.DOFade(0, _fadeDuration).SetEase(Ease.InQuad);
-            yield return new WaitForSeconds(_fadeDuration);
+            _backdrop.DOFade(0, _fadeDuration).SetEase(Ease.InQuad).SetUpdate(true);
+            if (_loadingText != null)
+                _loadingText.DOKill();
+            yield return new WaitForSecondsRealtime(_fadeDuration);
         } else {
             _backdrop.alpha = 0;
         }

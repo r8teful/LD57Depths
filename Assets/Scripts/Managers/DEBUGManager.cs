@@ -9,25 +9,9 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     [Header("References")]
     public BiomeManager biomeManager;
     public ChunkManager chunkManager;
-    public Tilemap tilemap;
+
     public MachineControlPanel machineControlPanel;
-
-    [System.Serializable]
-    public struct BiomeTileMapping {
-        public BiomeType biome;
-        public TileBase tile;
-    }
-
-    [Header("Biome Tiles")]
-    public List<BiomeTileMapping> biomeTileMappings;
-
-    private Dictionary<BiomeType, TileBase> tileLookup;
-
-    [SerializeField] PlayerMovement player;
-    [OnValueChanged("PlayerSpeed")]
-    public float playerSpeed;
     private PlayerManager _player;
-
 
     public UpgradeNodeSO SubCablesNode;
     public void RegisterOwningPlayer(PlayerManager player) {
@@ -59,41 +43,20 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
         _player.InventoryN.DEBUGGIVE(10,Random.Range(50, 100));
     */
     }
-    protected override void Awake() {
-        base.Awake();
-        tileLookup = new Dictionary<BiomeType, TileBase>();
-        foreach (var mapping in biomeTileMappings) {
-            tileLookup[mapping.biome] = mapping.tile;
-        }
+    private void Start() {
+        Console.RegisterCommand(this, "save", "save");
+        Console.RegisterCommand(this, "give","give");
+        Console.RegisterCommand(this, "giveXP", "giveXP");
+        Console.RegisterCommand(this, "giveShrine", "giveShrine");
+        //Console.RegisterCommand(this, "save", "save");
+        //Console.RegisterCommand(this, "save", "save");
+        //Console.RegisterCommand(this, "save", "save");
+        //Console.RegisterCommand(this, "save", "save");
+        //Console.RegisterCommand(this, "save", "save");
+        //Console.RegisterCommand()
     }
 
-    [ContextMenu("Visualize Biomes")]
-    public void VisualizeBiomes() {
-
-        if (biomeManager == null || tilemap == null || chunkManager == null) {
-            biomeManager = FindFirstObjectByType<BiomeManager>();
-            chunkManager = FindFirstObjectByType<ChunkManager>();
-        }
-            if (biomeManager == null || tilemap == null) {
-            Debug.LogWarning("Missing references on BiomeDebugVisualizer.");
-            return;
-        }
-
-        tilemap.ClearAllTiles();
-
-        var allData = biomeManager.GetAllBiomeData();
-        foreach (var kvp in allData) {
-            Vector2Int chunkCoord = kvp.Key;
-            BiomeChunkInfo info = kvp.Value;
-            if (!tileLookup.TryGetValue(info.dominantBiome, out TileBase tile)) {
-                continue;
-            }
-            var c = chunkManager.ChunkCoordToCellOrigin(chunkCoord);
-            Vector3Int tilePos = new Vector3Int(c.x, c.y, 0);
-            tilemap.SetTile(tilePos, tile);
-        }
-    }
-    [ConsoleCommand("save")]
+   // [ConsoleCommand("save")]
     private void save() {
         GameManager.Instance.TriggerSave();
     }

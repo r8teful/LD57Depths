@@ -33,7 +33,9 @@ public class GameManager : PersistentSingleton<GameManager> {
             // From main menu 
             AudioController.Instance.SetLoopVolume(0, 4); // Stop main menu music
         }
-        SceneManager.LoadScene(1);
+        _bootRoutine = StartCoroutine(BootSequence());
+        //StartCoroutine(App.Backdrop.Require());
+        //SceneManager.LoadScene(1);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
@@ -48,6 +50,10 @@ public class GameManager : PersistentSingleton<GameManager> {
         }
     }
     private IEnumerator BootSequence() {
+        yield return App.Backdrop.Require();
+
+        SceneManager.LoadScene(1); // here you'd do async or something if you're showing the lore
+
         Debug.Log($"boot seq start: {GetInstanceID()}");
         SaveData saveData = _currentGameSettings.SaveToLoad;
         
@@ -137,6 +143,7 @@ public class GameManager : PersistentSingleton<GameManager> {
         yield return null;// App.Backdrop.Release();
         
         _bootRoutine = null;
+        yield return App.Backdrop.Release();
         Debug.Log("Boot sequence complete!");
         OnSetupComplete?.Invoke();
     }

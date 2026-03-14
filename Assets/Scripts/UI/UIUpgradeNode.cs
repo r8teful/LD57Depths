@@ -1,3 +1,4 @@
+using Assets.SimpleLocalization.Scripts;
 using Coffee.UIExtensions;
 using DG.Tweening;
 using Sirenix.OdinInspector;
@@ -40,6 +41,17 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private UpgradeNodeVisualData _visualData;
     public UpgradeNodeState GetState => _visualData.State;
     public UpgradeNodeVisualData GetVisualData => _visualData;
+
+    public bool ShouldBeDemoLocked {
+        get {
+            if (DemoManager.Instance == null) return false;
+            if (DemoManager.Instance.LockedNodes.Contains(IDBoundNode) && GetState != UpgradeNodeState.Locked) {
+                return true;
+            }
+            return false;
+        }
+    }
+
     [OnValueChanged("InspectorBigChange")]
     public bool IsBig;
     public event Action PopupDataChanged;
@@ -285,8 +297,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
 
     private bool HandleDemoLockedState(UpgradeNodeState state) {
-        if (DemoManager.Instance == null) return false;
-        if (DemoManager.Instance.LockedNodes.Contains(IDBoundNode) && state != UpgradeNodeState.Locked) {
+        if (ShouldBeDemoLocked) {
                 // We're locked and there is nothing you can do!! ( only buy the game ofcourse) 
                 _canvasGroup.alpha = 1;
                 // we can set the icon here aswell
@@ -376,6 +387,11 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public PopupData GetPopupData(InventoryManager clientInv) {
         // Stat data
         _visualData.UpdateForPopup();
+        if (ShouldBeDemoLocked) {
+            return new PopupData(
+                title: LocalizationManager.Localize("U.Locked"),
+                description: LocalizationManager.Localize("U.Locked.D"), null);
+        }
         return new PopupData(_visualData.Title, _visualData.Description,
             _visualData.IngredientStatuses, // We'll have to pull this everytime we want to show it because 
                                             // We need a new way to get the stat statuses, it will depend on the upgrade. 

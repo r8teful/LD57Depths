@@ -64,6 +64,7 @@ public class MainMenu : MonoBehaviour {
             return;
         }
         AudioController.Instance.SetLoopAndPlay("MainMenu");
+        StartCoroutine(App.Backdrop.Release());
         _settings.Hide();
         _containerStartGame.SetActive(false);
         ButtonContinueState(App.SaveRunDataExists);

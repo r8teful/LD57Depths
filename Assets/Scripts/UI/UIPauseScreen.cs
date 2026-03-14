@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -49,10 +50,13 @@ public class UIPauseScreen : MonoBehaviour {
             Debug.LogError("uimanager null!");
             return;
         }
+        StartCoroutine(ExitToMenu());
+    }
+    private IEnumerator ExitToMenu() {
+        yield return App.Backdrop.Require();
         UIManager.Instance.Unpause();
         SceneManager.LoadScene(0);
     }
-
     private void OnResumeButtonClick() {
         UIManager.Instance.Unpause(); // Will call on close
     }

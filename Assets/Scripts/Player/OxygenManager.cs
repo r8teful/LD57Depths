@@ -13,7 +13,6 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     private bool _isInsideOxygenZone;
     private PlayerState _cachedState;
     private bool peepPlayed;
-    private bool _initialized;
     private bool _oxygenDepleted;
     [SerializeField] private LowOxygenVisual _lowoxygenVisual;
     private LowOxygenVisual _lowoxygenVisualInstance;
@@ -41,7 +40,6 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
         _player = playerParent;
         playerParent.PlayerStats.OnStatChanged += OnStatChanged;
         playerParent.PlayerMovement.OnPlayerStateChanged += StateChanged;
-        _initialized = true;
     }
     private void OnDestroy() {
         _player.PlayerStats.OnStatChanged -= OnStatChanged;
@@ -58,7 +56,8 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     }
 
     private void Update() {
-        if (!_initialized) return;
+        if (GameManager.Instance == null) return;
+        if (GameManager.Instance.IsBooting) return;
         if (ShouldDepleteOxygen()) {
             DepleteOxygen();
         } else {
