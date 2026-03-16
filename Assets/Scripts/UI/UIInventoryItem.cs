@@ -35,8 +35,8 @@ public class UIInventoryItem : MonoBehaviour {
     private void DoAnimation() {
         quantityText.transform.localScale = Vector3.one;
         quantityText.transform.DOKill();
-        var punchAmount = 1.0001f;
-        quantityText.transform.DOPunchScale(new Vector3(punchAmount, punchAmount, punchAmount), 0.3f, 1, 1f);
+        var punchAmount = 0.4f;
+        quantityText.transform.DOPunchScale(new Vector3(punchAmount, punchAmount, punchAmount), 0.3f, 1, 0.1f);
 
     }
 }

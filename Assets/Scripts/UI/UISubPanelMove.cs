@@ -5,8 +5,6 @@ using UnityEngine.UI;
 public class UISubPanelMove : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI _zoneText;
     [SerializeField] private Transform _zoneResourcesContainer;
-    [SerializeField] private Transform _playerStatusContainer;
-    [SerializeField] private GameObject _waitingContainer;
     [SerializeField] private Button _buttonMove;
     [SerializeField] private TextMeshProUGUI _buttonMoveText;
 
@@ -15,7 +13,6 @@ public class UISubPanelMove : MonoBehaviour {
     private void Awake() {
         _buttonMove.onClick.AddListener(OnMoveClicked);
         _mapScript.Init(this);
-        _waitingContainer.SetActive(false);
         SubmarineManager.Instance.OnSubMoved += SubMoved;
     }
 
@@ -79,9 +76,4 @@ public class UISubPanelMove : MonoBehaviour {
         UpdateMoveButton();
     }
 
-    public void OnMoveExit() {
-        //_buttonMove.gameObject.SetActive(true);
-        _waitingContainer.SetActive(false);
-        _mapScript.EnableMapInteractions();
-    }
 }

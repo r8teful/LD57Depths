@@ -12,6 +12,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
     [SerializeField] private GameObject _iconContainer;
     [SerializeField] private Image _iconImage;
     [SerializeField] private Image _descriptionDivider;
+    [SerializeField] private Image _secondDivider;
     [SerializeField] private Transform _statsChangeContainer;
     [SerializeField] private Transform _ingredientContainer;
     [SerializeField] private UIPopupUpgradeBar _upgradeBar;
@@ -19,7 +20,6 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
     [SerializeField] private UIParticle _particlesPurchaseDown;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI descriptionText;
-    public TextMeshProUGUI _stageText;
     public UIIngredientVisual ingredientPrefab;
     public ItemData itemData;
     private bool _isWorldPopup; // Is this popup on a world space canvas?
@@ -77,8 +77,11 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         // Name and description
         nameText.text = data.title;
         descriptionText.text = data.description;
-        if(data.description == null || data.description == string.Empty || data.description == "") {
+        if(data.description == null || data.description == string.Empty || data.description == "" ){
             _descriptionDivider.gameObject.SetActive(false);
+        }
+        if (data.description != null && (data.craftingInfo == null || data.craftingInfo.Count <= 0)){
+            _secondDivider.gameObject.SetActive(false);
         }
         // Destroy old
         foreach (Transform child in _ingredientContainer) {
@@ -111,10 +114,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
             // Set the status for the bar
             _upgradeBar.gameObject.SetActive(true);
             _upgradeBar.UpdateVisuals(data.progressionInfo);
-            _stageText.gameObject.SetActive(true);
-            _stageText.text = $"{data.progressionInfo.LevelCurr}/{data.progressionInfo.LevelMax}";
         } else {
-            _stageText.gameObject.SetActive(false);
             _upgradeBar.gameObject.SetActive(false);
         }
 

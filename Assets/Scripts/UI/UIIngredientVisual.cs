@@ -15,8 +15,13 @@ public class UIIngredientVisual : MonoBehaviour {
         if (sprite != null) {
             resourceIcon.sprite = sprite;
         }
-        resourceAmountText.text = ingredient.RequiredAmount.ToString();
+        resourceAmountText.text = $"<color=\"{color}\">{ingredient.RequiredAmount}";
         //resourceNameText.text = $"<color=\"{color}\">{ingredient.Item.itemName}";
-        resourceHaveText.text = $"<color=\"{color}\">{ingredient.CurrentAmount}";
+        if (resourceHaveText == null) { // todo we're not using resource have atm so 
+            resourceHaveText.gameObject.SetActive(false);
+        } else {
+            resourceHaveText.text = $"<color=\"{color}\">{ingredient.CurrentAmount}";
+
+        }
     }
 }

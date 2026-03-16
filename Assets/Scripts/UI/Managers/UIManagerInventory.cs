@@ -71,7 +71,7 @@ public class UIManagerInventory : Singleton<UIManagerInventory> {
             UpdateSlot(itemID);
             return;
         }
-        UIInventoryItem slotUI = Instantiate(App.ResourceSystem.GetPrefab<UIInventoryItem>("InventoryItem"), slotInvContainer);
+        UIInventoryItem slotUI = Instantiate(App.ResourceSystem.GetPrefab<UIInventoryItem>("InventoryItemPlayer"), slotInvContainer);
         slotInventoryUIs.Add(itemID, slotUI);
         // Fetch item data from inv
         slotUI.Init(_localInventoryManager.GetItem(itemID));

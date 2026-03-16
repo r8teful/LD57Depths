@@ -1356,18 +1356,18 @@ Escape closes a menu, Escape without a menu opens settings
     * All available artifacts in the run
     * Which artifacts you've got
     * What the artifacts have given you for benefits
-  * Upgrade tree nodes
+  * ~~Upgrade tree nodes~~
 
-    * Node names
-    * UI -> Layout within popup
-    * Descriptions
+    * ~~Node names~~
+    * ~~UI -> Layout within popup~~
+    * ~~Descriptions~~
 * Main menu
 
   * New game screen
 
     * Modifiers
     * Character selection
-    * Maps?
+    * *Maps?*
   * Load game
   * Meta Progression / unlocks / stats
 
@@ -1382,6 +1382,7 @@ Escape closes a menu, Escape without a menu opens settings
     * Audio
   * Exit
   * Language
+  * *Leaderboard?*
   * Social links
 
     * Discord 

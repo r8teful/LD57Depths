@@ -14,13 +14,14 @@ Steamdeck notes:
 * Items go From bob to PC? -> Visually show it go from bob to pc, and make the PC bounce or something (show that its receiving it). I've tried this but its really hard to have it look good!!!!
 * New color node with one upgrade but not getting one upgrade
 * Hitstop when buying a node!?
-* Change popup particle colour to match the purchase particle color
+* Change popup particle colour to match the purchase particle color -> ALSO change popup border colour to match the node. INCLUDING "disabled" colour
 * Screenshake?
 * Add fog? Just some pixelated transparent noise, could add some more depth to the background
 * Make menu buttons pop in, like the stardewvalley menu
 * Upgrade progress should look animated / cooler, more exciting!!
 * When an upgrade is maxed the popup could be looking cooler like bigger text where your current upgrade amount is shown or something like that
 * Update the ui with lucys new stuff
+* Don't show popup when panning
 
 UX:
 
@@ -42,6 +43,8 @@ Coding:
 * crit damage?
 * Implement ONE event
 * Don't let submarine spawn inside a rock, or inside a cave
+* Number system that truncates big numbers
+* Highlight system that surrounds a button with a sprite
 
 
 
