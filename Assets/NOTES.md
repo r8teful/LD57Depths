@@ -1,4 +1,4 @@
----------- MAKE THE GAME FUN!!! ----------------
+\---------- MAKE THE GAME FUN!!! ----------------
 
 Blocks ARE enemies, you MINE/defeat them and gain a REWARD
 
@@ -1016,7 +1016,6 @@ You get gold a bit too late? Idk the cool stuff need gold but you're not really 
 * Outside of the upgrade tree sub consciously feels like it should be harder to upgrade. While the things close should be easier
 * Make stone density not increase tile HP? Because it doesn't feel nice getting less strong, to compensate just scale the damage less quickly up
 * For ore spawning, you should try two options:
-
 1. Ores spawn in specific biomes
 2. Ores spawn in specific layers
 
@@ -1029,7 +1028,7 @@ Tile strength should be dynamic, that's all I want. Strength should increase, an
 maxDurability in tile SO is now quite useless, because we want to set it dynamically and store it in some kind of class. because the position of the biomes will be different every game. So basically the tiles durabilities are not really a consistent value. Ok, basically I'm treating the biome as a multiplier value to the base tile value, which makes sense right? I mean that is basiaclly what I explained in the text above with the biomes being harder versions of the layer. But that would mean if for some reason a biome is just touching a different layer that would be less hard but maybe that makes sense like that?
 
 * Half player damage
-  Scaling should be like 10 times on the second biome or something, that gives you that feeling that you shouldn't be there.
+Scaling should be like 10 times on the second biome or something, that gives you that feeling that you shouldn't be there.
 * More oxygen upgrades: You get sick of having to go back all the time so just increase oxygen and that will be fine. Next stage you can just nerf the shit out of it so they need to keep upgrading it if they want to get good oxygen.
 * Make oxygen darkness less dark so you have a better chance of actually finding your wayh back
 * Ores slighly more to the edge so you don't have to go so far away to get lots
@@ -1229,7 +1228,6 @@ Menu flow:
 
    * General, playtime, blocks mined etc...
    * Collectibles
-
 2. Settings
 3. Exit
 
@@ -1307,11 +1305,11 @@ Basically you need to rebuild \_nodeStates when starting. Doing this you'll simp
 
 Structures:
 
-How will that work? Structures will have to know if they've been used or not. Would it not be better if you have the entity manager handles this. Because then you can save their state in persistantEntityData and incase you need any other things saved like that it would be easier later. Kind of how you are saving the tiles straight into the chunks, you'd also put the actual script right into the entitymanager 
+How will that work? Structures will have to know if they've been used or not. Would it not be better if you have the entity manager handles this. Because then you can save their state in persistantEntityData and incase you need any other things saved like that it would be easier later. Kind of how you are saving the tiles straight into the chunks, you'd also put the actual script right into the entitymanager
 
 
 
-I like the idea. Let us properly set the world entities then... 
+I like the idea. Let us properly set the world entities then...
 
 
 
@@ -1319,7 +1317,7 @@ Artifact doesn't need to know what biome it is in, simply check what biome the p
 
 
 
-When we make the world from scratch, we always create new entity data in that chunk. Basically when we've gone over the chunk we shouldn't care about spawning new instances because we've already done it. But that logic also goes for the tiles, so if 
+When we make the world from scratch, we always create new entity data in that chunk. Basically when we've gone over the chunk we shouldn't care about spawning new instances because we've already done it. But that logic also goes for the tiles, so if
 
 
 
@@ -1327,7 +1325,7 @@ Lucy.
 
 Make the stone one pixel or have the other drops have more detail
 
-Upgrade: "don't loose all things" 
+Upgrade: "don't loose all things"
 
 Annoying that the music slows down when low on oxygen
 
@@ -1336,4 +1334,70 @@ Upgrade: Path lights up when you run out of time
 Cost on popup should disappear when node is complete
 
 Escape closes a menu, Escape without a menu opens settings
+
+
+
+
+
+
+
+# UI DAY
+
+* Submarine
+
+  * Movement system
+
+    * what level you're in
+    * available resources in trench and in biomes
+    * How you move on to the next level - maybe as a pop up when you hover over the next level
+    * needs to tell you that the layers above are locked
+  * Artifacts screen
+
+    * All available artifacts in the run
+    * Which artifacts you've got
+    * What the artifacts have given you for benefits
+  * Upgrade tree nodes
+
+    * Node names
+    * UI -> Layout within popup
+    * Descriptions
+* Main menu
+
+  * New game screen
+
+    * Modifiers
+    * Character selection
+    * Maps?
+  * Load game
+  * Meta Progression / unlocks / stats
+
+    * General stats -> Runs played, blocks mined, quickest time, passed out, items lost etc
+    * Discoveries: Biomes, Ores, plants \& mined of each
+    * Unlocks/Meta progression -> Characters, abilities, difficulty modifiers, maps? \& conditions for each
+  * Settings
+
+    * Game -> General game settings and accessibility
+    * Rebinding Keys
+    * Video-> Screen mode, resolution, fps, graphics quality
+    * Audio
+  * Exit
+  * Language
+  * Social links
+
+    * Discord 
+    * Bluesky
+    * Instagram
+    * YouTube
+
+
+
+
+
+
+
+
+
+
+
+
 

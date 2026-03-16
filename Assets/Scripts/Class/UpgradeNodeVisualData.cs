@@ -51,7 +51,7 @@ public class UpgradeNodeVisualData {
             Title = LocalizationManager.Localize(_node.nodeKey); // Normal without a number at the end
         }
         // Desc
-        if (_currentUpgradeStage == null) {
+        if (_currentUpgradeStage != null) {
             Description = LocalizationManager.Localize(_node.descriptionKey);
         }
     }

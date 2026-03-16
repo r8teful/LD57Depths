@@ -1064,7 +1064,7 @@ MonoBehaviour:
   zoomSmoothSpeed: 8
   zoomStep: 0.1
   panSmoothSpeed: 12
-  boundsPadding: 150
+  boundsPadding: 500
   isController: 0
 --- !u!1 &3058639458214871971
 GameObject:
@@ -4281,7 +4281,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1656546485902910806, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 213.99
       objectReference: {fileID: 0}
     - target: {fileID: 1656546485902910806, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
       propertyPath: m_SizeDelta.y
@@ -4361,7 +4361,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2214037514705622562, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 369.83002
       objectReference: {fileID: 0}
     - target: {fileID: 2214037514705622562, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
       propertyPath: m_SizeDelta.y
@@ -4385,7 +4385,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2683283899498199857, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 331.43
       objectReference: {fileID: 0}
     - target: {fileID: 2683283899498199857, guid: e46f707045cbc5a44b38b51002f66d0d, type: 3}
       propertyPath: m_SizeDelta.y
@@ -5287,7 +5287,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8297005573647459142, guid: f9307c13f249b3d4ea0066268dd63b5b, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 8297005573647459142, guid: f9307c13f249b3d4ea0066268dd63b5b, type: 3}
       propertyPath: m_SizeDelta.y
@@ -5732,7 +5732,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8297005573647459142, guid: f9307c13f249b3d4ea0066268dd63b5b, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 127.56
       objectReference: {fileID: 0}
     - target: {fileID: 8297005573647459142, guid: f9307c13f249b3d4ea0066268dd63b5b, type: 3}
       propertyPath: m_SizeDelta.y
@@ -6367,7 +6367,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8297005573647459142, guid: f9307c13f249b3d4ea0066268dd63b5b, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 220.01
       objectReference: {fileID: 0}
     - target: {fileID: 8297005573647459142, guid: f9307c13f249b3d4ea0066268dd63b5b, type: 3}
       propertyPath: m_SizeDelta.y

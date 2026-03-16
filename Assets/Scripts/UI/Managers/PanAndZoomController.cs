@@ -30,6 +30,7 @@ public class PanAndZoomController : MonoBehaviour {
     private UIUpgradeTree _upgradeTree;          
 
     private bool _isDragging;
+    private bool _isZooming;
     private Vector2 lastPointerPosition;
 
     private float zoomAmount;                   

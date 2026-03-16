@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
   m_Name: UpgradeLazerBlastCooldown
   m_EditorClassIdentifier: 
-  nodeKey: U.LazerBlast.Cooldown
+  nodeKey: U.LaserBlast.Cooldown
   nodeStageNum: 0
   uniqueID: 90
-  description: 
+  descriptionKey: 
   icon: {fileID: -1955116903, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
