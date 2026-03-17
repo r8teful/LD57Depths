@@ -9,7 +9,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager>, ISaveable {
      private int _currentZoneIndex;
     public int CurrentZoneIndex => _currentZoneIndex;
 
-    public event Action OnSubMoved; // Used by map 
+    public event Action<int> OnSubMoved; // Used by map 
     public static event Action<ushort> OnSubUpgrade; 
     public GameObject submarineExterior;
     public Transform InteriorSpawnPoint;
@@ -46,7 +46,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager>, ISaveable {
     }
     internal void SetSubPosIndex(int index) {
         _currentZoneIndex = index;
-        OnSubMoved?.Invoke();
+        OnSubMoved?.Invoke(index);
     }
     
 

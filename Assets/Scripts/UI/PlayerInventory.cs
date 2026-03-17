@@ -24,7 +24,7 @@ public class PlayerInventory : MonoBehaviour {
         OnItemPickup?.Invoke(itemID, amount);
         RewardEvents.TriggerGainXP(XPCalculation.
             CalculateXP(App.ResourceSystem.GetItemByID(itemID),amount));
-        DiscoveryManager.Instance.ServerDiscoverResource(itemID);
+        //DiscoveryManager.Instance.ServerDiscoverResource(itemID);
         
     }
     

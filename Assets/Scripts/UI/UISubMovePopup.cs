@@ -22,11 +22,8 @@ public class UISubMovePopup : MonoBehaviour {
         // Now polulate
         foreach (var item in zone.AvailableResources) {
             var g = Instantiate(App.ResourceSystem.GetPrefab("UIZoneResourceElement"), _zoneResourcesContainer); // Will automatically make a nice grid
-            if (DiscoveryManager.Instance.IsDiscovered(item)) {
-                g.GetComponent<Image>().sprite = item.icon;
-            } else {
-                g.GetComponent<Image>().sprite = App.ResourceSystem.GetSprite("ItemUnknown");
-            }
+            g.GetComponent<Image>().sprite = item.icon;
+            
         }
         _mapScript.SetBoxHighlight(zone);
     }

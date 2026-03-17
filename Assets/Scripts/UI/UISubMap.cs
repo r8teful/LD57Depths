@@ -6,7 +6,7 @@ public class UISubMap : MonoBehaviour {
     [SerializeField] private Transform trenchZonesContainer;
     [SerializeField] private Transform youAreHereContainer;
     private List<UITrenchZone> _trenchZones = new();
-    private UISubPanelMove _parent;
+    private UISubControlPanel _parent;
 
     private void Awake() {
         SubmarineManager.Instance.OnSubMoved += SubMoved;
@@ -19,9 +19,12 @@ public class UISubMap : MonoBehaviour {
         }
     }
     private void OnEnable() {
-        RefreshUI();
+        var zoneI = SubmarineManager.Instance.CurrentZoneIndex;
+        if (_parent != null)
+            SetMapButtonVisual(zoneI); // start with the visuals in your current zone
+        RefreshUI(zoneI);
     }
-    internal void Init(UISubPanelMove uISubPanelMove) {
+    internal void Init(UISubControlPanel uISubPanelMove) {
        _parent = uISubPanelMove;
     }
     public void OnMapButtonClicked(ZoneSO zoneData) {
@@ -33,20 +36,13 @@ public class UISubMap : MonoBehaviour {
     private void OnDestroy() {
         SubmarineManager.Instance.OnSubMoved -= SubMoved;
     }
-    private void Start() {
-        var zoneI = SubmarineManager.Instance.CurrentZoneIndex;
-        if(_parent!=null)
-            SetMapButtonVisual(zoneI); // start with the visuals in your current zone
-        RefreshUI();
+
+    private void SubMoved(int index) {
+        RefreshUI(index);
     }
 
-    private void SubMoved() {
-        RefreshUI();
-    }
-
-    private void RefreshUI() {
-        var zoneI = SubmarineManager.Instance.CurrentZoneIndex;
-        SetYouAreHereVisual(zoneI);
+    private void RefreshUI(int index) {
+        SetYouAreHereVisual(index);
         UpdateButtonVisualColors(SubmarineManager.Instance.GetUpgradeStage());
     }
 
