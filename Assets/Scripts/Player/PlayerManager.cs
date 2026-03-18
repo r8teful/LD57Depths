@@ -93,6 +93,6 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
     }
 
     internal void RequestDamageTile(Vector3Int cellPos, float damage) {
-        RequestDamageTile(new(damage, false, cellPos));
+        RequestDamageTile(new(damage, false, cellPos,Vector2.zero));
     }
 }

@@ -1,7 +1,4 @@
-using Sirenix.OdinInspector;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using System.Linq;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

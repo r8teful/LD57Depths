@@ -102,7 +102,7 @@ public class IceBounce : MonoBehaviour {
         if(contacts.Count == 0) return;
         var hits = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, contacts[0].point, 3);
         foreach (var hit in hits) {
-            _player.RequestDamageTile(new DamageContainer(hit.DamageRatio * dmg, false, hit.CellPos));
+            _player.RequestDamageTile(new DamageContainer(hit.DamageRatio * dmg, false, hit.CellPos, currentVelocity.normalized));
         }
         // start cooldown to avoid repeated triggers for the same collision
         _cooldownCounter = cooldownFrames;

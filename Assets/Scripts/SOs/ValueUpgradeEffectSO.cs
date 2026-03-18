@@ -25,7 +25,7 @@ public class ValueUpgradeEffectSO : UpgradeEffect {
             return null;
         }
         ValueModifier modifier = new(modificationValue, valueType, increaseType, this);
-        if(valueType == ValueKey.LazerChainAmount) {
+        if(valueType == ValueKey.LazerChainLength) {
             // absolute change
             return modifier.GetStatusAbsolute(script);
         }

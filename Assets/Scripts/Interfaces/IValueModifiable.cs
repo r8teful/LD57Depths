@@ -10,6 +10,7 @@ public enum ValueKey {
     MagnetismPickup = 10,
     MagnetismStrength = 11,
     ItemTransferRate = 20,
-    LazerChainAmount = 30,
-    LazerChainDamage = 31 // as mult
+    LazerChainLength = 30,
+    LazerChainDamage = 31, // as mult
+    LazerChainChance = 32,
 }

@@ -117,4 +117,87 @@ public static class MineHelper {
 
         return closestResult;
     }
+    public static List<TileDamageData> GetLightningBolt(
+    Tilemap map,
+    Vector3 startPosition,
+    Vector3 baseDirection,
+    int steps,
+    float stepLength,
+    float deviationAngle = 45f,
+    bool checkSolid = false,
+    bool useFalloff = false) {
+        List<TileDamageData> result = new List<TileDamageData>();
+
+        // Track visited cells to avoid duplicate entries
+        HashSet<Vector3Int> visited = new HashSet<Vector3Int>();
+        baseDirection.Normalize();
+
+        Vector3 currentPos = startPosition;
+
+        for (int i = 0; i < steps; i++) {
+            // Deviate from the base direction by a random angle each step
+            float randomAngle = Random.Range(-deviationAngle, deviationAngle);
+            Vector3 stepDirection = Quaternion.Euler(0f, 0f, randomAngle) * baseDirection;
+            stepDirection.Normalize();
+
+            Vector3 nextPos = currentPos + stepDirection * stepLength;
+
+            // Damage ratio: 1.0 at start, falls toward 0.0 at end if falloff is enabled
+            float ratio = useFalloff ? Mathf.Clamp01(1f - ((float)i / steps)) : 1f;
+
+            // Collect all cells touched on the line between current and next position
+            List<Vector3Int> cellsOnSegment = GetCellsOnLine(map, currentPos, nextPos);
+
+            foreach (Vector3Int cell in cellsOnSegment) {
+                if (visited.Contains(cell))
+                    continue;
+                if (checkSolid && !IsSolid(map, cell))
+                    continue;
+
+                visited.Add(cell);
+                result.Add(new TileDamageData(cell, ratio));
+            }
+
+            currentPos = nextPos;
+        }
+
+        return result;
+    }
+
+    private static bool IsSolid(Tilemap map, Vector3Int cell) {
+        return true; // TODO 
+    }
+
+    /// <summary>
+    /// Returns all tilemap cells intersected by a line segment between two world positions,
+    /// using Bresenham's line algorithm on cell coordinates.
+    /// </summary>
+    private static List<Vector3Int> GetCellsOnLine(Tilemap map, Vector3 from, Vector3 to) {
+        List<Vector3Int> cells = new List<Vector3Int>();
+
+        Vector3Int fromCell = map.WorldToCell(from);
+        Vector3Int toCell = map.WorldToCell(to);
+
+        int x0 = fromCell.x, y0 = fromCell.y;
+        int x1 = toCell.x, y1 = toCell.y;
+
+        int dx = Mathf.Abs(x1 - x0);
+        int dy = Mathf.Abs(y1 - y0);
+        int sx = (x0 < x1) ? 1 : -1;
+        int sy = (y0 < y1) ? 1 : -1;
+        int err = dx - dy;
+
+        while (true) {
+            cells.Add(new Vector3Int(x0, y0, 0));
+
+            if (x0 == x1 && y0 == y1)
+                break;
+
+            int e2 = 2 * err;
+            if (e2 > -dy) { err -= dy; x0 += sx; }
+            if (e2 < dx) { err += dx; y0 += sy; }
+        }
+
+        return cells;
+    }
 }

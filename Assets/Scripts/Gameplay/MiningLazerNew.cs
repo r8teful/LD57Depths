@@ -1,8 +1,9 @@
 ﻿using r8teful;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifiable {
+public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
     private AbilityInstance _abilityInstance;
     private PlayerManager _player;
     private const float MINING_COOLDOWN = 0.02f;
@@ -16,11 +17,8 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifi
     private MiningLazerVisualNew _visual;
     private bool _firstShot;
     private DamageContainer _damageContainer;
-    private int _maxChainLength = 0; // Max number of chains allowed
     private List<Vector3Int> _activeChainPath = new List<Vector3Int>();
-    private float _chainRange = 3f;
-    private float _chainDamage;
-    private float _chainDamageBase = 0.5f;
+    public event Action<DamageContainer> OnTileDamaged;
 
     public Vector2 CurrentDir => _currentDirection;
     public void Init(AbilityInstance instance, PlayerManager player) {
@@ -29,8 +27,6 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifi
         _visual = GetComponent<MiningLazerVisualNew>();
         _visual.Init(player,instance,this);
         _damageContainer = new DamageContainer();
-        _chainDamage = _chainDamageBase;
-        Register();
         _abilityInstance.OnBuffExpired += OnBuffExpire;
     }
     private void OnDestroy() {
@@ -146,18 +142,20 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifi
 
             }
             _damageContainer.damage = damage;
-            
+            _damageContainer.hitDirection = _currentDirection;
+            _damageContainer.exactHitPoint = hit.point;
             // Chain & Damage
             // move forward slighly so we get the right world block
             Vector2 nudgedPoint = hit.point + _currentDirection * 0.1f;
-            if(_maxChainLength > 0) {
-                HandleChainLogic(nudgedPoint);
-            }
+            //if(_maxChainLength > 0) {
+            //    HandleChainLogic(nudgedPoint);
+            //}
             var tiles = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, hit.point,0.8f);
             foreach (var tile in tiles) {
                 _damageContainer.tile = tile.CellPos;
                 _player.RequestDamageTile(_damageContainer);
             }
+            OnTileDamaged?.Invoke(_damageContainer);
             //_damageContainer.damage *= 0.5f;
             
             /* todo if you want falloff
@@ -170,7 +168,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifi
             _visual.StopChain();
         } 
     }
-
+    /*
     private void HandleChainLogic(Vector2 hit) {
         _visual.StartChain();
         Vector3Int currentLinkOriginCell = WorldManager.Instance.MainTileMap.WorldToCell(hit);
@@ -238,6 +236,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifi
         }
         _visual.HideChainsFromIndex(_activeChainPath.Count);
     }
+     */
 
     public void MineAbility() {
         HashSet<Vector3Int> processedCells = new HashSet<Vector3Int>(); // To avoid duplicate tiles
@@ -286,34 +285,5 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifi
         //Gizmos.DrawSphere(pointBlue, 0.1f);
     }
 
-    public void ModifyValue(ValueModifier modifier) {
-        if (modifier.Key == ValueKey.LazerChainAmount) { 
-            _maxChainLength = Mathf.FloorToInt(UpgradeCalculator.CalculateNewUpgradeValue(_maxChainLength, modifier));
-        }
-        if (modifier.Key == ValueKey.LazerChainDamage) {
-            _chainDamage = UpgradeCalculator.CalculateNewUpgradeValue(_chainDamage, modifier);
-        }
-
-    }
-
-    public void Register() {
-        PlayerManager.Instance.UpgradeManager.RegisterValueModifierScript(ValueKey.LazerChainAmount, this);
-    }
-
-    public float GetValueNow(ValueKey key) {
-        if(key == ValueKey.LazerChainAmount) return _maxChainLength;
-        if(key == ValueKey.LazerChainDamage) return _chainDamage;
-        return 0;
-    }
-
-    public float GetValueBase(ValueKey key) {
-        if(key == ValueKey.LazerChainAmount) return 0;
-        if(key == ValueKey.LazerChainDamage) return _chainDamageBase; 
-        return 0;  
-    }
-
-    public void ReturnValuesToBase() {
-        _maxChainLength = 0;
-        _chainDamage = _chainDamageBase;
-    }
+  
 }

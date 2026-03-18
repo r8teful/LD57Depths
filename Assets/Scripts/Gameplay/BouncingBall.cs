@@ -28,8 +28,9 @@ public class BouncingBall : MonoBehaviour {
     private void OnCollisionEnter2D(Collision2D collision) {
         var hits = MineHelper.GetCircle(WorldManager.Instance.MainTileMap, transform.position, 3);
         var dmg = _ability.GetEffectiveStat(StatType.MiningDamage);
+        Vector2 hitDirection = _rb.linearVelocity.normalized;
         foreach (var hit in hits) {
-            _player.RequestDamageTile(new DamageContainer(hit.DamageRatio * dmg, false, hit.CellPos));
+            _player.RequestDamageTile(new DamageContainer(hit.DamageRatio * dmg, false, hit.CellPos, hitDirection));
         }
         _bounceAmount++;
         if (_bounceAmount >= _maxBounces) {
