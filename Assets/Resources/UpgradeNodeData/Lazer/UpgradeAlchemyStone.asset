@@ -10,18 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
-  m_Name: NodeBasePlayer
+  m_Name: UpgradeAlchemyStone
   m_EditorClassIdentifier: 
-  nodeName: Base Player
-  uniqueID: 0
-  description: This is where it begins
-  icon: {fileID: 1185593456, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  nodeKey: U.Alchemy.Stone
+  nodeStageNum: 0
+  uniqueID: 2000
+  icon: {fileID: -1703950749, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  IsCool: 0
   prerequisiteNodesAny: []
   UnlockedAtFirstPrereqStage: 0
-  stages:
-  - effects:
-    - {fileID: 11400000, guid: f3e75dd184350bf4f9ac48e282e931cc, type: 2}
-    costMultiplier: 1
-    costTier: 0
-    upgradeItemPool: {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
-    extraData: {fileID: 0}
+  stages: []

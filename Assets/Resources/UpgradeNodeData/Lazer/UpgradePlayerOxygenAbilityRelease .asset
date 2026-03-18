@@ -12,23 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
   m_Name: 'UpgradePlayerOxygenAbilityRelease '
   m_EditorClassIdentifier: 
-  nodeName: Block Oxygen Release
+  nodeKey: U.OxygenRelease.Amount
+  nodeStageNum: 0
   uniqueID: 370
-  description: 
   icon: {fileID: 1913521740, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
+  IsCool: 0
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 0a7a465d100abaa4d84949edae6ccb5b, type: 2}
   UnlockedAtFirstPrereqStage: 0
   stages:
-  - upgrade: {fileID: 11400000, guid: 9ed806d984a76f54186f149dd810313b, type: 2}
+  - effects: []
     costMultiplier: 1
     costTier: 2
     upgradeItemPool: {fileID: 11400000, guid: 252630a728eb6594c979e7727659293c, type: 2}
-  - upgrade: {fileID: 11400000, guid: e07b0716eaad0a3419891cf521393cb7, type: 2}
+    extraData: {fileID: 0}
+  - effects: []
     costMultiplier: 1
     costTier: 5
     upgradeItemPool: {fileID: 11400000, guid: 29f367e82be84e84aa1af9c8dd6f8436, type: 2}
-  - upgrade: {fileID: 11400000, guid: bee009b4b5b31c74e813920460b3ac23, type: 2}
+    extraData: {fileID: 0}
+  - effects: []
     costMultiplier: 1
     costTier: 7
     upgradeItemPool: {fileID: 11400000, guid: 29f367e82be84e84aa1af9c8dd6f8436, type: 2}
+    extraData: {fileID: 0}

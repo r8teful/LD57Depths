@@ -10,17 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
-  m_Name: UpgradeSpecialLazerCombo
+  m_Name: NodeUpgradeStation
   m_EditorClassIdentifier: 
-  nodeName: Lazer combo
-  uniqueID: 9998
-  description: 
-  icon: {fileID: -1272238471, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
-  prerequisiteNodesAny:
-  - {fileID: 11400000, guid: 287c7b7c66cc5be498d1eea9de862007, type: 2}
+  nodeKey: U.UpgradeStation
+  nodeStageNum: 0
+  uniqueID: 0
+  icon: {fileID: 1185593456, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  IsCool: 0
+  prerequisiteNodesAny: []
   UnlockedAtFirstPrereqStage: 0
   stages:
-  - upgrade: {fileID: 11400000, guid: ee9c7d02e889c8849bee9abe4d7bc0b1, type: 2}
+  - effects:
+    - {fileID: 11400000, guid: f3e75dd184350bf4f9ac48e282e931cc, type: 2}
     costMultiplier: 1
     costTier: 0
-    upgradeItemPool: {fileID: 0}
+    upgradeItemPool: {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
+    extraData: {fileID: 0}

@@ -10,12 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
-  m_Name: UpgradeMagnetismStrength1
+  m_Name: UpgradeMagnetismSpeed
   m_EditorClassIdentifier: 
-  nodeKey: U.Magnetism.Strength
+  nodeKey: U.Magnetism.Speed
   nodeStageNum: 0
   uniqueID: 730
-  description: 
   icon: {fileID: 1662966539, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
