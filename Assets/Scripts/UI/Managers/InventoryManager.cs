@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class InventoryManager {
@@ -121,5 +122,16 @@ public class InventoryManager {
             total += item.Value.quantity;
         }
         return total;
+    }
+    public List<ItemQuantity> GetItemSnapshot(float f = 1) {
+        var items = new List<ItemQuantity>();
+        foreach (var slot in Slots) {
+            var q = slot.Value.quantity;
+            if (q <= 0) continue;
+            var scaled = Mathf.CeilToInt(q * f);
+            var resultQty = Math.Min(q, scaled);
+            items.Add(new(slot.Key, resultQty));
+        }
+        return items;
     }
 }

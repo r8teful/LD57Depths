@@ -288,10 +288,10 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, IValueModifi
 
     public void ModifyValue(ValueModifier modifier) {
         if (modifier.Key == ValueKey.LazerChainAmount) { 
-            _maxChainLength = Mathf.FloorToInt(UpgradeCalculator.CalculateUpgradeChange(_maxChainLength, modifier));
+            _maxChainLength = Mathf.FloorToInt(UpgradeCalculator.CalculateNewUpgradeValue(_maxChainLength, modifier));
         }
         if (modifier.Key == ValueKey.LazerChainDamage) {
-            _chainDamage = UpgradeCalculator.CalculateUpgradeChange(_chainDamage, modifier);
+            _chainDamage = UpgradeCalculator.CalculateNewUpgradeValue(_chainDamage, modifier);
         }
 
     }

@@ -28,8 +28,8 @@ public class PlayerInventory : MonoBehaviour {
         
     }
     
-    internal void AddItem(ushort itemId, int quantityTransferred) {
-        inventoryManager.AddItem(itemId, quantityTransferred);
+    internal void AddItem(ushort itemId, int quanitity) {
+        inventoryManager.AddItem(itemId, quanitity);
     }
 
     internal void RemoveItem(ushort itemId, int quantityTransferred) {

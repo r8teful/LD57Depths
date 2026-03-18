@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bd08606626a8904b990accdb65bb0aa, type: 3}
   m_Name: AbilityCompas
   m_EditorClassIdentifier: 
-  id: 104
+  id: 210
   icon: {fileID: 0}
   displayName: You feel oxinated
+  description: 
   type: 0
   cooldown: 0
-  isTimed: 0
   StatTypes: []
+  UpgradeValues: []
   effects:
-  - {fileID: 11400000, guid: 48dbb057197c84a47a53aadb4bd8a559, type: 2}
+  - {fileID: 11400000, guid: 679e980d67206ac4ba2dd85d37ee22ee, type: 2}
   costumes: []

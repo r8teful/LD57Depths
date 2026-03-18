@@ -110,10 +110,10 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
 
     public void ModifyValue(ValueModifier modifier) {
         if(modifier.Key == ValueKey.MagnetismPickup) {
-            var newV = UpgradeCalculator.CalculateUpgradeChange(_magnetRange,modifier);
+            var newV = UpgradeCalculator.CalculateNewUpgradeValue(_magnetRange,modifier);
             _magnetRange = newV; 
         } else if(modifier.Key == ValueKey.MagnetismStrength) {
-            var newV = UpgradeCalculator.CalculateUpgradeChange(_magnetStrength, modifier);
+            var newV = UpgradeCalculator.CalculateNewUpgradeValue(_magnetStrength, modifier);
             _magnetStrength = newV; 
         }
     }

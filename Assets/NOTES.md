@@ -1361,6 +1361,14 @@ Escape closes a menu, Escape without a menu opens settings
     * ~~Node names~~
     * ~~UI -> Layout within popup~~
     * ~~Descriptions~~
+* World
+
+  * Chest 
+  * Shrine
+* HUD
+
+  * Lazer ability icon
+  * Buff status icons
 * Main menu
 
   * New game screen

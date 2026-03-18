@@ -21,6 +21,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     public static event Action<float, float> OnOxygenChanged;
     public static event Action OnFlashStart;
     public static event Action OnFlashStop;
+    public static event Action OnPassOut;
     public int InitializationOrder => 92; // After playerstats
 
     public float CurrentOxygen { 
@@ -92,6 +93,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
             // Slowly fade out and then teleport player back to base?
             playerHealth -= Time.deltaTime;
             if (playerHealth <= 0) {
+                OnPassOut?.Invoke(); // Important to call before we remove all 
                 _player.InventoryN.RemoveAll(); // womp womp 
                 _player.PlayerLayerController.PutPlayerInSub();
                 Resurect();

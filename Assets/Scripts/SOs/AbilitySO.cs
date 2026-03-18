@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Sirenix.OdinInspector;
+using System.Collections.Generic;
 using UnityEngine;
 // An ability can be passive (like a permanent buff, or tool, or passive destruction)
 // Or active (like a tool ability)
@@ -15,7 +16,7 @@ public class AbilitySO : ScriptableObject, IIdentifiable {
     public float cooldown; // Same as duration, this number is MULTIPLYING our base cooldown stat
     public List<StatDefault> StatTypes; // Initial stats
     public List<StatModifier> UpgradeValues; // What stats can be upgraded and by how much 
-
+    [InlineEditor]
     public List<ScriptableObject> effects;
     public List<CosmeticData> costumes;
 

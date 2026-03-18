@@ -6,6 +6,7 @@
     void ReturnValuesToBase(); // Just so I can call ClearAllUpgrades and it clears all the things lollol
 }
 public enum ValueKey {
+    PassOutLoseProcent = 5, // as mult
     MagnetismPickup = 10,
     MagnetismStrength = 11,
     ItemTransferRate = 20,

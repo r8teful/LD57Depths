@@ -11,7 +11,7 @@ public static class UpgradeCalculator {
         }
         return points;
     }
-    public static float CalculateUpgradeChange(float current, StatModifyType type, float increaseAmount) {
+    public static float CalculateNewUpgradeValue(float current, StatModifyType type, float increaseAmount) {
         switch (type) {
             case StatModifyType.Add:
                 return current + increaseAmount;
@@ -25,10 +25,10 @@ public static class UpgradeCalculator {
         }
     }
 
-    public static float CalculateUpgradeChange(float current, ValueModifier modifier) {
-        return CalculateUpgradeChange(current, modifier.Type, modifier.Value);
+    public static float CalculateNewUpgradeValue(float current, ValueModifier modifier) {
+        return CalculateNewUpgradeValue(current, modifier.Type, modifier.Value);
     }
-    public static float CalculateUpgradeChange(float current, StatModifier modifier) {
-        return CalculateUpgradeChange(current, modifier.Type, modifier.Value);
+    public static float CalculateNewUpgradeValue(float current, StatModifier modifier) {
+        return CalculateNewUpgradeValue(current, modifier.Type, modifier.Value);
     }
 }

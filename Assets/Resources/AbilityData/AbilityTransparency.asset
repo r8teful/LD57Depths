@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bd08606626a8904b990accdb65bb0aa, type: 3}
   m_Name: AbilityTransparency
   m_EditorClassIdentifier: 
-  id: 102
+  id: 230
   icon: {fileID: 0}
   displayName: Let me be clear
+  description: 
   type: 0
   cooldown: 0
-  isTimed: 0
+  StatTypes: []
+  UpgradeValues: []
   effects:
   - {fileID: 11400000, guid: 181d397c85b3b364abf4371208f2d073, type: 2}
+  costumes: []

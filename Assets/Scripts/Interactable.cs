@@ -13,7 +13,7 @@ public class Interactable : MonoBehaviour, IInteractable {
 
     [SerializeField] private bool _useOutline = true;
     [ShowIf("_useOutline")]
-    [SerializeField] private SpriteRenderer _spriteRenderer; 
+    [SerializeField] protected SpriteRenderer _spriteRenderer; 
 
     public event Action<PlayerManager> OnInteract;
     [Tooltip("Action to execute when this object is no longer the closest interactable (e.g., to close an associated UI).")]
@@ -36,7 +36,7 @@ public class Interactable : MonoBehaviour, IInteractable {
     private CanvasInputWorld instantiatedPopup;
     private Material _outlineMat;
 
-    void Awake() {
+    protected virtual void Awake() {
         // Default to this object's transform if no specific popup position is set.
         if (popupPosition == null) {
             popupPosition = transform;
@@ -65,7 +65,7 @@ public class Interactable : MonoBehaviour, IInteractable {
                 instantiatedPopup.Init(this, interactPrompt);
                 OnSetInteractable?.Invoke();
             }
-            if (_useOutline) {
+            if (_useOutline && _outlineMat != null) {
                 _outlineMat.DOFade(1, 0.3f); // this makes such a difference omg
                 _outlineMat.SetInt("_Enabled", 1);
             }
@@ -74,7 +74,7 @@ public class Interactable : MonoBehaviour, IInteractable {
                 instantiatedPopup.Destroy();
                 instantiatedPopup = null; // Clear the reference
             }
-            if (_useOutline) {
+            if (_useOutline && _outlineMat != null) {
                 _outlineMat.DOFade(0, 0.3f);
                 _outlineMat.SetInt("_Enabled", 0);
             }

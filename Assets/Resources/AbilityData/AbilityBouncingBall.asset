@@ -12,13 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bd08606626a8904b990accdb65bb0aa, type: 3}
   m_Name: AbilityBouncingBall
   m_EditorClassIdentifier: 
-  id: 108
+  id: 560
   icon: {fileID: 0}
   displayName: Bouncing Ball
   description: Bouncing balls damage walls they touch
   type: 0
   cooldown: 0
-  isTimed: 0
   StatTypes:
   - Stat: 1000
     BaseValue: 3

@@ -23,6 +23,7 @@ public class PlayerAbilities : MonoBehaviour, IPlayerModule {
         AddAbility(App.ResourceSystem.GetAbilityByID(0)); // Lazer is ID 0 
         AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BiomeBuffID)); // Biome buffs
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BrimstoneBuffID)); // Lazer blast
+        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.GraveStoneID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(101)); // cactus suit
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BlockOxygenID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.PlayerDashID));

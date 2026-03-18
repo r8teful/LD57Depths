@@ -61,16 +61,17 @@ public class ResourceSystem {
     public static ushort WORLD_MAP_ID = 1;
 
     public const ushort BrimstoneBuffID = 1; // There must be a better way
-    public const ushort BiomeBuffID = 99; // There must be a better way
+    public const ushort BiomeBuffID = 100; // There must be a better way
+    public const ushort PlayerDashID = 10; 
     public const ushort LazerEffectID = 0; // There must be a better way
-    public const ushort CactusAbilityID = 101; 
-    public const ushort BlockOxygenID = 104; 
-    public const ushort PlayerDashID = 9; 
-    public const ushort ShockwaveID = 105; 
-    public const ushort BoomerangID = 106; 
-    public const ushort BlackholeID = 107; 
-    public const ushort BouncingBallID = 108; 
-    public const ushort FishShooterID = 109; 
+    public const ushort BlockOxygenID = 200; 
+    public const ushort GraveStoneID = 220; // There must be a better way
+    public const ushort CactusAbilityID = 500; 
+    public const ushort ShockwaveID = 530; 
+    public const ushort BoomerangID = 540; 
+    public const ushort BlackholeID = 550; 
+    public const ushort BouncingBallID = 560; 
+    public const ushort FishShooterID = 570; 
   
     public const ushort SubUpgradePanel = 0; //  
     public const ushort SubUpgradeControlPanel = 1000; //  

@@ -12,13 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bd08606626a8904b990accdb65bb0aa, type: 3}
   m_Name: AbilityExtraFish
   m_EditorClassIdentifier: 
-  id: 109
+  id: 570
   icon: {fileID: 0}
   displayName: Fish Shooter
   description: Shoots pyranas that eat through blocks
   type: 0
   cooldown: 0
-  isTimed: 0
   StatTypes:
   - Stat: 1000
     BaseValue: 1.5

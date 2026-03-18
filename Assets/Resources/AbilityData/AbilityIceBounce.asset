@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bd08606626a8904b990accdb65bb0aa, type: 3}
   m_Name: AbilityIceBounce
   m_EditorClassIdentifier: 
-  id: 103
+  id: 520
   icon: {fileID: 0}
   displayName: Bouncy
+  description: 
   type: 0
   cooldown: 0
-  isTimed: 0
   StatTypes: []
+  UpgradeValues: []
   effects:
   - {fileID: 11400000, guid: 4956db97d6207f140b5a9a3536dcfa8d, type: 2}
   costumes:

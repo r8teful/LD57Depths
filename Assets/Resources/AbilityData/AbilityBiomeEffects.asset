@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bd08606626a8904b990accdb65bb0aa, type: 3}
   m_Name: AbilityBiomeEffects
   m_EditorClassIdentifier: 
-  id: 99
+  id: 100
   icon: {fileID: -917287309, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   displayName: Biomes gives me power
+  description: 
   type: 0
   cooldown: 0
-  isTimed: 0
+  StatTypes: []
+  UpgradeValues: []
   effects:
   - {fileID: 11400000, guid: 57629c77531ec4c40840ac1a9a0b19de, type: 2}
+  costumes: []

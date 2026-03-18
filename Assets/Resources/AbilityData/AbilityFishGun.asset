@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bd08606626a8904b990accdb65bb0aa, type: 3}
   m_Name: AbilityFishGun
   m_EditorClassIdentifier: 
-  id: 69
+  id: 5
   icon: {fileID: 0}
   displayName: Its a fish gun...
+  description: 
   type: 0
   cooldown: 0
-  isTimed: 0
+  StatTypes: []
+  UpgradeValues: []
   effects:
   - {fileID: 11400000, guid: 60f7be414c5427449bca9caa5086eda0, type: 2}
+  costumes: []

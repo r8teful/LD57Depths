@@ -22,7 +22,7 @@ public class ValueModifier {
     public StatChangeStatus GetStatusProcent(IValueModifiable script) {
         var valueBase = script.GetValueBase(Key);
         var valueNow = script.GetValueNow(Key);
-        var valueNext = UpgradeCalculator.CalculateUpgradeChange(valueNow, Type, Value);
+        var valueNext = UpgradeCalculator.CalculateNewUpgradeValue(valueNow, Type, Value);
 
         // make it a procent change duh
         float percentNow = valueNow / (float)valueBase;
@@ -36,7 +36,7 @@ public class ValueModifier {
     public StatChangeStatus GetStatusAbsolute(IValueModifiable script) {
         //var valueBase = script.GetValueBase(Key);
         var valueNow = script.GetValueNow(Key);
-        var valueNext = UpgradeCalculator.CalculateUpgradeChange(valueNow, Type, Value);
+        var valueNext = UpgradeCalculator.CalculateNewUpgradeValue(valueNow, Type, Value);
 
         return new("todo", $"{valueNow}", $"{valueNext}", true);
     }
