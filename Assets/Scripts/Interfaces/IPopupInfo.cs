@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static UpgradeNodeVisualData;
 
 // Anything that can give information to the popup on the cursor
 public interface IPopupInfo {
@@ -16,14 +17,25 @@ public class PopupData {
     public List<IngredientStatus> craftingInfo; // int is quantity
     public List<StatChangeStatus> upgradeEffects; // in its core this is what we want to know
     public NodeProgressionStatus progressionInfo;
+    public PopupColourData colourOverrideData;
 
     public PopupData(string title, string description, List<IngredientStatus> craftingInfo, Sprite icon = null, List<StatChangeStatus> statInfo = null,
-        NodeProgressionStatus progressionInfo = default) {
+        NodeProgressionStatus progressionInfo = default, PopupColourData colourOverrideData = null) {
         this.title = title;
         this.description = description;
         this.craftingInfo = craftingInfo;
         this.upgradeEffects = statInfo;
         this.progressionInfo = progressionInfo;
+        this.colourOverrideData = colourOverrideData;
         Icon = icon;
+    }
+}
+public class PopupColourData {
+    public Sprite BoarderOverrideSprite;
+    public Color PurchaseParticleColour;
+
+    public PopupColourData(Sprite boarderOverrideSprite, Color purchaseParticleColour) {
+        BoarderOverrideSprite = boarderOverrideSprite;
+        PurchaseParticleColour = purchaseParticleColour;
     }
 }

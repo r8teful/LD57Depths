@@ -13,12 +13,27 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     [SerializeField] private Button _button;
     [SerializeField] private GameObject _buttonSmallVisual;
     [SerializeField] private GameObject _buttonBigVisual;
-   
-    [SerializeField] private Sprite _unlockedSpriteSmall;
-    [SerializeField] private Sprite _unlockedSpriteBig;
-    [SerializeField] private Sprite _purchasableSpriteSmall;
-    [SerializeField] private Sprite _purchasableSpriteBig;
+    [FoldoutGroup("State Sprites")]
+    [SerializeField] private Sprite _unlockedPurple;
+    [FoldoutGroup("State Sprites")]
+    [SerializeField] private Sprite _unlockedBlue;
+    [FoldoutGroup("State Sprites")]
+    [SerializeField] private Sprite _purchasablePurple;
+    [FoldoutGroup("State Sprites")]
+    [SerializeField] private Sprite _purchasableBlue;
+    [FoldoutGroup("State Sprites")]
     [SerializeField] private Sprite _purchasedSprite;
+
+    [FoldoutGroup("State Sprites Popup")]
+    [SerializeField] private Sprite _unlockedBluePopup;
+    [FoldoutGroup("State Sprites Popup")]
+    [SerializeField] private Sprite _unlockedPurplePopup;
+    [FoldoutGroup("State Sprites Popup")]
+    [SerializeField] private Sprite _purchasableBluePopup;
+    [FoldoutGroup("State Sprites Popup")]
+    [SerializeField] private Sprite _purchasablePurplePopup;
+    [FoldoutGroup("State Sprites Popup")]
+    [SerializeField] private Sprite _purchasedPopup;
     [SerializeField] private Sprite _whiteSprite;
     [SerializeField] private UIParticle _purchasableParticle;
     [SerializeField] private UIParticle _purchasableParticleCool;
@@ -41,6 +56,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private UpgradeNodeVisualData _visualData;
     public UpgradeNodeState GetState => _visualData.State;
     public UpgradeNodeVisualData GetVisualData => _visualData;
+    private Sprite _popupOverrideSprite;
 
     public bool ShouldBeDemoLocked {
         get {
@@ -57,14 +73,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public event Action PopupDataChanged;
     public event Action<UpgradeNodeState,bool> OnStateChange; // bool is if it has been purshed atleast ONCE
 
-    private static readonly string ICON_PURCHASED_HEX = "#FFAA67";    
-    private static readonly string ICON_UNLOCKED_HEX = "#FFFFFF"; // slighly gray?
-    private static readonly string ICON_PURCHASABLE_HEX = "#FFFFFF";
-
-    private static readonly string PARTICLE_ORANGE = "#D58141";      
-    private static readonly string PARTICLE_PURPLE = "#FF2986";      
-    private static readonly string PARTICLE_PURPLELIGHT = "#860F75";      
-    private static readonly string PARTICLE_PURPLEMEDIUM = "#C31F66";      
 
     // 0 = Blue | Green | Orange
     // 1 = Active | Inactive | Pressed
@@ -78,13 +86,14 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private Vector2 _preferedSize;
     private Sequence colorSequence;
     private bool _isPressed;
+    private static readonly string PARTICLE_ORANGE = "#D58141";
+    private static readonly string PARTICLE_PURPLE = "#FF2986";
+    private static readonly string PARTICLE_PURPLELIGHT = "#860F75";
+    private static readonly string PARTICLE_PURPLEMEDIUM = "#C31F66";
+    private static readonly string PARTICLE_BLUE = "#4cbed0";
 
     private void Awake() {
-        // parse hex colors (falls back to white if parse fails)
-        ColorUtility.TryParseHtmlString(ICON_PURCHASED_HEX, out _iconPurchasedColor);
-        ColorUtility.TryParseHtmlString(ICON_UNLOCKED_HEX, out _iconUnlockedColor);
-        ColorUtility.TryParseHtmlString(ICON_PURCHASABLE_HEX, out _iconPurchasableColor);
-
+       
         _rectTransform = GetComponent<RectTransform>();
         _canvasGroup = GetComponent<CanvasGroup>();
         _canvasGroup.alpha = 1;
@@ -230,72 +239,33 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         }
         HandleParticles(state);
         //HandleShaderState(state);
-
-        if (!_visualData.IsCool) {
-            switch (state) {
-                case UpgradeNodeState.Purchased:
-                    _canvasGroup.alpha = 1;
-                    _iconImage.color = _iconPurchasedColor;
-                    _button.interactable = false;
-                    break;
-                case UpgradeNodeState.Unlocked:
-                    _canvasGroup.alpha = 1;
-                    _iconImage.color = _iconUnlockedColor;
-                    _button.interactable = true;
-                    break;
-                case UpgradeNodeState.Purchasable:
-                    _iconImage.color = _iconPurchasableColor;
-                    _button.interactable = true;
-                    _canvasGroup.alpha = 1;
-                    break;
-                case UpgradeNodeState.Locked:
-                    _imageCurrent.sprite = null;
-                    _canvasGroup.alpha = 0;
-                    _button.interactable = false;
-                    break;
-                default:
-                    
-                    break;
-            }
-        } else {
-            switch (state) {
-                case UpgradeNodeState.Purchased:
-                    _canvasGroup.alpha = 1;
-                    _iconImage.color = _iconPurchasedColor;
-                    _button.interactable = false;
-                    if(colorSequence != null) {
-                        colorSequence.Kill();
-                        colorSequence = null;
-                        _imageCurrent.color = Color.white;
-                    }
-                    _imageCurrent.material = _defaultMat;
-                    break;
-                case UpgradeNodeState.Unlocked:
-                    _canvasGroup.alpha = 0.5f;
-                    _imageCurrent.sprite = _whiteSprite;
-                    colorSequence ??= _imageCurrent.DOGradientColor(_coolGradient, 30).SetLoops(-1);
-                    _button.interactable = true;
-                    break;
-                case UpgradeNodeState.Purchasable:
-                    _imageCurrent.sprite = _whiteSprite;
-                    colorSequence ??= _imageCurrent.DOGradientColor(_coolGradient, 30).SetLoops(-1);
-                    _button.interactable = true;
-                    _canvasGroup.alpha = 1;
-                    break;
-                case UpgradeNodeState.Locked:
-                    _imageCurrent.sprite = null;
-                    _canvasGroup.alpha = 0;
-                    _button.interactable = false;
-                    break;
-                default:
-
-                    break;
-            }
-        }
+        ApplyConfig(_visualData.CurrentConfig);
         OnStateChange?.Invoke(state,_visualData.LevelCurrent>0);
 
     }
+    private void ApplyConfig(UpgradeNodeVisualData.StateVisualConfig config) {
+        _canvasGroup.alpha = config.alpha;
+        _button.interactable = config.interactable;
 
+        if (config.clearSprite) _imageCurrent.sprite = null;
+        else if (config.useWhiteSprite) _imageCurrent.sprite = _whiteSprite;
+
+        if (config.killCoolAnimation) {
+            colorSequence?.Kill();
+            colorSequence = null;
+            _imageCurrent.color = Color.white;
+            _imageCurrent.material = _defaultMat;
+        }
+
+        if (config.useCoolAnimation) {
+            colorSequence ??= _imageCurrent.DOGradientColor(_coolGradient, 30).SetLoops(-1);
+        }
+
+        // Only apply icon color when not running the gradient (which owns the color)
+        if (!config.useCoolAnimation) {
+            _iconImage.color = config.iconColor;
+        }
+    }
     private bool HandleDemoLockedState(UpgradeNodeState state) {
         if (ShouldBeDemoLocked) {
                 // We're locked and there is nothing you can do!! ( only buy the game ofcourse) 
@@ -343,10 +313,23 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             UpgradeNodeState.Purchased => _purchasedSprite,
 
             UpgradeNodeState.Purchasable =>
-                IsBig ? _purchasableSpriteBig : _purchasableSpriteSmall,
+                IsBig ? _purchasableBlue : _purchasablePurple,
 
             UpgradeNodeState.Unlocked =>
-                IsBig ? _unlockedSpriteBig : _unlockedSpriteSmall,
+                IsBig ? _unlockedBlue : _unlockedPurple,
+            _ => null
+        };
+        
+    }
+    private void SetPopupOverrideSprite(UpgradeNodeState state) {
+        _popupOverrideSprite = state switch {
+            UpgradeNodeState.Purchased => _purchasedPopup,
+
+            UpgradeNodeState.Purchasable =>
+                IsBig ? _purchasableBluePopup : _purchasablePurplePopup,
+
+            UpgradeNodeState.Unlocked =>
+                IsBig ? _unlockedBluePopup : _unlockedPurplePopup,
             _ => null
         };
     }
@@ -359,6 +342,8 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         Color c;
         if (_visualData.IsMaxLevel()) {
             ColorUtility.TryParseHtmlString(PARTICLE_ORANGE, out c);
+        } else if (IsBig) {
+            ColorUtility.TryParseHtmlString(PARTICLE_BLUE, out c);
         } else {
             ColorUtility.TryParseHtmlString(PARTICLE_PURPLEMEDIUM, out c);
         }
@@ -392,13 +377,23 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
                 title: LocalizationManager.Localize("U.Locked"),
                 description: LocalizationManager.Localize("U.Locked.D"), null);
         }
-        return new PopupData(_visualData.Title, _visualData.Description,
-            _visualData.IngredientStatuses, // We'll have to pull this everytime we want to show it because 
-                                            // We need a new way to get the stat statuses, it will depend on the upgrade. 
-            statInfo: _visualData.StatChangeStatuses, 
-            progressionInfo: new(_visualData.LevelMax, _visualData.LevelCurrent),
-            icon: _visualData.IconExtra
-            );
+        Color c;
+        if (_visualData.IsMaxLevel()) {
+            ColorUtility.TryParseHtmlString(PARTICLE_ORANGE, out c);
+        } else if (IsBig) {
+            ColorUtility.TryParseHtmlString(PARTICLE_BLUE, out c);
+        } else {
+            ColorUtility.TryParseHtmlString(PARTICLE_PURPLEMEDIUM, out c);
+        }
+        SetPopupOverrideSprite(_visualData.State);
+            return new PopupData(_visualData.Title, _visualData.Description,
+                _visualData.IngredientStatuses, // We'll have to pull this everytime we want to show it because 
+                                                // We need a new way to get the stat statuses, it will depend on the upgrade. 
+                statInfo: _visualData.StatChangeStatuses,
+                progressionInfo: new(_visualData.LevelMax, _visualData.LevelCurrent),
+                icon: _visualData.IconExtra,
+                colourOverrideData: new(_popupOverrideSprite, c)
+                );
     }
 
     internal void SetSelected() {
@@ -448,3 +443,4 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
 
 }
+

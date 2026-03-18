@@ -330,28 +330,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DiscoveryGrid
-      rect:
-        serializedVersion: 2
-        x: 3
-        y: 547
-        width: 100
-        height: 46
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2a205734357e26748ae5184909457496
-      internalID: 1687985993
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: TrenchProgression0
       rect:
         serializedVersion: 2
@@ -3370,7 +3348,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 9
-        y: 672
+        y: 572
         width: 25
         height: 14
       alignment: 0
@@ -3652,11 +3630,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ButtonUpgradePurchasableB
+      name: ButtonPurchasableBlue
       rect:
         serializedVersion: 2
-        x: 266
-        y: 583
+        x: 80
+        y: 672
         width: 14
         height: 14
       alignment: 0
@@ -3674,11 +3652,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ButtonUpgradeUnlockedB
+      name: ButtonUnlockedBlue
       rect:
         serializedVersion: 2
-        x: 282
-        y: 583
+        x: 116
+        y: 672
         width: 14
         height: 14
       alignment: 0
@@ -3696,11 +3674,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ButtonUpgradePurchasableS
+      name: ButtonPurchasablePurple
       rect:
         serializedVersion: 2
-        x: 266
-        y: 567
+        x: 16
+        y: 672
         width: 14
         height: 14
       alignment: 0
@@ -3740,11 +3718,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ButtonUpgradePurchased
+      name: ButtonPurchased
       rect:
         serializedVersion: 2
-        x: 247
-        y: 571
+        x: 149
+        y: 672
         width: 14
         height: 14
       alignment: 0
@@ -3828,11 +3806,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ButtonUpgradeUnlockedS
+      name: ButtonUnlockedPurple
       rect:
         serializedVersion: 2
-        x: 282
-        y: 567
+        x: 47
+        y: 671
         width: 14
         height: 14
       alignment: 0
@@ -4070,7 +4048,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PopupWhole2
+      name: PopupPurchasablePurple
       rect:
         serializedVersion: 2
         x: 7
@@ -4122,7 +4100,7 @@ TextureImporter:
         width: 13
         height: 13
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -4131,6 +4109,94 @@ TextureImporter:
       bones: []
       spriteID: 0e4b2b1fc0d560e4eab8eadf1799b029
       internalID: 460111579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PopupUnlockedPurple
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 652
+        width: 29
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 7, y: 6, z: 6, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed9dc2948b5359441bcab4cfc15cb872
+      internalID: 2078350071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PopupPurchasableBlue
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 652
+        width: 30
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 7, y: 6, z: 6, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 861f16f183fd51845a0296577a3f8f28
+      internalID: 1881735478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PopupUnlockedBlue
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 652
+        width: 29
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 7, y: 6, z: 6, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c65add02b5ab10f4f8b1e354da7d3e4a
+      internalID: -984292151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PopupPurchased
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 652
+        width: 29
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 7, y: 6, z: 6, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8323c607726743b4b8fa8e3303b7966b
+      internalID: -1368836696
       vertices: []
       indices: 
       edges: []
@@ -4158,7 +4224,12 @@ TextureImporter:
       ButtonGreedDark: -978120224
       ButtonGreenBright: 1170321897
       ButtonOrange: 1363531171
+      ButtonPurchasableBlue: 1242008253
+      ButtonPurchasablePurple: 1328511984
+      ButtonPurchased: -882738324
       ButtonRed: 1634354981
+      ButtonUnlockedBlue: 550759883
+      ButtonUnlockedPurple: -169607546
       ButtonUpgradeBlueActive: 624703488
       ButtonUpgradeBlueInactive: -176935646
       ButtonUpgradeBluePressed: -2138730293
@@ -4168,11 +4239,6 @@ TextureImporter:
       ButtonUpgradeOrangeActive: 434696062
       ButtonUpgradeOrangeInactive: 1131497666
       ButtonUpgradeOrangePressed: -1622521877
-      ButtonUpgradePurchasableB: 1242008253
-      ButtonUpgradePurchasableS: 1328511984
-      ButtonUpgradePurchased: -882738324
-      ButtonUpgradeUnlockedB: 550759883
-      ButtonUpgradeUnlockedS: -169607546
       ButtonWhite: -1732391133
       DiscordIConPix: -879546127
       DiscoveryGrid: 1687985993
@@ -4214,9 +4280,13 @@ TextureImporter:
       OxygenBoarder_Blue: 1579109010
       PlaceMarker: 116054401
       PopupBox: 2098033918
+      PopupPurchasableBlue: 1881735478
+      PopupPurchasablePurple: -169271006
+      PopupPurchased: -1368836696
       PopupTop: 1523963916
+      PopupUnlockedBlue: -984292151
+      PopupUnlockedPurple: 2078350071
       PopupWhole: -523195754
-      PopupWhole2: -169271006
       RikUISpriteSheet_16: -1480687458
       Speed: -2053248459
       SubFixCable_0: 518516892

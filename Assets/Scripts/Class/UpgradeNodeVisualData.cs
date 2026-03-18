@@ -1,4 +1,5 @@
 ﻿using Assets.SimpleLocalization.Scripts;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ public class UpgradeNodeVisualData {
     private UpgradeStage _currentUpgradeStage;
     private UpgradeManagerPlayer _upgradeManager;
     private readonly UpgradeNodeSO _node;
+    private Dictionary<UpgradeNodeState, StateVisualConfig> _normalConfigs;
+    private Dictionary<UpgradeNodeState, StateVisualConfig> _coolConfigs;
     public UpgradeNodeSO Node => _node;
     // Straight from SO
     public Sprite Icon;
@@ -29,9 +32,18 @@ public class UpgradeNodeVisualData {
     public UpgradeNodeState State; // Depends on inventory and costs
     public int LevelMax;
     public int LevelCurrent;
+    private Color _iconPurchasedColor;
+    private Color _iconUnlockedColor;
+    private Color _iconPurchasableColor;
+    internal StateVisualConfig CurrentConfig => IsCool ? _coolConfigs.GetValueOrDefault(State) : _normalConfigs.GetValueOrDefault(State);
+    private static readonly string ICON_PURCHASED_HEX = "#FFAA67";
+    private static readonly string ICON_UNLOCKED_HEX = "#FFFFFF"; // slighly gray?
+    private static readonly string ICON_PURCHASABLE_HEX = "#FFFFFF";
 
     public UpgradeNodeVisualData(UpgradeNodeSO node, UpgradeManagerPlayer upgradeManager) {
         // Need to get current node STAGE, and get the recipe from that state from here
+        SetColours();
+        BuildConfigs();
          _upgradeManager = upgradeManager;
         _node = node;
         Icon = node.icon;
@@ -39,6 +51,28 @@ public class UpgradeNodeVisualData {
         RefreshRecipeData();
         OnLocalize();
         LocalizationManager.OnLocalizationChanged += OnLocalize;
+    }
+
+    private void SetColours() {
+        ColorUtility.TryParseHtmlString(ICON_PURCHASED_HEX, out _iconPurchasedColor);
+        ColorUtility.TryParseHtmlString(ICON_UNLOCKED_HEX, out _iconUnlockedColor);
+        ColorUtility.TryParseHtmlString(ICON_PURCHASABLE_HEX, out _iconPurchasableColor);
+    }
+
+    private void BuildConfigs() {
+        _normalConfigs = new Dictionary<UpgradeNodeState, StateVisualConfig> {
+            [UpgradeNodeState.Purchased] = new()    { alpha = 1f, iconColor = _iconPurchasedColor, interactable = false },
+            [UpgradeNodeState.Unlocked] = new()     { alpha = 1f, iconColor = _iconUnlockedColor, interactable = true },
+            [UpgradeNodeState.Purchasable] = new()  { alpha = 1f, iconColor = _iconPurchasableColor, interactable = true },
+            [UpgradeNodeState.Locked] = new()       { alpha = 0f, iconColor = Color.white, interactable = false, clearSprite = true },
+        };
+
+        _coolConfigs = new Dictionary<UpgradeNodeState, StateVisualConfig> {
+            [UpgradeNodeState.Purchased] = new()    { alpha = 1f, iconColor = _iconPurchasedColor, interactable = false, killCoolAnimation = true },
+            [UpgradeNodeState.Unlocked] = new()     { alpha = 0.5f, iconColor = Color.white, interactable = true, useWhiteSprite = true, useCoolAnimation = true },
+            [UpgradeNodeState.Purchasable] = new()  { alpha = 1f, iconColor = Color.white, interactable = true, useWhiteSprite = true, useCoolAnimation = true },
+            [UpgradeNodeState.Locked] = new()       { alpha = 0f, iconColor = Color.white, interactable = false, clearSprite = true },
+        };
     }
     internal void OnDestroy() {
         LocalizationManager.OnLocalizationChanged -= OnLocalize;
@@ -101,7 +135,16 @@ public class UpgradeNodeVisualData {
         return LevelCurrent == LevelMax;
     }
 
-   
+    [Serializable]
+    public struct StateVisualConfig {
+        public float alpha;
+        public Color iconColor;
+        public bool interactable;
+        public bool clearSprite;       // True = set sprite to null
+        public bool useWhiteSprite;    // True = override with _whiteSprite
+        public bool useCoolAnimation;  // True = start/maintain gradient loop
+        public bool killCoolAnimation; // True = stop animation and reset material
+    }
 }
 
-public enum UpgradeNodeState { Purchased, Purchasable, Unlocked, Locked, LockedDemo}
+public enum UpgradeNodeState { None, Purchased, Purchasable, Unlocked, Locked, LockedDemo}

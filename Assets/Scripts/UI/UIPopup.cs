@@ -1,5 +1,6 @@
 ﻿using Coffee.UIExtensions;
 using DG.Tweening;
+using Sirenix.OdinInspector;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
     [SerializeField] private Image _iconImage;
     [SerializeField] private Image _descriptionDivider;
     [SerializeField] private Image _secondDivider;
+    [SerializeField] private Image _popupBoarderAndBackground;
     [SerializeField] private Transform _statsChangeContainer;
     [SerializeField] private Transform _ingredientContainer;
     [SerializeField] private UIPopupUpgradeBar _upgradeBar;
@@ -125,6 +127,18 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
 
         } else if (_iconContainer != null) {
             _iconContainer.SetActive(false);
+        }
+        if (data.colourOverrideData != null) {
+            var color = data.colourOverrideData.PurchaseParticleColour;
+            var m = _particlesPurchaseDown.particles[0].main;
+            m.startColor = color;
+            m = _particlesPurchaseUp.particles[0].main;
+            m.startColor = color;
+            _particlesPurchaseDown.color =color;
+            _descriptionDivider.color = color;
+            _secondDivider.color = color;
+            if(data.colourOverrideData.BoarderOverrideSprite != null) 
+                _popupBoarderAndBackground.sprite = data.colourOverrideData.BoarderOverrideSprite;
         }
     }
 
