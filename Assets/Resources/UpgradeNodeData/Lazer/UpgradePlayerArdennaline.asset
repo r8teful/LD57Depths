@@ -10,20 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
-  m_Name: UpgradeSubCables
+  m_Name: UpgradePlayerArdennaline
   m_EditorClassIdentifier: 
-  nodeKey: U.CableUpgrade
+  nodeKey: U.Adrenaline
   nodeStageNum: 0
-  uniqueID: 1001
-  icon: {fileID: -1703950749, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
-  IsCool: 1
+  uniqueID: 250
+  descriptionKey: 
+  icon: {fileID: 118686583, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
+  IsCool: 0
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: db8e0ecd84ff05b469cb43a89ba41450, type: 2}
+  - {fileID: 11400000, guid: cdf389641a0aeef4bb3b6416de14163c, type: 2}
   UnlockedAtFirstPrereqStage: 1
   stages:
   - effects:
-    - {fileID: 11400000, guid: 73e2b28488486024cadd4b5879a2cba6, type: 2}
+    - {fileID: 11400000, guid: 1e1edf618d018ba4eb49387fc31f3f49, type: 2}
     costMultiplier: 1
-    costTier: 11
-    upgradeItemPool: {fileID: 11400000, guid: 2578a8b93b92f144997963031306a875, type: 2}
-    extraData: {fileID: 11400000, guid: c20fd989c300b1a4eb793760f952dfc3, type: 2}
+    costTier: 6
+    upgradeItemPool: {fileID: 11400000, guid: c8505d26704f39c49ad4623ac0fd7558, type: 2}
+    extraData: {fileID: 0}

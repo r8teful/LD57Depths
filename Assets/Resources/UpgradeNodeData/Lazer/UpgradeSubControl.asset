@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
-  m_Name: UpgradeSubCables
+  m_Name: UpgradeSubControl
   m_EditorClassIdentifier: 
-  nodeKey: U.CableUpgrade
+  nodeKey: U.ControlPanel
   nodeStageNum: 0
-  uniqueID: 1001
+  uniqueID: 1000
   icon: {fileID: -1703950749, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
-  IsCool: 1
+  IsCool: 0
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: db8e0ecd84ff05b469cb43a89ba41450, type: 2}
+  - {fileID: 11400000, guid: e8fa2fd387da1694d95c92b5f8d42c7a, type: 2}
   UnlockedAtFirstPrereqStage: 1
   stages:
   - effects:

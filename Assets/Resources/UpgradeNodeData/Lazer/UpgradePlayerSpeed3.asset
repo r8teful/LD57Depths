@@ -10,16 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
-  m_Name: UpgradePlayerSpeed
+  m_Name: UpgradePlayerSpeed3
   m_EditorClassIdentifier: 
   nodeKey: U.Speed
-  nodeStageNum: 0
-  uniqueID: 210
-  descriptionKey: 
+  nodeStageNum: 3
+  uniqueID: 212
   icon: {fileID: 868697242, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: 3fc0c9bd770644d448652616cf99fcec, type: 2}
+  - {fileID: 11400000, guid: cc6f94632e8ed3c4488fad83ab6e5301, type: 2}
   UnlockedAtFirstPrereqStage: 1
   stages:
   - effects:

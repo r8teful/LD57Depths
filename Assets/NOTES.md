@@ -1345,12 +1345,12 @@ Escape closes a menu, Escape without a menu opens settings
 
 * Submarine
 
-  * Movement system
+  * ~~Movement system~~
 
-    * what level you're in
-    * available resources in trench and in biomes
-    * How you move on to the next level - maybe as a pop up when you hover over the next level
-    * needs to tell you that the layers above are locked
+    * ~~what level you're in~~
+    * ~~available resources in trench and in biomes~~
+    * ~~How you move on to the next level - maybe as a pop up when you hover over the next level~~
+    * ~~needs to tell you that the layers above are locked~~
   * Artifacts screen
 
     * All available artifacts in the run
@@ -1385,20 +1385,8 @@ Escape closes a menu, Escape without a menu opens settings
   * *Leaderboard?*
   * Social links
 
-    * Discord 
+    * Discord
     * Bluesky
     * Instagram
     * YouTube
-
-
-
-
-
-
-
-
-
-
-
-
 

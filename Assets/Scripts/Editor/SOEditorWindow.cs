@@ -22,6 +22,7 @@ public class SOEditorWindow : OdinMenuEditorWindow {
         tree.Config.DrawSearchToolbar = true;
         // Load and sort assets for each category
         AddSortedAssets<ItemData>(tree, "Items", "Assets/Resources/ItemData");
+        AddSortedAssets<AbilitySO>(tree, "Abilities", "Assets/Resources/AbilityData");
         AddSortedAssets<UpgradeNodeSO>(tree, "UpgradeNodes", "Assets/Resources/UpgradeNodeData");
         AddSortedAssets<EntityBaseSO>(tree, "Entities", "Assets/Resources/EntityData");
         AddSortedAssets<TileSO>(tree, "Tiles", "Assets/Resources/TileData");

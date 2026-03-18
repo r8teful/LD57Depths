@@ -16,7 +16,7 @@ public struct UpgradeTreeCosts {
 public class UpgradeTreeDataSO : ScriptableObject {
     public UpgradeTreeCosts costsValues; // How the costs of the upgrades increases
     public string treeName; 
-    public List<UpgradeNodeSO> nodes = new List<UpgradeNodeSO>();
+   // public List<UpgradeNodeSO> nodes = new List<UpgradeNodeSO>();
     public UIUpgradeTree prefab; // The visual representation of this tree in a prefab with the approriate nodes already created
 
     public UpgradeStage GetUpgradeWithValue(int value, HashSet<ushort> pickedIDs) {

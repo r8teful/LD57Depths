@@ -16,6 +16,9 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
     private readonly Dictionary<ValueKey, IValueModifiable> _valueModifierScipts = new Dictionary<ValueKey, IValueModifiable>();
     public event Action<UpgradeNodeSO> OnUpgradePurchased;
     private int _highestCostTierPurchased; // used for chest loot
+    private List<UpgradeNodeSO> _nodes = new List<UpgradeNodeSO>();
+    public List<UpgradeNodeSO> Nodes => _nodes;
+
     public UpgradeNode GetUpgradeNode(ushort id) {
         if(_nodeStates.TryGetValue(id, out var state)) {
             return state;
@@ -30,16 +33,17 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
         return node.GetStage(lvl);
     }
 
-    public int InitializationOrder => 10;
+    public int InitializationOrder => 10; 
 
     public void InitializeOnOwner(PlayerManager playerParent) {
         // Init is called after OnLoad
         _player = playerParent;
         InitUpgradeNodes();
     }
+
     // Basically just init but we have to run it later because some effect require references (like abilities, stats, etc...)
     public void ExecuteStageEffects() {
-        foreach (var node in _cachedTree.nodes) {
+        foreach (var node in _nodes) {
             int stage = 0;
             // Take the loaded state if we have any, otherwise just default to 0
             if (_loadedNodeStates != null && _loadedNodeStates.TryGetValue(node.ID, out var loadedStage)) {
@@ -65,7 +69,15 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
     }
     private void InitUpgradeNodes() {
         _cachedTree = App.ResourceSystem.GetTreeByName(GameManager.Instance.GetUpgradeTreeName());
-        foreach (var node in _cachedTree.nodes) {
+        var tempTree = Instantiate(_cachedTree.prefab);
+        foreach (Transform child in tempTree.transform) {
+            // So i don't have to put it in the inspector, just get all the nodes that are in the prefab
+            if (!child.TryGetComponent<UIUpgradeNode>(out var node)) continue;
+            var nodeData = App.ResourceSystem.GetUpgradeNodeByID(node.IDBoundNode);
+            if (nodeData == null) continue;
+            _nodes.Add(nodeData);
+        }
+        foreach (var node in _nodes) {
             int stage = 0;
             // Take the loaded state if we have any, otherwise just default to 0
             if (_loadedNodeStates != null && _loadedNodeStates.TryGetValue(node.ID, out var loadedStage)) {
@@ -76,7 +88,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
             if(tier == null) {
                 Debug.Log("What is going on");
             }
-            _nodeStates.Add(node.ID, new(node.ID,stage, cost, tier));
+            _nodeStates.TryAdd(node.ID, new(node.ID,stage, cost, tier));
         }
     }
     
@@ -181,8 +193,8 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
     public bool CanAffordUpgrade(UpgradeNodeSO node) {
         if (IsNodeCompleted(node)) return false;
         if (!IsNodeUnlocked(node)) return false;
-        _nodeStates.TryGetValue(node.ID, out var state);
-        if (SubmarineManager.Instance == null) return false;
+        if (!_nodeStates.TryGetValue(node.ID, out var state)) return false;
+        if (SubmarineManager.Instance == null || SubmarineManager.Instance.SubInventory == null) return false;
         if (!state.CanAfford(SubmarineManager.Instance.SubInventory)) return false;
         return true;
     }
@@ -259,6 +271,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
     }
 
     internal List<IngredientStatus> GetIngredientStatuses(UpgradeNodeSO node) {
+        if(node == null) return null;
         return GetUpgradeNode(node.ID).
             GetIngredientStatuses(SubmarineManager.Instance.SubInventory);
     }
@@ -276,4 +289,5 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
         if(data.bobData == null) return; 
         _loadedNodeStates = data.bobData.nodeSaveData;
     }
+
 }

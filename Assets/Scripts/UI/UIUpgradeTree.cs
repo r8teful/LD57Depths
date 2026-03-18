@@ -22,6 +22,7 @@ public class UIUpgradeTree : MonoBehaviour {
         _nodeMap.Clear();
         _treeData = tree;
         _player = player;
+        var nodes = player.UpgradeManager.Nodes;
         var inv = SubmarineManager.Instance.SubInventory;
         // Instead of instantiating the nodes, we "link" the existing node prefab to the data, so that it displays the right
         // upgrade. This is how we have to do it if we want more complex trees, instead of just instantiating the nodes
@@ -39,19 +40,31 @@ public class UIUpgradeTree : MonoBehaviour {
                 dataToNodeLookup.Add(node.IDBoundNode, node);
             }
         }
-        // Iterate through the ACTUAL upgrade data and initialize the corresponding UI nodes.
-        // We use tree.nodes now, as it contains the original, unprepared assets.
-        foreach (var nodeData in tree.nodes) {
+        foreach (Transform child in transform) {
+            if (!child.TryGetComponent<UIUpgradeNode>(out var node)) continue;
+            var nodeData = App.ResourceSystem.GetUpgradeNodeByID(node.IDBoundNode);
+            if (nodeData == null) continue;
             // We just want to tell the existing node what prepared node it is connected to
             // Find the UI node in our prefab that has the matching GUID.
             if (!dataToNodeLookup.TryGetValue(nodeData.ID, out UIUpgradeNode uiNode)) {
                 continue;
             }
-            uiNode.Init(this,nodeData, player.UpgradeManager);
-            _nodeMap.Add(nodeData.ID, uiNode);
+            uiNode.Init(this, nodeData, player.UpgradeManager);
+            _nodeMap.TryAdd(nodeData.ID, uiNode);
         }
-        CreateConnectionLines(tree);
-        _adjacencyDict = BuildUndirectedAdjacency(tree.nodes);
+        // Iterate through the ACTUAL upgrade data and initialize the corresponding UI nodes.
+        // We use tree.nodes now, as it contains the original, unprepared assets.
+        //foreach (var nodeData in tree.nodes) {
+        //    // We just want to tell the existing node what prepared node it is connected to
+        //    // Find the UI node in our prefab that has the matching GUID.
+        //    if (!dataToNodeLookup.TryGetValue(nodeData.ID, out UIUpgradeNode uiNode)) {
+        //        continue;
+        //    }
+        //    uiNode.Init(this,nodeData, player.UpgradeManager);
+        //    _nodeMap.Add(nodeData.ID, uiNode);
+        //}
+        CreateConnectionLines(tree,nodes);
+        _adjacencyDict = BuildUndirectedAdjacency(nodes);
         UIUpgradeScreen.OnSelectedNodeChanged += SelectedChange;
         _player.UiManager.UpgradeScreen.OnPanelChanged += PanelChanged;
         _player.PlayerMovement.OnPlayerStateChanged += PlayerStateChanged;
@@ -82,8 +95,8 @@ public class UIUpgradeTree : MonoBehaviour {
         
     }
 
-    private void CreateConnectionLines(UpgradeTreeDataSO treeData) {
-        foreach (var dataNode in treeData.nodes) {
+    private void CreateConnectionLines(UpgradeTreeDataSO treeData, List<UpgradeNodeSO> nodes) {
+        foreach (var dataNode in nodes) {
             if (!_nodeMap.TryGetValue(dataNode.ID, out UIUpgradeNode childUiNode)) continue;
 
             foreach (var prereqNode in dataNode.prerequisiteNodesAny) {

@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
-  m_Name: UpgradePlayerSpecialDash
+  m_Name: UpgradePlayerArdennaline+
   m_EditorClassIdentifier: 
-  nodeKey: U.Dash
+  nodeKey: U.Adrenaline
   nodeStageNum: 0
-  uniqueID: 250
-  description: 
+  uniqueID: 251
+  descriptionKey: 
   icon: {fileID: 118686583, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: cdf389641a0aeef4bb3b6416de14163c, type: 2}
+  - {fileID: 11400000, guid: 052e893be143db04e8e7ba1f5b8320fb, type: 2}
   UnlockedAtFirstPrereqStage: 1
   stages:
   - effects:

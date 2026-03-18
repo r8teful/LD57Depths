@@ -52,7 +52,7 @@ public class UpgradeNodeVisualData {
         }
         // Desc
         if (_currentUpgradeStage != null) {
-            Description = LocalizationManager.Localize(_node.descriptionKey);
+            Description = LocalizationManager.Localize(_node.nodeKey+".D");
         }
     }
 
