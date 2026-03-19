@@ -41,6 +41,14 @@ namespace SingularityGroup.HotReload.Editor.Localization {
             public static string EventTitleChangePartiallyApplied;
             public static string EventDescriptionFailedApplyingPatchTapForMore;
             
+            // Manual download
+            public static string ManualDownloadButtonContactSupport;
+            public static string ManualDownloadWarning;
+            public static string ManualDownloadInfo;
+            public static string ManualDownloadButtonCopyToClipboard;
+            public static string ManualDownloadButtonOpenDownloadUrl;
+            public static string ManualDownloadButtonComplete;
+            
             public static void LoadEnglish() {
                 // Timeline/Events
                 TimelineTitle = "Timeline";
@@ -81,6 +89,14 @@ namespace SingularityGroup.HotReload.Editor.Localization {
                 EventDescriptionUndetectedChange = "Code semantics didn't change (e.g. whitespace) or the change requires manual recompile.\n\nRecompile to force-apply changes.";
                 EventTitleChangePartiallyApplied = "Change partially applied";
                 EventDescriptionFailedApplyingPatchTapForMore = "{0}: {1}, tap here to see more.";
+                
+                // Manual download
+                ManualDownloadButtonContactSupport = "Contact Support";
+                ManualDownloadWarning = "Automatic downloads are slow or not available. You can download the required binaries manually.";
+                ManualDownloadInfo = "Download the server binary and save it to the following path:\n{0}";
+                ManualDownloadButtonCopyToClipboard = "Copy path to clipboard";
+                ManualDownloadButtonOpenDownloadUrl = "Open Download URL";
+                ManualDownloadButtonComplete = "I've completed the download";
             }
             
             public static void LoadSimplifiedChinese() {
@@ -123,6 +139,14 @@ namespace SingularityGroup.HotReload.Editor.Localization {
                 EventDescriptionUndetectedChange = "代码语义未更改（例如空格）或更改需要手动重新编译。\n\n重新编译以强制应用更改。";
                 EventTitleChangePartiallyApplied = "更改部分应用";
                 EventDescriptionFailedApplyingPatchTapForMore = "{0}: {1}，点击此处查看更多。";
+                
+                // Manual download
+                ManualDownloadButtonContactSupport = "联系支持";
+                ManualDownloadWarning = "自动下载速度较慢或不可用。您可以手动下载所需的二进制文件。";
+                ManualDownloadInfo = "下载服务器二进制文件并将其保存到以下路径：\n{0}";
+                ManualDownloadButtonCopyToClipboard = "复制路径到剪贴板";
+                ManualDownloadButtonOpenDownloadUrl = "打开下载链接";
+                ManualDownloadButtonComplete = "我已完成下载";
             }
         }
     }

@@ -16,7 +16,7 @@ using Translations = SingularityGroup.HotReload.Editor.Localization.Translations
 
 namespace SingularityGroup.HotReload.Editor {
     internal class PackageUpdateChecker {
-        const string persistedFile = PackageConst.LibraryCachePath + "/updateChecker.json";
+        static readonly string persistedFile = PackageConst.LibraryCachePath + "/updateChecker.json";
         readonly JsonSerializer jsonSerializer = JsonSerializer.CreateDefault();
         SemVersion newVersionDetected;
         bool started;

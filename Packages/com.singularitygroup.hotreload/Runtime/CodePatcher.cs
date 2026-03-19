@@ -65,10 +65,13 @@ namespace SingularityGroup.HotReload {
         readonly string tmpDir;
         public FieldHandler fieldHandler;
         public bool debuggerCompatibilityEnabled;
+        public bool anyFailures;
         
+        public IReadOnlyList<MethodPatchResponse> PatchHistory => patchHistory;
+
         CodePatcher() {
             pendingPatches = new List<MethodPatchResponse>();
-            patchHistory = new List<MethodPatchResponse>(); 
+            patchHistory = new List<MethodPatchResponse>();
             if(UnityHelper.IsEditor) {
                 tmpDir = PackageConst.LibraryCachePath;
             } else {
@@ -81,6 +84,8 @@ namespace SingularityGroup.HotReload {
                 } catch(Exception ex) {
                     Log.Error($"{Localization.Translations.Logging.LoadingPatchesFromDiskError}\n{ex}");
                 }
+            } else {
+                PersistencePath = Path.Combine(PackageConst.LibraryCachePath, "patches.json");
             }
 #if UNITY_EDITOR
             // Unity event methods are not assigned outside the scene. 
@@ -123,6 +128,10 @@ namespace SingularityGroup.HotReload {
         internal string[] GetAssemblySearchPaths() {
             EnsureSymbolResolver();
             return assemblySearchPaths;
+        }
+
+        internal void RegisterFailures(MethodPatchResponse patch, RegisterPatchesResult result) {
+            anyFailures |= patch.failures?.Length > 0 || result?.patchFailures.Count > 0 || result?.patchExceptions.Count > 0;
         }
        
         internal RegisterPatchesResult RegisterPatches(MethodPatchResponse patches, bool persist) {
@@ -715,9 +724,12 @@ namespace SingularityGroup.HotReload {
             });
         }
         
-        public void InitPatchesBlocked(string filePath) {
+        public void InitPatchesBlocked() {
+            if (PersistencePath == null) {
+                return;
+            }
             seenResponses.Clear();
-            var file = new FileInfo(filePath);
+            var file = new FileInfo(PersistencePath);
             if (file.Exists) {
                 using(var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan))
                 using (StreamReader sr = new StreamReader(fs))
@@ -729,6 +741,13 @@ namespace SingularityGroup.HotReload {
                 }
                 ApplyPatches(persist: false);
             }
+        }
+
+        public void ClearPatchesThreaded() {
+            if (PersistencePath == null) {
+                return;
+            }
+            Task.Run(() => File.Delete(PersistencePath));
         }
         
         

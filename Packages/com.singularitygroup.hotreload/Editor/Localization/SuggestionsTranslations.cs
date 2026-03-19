@@ -75,7 +75,9 @@ namespace SingularityGroup.HotReload.Editor.Localization {
             
             // Hot Reload While Debugger Is Attached
             public static string DebuggerAttachedTitle;
-            public static string DebuggerAttachedMessage;
+            public static string DebuggerAttachedMessagePaused;
+            public static string DebuggerAttachedMessageAutoRecompile;
+            
             
             // Hot Reloaded Methods When Debugger Is Attached
             public static string DebuggerMethodsTitle;
@@ -161,7 +163,8 @@ namespace SingularityGroup.HotReload.Editor.Localization {
                 
                 // Hot Reload While Debugger Is Attached
                 DebuggerAttachedTitle = "Hot Reload is disabled while a debugger is attached";
-                DebuggerAttachedMessage = "Hot Reload automatically disables itself while a debugger is attached, as it can otherwise interfere with certain debugger features.\nWhile disabled, every code change will trigger a full Unity recompilation.\n\nYou can choose to keep Hot Reload enabled while a debugger is attached, though some features like debugger variable inspection might not always work as expected.";
+                DebuggerAttachedMessageAutoRecompile = "Hot Reload automatically disables itself while a debugger is attached, as it can otherwise interfere with certain debugger features.\nWhile disabled, every code change will trigger a full Unity recompilation.\n\nYou can choose to keep Hot Reload enabled while a debugger is attached, though some features like debugger variable inspection might not always work as expected.";
+                DebuggerAttachedMessagePaused = "Hot Reload automatically disables itself while a debugger is attached, as it can otherwise interfere with certain debugger features.\n\nYou can choose to keep Hot Reload enabled while a debugger is attached, though some features like debugger variable inspection might not always work as expected.";
                 
                 // Hot Reloaded Methods When Debugger Is Attached
                 DebuggerMethodsTitle = "Hot Reload may interfere with your debugger session";
@@ -248,7 +251,8 @@ namespace SingularityGroup.HotReload.Editor.Localization {
 
                 // Hot Reload While Debugger Is Attached
                 DebuggerAttachedTitle = "附加调试器时禁用 Hot Reload";
-                DebuggerAttachedMessage = "附加调试器时，Hot Reload 会自动禁用自身，因为它可能会干扰某些调试器功能。\n禁用后，每次代码更改都会触发完整的 Unity 重新编译。\n\n您可以选择在附加调试器时保持 Hot Reload 启用，但某些功能（如调试器变量检查）可能不总是按预期工作。";
+                DebuggerAttachedMessageAutoRecompile = "当附加调试器时,热重载将自动禁用,以避免干扰某些调试器功能。\n禁用状态下,每次修改代码都会触发Unity完整重编译。\n\n您也可以选择在附加调试器时继续启用热重载,但请注意某些功能(例如调试器的变量检查)可能无法正常工作。";
+                DebuggerAttachedMessagePaused = "当附加调试器时,热重载将自动禁用,以避免干扰某些调试器功能。\n\n您也可以选择在附加调试器时继续启用热重载,但请注意某些功能(例如调试器的变量检查)可能无法正常工作。";
 
                 // Hot Reloaded Methods When Debugger Is Attached
                 DebuggerMethodsTitle = "Hot Reload 可能会干扰您的调试会话";

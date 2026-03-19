@@ -21,6 +21,10 @@ namespace SingularityGroup.HotReload.Editor.Cli {
         
         //InitializeOnLoad ensures controller gets initialized on unity thread
         static HotReloadCli() {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                controller = new FallbackCliController();
+                return;
+            }
             controller =
     #if UNITY_EDITOR_OSX
                 new OsxCliController();
@@ -62,6 +66,9 @@ namespace SingularityGroup.HotReload.Editor.Cli {
 #endif
             LoginData loginData = null
 ) {
+            if (controller.PlatformName == "") {
+                return;
+            }
             var port = await Prepare().ConfigureAwait(false);
             await ThreadUtility.SwitchToThreadPool();
             StartArgs args;
@@ -236,7 +243,8 @@ namespace SingularityGroup.HotReload.Editor.Cli {
             
             var port = DiscoverFreePort();
             HotReloadState.ServerPort = port;
-            RequestHelper.SetServerPort(port);
+            var serverInfo = RequestHelper.SetServerPort(port);
+            await Task.Run(() => File.WriteAllText(Path.Combine(PackageConst.LibraryCachePath, PackageConst.ServerInfoFileName), JsonConvert.SerializeObject(serverInfo)));
             return port;
         }
 

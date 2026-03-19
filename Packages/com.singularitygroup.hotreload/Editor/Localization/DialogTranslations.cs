@@ -44,6 +44,20 @@ namespace SingularityGroup.HotReload.Editor.Localization {
             public static string DialogMessageRestartExposeServer;
             public static string DialogTitleHotReload;
             
+            // Debugger Detected Dialogs
+            public static string DialogTitleHotReloadDebuggerDetected;
+            public static string DialogMessageHotReloadDebuggerDetectedPause;
+            public static string DialogMessageHotReloadDebuggerDetectedRecompile;
+            public static string DialogButtonHotReloadDebuggerDetectedPause;
+            public static string DialogButtonHotReloadDebuggerDetectedRecompile;
+            public static string DialogCloseHotReloadDebuggerDetected;
+            public static string DialogButtonHotReloadDebuggerDetectedAdvancedOptions;
+            public static string DialogTitleHotReloadDebuggerOptions;
+            public static string DialogMessageHotReloadDebuggerOptions;
+            public static string DialogButtonHotReloadDebuggerOptionsContinue;
+            public static string DialogButtonHotReloadDebuggerOptionsCancelPause;
+            public static string DialogButtonHotReloadDebuggerOptionsCancelRecompile;
+            
             public static void LoadEnglish() {
                 // Dialogs
                 DialogTitleRecompile = "Hot Reload auto-applies changes";
@@ -87,6 +101,20 @@ namespace SingularityGroup.HotReload.Editor.Localization {
                 DialogMessageRestartFieldInitializer = "When changing 'Apply field initializer edits to existing class instances' setting, the Hot Reload server must restart for it to take effect.\nDo you want to restart it now?";
                 DialogMessageRestartExposeServer = "When changing '{0}', the Hot Reload server must be restarted for this to take effect.\nDo you want to restart it now?";
                 DialogTitleHotReload = "Hot Reload";
+
+                // Debugger Detected Dialogs
+                DialogTitleHotReloadDebuggerDetected = "Hot Reload - Debugger Detected";
+                DialogMessageHotReloadDebuggerDetectedPause = "Hot Reload can interfere with debugger breakpoints. We recommend pausing Hot Reload while the debugger is attached for the best debugger experience.";
+                DialogMessageHotReloadDebuggerDetectedRecompile = "Hot Reload can interfere with debugger breakpoints. We recommend using auto full-recompile while the debugger is attached for the best debugger experience.";
+                DialogButtonHotReloadDebuggerDetectedPause = "Pause Hot Reload (Recommended)";
+                DialogButtonHotReloadDebuggerDetectedRecompile = "Use Full Recompile (Recommended)";
+                DialogCloseHotReloadDebuggerDetected = "Close";
+                DialogButtonHotReloadDebuggerDetectedAdvancedOptions = "Advanced Options";
+                DialogTitleHotReloadDebuggerOptions = "Advanced: Keep Hot Reload Active";
+                DialogMessageHotReloadDebuggerOptions = "Breakpoints in Visual Studio may not work reliably when Hot Reload remains active during debugging. This is intended for developers who prefer Hot Reload over full breakpoint support. You can change this anytime in Settings.";
+                DialogButtonHotReloadDebuggerOptionsContinue = "Continue With Limited Debugger";
+                DialogButtonHotReloadDebuggerOptionsCancelPause = "Pause Hot Reload";
+                DialogButtonHotReloadDebuggerOptionsCancelRecompile = "Use Full Recompile";
             }
             
             public static void LoadSimplifiedChinese() {
@@ -132,6 +160,20 @@ namespace SingularityGroup.HotReload.Editor.Localization {
                 DialogMessageRestartFieldInitializer = "更改“将字段初始化程序编辑应用于现有类实例”设置时，必须重新启动 Hot Reload 服务器才能生效。\n您希望现在重新启动吗？";
                 DialogMessageRestartExposeServer = "更改“{0}”时，必须重新启动 Hot Reload 服务器才能生效。\n您希望现在重新启动吗？";
                 DialogTitleHotReload = "Hot Reload";
+                
+                // Debugger Detected Dialogs
+                DialogTitleHotReloadDebuggerDetected = "Hot Reload - 检测到调试器";
+                DialogMessageHotReloadDebuggerDetectedPause = "Hot Reload 可能会干扰调试器断点。我们建议在调试器附加时暂停 Hot Reload 以获得最佳调试体验。";
+                DialogMessageHotReloadDebuggerDetectedRecompile = "Hot Reload 可能会干扰调试器断点。我们建议在调试器附加时使用自动完全重新编译以获得最佳调试体验。";
+                DialogButtonHotReloadDebuggerDetectedPause = "暂停 Hot Reload（推荐）";
+                DialogButtonHotReloadDebuggerDetectedRecompile = "使用完全重新编译（推荐）";
+                DialogCloseHotReloadDebuggerDetected = "关闭";
+                DialogButtonHotReloadDebuggerDetectedAdvancedOptions = "高级选项";
+                DialogTitleHotReloadDebuggerOptions = "高级：保持 Hot Reload 激活";
+                DialogMessageHotReloadDebuggerOptions = "当 Hot Reload 在调试期间保持激活状态时，Visual Studio 中的断点可能无法可靠工作。这适用于更偏好 Hot Reload 而非完整断点支持的开发者。您可以随时在设置中更改此选项。";
+                DialogButtonHotReloadDebuggerOptionsContinue = "继续使用受限调试器";
+                DialogButtonHotReloadDebuggerOptionsCancelPause = "暂停 Hot Reload";
+                DialogButtonHotReloadDebuggerOptionsCancelRecompile = "使用完全重新编译";
             }
         }
     }

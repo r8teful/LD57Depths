@@ -153,6 +153,7 @@ namespace SingularityGroup.HotReload.Editor {
                                     // misc
                                     RenderMiscHeader();
                                     using (new EditorGUILayout.VerticalScope(paddedStyle ?? (paddedStyle = new GUIStyle { padding = new RectOffset(20, 0, 0, 0) }))) {
+                                        RenderAutoClearTimeline();
                                         RenderAutostart();
                                         RenderConsoleWindow();
 
@@ -394,6 +395,22 @@ namespace SingularityGroup.HotReload.Editor {
                     HotReloadRunTab.Recompile();
                 }
             }
+        }
+        
+        void RenderAutoClearTimeline() {
+            var newSettings = EditorGUILayout.BeginToggleGroup(new GUIContent(Translations.Settings.ToggleAutoClearTimeline), HotReloadPrefs.AutoClearTimeline);
+            if (newSettings != HotReloadPrefs.AutoClearTimeline) {
+                HotReloadPrefs.AutoClearTimeline = newSettings;
+            }
+            string toggleDescription;
+            if (HotReloadPrefs.AutoClearTimeline) {
+                toggleDescription = Translations.Settings.SettingsAutoClearTimelineOn;
+            } else {
+                toggleDescription = Translations.Settings.SettingsAutoClearTimelineOff;
+            }
+            EditorGUILayout.LabelField(toggleDescription, HotReloadWindowStyles.WrapStyle);
+            EditorGUILayout.EndToggleGroup();
+            EditorGUILayout.Space();
         }
 
         void RenderAutostart() {

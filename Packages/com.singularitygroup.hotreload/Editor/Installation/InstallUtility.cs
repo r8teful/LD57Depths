@@ -12,7 +12,7 @@ using Unity.CodeEditor;
 
 namespace SingularityGroup.HotReload.Editor {
     static class InstallUtility {
-        const string installFlagPath = PackageConst.LibraryCachePath + "/installFlag.txt";
+        static string installFlagPath = PackageConst.LibraryCachePath + "/installFlag.txt";
 
         public static void DebugClearInstallState() {
             File.Delete(installFlagPath);
@@ -22,9 +22,7 @@ namespace SingularityGroup.HotReload.Editor {
         public static void HandleEditorStart(string updatedFromVersion) {
             var showOnStartup = HotReloadPrefs.ShowOnStartup;
             if (showOnStartup == ShowOnStartupEnum.Always || (showOnStartup == ShowOnStartupEnum.OnNewVersion && !String.IsNullOrEmpty(updatedFromVersion))) {
-                // Don't open Hot Reload window inside Virtual Player folder
-                // This is a heuristic since user might have the main player inside VP user-created folder, but that will be rare
-                if (new DirectoryInfo(Path.GetFullPath("..")).Name != "VP" && !HotReloadPrefs.DeactivateHotReload) {
+                if (!HotReloadPrefs.DeactivateHotReload) {
                     HotReloadWindow.Open();
                 }
             }
@@ -36,7 +34,7 @@ namespace SingularityGroup.HotReload.Editor {
         }
 
         public static void CheckForNewInstall() {
-            if(File.Exists(installFlagPath)) {
+            if(File.Exists(installFlagPath) || MultiplayerPlaymodeHelper.IsClone) {
                 return;
             }
             Directory.CreateDirectory(Path.GetDirectoryName(installFlagPath));
@@ -48,11 +46,6 @@ namespace SingularityGroup.HotReload.Editor {
         static void HandleNewInstall() {
             if (EditorCodePatcher.licenseType == UnityLicenseType.UnityPro) {
                 RedeemLicenseHelper.I.StartRegistration();
-            }
-            // Don't open Hot Reload window inside Virtual Player folder
-            // This is a heuristic since user might have the main player inside VP user-created folder, but that will be rare
-            if (new DirectoryInfo(Path.GetFullPath("..")).Name != "VP") {
-                HotReloadWindow.Open();
             }
             HotReloadPrefs.AllowDisableUnityAutoRefresh = true;
             HotReloadPrefs.AllAssetChanges = true;

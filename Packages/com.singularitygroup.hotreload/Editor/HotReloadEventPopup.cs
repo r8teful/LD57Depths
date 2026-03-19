@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using UnityEngine;
 using UnityEditor;
 
@@ -52,11 +53,16 @@ namespace SingularityGroup.HotReload.Editor {
                     _PopupScrollPos.x = scope.scrollPosition.x;
                     _PopupScrollPos.y = scope.scrollPosition.y;
 
-                    if (HotReloadWindowStyles.windowScreenWidth <= Constants.ConsumptionsHideWidth
+                    
+                    var renderDebuggerInfo = Debugger.IsAttached && !CodePatcher.I.debuggerCompatibilityEnabled;
+                    if ((HotReloadWindowStyles.windowScreenWidth <= Constants.ConsumptionsHideWidth
                         || HotReloadWindowStyles.windowScreenHeight <= Constants.ConsumptionsHideHeight
-                        || source == PopupSource.Overlay
+                        || source == PopupSource.Overlay) && !renderDebuggerInfo
                     ) {
                         HotReloadRunTab.RenderLicenseInfo(currentState);
+                    }
+                    if (renderDebuggerInfo) {
+                        HotReloadRunTab.RenderDebuggerAttachedInfo(true);
                     }
 
                     HotReloadRunTab.RenderBars(currentState);

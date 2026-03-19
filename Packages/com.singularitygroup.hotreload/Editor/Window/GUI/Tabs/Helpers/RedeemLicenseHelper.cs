@@ -33,8 +33,8 @@ namespace SingularityGroup.HotReload.Editor {
         private string _pendingInvoiceNumber;
         private string _pendingRedeemEmail;
 
-        private const string registerFlagPath = PackageConst.LibraryCachePath + "/registerFlag.txt";
-        public const string registerOutcomePath = PackageConst.LibraryCachePath + "/registerOutcome.txt";
+        private static string registerFlagPath = PackageConst.LibraryCachePath + "/registerFlag.txt";
+        public static string registerOutcomePath = PackageConst.LibraryCachePath + "/registerOutcome.txt";
 
         public RedeemStage RedeemStage { get; private set; }
         public RegistrationOutcome RegistrationOutcome { get; private set; }

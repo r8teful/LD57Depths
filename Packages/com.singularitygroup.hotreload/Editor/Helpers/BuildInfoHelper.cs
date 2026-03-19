@@ -138,7 +138,7 @@ namespace SingularityGroup.HotReload.Editor {
         //   Hardcoding the differences was less effort and is less error prone.
         // I also looked into it and tried all the Build interfaces like this one https://docs.unity3d.com/ScriptReference/Build.IPostBuildPlayerScriptDLLs.html
         //   and logging EditorUserBuildSettings.activeScriptCompilationDefines in the callbacks - result: all same like editor, so I agree that hardcode is best. 
-        public static string GetAllAndroidMonoBuildDefineSymbolsThreaded(string[] defineSymbols) {
+        private static string GetAllAndroidMonoBuildDefineSymbolsThreaded(string[] defineSymbols) {
             var defines = new HashSet<string>(defineSymbols);
             defines.ExceptWith(editorSymbolsToRemove);
             defines.UnionWith(androidSymbolsToAdd);

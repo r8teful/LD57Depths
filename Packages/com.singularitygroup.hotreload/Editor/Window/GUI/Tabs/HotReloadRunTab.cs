@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using SingularityGroup.HotReload.DTO;
+using SingularityGroup.HotReload.Editor.Cli;
 using SingularityGroup.HotReload.EditorDependencies;
 using SingularityGroup.HotReload.Editor.Localization;
 using UnityEditor;
@@ -280,8 +282,11 @@ namespace SingularityGroup.HotReload.Editor {
                         RenderUpgradeLicenseNote(currentState, HotReloadWindowStyles.UpgradeLicenseButtonStyle);
                     }
 
-                    RenderIndicationPanel();
-
+                    var renderDebuggerInfo = Debugger.IsAttached && !CodePatcher.I.debuggerCompatibilityEnabled;
+                    RenderIndicationPanel(!renderDebuggerInfo);
+                    if (renderDebuggerInfo) {
+                        RenderDebuggerAttachedInfo(false);
+                    }
                     if (CanRenderBars(currentState)) {
                         RenderBars(currentState);
                         // clear red dot next time button shows
@@ -326,6 +331,9 @@ namespace SingularityGroup.HotReload.Editor {
         }
         
         internal static bool CanRenderBars(HotReloadRunTabState currentState) {
+            if (Debugger.IsAttached && !CodePatcher.I.debuggerCompatibilityEnabled) {
+                return false;
+            }
             return HotReloadWindowStyles.windowScreenHeight > Constants.EventsListHideHeight
                 && HotReloadWindowStyles.windowScreenWidth > Constants.EventsListHideWidth
                 && !currentState.starting
@@ -432,6 +440,9 @@ namespace SingularityGroup.HotReload.Editor {
                         var kind = HotReloadSuggestionsHelper.FindSuggestionKind(alertEntry);
                         if (kind != null) {
                             HotReloadSuggestionsHelper.SetSuggestionInactive((HotReloadSuggestionKind)kind);
+                            if (kind == HotReloadSuggestionKind.EditorsWithoutHRRunning) {
+                                HotReloadState.ShowedEditorsWithoutHR = true;
+                            }
                         }
                         _instantRepaint = true;
                     }
@@ -730,7 +741,7 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
-        void RenderIndicationPanel() {
+        void RenderIndicationPanel(bool renderLicenseInfo = true) {
             using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.SectionInnerBox)) {
                 RenderIndication();
                 if (HotReloadWindowStyles.windowScreenWidth > Constants.IndicationTextHideWidth) {
@@ -743,12 +754,51 @@ namespace SingularityGroup.HotReload.Editor {
             }
             if (currentState.requestingDownloadAndRun || currentState.starting) {
                 RenderProgressBar();
-            }
+                if (EditorCodePatcher.serverDownloader.Attempts > 0) {
+                    RenderManualDownloadSection();
+                }
+            } 
+
             if (HotReloadWindowStyles.windowScreenWidth > Constants.ConsumptionsHideWidth
                 && HotReloadWindowStyles.windowScreenHeight > Constants.ConsumptionsHideHeight
+                && renderLicenseInfo
             ) {
                 RenderLicenseInfo(currentState);
             }
+        }
+
+        bool copiedPath = false;
+        bool openedDownloadUrl = false;
+        void RenderManualDownloadSection() {
+            var downloadUrl = ServerDownloader.GetDownloadUrl(HotReloadCli.controller);
+            var downloadPath = EditorCodePatcher.serverDownloader.GetBinaryPath(HotReloadCli.controller);
+
+            EditorGUILayout.Space();
+            HotReloadGUIHelper.HelpBox(
+                Translations.Timeline.ManualDownloadWarning,
+                MessageType.Warning, 11);
+
+            HotReloadGUIHelper.HelpBox(
+                string.Format(Translations.Timeline.ManualDownloadInfo, downloadPath),
+                MessageType.Info, 11);
+
+            using (new EditorGUILayout.HorizontalScope()) {
+                if (GUILayout.Button(Translations.Timeline.ManualDownloadButtonCopyToClipboard + (copiedPath ? " ✓" : ""))) {
+                    GUIUtility.systemCopyBuffer = downloadPath;
+                    copiedPath = true;
+                }
+                if (GUILayout.Button(Translations.Timeline.ManualDownloadButtonOpenDownloadUrl + (openedDownloadUrl ? " ✓" : ""))) {
+                    Application.OpenURL(downloadUrl);
+                    openedDownloadUrl = true;
+                }
+            }
+            if (GUILayout.Button(Translations.Timeline.ManualDownloadButtonComplete)) {
+                EditorCodePatcher.downloadCancelToken?.Cancel();
+                copiedPath = false;
+                openedDownloadUrl = false;
+            }
+            OpenURLButton.Render(Translations.Timeline.ManualDownloadButtonContactSupport, Constants.ContactURL);
+            EditorGUILayout.Space();
         }
 
         internal static void RenderLicenseInfo(HotReloadRunTabState currentState) {
@@ -900,6 +950,38 @@ namespace SingularityGroup.HotReload.Editor {
                 }
                 if (GUILayout.Button(Translations.Common.ButtonUpgrade, style)) {
                     Application.OpenURL(Constants.ProductPurchaseBusinessURL);
+                }
+            }
+        }
+        
+        internal static void RenderDebuggerAttachedInfo(bool isPopup) {
+            GUILayout.Space(8);
+            var autoRefreshDisabled = AutoRefreshSettingChecker.IsUserAutoRefreshDisabled();
+            var msg = autoRefreshDisabled ? Translations.Suggestions.DebuggerAttachedMessagePaused : Translations.Suggestions.DebuggerAttachedMessageAutoRecompile;
+            using (new EditorGUILayout.VerticalScope()) {
+                var _fontSize = EditorStyles.helpBox.fontSize;
+                try {
+                    EditorStyles.helpBox.fontSize = 12;
+                    // empty label field to measure width
+                    EditorGUILayout.LabelField(GUIContent.none, new GUILayoutOption[]{GUILayout.Height(0)});
+                    var lastRectWidth = GUILayoutUtility.GetLastRect().width;
+                    EditorStyles.helpBox.fixedHeight = EditorStyles.helpBox.CalcHeight(new GUIContent(msg), lastRectWidth) + 15;
+                    EditorStyles.helpBox.fixedWidth = lastRectWidth;
+                    EditorGUILayout.HelpBox(msg, MessageType.Info);
+                    // to account for added height
+                    GUILayout.Space(isPopup ? 45 : 30);
+                    using (new EditorGUILayout.HorizontalScope()) {
+                        if (GUILayout.Button("Docs")) {
+                            Application.OpenURL(Constants.DebuggerURL);
+                        }
+                        if (GUILayout.Button("Open Settings") && HotReloadWindow.Current) {
+                            HotReloadWindow.Current.SelectTab(typeof(HotReloadSettingsTab));
+                        }
+                    }
+                } finally {
+                    EditorStyles.helpBox.fixedHeight = 0;
+                    EditorStyles.helpBox.fixedWidth = 0;
+                    EditorStyles.helpBox.fontSize = _fontSize;
                 }
             }
         }

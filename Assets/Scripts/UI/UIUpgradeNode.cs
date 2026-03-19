@@ -122,12 +122,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         }
     }
     internal void Init(UIUpgradeTree parent, UpgradeNodeSO data, UpgradeManagerPlayer up) {
-        Debug.Log($"Init on gameobject: {gameObject.name} ID: {gameObject.GetInstanceID()}");
+        //Debug.Log($"Init on gameobject: {gameObject.name} ID: {gameObject.GetInstanceID()}");
         if (_rectTransform == null) {
-
-            if (IDBoundNode == 0) {
                 Debug.LogError($"Rect or icon is NULL! on gameobject: {gameObject.name} ID: {gameObject.GetInstanceID()}");
-            }
             //Debug.LogError(": " + gameObject.name);
             return;
         }

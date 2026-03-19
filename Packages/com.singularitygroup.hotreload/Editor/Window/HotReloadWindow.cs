@@ -56,6 +56,11 @@ namespace SingularityGroup.HotReload.Editor {
 
         [MenuItem(Translations.MenuItems.OpenHotReload)]
         internal static void Open() {
+            // Don't open Hot Reload window inside Virtual Player folder
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                Log.Info("Virtual Player instances use the same Hot Reload server instance as the Main Editor. Use Hot Reload window in the Main Editor.");
+                return;
+            }
             // opening the window on CI systems was keeping Unity open indefinitely
             if (EditorWindowHelper.IsHumanControllingUs()) {
                 if (Current) {

@@ -112,11 +112,14 @@ namespace SingularityGroup.HotReload.Editor.ProjectGeneration {
 
         public static bool IsSyncing => gate.CurrentCount == 0;
 
-        internal const string tempDir = PackageConst.LibraryCachePath + "/Solution";
+        internal static readonly string tempDir = PackageConst.LibraryCachePath + "/Solution";
         public static string GetUnityProjectDirectory(string dataPath) => new DirectoryInfo(dataPath).Parent.FullName;
         public static string GetSolutionFilePath(string dataPath) => Path.Combine(tempDir, Path.GetFileName(GetUnityProjectDirectory(dataPath)) + ".sln");
 
         public static Task GenerateSlnAndCsprojFiles(string dataPath) {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return Task.CompletedTask;
+            }
             if (!IsSyncing) {
                 return GenerateAsync(dataPath);
             }
@@ -124,6 +127,9 @@ namespace SingularityGroup.HotReload.Editor.ProjectGeneration {
         }
 
         public static Task EnsureSlnAndCsprojFiles(string dataPath) {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return Task.CompletedTask;
+            }
             if (File.Exists(GetSolutionFilePath(dataPath))) {
                 return Task.CompletedTask;
             }
@@ -146,7 +152,7 @@ namespace SingularityGroup.HotReload.Editor.ProjectGeneration {
             m_GUIDGenerator = new GUIDProvider();
         }
 
-        public async Task Sync() {
+        private async Task Sync() {
             await ThreadUtility.SwitchToThreadPool();
             var config = LoadConfig();
             if (config.useBuiltInProjectGeneration) {
@@ -201,7 +207,7 @@ namespace SingularityGroup.HotReload.Editor.ProjectGeneration {
             return HasValidExtension(file);
         }
 
-        public bool HasValidExtension(string file) {
+        private bool HasValidExtension(string file) {
             var extension = Path.GetExtension(file);
 
             // Dll's are not scripts but still need to be included..

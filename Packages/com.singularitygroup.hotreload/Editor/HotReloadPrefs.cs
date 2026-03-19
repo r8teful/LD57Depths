@@ -35,6 +35,7 @@ namespace SingularityGroup.HotReload.Editor {
         private const string PatchesCollapseKey = "HotReloadWindow.PatchesCollapse";
         private const string PatchesGroupAllKey = "HotReloadWindow.PatchesGroupAll";
         private const string LaunchOnEditorStartKey = "HotReloadWindow.LaunchOnEditorStart";
+        private const string AutoClearTimelineKey = "HotReloadWindow.AutoClearTimeline";
         private const string AutoRecompileUnsupportedChangesKey = "HotReloadWindow.AutoRecompileUnsupportedChanges";
         private const string AutoRecompilePartiallyUnsupportedChangesKey = "HotReloadWindow.AutoRecompilePartiallyUnsupportedChanges";
         private const string DisplayNewMonobehaviourMethodsAsPartiallySupportedKey = "HotReloadWindow.DisplayNewMonobehaviourMethodsAsPartiallySupported";
@@ -76,6 +77,7 @@ namespace SingularityGroup.HotReload.Editor {
         private const string DeactivateHotReloadKey = "HotReloadWindow.DeactivateHotReload";
         private const string ActiveLocaleKey = "HotReloadWindow.ActiveLocale";
         public const string DontShowPromptForDownloadKey = "ServerDownloader.DontShowPromptForDownload";
+        public const string DebuggerOnboardingShownKey = "HotReloadWindow.DebuggerOnboardingShownKey";
         #if UNITY_EDITOR_WIN
         public const string UseWatchmanKey = "ServerDownloader.UseWatchman";
         #endif
@@ -279,6 +281,11 @@ namespace SingularityGroup.HotReload.Editor {
         public static bool LaunchOnEditorStart {
             get { return EditorPrefs.GetBool(LaunchOnEditorStartKey, false); }
             set { EditorPrefs.SetBool(LaunchOnEditorStartKey, value); }
+        }
+        
+        public static bool AutoClearTimeline {
+            get { return EditorPrefs.GetBool(AutoClearTimelineKey, true); }
+            set { EditorPrefs.SetBool(AutoClearTimelineKey, value); }
         }
 
         public static bool AutoRecompileUnsupportedChanges {
@@ -508,5 +515,10 @@ namespace SingularityGroup.HotReload.Editor {
             set { EditorPrefs.SetBool(UseWatchmanKey, value); }
         }
         #endif
+        
+        public static bool DebuggerOnboardingShown {
+            get { return EditorPrefs.GetBool(DebuggerOnboardingShownKey); }
+            set { EditorPrefs.SetBool(DebuggerOnboardingShownKey, value); }
+        }
     }
 }

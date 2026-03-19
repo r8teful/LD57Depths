@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -48,8 +49,15 @@ namespace SingularityGroup.HotReload {
         const string ChangelogURL = PackageConst.DefaultLocale == Locale.SimplifiedChinese ? 
             "https://d2tc55zjhw51ly.cloudfront.net/releases/latest/changelog-zh.json" :
             "https://d2tc55zjhw51ly.cloudfront.net/releases/latest/changelog.json";
-        static readonly string defaultOrigin = Path.GetDirectoryName(UnityHelper.DataPath);
+        static readonly string defaultOrigin = GetProjectRoot();
         public static string origin { get; private set; } = defaultOrigin;
+
+        static string GetProjectRoot() {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return Path.GetFullPath(MultiplayerPlaymodeHelper.PathToMainProject("."));
+            }
+            return Path.GetFullPath(".");
+        }
         
         static PatchServerInfo serverInfo = new PatchServerInfo(defaultServerHost, null, null);
         public static PatchServerInfo ServerInfo => serverInfo;
@@ -69,8 +77,7 @@ namespace SingularityGroup.HotReload {
         
         static HttpClient CreateHttpClientWithOrigin() {
             var httpClient = HttpClientUtils.CreateHttpClient();
-            httpClient.DefaultRequestHeaders.Add("origin", Path.GetDirectoryName(UnityHelper.DataPath));
-
+            httpClient.DefaultRequestHeaders.Add("origin", origin);
             return httpClient;
         }
         
@@ -81,13 +88,11 @@ namespace SingularityGroup.HotReload {
             return $"http://{server.hostName}:{server.port.ToString()}";
         }
         
-        public static void SetServerPort(int port) {
-            serverInfo = new PatchServerInfo(serverInfo.hostName, port, serverInfo.commitHash, serverInfo.rootPath);
-            cachedUrl = null;
-            Log.Debug($"SetServerInfo to {CreateUrl(serverInfo)}");
+        public static PatchServerInfo SetServerPort(int port) {
+            return SetServerInfo(new PatchServerInfo(serverInfo.hostName, port, serverInfo.commitHash, serverInfo.rootPath, false, serverInfo.customRequestOrigin));
         }
 
-        public static void SetServerInfo(PatchServerInfo info) {
+        public static PatchServerInfo SetServerInfo(PatchServerInfo info) {
             if (info != null) Log.Debug($"SetServerInfo to {CreateUrl(info)}");
             serverInfo = info;
             cachedUrl = null;
@@ -95,6 +100,7 @@ namespace SingularityGroup.HotReload {
             if (info?.customRequestOrigin != null) {
                 SetOrigin(info.customRequestOrigin);
             }
+            return info;
         }
 
         // This function is not thread safe but is currently called before the first request is sent so no issue.
@@ -142,8 +148,12 @@ namespace SingularityGroup.HotReload {
                 return;
             }
             pollPending = true;
-            var searchPaths = assemblySearchPaths ?? CodePatcher.I.GetAssemblySearchPaths();
-            var body = SerializeRequestBody(new MethodPatchRequest(lastPatchId, searchPaths, TimeSpan.FromSeconds(20), Path.GetDirectoryName(Application.dataPath)));
+            string[] searchPaths = null;
+            // This is here so that it doesn't override searchPaths registered by main project
+            if (!MultiplayerPlaymodeHelper.IsClone) {
+                searchPaths = assemblySearchPaths ?? CodePatcher.I.GetAssemblySearchPaths();
+            }
+            var body = SerializeRequestBody(new MethodPatchRequest(lastPatchId, searchPaths, TimeSpan.FromSeconds(20), origin));
             
             await ThreadUtility.SwitchToThreadPool();
             
@@ -320,6 +330,9 @@ namespace SingularityGroup.HotReload {
         }
         
         internal static async Task RequestEditorEventWithRetry(Stat stat, EditorExtraData extraData = null) {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
+            }
             int attempt = 0;
             do {
                 var resp = await RequestHelper.RequestEditorEvent(stat, extraData);
@@ -339,13 +352,23 @@ namespace SingularityGroup.HotReload {
             await ThreadUtility.SwitchToThreadPool();
             await KillServerInternal().ConfigureAwait(false);
         }
+        
+        internal static async Task RegisterClone() {
+            await ThreadUtility.SwitchToThreadPool();
+            try {
+                var body = SerializeRequestBody(new RegisterCloneRequest(Process.GetCurrentProcess().Id));
+                using(await client.PostAsync(CreateUrl(serverInfo) + "/registerClone", new StringContent(body)).ConfigureAwait(false)) { }
+            } catch {
+                //ignored
+            } 
+        }
 
         internal static async Task KillServerInternal() {
             try {
                 using(await client.PostAsync(CreateUrl(serverInfo) + "/kill", new StringContent(origin)).ConfigureAwait(false)) { }
             } catch {
                 //ignored
-            } 
+            }
         }
 
         public static async Task<bool> PingServer(Uri uri) {

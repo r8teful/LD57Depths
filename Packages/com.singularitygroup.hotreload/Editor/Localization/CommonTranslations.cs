@@ -18,6 +18,7 @@ namespace SingularityGroup.HotReload.Editor.Localization {
             public static string ButtonRedeem;
             public static string ButtonSkip;
             public static string ButtonUpgrade;
+            public static string ButtonDocs;
             public static string ButtonFixAll;
             public static string ButtonGoBack;
             public static string ButtonActivatePromoCode;
@@ -71,6 +72,7 @@ namespace SingularityGroup.HotReload.Editor.Localization {
                 LabelCompanySize = "Company size (number of employees)";
                 LabelInvoiceNumber = "Invoice number/Order ID";
                 LabelShowOnStartup = "Show On Startup";
+                ButtonDocs = "Docs";
             }
             
             public static void LoadSimplifiedChinese() {
@@ -90,6 +92,7 @@ namespace SingularityGroup.HotReload.Editor.Localization {
                 ButtonLogout = "登出";
                 ButtonRedeem = "兑换";
                 ButtonSkip = "跳过";
+                ButtonDocs = "文档";
                 ButtonUpgrade = "升级";
                 ButtonFixAll = "全部修复";
                 ButtonGoBack = "返回";

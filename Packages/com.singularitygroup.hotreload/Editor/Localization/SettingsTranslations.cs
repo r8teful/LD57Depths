@@ -31,6 +31,8 @@ namespace SingularityGroup.HotReload.Editor.Localization {
             public static string SettingsPauseEditModeOff;
             public static string SettingsAutostartOn;
             public static string SettingsAutostartOff;
+            public static string SettingsAutoClearTimelineOn;
+            public static string SettingsAutoClearTimelineOff;
             public static string SettingsPatchingIndicationUnsupported;
             public static string SettingsPatchingIndicationOff;
             public static string SettingsPatchingIndicationOn;
@@ -66,6 +68,7 @@ namespace SingularityGroup.HotReload.Editor.Localization {
             public static string ToggleDisableErrorReporting;
             public static string TogglePauseEditMode;
             public static string ToggleAutostart;
+            public static string ToggleAutoClearTimeline;
             public static string TogglePatchingIndication;
             public static string ToggleCompilingIndication;
             public static string ToggleAutoRecompile;
@@ -120,6 +123,8 @@ namespace SingularityGroup.HotReload.Editor.Localization {
                 SettingsPauseEditModeOff = "Toggle on to pause Hot Reload while in Edit mode. With this setting enabled, it is recommended to perform a full Unity recompilation manually before entering Play Mode to prevent Hot Reload becoming unusable.";
                 SettingsAutostartOn = "Hot Reload will be launched when Unity project opens.";
                 SettingsAutostartOff = "Enable to launch Hot Reload when Unity project opens.";
+                SettingsAutoClearTimelineOn = "Timeline entries will be cleared after every full Unity recompilation.";
+                SettingsAutoClearTimelineOff = "Enable to clear Timeline entries after every full Unity recompilation.";
                 SettingsPatchingIndicationUnsupported = "Patching Notification is not supported in the Unity version you use.";
                 SettingsPatchingIndicationOff = "Enable to show GameView and SceneView indications when Patching.";
                 SettingsPatchingIndicationOn = "Indications will be shown in GameView and SceneView when Patching.";
@@ -155,6 +160,7 @@ namespace SingularityGroup.HotReload.Editor.Localization {
                 ToggleDisableErrorReporting = "Disable Detailed Error Reporting";
                 TogglePauseEditMode = "Pause Hot Reload in Edit Mode";
                 ToggleAutostart = "Autostart on Unity open";
+                ToggleAutoClearTimeline = "Auto clear Timeline after recompile";
                 TogglePatchingIndication = "Patching Indication";
                 ToggleCompilingIndication = "Compiling Unsupported Changes Indication";
                 ToggleAutoRecompile = "Auto recompile unsupported changes (recommended)";
@@ -210,6 +216,8 @@ namespace SingularityGroup.HotReload.Editor.Localization {
                 SettingsPauseEditModeOff = "切换以在编辑模式下暂停 Hot Reload。启用此设置后，建议在进入播放模式之前手动执行完整的 Unity 重新编译，以防止 Hot Reload 无法使用。";
                 SettingsAutostartOn = "当 Unity 项目打开时，将启动 Hot Reload。";
                 SettingsAutostartOff = "启用以在 Unity 项目打开时启动 Hot Reload。";
+                SettingsAutoClearTimelineOn = "每次完整的 Unity 重新编译后，时间轴条目将被清除。";
+                SettingsAutoClearTimelineOff = "启用后，每次完整的 Unity 重新编译后清除时间轴条目。";
                 SettingsPatchingIndicationUnsupported = "您使用的 Unity 版本不支持修补通知。";
                 SettingsPatchingIndicationOff = "启用以在修补时显示 GameView 和 SceneView 指示。";
                 SettingsPatchingIndicationOn = "修补时将在 GameView 和 SceneView 中显示指示。";
@@ -245,6 +253,7 @@ namespace SingularityGroup.HotReload.Editor.Localization {
                 ToggleDisableErrorReporting = "禁用详细错误报告";
                 TogglePauseEditMode = "在编辑模式下暂停 Hot Reload";
                 ToggleAutostart = "在 Unity 打开时自动启动";
+                ToggleAutoClearTimeline = "重新编译后自动清除时间轴";
                 TogglePatchingIndication = "修补指示";
                 ToggleCompilingIndication = "编译不支持的更改指示";
                 ToggleAutoRecompile = "自动重新编译不支持的更改（推荐）";

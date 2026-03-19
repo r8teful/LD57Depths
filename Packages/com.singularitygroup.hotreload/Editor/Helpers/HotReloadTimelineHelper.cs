@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using SingularityGroup.HotReload.DTO;
 using SingularityGroup.HotReload.Localization;
@@ -108,13 +109,16 @@ namespace SingularityGroup.HotReload.Editor {
 
         static readonly string filePath = Path.Combine(PackageConst.LibraryCachePath, "eventEntries.json");
 
-        public static void InitPersistedEvents() {
+        public static async Task InitPersistedEvents() {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
+            }
             if (!File.Exists(filePath)) {
                 return;
             }
             var redDotShown = HotReloadState.ShowingRedDot;
             try {
-                var persistedAlertData = JsonConvert.DeserializeObject<PersistedAlertData>(File.ReadAllText(filePath));
+                var persistedAlertData = await Task.Run(() => JsonConvert.DeserializeObject<PersistedAlertData>(File.ReadAllText(filePath)));
                 eventsTimeline = new List<AlertEntry>(persistedAlertData.alertDatas.Length);
                 for (int i = persistedAlertData.alertDatas.Length - 1; i >= 0; i--) {
                     AlertData alertData = persistedAlertData.alertDatas[i];
@@ -160,25 +164,23 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
-        internal static void PersistTimeline() {
-            var alertDatas = new AlertData[eventsTimeline.Count];
-            for (var i = 0; i < eventsTimeline.Count; i++) {
-                alertDatas[i] = eventsTimeline[i].alertData;
+        internal static async Task PersistTimeline() {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
             }
-            var persistedData = new PersistedAlertData(alertDatas);
+            var persistedData = new PersistedAlertData(eventsTimeline.Where(x => x.alertType != AlertType.CompileError).Select(x => x.alertData).ToArray());
             try {
-                File.WriteAllText(path: filePath, contents: JsonConvert.SerializeObject(persistedData));
+                await Task.Run(() => File.WriteAllText(path: filePath, contents: JsonConvert.SerializeObject(persistedData)));
             } catch (Exception e) {
                 Log.Warning(Translations.Errors.WarningPersistingEventEntries, e);
             }
         }
         
         internal static void ClearPersistance() {
-            try {
-                File.Delete(filePath);
-            } catch {
-                // ignore
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
             }
+            Task.Run(() => File.Delete(filePath));
             eventsTimeline = new List<AlertEntry>();
         }
         
