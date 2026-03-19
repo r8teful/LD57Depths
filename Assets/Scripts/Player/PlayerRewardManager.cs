@@ -16,6 +16,7 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
     private HashSet<ushort> pickedUpgradeNodeIDs =     new();
     private HashSet<StatType> pickedStats =            new();
     public IExecutable[] UpgradeEffects => _rewardEffects;
+    public static event Action<IExecutable> OnRewardExecuted;
     public void InitializeOnOwner(PlayerManager playerParent) {
         _rewardEffects = new IExecutable[3];
         _player = playerParent;
@@ -174,6 +175,7 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
             // no special logic here
         }
         choice.Execute(new(_player));
+        OnRewardExecuted?.Invoke(choice);
     }
 
 }

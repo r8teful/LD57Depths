@@ -7,6 +7,7 @@ public class Shrine : MonoBehaviour {
     [SerializeField] private ParticleSystem _passiveParticles;
     [SerializeField] private Sprite _usedSprite;
     [SerializeField] private SpriteRenderer _sprite;
+    [SerializeField] SaveEntityCallback SaveCallback;
     private bool _hasUsed = false;
     public bool HasUsed {
         get {
@@ -41,6 +42,8 @@ public class Shrine : MonoBehaviour {
                _audio.DOFade(0, 0.5f).OnComplete(() => Destroy(_audio));
                AudioController.Instance.PlaySound2D("RewardPickup2");
                _usedParticle.Play(); // cool particles
+               SaveCallback.OnSaveChange(); // this triggers entityManager to save these changes, resulting in the compas to update aswell!
+
                SetVisualState(isEnabled: false);
            }
      );

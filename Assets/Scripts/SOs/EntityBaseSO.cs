@@ -14,6 +14,7 @@ public class EntityBaseSO : SerializedScriptableObject, IIdentifiable {
     public ushort entityID; 
     [VerticalGroup("Identification/Split/Right")]
     public string entityName = "Generic Entity";
+    public EntityType entityType = EntityType.Decorative;
     [VerticalGroup("Identification/Split/Right")]
 #if UNITY_EDITOR
     [OnValueChanged(nameof(UpdatePreview))]
@@ -58,7 +59,6 @@ public class PersistentEntityData {
     // --- Core State ---
     public Vector3Int cellPos;
     public Quaternion rotation;
-
     [JsonProperty(TypeNameHandling = TypeNameHandling.Auto)]
     public EntitySpecificData specificData; // Polymorphic field for specific data
 
@@ -92,4 +92,8 @@ public struct EntitySpawnInfo {
         this.cellPos = cellPos;
         this.rotation = rotation;
     }
+}
+public enum EntityType {
+    Decorative = 0,
+    Exploration = 10
 }

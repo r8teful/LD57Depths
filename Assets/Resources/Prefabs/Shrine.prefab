@@ -5070,6 +5070,7 @@ GameObject:
   - component: {fileID: 5199328303575127395}
   - component: {fileID: 2119563253440151022}
   - component: {fileID: 4689613485014730356}
+  - component: {fileID: 818704158028823042}
   m_Layer: 8
   m_Name: Shrine
   m_TagString: Untagged
@@ -5114,6 +5115,7 @@ MonoBehaviour:
   _passiveParticles: {fileID: 5870145940868512520}
   _usedSprite: {fileID: 1726495633, guid: f122392e82370fb46b223396d2d1b404, type: 3}
   _sprite: {fileID: 627790587321814870}
+  SaveCallback: {fileID: 818704158028823042}
 --- !u!114 &4689613485014730356
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5127,6 +5129,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DestroyEntityCallback
   IsDestroyedPermanently: 1
+--- !u!114 &818704158028823042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5165155546490969106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a1f79252f89fe649bcfe223765ec2ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveEntityCallback
+  persistantID: 0
 --- !u!1 &5744167335185397548
 GameObject:
   m_ObjectHideFlags: 0

@@ -222,6 +222,7 @@ GameObject:
   - component: {fileID: 1878611968838650551}
   - component: {fileID: -2155780327714561273}
   - component: {fileID: 7606191376277095083}
+  - component: {fileID: 4034646274419962481}
   m_Layer: 8
   m_Name: Chest
   m_TagString: Untagged
@@ -278,6 +279,7 @@ MonoBehaviour:
   _openParticles: {fileID: 4353883291717989270}
   _destroyParticles: {fileID: 8246323227617163550}
   _animator: {fileID: 1415772383837694191}
+  SaveCallback: {fileID: 4034646274419962481}
 --- !u!114 &7606191376277095083
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -291,6 +293,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DestroyEntityCallback
   IsDestroyedPermanently: 1
+--- !u!114 &4034646274419962481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5165155546490969106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a1f79252f89fe649bcfe223765ec2ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveEntityCallback
+  persistantID: 0
 --- !u!1 &5744167335185397548
 GameObject:
   m_ObjectHideFlags: 0

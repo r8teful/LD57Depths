@@ -73,7 +73,7 @@ public class StructureManager : StaticInstance<StructureManager> {
             // If its a problem simply integrate this into the entity manager 
             StructurePlacementResult structure = new(pos, ResourceSystem.StructureChestID);
 
-            var chestData = new IsUsed(false);
+            var chestData = new IsUsedData(false);
 
             var chunk = ChunkManager.Instance.CellToChunkCoord(pos);
             EntitySpawnInfo entity = new(2000, new(pos.x, pos.y, 0), Quaternion.identity); // chest ID is 2000 (will fix later)
@@ -86,7 +86,7 @@ public class StructureManager : StaticInstance<StructureManager> {
             StructurePlacementResult structure = new(pos, ResourceSystem.StructureShrineID);
             StructurePlacements.Add(structure);
 
-            var shrineData = new IsUsed(false);
+            var shrineData = new IsUsedData(false);
             var chunk = ChunkManager.Instance.CellToChunkCoord(pos);
             EntitySpawnInfo entity = new(2010, new(pos.x, pos.y, 0), Quaternion.identity); // shrine ID is 2010 (will fix later)
             EntityManager.Instance.AddGeneratedEntityData(chunk, entity, shrineData);

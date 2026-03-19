@@ -78,8 +78,11 @@ public class UIUpgradeTree : MonoBehaviour {
     }
     private void OnDestroy() {
         UIUpgradeScreen.OnSelectedNodeChanged -= SelectedChange;
-        _player.UiManager.UpgradeScreen.OnPanelChanged -= PanelChanged;
-        _player.PlayerMovement.OnPlayerStateChanged -= PlayerStateChanged;
+        if (_player != null) {
+            _player.UiManager.UpgradeScreen.OnPanelChanged -= PanelChanged;
+            _player.PlayerMovement.OnPlayerStateChanged -= PlayerStateChanged;
+
+        }
         ItemTransferManager.OnTransferCompleteAll -= UpdateNodeVisualData; //
 
     }

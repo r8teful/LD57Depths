@@ -8,9 +8,9 @@ public abstract class EntitySpecificData {
     public abstract void ApplyTo(GameObject go);
 }
 
-public class IsUsed : EntitySpecificData {
+public class IsUsedData : EntitySpecificData {
     public bool IsEntityUsed;
-    public IsUsed(bool isUsed) {
+    public IsUsedData(bool isUsed) {
         IsEntityUsed = isUsed;
     }
     public override void ApplyTo(GameObject go) {

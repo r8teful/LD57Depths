@@ -18,7 +18,7 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
     
     // runtime
     private HashSet<ulong> _currentSpawnedEntities = new HashSet<ulong>();
-
+    
     private ulong GetNextPersistentEntityId() { return nextPersistentEntityId++; }
     public List<ulong> GetEntityIDsByChunkCoord(Vector2Int chunkCoord) {
         if (entityIdsByByChunkCoord.TryGetValue(chunkCoord, out var Idlist)) {
@@ -136,8 +136,17 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
         } else {
             Debug.LogWarning($"Entity {entitySO.entityName} doesn't have destroyEntityCallback! You should add it just in case the object gets destroyed");
         }
+        if (instance.TryGetComponent<SaveEntityCallback>(out var entitySaveCallback)) {
+            // tell what ID the save has
+            entitySaveCallback.persistantID = data.persistentId;
+            entitySaveCallback.OnSave += HandleEntitySaveChange;
+        } 
     }
 
+    private void HandleEntitySaveChange(GameObject obj,ulong ID) {
+        persistentEntityDatabase.TryGetValue(ID, out var persistentEntity);
+        SaveDataFromInstance(obj, persistentEntity);
+    }
 
     public void RequestEntityDeactivation(ulong persistentId) {
         PersistentEntityData data = persistentEntityDatabase[persistentId];
@@ -153,6 +162,9 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
             // Unsubscribe FIRST
             if (nob.TryGetComponent<DestroyEntityCallback>(out var entityDestroyCallback)) {
                 entityDestroyCallback.OnDestroyed -= HandleEntityDestroyed;
+            }
+            if (nob.TryGetComponent<SaveEntityCallback>(out var entitySaveCallback)) {
+                entitySaveCallback.OnSave -= HandleEntitySaveChange;
             }
             Destroy(nob); // This could also return it to the object pool or something
             _currentSpawnedEntities.Remove(data.persistentId);
@@ -181,6 +193,9 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
                 ServerRemovePersistentEntity(persistentId);
             }
         }
+        if (nob.TryGetComponent<SaveEntityCallback>(out var entitySaveCallback)) {
+            entitySaveCallback.OnSave -= HandleEntitySaveChange;
+        }
     }
 
     private void ApplyDataToInstance(GameObject instance, PersistentEntityData data) {
@@ -204,7 +219,7 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
             // Biome data doeesn't change at runtime so no need to save or change the persistanententityData
             return;
         }
-        if(data.specificData is IsUsed i) {
+        if(data.specificData is IsUsedData i) {
             i.TrySave(nob);
             return;
         }
@@ -253,7 +268,36 @@ public class EntityManager : StaticInstance<EntityManager>, ISaveable {
             }
         }
     }
+    public PersistentEntityData FindClosestExplorationEntity(Transform playerTransform) {
+        if (playerTransform == null || persistentEntityDatabase == null || persistentEntityDatabase.Count == 0)
+            return null;
 
+        PersistentEntityData closestEntity = null;
+        float closestSqrDistance = float.MaxValue;
+        Vector3 playerPos = playerTransform.position;
+
+        foreach (var entity in persistentEntityDatabase.Values) {
+            if (entity == null)continue;
+            if (entity.specificData == null)continue;
+            if (entity.specificData is IsUsedData used) {
+                if(used.IsEntityUsed) continue;
+            } else {
+                continue;
+            }
+            var data = App.ResourceSystem.GetEntityByID(entity.entityID);
+            if (data == null || data.entityType != EntityType.Exploration) continue;
+            
+            Vector3 entityPos = (Vector3)entity.cellPos;
+            float sqrDistance = (playerPos - entityPos).sqrMagnitude;
+
+            if (sqrDistance < closestSqrDistance) {
+                closestSqrDistance = sqrDistance;
+                closestEntity = entity;
+            }
+        }
+
+        return closestEntity;
+    }
     public void OnSave(SaveData data) {
         if (data == null|| data.worldData == null) return;
         // Make sure we save entity specific data in the database of all active entities

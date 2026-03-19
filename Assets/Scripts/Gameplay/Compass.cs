@@ -5,51 +5,64 @@ using UnityEngine.UI;
 
 public class Compass : MonoBehaviour {
     [Header("References")]
-    private Transform _player;
+    private Transform _playerTrans;
     [SerializeField] private Image _compasImage;
     [SerializeField] private CompassArrow arrowHandPrefab;
+    private Coroutine ClosestEntityCoroutine;
 
     // Keyed by target transform for easy lookup and removal
-    private readonly Dictionary<Transform, CompassArrow> _arrows = new();
+    private CompassArrow _arrowNormal;
+    private CompassArrow _arrowPlus;
 
     private void Awake() {
         _compasImage.gameObject.SetActive(false);
+        PlayerRewardManager.OnRewardExecuted += OnRewardTaken;
     }
-    public void Activate(PlayerManager player) {
-        _player = player.transform;
+
+    private void OnRewardTaken(IExecutable obj) {
+        // Simply star the coroutine over again
+        StopCoroutine(ClosestEntityCoroutine);
+        ClosestEntityCoroutine = StartCoroutine(FindClosestEntityRoutine());
+    }
+    public void ActivateCompassPlus() {
+        var closest = FindClosestEntity();
+        if (closest == null) Debug.LogError("Coudn't find closest!");
+        _arrowPlus = Instantiate(arrowHandPrefab, transform);
+        _arrowPlus.Init(_playerTrans, closest,isPlus: true);
+        ClosestEntityCoroutine = StartCoroutine(FindClosestEntityRoutine());
+    }
+    private IEnumerator FindClosestEntityRoutine() {
+        while (true) {
+            var closest = FindClosestEntity();
+            if (closest != null) {
+                _arrowPlus.UpdateTarget((Vector2)closest);
+            }
+            yield return new WaitForSeconds(1f);
+        }
+    }
+    private Vector2? FindClosestEntity() {
+        if (EntityManager.Instance == null) return null;
+        var closest = EntityManager.Instance.FindClosestExplorationEntity(_playerTrans);
+        if (closest != null) {
+            return (Vector2)(Vector3)closest.cellPos;
+        }
+        return null;
+    }
+    public void ActivateNormal(PlayerManager player) {
+        _playerTrans = player.transform;
         _compasImage.gameObject.SetActive(true);
-        if (SubmarineManager.Instance != null)
-            AddArrowHand(SubmarineManager.Instance.submarineExterior.transform);
+        if (SubmarineManager.Instance != null) {
+            _arrowNormal = Instantiate(arrowHandPrefab, transform);
+            _arrowNormal.Init(_playerTrans, SubmarineManager.Instance.submarineExterior.transform);
+        }
     }
     private void LateUpdate() {
-        foreach (var hand in _arrows.Values)
-            hand.UpdateArrow();
-    }
-
-    public CompassArrow AddArrowHand(Transform target) {
-        if (_arrows.ContainsKey(target)) {
-            Debug.LogWarning($"[Compass] Arrow hand for target '{target.name}' already exists.");
-            return _arrows[target];
+        if (_arrowNormal !=null) {
+            _arrowNormal.UpdateArrow();
         }
-
-        CompassArrow hand = Instantiate(arrowHandPrefab, transform);
-        hand.Init(_player, target);
-        _arrows[target] = hand;
-        return hand;
-    }
-
-    public void RemoveArrowHand(Transform target) {
-        if (!_arrows.TryGetValue(target, out CompassArrow hand)) return;
-
-        Destroy(hand.gameObject);
-        _arrows.Remove(target);
-    }
-
-    public void ClearAllArrowHands() {
-        foreach (var hand in _arrows.Values)
-            Destroy(hand.gameObject);
-
-        _arrows.Clear();
+        if (_arrowPlus != null) {
+            _arrowPlus.UpdateArrow();
+        }
     }
 
 }

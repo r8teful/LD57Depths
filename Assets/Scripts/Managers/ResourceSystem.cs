@@ -65,6 +65,8 @@ public class ResourceSystem {
     public const ushort PlayerDashID = 10; 
     public const ushort LazerEffectID = 0; // There must be a better way
     public const ushort BlockOxygenID = 200; 
+    public const ushort CompassID = 210; 
+    public const ushort CompassPlusID = 211; 
     public const ushort GraveStoneID = 220; // There must be a better way
     public const ushort LazerChainID = 240; 
     public const ushort CactusAbilityID = 500; 
