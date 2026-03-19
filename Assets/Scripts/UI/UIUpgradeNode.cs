@@ -54,7 +54,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public RectTransform Rect => _rectTransform;
     private UIUpgradeTree _treeParent;
     private UpgradeNodeVisualData _visualData;
-    public UpgradeNodeState GetState => _visualData.State;
+    public UpgradeNodeState GetState => _visualData != null ? _visualData.State : UpgradeNodeState.None;
     public UpgradeNodeVisualData GetVisualData => _visualData;
     private Sprite _popupOverrideSprite;
 
@@ -93,7 +93,8 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private static readonly string PARTICLE_BLUE = "#4cbed0";
 
     private void Awake() {
-       
+
+        Debug.Log("AWAKE on gameobject: " + gameObject.name);
         _rectTransform = GetComponent<RectTransform>();
         _canvasGroup = GetComponent<CanvasGroup>();
         _canvasGroup.alpha = 1;
@@ -102,8 +103,10 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         _button.onClick.AddListener(OnUpgradeButtonClicked);
     }
     private void OnDestroy() {
-        _button.onClick.RemoveListener(OnUpgradeButtonClicked);
-        _visualData.OnDestroy();
+        if (_button != null) {
+            _button.onClick.RemoveListener(OnUpgradeButtonClicked);
+        }
+        _visualData?.OnDestroy();
     }
     public void InspectorBigChange() {
         if (IsBig) {
@@ -115,6 +118,10 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         }
     }
     internal void Init(UIUpgradeTree parent, UpgradeNodeSO data, UpgradeManagerPlayer up) {
+        if (_rectTransform == null || _iconImage == null) {
+            Debug.LogError("Rect or icon is NULL! on gameobject: " + gameObject.name);
+            return;
+        }
         _visualData = new(data, up);
         _treeParent = parent;
         HandleButtonSize(); // Sets _buttonCurrent
@@ -174,10 +181,11 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     public void Select(bool usingPointer) {
         if (_visualData.State == UpgradeNodeState.Locked) return;
         if (_treeParent.IsClosing) return;
+        if (PlayerManager.Instance.UiManager.UpgradeScreen.PanAndZoom.IsDraggingOrZooming) return;
         PlaySelectAnim();
         if (usingPointer) {
             // No coroutine movement, simply show the popup
-            PopupManager.Instance.ShowPopup(this, true);
+            PopupManager.Instance.OnEnter(this);
         } else {
             StartCoroutine(SelectRoutine());
         }
@@ -199,15 +207,14 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private IEnumerator SelectRoutine() {
         // Simple solution, wait untill we've gotten to the target, and then we posision popup
         yield return _treeParent.OnPanSelect(this);
-        PopupManager.Instance.ShowPopup(this, true);
+        PopupManager.Instance.OnEnter(this);
     }
     public void Deselect() {
         if (_visualData.State == UpgradeNodeState.Locked) return;
-        PopupManager.Instance.ShowPopup(this, false);
+        PopupManager.Instance.OnExit(true);
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        Debug.Log("On Pointer up!");
         Select(usingPointer: true);
     }
 
@@ -220,6 +227,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
     private void OnUpgradeButtonClicked() {
         if (_visualData.Node.stages.Count == 0) return; // Some nodes have any stages and it will give null
+        if (!PopupManager.Instance.IsShowingPopup) return; 
         Debug.Log("pressed");
         _isPressed = true;
         _treeParent.OnUpgradeButtonClicked(this,_visualData.Node); // This seems wrong but its where we store what actual node we are

@@ -5545,6 +5545,7 @@ GameObject:
   - component: {fileID: 8655694010588922278}
   - component: {fileID: 5581936464494358817}
   - component: {fileID: 7426018807700302947}
+  - component: {fileID: 9103183343860119208}
   m_Layer: 5
   m_Name: Popup
   m_TagString: Untagged
@@ -5587,7 +5588,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b49dd4eb7d21194598accda71caed1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rectTransform: {fileID: 4599692433643166816}
+  RectTransform: {fileID: 4599692433643166816}
+  CanvasGroup: {fileID: 9103183343860119208}
   _iconContainer: {fileID: 6983506088046839019}
   _iconImage: {fileID: 6528674682269172542}
   _descriptionDivider: {fileID: 5889705914136868755}
@@ -5642,6 +5644,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 2
+--- !u!225 &9103183343860119208
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4230272347824605162}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &4923703461827238077
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Shows stats, items etc.
-public class UIManagerStats : MonoBehaviour {
+public class UIPlayerHUD : MonoBehaviour {
     private PlayerStatsManager _playerStats;
 
     // Maybe we could have a generic "uihudiconbase" dictionary but eh...
@@ -15,6 +15,7 @@ public class UIManagerStats : MonoBehaviour {
     [SerializeField] Transform _statDisplayElements;
     [SerializeField] Transform _abilityDisplayElements;
     [SerializeField] UIBiomeText _biomeTextPrefab;
+    public Compass Compass;
     private PlayerManager _player;
 
     internal void Init(PlayerManager player) {

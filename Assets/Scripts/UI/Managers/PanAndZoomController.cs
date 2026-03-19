@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,6 +31,9 @@ public class PanAndZoomController : MonoBehaviour {
 
     private bool _isDragging;
     private bool _isZooming;
+    
+    public bool IsDraggingOrZooming => _isDragging || _isZooming;
+
     private Vector2 lastPointerPosition;
 
     private float zoomAmount;                   
@@ -60,7 +64,10 @@ public class PanAndZoomController : MonoBehaviour {
         }
 
         ApplySmoothTransform();
+
+        //ApplyTransform();
     }
+
 
 
     /// <summary>Called by InputManager when a drag/pan gesture begins.</summary>
@@ -116,7 +123,8 @@ public class PanAndZoomController : MonoBehaviour {
         // Zoom toward the current anchor-center so content doesn't jump.
         // (For pointer-based zooming you can replace Vector2.zero with the
         //  pointer's local position inside the viewport.)
-        ZoomToward(newScale, Vector2.zero);
+        var toward = _inputManager.GetPointerPivotInViewport(viewportRect);
+        ZoomToward(newScale, toward);
 
         zoomAmount = 0f;
     }
@@ -156,6 +164,11 @@ public class PanAndZoomController : MonoBehaviour {
         contentRect.anchoredPosition = smoothedPos;
     }
 
+    private void ApplyTransform() {
+        contentRect.localScale = Vector3.one * _targetScale;
+        contentRect.anchoredPosition = _targetPosition;
+
+    }
 
     /// <summary>
     /// Ensures <paramref name="child"/> RectTransform is fully inside

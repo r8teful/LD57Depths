@@ -32,7 +32,9 @@ public class UIUpgradeScreen : MonoBehaviour {
     private void OnUpgradePurchasedThroughTree() {
         Debug.Log("PURSHASETREE");
         var rect = _upgradePanel.GetComponent<RectTransform>();
-       // rect.DOShakeAnchorPos(0.2f,60,2,180,randomnessMode:ShakeRandomnessMode.Harmonic);
+        rect.DOShakePosition(0.2f,strength: 4,vibrato: 25,randomness:100,randomnessMode:ShakeRandomnessMode.Harmonic);
+        
+        //rect.DOShakeAnchorPos(0.2f,30,2,180,randomnessMode:ShakeRandomnessMode.Harmonic);
        // rect.DOShakeRotation(0.4f,60,2,180,randomnessMode:ShakeRandomnessMode.Harmonic);
         //rect.DOComplete();
     }

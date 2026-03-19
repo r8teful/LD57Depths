@@ -2,6 +2,7 @@
 using Sirenix.OdinInspector;
 using System;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 public enum PlayerInteractionContext {
@@ -359,6 +360,22 @@ public class InputManager : MonoBehaviour, IPlayerModule {
           {
             return rawAimInput; // Also raw?!
         }
+    }
+    //public Vector2 asdas() {
+    //    RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, screenPos, uiCam, out Vector2 pivotInViewportLocal);
+    //}
+    public Vector2 GetPointerPivotInViewport(RectTransform viewport) {
+        //Vector2 screenPos = Pointer.current.position.ReadValue();
+         Vector2 screenPos = rawAimInput;
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            viewport,
+            screenPos,
+            null,
+            out Vector2 localPoint
+        );
+
+        return localPoint;
     }
     public Vector2 GetUINavigationInput() {
         return _uiNavigationVector;

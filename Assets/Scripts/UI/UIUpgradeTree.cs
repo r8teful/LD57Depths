@@ -18,7 +18,12 @@ public class UIUpgradeTree : MonoBehaviour {
     public bool IsClosing => _closing; // to fix a stupid bug where you get a popup because we squich the transform
     public static event Action OnUpgradeButtonPurchased; // this would break if we have several trees
     public Dictionary<ushort, UIUpgradeNode> GetNodeMap => _nodeMap;
+    private void Awake() {
+        Debug.Log("UPGRADE TREE AWKAE!!: ID: " + gameObject.name + gameObject.GetInstanceID());
+       
+    }
     internal void Init(UpgradeTreeDataSO tree, PlayerManager player) {
+        Debug.Log("UPGRADE TREE INIT!! ID: " + gameObject.GetInstanceID());
         _nodeMap.Clear();
         _treeData = tree;
         _player = player;

@@ -4201,6 +4201,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UICompass
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 630
+        width: 27
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8e11edd8a6b3bd47b3a32c88f7023b6
+      internalID: -916741622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -4337,6 +4359,7 @@ TextureImporter:
       UIBrimstone1: -526431394
       UIBrimstone3: -1724539373
       UIButton: -1863908995
+      UICompass: -916741622
       UIDivider: 1399374186
       UILine: 511341760
       UISimpleBoarder: 1878530721

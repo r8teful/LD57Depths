@@ -28,7 +28,7 @@ public class UIInventoryItem : MonoBehaviour {
     }
 
     public void UpdateSlot(int amount) {
-        quantityText.text = amount.ToString();
+        quantityText.text = NumberFormatter.Format(amount);
         DoAnimation(); // Satisfying!
     }
 

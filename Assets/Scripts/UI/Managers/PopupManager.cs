@@ -1,22 +1,15 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class PopupManager : StaticInstance<PopupManager> {
     public UIPopup popupPrefab;
     private UIPopup currentPopup;
     private IPopupInfo currentInfoProvider;
-    private IPopupInfo currentHoveredInfoProvider;
-    private IPopupInfo currentSelectedInfoProvider;
-    private bool isMouseOverPopup;
     private InventoryManager inventoryManager;
-    
+    public bool IsShowingPopup => currentPopup != null;
     public UIPopup CurrentPopup => currentPopup;
-    //private void Awake() {
-    //    if (Instance == null)
-    //        Instance = this;
-    //    else
-    //        Destroy(gameObject);
-    //}
+
     public void Init(InventoryManager clientInv) {
         inventoryManager = clientInv; // need it for popup box info
     }
@@ -35,66 +28,27 @@ public class PopupManager : StaticInstance<PopupManager> {
         GetComponent<UIManager>().UpgradeScreen.OnPanelChanged -= TryHidePopup;
     }
 
-    private void OnInventoryToggled(bool isOpen) {
-        //Debug.Log("INVOKED!");
-        if (!isOpen) {
-            // Closing
-            if(currentPopup != null) {
-                HidePopup();
-            }
-        }
-    }
-
-    public void OnPointerEnterItem(IPopupInfo infoProvider) {
-        currentHoveredInfoProvider = infoProvider;
+    public void OnEnter(IPopupInfo infoProvider) {
         ShowPopup(infoProvider);
     }
 
-    public void OnPointerExitItem() {
-        if (!isMouseOverPopup) {
-            currentHoveredInfoProvider = null;
-            if (currentSelectedInfoProvider != null)
-                ShowPopup(currentSelectedInfoProvider);
-            else
-                HidePopup();
-        }
+    public void OnExit(bool withFade = false) {
+        HidePopup(withFade);
     }
 
-    public void OnPointerEnterPopup() {
-        isMouseOverPopup = true;
-    }
-
-    public void OnPointerExitPopup() {
-        Debug.Log("EXitPopup!");
-        isMouseOverPopup = false;
-        if (currentHoveredInfoProvider == null) {
-            if (currentSelectedInfoProvider != null)
-                ShowPopup(currentSelectedInfoProvider);
-            else
-                HidePopup();
-        }
-    }
-    
-    private void OnSelectedGameObjectChanged(GameObject selected) {
-        IPopupInfo newInfoProvider = selected?.GetComponent<IPopupInfo>();
-        if (newInfoProvider != currentSelectedInfoProvider) {
-            currentSelectedInfoProvider = newInfoProvider;
-            if (currentHoveredInfoProvider == null && newInfoProvider != null)
-                ShowPopup(newInfoProvider);
-            else if (currentHoveredInfoProvider == null && newInfoProvider == null)
-                HidePopup();
-        }
-    }
 
     private void ShowPopup(IPopupInfo infoProvider) {
-        if (currentPopup != null && currentInfoProvider == infoProvider)
+        if (currentPopup != null && currentInfoProvider == infoProvider) {
+            if(currentPopup.CanvasGroup != null && currentPopup.CanvasGroup.DOKill() == 0)
             return;
+        }
         HidePopup();
         currentInfoProvider = infoProvider;
         PopupData data = infoProvider.GetPopupData(inventoryManager);
         infoProvider.PopupDataChanged += PopupDataChange;
         currentPopup = Instantiate(popupPrefab, transform);
         currentPopup.SetData(data);
+        //currentPopup.CanvasGroup.DOKill();
         //LayoutRebuilder.ForceRebuildLayoutImmediate(currentPopup.GetComponent<RectTransform>());
         PositionPopup(infoProvider);
         currentPopup.ShowAnimate();
@@ -105,12 +59,21 @@ public class PopupManager : StaticInstance<PopupManager> {
         currentPopup.SetData(currentInfoProvider.GetPopupData(inventoryManager));
     }
 
-    private void HidePopup() {
+    private void HidePopup(bool withFade = false) {
         if (currentPopup != null) {
             currentInfoProvider.PopupDataChanged -= PopupDataChange;
-            Destroy(currentPopup.gameObject); // This is breaking the UINODETWEEN!?!?
-            currentPopup = null;
-            currentInfoProvider = null;
+            if (withFade) {
+                currentPopup.RectTransform.DOAnchorPosY(-3, 0.2f).SetRelative();
+                currentPopup.CanvasGroup.DOFade(0, 0.2f).OnComplete(() => {
+                    Destroy(currentPopup.gameObject);
+                    currentPopup = null;
+                    currentInfoProvider = null;
+                });
+            } else {
+                Destroy(currentPopup.gameObject); // This is breaking the UINODETWEEN!?!?
+                currentPopup = null;
+                currentInfoProvider = null;
+            }
         }
     }
 
@@ -202,16 +165,6 @@ public class PopupManager : StaticInstance<PopupManager> {
                 if (RectTransformUtility.ScreenPointToWorldPointInRectangle(canvasRect, anchorScreenPoint, canvasCam, out worldPos))
                     popupRT.position = worldPos;
             }
-        }
-    }
-    public void ShowPopup(IPopupInfo p, bool b) {
-        OnPopupShow(p, b);
-    }
-    private void OnPopupShow(IPopupInfo popup, bool shouldShow) {
-        if (shouldShow) {
-            OnPointerEnterItem(popup);
-        } else {
-            OnPointerExitItem();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Anarkila.DeveloperConsole {
 
@@ -11,12 +12,11 @@ namespace Anarkila.DeveloperConsole {
     /// </summary>
     public class ConsoleKeyInputs : MonoBehaviour {
 
-        private KeyCode consoleToggleKey = KeyCode.Backslash;
-        private KeyCode submitKey = KeyCode.Return;
-        private KeyCode searchPreviousCommand = KeyCode.UpArrow;
-        private KeyCode nextSuggestedCommandKey = KeyCode.DownArrow;
-        private KeyCode nextSuggestedCommandKeyAlt = KeyCode.Tab;
-
+        private InputAction consoleToggleAction;
+        private InputAction submitAction;
+        private InputAction searchPreviousAction;
+        private InputAction nextSuggestedCommandAction;
+        public InputActionAsset Inputs;
         private bool listenActivateKey = true;
         private bool consoleIsOpen = false;
        
@@ -25,6 +25,11 @@ namespace Anarkila.DeveloperConsole {
             ConsoleEvents.RegisterListenActivatStateEvent += ActivatorStateChangeEvent;
             ConsoleEvents.RegisterConsoleStateChangeEvent += ConsoleStateChanged;
             ConsoleEvents.RegisterSettingsChangedEvent += GetSettings;
+
+            consoleToggleAction = Inputs.FindAction("ConsoleToggle", true);
+            submitAction = Inputs.FindAction("ConsoleSubmit", true);
+            searchPreviousAction = Inputs.FindAction("ConsolePrevious", true);
+            nextSuggestedCommandAction = Inputs.FindAction("ConsoleSuggest", true);
         }
 
         private void OnDestroy() {
@@ -39,8 +44,7 @@ namespace Anarkila.DeveloperConsole {
 
         private void ListenPlayerInputs() {
             // If you wish to move into the new Unity Input system, modify this.
-
-            if (Input.GetKeyDown(consoleToggleKey) && listenActivateKey) {
+            if (consoleToggleAction.WasPressedThisFrame() && listenActivateKey) {
                 ConsoleEvents.SetConsoleState(!consoleIsOpen);
             }
 
@@ -51,15 +55,15 @@ namespace Anarkila.DeveloperConsole {
             // If console is not open then don't check other input keys
             if (!consoleIsOpen) return;
 
-            if (Input.GetKeyDown(submitKey)) {
+            if (submitAction.WasPressedThisFrame()) {
                 ConsoleEvents.InputFieldSubmit();
             }
 
-            if (Input.GetKeyDown(searchPreviousCommand)) {
+            if (searchPreviousAction.WasPressedThisFrame()) {
                 ConsoleEvents.SearchPreviousCommand();
             }
 
-            if (Input.GetKeyDown(nextSuggestedCommandKey) || Input.GetKeyDown(nextSuggestedCommandKeyAlt)) {
+            if (nextSuggestedCommandAction.WasPressedThisFrame()) {
                 ConsoleEvents.FillCommand();
             }
         }
@@ -74,14 +78,6 @@ namespace Anarkila.DeveloperConsole {
 
         private void GetSettings() {
             var settings = ConsoleManager.GetSettings();
-
-            if (settings != null) {
-                searchPreviousCommand = settings.consoleSearchCommandKey;
-                nextSuggestedCommandKeyAlt = settings.NextSuggestedCommandKeyAlt;
-                nextSuggestedCommandKey = settings.NextSuggestedCommandKey;
-                consoleToggleKey = settings.consoleToggleKey;
-                submitKey = settings.consoleSubmitKey;
-            }
         }
     }
 }

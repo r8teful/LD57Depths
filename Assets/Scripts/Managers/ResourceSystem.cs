@@ -96,8 +96,6 @@ public class ResourceSystem {
         BackgroundObjects = Resources.LoadAll<BackgroundObjectSO>("BackgroundObjectData").ToList();
 
         UpgradeTreeData = Resources.LoadAll<UpgradeTreeDataSO>("UpgradeTreeData").ToList();
-        
-        UpgradeTreeData = Resources.LoadAll<UpgradeTreeDataSO>("UpgradeTreeData").ToList();
 
         InitializeLookup("ItemData", out _itemLookupByID, out _idLookupByItem);
         InitializeLookup("TileData", out _tileLookupByID, out _idLookupByTile);

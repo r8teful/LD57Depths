@@ -9,7 +9,8 @@ using Image = UnityEngine.UI.Image;
 
 // Should be generic enough to display any kind of data that popups up on the screen, either in world space, or on the canvas, for example next to the cursor 
 public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
-    [SerializeField] private RectTransform rectTransform;
+    public RectTransform RectTransform;
+    public CanvasGroup CanvasGroup;
     [SerializeField] private GameObject _iconContainer;
     [SerializeField] private Image _iconImage;
     [SerializeField] private Image _descriptionDivider;
@@ -43,10 +44,10 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
 //        _particlesPurchaseDown.StartEmission();
         _particlesPurchaseDown.Play();
         //float strength = 10f;
-        rectTransform.DOPunchScale(new(scale, 0, 0), time*0.5f, vibrato, elasticity)
+        RectTransform.DOPunchScale(new(scale, 0, 0), time*0.5f, vibrato, elasticity)
             .SetEase(Ease.OutElastic);
-            //..SetEase(Ease.OutSine);
-        rectTransform.DOPunchRotation(new(0, 0, Random.value > 0.5 ? -rotation :  rotation), time, vibrato, elasticity)
+        //..SetEase(Ease.OutSine);
+        RectTransform.DOPunchRotation(new(0, 0, Random.value > 0.5 ? -rotation :  rotation), time, vibrato, elasticity)
             //.SetEase(Ease.OutBack);
             .SetEase(Ease.OutElastic);
         //rectTransform.DOPunchRotation(new(0, 0, Random.value > 0.5 ? -rotation :  rotation), 0.2f)
@@ -151,7 +152,7 @@ public class UIPopup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler 
         const float originalW = 39f;
         const float originalH = 65f;
         float aspect = originalW / originalH;
-        float targetHeight = rectTransform.rect.height;
+        float targetHeight = RectTransform.rect.height;
         float newWidth = targetHeight * aspect;
 
         // Respect RectTransform layout (works with different anchors)

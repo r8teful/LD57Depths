@@ -6,7 +6,7 @@ public class UIManager : Singleton<UIManager> {
     public PopupManager PopupManager { get; private set; }
     [field:SerializeField] public UIUpgradeScreen UpgradeScreen { get; private set; }
     [field: SerializeField] public UIManagerInventory UIManagerInventory {  get; private set; }
-    [field: SerializeField] public UIManagerStats UIManagerStats {  get; private set; }
+    [field: SerializeField] public UIPlayerHUD PlayerHUD {  get; private set; }
     [field: SerializeField] public UISubControlPanel UISubControlPanel {  get; private set; }
     [field: SerializeField] public UISubInventory UISubInventory {  get; private set; }
     [field: SerializeField] public UIPauseScreen UIPause {  get; private set; }
@@ -60,7 +60,7 @@ public class UIManager : Singleton<UIManager> {
         UpgradeScreen.Init(this,client);
         UIManagerInventory.Init(owningPlayer,client);
         PopupManager.Init(_inventory);
-        UIManagerStats.Init(client);;
+        PlayerHUD.Init(client);;
         UISubInventory.Init();
     }
 

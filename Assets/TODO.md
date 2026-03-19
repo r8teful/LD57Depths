@@ -14,14 +14,12 @@ Steamdeck notes:
 * Items go From bob to PC? -> Visually show it go from bob to pc, and make the PC bounce or something (show that its receiving it). I've tried this but its really hard to have it look good!!!!
 * New color node with one upgrade but not getting one upgrade
 * Hitstop when buying a node!?
-* Change popup particle colour to match the purchase particle color -> ALSO change popup border colour to match the node. INCLUDING "disabled" colour
-* Screenshake?
 * Add fog? Just some pixelated transparent noise, could add some more depth to the background
 * Make menu buttons pop in, like the stardewvalley menu
-* Upgrade progress should look animated / cooler, more exciting!!
 * When an upgrade is maxed the popup could be looking cooler like bigger text where your current upgrade amount is shown or something like that
 * Update the ui with lucys new stuff
-* Don't show popup when panning
+* Icon for upgrade station node
+* Fog stops make it behave like the background stuff, following the player camera
 
 UX:
 
@@ -29,13 +27,15 @@ UX:
 * Forget to use lazer blast \& what button it needs to activate
 * A machine that shows the biome artifacts and which one's you've gotten
 * Need some kind of tutorial / reminder of using the brimstone ability
+* Exit buttons in menus
+* Control action hits
+* Button selection viewer for controller and when hovering for MKB
 
 Misc:
 
-* Should not fix the upgrade panel from the upgrade panel
 * Cactus particle effect?? When you turn into one
-* Upgrade: "don't loose all things"
 * Upgrade: Path lights up when you run out of time
+* Subtle fullscreen distortion
 
 Coding:
 
@@ -43,15 +43,22 @@ Coding:
 * crit damage?
 * Implement ONE event
 * Don't let submarine spawn inside a rock, or inside a cave
-* Number system that truncates big numbers
 * Highlight system that surrounds a button with a sprite
+
+Add more content:
+
+* Compass \& compass+
+* Adrenaline \& adrenaline+
+* chain -> add sound \& sub upgrades 
+* explosive crits
+* Alchemy
+* 
 
 
 
 FOR POLISED DEMO:
 
 * Add one more song
-* Some kind of animation when going into the submarine?
 * Make pitch more soothing
 * Add upgrades that you'll be able to get for level 2
 * Sub UI needs to be updated. Zone ui should show appropriate resources
