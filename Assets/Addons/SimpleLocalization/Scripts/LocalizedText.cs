@@ -24,7 +24,8 @@ namespace Assets.SimpleLocalization.Scripts
 
         private void Localize()
         {
-            GetComponent<Text>().text = LocalizationManager.Localize(LocalizationKey);
+            LocalizationManager.TryLocalize(LocalizationKey, out var s);
+            GetComponent<Text>().text = s;
         }
     }
 }

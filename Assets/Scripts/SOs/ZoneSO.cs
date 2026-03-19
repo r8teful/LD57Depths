@@ -1,6 +1,7 @@
 ﻿using Assets.SimpleLocalization.Scripts;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [CreateAssetMenu(fileName = "ZoneSO", menuName = "ScriptableObjects/Other/ZoneSO", order = 2)]
 public class ZoneSO : ScriptableObject {
@@ -12,7 +13,8 @@ public class ZoneSO : ScriptableObject {
     
     public string GetLocalizedZoneName() {
         if (ZoneNameID == null || ZoneNameID == string.Empty) {
-            var s = LocalizationManager.Localize(ZoneNameID);
+            LocalizationManager.TryLocalize(ZoneNameID, out var localZone);
+            var s = localZone;
             if (s == null || s == string.Empty) {
                 s = ZoneName;
             }
@@ -22,7 +24,8 @@ public class ZoneSO : ScriptableObject {
     }
     public string GetLocalizedZoneCantGetDesc() {
         if (ZoneNameID != null || ZoneNameID != string.Empty) {
-            var s = LocalizationManager.Localize($"{ZoneNameID}.D");
+            LocalizationManager.TryLocalize($"{ZoneNameID}.D", out var localZone);
+            var s = localZone;
             if (s == null || s == string.Empty) {
                 s = "If you see this text its a bug";
             }

@@ -16,7 +16,9 @@ public class LocalizedTextMeshPro : MonoBehaviour {
 
     private void Localize() {
         if (LocalizationKey == string.Empty) return;
-        string text = LocalizationManager.Localize(LocalizationKey);
+
+        LocalizationManager.TryLocalize(LocalizationKey, out var s);
+        string text = s;
         if(text == "") {
             Debug.LogWarning("Something went wrong trying to localize key " + LocalizationKey);
             return;
