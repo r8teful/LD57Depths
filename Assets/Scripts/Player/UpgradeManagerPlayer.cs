@@ -90,6 +90,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
             }
             _nodeStates.TryAdd(node.ID, new(node.ID,stage, cost, tier));
         }
+        Destroy(tempTree.gameObject);
     }
     
     // Call this lots when you're balancing

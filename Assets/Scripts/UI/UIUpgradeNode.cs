@@ -93,10 +93,14 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     private static readonly string PARTICLE_BLUE = "#4cbed0";
 
     private void Awake() {
-
-        Debug.Log("AWAKE on gameobject: " + gameObject.name);
+        if(IDBoundNode == 0) {
+            Debug.Log($"AWAKE on gameobject: {gameObject.name} ID: {gameObject.GetInstanceID()}");
+        }
         _rectTransform = GetComponent<RectTransform>();
         _canvasGroup = GetComponent<CanvasGroup>();
+        if (_rectTransform != null) { 
+        
+        }
         _canvasGroup.alpha = 1;
         _coolBackground.SetActive(false);
         _lockedOverlayRect.SetActive(false);
@@ -118,13 +122,18 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         }
     }
     internal void Init(UIUpgradeTree parent, UpgradeNodeSO data, UpgradeManagerPlayer up) {
-        if (_rectTransform == null || _iconImage == null) {
-            Debug.LogError("Rect or icon is NULL! on gameobject: " + gameObject.name);
+        Debug.Log($"Init on gameobject: {gameObject.name} ID: {gameObject.GetInstanceID()}");
+        if (_rectTransform == null) {
+
+            if (IDBoundNode == 0) {
+                Debug.LogError($"Rect or icon is NULL! on gameobject: {gameObject.name} ID: {gameObject.GetInstanceID()}");
+            }
+            //Debug.LogError(": " + gameObject.name);
             return;
         }
+        HandleButtonSize(); // Sets _buttonCurrent
         _visualData = new(data, up);
         _treeParent = parent;
-        HandleButtonSize(); // Sets _buttonCurrent
         HandleButtonMaterial();
         SetIcon();
        
