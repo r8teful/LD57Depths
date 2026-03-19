@@ -264,9 +264,9 @@ RectTransform:
   - {fileID: 2280657989828540120}
   - {fileID: 4076179455666252916}
   - {fileID: 1787095279564858023}
-  - {fileID: 2791259944598991436}
   - {fileID: 3652878242035825081}
   - {fileID: 8050355148722088563}
+  - {fileID: 2791259944598991436}
   - {fileID: 38577263636476573}
   - {fileID: 6993368599885549294}
   - {fileID: 5940149682180459187}
@@ -2405,7 +2405,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 93c1c2c1a62af3d489bb54e1587b70e5, type: 2}
     - target: {fileID: 68548652011890251, guid: 59b1e1b7e631a3344ab16ca886f5bfaf, type: 3}
       propertyPath: IDBoundNode
-      value: 800
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 1796367991480788740, guid: 59b1e1b7e631a3344ab16ca886f5bfaf, type: 3}
       propertyPath: m_LocalScale.x
@@ -4909,7 +4909,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 93c1c2c1a62af3d489bb54e1587b70e5, type: 2}
     - target: {fileID: 68548652011890251, guid: 59b1e1b7e631a3344ab16ca886f5bfaf, type: 3}
       propertyPath: IDBoundNode
-      value: 800
+      value: 2001
       objectReference: {fileID: 0}
     - target: {fileID: 1796367991480788740, guid: 59b1e1b7e631a3344ab16ca886f5bfaf, type: 3}
       propertyPath: m_LocalScale.x

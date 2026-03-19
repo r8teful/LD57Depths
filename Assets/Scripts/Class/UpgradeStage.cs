@@ -73,11 +73,20 @@ public class UpgradeStage : IExecutable {
     [SerializeReference]
     public List<UpgradeEffect> effects = new List<UpgradeEffect>(); // The results the upgrade has when purchased 
   
+    [HideIf("overrideCost")]
     [Range(0.1f, 5f)]
     public float costMultiplier = 1.0f;
+    [HideIf("overrideCost")]
     public int costTier;
+    [HideIf("overrideCost")]
     public UpgradeTierSO upgradeItemPool;
     public UpgradeStageExtraDataSO extraData;
+    public bool overrideCost = false;
+    [ShowIf("overrideCost")]
+    public List<ItemQuantity> overrideItemQuantities = new List<ItemQuantity>();
+    public List<ItemQuantity> GetStageCost() {
+        return overrideItemQuantities;
+    }
 
     public void Execute(ExecutionContext context) {
         foreach (var effect in effects) {

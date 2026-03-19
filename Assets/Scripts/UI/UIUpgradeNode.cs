@@ -185,7 +185,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         }
     }
     public void Select(bool usingPointer) {
-        if (_visualData.State == UpgradeNodeState.Locked) return;
+        if (_visualData == null || _visualData.State == UpgradeNodeState.Locked) return;
         if (_treeParent.IsClosing) return;
         if (PlayerManager.Instance.UiManager.UpgradeScreen.PanAndZoom.IsDraggingOrZooming) return;
         PlaySelectAnim();
@@ -216,7 +216,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         PopupManager.Instance.OnEnter(this);
     }
     public void Deselect() {
-        if (_visualData.State == UpgradeNodeState.Locked) return;
+        if (_visualData == null || _visualData.State == UpgradeNodeState.Locked) return;
         PopupManager.Instance.OnExit(true);
     }
 
@@ -232,7 +232,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         Debug.Log("On Pointer up!");
     }
     private void OnUpgradeButtonClicked() {
-        if (_visualData.Node.stages.Count == 0) return; // Some nodes have any stages and it will give null
+        if (_visualData == null || _visualData.Node.stages.Count == 0) return; // Some nodes have any stages and it will give null
         if (!PopupManager.Instance.IsShowingPopup) return; 
         Debug.Log("pressed");
         _isPressed = true;
@@ -387,9 +387,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         // Stat data
         _visualData.UpdateForPopup();
         if (ShouldBeDemoLocked) {
-            return new PopupData(
-                title: LocalizationManager.Localize("U.Locked"),
-                description: LocalizationManager.Localize("U.Locked.D"), null);
+            LocalizationManager.TryLocalize("U.Locked", out string title);
+            LocalizationManager.TryLocalize("U.Locked.D", out string description);
+            return new PopupData(title,description,null);
         }
         Color c;
         if (_visualData.IsMaxLevel()) {

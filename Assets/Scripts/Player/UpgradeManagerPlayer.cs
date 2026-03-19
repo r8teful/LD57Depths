@@ -128,7 +128,9 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
         foreach (var effect in stage.effects) {
             effect.Execute(new(_player)); 
         }
-        state.CurrentStage++;
+        if(!node.InfinateStages)
+            state.CurrentStage++; // its that easy lol 
+        
         if(stage.costTier > _highestCostTierPurchased) {
             _highestCostTierPurchased = stage.costTier;
         }

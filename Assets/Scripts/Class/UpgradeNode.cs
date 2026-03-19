@@ -25,9 +25,13 @@ public class UpgradeNode {
     }
 
 
-    public void UpdateNodeCost(float value, List<ItemData> resourcePool) {
-        requiredItems = CalculateItemQuantities(Mathf.RoundToInt(value), resourcePool,
+    public void UpdateNodeCost(float cost, List<ItemData> resourcePool) {
+        requiredItems = CalculateItemQuantities(Mathf.RoundToInt(cost), resourcePool,
             new QuantityCalculationOptions { MaxContributionPercentage = 0.50f });
+    }
+    // For overriding the cost + resource pool way of doing it
+    public void UpdateNodeCost(List<ItemQuantity> items) {
+        requiredItems = items;
     }
 
     internal void UpdateNodeCost(UpgradeNodeSO node, UpgradeTreeDataSO tree) {
@@ -37,6 +41,11 @@ public class UpgradeNode {
             requiredItems.Clear();
             return; // final tier reached, no need to change costs
         } 
+        if(cost < 0) {
+            // Override
+            UpdateNodeCost(node.GetStage(CurrentStage).overrideItemQuantities);
+            return;
+        }
         UpdateNodeCost(cost, tier.Items);
     }
     public bool CanAfford(InventoryManager inv) {

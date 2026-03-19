@@ -10,30 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
-  m_Name: UpgradeAlchemyStone
+  m_Name: AlchemyStone
   m_EditorClassIdentifier: 
-  nodeKey: U.Alchemy.Stone+
+  nodeKey: U.Alchemy.Stone
   nodeStageNum: 0
-  uniqueID: 2001
+  uniqueID: 2000
   icon: {fileID: -1703950749, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: 9348d0b602d93da44aadd969b4c0a679, type: 2}
+  - {fileID: 11400000, guid: 92562e5faa4d6784d90e40403115e920, type: 2}
   UnlockedAtFirstPrereqStage: 0
-  InfinateStages: 0
+  InfinateStages: 1
   stages:
-  - effects: []
+  - effects:
+    - {fileID: 11400000, guid: 25d2e78c34d5f064eaf37d4124e35024, type: 2}
     costMultiplier: 1
-    costTier: 10
+    costTier: 0
     upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
     extraData: {fileID: 0}
-  - effects: []
-    costMultiplier: 1
-    costTier: 15
-    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
-    extraData: {fileID: 0}
-  - effects: []
-    costMultiplier: 1
-    costTier: 20
-    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
-    extraData: {fileID: 0}
+    overrideCost: 1
+    overrideItemQuantities:
+    - item: {fileID: 11400000, guid: 3b36fba2dbc731d4baeb1857b385fe75, type: 2}
+      quantity: 10

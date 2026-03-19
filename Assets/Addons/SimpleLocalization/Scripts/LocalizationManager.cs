@@ -108,38 +108,46 @@ namespace Assets.SimpleLocalization.Scripts
         /// <summary>
         /// Get localized value by localization key.
         /// </summary>
-        public static string Localize(string localizationKey)
-        {
-            if(localizationKey == null) {
-                return string.Empty;
-            }
+        public static bool TryLocalize(string localizationKey, out string localizedText) {
+            localizedText = string.Empty;
+
+            if (string.IsNullOrEmpty(localizationKey))
+                return false;
+
             if (Dictionary.Count == 0)
-            {
                 Read();
+
+            if (!Dictionary.TryGetValue(Language, out var languageTable))
+                throw new KeyNotFoundException("Language not found: " + Language);
+
+            if (languageTable.TryGetValue(localizationKey, out var translated) &&
+                !string.IsNullOrEmpty(translated)) {
+                localizedText = translated;
+                return true;
             }
 
-            if (!Dictionary.ContainsKey(Language)) throw new KeyNotFoundException("Language not found: " + Language);
+            Debug.LogWarning($"Translation not found: {localizationKey} ({Language}).");
 
-            var missed = !Dictionary[Language].ContainsKey(localizationKey) || Dictionary[Language][localizationKey] == "";
-
-            if (missed)
-            {
-                Debug.LogWarning($"Translation not found: {localizationKey} ({Language}).");
-
-                return Dictionary["English"].ContainsKey(localizationKey) ? Dictionary["English"][localizationKey] : localizationKey;
+            if (Dictionary.TryGetValue("English", out var englishTable) &&
+                englishTable.TryGetValue(localizationKey, out translated) &&
+                !string.IsNullOrEmpty(translated)) {
+                localizedText = translated;
+                return false;
             }
-
-            return Dictionary[Language][localizationKey];
+            return false;
         }
 
-	    /// <summary>
-	    /// Get localized value by localization key.
-	    /// </summary>
-		public static string Localize(string localizationKey, params object[] args)
+        /// <summary>
+        /// Get localized value by localization key.
+        /// </summary>
+        public static bool TryLocalize(string localizationKey, out string localizedText, params object[] args)
         {
-            var pattern = Localize(localizationKey);
-
-            return string.Format(pattern, args);
+            localizedText = string.Empty;
+            if (TryLocalize(localizationKey, out var text)) {
+                localizedText =  string.Format(text, args);
+                return true;
+            }
+            return false;
         }
 
         public static List<string> GetLines(string text)

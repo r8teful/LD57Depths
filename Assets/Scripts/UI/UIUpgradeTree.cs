@@ -184,7 +184,8 @@ public class UIUpgradeTree : MonoBehaviour {
             StartSimpleRipple(upgradeNode.ID, _adjacencyDict, _nodeMap);
             
             PlayerManager.Instance.UiManager.UpgradeScreen.PanAndZoom.RecalculateContentBounds();
-            _upgradeBoughtThisVisit++;
+            if(!upgradeNode.InfinateStages)
+               _upgradeBoughtThisVisit++;
         } 
     }
 

@@ -80,13 +80,17 @@ public class UpgradeNodeVisualData {
 
     private void OnLocalize() {
         if (_node.nodeStageNum > 0) {
-            Title = LocalizationManager.Localize(_node.nodeKey, _node.nodeStageNum);
+            LocalizationManager.TryLocalize(_node.nodeKey, out var title,_node.nodeStageNum);
+            Title = title;
         } else {
-            Title = LocalizationManager.Localize(_node.nodeKey); // Normal without a number at the end
+            LocalizationManager.TryLocalize(_node.nodeKey, out var title); // Normal without a number at the end
+            Title = title;
         }
         // Desc
         if (_currentUpgradeStage != null) {
-            Description = LocalizationManager.Localize(_node.nodeKey+".D");
+            if (LocalizationManager.TryLocalize(_node.nodeKey + ".D", out var desc)) {
+                Description = desc; 
+            }
         }
     }
 

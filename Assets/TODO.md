@@ -47,12 +47,11 @@ Coding:
 
 Add more content:
 
-* Compass \& compass+
 * Adrenaline \& adrenaline+
-* chain -> add sound \& sub upgrades 
+* chain -> add sound \& sub upgrades
+* Speed also changes acceleration
 * explosive crits
 * Alchemy
-* 
 
 
 

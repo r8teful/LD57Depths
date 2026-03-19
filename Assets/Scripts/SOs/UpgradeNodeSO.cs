@@ -20,12 +20,14 @@ public class UpgradeNodeSO : ScriptableObject, IIdentifiable {
     [Tooltip("ANY of these prerequisite nodes must be fully unlocked before this one can be started.")]
     public List<UpgradeNodeSO> prerequisiteNodesAny;
     public bool UnlockedAtFirstPrereqStage;
+    public bool InfinateStages = false; // This means, that the current stage is never advanced automatically, we have to manually set the stage depending on a condition
     public List<UpgradeStage> stages = new List<UpgradeStage>();
     public int MaxLevel => stages.Count;
 
     public ushort ID => uniqueID;
 
     public float GetStageCost(int stageNum, UpgradeTreeDataSO tree) {
+        if(InfinateStages) return -1; // ignore cost
         if(stages.Count <= stageNum) return 0f;
         var stage = stages[stageNum];
         int currentStageLevel = stage.costTier;

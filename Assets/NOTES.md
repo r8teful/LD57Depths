@@ -1363,7 +1363,7 @@ Escape closes a menu, Escape without a menu opens settings
     * ~~Descriptions~~
 * World
 
-  * Chest 
+  * Chest
   * Shrine
 * HUD
 
@@ -1397,4 +1397,36 @@ Escape closes a menu, Escape without a menu opens settings
     * Bluesky
     * Instagram
     * YouTube
+
+
+
+INPUTS
+
+Player movement
+
+Player aiming
+
+Player Interact
+
+Tool activation first
+
+Tool activation ability
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -26,7 +26,10 @@ public class UISubControlPanel : MonoBehaviour {
         SubmarineManager.Instance.OnSubMoved += SubMoved;
     }
     private void OnDestroy() {
-        SubmarineManager.Instance.OnSubMoved -= SubMoved;
+        if(SubmarineManager.Instance != null){
+            SubmarineManager.Instance.OnSubMoved -= SubMoved;
+
+        }
     }
     private void SubMoved(int currentMovedIndex) {
         // Update to new zone
