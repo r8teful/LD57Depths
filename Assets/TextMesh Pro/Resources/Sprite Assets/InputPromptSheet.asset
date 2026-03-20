@@ -169,7 +169,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 17
     m_Scale: 1
-    m_Name: InputPromptSheet_17
+    m_Name: KeyboardEsc
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 18
@@ -464,7 +464,7 @@ MonoBehaviour:
     m_Unicode: 65534
     m_GlyphIndex: 76
     m_Scale: 1
-    m_Name: InputPromptSheet_76
+    m_Name: MouseScroll
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 77
@@ -3902,15 +3902,15 @@ MonoBehaviour:
     m_Metrics:
       m_Width: 16
       m_Height: 16
-      m_HorizontalBearingX: -8
-      m_HorizontalBearingY: 8
+      m_HorizontalBearingX: 0
+      m_HorizontalBearingY: 12.69
       m_HorizontalAdvance: 16
     m_GlyphRect:
       m_X: 289
       m_Y: 392
       m_Width: 16
       m_Height: 16
-    m_Scale: 1
+    m_Scale: 1.43
     m_AtlasIndex: 0
     m_ClassDefinitionType: 0
     sprite: {fileID: -1692786778, guid: eefcc58057196684bba01a7e814ff70a, type: 3}
@@ -4846,15 +4846,15 @@ MonoBehaviour:
     m_Metrics:
       m_Width: 16
       m_Height: 16
-      m_HorizontalBearingX: -8
-      m_HorizontalBearingY: 8
+      m_HorizontalBearingX: 0
+      m_HorizontalBearingY: 12.1
       m_HorizontalAdvance: 16
     m_GlyphRect:
       m_X: 238
       m_Y: 358
       m_Width: 16
       m_Height: 16
-    m_Scale: 1
+    m_Scale: 1.4
     m_AtlasIndex: 0
     m_ClassDefinitionType: 0
     sprite: {fileID: -1853436014, guid: eefcc58057196684bba01a7e814ff70a, type: 3}

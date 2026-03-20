@@ -165,7 +165,9 @@ public static class MineHelper {
     }
 
     private static bool IsSolid(Tilemap map, Vector3Int cell) {
-        return true; // TODO 
+        var tile = map.GetTile<TileSO>(cell);
+        if (tile != null) return tile.IsSolid;
+        return false; 
     }
 
     /// <summary>

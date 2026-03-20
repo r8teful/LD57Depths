@@ -1418,27 +1418,19 @@ Open pause
 
 
 
-**Upgrade Menu** 
+**Menu:**
 
 Pan
 
 Zoom
 
-Purchase node
+Purchase node ( click )
 
 Navigate nodes
 
 Close menu
 
-
-
-**Menu:**
-
-Navigate buttons
-
-Close Pause
-
-Button Select
+InteractClose(Close menu but same bind as interact button)
 
 
 
@@ -1446,11 +1438,37 @@ Button Select
 
 
 
+Move wil have to be W A S D - > each separate 
+
+KeyboardT
+
+KeyboardSpace
+
+GamepadRS
+
+
+
+So you basically get all through action.GetBindingDisplayString. This returns a deviceLayoutName and a controlPath
+
+This will be Keyboard, GamePad, or DualShockGamepad. controlPath will be buttonSouth, rightTrigger, w, etc
+
+
+
+We use GetPromptTag("Interact") 
 
 
 
 
 
+Holy shit I simply just want: "press \[Interact] to do this"
+
+to insert an icon at that positoin
+
+
+
+Just one call InputPromtHandler.HandleText(myString)
+
+turnts woudl simply return the new string with the icon
 
 
 

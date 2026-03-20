@@ -458,6 +458,24 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "ZoomIn",
+                    "type": "Button",
+                    "id": "d16f15a5-950b-4f5a-acde-41ac65cd68d9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ZoomOut",
+                    "type": "Button",
+                    "id": "a04c256e-a755-48aa-9d00-97e439ecbe80",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "PanHold",
                     "type": "Button",
                     "id": "e13f739e-0018-41da-961f-5f8f58136230",
@@ -524,6 +542,15 @@
                     "name": "ConsoleSuggest",
                     "type": "Button",
                     "id": "e3c56d32-cc5b-470f-8b25-bfa6ff40b3b9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "InteractExit",
+                    "type": "Button",
+                    "id": "b35edb64-c9f1-480b-b992-d57073473def",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -1001,6 +1028,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "ConsoleSuggest",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "012dc75f-fb35-4583-98e6-38253556805d",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InteractExit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d50e8722-b57a-4628-9d46-bd142f9472fa",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ZoomIn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "53fce1c8-156a-49f6-b8ff-7b77a972850c",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ZoomOut",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

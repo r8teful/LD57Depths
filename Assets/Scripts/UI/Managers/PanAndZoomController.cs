@@ -23,12 +23,12 @@ public class PanAndZoomController : MonoBehaviour {
 
     [SerializeField] private float boundsPadding = 150f;   
 
-    [SerializeField] private bool isController = false;
 
 
     private InputManager _inputManager;          
     private UIUpgradeTree _upgradeTree;          
 
+    private bool _isController = false;
     private bool _isDragging;
     private bool _isZooming;
     
@@ -53,18 +53,28 @@ public class PanAndZoomController : MonoBehaviour {
         _targetPosition = contentRect.anchoredPosition;
         _initialized = true;
         RecalculateContentBounds();
+        InputManager.OnDeviceChanged += DeviceChange;
+    }
+
+    private void DeviceChange(InputManager.DeviceType device) {
+        if(device == InputManager.DeviceType.Gamepad) {
+            _isController = true;
+            _isDragging = false; // stop dragging
+        } else if(device == InputManager.DeviceType.KeyboardMouse) {
+            _isController = false;
+        }
     }
 
     private void Update() {
         if (!_initialized) return;
         HandleZoom();
 
-        if (!isController) {
-            HandleDrag();
+        if (!_isController) {
+            HandleDragMouseKeyboard();
+        } else {
+            HandleDragController();
         }
-
         ApplySmoothTransform();
-
         //ApplyTransform();
     }
 
@@ -72,7 +82,7 @@ public class PanAndZoomController : MonoBehaviour {
 
     /// <summary>Called by InputManager when a drag/pan gesture begins.</summary>
     internal void OnPanStart() {
-        if (isController) return;
+        if (_isController) return;
 
         var input = _inputManager.GetAimScreenInput();
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
@@ -91,7 +101,7 @@ public class PanAndZoomController : MonoBehaviour {
     }
 
 
-    private void HandleDrag() {
+    private void HandleDragMouseKeyboard() {
         if (!_isDragging) return;
 
         var input = _inputManager.GetAimScreenInput();
@@ -109,6 +119,12 @@ public class PanAndZoomController : MonoBehaviour {
 
         // Immediately clamp so the smoothed position never chases an
         // out-of-bounds target.
+        _targetPosition = ClampedPosition(_targetPosition, _targetScale);
+    }
+
+    private void HandleDragController() {
+        Vector2 panInput = _inputManager.GetPanVector();
+        _targetPosition += panInput;
         _targetPosition = ClampedPosition(_targetPosition, _targetScale);
     }
 
@@ -318,11 +334,6 @@ public class PanAndZoomController : MonoBehaviour {
 
 
 
-    /// <summary>Switches between controller and pointer/touch input modes at runtime.</summary>
-    public void SetControllerMode(bool controller) {
-        isController = controller;
-        if (isController) _isDragging = false;
-    }
 
     /// <summary>Snaps content immediately to the clamped bounds (no smoothing).</summary>
     public void SnapToBounds() {

@@ -1,4 +1,5 @@
 using Assets.SimpleLocalization.Scripts;
+using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 
@@ -13,12 +14,12 @@ public class LocalizedTextMeshPro : MonoBehaviour {
     public void OnDisable() {
         LocalizationManager.OnLocalizationChanged -= Localize;
     }
-
+    [Button]
     private void Localize() {
-        if (LocalizationKey == string.Empty) return;
-
+        if (string.IsNullOrEmpty(LocalizationKey)) return;
         LocalizationManager.TryLocalize(LocalizationKey, out var s);
-        string text = s;
+        var sFormated = InputPromptHandler.Instance.FormatWithIcons(s);
+        string text = sFormated;
         if(text == "") {
             Debug.LogWarning("Something went wrong trying to localize key " + LocalizationKey);
             return;

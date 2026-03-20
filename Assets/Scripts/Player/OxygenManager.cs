@@ -18,7 +18,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     private LowOxygenVisual _lowoxygenVisualInstance;
     private bool _infOx;
 
-    public static event Action<float, float> OnOxygenChanged;
+    public static event Action<float, float> OnOxygenChanged; // current, max
     public static event Action OnFlashStart;
     public static event Action OnFlashStop;
     public static event Action OnPassOut;

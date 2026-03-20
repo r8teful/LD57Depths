@@ -28,7 +28,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
 
     // UI 
     private InputAction _uiNavigateAction;    // D-Pad / Arrow Keys
-    private InputAction _uiPanAction;
+    private InputAction _uiPanMoveAction;
     private InputAction _uiSubmitAction;   // e.g., Left Mouse / Gamepad A
     private InputAction _uiCancelAction;
     private InputAction _uiZoomAction;
@@ -36,6 +36,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     private InputAction _uiPointAction;       // Mouse position
     private InputAction _uiTabLeft;
     private InputAction _uiTabRight;
+    private InputAction _uiInteractExit;
 
 
     private UIManagerInventory _inventoryUIManager;
@@ -59,7 +60,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     private PlayerInteractionContext _currentContext;
     private bool _primaryInputToggle;
     private Vector2 _uiNavigationVector;
-    private Vector2 _mousePos;
+    private Vector2 _panVector;
 
     public int InitializationOrder => 1001; // after ui 
 
@@ -98,7 +99,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
 
         _uiActionMap = _playerInput.actions.FindActionMap("UI");
         _uiNavigateAction = _playerInput.actions.FindAction("UI/Navigate",true);
-        _uiPanAction = _playerInput.actions.FindAction("UI/Pan",true); // Start Moving upgrade view
+        _uiPanMoveAction = _playerInput.actions.FindAction("UI/Pan",true); // Start Moving upgrade view
         _uiSubmitAction = _playerInput.actions.FindAction("UI/Submit",true); // LMB, X
         _uiCancelAction = _playerInput.actions.FindAction("UI/Cancel",true);
         _uiZoomAction = _playerInput.actions.FindAction("UI/Zoom",true); // Zooming upgrade view
@@ -106,6 +107,13 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         _uiPointAction = _playerInput.actions.FindAction("UI/Point",true);
         _uiTabLeft = _playerInput.actions.FindAction("UI/TabLeft",true); 
         _uiTabRight = _playerInput.actions.FindAction("UI/TabRight",true);
+        _uiInteractExit = _playerInput.actions.FindAction("UI/InteractExit", true); // Same as E 
+        Debug.Log("_playerMoveAction: " + _playerMoveAction.GetBindingDisplayString(InputBinding.DisplayStringOptions.DontOmitDevice));
+        Debug.Log("_playerAimAction : " + _playerAimAction .GetBindingDisplayString(InputBinding.DisplayStringOptions.DontOmitDevice));
+        Debug.Log("_playerShootAction : " + _playerShootAction .GetBindingDisplayString(InputBinding.DisplayStringOptions.DontOmitDevice));
+        Debug.Log("_playerInteractAction : " + _playerInteractAction .GetBindingDisplayString(InputBinding.DisplayStringOptions.DontOmitDevice));
+        Debug.Log("_playerAbilityAction : " + _playerAbilityAction .GetBindingDisplayString(InputBinding.DisplayStringOptions.DontOmitDevice));
+        Debug.Log("_playerPauseAction : " + _playerPauseAction.GetBindingDisplayString(InputBinding.DisplayStringOptions.DontOmitDevice));
     }
 
 
@@ -122,8 +130,10 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         _playerAimAction.performed += OnAim;
         _playerAimAction.canceled += OnAim;
         _playerPauseAction.performed += OnPause;
-        _uiPanAction.performed += OnPanStart;
-        _uiPanAction.canceled += OnPanStop;
+        _uiPanHoldAction.performed += OnPanStart;
+        _uiPanHoldAction.canceled += OnPanStop;
+        _uiPanMoveAction.performed += OnPanContol;
+        _uiPanMoveAction.canceled += OnPanContol;
         _uiPointAction.performed += OnMousePosChange;
         _uiZoomAction.performed += OnZoom;
         _uiZoomAction.canceled += OnZoom;
@@ -148,8 +158,8 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         _playerPauseAction.performed -= OnPause;
         _playerAimAction.performed -= OnAim;
         _playerAimAction.canceled -= OnAim;
-        _uiPanAction.performed -= OnPanStart;
-        _uiPanAction.canceled -= OnPanStop;
+        _uiPanMoveAction.performed -= OnPanStart;
+        _uiPanMoveAction.canceled -= OnPanStop;
         _uiPointAction.performed -= OnMousePosChange;
         _uiZoomAction.performed -= OnZoom;
         _uiZoomAction.canceled -= OnZoom;
@@ -192,7 +202,16 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     private void OnPanStart(InputAction.CallbackContext obj) {
         //_UIManager.UpgradeScreen.PanAndZoom.OnPanStart();
         _UIManager.UpgradeScreen.PanAndZoom.OnPanStart();
-     }
+    }
+
+    // Movement vector for controller panning
+    private void OnPanContol(InputAction.CallbackContext context) {
+        if (context.canceled) {
+            _panVector = Vector2.zero;
+        }else {
+            _panVector = context.ReadValue<Vector2>();
+        }
+    }
 
     private void OnZoom(InputAction.CallbackContext context) {
        // _UIManager.UpgradeScreen.PanAndZoom.OnZoom(context.ReadValue<Vector2>().y);
@@ -200,7 +219,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     }
 
     private void OnMousePosChange(InputAction.CallbackContext context) {
-        _mousePos = context.ReadValue<Vector2>();
+        rawAimInput = context.ReadValue<Vector2>(); // rawAimInput also used for player, we could make a different variable here but eh
     }
     private void OnUINavigation(InputAction.CallbackContext context) {
         _uiNavigationVector = context.ReadValue<Vector2>();
@@ -336,6 +355,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
 
     public void OnAim(InputAction.CallbackContext context) {
         rawAimInput = context.ReadValue<Vector2>();
+        //Debug.Log(rawAimInput);
     }
 
 
@@ -345,7 +365,10 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         return _currentContext == PlayerInteractionContext.UsingToolOnWorld || _currentContext == PlayerInteractionContext.WorldInteractable
             ? movementInput : Vector2.zero;
     }
-  
+    internal Vector2 GetPanVector() {
+        return _panVector;
+    }
+
     // Get aim input, processed based on control scheme
     public Vector2 GetAimWorldInput(Transform reference = null) {
         var cam = Camera.main;

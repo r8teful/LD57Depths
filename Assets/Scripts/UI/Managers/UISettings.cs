@@ -14,6 +14,8 @@ public class UISettings : MonoBehaviour {
     [SerializeField] private Button _buttonBack;
 
     [SerializeField] private GameObject _settingContainer;
+    [SerializeField] private GameObject _inputKeyboardBinds;
+    [SerializeField] private GameObject _inputControllerBinds;
     
     // Actual setting stuff
     [SerializeField] private Toggle _debugMenu;
@@ -29,8 +31,27 @@ public class UISettings : MonoBehaviour {
         _screenModeDropdown.onValueChanged.AddListener(OnScreenModeSet);
         _debugMenu.onValueChanged.AddListener(OnDebugMenuChange);
         _backgroundFancy.onValueChanged.AddListener(OnBackgroundFancyChanage);
+        InputManager.OnDeviceChanged += OnDeviceChange;
+    }
+    private void OnDestroy() {
+        _buttonBack.onClick.RemoveListener(OnBackButtonClicked);
+        _buttonApplyVideo.onClick.RemoveListener(OnApplyVideoClick);
+        _screenModeDropdown.onValueChanged.RemoveListener(OnScreenModeSet);
+        _debugMenu.onValueChanged.RemoveListener(OnDebugMenuChange);
+        _backgroundFancy.onValueChanged.RemoveListener(OnBackgroundFancyChanage);
+        InputManager.OnDeviceChanged -= OnDeviceChange;
     }
 
+    private void OnDeviceChange(InputManager.DeviceType newDevice) {
+        if (newDevice == InputManager.DeviceType.KeyboardMouse) {
+            _inputKeyboardBinds.SetActive(true);
+            _inputControllerBinds.SetActive(false);
+        } else if(newDevice == InputManager.DeviceType.Gamepad) {
+            _inputKeyboardBinds.SetActive(false );
+            _inputControllerBinds.SetActive(true);
+
+        }
+    }
 
     private void Start() {
         OnDebugMenuChange(false);

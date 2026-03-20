@@ -40,7 +40,7 @@ public class LazerChainSpawner : MonoBehaviour, IInitializableAbility, IValueMod
         var steps = 7;
         var stepLength =1 ;
         float deviationAngle = 60f;
-        var tiles = MineHelper.GetLightningBolt(WorldManager.Instance.MainTileMap, dmg.tile, dmg.hitDirection, steps, stepLength, deviationAngle);
+        var tiles = MineHelper.GetLightningBolt(WorldManager.Instance.MainTileMap, dmg.tile, dmg.hitDirection, steps, stepLength, deviationAngle,checkSolid:true);
         _damageContainer.damage = 10;
         foreach (var tile in tiles) {
             _damageContainer.tile = tile.CellPos;
