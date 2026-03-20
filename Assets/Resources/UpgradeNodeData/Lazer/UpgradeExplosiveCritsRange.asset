@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeKey: U.ExplosiveCrits.Range
   nodeStageNum: 0
-  uniqueID: 44
+  uniqueID: 43
   icon: {fileID: 1228492800, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 7df2eb582e9fdb64aa47295b0b9300cc, type: 2}
   UnlockedAtFirstPrereqStage: 1
+  InfinateStages: 0
   stages:
   - effects:
     - {fileID: 11400000, guid: b5da7ee4a9127ad418dcfc67f7b1fd88, type: 2}
@@ -27,9 +28,13 @@ MonoBehaviour:
     costTier: 4
     upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}
     extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
   - effects:
     - {fileID: 11400000, guid: 8ef7330929f5678419df07bcb1abd669, type: 2}
     costMultiplier: 1
     costTier: 7
     upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}
     extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
