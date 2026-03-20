@@ -1402,6 +1402,8 @@ Escape closes a menu, Escape without a menu opens settings
 
 INPUTS
 
+**Player In world**
+
 Player movement
 
 Player aiming
@@ -1411,6 +1413,32 @@ Player Interact
 Tool activation first
 
 Tool activation ability
+
+Open pause
+
+
+
+**Upgrade Menu** 
+
+Pan
+
+Zoom
+
+Purchase node
+
+Navigate nodes
+
+Close menu
+
+
+
+**Menu:**
+
+Navigate buttons
+
+Close Pause
+
+Button Select
 
 
 

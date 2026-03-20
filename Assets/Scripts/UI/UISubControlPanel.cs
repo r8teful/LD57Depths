@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class UISubControlPanel : MonoBehaviour {
     private int _currentShownIndex;
     private int _currentSubIndex;
-    public bool IsOpen { get; private set; }
+    public bool IsOpen => _panelMain.activeSelf;
     [SerializeField] private GameObject _panelMain;
     public Transform PanelMain => _panelMain.transform;
 
@@ -51,15 +51,7 @@ public class UISubControlPanel : MonoBehaviour {
                 _panelMain.SetActive(false);
             });
     }
-    internal void ControlPanelToggle() {
-        if (_panelMain.activeSelf) {
-            // hide
-            ControlPanelHide();
-        } else {
-            ControlPanelShow();
-        }
-    }
-
+    
     private void OnEnable() {
         // Start showing our current zone
         ChangeSubPanel(SubmarineManager.Instance.CurrentZoneIndex);

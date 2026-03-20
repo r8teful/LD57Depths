@@ -2,7 +2,6 @@
 using Sirenix.OdinInspector;
 using System;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 public enum PlayerInteractionContext {
@@ -16,47 +15,51 @@ public enum PlayerInteractionContext {
 // This script sits on the player client
 public class InputManager : MonoBehaviour, IPlayerModule {
     private PlayerInput _playerInput;
-    private InputAction _interactAction;
-    private InputAction _playerShootAction;
+    private InputActionMap _playerActionMap;
+    private InputActionMap _uiActionMap;
+    // Player
     private InputAction _playerMoveAction;
-    private InputAction _playerAbilityAction;
     private InputAction _playerAimAction;
-    private InputAction _playerDashAction;
-    private InputAction _useItemAction;
-    private InputAction _hotbarSelection;
+    private InputAction _playerShootAction;
+    private InputAction _playerInteractAction;
+    private InputAction _playerAbilityAction;
+    private InputAction _playerPauseAction;
+
+
+    // UI 
+    private InputAction _uiNavigateAction;    // D-Pad / Arrow Keys
+    private InputAction _uiPanAction;
+    private InputAction _uiSubmitAction;   // e.g., Left Mouse / Gamepad A
+    private InputAction _uiCancelAction;
+    private InputAction _uiZoomAction;
+    private InputAction _uiPanHoldAction; 
+    private InputAction _uiPointAction;       // Mouse position
+    private InputAction _uiTabLeft;
+    private InputAction _uiTabRight;
+
+
     private UIManagerInventory _inventoryUIManager;
     private UIManager _UIManager;
     private PlayerManager _player;
     private PlayerAbilities _playerAbilities;
     private InputDevice lastUsedDevice;
-    // UI
-    private InputAction _UItoggleInventoryAction; // Assign your toggle input action asset
-    private InputAction _uiInteractAction;   // e.g., Left Mouse / Gamepad A
-    private InputAction _uiAltInteractAction; // e.g., Right Mouse / Gamepad X
-    private InputAction _uiNavigateAction;    // D-Pad / Arrow Keys
-    private InputAction _uiPointAction;       // Mouse position
-    private InputAction _cancelAction;       // Escape / Gamepad Start (to cancel holding)
-    private InputAction _uiTabLeft;
-    private InputAction _uiTabRight;
 
-    private InputAction _uiPan;
-    private InputAction _uiZoom;
-    private InputAction _uiEscape;
-    
-    
+    public enum DeviceType { KeyboardMouse, Gamepad }
+    public static event Action<DeviceType> OnDeviceChanged;
+    public static DeviceType CurrentDevice { get; private set; } = DeviceType.KeyboardMouse;
+
     private LayerMask _interactableLayerMask;
     private PlayerMovement _playerMovement;
     private float _interactionRadius = 2f;
-    private bool _dashPefromed;
     private Vector2 movementInput;   // For character movement
     private Vector2 rawAimInput;     // Raw input for aiming (mouse position or joystick). Mouse pos is in screen pixels. 0,0 bottom left, screenrez top right
     private IInteractable _currentInteractable;
     private IInteractable _previousInteractable;
     [ShowInInspector]
     private PlayerInteractionContext _currentContext;
-    private Vector2 _mousePos;
     private bool _primaryInputToggle;
     private Vector2 _uiNavigationVector;
+    private Vector2 _mousePos;
 
     public int InitializationOrder => 1001; // after ui 
 
@@ -73,6 +76,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
                                  (1 << LayerMask.NameToLayer("InteractablesExterior")); // Don't ask me why, its in the unity documentation
         SetupInputs();
         SubscribeToEvents();
+
     }
     private void SetupInputs() {
         _playerInput = GetComponent<PlayerInput>();
@@ -82,73 +86,102 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         if( _playerInput.actions == null) {
             Debug.LogError("Actions not found on player!!");
         }
-        _interactAction = _playerInput.actions.FindAction("Interact",true); // E
-        _playerShootAction = _playerInput.actions.FindAction("Shoot",true);
-        _playerMoveAction = _playerInput.actions.FindAction("Move",true);
-        _playerAbilityAction = _playerInput.actions.FindAction("Ability",true);
-        _playerAimAction = _playerInput.actions.FindAction("Aim",true);
-        //_playerSwitchAction = _playerInput.actions.FindAction("SwitchTool",true);
-        _playerDashAction = _playerInput.actions.FindAction("Dash",true);
-        _cancelAction = _playerInput.actions.FindAction("Cancel",true);
-        _UItoggleInventoryAction = _playerInput.actions.FindAction("UI_Toggle",true); // I
-        _uiInteractAction = _playerInput.actions.FindAction("UI_Interact",true); // LMB
-        _uiAltInteractAction = _playerInput.actions.FindAction("UI_AltInteract",true); // RMB
-        _uiNavigateAction = _playerInput.actions.FindAction("UI_Navigate",true);
-        _uiPointAction = _playerInput.actions.FindAction("UI_Point",true);
-        _uiTabLeft = _playerInput.actions.FindAction("UI_TabLeft",true); // Opening containers
-        _uiTabRight = _playerInput.actions.FindAction("UI_TabRight",true); // Opening containers
 
-        _uiPan = _playerInput.actions.FindAction("UI_PanAction",true); // Start Moving upgrade view
-        _uiZoom = _playerInput.actions.FindAction("UI_Scroll",true); // Zooming upgrade view
-        _uiEscape = _playerInput.actions.FindAction("UI_Pause",true); 
-        _hotbarSelection = _playerInput.actions.FindAction("HotbarSelect",true);
-        _useItemAction = _playerInput.actions.FindAction("Shoot",true);
-        
+        _playerActionMap = _playerInput.actions.FindActionMap("Player");
+        _playerMoveAction = _playerInput.actions.FindAction("Player/Move",true);
+        _playerAimAction = _playerInput.actions.FindAction("Player/Aim",true);
+        _playerShootAction = _playerInput.actions.FindAction("Player/Shoot",true);
+        _playerInteractAction = _playerInput.actions.FindAction("Player/Interact",true); // E
+        _playerAbilityAction = _playerInput.actions.FindAction("Player/Ability",true);
+        _playerPauseAction = _playerInput.actions.FindAction("Player/Pause",true);
+
+
+        _uiActionMap = _playerInput.actions.FindActionMap("UI");
+        _uiNavigateAction = _playerInput.actions.FindAction("UI/Navigate",true);
+        _uiPanAction = _playerInput.actions.FindAction("UI/Pan",true); // Start Moving upgrade view
+        _uiSubmitAction = _playerInput.actions.FindAction("UI/Submit",true); // LMB, X
+        _uiCancelAction = _playerInput.actions.FindAction("UI/Cancel",true);
+        _uiZoomAction = _playerInput.actions.FindAction("UI/Zoom",true); // Zooming upgrade view
+        _uiPanHoldAction = _playerInput.actions.FindAction("UI/PanHold", true); 
+        _uiPointAction = _playerInput.actions.FindAction("UI/Point",true);
+        _uiTabLeft = _playerInput.actions.FindAction("UI/TabLeft",true); 
+        _uiTabRight = _playerInput.actions.FindAction("UI/TabRight",true);
     }
 
 
-    void OnDisable() { if(_playerInput !=null) UnsubscribeFromEvents(); }
+    void OnDisable() { 
+        if(_playerInput !=null) UnsubscribeFromEvents(); 
+    }
     private void SubscribeToEvents() {
-        _UItoggleInventoryAction.performed += UIOnToggleInventory;
-        _cancelAction.performed += UIHandleCloseAction;
-        _cancelAction.performed += HandleCancelAction;
+        _uiCancelAction.performed += OnCancel;
         _playerShootAction.performed += OnPrimaryInteraction;
         _playerShootAction.canceled += OnPrimaryInteraction;
-        _uiInteractAction.performed += OnPrimaryUIInteraction;
-        _playerDashAction.performed += OnDashPerformed;
-        _playerDashAction.canceled += OnDashPerformed;
+        _uiSubmitAction.performed += OnPrimaryUIInteraction;
         _playerMoveAction.performed += OnMove;
         _playerMoveAction.canceled += OnMove;
         _playerAimAction.performed += OnAim;
         _playerAimAction.canceled += OnAim;
-        _uiPan.performed += OnPanStart;
-        _uiPan.canceled += OnPanStop;
+        _playerPauseAction.performed += OnPause;
+        _uiPanAction.performed += OnPanStart;
+        _uiPanAction.canceled += OnPanStop;
         _uiPointAction.performed += OnMousePosChange;
-        _uiZoom.performed += OnZoom;
-        _uiZoom.canceled += OnZoom;
-        _uiEscape.performed += OnEscape;
+        _uiZoomAction.performed += OnZoom;
+        _uiZoomAction.canceled += OnZoom;
         _uiNavigateAction.performed += OnUINavigation;
         _uiNavigateAction.canceled += OnUINavigation;
         _playerInput.onControlsChanged += OnControlsChanged;
 
         _playerAbilityAction.performed+= OnAbilityPerformed;
+
+        InputSystem.onActionChange += HandleActionChange;
+        UIManager.OnUIOpenChange += HandleActionMaps;
     }
 
-    private void OnEscape(InputAction.CallbackContext context) {
+
+    private void UnsubscribeFromEvents() {
+        _uiCancelAction.performed -= OnCancel;
+        _playerShootAction.performed -= OnPrimaryInteraction;
+        _playerShootAction.canceled -= OnPrimaryInteraction;
+        _uiSubmitAction.performed -= OnPrimaryUIInteraction;
+        _playerMoveAction.performed -= OnMove;
+        _playerMoveAction.canceled -= OnMove;
+        _playerPauseAction.performed -= OnPause;
+        _playerAimAction.performed -= OnAim;
+        _playerAimAction.canceled -= OnAim;
+        _uiPanAction.performed -= OnPanStart;
+        _uiPanAction.canceled -= OnPanStop;
+        _uiPointAction.performed -= OnMousePosChange;
+        _uiZoomAction.performed -= OnZoom;
+        _uiZoomAction.canceled -= OnZoom;
+        _uiNavigateAction.performed -= OnUINavigation;
+        _uiNavigateAction.canceled -= OnUINavigation;
+        _playerInput.onControlsChanged -= OnControlsChanged;
+        _playerAbilityAction.performed -= OnAbilityPerformed;
+
+        InputSystem.onActionChange -= HandleActionChange;
+    }
+    private void HandleActionMaps(bool isUIOpen) {
+        if (isUIOpen) {
+            _uiActionMap.Enable();
+            _playerActionMap.Disable();
+        } else {
+            _uiActionMap.Disable();
+            _playerActionMap.Enable();
+        }
+    }
+    private void OnPause(InputAction.CallbackContext context) {
+        if (_UIManager.IsAnyUIOpen()) {
+            return; // Don't do anything if UI is open
+        }
+        _UIManager.Pause();
+    }
+
+    private void OnCancel(InputAction.CallbackContext context) {
         // If any ui open, close it 
-        
         if (_UIManager.TryCloseAnyOpenUI()) {
             return;
         }
         ClearInteractable();
-        // Nothing to close open pause
-        _UIManager.PausePanelUIToggle();
-    }
-
-    private void UIHandleCloseAction(InputAction.CallbackContext context) {
-        // E.g., Escape key or Gamepad B/Start 
-        //_inventoryUIManager.HandleCloseAction(context); // For UI related
-        //ClearInteractable(); // Also clear interactable
     }
 
     private void OnPanStop(InputAction.CallbackContext context) {
@@ -175,32 +208,27 @@ public class InputManager : MonoBehaviour, IPlayerModule {
             _uiNavigationVector = Vector2.zero;
         }
     }
+    private void HandleActionChange(object obj, InputActionChange change) {
+        // We only care about actions that were actually performed
+        if (change != InputActionChange.ActionPerformed)
+            return;
 
+        if (obj is not InputAction action)
+            return;
 
-    private void UnsubscribeFromEvents() {
-        _UItoggleInventoryAction.performed -= UIOnToggleInventory;
-        _cancelAction.performed -= UIHandleCloseAction;
-        _cancelAction.performed -= HandleCancelAction;
-        _playerShootAction.performed -= OnPrimaryInteraction;
-        _playerShootAction.canceled -= OnPrimaryInteraction;
-        _uiInteractAction.performed -= OnPrimaryUIInteraction;
-        _playerDashAction.performed -= OnDashPerformed;
-        _playerDashAction.canceled -= OnDashPerformed;
-        _playerMoveAction.performed -= OnMove;
-        _playerMoveAction.canceled -= OnMove;
-        _playerAimAction.performed -= OnAim;
-        _playerAimAction.canceled -= OnAim;
-        _uiPan.performed -= OnPanStart;
-        _uiPan.canceled -= OnPanStop;
-        _uiPointAction.performed -= OnMousePosChange;
-        _uiZoom.performed -= OnZoom;
-        _uiZoom.canceled -= OnZoom;
-        _uiEscape.performed -= OnEscape;
-        _uiNavigateAction.performed -= OnUINavigation;
-        _uiNavigateAction.canceled -= OnUINavigation;
-        _playerInput.onControlsChanged -= OnControlsChanged;
-        _playerAbilityAction.performed -= OnAbilityPerformed;
+        var device = action.activeControl?.device;
+        if (device == null)
+            return;
+
+        DeviceType detected = device is Gamepad ? DeviceType.Gamepad : DeviceType.KeyboardMouse;
+
+        if (detected != CurrentDevice) {
+            CurrentDevice = detected;
+            OnDeviceChanged?.Invoke(CurrentDevice);
+        }
     }
+
+
     private void Update() {
         if (_inventoryUIManager == null) return;
         UpdateInteractionContext();
@@ -209,7 +237,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         // Handle interaction input
         if (_currentContext == PlayerInteractionContext.Console) 
             return;
-        if (_currentInteractable != null && _interactAction.WasPerformedThisFrame()) {
+        if (_currentInteractable != null && _playerInteractAction.WasPerformedThisFrame()) {
             _currentInteractable.Interact(_player);
         }
     }
@@ -260,7 +288,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
             if (_currentInteractable != null) {
                 // Show prompt on new one
                 // You can get the binding string here as you did before
-                string key = _interactAction.GetBindingDisplayString(InputBinding.DisplayStringOptions.DontOmitDevice);
+                string key = _playerInteractAction.GetBindingDisplayString(InputBinding.DisplayStringOptions.DontOmitDevice);
                 _currentInteractable.SetInteractable(true, App.ResourceSystem.GetSprite(FormatBindingDisplayString(key)));
             }
         }
@@ -300,16 +328,16 @@ public class InputManager : MonoBehaviour, IPlayerModule {
             _previousInteractable = null;
         }
     }
-    // Called by Input System for movement input
+    
     public void OnMove(InputAction.CallbackContext context) {
         movementInput = context.ReadValue<Vector2>();
     }
 
-    // Called by Input System for aim input
+
     public void OnAim(InputAction.CallbackContext context) {
         rawAimInput = context.ReadValue<Vector2>();
     }
-    public bool GetDashInput() => _dashPefromed;
+
 
     // Get movement input (e.g., WASD, joystick)
     public Vector2 GetMovementInput() {
@@ -361,9 +389,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
             return rawAimInput; // Also raw?!
         }
     }
-    //public Vector2 asdas() {
-    //    RectTransformUtility.ScreenPointToLocalPointInRectangle(viewport, screenPos, uiCam, out Vector2 pivotInViewportLocal);
-    //}
+
     public Vector2 GetPointerPivotInViewport(RectTransform viewport) {
         //Vector2 screenPos = Pointer.current.position.ReadValue();
          Vector2 screenPos = rawAimInput;
@@ -400,16 +426,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     //        _inventoryUIManager.ItemSelectionManager.HandleUseInput(context);
     //    }
     //}
-    private void OnDashPerformed(InputAction.CallbackContext context) {
-        if (context.performed) {
-            _playerAbilities.UseActive(ResourceSystem.PlayerDashID);
-
-            _dashPefromed = true;
-        } else if(context.canceled) {
-            _dashPefromed = false;
-        }
-    }
-
+ 
     private void OnAbilityPerformed(InputAction.CallbackContext context) {
         if (!context.performed) return;
 
@@ -437,22 +454,14 @@ public class InputManager : MonoBehaviour, IPlayerModule {
 
     public void OnPrimaryInteraction(InputAction.CallbackContext context) {
         lastUsedDevice = context.control.device;
-        // Todo some kind of checks to see if this is allowed..
         // This is Left Mouse Click / Gamepad A
-        // Switch on the context to decide what Left Click does
         if(_currentContext == PlayerInteractionContext.UsingToolOnWorld || _currentContext == PlayerInteractionContext.WorldInteractable) {
             if (context.performed) {
                 _primaryInputToggle = true;
-                //_toolController.ToolStart(this);
             } else if (context.canceled) {
                 _primaryInputToggle = false;
-                //_toolController.ToolStop();
             }
         } 
-        // old building code
-        //        if (context.performed) {
-        //            BuildingManager.Instance.UserPlacedClicked(_clientObject);
-        //        }
         
     }
     private void OnPrimaryUIInteraction(InputAction.CallbackContext context) {
@@ -462,17 +471,6 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     }
 
 
-    #region INVENTORY
-
-    private void UIOnToggleInventory(InputAction.CallbackContext context) {
-        if (Console.IsConsoleOpen())
-            return;
-       // _inventoryUIManager.HandleToggleInventory();
-    }
-
-    private void HandleCancelAction(InputAction.CallbackContext context) {
-    }
-    #endregion
     public static string FormatBindingDisplayString(string input) {
         if (string.IsNullOrWhiteSpace(input))
             return input;

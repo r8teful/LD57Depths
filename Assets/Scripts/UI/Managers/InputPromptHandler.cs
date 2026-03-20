@@ -33,11 +33,11 @@ public class InputPromptHandler : PersistentSingleton<InputPromptHandler> {
 
 
     private void OnEnable() {
-        InputDeviceDetector.OnDeviceChanged += HandleDeviceChanged;
+        InputManager.OnDeviceChanged += HandleDeviceChanged;
     }
 
     private void OnDisable() {
-        InputDeviceDetector.OnDeviceChanged -= HandleDeviceChanged;
+        InputManager.OnDeviceChanged -= HandleDeviceChanged;
     }
 
 
@@ -68,8 +68,7 @@ public class InputPromptHandler : PersistentSingleton<InputPromptHandler> {
         OnBindingsChanged?.Invoke();
     }
 
-    // ── Private ───────────────────────────────────────────────────────────────
-    private void HandleDeviceChanged(InputDeviceDetector.DeviceType _) {
+    private void HandleDeviceChanged(InputManager.DeviceType _) {
         // Device switched → bindings may display differently → refresh all prompts
         OnBindingsChanged?.Invoke();
     }
@@ -79,7 +78,7 @@ public class InputPromptHandler : PersistentSingleton<InputPromptHandler> {
     /// Prefers override bindings (from rebinding) over the original path.
     /// </summary>
     private string GetEffectiveBindingPath(InputAction action) {
-        bool wantGamepad = InputDeviceDetector.CurrentDevice == InputDeviceDetector.DeviceType.Gamepad;
+        bool wantGamepad = InputManager.CurrentDevice == InputManager.DeviceType.Gamepad;
 
         for (int i = 0; i < action.bindings.Count; i++) {
             InputBinding binding = action.bindings[i];
@@ -113,7 +112,7 @@ public class InputPromptHandler : PersistentSingleton<InputPromptHandler> {
     }
 
     private TextIconsDatabase GetDatabaseForCurrentDevice() {
-        return InputDeviceDetector.CurrentDevice == InputDeviceDetector.DeviceType.Gamepad
+        return InputManager.CurrentDevice == InputManager.DeviceType.Gamepad
             ? gamepadDatabase
             : keyboardMouseDatabase;
     }

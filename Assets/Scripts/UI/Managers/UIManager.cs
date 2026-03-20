@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 // Root of all player UI
 public class UIManager : Singleton<UIManager> {
@@ -14,6 +15,8 @@ public class UIManager : Singleton<UIManager> {
 
     private GameObject _playerGameObject;
     private bool _isPaused;
+
+    public static event Action<bool> OnUIOpenChange;
 
     public bool IsAnyUIOpen() {
         if (UpgradeScreen.IsOpen)
@@ -35,7 +38,7 @@ public class UIManager : Singleton<UIManager> {
             didSucceed = false;
             return;
         }
-        UpgradeScreen.PanelToggle();
+        UpgradeScreen.PanelClose();
         didSucceed = true;
     }
 
@@ -69,31 +72,45 @@ public class UIManager : Singleton<UIManager> {
 
     internal void ControlPanelUIOpen() {
         UISubControlPanel.ControlPanelShow();
+        OnUIOpenChange?.Invoke(true);
     }
 
     internal void ControlPanelUIClose() {
-        UISubControlPanel.ControlPanelHide();
+        UISubControlPanel.ControlPanelHide(); 
+        OnUIOpenChange?.Invoke(false);
     }
 
     internal void ControlPanelUIToggle() {
-        UISubControlPanel.ControlPanelToggle();
+        if (UISubControlPanel.IsOpen) {
+            UISubControlPanel.ControlPanelHide();
+            OnUIOpenChange?.Invoke(false);
+        }else {
+            UISubControlPanel.ControlPanelShow();
+            OnUIOpenChange?.Invoke(true);
+        }
     }
 
     internal void UpgradePanelUIToggle() {
-        UpgradeScreen.PanelToggle();
+        if (UpgradeScreen.IsOpen) {
+            UpgradeScreen.PanelClose();
+            OnUIOpenChange?.Invoke(false);
+        }else {
+            UpgradeScreen.PanelOpen();
+            OnUIOpenChange?.Invoke(true);
+        }
     }
 
     internal void UpgradePanelUIClose() {
-
-        UpgradeScreen.PanelHide();
+        UpgradeScreen.PanelClose();
+        OnUIOpenChange?.Invoke(false);
     }
 
-    public void PausePanelUIToggle() {
-        if (_isPaused) Unpause();
-        else Pause();
+    public void Pause() {
+        if (_isPaused) return;
+        PauseInternal();
     }
 
-    private void Pause() {
+    private void PauseInternal() {
         Time.timeScale = 0f;
         
         //AudioListener.pause = true; 
@@ -102,6 +119,7 @@ public class UIManager : Singleton<UIManager> {
 
         // Dissable action maps?
         UIPause.OnPauseOpen();
+        OnUIOpenChange?.Invoke(true);
         _isPaused = true;
     }
 
@@ -113,6 +131,7 @@ public class UIManager : Singleton<UIManager> {
         //Cursor.visible = false;
 
         UIPause.OnPauseClose();
+        OnUIOpenChange?.Invoke(false);
         _isPaused = false;
     }
     public void DEBUGToggleALLUI() {
@@ -130,14 +149,17 @@ public class UIManager : Singleton<UIManager> {
         if (open != null) { 
             if(open is UIUpgradeScreen) {
                 UpgradePanelUIToggle();
+                OnUIOpenChange?.Invoke(false);
                 return true;
             }
             if (open is UISubInventory) {
                 ControlPanelUIClose();
+                OnUIOpenChange?.Invoke(false);
                 return true;
             }
             if (open is UIPauseScreen) {
-                PausePanelUIToggle();
+                OnUIOpenChange?.Invoke(false);
+                Unpause();
                 return true;
             }
         }

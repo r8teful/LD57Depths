@@ -96,7 +96,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     }
     [ConsoleCommand("showupgrade")]
     private void debugShowUpgradeScreen() {
-        _player.UiManager.UpgradeScreen.PanelToggle();
+        _player.UiManager.UpgradePanelUIToggle();
     }
 
     [ConsoleCommand("giveAll")]
