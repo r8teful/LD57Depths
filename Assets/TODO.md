@@ -51,7 +51,6 @@ Add more content:
 * chain -> add sound \& sub upgrades
 * Speed also changes acceleration
 * explosive crits
-* Alchemy
 
 
 
@@ -119,4 +118,38 @@ Not like:
 * More of a reason to go into the biome
 * Would be great if exploration entities didn't spawn in the air
 * Not enough detail in the submarine
+
+
+
+
+
+
+
+
+
+Time line:
+
+1. Go through the nodes and make sure they give you the upgrades and show the right popup number
+
+Crit chance \& Damage
+
+Explosive crits unlock, range, damage 
+
+Chain reaction range and damage
+
+Alchemy 
+
+Adrenaline, adrenaline+
+
+Compass, compass+
+
+Oxygen release
+
+Gravestones
+
+Control panel \& sub repair
+
+1. Get ui stuff done with lucy
+2. Implement that ui stuff
+3. 
 

@@ -19,7 +19,7 @@ public class ValueModifier {
         Type = type;
         Source = source;
     }
-    public StatChangeStatus GetStatusProcent(IValueModifiable script) {
+    public StatChangeStatus GetStatusProcent(ValueModifiableComponent script) {
         var valueBase = script.GetValueBase(Key);
         var valueNow = script.GetValueNow(Key);
         var valueNext = UpgradeCalculator.CalculateNewUpgradeValue(valueNow, Type, Value);
@@ -33,7 +33,7 @@ public class ValueModifier {
 
         return new("todo", $"{currentProcent}%", $"{nextProcent}%", true);
     }
-    public StatChangeStatus GetStatusAbsolute(IValueModifiable script) {
+    public StatChangeStatus GetStatusAbsolute(ValueModifiableComponent script) {
         //var valueBase = script.GetValueBase(Key);
         var valueNow = script.GetValueNow(Key);
         var valueNext = UpgradeCalculator.CalculateNewUpgradeValue(valueNow, Type, Value);

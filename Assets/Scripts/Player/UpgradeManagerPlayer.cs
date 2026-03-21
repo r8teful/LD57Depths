@@ -13,7 +13,7 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
     [ShowInInspector]
     private Dictionary<ushort, int> _loadedNodeStates = new Dictionary<ushort, int>();
     private UpgradeTreeDataSO _cachedTree;
-    private readonly Dictionary<ValueKey, IValueModifiable> _valueModifierScipts = new Dictionary<ValueKey, IValueModifiable>();
+    private readonly Dictionary<ValueKey, ValueModifiableComponent> _valueModifierScipts = new Dictionary<ValueKey, ValueModifiableComponent>();
     public event Action<UpgradeNodeSO> OnUpgradePurchased;
     private int _highestCostTierPurchased; // used for chest loot
     private List<UpgradeNodeSO> _nodes = new List<UpgradeNodeSO>();
@@ -252,16 +252,16 @@ public class UpgradeManagerPlayer : MonoBehaviour, IPlayerModule, ISaveable {
     }
 
 
-    public void RegisterValueModifierScript(ValueKey key, IValueModifiable modifiable) {
+    public void RegisterValueModifierScript(ValueKey key, ValueModifiableComponent modifiable) {
         if (_valueModifierScipts.ContainsKey(key)) {
             Debug.LogWarning($"SimpleValueManager: {modifiable} already registered, overwriting.");
         }
         _valueModifierScipts.Add(key,modifiable);
     }
 
-    public T Get<T>(ValueKey key) where T : class, IValueModifiable {
+    public ValueModifiableComponent Get(ValueKey key)  {
         _valueModifierScipts.TryGetValue(key, out var value);
-        return value as T;
+        return value;
     }
 
     internal void RemoveAllUpgrades() {

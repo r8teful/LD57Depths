@@ -6,7 +6,6 @@ public class RPGProjectile : MonoBehaviour {
     [SerializeField] private float hitBoxRadius = 2f; // Hitbox
     [SerializeField] private short damageAmount = 10; // Damage per tile
     [SerializeField] private float checkInterval = 0.1f; // How often to check for collisions
-    [SerializeField] private GameObject explosionParticlePrefab;
 
     private float checkTimer = 0f;
     private bool hasExploded = false;
@@ -48,8 +47,8 @@ public class RPGProjectile : MonoBehaviour {
             // todo set this to player also I don't know if the circle thing will work but eh
            // toolController.CmdRequestDamageTile(tile.CellPos, damageAmount * tile.DamageRatio);
         }
-
-        Instantiate(explosionParticlePrefab, transform.position,Quaternion.identity);
+        if(WorldJuiceCreator.Instance!=null)
+            WorldJuiceCreator.Instance.SpawnExplosion(transform.position);
         AudioController.Instance.PlaySound2D("RPGExplode", 1);
         // Destroy the projectile after exploding
         Destroy(gameObject);

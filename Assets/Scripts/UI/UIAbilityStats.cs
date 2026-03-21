@@ -28,6 +28,9 @@ public class UIAbilityStats : MonoBehaviour {
             if(statData.Key == StatType.MiningDamage && _cachedAbility.Data.ID == ResourceSystem.BrimstoneBuffID) {
                 Debug.Log("This is mining damage");
             }
+            if (statData.Key == StatType.MiningCritDamage) {
+                Debug.Log("This is mining damage");
+            }
             var statRaw = 0; // tdo 
             //var statRaw = _cachedAbility.GetRawValue(statData.Key);
             var statEffective = _cachedAbility.GetEffectiveStat(statData.Key);

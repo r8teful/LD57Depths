@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class ParticleCallback : MonoBehaviour {
-    public int type = 0; // 0 is crit, idk this could just become an enum
+    public JuiceType particleJuiceType; 
     private ParticleSystem _particleSystem;
 
     private void Awake() {
@@ -13,8 +13,7 @@ public class ParticleCallback : MonoBehaviour {
             _particleSystem = GetComponent<ParticleSystem>();
             if (_particleSystem == null) return;
         }
-        WorldJuiceCreator.Instance.ReturnCritToPool(_particleSystem);
-        
+        WorldJuiceCreator.Instance.ReturnParticleToPool(_particleSystem,particleJuiceType);
     }
 
 }

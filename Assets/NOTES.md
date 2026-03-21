@@ -1351,11 +1351,11 @@ Escape closes a menu, Escape without a menu opens settings
     * ~~available resources in trench and in biomes~~
     * ~~How you move on to the next level - maybe as a pop up when you hover over the next level~~
     * ~~needs to tell you that the layers above are locked~~
-  * Artifacts screen
+  * <i>~~Artifacts screen~~</i>
 
-    * All available artifacts in the run
-    * Which artifacts you've got
-    * What the artifacts have given you for benefits
+    * <i>~~All available artifacts in the run~~</i>
+    * <i>~~Which artifacts you've got~~</i>
+    * <i>~~What the artifacts have given you for benefits~~</i>
   * ~~Upgrade tree nodes~~
 
     * ~~Node names~~
@@ -1438,7 +1438,7 @@ InteractClose(Close menu but same bind as interact button)
 
 
 
-Move wil have to be W A S D - > each separate 
+Move wil have to be W A S D - > each separate
 
 KeyboardT
 
@@ -1454,7 +1454,7 @@ This will be Keyboard, GamePad, or DualShockGamepad. controlPath will be buttonS
 
 
 
-We use GetPromptTag("Interact") 
+We use GetPromptTag("Interact")
 
 
 
@@ -1469,6 +1469,54 @@ to insert an icon at that positoin
 Just one call InputPromtHandler.HandleText(myString)
 
 turnts woudl simply return the new string with the icon
+
+
+
+
+
+Its so weird, because one changes the STATS, and one simply chances a VALUE. So its not that weird. But if you wanted to buff that value stat, then you have a problem, but then just don't do that? lol. You could literally just have a rule where you don't allow that you buff non stat things. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

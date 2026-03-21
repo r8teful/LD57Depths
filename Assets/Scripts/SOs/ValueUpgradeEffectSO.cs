@@ -8,7 +8,7 @@ public class ValueUpgradeEffectSO : UpgradeEffect {
     public StatModifyType increaseType;
     public float modificationValue;
     public override void Execute(ExecutionContext context) {
-       var script = PlayerManager.Instance.UpgradeManager.Get<IValueModifiable>(valueType);
+       var script = PlayerManager.Instance.UpgradeManager.Get(valueType);
         ValueModifier modifier = new(modificationValue, valueType, increaseType, this);
         if(script == null) {
             Debug.LogError("couldn't find IValueModifable script, did you register it???");
@@ -19,7 +19,7 @@ public class ValueUpgradeEffectSO : UpgradeEffect {
     }
 
     public override UIExecuteStatus GetExecuteStatus() {
-        var script = PlayerManager.Instance.UpgradeManager.Get<IValueModifiable>(valueType);
+        var script = PlayerManager.Instance.UpgradeManager.Get(valueType);
         if(script == null) {
             Debug.LogWarning("coudn't find script with valueType: " + valueType);
             return null;

@@ -23,17 +23,9 @@ MonoBehaviour:
   InfinateStages: 0
   stages:
   - effects:
-    - {fileID: 11400000, guid: b5da7ee4a9127ad418dcfc67f7b1fd88, type: 2}
+    - {fileID: 11400000, guid: 034125618bb5e014e8257540f8dd3939, type: 2}
     costMultiplier: 1
     costTier: 4
-    upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}
-    extraData: {fileID: 0}
-    overrideCost: 0
-    overrideItemQuantities: []
-  - effects:
-    - {fileID: 11400000, guid: 8ef7330929f5678419df07bcb1abd669, type: 2}
-    costMultiplier: 1
-    costTier: 7
     upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}
     extraData: {fileID: 0}
     overrideCost: 0

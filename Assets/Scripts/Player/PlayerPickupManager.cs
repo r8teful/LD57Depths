@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiable {
+public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
 
     private float _pickupTimer;
     private float pickupRadius = 1f;
@@ -11,14 +11,14 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
     private float _magnetStrength;
     private float _magnetRangeBase = 2;
     private float _magnetRange;
-    
+    [SerializeField] private ValueModifiableComponent _values;
     public int InitializationOrder => 42;// Again no clue if this matters
 
     private HashSet<DropPooled> _currentlyMagnetized = new HashSet<DropPooled>(); // We keep that so we can call StopMagn
 
     public void InitializeOnOwner(PlayerManager playerParent) {
         _player = playerParent;
-        Register();
+        _values.Register();
         _magnetStrength = _magnetStrengthBase;
         _magnetRange = _magnetRangeBase;
     }
@@ -108,39 +108,4 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule, IValueModifiabl
         WorldTileManager.Instance.ReturnToPool(item);
     }
 
-    public void ModifyValue(ValueModifier modifier) {
-        if(modifier.Key == ValueKey.MagnetismPickup) {
-            var newV = UpgradeCalculator.CalculateNewUpgradeValue(_magnetRange,modifier);
-            _magnetRange = newV; 
-        } else if(modifier.Key == ValueKey.MagnetismStrength) {
-            var newV = UpgradeCalculator.CalculateNewUpgradeValue(_magnetStrength, modifier);
-            _magnetStrength = newV; 
-        }
-    }
-
-    public float GetValueNow(ValueKey key) {
-        if (key == ValueKey.MagnetismPickup)
-            return _magnetRange;
-        if (key == ValueKey.MagnetismStrength)
-            return _magnetStrength;
-        return 0;
-    }
-
-    public float GetValueBase(ValueKey key) {
-        if (key == ValueKey.MagnetismPickup)
-            return _magnetRangeBase;
-        if (key == ValueKey.MagnetismStrength)
-            return _magnetStrengthBase;
-        return 0;
-    }
-
-    public void Register() {
-        PlayerManager.Instance.UpgradeManager.RegisterValueModifierScript(ValueKey.MagnetismPickup, this);
-        PlayerManager.Instance.UpgradeManager.RegisterValueModifierScript(ValueKey.MagnetismStrength, this);
-    }
-
-    public void ReturnValuesToBase() {
-        _magnetRange = _magnetRangeBase;
-        _magnetStrength = _magnetStrengthBase;
-    }
 }

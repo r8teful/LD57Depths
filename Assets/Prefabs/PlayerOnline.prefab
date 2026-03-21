@@ -23,9 +23,11 @@ GameObject:
   - component: {fileID: 7040180018344758678}
   - component: {fileID: 1918865514594608421}
   - component: {fileID: 7250565941071333612}
+  - component: {fileID: 7835751615984820704}
   - component: {fileID: 8635853783913038229}
   - component: {fileID: 3950145110356713766}
   - component: {fileID: 942153636855539669}
+  - component: {fileID: 5864144833379584783}
   m_Layer: 2
   m_Name: PlayerOnline
   m_TagString: Player
@@ -245,6 +247,58 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 32b35790-4ed0-4e9a-aa41-69ac6d629449
     m_ActionName: 'UI/Point[/Mouse/position]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cde55c7f-1a30-4d1a-be8b-fcdbc00c48a6
+    m_ActionName: 'Player/ConsoleToggle[/Keyboard/f1]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: fe57025f-f0cd-4936-8d97-7cdb0ff85295
+    m_ActionName: 'Player/ConsoleSubmit[/Keyboard/enter]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7c56ab46-1ab9-4a8d-b7ed-ce9d05dc1c90
+    m_ActionName: 'Player/ConsolePrevious[/Keyboard/upArrow]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c13f7a41-bba5-4348-b173-11b1b2752597
+    m_ActionName: 'Player/ConsoleSuggest[/Keyboard/downArrow]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: d16f15a5-950b-4f5a-acde-41ac65cd68d9
+    m_ActionName: UI/ZoomIn
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a04c256e-a755-48aa-9d00-97e439ecbe80
+    m_ActionName: UI/ZoomOut
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 71b4fe56-90bb-49f1-8cb0-eb576718eba1
+    m_ActionName: UI/TabLeft
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4090b56d-8323-4fc1-88cb-4515583a6e7e
+    m_ActionName: UI/TabRight
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 73554455-90cc-478b-9a86-11ee7396a875
+    m_ActionName: 'UI/ConsoleToggle[/Keyboard/f1]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: eb9ed18a-c804-4fc1-a573-999294b192a0
+    m_ActionName: 'UI/ConsoleSubmit[/Keyboard/enter]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: d99fcc3e-42b0-4b10-8164-8ef6a94feded
+    m_ActionName: 'UI/ConsolePrevious[/Keyboard/upArrow]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e3c56d32-cc5b-470f-8b25-bfa6ff40b3b9
+    m_ActionName: 'UI/ConsoleSuggest[/Keyboard/downArrow]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b35edb64-c9f1-480b-b992-d57073473def
+    m_ActionName: 'UI/InteractExit[/Keyboard/e]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -401,6 +455,24 @@ MonoBehaviour:
   pickupLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  _values: {fileID: 7835751615984820704}
+--- !u!114 &7835751615984820704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228294681075539138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08841c4efd9de674f9d3f1ac2e547cfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ValueModifiableComponent
+  _entries:
+  - Key: 10
+    BaseValue: 2
+  - Key: 11
+    BaseValue: 0.2
 --- !u!114 &8635853783913038229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -437,7 +509,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de832d855c611b04d9794dfe201c2196, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _values: {fileID: 5864144833379584783}
   delayBetweenCategories: 0
+--- !u!114 &5864144833379584783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228294681075539138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08841c4efd9de674f9d3f1ac2e547cfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ValueModifiableComponent
+  _entries:
+  - Key: 20
+    BaseValue: 20
 --- !u!1 &1942967068140502079
 GameObject:
   m_ObjectHideFlags: 0

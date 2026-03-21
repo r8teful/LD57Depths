@@ -9,10 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb3d0041ed540d04d9d938a5f700a60c, type: 3}
-  m_Name: LazerCritChanceEffect
+  m_Script: {fileID: 11500000, guid: a3c72f2ab6d63534a9cce831ba6285c9, type: 3}
+  m_Name: EffectExplosiveCrit
   m_EditorClassIdentifier: 
-  upgradeType: 7
-  increaseType: 0
-  modificationValue: 1
-  targetAbility: {fileID: 11400000, guid: bfa7ecccf4ae75f439325ee1ebc3c688, type: 2}
+  prefabToSpawn: {fileID: 6858270054936375335, guid: 2e54acb2903cc3c49950c62fcbc7524e, type: 3}

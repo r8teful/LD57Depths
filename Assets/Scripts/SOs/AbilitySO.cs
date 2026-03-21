@@ -14,6 +14,7 @@ public class AbilitySO : ScriptableObject, IIdentifiable {
     public string description;
     public AbilityType type;
     public float cooldown; // Same as duration, this number is MULTIPLYING our base cooldown stat
+    [Tooltip("Remember that these stats multipliers of the player base stats")]
     public List<StatDefault> StatTypes; // Initial stats
     public List<StatModifier> UpgradeValues; // What stats can be upgraded and by how much 
     [InlineEditor]

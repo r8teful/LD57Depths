@@ -38,7 +38,13 @@ public class UIManager : Singleton<UIManager> {
             didSucceed = false;
             return;
         }
-        UpgradeScreen.PanelClose();
+        if (setActive) {
+            UpgradeScreen.PanelOpen();
+            OnUIOpenChange?.Invoke(true);
+        } else {
+            UpgradeScreen.PanelClose();
+            OnUIOpenChange?.Invoke(false);
+        }
         didSucceed = true;
     }
 

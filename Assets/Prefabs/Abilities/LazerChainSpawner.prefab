@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6373556478426794711}
   - component: {fileID: -17180384372697245}
+  - component: {fileID: 8269555234544565071}
   m_Layer: 0
   m_Name: LazerChainSpawner
   m_TagString: Untagged
@@ -44,4 +45,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 245e90783050dcf49a61ddf724a5485c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LazerChainSpawner
+  _values: {fileID: 8269555234544565071}
   LineRenderVisualPrefab: {fileID: 2286624257162411824, guid: a3d8d52e6a6e1164bb21f3b7837485dd, type: 3}
+--- !u!114 &8269555234544565071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6858270054936375335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08841c4efd9de674f9d3f1ac2e547cfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ValueModifiableComponent
+  _entries:
+  - Key: 30
+    BaseValue: 3
+  - Key: 31
+    BaseValue: 3
+  - Key: 32
+    BaseValue: 0.2

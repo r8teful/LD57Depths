@@ -19,8 +19,8 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
         [Tooltip("Whether UI actions should be disabled during gameplay.")]
         public bool enableUIActionsDuringGameplay = true;
 
-        [Tooltip("The gameplay manager responsible for managing gameplay.")]
-        public GameplayManager gameplayManager;
+        //[Tooltip("The gameplay manager responsible for managing gameplay.")]
+        //public GameplayManager gameplayManager;
 
         [Tooltip("The gameplay UI")]
         public GameObject gameUI;
@@ -98,7 +98,7 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
                 // Entering game mode: enable in-game actions, show menu
                 case GameState.Playing:
                     gameplayActions.Enable();
-                    gameplayManager.enabled = true;
+                    //gameplayManager.enabled = true;
                     if (enableUIActionsDuringGameplay)
                         uiActions.Enable();
                     else
@@ -112,7 +112,7 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
                 // Also make sure or toggle menu action is enabled in case its part of gameplay actions.
                 case GameState.RebindingMenu:
                     gameplayActions.Disable();
-                    gameplayManager.enabled = false;
+                    //gameplayManager.enabled = false;
                     if (!enableUIActionsDuringGameplay)
                         uiActions.Enable();
 

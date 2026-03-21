@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
+public class MiningLazerNew : MonoBehaviour, IInitializableAbility, ITileDamageable {
     private AbilityInstance _abilityInstance;
     private PlayerManager _player;
     private const float MINING_COOLDOWN = 0.02f;
@@ -129,7 +129,7 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility {
         //Debug.Log($"damage: {damage}");
         
         if (hit.collider != null) {
-            // Crit
+            // try Crit
             if (RandomnessHelpers.TryGetCritDamage(_abilityInstance, out var critMult)) {
                 // Crit!
                 damage *= critMult;

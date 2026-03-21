@@ -4,14 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Transfers the items from player inventory to sub inventory
-public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiable {
+public class ItemTransferManager : MonoBehaviour, IPlayerModule {
 
     private InventoryManager inventorySub;
     private InventoryManager inventoryPlayer;
     private PlayerManager _player;
+    [SerializeField] private ValueModifiableComponent _values;
     [SerializeField] private float delayBetweenCategories = 0.5f;
-    private float itemsPerSecond;
-    private const float itemPerSecondBase = 20f;
 
     private Coroutine transferCoroutine;
     public static event Action OnTransferCompleteAll;
@@ -23,19 +22,23 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
     public void InitializeOnOwner(PlayerManager playerParent) {
         _player = playerParent;
         inventorySub = SubmarineManager.Instance.SubInventory;
-        itemsPerSecond = itemPerSecondBase;
-        Register();
+
+        _values.Register();
+        _values.OnValueChanged += OnValueChanged;
         PlayerLayerController.OnPlayerVisibilityChanged += PlayerLayerChange;
 
     }
+    private void OnDestroy() {
+        PlayerLayerController.OnPlayerVisibilityChanged -= PlayerLayerChange;
+        _values.OnValueChanged -= OnValueChanged;
+
+    }
+
     // after ui
     public void InitLate(PlayerManager playerParent) {
         inventoryPlayer = playerParent.GetInventory();
     }
-    private void OnDestroy() {
-        PlayerLayerController.OnPlayerVisibilityChanged -= PlayerLayerChange;
-
-    }
+  
     private void PlayerLayerChange(VisibilityLayerType layer) {
         if (layer == VisibilityLayerType.Interior) {
             TriggerTransferSequence();
@@ -78,6 +81,7 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
     private IEnumerator TransferRoutine() {
         List<ushort> itemTypesToTransfer = new List<ushort>(inventoryPlayer.Slots.Keys);
         float timeAccumulator = 0f;
+        var itemsPerSecond = _values.GetValueNow(ValueKey.ItemTransferRate);
         OnTransferStart?.Invoke(inventoryPlayer.GetTotalItems(),itemsPerSecond);
         foreach (ushort itemID in itemTypesToTransfer) {
             // Verify item still exists in dictionary
@@ -114,25 +118,9 @@ public class ItemTransferManager : MonoBehaviour, IPlayerModule, IValueModifiabl
             transferCoroutine = null;
         }
     }
-
-    public void ModifyValue(ValueModifier modifier) {
-        if(modifier.Key == ValueKey.ItemTransferRate) {
-            itemsPerSecond = UpgradeCalculator.CalculateNewUpgradeValue(itemsPerSecond, modifier);
-            TransferSpeedChange?.Invoke(itemsPerSecond);
+    private void OnValueChanged(ValueKey key, float value) {
+        if (key == ValueKey.ItemTransferRate) {
+            TransferSpeedChange?.Invoke(value);
         }
-    }
-
-    public void Register() {
-        PlayerManager.Instance.UpgradeManager.RegisterValueModifierScript(ValueKey.ItemTransferRate, this);
-    }
-
-    public float GetValueNow(ValueKey key) 
-        => key == ValueKey.ItemTransferRate? itemsPerSecond : 0;
-
-    public float GetValueBase(ValueKey key) 
-        => key == ValueKey.ItemTransferRate ? itemPerSecondBase : 0;
-
-    public void ReturnValuesToBase() {
-        itemsPerSecond = itemPerSecondBase;
     }
 }

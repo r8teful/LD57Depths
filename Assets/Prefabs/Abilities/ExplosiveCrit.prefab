@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6373556478426794711}
-  - component: {fileID: 3019218194199840695}
+  - component: {fileID: -7648027071659106729}
   - component: {fileID: 5887084928536373505}
   m_Layer: 0
-  m_Name: GravestoneSpawner
+  m_Name: ExplosiveCrit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,7 +33,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3019218194199840695
+--- !u!114 &-7648027071659106729
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,10 +42,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6858270054936375335}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee7fc563a7b89ca45a78c5e8eb6e257c, type: 3}
+  m_Script: {fileID: 11500000, guid: d2319badb2b0c814497fe9145182c13f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
-  _gravestonePrefab: {fileID: 4196488720746984013, guid: 5eaf08a074de86441ae0a2c644d3557b, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::ExplosiveCrits
+  abilityTarget: {fileID: 11400000, guid: bfa7ecccf4ae75f439325ee1ebc3c688, type: 2}
   _values: {fileID: 5887084928536373505}
 --- !u!114 &5887084928536373505
 MonoBehaviour:
@@ -60,5 +60,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ValueModifiableComponent
   _entries:
-  - Key: 5
+  - Key: 40
     BaseValue: 0.2
+  - Key: 41
+    BaseValue: 2
+  - Key: 42
+    BaseValue: 2

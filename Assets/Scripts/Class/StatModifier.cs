@@ -21,15 +21,14 @@ public class StatModifier {
         float currentIncrease, nextIncrease;
         // We need different ways to display it, for damage, it needs to be "abstract"
         // so 10% damage -> 20% would be 2x the damage
-        // But with things like crit chance, we need the ACTAUL value, 
+        // But with things like crit chance, or damage we need the ACTAUL value, 
         // so 5% crit chacnce really means 5% 
-        if (Stat == StatType.MiningCritChance) {
+        if (Stat == StatType.MiningCritChance || Stat == StatType.MiningCritDamage) { 
             currentIncrease = ability.GetEffectiveStat(Stat);
             nextIncrease = ability.GetEffectiveStat(Stat, this);
         } else {
             currentIncrease = ability.GetProcentStat(Stat) * 0.1f;
             nextIncrease = ability.GetProcentStat(Stat, this) * 0.1f;
-
         }
         int currentProcent = Mathf.RoundToInt(currentIncrease * 100f);
         int nextProcent = Mathf.RoundToInt(nextIncrease * 100f);
