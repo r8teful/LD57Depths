@@ -5,7 +5,7 @@ using UnityEngine.UI;
 // Shows active abilities with cooldown and active length
 public class UIHudIconAbilityActive : UIHudIconBase {
     [SerializeField] private Image _progressImage;
-    [SerializeField] private TextMeshProUGUI timeText; // We won't really have a time text but just for now
+    //[SerializeField] private TextMeshProUGUI timeText; // We won't really have a time text but just for now
     private AbilityInstance _ability;
 
     internal void Init(AbilityInstance ability) {
@@ -33,15 +33,15 @@ public class UIHudIconAbilityActive : UIHudIconBase {
 
     private void OnAbilityActiveTimeChanged(float time) {
         //Debug.Log($"Active Time changed: {time}");
-        timeText.text = FormatSeconds(time);
-        timeText.color = Color.green;
+        //timeText.text = FormatSeconds(time);
+        //timeText.color = Color.green;
         
     }
     private void OnAbilityCooldownChanged(float time,float max) {
         float progress = time / Mathf.Max(0.001f,max);
         _progressImage.fillAmount = progress;
-        timeText.text = FormatSeconds(time);
-        timeText.color = Color.red;
+        //timeText.text = FormatSeconds(time);
+        //timeText.color = Color.red;
     }
     string FormatSeconds(float sec) {
         if (sec <= 0) return "0s";

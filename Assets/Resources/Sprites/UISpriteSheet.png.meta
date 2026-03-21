@@ -3872,7 +3872,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UIBoarderWhiteFill
+      name: UIBoarderWhiteFillBackground
       rect:
         serializedVersion: 2
         x: 323
@@ -4210,7 +4210,7 @@ TextureImporter:
         width: 27
         height: 27
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -4219,6 +4219,50 @@ TextureImporter:
       bones: []
       spriteID: d8e11edd8a6b3bd47b3a32c88f7023b6
       internalID: -916741622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIBoarderBackgroundd
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 520
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 3, y: 4, z: 3, w: 4}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3eb68d70732f3844989d81a4554d77b4
+      internalID: -153018256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIArrowBig2
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 303
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9cb7083b99e4a414fae60e7cc61edc94
+      internalID: 734252187
       vertices: []
       indices: 
       edges: []
@@ -4348,13 +4392,15 @@ TextureImporter:
       UIAbilityActiveBoarder: -1507697884
       UIArrow2: -923879406
       UIArrowBig: 1880573985
+      UIArrowBig2: 734252187
       UIBoarderBackground: 398889071
+      UIBoarderBackgroundd: -153018256
       UIBoarderBigBlue: 1025421921
       UIBoarderBigGreen: -702740983
       UIBoarderBigOrange: 276201666
       UIBoarderOrange: -1985720069
       UIBoarderWhite: 1126861340
-      UIBoarderWhiteFill: -1427946143
+      UIBoarderWhiteFillBackground: -1427946143
       UIBrimstone0: -917287309
       UIBrimstone1: -526431394
       UIBrimstone3: -1724539373
@@ -4447,6 +4493,7 @@ TextureImporter:
       UpgradeTreeT2: -197357614
       UpgradeTreeT3: 921795186
       UpgradeTreeYield: -173148886
+      d: -153018256
       iconIcor: -424937040
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

@@ -11,6 +11,7 @@ public class UIManager : Singleton<UIManager> {
     [field: SerializeField] public UISubControlPanel UISubControlPanel {  get; private set; }
     [field: SerializeField] public UISubInventory UISubInventory {  get; private set; }
     [field: SerializeField] public UIPauseScreen UIPause {  get; private set; }
+    [field: SerializeField] public UIRewardScreens UIReward {  get; private set; }
     [field: SerializeField] public GameObject DebugStatMenu {  get; private set; }
 
     private GameObject _playerGameObject;
@@ -24,6 +25,8 @@ public class UIManager : Singleton<UIManager> {
         if (UISubControlPanel.IsOpen)
             return true;
         if (UIPause.IsOpen)
+            return true;
+        if (UIReward.IsOpen)
             return true;
         return false;
     }
