@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d6fe04157bd35da4da28996dc50dd327
+guid: 495ef0aef4be4b941ab55f8d1886ca98
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -37,9 +37,9 @@ TextureImporter:
     filterMode: 0
     aniso: 1
     mipBias: 0
-    wrapU: 0
-    wrapV: 0
-    wrapW: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Cheen
+      name: ResurfaceLogoPixelated
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 64
-        height: 64
+        width: 372
+        height: 86
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -135,7 +135,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: cdb82e9b98cdc2f438b96dd089863c48
+    spriteID: d784d5f789eff6f49aa5769d3f63a7f6
     internalID: 0
     vertices: []
     indices: 
@@ -145,7 +145,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Cheen: -7943720702334105097
+      ResurfaceLogoPixelated: -7943720702334105097
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

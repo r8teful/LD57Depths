@@ -34,7 +34,7 @@ public class UISubMap : MonoBehaviour {
     }
 
     private void OnDestroy() {
-        SubmarineManager.Instance.OnSubMoved -= SubMoved;
+        if(SubmarineManager.Instance !=null) SubmarineManager.Instance.OnSubMoved -= SubMoved;
     }
 
     private void SubMoved(int index) {

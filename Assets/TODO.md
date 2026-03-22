@@ -133,13 +133,12 @@ Time line:
 
 Alchemy !! **Test before adding loads of logic and upgrades to it** !!
 
-Oxygen release
-
-Gravestones
-
-Control panel \& sub repair
-
 1. Get ui stuff done with lucy
 2. Implement that ui stuff
-3. 
+
+
+
+
+
+
 

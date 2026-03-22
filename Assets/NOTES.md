@@ -1361,20 +1361,20 @@ Escape closes a menu, Escape without a menu opens settings
     * ~~Node names~~
     * ~~UI -> Layout within popup~~
     * ~~Descriptions~~
-* World
+* ~~World~~
 
-  * Chest
-  * Shrine
-* HUD
+  * ~~Chest~~
+  * ~~Shrine~~
+* ~~HUD~~
 
-  * Lazer ability icon
-  * Buff status icons
+  * ~~Lazer ability icon~~
+  * ~~Buff status icons~~
 * Main menu
 
   * New game screen
 
-    * Modifiers
     * Character selection
+    * Modifiers
     * *Maps?*
   * Load game
   * Meta Progression / unlocks / stats
@@ -1389,7 +1389,7 @@ Escape closes a menu, Escape without a menu opens settings
     * Video-> Screen mode, resolution, fps, graphics quality
     * Audio
   * Exit
-  * Language
+  * Language 
   * *Leaderboard?*
   * Social links
 

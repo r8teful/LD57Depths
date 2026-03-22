@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d6fe04157bd35da4da28996dc50dd327
+guid: 63d5a0dd6bf7d3f438e9a9164e6733c9
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,15 +110,15 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Cheen
+      name: Character2_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 64
-        height: 64
+        width: 14
+        height: 24
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -135,7 +135,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: cdb82e9b98cdc2f438b96dd089863c48
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -145,7 +145,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Cheen: -7943720702334105097
+      Character2_0: -7943720702334105097
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -4254,7 +4254,7 @@ TextureImporter:
         width: 21
         height: 14
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -4263,6 +4263,50 @@ TextureImporter:
       bones: []
       spriteID: 9cb7083b99e4a414fae60e7cc61edc94
       internalID: 734252187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIBoarderOrangeBright
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 342
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 23dff27e1dc5ea04b97a6f618b05f8fa
+      internalID: 474797068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonOrangeBigAss
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 661
+        width: 43
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 6, y: 7, z: 7, w: 6}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33d52d80178db724baa567ce3799ae12
+      internalID: 767863602
       vertices: []
       indices: 
       edges: []
@@ -4290,6 +4334,7 @@ TextureImporter:
       ButtonGreedDark: -978120224
       ButtonGreenBright: 1170321897
       ButtonOrange: 1363531171
+      ButtonOrangeBigAss: 767863602
       ButtonPurchasableBlue: 1242008253
       ButtonPurchasablePurple: 1328511984
       ButtonPurchased: -882738324
@@ -4399,6 +4444,7 @@ TextureImporter:
       UIBoarderBigGreen: -702740983
       UIBoarderBigOrange: 276201666
       UIBoarderOrange: -1985720069
+      UIBoarderOrangeBright: 474797068
       UIBoarderWhite: 1126861340
       UIBoarderWhiteFillBackground: -1427946143
       UIBrimstone0: -917287309

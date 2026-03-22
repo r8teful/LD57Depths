@@ -21,8 +21,10 @@ public class Compass : MonoBehaviour {
 
     private void OnRewardTaken(IExecutable obj) {
         // Simply star the coroutine over again
-        StopCoroutine(ClosestEntityCoroutine);
-        ClosestEntityCoroutine = StartCoroutine(FindClosestEntityRoutine());
+        if (ClosestEntityCoroutine != null) {
+            StopCoroutine(ClosestEntityCoroutine);
+            ClosestEntityCoroutine = StartCoroutine(FindClosestEntityRoutine());
+        }
     }
     public void ActivateCompassPlus() {
         var closest = FindClosestEntity();
