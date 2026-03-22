@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeKey: U.Alchemy.Gold+
   nodeStageNum: 0
-  uniqueID: 5001
+  uniqueID: 2031
   icon: {fileID: -1703950749, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: 0a5d4988e20681142ae4ee4efac517d7, type: 2}
+  - {fileID: 11400000, guid: aae5068873538734c98e5f1458a43eeb, type: 2}
   UnlockedAtFirstPrereqStage: 0
   InfinateStages: 1
   stages: []

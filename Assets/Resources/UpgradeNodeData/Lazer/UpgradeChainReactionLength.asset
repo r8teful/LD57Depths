@@ -20,6 +20,7 @@ MonoBehaviour:
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 0476152a18d365146840335cc0f542e1, type: 2}
   UnlockedAtFirstPrereqStage: 1
+  InfinateStages: 0
   stages:
   - effects:
     - {fileID: 11400000, guid: 62653efa439771e4e9915c0fedb5a411, type: 2}
@@ -27,3 +28,21 @@ MonoBehaviour:
     costTier: 9
     upgradeItemPool: {fileID: 11400000, guid: 2578a8b93b92f144997963031306a875, type: 2}
     extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
+  - effects:
+    - {fileID: 11400000, guid: 62653efa439771e4e9915c0fedb5a411, type: 2}
+    costMultiplier: 1
+    costTier: 9
+    upgradeItemPool: {fileID: 11400000, guid: 2578a8b93b92f144997963031306a875, type: 2}
+    extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
+  - effects:
+    - {fileID: 11400000, guid: 62653efa439771e4e9915c0fedb5a411, type: 2}
+    costMultiplier: 1
+    costTier: 10
+    upgradeItemPool: {fileID: 11400000, guid: 2578a8b93b92f144997963031306a875, type: 2}
+    extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []

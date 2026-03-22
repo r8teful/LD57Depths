@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0bd08606626a8904b990accdb65bb0aa, type: 3}
-  m_Name: AbilityExplosiveCrit
+  m_Name: AbilityAdrenalinePlus
   m_EditorClassIdentifier: 
-  id: 200
+  id: 261
   icon: {fileID: 0}
-  displayName: You feel oxinated
+  displayName: Let me be adrenaline
   description: 
   type: 0
   cooldown: 0
   StatTypes: []
   UpgradeValues: []
   effects:
-  - {fileID: 11400000, guid: 48dbb057197c84a47a53aadb4bd8a559, type: 2}
+  - {fileID: 11400000, guid: 76394cd2b878e114ba2bbc722b59d572, type: 2}
   costumes: []

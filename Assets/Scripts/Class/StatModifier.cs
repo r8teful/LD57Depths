@@ -23,7 +23,8 @@ public class StatModifier {
         // so 10% damage -> 20% would be 2x the damage
         // But with things like crit chance, or damage we need the ACTAUL value, 
         // so 5% crit chacnce really means 5% 
-        if (Stat == StatType.MiningCritChance || Stat == StatType.MiningCritDamage) { 
+        DisplayType type = ResourceSystem.GetDisplayType(Stat);
+        if (type == DisplayType.Absolute) { 
             currentIncrease = ability.GetEffectiveStat(Stat);
             nextIncrease = ability.GetEffectiveStat(Stat, this);
         } else {

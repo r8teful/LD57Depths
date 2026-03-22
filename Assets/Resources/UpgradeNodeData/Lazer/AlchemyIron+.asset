@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeKey: U.Alchemy.Iron+
   nodeStageNum: 0
-  uniqueID: 4001
+  uniqueID: 2021
   icon: {fileID: -1703950749, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: 973b0091b0a3aca42bfd3a1d787c1a0f, type: 2}
+  - {fileID: 11400000, guid: d6d480d424e893c4fa34893fb8b37e60, type: 2}
   UnlockedAtFirstPrereqStage: 0
   InfinateStages: 1
   stages: []

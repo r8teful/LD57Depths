@@ -258,7 +258,7 @@ public class WorldGen : MonoBehaviour {
                 //TargetReceiveChunkDataMultiple(requester, processedPayloads);
                 //Debug.Log($"Sent {processedPayloads.Count} processed chunks to player");
             } else {
-                Debug.LogWarning("No payloads to send!");
+                //Debug.LogWarning("No payloads to send!");
                 context.OnCompleteCallback?.Invoke(processedPayloads, processedChunks);
             }
         }));

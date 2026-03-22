@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeKey: U.Alchemy.Copper+
   nodeStageNum: 0
-  uniqueID: 3001
+  uniqueID: 2011
   icon: {fileID: -1703950749, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: d8b73a8ba8c2e9a4caa60793c5afc962, type: 2}
+  - {fileID: 11400000, guid: 7fdeec9bef1fa684bb0af10415dffebe, type: 2}
   UnlockedAtFirstPrereqStage: 0
   InfinateStages: 1
   stages:

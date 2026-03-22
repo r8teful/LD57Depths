@@ -69,6 +69,7 @@ public class ResourceSystem {
     public const ushort CompassPlusID = 211; 
     public const ushort GraveStoneID = 220; // There must be a better way
     public const ushort LazerChainID = 240; 
+    public const ushort Adrenaline = 260; 
     public const ushort CactusAbilityID = 500; 
     public const ushort ShockwaveID = 530; 
     public const ushort BoomerangID = 540; 
@@ -333,26 +334,14 @@ public class ResourceSystem {
 
     public static bool IsLowerBad(StatType stat) {
         return stat switch {
-            StatType.MiningRange => true,
-            StatType.MiningDamage => true,
-            StatType.MiningRotationSpeed => true,
-            StatType.PlayerSpeedMax => true,
-            StatType.PlayerAcceleration => true,
-            StatType.PlayerOxygenMax => true,
             StatType.Knockback => false,
             StatType.MiningFalloff => false,
-            StatType.MiningCombo => true,
-            StatType.MiningCritDamage => true,
-            StatType.MiningCritChance => true,
-            StatType.PlayerDrag => true,
-            StatType.Cooldown => true,
-            StatType.Duration => true,
-            StatType.Size => true,
-            StatType.ProjectileCount => true,
-            StatType.ProjectileSpeed => true,
-            StatType.ProjectileBounces => true,
-            StatType.Luck => true,
             _ => true,
+        };
+    }
+    public static bool IsLowerBad(ValueKey key) {
+        return key switch {
+            _ => false,
         };
     }
     public static string GetStatString(StatType stat) {
@@ -465,6 +454,31 @@ public class ResourceSystem {
 
     internal static string BiomeToString(BiomeType to) {
         return to.ToString(); // idk needs localization 
+    }
+
+    internal static DisplayType GetDisplayType(ValueKey valueType) {
+        return valueType switch {
+            ValueKey.GravestoneHoldProcent  => DisplayType.Absolute,
+            ValueKey.MagnetismPickup        => DisplayType.Absolute,
+            ValueKey.MagnetismStrength      => DisplayType.Procent,
+            ValueKey.ItemTransferRate       => DisplayType.Procent,
+            ValueKey.LazerChainLength       => DisplayType.Procent,
+            ValueKey.LazerChainDamage       => DisplayType.Procent,
+            ValueKey.LazerChainChance       => DisplayType.Absolute,
+            ValueKey.ExplosiveCritChance    => DisplayType.Procent,
+            ValueKey.ExplosiveCritDamage    => DisplayType.Procent,
+            ValueKey.ExplosiveCritRange     => DisplayType.Absolute,
+            ValueKey.BlockOxygenAmount      => DisplayType.Absolute,
+            ValueKey.BlockOxygenChance      => DisplayType.Absolute,
+            _ => DisplayType.Procent,
+        };
+    }
+    internal static DisplayType GetDisplayType(StatType stat) {
+        return stat switch {
+            StatType.MiningCritChance => DisplayType.Absolute,
+            StatType.MiningCritDamage => DisplayType.Absolute,
+            _ => DisplayType.Procent,
+        };
     }
 }
 

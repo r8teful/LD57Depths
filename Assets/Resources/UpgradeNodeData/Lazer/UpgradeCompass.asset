@@ -18,6 +18,15 @@ MonoBehaviour:
   icon: {fileID: 1134582682, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: cc6f94632e8ed3c4488fad83ab6e5301, type: 2}
+  - {fileID: 11400000, guid: ac1a960b04d3ef04d981f9e827f863d1, type: 2}
   UnlockedAtFirstPrereqStage: 1
-  stages: []
+  InfinateStages: 0
+  stages:
+  - effects:
+    - {fileID: 11400000, guid: c3d6a51adc665dc49b647a9878a22b22, type: 2}
+    costMultiplier: 1
+    costTier: 3
+    upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
+    extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6373556478426794711}
   - component: {fileID: -7188864261384001456}
+  - component: {fileID: 1376148357861490119}
   m_Layer: 0
   m_Name: BlockOxygen
   m_TagString: Untagged
@@ -45,3 +46,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bubblePrefab: {fileID: 7031532275906770597, guid: 566d58829cc3dcf4099be2b50af5f86a, type: 3}
+  _values: {fileID: 1376148357861490119}
+--- !u!114 &1376148357861490119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6858270054936375335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08841c4efd9de674f9d3f1ac2e547cfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ValueModifiableComponent
+  _entries:
+  - Key: 50
+    BaseValue: 0.01
+  - Key: 51
+    BaseValue: 1

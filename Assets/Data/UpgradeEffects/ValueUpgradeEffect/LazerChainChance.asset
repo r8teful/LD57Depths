@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d6a735d205374942bd16c7c3254a7bd, type: 3}
-  m_Name: LazerChainAmount
+  m_Name: LazerChainChance
   m_EditorClassIdentifier: 
-  valueType: 30
-  increaseType: 0
-  modificationValue: 1
+  valueType: 32
+  increaseType: 1
+  modificationValue: 0.5

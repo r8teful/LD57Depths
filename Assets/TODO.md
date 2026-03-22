@@ -131,17 +131,7 @@ Time line:
 
 1. Go through the nodes and make sure they give you the upgrades and show the right popup number
 
-Crit chance \& Damage
-
-Explosive crits unlock, range, damage 
-
-Chain reaction range and damage
-
-Alchemy 
-
-Adrenaline, adrenaline+
-
-Compass, compass+
+Alchemy !! **Test before adding loads of logic and upgrades to it** !!
 
 Oxygen release
 

@@ -15,8 +15,8 @@ public class GravestoneSpawner : MonoBehaviour, IInitializableAbility {
     }
     private void OnPlayerPassout() {
         if (PlayerManager.Instance == null) return;
-        var passOutLoseProcent = _values.GetValueNow(ValueKey.PassOutLoseProcent);
-        var itemsToPutInGrave = PlayerManager.Instance.GetInventory().GetItemSnapshot(1 - passOutLoseProcent); // we keep what we don't lose 
+        var holdProcent = _values.GetValueNow(ValueKey.GravestoneHoldProcent);
+        var itemsToPutInGrave = PlayerManager.Instance.GetInventory().GetItemSnapshot(holdProcent); 
         if (itemsToPutInGrave == null || itemsToPutInGrave.Count == 0) return; 
         var grave = Instantiate(_gravestonePrefab, PlayerManager.Instance.GetWorldPosition, Quaternion.identity);
         

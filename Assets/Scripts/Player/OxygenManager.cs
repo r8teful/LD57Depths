@@ -24,6 +24,8 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     public static event Action OnPassOut;
     public int InitializationOrder => 92; // After playerstats
 
+    public bool IsFullOxygen => CurrentOxygen >= maxOxygen;
+
     public float CurrentOxygen { 
         get {
             return currentOxygen;
@@ -61,7 +63,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
         if (GameManager.Instance.IsBooting) return;
         if (ShouldDepleteOxygen()) {
             DepleteOxygen();
-        } else {
+        } else if(!IsFullOxygen) {
             ReplenishOxygen();
         }
     }

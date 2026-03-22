@@ -1474,53 +1474,5 @@ turnts woudl simply return the new string with the icon
 
 
 
-Its so weird, because one changes the STATS, and one simply chances a VALUE. So its not that weird. But if you wanted to buff that value stat, then you have a problem, but then just don't do that? lol. You could literally just have a rule where you don't allow that you buff non stat things. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Its so weird, because one changes the STATS, and one simply chances a VALUE. So its not that weird. But if you wanted to buff that value stat, then you have a problem, but then just don't do that? lol. You could literally just have a rule where you don't allow that you buff non stat things.
 

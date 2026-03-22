@@ -15,16 +15,18 @@ MonoBehaviour:
   nodeKey: U.Adrenaline
   nodeStageNum: 0
   uniqueID: 250
-  descriptionKey: 
   icon: {fileID: 118686583, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
-  - {fileID: 11400000, guid: cdf389641a0aeef4bb3b6416de14163c, type: 2}
+  - {fileID: 11400000, guid: cc6f94632e8ed3c4488fad83ab6e5301, type: 2}
   UnlockedAtFirstPrereqStage: 1
+  InfinateStages: 0
   stages:
   - effects:
-    - {fileID: 11400000, guid: 1e1edf618d018ba4eb49387fc31f3f49, type: 2}
+    - {fileID: 11400000, guid: 02b5fb7545a71b045abb6d340a7061f8, type: 2}
     costMultiplier: 1
     costTier: 6
     upgradeItemPool: {fileID: 11400000, guid: c8505d26704f39c49ad4623ac0fd7558, type: 2}
     extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []

@@ -26,14 +26,9 @@ public class SOEditorWindow : OdinMenuEditorWindow {
         AddSortedAssets<UpgradeNodeSO>(tree, "UpgradeNodes", "Assets/Resources/UpgradeNodeData");
         AddSortedAssets<EntityBaseSO>(tree, "Entities", "Assets/Resources/EntityData");
         AddSortedAssets<TileSO>(tree, "Tiles", "Assets/Resources/TileData");
-        // Add drag handles to items, so they can be easily dragged into the inventory if characters etc...
-        tree.EnumerateTree().Where(x => x.Value as ItemData).ForEach(AddDragHandles);
-        tree.EnumerateTree().Where(x => x.Value as EntityBaseSO).ForEach(AddDragHandles);
-        tree.EnumerateTree().Where(x => x.Value as TileSO).ForEach(AddDragHandles);
-        tree.EnumerateTree().Where(x => x.Value as UpgradeNodeSO).ForEach(AddDragHandles);
-        tree.EnumerateTree().Where(x => x.Value as UpgradeEffect).ForEach(AddDragHandles);
-        // Double click for everything
+        // Double click and drag for everything
         tree.EnumerateTree().Where(x => x.Value is Object).ForEach(AddDoubleClickSelect);    
+        tree.EnumerateTree().Where(x => x.Value is Object).ForEach(AddDragHandles);    
         // Add icons to characters and items.
         tree.EnumerateTree().AddIcons<ItemData>(x => x.icon);
         tree.EnumerateTree().AddIcons<UpgradeNodeSO>(x => x.icon);

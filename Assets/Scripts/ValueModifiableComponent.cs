@@ -49,7 +49,7 @@ public class ValueModifiableComponent : MonoBehaviour {
     }
 }
 public enum ValueKey {
-    PassOutLoseProcent = 5, // as mult
+    GravestoneHoldProcent = 5, // as mult
     MagnetismPickup = 10,
     MagnetismStrength = 11,
     ItemTransferRate = 20,
@@ -59,4 +59,7 @@ public enum ValueKey {
     ExplosiveCritChance = 40,
     ExplosiveCritDamage= 41,
     ExplosiveCritRange= 42,
+    BlockOxygenChance = 50,
+    BlockOxygenAmount = 51
+
 }

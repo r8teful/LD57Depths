@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0183601e43946ba498966f9df2fef387, type: 3}
+  m_Name: BuffAdrenalineSpeed
+  m_EditorClassIdentifier: 
+  id: 100
+  Modifiers:
+  - Value: 3
+    Stat: 20
+    Type: 1
+  - Value: 4
+    Stat: 21
+    Type: 1
+  - Value: 0.7
+    Stat: 22
+    Type: 1
+  Title: Adrenaline
+  Description: You feel speedy
+  Icon: {fileID: 592115751, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}

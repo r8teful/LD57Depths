@@ -25,10 +25,11 @@ public class ValueUpgradeEffectSO : UpgradeEffect {
             return null;
         }
         ValueModifier modifier = new(modificationValue, valueType, increaseType, this);
-        if(valueType == ValueKey.LazerChainLength) {
-            // absolute change
+        DisplayType type = ResourceSystem.GetDisplayType(valueType);
+        if(type == DisplayType.Absolute) {
             return modifier.GetStatusAbsolute(script);
+        } else {
+            return modifier.GetStatusProcent(script);
         }
-        return modifier.GetStatusProcent(script);
     }
 }

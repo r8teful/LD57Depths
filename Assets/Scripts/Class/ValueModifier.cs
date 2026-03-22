@@ -38,6 +38,12 @@ public class ValueModifier {
         var valueNow = script.GetValueNow(Key);
         var valueNext = UpgradeCalculator.CalculateNewUpgradeValue(valueNow, Type, Value);
 
-        return new("todo", $"{valueNow}", $"{valueNext}", true);
+        float currentProcent = valueNow * 100f;
+        float nextProcent = valueNext * 100f;
+        bool isBadChange =
+           (nextProcent < currentProcent && ResourceSystem.IsLowerBad(Key)) ||
+           (nextProcent > currentProcent && !ResourceSystem.IsLowerBad(Key));
+        return new(Key.ToString(), $"{currentProcent}%", $"{nextProcent}%", isBadChange);
+        //return new("todo", $"{valueNow}", $"{valueNext}", true);
     }
 }
