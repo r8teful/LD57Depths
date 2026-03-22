@@ -20,10 +20,13 @@ MonoBehaviour:
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: e8fa2fd387da1694d95c92b5f8d42c7a, type: 2}
   UnlockedAtFirstPrereqStage: 1
+  InfinateStages: 0
   stages:
   - effects:
     - {fileID: 11400000, guid: 73e2b28488486024cadd4b5879a2cba6, type: 2}
     costMultiplier: 1
     costTier: 11
     upgradeItemPool: {fileID: 11400000, guid: 2578a8b93b92f144997963031306a875, type: 2}
-    extraData: {fileID: 11400000, guid: c20fd989c300b1a4eb793760f952dfc3, type: 2}
+    extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []

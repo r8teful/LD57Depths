@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2a534d3f85bf1ca45800d17843b97461, type: 3}
-  m_Name: SubEffectCable1
+  m_Name: SubContolFix
   m_EditorClassIdentifier: 
   SpriteExterior: {fileID: 0}
-  SpriteInterior: {fileID: 808791789, guid: c0c892148653d6f41a1fb585a1e88300, type: 3}
-  upgrade: {fileID: 0}
-  isMajor: 0
+  SpriteInterior: {fileID: 0}
+  upgrade: {fileID: 11400000, guid: db8e0ecd84ff05b469cb43a89ba41450, type: 2}
+  isMajor: 1

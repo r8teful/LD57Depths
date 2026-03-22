@@ -77,8 +77,9 @@ public class ResourceSystem {
     public const ushort BouncingBallID = 560; 
     public const ushort FishShooterID = 570; 
   
-    public const ushort SubUpgradePanel = 0; //  
-    public const ushort SubUpgradeControlPanel = 1000; //  
+    public const ushort SubUpgradePanel = 0;   
+    public const ushort SubUpgradeControlPanel = 1000; 
+    public const ushort SubUpgradeCables = 1001; 
    public static bool IsGrowEntity(ushort id) {
         if (id == 900) // Tree farm
             return true;

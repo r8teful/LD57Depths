@@ -4,31 +4,27 @@ public class SubVisualUpgradeable : MonoBehaviour {
     [SerializeField] private Sprite _spriteToSet;
     [SerializeField] private UpgradeNodeSO _nodeUpgrade;
     private SpriteRenderer _spriteRenderer;
-    
+    [SerializeField] private ParticleSystem _fixParticles;
+
     private void Awake() {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         if (_spriteRenderer == null) {
             Debug.LogError("Script needs renderer component to work!");
         }
-        GameManager.OnSetupComplete += MyAwake;
+        SubmarineManager.OnSubUpgrade += UpgradePurchased;
 
     }
     private void OnDestroy() {
-        GameManager.OnSetupComplete -= MyAwake;
-        if (PlayerManager.Instance != null)
-            PlayerManager.Instance.UpgradeManager.OnUpgradePurchased -= UpgradePurchased;
+        SubmarineManager.OnSubUpgrade -= UpgradePurchased;
     }
 
-    private void MyAwake() {
-        if (PlayerManager.Instance == null) {
-            Debug.LogError("Can't find player!!");
-        }
-        PlayerManager.Instance.UpgradeManager.OnUpgradePurchased += UpgradePurchased;
-    }
 
-    private void UpgradePurchased(UpgradeNodeSO upgrade) {
-        if(upgrade == _nodeUpgrade) {
+    private void UpgradePurchased(ushort upgrade) {
+        if(upgrade == _nodeUpgrade.ID) {
             _spriteRenderer.sprite = _spriteToSet;
+            if (_fixParticles != null) {
+                _fixParticles.Play();
+            }
         }
     }
 }

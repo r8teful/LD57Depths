@@ -22,6 +22,7 @@ public class SubmarineManager : StaticInstance<SubmarineManager>, ISaveable {
     
     [SerializeField] private Transform _cutsceneCameraPosUpgradeMachine;
     [SerializeField] private Transform _cutsceneCameraPosControlPanel; 
+    [SerializeField] private Transform _cutsceneCameraCables; 
     [SerializeField] private SpriteRenderer _upgradeMachine; 
     [SerializeField] private SpriteRenderer _subControlPanel; 
     
@@ -60,20 +61,21 @@ public class SubmarineManager : StaticInstance<SubmarineManager>, ISaveable {
             if (GameManager.Instance.IsBooting) {
                 OnSubUpgrade?.Invoke(effect.upgrade.ID); // skip the cutscene
             } else {
-                HandleCutscene(effect.upgrade.ID, effect, ResourceSystem.SubUpgradePanel, _cutsceneCameraPosUpgradeMachine);
-                HandleCutscene(effect.upgrade.ID, effect,ResourceSystem.SubUpgradeControlPanel, _cutsceneCameraPosControlPanel);
+                HandleCutscene(effect.upgrade.ID, ResourceSystem.SubUpgradePanel, _cutsceneCameraPosUpgradeMachine);
+                HandleCutscene(effect.upgrade.ID,ResourceSystem.SubUpgradeControlPanel, _cutsceneCameraPosControlPanel);
+                HandleCutscene(effect.upgrade.ID,ResourceSystem.SubUpgradeCables, _cutsceneCameraCables);
             }
         }
         // TODO update visual of the sub based on effect sprites
 
     }
 
-    private void HandleCutscene(ushort newUpgrade, SubUpgradeEffect effect, ushort ID, Transform cameraPos) {
+    private void HandleCutscene(ushort newUpgrade, ushort ID, Transform cutscenePosition) {
         if (newUpgrade == ID) {
             GameSequenceManager.Instance.AddEvent(shouldPause: false,
                 onStart: () => {
                     GameCutsceneManager.Instance.StartSubUpgradeCutscene(
-                        cameraPos,
+                        cutscenePosition,
                         () => OnSubUpgrade?.Invoke(ID));
                 },
             onFinish: () => {
