@@ -17,6 +17,7 @@ public class LocalizedTextMeshPro : MonoBehaviour {
     [Button]
     private void Localize() {
         if (string.IsNullOrEmpty(LocalizationKey)) return;
+        if (InputPromptHandler.Instance == null) return;
         LocalizationManager.TryLocalize(LocalizationKey, out var s);
         var sFormated = InputPromptHandler.Instance.FormatWithIcons(s);
         string text = sFormated;

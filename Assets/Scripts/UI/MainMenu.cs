@@ -1,21 +1,33 @@
 using DG.Tweening;
+using HierarchyDecorator;
+using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static ButtonMenuVisual;
 
 public class MainMenu : MonoBehaviour {
+    [FoldoutGroup("Buttons")]
     [SerializeField] private  Button _buttonPlay;
+    [FoldoutGroup("Buttons")]
     [SerializeField] private  Button _buttonPlayBack;
+    [FoldoutGroup("Buttons")]
     [SerializeField] private  Button _buttonNewGame;
+    [FoldoutGroup("Buttons")]
     [SerializeField] private  Button _buttonContinueTab;
+    [FoldoutGroup("Buttons")]
     [SerializeField] private  Button _buttonContinueGame;
+    [FoldoutGroup("Buttons")]
     [SerializeField] private  Button _buttonExit;
-    [SerializeField] private ButtonMenuVisual _buttonContinueTabVisual;
+    [FoldoutGroup("Buttons")]
     [SerializeField] private  Button _buttonChallenge;
+    [FoldoutGroup("Buttons")]
     [SerializeField] private  Button _buttonSettings;
+    [FoldoutGroup("Buttons")]
     [SerializeField] private  Button _buttonLanguage;
+    [FoldoutGroup("Buttons")]
     [SerializeField] private  Button _buttonLanguageBack;
+    [SerializeField] private ButtonMenuVisual _buttonContinueTabVisual;
     [SerializeField] private UISettings _settings; 
     [SerializeField] private Transform _cameraTrans; 
     [SerializeField] private Transform _logoTrans;
@@ -24,6 +36,12 @@ public class MainMenu : MonoBehaviour {
     [SerializeField] private GameObject _containerLanguage;
 
     [SerializeField] private TMP_InputField _seedField;
+    [FoldoutGroup("MenuCameraPositions")]
+    [SerializeField] private Transform _mainPageCameraPos;
+    [FoldoutGroup("MenuCameraPositions")]    
+    [SerializeField] private Transform _settingsCameraPos;
+    [FoldoutGroup("MenuCameraPositions")]
+    [SerializeField] private Transform _playGameCameraPos;
 
     private void OnEnable() {
         _buttonPlay.onClick.AddListener(OnPlayClicked);
@@ -78,7 +96,7 @@ public class MainMenu : MonoBehaviour {
 
     private void IntroAnimation() {
         Sequence introSeq = DOTween.Sequence();
-        float targetZ = -14;
+        float targetZ = -10.5f;
         float targetY = 8.17f;
         // Camera 
         var p = _cameraTrans.position;
@@ -97,9 +115,15 @@ public class MainMenu : MonoBehaviour {
 
     private void OnSettingsClicked() {
         Debug.Log("Setting Click");
+        _cameraTrans.DOMove(_settingsCameraPos.position, 2);
         _settings.Show(fromPause: false);
     }
 
+    // Unity event from inspector
+    public void OnSettingBack(bool isOpen) {
+        if (isOpen) return;
+        _cameraTrans.DOMove(_mainPageCameraPos.position, 2);
+    }
 
     private void OnContinueGameClicked() {
         // ensure save data still exists
