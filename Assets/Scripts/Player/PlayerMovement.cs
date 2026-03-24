@@ -17,12 +17,10 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
     private PlayerVisualHandler _visualHandler;
 
     private Vector2 _currentInput;
-    private bool _isDashing;
     private bool DEBUGIsGOD;
 
     List<ContactPoint2D> _contactsMostRecent = new List<ContactPoint2D>(); // Store the contacts we hit on collision enter
-    private bool _dashUnlocked = false;
-    private float _cachedSwimSpeed;
+    private float _swimSpeed;
     private float _waterDifficulty;
 
     public List<ContactPoint2D> ContactsMostRecent { get => _contactsMostRecent; set => _contactsMostRecent = value; }
@@ -97,20 +95,12 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
             return;
         // Get input for movement
         _currentInput = _inputManager.GetMovementInput();
-        // Handle state-specific logic in Update (mostly non-physics like animations, input processing)
-        switch (_currentState) {
-            case PlayerState.Swimming:
-                HandleSwimmingUpdate();
-                break;
-            case PlayerState.Grounded:
-                break;
-        }
         _visualHandler.HandleVisualUpdate(_currentState, _currentInput);
     }
 
     void OnCollisionEnter2D(Collision2D col) {
-        if (rb.linearVelocity.magnitude > _cachedSwimSpeed)
-            rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, _cachedSwimSpeed);
+        if (rb.linearVelocity.magnitude > _swimSpeed)
+            rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, _swimSpeed);
         _contactsMostRecent.Clear();
         _contactsMostRecent.AddRange(col.contacts);
     }
@@ -130,47 +120,36 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
     }
 
     
-    #region SWIMMING
-    private void HandleSwimmingUpdate() {
-        // Dash logic was here but its nothing now
-    }
 
     // --- State Handlers for FixedUpdate (Physics) ---
     private void HandleSwimmingPhysics() {
-        var accelerationForce = _playerStats.GetStat(StatType.PlayerAcceleration);
-        _cachedSwimSpeed = _playerStats.GetStat(StatType.PlayerSpeedMax);
+        _swimSpeed = _playerStats.GetStat(StatType.PlayerSpeedMax);
 #if UNITY_EDITOR
         if (DEBUGIsGOD) {
             rb.MovePosition(rb.position + 20 * Time.fixedDeltaTime * _currentInput.normalized);
             return;
         }
 #endif
-        // float waterDifficulty = 0.5f; // Boom  
-        accelerationForce *= _waterDifficulty;
         //Debug.Log(_waterDifficulty);
-        _cachedSwimSpeed  *= _waterDifficulty;
-        Vector2 moveDirection = _currentInput.normalized;
+        _swimSpeed  *= _waterDifficulty;
+        Vector2 input = Vector2.ClampMagnitude(_currentInput, 1f); // still lets player go slower if on controller
+        Vector2 desiredVelocity = input * _swimSpeed;
+        float accelerationTime = 1f;
+        float decelerationTime = 0.5f;
+        float time = input != Vector2.zero ? accelerationTime : decelerationTime;
 
-        if (moveDirection != Vector2.zero) {
-            rb.AddForce(moveDirection * accelerationForce);
-        } else {
-            if (rb.linearVelocity.magnitude > 0.01f) {
-                Vector2 oppositeDirection = -rb.linearVelocity.normalized;
-                rb.AddForce(oppositeDirection * decelerationForce * accelerationForce*0.4f);
-            } else {
-                rb.linearVelocity = Vector2.zero;
-            }
-        }
-        if (!_isDashing) {
-            float speed = rb.linearVelocity.magnitude;
-            if (speed > _cachedSwimSpeed) {
-                // lerp the magnitude down toward swimSpeed each FixedUpdate
-                float newSpeed = Mathf.Lerp(speed, _cachedSwimSpeed, 5 * Time.fixedDeltaTime);
-                rb.linearVelocity = rb.linearVelocity.normalized * newSpeed;
-            }
-        }
+        // How much velocity can change this frame
+        float maxDelta = _swimSpeed / time * Time.fixedDeltaTime;
+
+        rb.linearVelocity = Vector2.MoveTowards(
+            rb.linearVelocity,
+            desiredVelocity,
+            maxDelta
+        );
+
+        // Hard safety cap
+        rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, _swimSpeed);
     }
-    #endregion
 
     private void HandleGroundedPhysics() {
         // Horizontal movement

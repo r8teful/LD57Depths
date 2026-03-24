@@ -11,6 +11,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     private PlayerManager _player;
 
     public UpgradeNodeSO SubCablesNode;
+    public UpgradeNodeSO SubControlNode;
     public void RegisterOwningPlayer(PlayerManager player) {
         _player = player;
     }
@@ -89,9 +90,14 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     private void debugCaveReward() {
         // todo
     }
+    [ConsoleCommand("fixCables")]
+    private void debugFixCables() {
+        _player.UpgradeManager.PurchaseNodeDebug(SubCablesNode);
+        //SubmarineManager.Instance.FixControlPanel();
+    }
     [ConsoleCommand("fixControl")]
     private void debugFixControl() {
-        _player.UpgradeManager.PurchaseNodeDebug(SubCablesNode);
+        _player.UpgradeManager.PurchaseNodeDebug(SubControlNode);
         //SubmarineManager.Instance.FixControlPanel();
     }
     [ConsoleCommand("showupgrade")]

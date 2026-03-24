@@ -16,7 +16,7 @@ public class BackgroundWorldTexturesHandler : StaticInstance<BackgroundWorldText
         //_worldGenSetting = App.ResourceSystem.GetWorldGenByID(obj.WorldGenID);
         //PushBiomesToMaterials();
     }
-
+    /*
     void Update() {
         if (Screen.width == 0 || Screen.height == 0) return;
         Vector3 camPos = Camera.main.transform.position;
@@ -29,8 +29,8 @@ public class BackgroundWorldTexturesHandler : StaticInstance<BackgroundWorldText
             m.SetFloat("_ParallaxFactor", layerParallax[i]);
             m.SetFloat("_PixelSize", layerPixelSize[i]);
         }
-       
     }
+     */
   
     public void PushBiomesToMaterials(WorldGenData settings) {
         var index = 0;
@@ -118,7 +118,7 @@ public class BackgroundWorldTexturesHandler : StaticInstance<BackgroundWorldText
 
 
         // global seed
-        mat.SetFloat("_GlobalSeed", settings.seed * 1+ matIndex * 2352.124f);
+        mat.SetFloat("_GlobalSeed", settings.seed);
 
         // Cave and trench
         mat.SetFloat("_CaveNoiseScale", settings.caveNoiseScale);

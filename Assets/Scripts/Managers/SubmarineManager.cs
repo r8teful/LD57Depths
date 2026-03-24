@@ -1,6 +1,8 @@
+using DG.Tweening;
 using r8teful;
 using Sirenix.OdinInspector;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,14 +20,18 @@ public class SubmarineManager : StaticInstance<SubmarineManager>, ISaveable {
     public InventoryManager SubInventory => subInventory;
     [SerializeField] private SubItemGainVisualSpawner itemGainSpawner;
 
-    private HashSet<ushort> _subUpgrades = new HashSet<ushort>(); // UPGRADE NODE ID 
+    private Dictionary<ushort, SubUpgradeEffect> _subUpgrades = new Dictionary<ushort, SubUpgradeEffect>(); // UPGRADE NODE ID, EFFECT
     
     [SerializeField] private Transform _cutsceneCameraPosUpgradeMachine;
     [SerializeField] private Transform _cutsceneCameraPosControlPanel; 
     [SerializeField] private Transform _cutsceneCameraCables; 
     [SerializeField] private SpriteRenderer _upgradeMachine; 
-    [SerializeField] private SpriteRenderer _subControlPanel; 
-    
+    [SerializeField] private SpriteRenderer _subControlPanel;
+
+    public bool CanMoveTo(int index) {
+        return index <= GetUpgradeStage();
+    }
+
     protected override void Awake() {
         base.Awake();
         subInventory = new InventoryManager(); // will get overwritten in OnLoad if we have save data
@@ -44,30 +50,43 @@ public class SubmarineManager : StaticInstance<SubmarineManager>, ISaveable {
     public void MoveSub(int index) {
         submarineExterior.transform.position = new(0, GameManager.Instance.WorldGenSettings.GetWorldLayerYPos(index));
         SetSubPosIndex(index);
-    }
+        float yBefore = transform.position.y;
+        MoveInterior(VisibilityLayerType.Interior); // so confusing but this will simply update the position of the interior so that its where the exterior part of the submarine is
+        float yNow = transform.position.y;
+        float yDiff = yNow - yBefore;
+        var p = PlayerManager.Instance.gameObject.transform.position;
+        p.y += yDiff; // this unexpectidly also works with negative numbers 
+        PlayerManager.Instance.gameObject.transform.position = p; // this is so bad, it it should teleport the player to the right positon
+
+        StartCoroutine(MoveSubRoutine()); // visual + audio
+     }
     internal void SetSubPosIndex(int index) {
         _currentZoneIndex = index;
         OnSubMoved?.Invoke(index);
     }
-    
+    private IEnumerator MoveSubRoutine() {
+        // todo dissable interaction etc...
+        yield return App.Backdrop.Require();
+        var s = AudioController.Instance.PlaySound2D("SubMove",0,looping:true);
+        s.DOFade(0.2f, 1);
+        yield return new WaitForSeconds(3);
+        s.DOFade(0, 2).OnComplete(()=>Destroy(s.gameObject));
+        yield return App.Backdrop.Release();
+    }
 
     internal void NewSubUpgrade(SubUpgradeEffect effect) {
-        if (effect.isMajor) {
-            bool success = _subUpgrades.Add(effect.upgrade.ID);
-            if (!success) {
-                Debug.LogError("Sub recipe already purchased! Did you assigned a unique ID?");
-                return;
-            }
-            if (GameManager.Instance.IsBooting) {
-                OnSubUpgrade?.Invoke(effect.upgrade.ID); // skip the cutscene
-            } else {
-                HandleCutscene(effect.upgrade.ID, ResourceSystem.SubUpgradePanel, _cutsceneCameraPosUpgradeMachine);
-                HandleCutscene(effect.upgrade.ID,ResourceSystem.SubUpgradeControlPanel, _cutsceneCameraPosControlPanel);
-                HandleCutscene(effect.upgrade.ID,ResourceSystem.SubUpgradeCables, _cutsceneCameraCables);
-            }
+        bool success = _subUpgrades.TryAdd(effect.upgrade.ID,effect);
+        if (!success) {
+            Debug.LogError("Sub recipe already purchased! Did you assigned a unique ID?");
+            return;
         }
-        // TODO update visual of the sub based on effect sprites
-
+        if (GameManager.Instance.IsBooting) {
+            OnSubUpgrade?.Invoke(effect.upgrade.ID); // skip the cutscene
+        } else {
+            HandleCutscene(effect.upgrade.ID, ResourceSystem.SubUpgradePanel, _cutsceneCameraPosUpgradeMachine);
+            HandleCutscene(effect.upgrade.ID, ResourceSystem.SubUpgradeControlPanel, _cutsceneCameraPosControlPanel);
+            HandleCutscene(effect.upgrade.ID, ResourceSystem.SubUpgradeCables, _cutsceneCameraCables);
+        }
     }
 
     private void HandleCutscene(ushort newUpgrade, ushort ID, Transform cutscenePosition) {
@@ -99,12 +118,15 @@ public class SubmarineManager : StaticInstance<SubmarineManager>, ISaveable {
         }
     }
 
-    public int GetUpgradeStage() => _subUpgrades.Count; // lol?
-    
-    public bool CanMoveTo(int index) {
-        return index <= GetUpgradeStage();
+    public int GetUpgradeStage() {
+        int stage = 0;
+        foreach (var kvp in _subUpgrades) {
+            if (kvp.Value.unlocksNextZone)
+                stage++;
+        }
+        return stage;
     }
-
+    
     // FOR DEBUGING PUPROSES!!
     internal void RemoveAllUpgrades() {
         _subUpgrades.Clear();

@@ -20,6 +20,7 @@ Steamdeck notes:
 * Update the ui with lucys new stuff
 * Icon for upgrade station node
 * Fog stops make it behave like the background stuff, following the player camera
+* Hide cursor when on controller and when you are inputing with keyboard in upgrade tree
 
 UX:
 
@@ -40,14 +41,10 @@ Misc:
 Coding:
 
 * The other upgrades, like the block oxygen, lazer blast, lazer chain, make them better, it feels wrong, it just costs like 2 iron to buy, its not satisfying, make it cost somewhat mored
-* crit damage?
-* Implement ONE event
 * Don't let submarine spawn inside a rock, or inside a cave
-* Highlight system that surrounds a button with a sprite
 
 Add more content:
 
-* Adrenaline \& adrenaline+
 * chain -> add sound \& sub upgrades
 * Speed also changes acceleration
 * explosive crits
@@ -85,8 +82,6 @@ RIK TODO:
 
  	SHING sound effect, shiny something like that when UI opens. P I K U
 
-* Add menu stuff
-* Saving? Start doing steam demo stuff Yeah do saving stuff I'm in the mood actually with all this bullshit architecture backend stuff
 * Save shrine stuff (not saved properly now)
 * Save artifact mining state so that you can mine half, then quit, and then it would still count. Or just implement so that it gives you the buff if all the tiles are air non solid or whatever
 * Make sure all run specific data is whipped when creating new game
@@ -98,32 +93,14 @@ For index: Biomes, artifacts, ores?
 #### Lucy playtest V0.0.4
 
 * Title card for when entering a biome -> Give it a cool sound effect, like buh bih beh bah buhh or du di de da daaa
-* Add more descriptions to nodes
-* Interact button hint for closing ui
-* Particle effect for exploration entities
-* Chunks are huge from chest
-* Frustrating to upgrade max speed because you slide too much
-* Feels like magnetism isn't actually helping its just making them shoot past
 * Make everything feel special - > More visual effects
 * Lots of nodes being upgraded feels like you are strong, you don't think about
-* increase interaction range for hatch
-* Remove question marks
 
 
 
-Not like:
-
-* Chest
 * I felt aimless like it didn't have a purpose -> Crash comic at the start
-* More of a reason to go into the biome
 * Would be great if exploration entities didn't spawn in the air
 * Not enough detail in the submarine
-
-
-
-
-
-
 
 
 
@@ -138,7 +115,5 @@ Alchemy !! **Test before adding loads of logic and upgrades to it** !!
 
 
 
-
-
-
+8.470047e+08
 

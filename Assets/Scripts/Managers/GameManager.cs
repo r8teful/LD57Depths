@@ -44,7 +44,7 @@ public class GameManager : PersistentSingleton<GameManager> {
                 return; // already running just return 
             if (_currentGameSettings == null) {
                 // We've run this scene from the editor, or something went very wrong. Just create one here
-                _currentGameSettings = new GameSettings(true);
+                _currentGameSettings = new GameSettings(createRandomSeed: true);
             }
             _bootRoutine = StartCoroutine(BootSequence(loadPlayScene: false));
         }

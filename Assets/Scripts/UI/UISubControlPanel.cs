@@ -117,7 +117,7 @@ public class UISubControlPanel : MonoBehaviour {
     }
 
     private void OnMoveClicked() {
-        // Server handles most logic, will call OnMoveEnter if succefull 
+
         SubmarineManager.Instance.MoveSub(_currentShownIndex);
     }
 }

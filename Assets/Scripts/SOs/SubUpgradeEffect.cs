@@ -3,8 +3,10 @@
 public class SubUpgradeEffect : UpgradeEffect {
     public Sprite SpriteExterior;
     public Sprite SpriteInterior;
+    [Tooltip("used for both cutscene checks, and ID mappings")]
     public UpgradeNodeSO upgrade; 
-    public bool isMajor;  
+
+    public bool unlocksNextZone;
     public override void Execute(ExecutionContext context) {
         SubmarineManager.Instance.NewSubUpgrade(this);
     }

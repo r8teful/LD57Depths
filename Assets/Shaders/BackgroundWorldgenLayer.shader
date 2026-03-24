@@ -7,6 +7,7 @@ Shader "Custom/BackgroundWorldGenLayer"
         _FillTexArray ("Fill Texture Array", 2DArray) = "" {}
         // world mapping & parallax
         _WorldUVScale ("World UV Scale", Float) = 1.0
+        _GlobalSeed ("Global Seed", Float) = 1.0
         _CameraPos ("Camera World Pos", Vector) = (0,0,0,0)
         _ParallaxFactor ("Parallax Factor", Float) = 0.5
         _BackgroundScaleFactor("Scale Factor", Float) = 1.0
@@ -302,7 +303,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                 {
                     float sCave = SampleCaveSigned(uv);
                     float sTrench = SampleTrenchSigned(uv, _TrenchBaseWiden, _TrenchBaseWidth, _TrenchNoiseScale, _TrenchEdgeAmp, 0.0, _GlobalSeed);
-                    //return sCave;
+                    return sCave;
                     s = min(sCave, sTrench);
                 }
                 else
@@ -368,7 +369,8 @@ Shader "Custom/BackgroundWorldGenLayer"
 
                 // 2) Parallax: shift the world coord based on camera position and parallax factor
                 // Camera pos passed in _CameraPos.xy
-                float2 cam = _CameraPos.xy;
+                //_WorldSpaceCameraPos
+                float2 cam = _WorldSpaceCameraPos.xy;
                 float2 parUV = ((worldUV - cam) * _ParallaxFactor) + worldUV; // your proposed formula ((UV - CameraPos) * Par) + UV
                 
                 int biomeIndex, textureIndex;

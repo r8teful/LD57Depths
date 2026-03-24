@@ -93,6 +93,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -100,10 +113,10 @@ TextureImporter:
       name: GamepadD-PadUp
       rect:
         serializedVersion: 2
-        x: 17
-        y: 168
-        width: 16
-        height: 16
+        x: 19
+        y: 170
+        width: 12
+        height: 12
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -122,10 +135,10 @@ TextureImporter:
       name: GamepadD-PadRight
       rect:
         serializedVersion: 2
-        x: 34
-        y: 168
-        width: 16
-        height: 16
+        x: 36
+        y: 170
+        width: 12
+        height: 12
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -144,10 +157,10 @@ TextureImporter:
       name: GamepadD-PadDown
       rect:
         serializedVersion: 2
-        x: 51
-        y: 168
-        width: 16
-        height: 16
+        x: 53
+        y: 170
+        width: 12
+        height: 12
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -166,10 +179,10 @@ TextureImporter:
       name: GamepadD-PadLeft
       rect:
         serializedVersion: 2
-        x: 68
-        y: 168
-        width: 16
-        height: 16
+        x: 70
+        y: 170
+        width: 12
+        height: 12
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -188,10 +201,10 @@ TextureImporter:
       name: MouseLeftButton
       rect:
         serializedVersion: 2
-        x: 109
-        y: 171
-        width: 16
-        height: 16
+        x: 113
+        y: 172
+        width: 8
+        height: 13
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -210,10 +223,10 @@ TextureImporter:
       name: MouseRightButton
       rect:
         serializedVersion: 2
-        x: 126
-        y: 171
-        width: 16
-        height: 16
+        x: 130
+        y: 172
+        width: 8
+        height: 13
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -232,10 +245,10 @@ TextureImporter:
       name: MouseMiddleButton
       rect:
         serializedVersion: 2
-        x: 143
-        y: 171
-        width: 16
-        height: 16
+        x: 147
+        y: 172
+        width: 8
+        height: 13
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -254,10 +267,10 @@ TextureImporter:
       name: MouseScrollUp
       rect:
         serializedVersion: 2
-        x: 160
-        y: 171
-        width: 16
-        height: 16
+        x: 164
+        y: 172
+        width: 8
+        height: 14
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -276,10 +289,10 @@ TextureImporter:
       name: MouseScrollDown
       rect:
         serializedVersion: 2
-        x: 177
-        y: 171
-        width: 16
-        height: 16
+        x: 181
+        y: 172
+        width: 8
+        height: 13
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -298,10 +311,10 @@ TextureImporter:
       name: MouseScroll
       rect:
         serializedVersion: 2
-        x: 195
-        y: 171
-        width: 16
-        height: 16
+        x: 198
+        y: 172
+        width: 8
+        height: 14
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -320,10 +333,10 @@ TextureImporter:
       name: KeyboardEsc
       rect:
         serializedVersion: 2
-        x: 289
-        y: 172
-        width: 16
-        height: 16
+        x: 292
+        y: 175
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -342,10 +355,10 @@ TextureImporter:
       name: KeyboardF1
       rect:
         serializedVersion: 2
-        x: 306
-        y: 172
-        width: 16
-        height: 16
+        x: 309
+        y: 175
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -364,10 +377,10 @@ TextureImporter:
       name: KeyboardF2
       rect:
         serializedVersion: 2
-        x: 323
-        y: 172
-        width: 16
-        height: 16
+        x: 326
+        y: 175
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -386,10 +399,10 @@ TextureImporter:
       name: KeyboardF3
       rect:
         serializedVersion: 2
-        x: 340
-        y: 172
-        width: 16
-        height: 16
+        x: 343
+        y: 175
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -408,10 +421,10 @@ TextureImporter:
       name: KeyboardF4
       rect:
         serializedVersion: 2
-        x: 357
-        y: 172
-        width: 16
-        height: 16
+        x: 360
+        y: 175
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -430,10 +443,10 @@ TextureImporter:
       name: KeyboardF5
       rect:
         serializedVersion: 2
-        x: 374
-        y: 172
-        width: 16
-        height: 16
+        x: 377
+        y: 175
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -452,10 +465,10 @@ TextureImporter:
       name: KeyboardF6
       rect:
         serializedVersion: 2
-        x: 391
-        y: 172
-        width: 16
-        height: 16
+        x: 394
+        y: 175
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -474,10 +487,10 @@ TextureImporter:
       name: KeyboardF7
       rect:
         serializedVersion: 2
-        x: 408
-        y: 172
-        width: 16
-        height: 16
+        x: 411
+        y: 175
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -496,10 +509,10 @@ TextureImporter:
       name: KeyboardF8
       rect:
         serializedVersion: 2
-        x: 425
-        y: 172
-        width: 16
-        height: 16
+        x: 428
+        y: 175
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -518,10 +531,10 @@ TextureImporter:
       name: KeyboardF9
       rect:
         serializedVersion: 2
-        x: 442
-        y: 172
-        width: 16
-        height: 16
+        x: 445
+        y: 175
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -540,10 +553,10 @@ TextureImporter:
       name: KeyboardF10
       rect:
         serializedVersion: 2
-        x: 459
-        y: 172
-        width: 16
-        height: 16
+        x: 462
+        y: 175
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -562,10 +575,10 @@ TextureImporter:
       name: KeyboardF11
       rect:
         serializedVersion: 2
-        x: 476
-        y: 172
-        width: 16
-        height: 16
+        x: 479
+        y: 175
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -584,10 +597,10 @@ TextureImporter:
       name: KeyboardF12
       rect:
         serializedVersion: 2
-        x: 493
-        y: 172
-        width: 16
-        height: 16
+        x: 496
+        y: 175
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -606,10 +619,10 @@ TextureImporter:
       name: KeyboardTilde
       rect:
         serializedVersion: 2
-        x: 510
-        y: 172
-        width: 16
-        height: 16
+        x: 513
+        y: 175
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -628,10 +641,10 @@ TextureImporter:
       name: Keyboard!
       rect:
         serializedVersion: 2
-        x: 527
-        y: 172
-        width: 16
-        height: 16
+        x: 530
+        y: 175
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -650,10 +663,10 @@ TextureImporter:
       name: Keyboard@
       rect:
         serializedVersion: 2
-        x: 544
-        y: 172
-        width: 16
-        height: 16
+        x: 547
+        y: 175
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -672,10 +685,10 @@ TextureImporter:
       name: Keyboard#
       rect:
         serializedVersion: 2
-        x: 561
-        y: 172
-        width: 16
-        height: 16
+        x: 564
+        y: 175
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -694,10 +707,10 @@ TextureImporter:
       name: GamepadButtonNorth
       rect:
         serializedVersion: 2
-        x: 0
-        y: 150
-        width: 16
-        height: 16
+        x: 6
+        y: 160
+        width: 4
+        height: 4
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -716,10 +729,10 @@ TextureImporter:
       name: GamepadButtonEast
       rect:
         serializedVersion: 2
-        x: 17
-        y: 150
-        width: 16
-        height: 16
+        x: 23
+        y: 160
+        width: 4
+        height: 4
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -738,10 +751,10 @@ TextureImporter:
       name: GamepadButtonSouth
       rect:
         serializedVersion: 2
-        x: 34
-        y: 150
-        width: 16
-        height: 16
+        x: 40
+        y: 160
+        width: 4
+        height: 4
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -760,10 +773,10 @@ TextureImporter:
       name: GamepadButtonWest
       rect:
         serializedVersion: 2
-        x: 51
-        y: 150
-        width: 16
-        height: 16
+        x: 57
+        y: 160
+        width: 4
+        height: 4
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -782,10 +795,10 @@ TextureImporter:
       name: GamepadLeftStick
       rect:
         serializedVersion: 2
-        x: 136
-        y: 154
-        width: 16
-        height: 16
+        x: 139
+        y: 157
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -804,10 +817,10 @@ TextureImporter:
       name: GamepadLeftStickPress
       rect:
         serializedVersion: 2
-        x: 272
-        y: 154
-        width: 16
-        height: 16
+        x: 275
+        y: 157
+        width: 10
+        height: 8
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -826,10 +839,10 @@ TextureImporter:
       name: Keyboard1
       rect:
         serializedVersion: 2
-        x: 289
-        y: 155
-        width: 16
-        height: 16
+        x: 292
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -848,10 +861,10 @@ TextureImporter:
       name: Keyboard2
       rect:
         serializedVersion: 2
-        x: 306
-        y: 155
-        width: 16
-        height: 16
+        x: 309
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -870,10 +883,10 @@ TextureImporter:
       name: Keyboard3
       rect:
         serializedVersion: 2
-        x: 323
-        y: 155
-        width: 16
-        height: 16
+        x: 326
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -892,10 +905,10 @@ TextureImporter:
       name: Keyboard4
       rect:
         serializedVersion: 2
-        x: 340
-        y: 155
-        width: 16
-        height: 16
+        x: 343
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -914,10 +927,10 @@ TextureImporter:
       name: Keyboard5
       rect:
         serializedVersion: 2
-        x: 357
-        y: 155
-        width: 16
-        height: 16
+        x: 360
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -936,10 +949,10 @@ TextureImporter:
       name: Keyboard6
       rect:
         serializedVersion: 2
-        x: 374
-        y: 155
-        width: 16
-        height: 16
+        x: 377
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -958,10 +971,10 @@ TextureImporter:
       name: Keyboard7
       rect:
         serializedVersion: 2
-        x: 391
-        y: 155
-        width: 16
-        height: 16
+        x: 394
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -980,10 +993,10 @@ TextureImporter:
       name: Keyboard8
       rect:
         serializedVersion: 2
-        x: 408
-        y: 155
-        width: 16
-        height: 16
+        x: 411
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1002,10 +1015,10 @@ TextureImporter:
       name: Keyboard9
       rect:
         serializedVersion: 2
-        x: 425
-        y: 155
-        width: 16
-        height: 16
+        x: 428
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1024,10 +1037,10 @@ TextureImporter:
       name: Keyboard0
       rect:
         serializedVersion: 2
-        x: 442
-        y: 155
-        width: 16
-        height: 16
+        x: 445
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1046,10 +1059,10 @@ TextureImporter:
       name: Keyboard-
       rect:
         serializedVersion: 2
-        x: 459
-        y: 155
-        width: 16
-        height: 16
+        x: 462
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1068,10 +1081,10 @@ TextureImporter:
       name: Keyboard+
       rect:
         serializedVersion: 2
-        x: 476
-        y: 155
-        width: 16
-        height: 16
+        x: 479
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1090,10 +1103,10 @@ TextureImporter:
       name: Keyboard=
       rect:
         serializedVersion: 2
-        x: 493
-        y: 155
-        width: 16
-        height: 16
+        x: 496
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1112,10 +1125,10 @@ TextureImporter:
       name: Keyboard_
       rect:
         serializedVersion: 2
-        x: 510
-        y: 155
-        width: 16
-        height: 16
+        x: 513
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1134,10 +1147,10 @@ TextureImporter:
       name: InputPromptSheet2_62
       rect:
         serializedVersion: 2
-        x: 527
-        y: 155
-        width: 16
-        height: 16
+        x: 530
+        y: 158
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1156,10 +1169,10 @@ TextureImporter:
       name: KeyboardBackspace
       rect:
         serializedVersion: 2
-        x: 544
-        y: 155
-        width: 33
-        height: 16
+        x: 547
+        y: 158
+        width: 26
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1178,10 +1191,10 @@ TextureImporter:
       name: GamepadRightStick
       rect:
         serializedVersion: 2
-        x: 136
-        y: 136
-        width: 16
-        height: 16
+        x: 139
+        y: 139
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1200,10 +1213,10 @@ TextureImporter:
       name: GamepadRightStickPress
       rect:
         serializedVersion: 2
-        x: 272
-        y: 136
-        width: 16
-        height: 16
+        x: 275
+        y: 139
+        width: 10
+        height: 8
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1222,10 +1235,10 @@ TextureImporter:
       name: KeyboardQ
       rect:
         serializedVersion: 2
-        x: 289
-        y: 138
-        width: 16
-        height: 16
+        x: 292
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1244,10 +1257,10 @@ TextureImporter:
       name: KeyboardW
       rect:
         serializedVersion: 2
-        x: 306
-        y: 138
-        width: 16
-        height: 16
+        x: 309
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1266,10 +1279,10 @@ TextureImporter:
       name: KeyboardE
       rect:
         serializedVersion: 2
-        x: 323
-        y: 138
-        width: 16
-        height: 16
+        x: 326
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1288,10 +1301,10 @@ TextureImporter:
       name: KeyboardR
       rect:
         serializedVersion: 2
-        x: 340
-        y: 138
-        width: 16
-        height: 16
+        x: 343
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1310,10 +1323,10 @@ TextureImporter:
       name: KeyboardT
       rect:
         serializedVersion: 2
-        x: 357
-        y: 138
-        width: 16
-        height: 16
+        x: 360
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1332,10 +1345,10 @@ TextureImporter:
       name: KeyboardY
       rect:
         serializedVersion: 2
-        x: 374
-        y: 138
-        width: 16
-        height: 16
+        x: 377
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1354,10 +1367,10 @@ TextureImporter:
       name: KeyboardU
       rect:
         serializedVersion: 2
-        x: 391
-        y: 138
-        width: 16
-        height: 16
+        x: 394
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1376,10 +1389,10 @@ TextureImporter:
       name: KeyboardI
       rect:
         serializedVersion: 2
-        x: 408
-        y: 138
-        width: 16
-        height: 16
+        x: 411
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1398,10 +1411,10 @@ TextureImporter:
       name: KeyboardO
       rect:
         serializedVersion: 2
-        x: 425
-        y: 138
-        width: 16
-        height: 16
+        x: 428
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1420,10 +1433,10 @@ TextureImporter:
       name: KeyboardP
       rect:
         serializedVersion: 2
-        x: 442
-        y: 138
-        width: 16
-        height: 16
+        x: 445
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1442,10 +1455,10 @@ TextureImporter:
       name: Keyboard[
       rect:
         serializedVersion: 2
-        x: 459
-        y: 138
-        width: 16
-        height: 16
+        x: 462
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1464,10 +1477,10 @@ TextureImporter:
       name: 'Keyboard]'
       rect:
         serializedVersion: 2
-        x: 476
-        y: 138
-        width: 16
-        height: 16
+        x: 479
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1486,10 +1499,10 @@ TextureImporter:
       name: Keyboard{
       rect:
         serializedVersion: 2
-        x: 493
-        y: 138
-        width: 16
-        height: 16
+        x: 496
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1508,10 +1521,10 @@ TextureImporter:
       name: Keyboard}
       rect:
         serializedVersion: 2
-        x: 510
-        y: 138
-        width: 16
-        height: 16
+        x: 513
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1530,10 +1543,10 @@ TextureImporter:
       name: Keyboard
       rect:
         serializedVersion: 2
-        x: 527
-        y: 138
-        width: 16
-        height: 16
+        x: 530
+        y: 141
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1552,10 +1565,10 @@ TextureImporter:
       name: GamepadLeftShoulder
       rect:
         serializedVersion: 2
-        x: 153
-        y: 118
-        width: 16
-        height: 16
+        x: 155
+        y: 121
+        width: 12
+        height: 11
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1574,10 +1587,10 @@ TextureImporter:
       name: GamepadRightShoulder
       rect:
         serializedVersion: 2
-        x: 170
-        y: 118
-        width: 16
-        height: 16
+        x: 172
+        y: 121
+        width: 12
+        height: 11
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1596,10 +1609,10 @@ TextureImporter:
       name: GamepadLeftTrigger
       rect:
         serializedVersion: 2
-        x: 187
-        y: 118
-        width: 16
-        height: 16
+        x: 189
+        y: 121
+        width: 12
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1618,10 +1631,10 @@ TextureImporter:
       name: GamepadRightTrigger
       rect:
         serializedVersion: 2
-        x: 204
-        y: 118
-        width: 16
-        height: 16
+        x: 206
+        y: 121
+        width: 12
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1640,10 +1653,10 @@ TextureImporter:
       name: KeyboardA
       rect:
         serializedVersion: 2
-        x: 306
-        y: 121
-        width: 16
-        height: 16
+        x: 309
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1662,10 +1675,10 @@ TextureImporter:
       name: KeyboardS
       rect:
         serializedVersion: 2
-        x: 323
-        y: 121
-        width: 16
-        height: 16
+        x: 326
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1684,10 +1697,10 @@ TextureImporter:
       name: KeyboardD
       rect:
         serializedVersion: 2
-        x: 340
-        y: 121
-        width: 16
-        height: 16
+        x: 343
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1706,10 +1719,10 @@ TextureImporter:
       name: KeyboardF
       rect:
         serializedVersion: 2
-        x: 357
-        y: 121
-        width: 16
-        height: 16
+        x: 360
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1728,10 +1741,10 @@ TextureImporter:
       name: KeyboardG
       rect:
         serializedVersion: 2
-        x: 374
-        y: 121
-        width: 16
-        height: 16
+        x: 377
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1750,10 +1763,10 @@ TextureImporter:
       name: KeyboardH
       rect:
         serializedVersion: 2
-        x: 391
-        y: 121
-        width: 16
-        height: 16
+        x: 394
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1772,10 +1785,10 @@ TextureImporter:
       name: KeyboardJ
       rect:
         serializedVersion: 2
-        x: 408
-        y: 121
-        width: 16
-        height: 16
+        x: 411
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1794,10 +1807,10 @@ TextureImporter:
       name: KeyboardK
       rect:
         serializedVersion: 2
-        x: 425
-        y: 121
-        width: 16
-        height: 16
+        x: 428
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1816,10 +1829,10 @@ TextureImporter:
       name: KeyboardL
       rect:
         serializedVersion: 2
-        x: 442
-        y: 121
-        width: 16
-        height: 16
+        x: 445
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1838,10 +1851,10 @@ TextureImporter:
       name: Keyboard'
       rect:
         serializedVersion: 2
-        x: 459
-        y: 121
-        width: 16
-        height: 16
+        x: 462
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1860,10 +1873,10 @@ TextureImporter:
       name: InputPromptSheet2_116
       rect:
         serializedVersion: 2
-        x: 476
-        y: 121
-        width: 16
-        height: 16
+        x: 479
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1882,10 +1895,10 @@ TextureImporter:
       name: InputPromptSheet2_117
       rect:
         serializedVersion: 2
-        x: 493
-        y: 121
-        width: 16
-        height: 16
+        x: 496
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1904,10 +1917,10 @@ TextureImporter:
       name: Keyboard;
       rect:
         serializedVersion: 2
-        x: 510
-        y: 121
-        width: 16
-        height: 16
+        x: 513
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1926,10 +1939,10 @@ TextureImporter:
       name: InputPromptSheet2_119
       rect:
         serializedVersion: 2
-        x: 527
-        y: 121
-        width: 16
-        height: 16
+        x: 530
+        y: 124
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1948,10 +1961,10 @@ TextureImporter:
       name: KeyboardEnter
       rect:
         serializedVersion: 2
-        x: 544
-        y: 121
-        width: 33
-        height: 33
+        x: 547
+        y: 124
+        width: 26
+        height: 27
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1970,10 +1983,10 @@ TextureImporter:
       name: KeyboardWindows
       rect:
         serializedVersion: 2
-        x: 306
-        y: 104
-        width: 16
-        height: 16
+        x: 309
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1992,10 +2005,10 @@ TextureImporter:
       name: KeyboardZ
       rect:
         serializedVersion: 2
-        x: 323
-        y: 104
-        width: 16
-        height: 16
+        x: 326
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2014,10 +2027,10 @@ TextureImporter:
       name: KeyboardX
       rect:
         serializedVersion: 2
-        x: 340
-        y: 104
-        width: 16
-        height: 16
+        x: 343
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2036,10 +2049,10 @@ TextureImporter:
       name: KeyboardC
       rect:
         serializedVersion: 2
-        x: 357
-        y: 104
-        width: 16
-        height: 16
+        x: 360
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2058,10 +2071,10 @@ TextureImporter:
       name: KeyboardV
       rect:
         serializedVersion: 2
-        x: 374
-        y: 104
-        width: 16
-        height: 16
+        x: 377
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2080,10 +2093,10 @@ TextureImporter:
       name: KeyboardB
       rect:
         serializedVersion: 2
-        x: 391
-        y: 104
-        width: 16
-        height: 16
+        x: 394
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2102,10 +2115,10 @@ TextureImporter:
       name: KeyboardN
       rect:
         serializedVersion: 2
-        x: 408
-        y: 104
-        width: 16
-        height: 16
+        x: 411
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2124,10 +2137,10 @@ TextureImporter:
       name: KeyboardM
       rect:
         serializedVersion: 2
-        x: 425
-        y: 104
-        width: 16
-        height: 16
+        x: 428
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2146,10 +2159,10 @@ TextureImporter:
       name: InputPromptSheet2_144
       rect:
         serializedVersion: 2
-        x: 442
-        y: 104
-        width: 16
-        height: 16
+        x: 445
+        y: 107
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2168,10 +2181,10 @@ TextureImporter:
       name: InputPromptSheet2_145
       rect:
         serializedVersion: 2
-        x: 459
-        y: 104
-        width: 16
-        height: 16
+        x: 462
+        y: 107
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2190,10 +2203,10 @@ TextureImporter:
       name: InputPromptSheet2_146
       rect:
         serializedVersion: 2
-        x: 476
-        y: 104
-        width: 16
-        height: 16
+        x: 479
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2212,10 +2225,10 @@ TextureImporter:
       name: InputPromptSheet2_147
       rect:
         serializedVersion: 2
-        x: 493
-        y: 104
-        width: 16
-        height: 16
+        x: 496
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2234,10 +2247,10 @@ TextureImporter:
       name: KeyboardUp
       rect:
         serializedVersion: 2
-        x: 510
-        y: 104
-        width: 16
-        height: 16
+        x: 513
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2256,10 +2269,10 @@ TextureImporter:
       name: KeyboardRight
       rect:
         serializedVersion: 2
-        x: 527
-        y: 104
-        width: 16
-        height: 16
+        x: 530
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2278,10 +2291,10 @@ TextureImporter:
       name: KeyboardDown
       rect:
         serializedVersion: 2
-        x: 544
-        y: 104
-        width: 16
-        height: 16
+        x: 547
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2300,10 +2313,10 @@ TextureImporter:
       name: KeyboardLeft
       rect:
         serializedVersion: 2
-        x: 560
-        y: 104
-        width: 16
-        height: 16
+        x: 563
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2322,10 +2335,10 @@ TextureImporter:
       name: GamepadSelect
       rect:
         serializedVersion: 2
-        x: 71
-        y: 93
-        width: 16
-        height: 16
+        x: 74
+        y: 96
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2344,10 +2357,10 @@ TextureImporter:
       name: GamepadStart
       rect:
         serializedVersion: 2
-        x: 88
-        y: 93
-        width: 16
-        height: 16
+        x: 91
+        y: 96
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2363,35 +2376,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InputPromptSheet2_156
-      rect:
-        serializedVersion: 2
-        x: 104
-        y: 93
-        width: 16
-        height: 16
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0bed46a4d51efe64c81b0bd3787b9646
-      internalID: -662378490
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: KeyboardAlt
       rect:
         serializedVersion: 2
-        x: 289
-        y: 87
-        width: 23
-        height: 16
+        x: 292
+        y: 90
+        width: 17
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2410,10 +2401,10 @@ TextureImporter:
       name: KeyboardTab
       rect:
         serializedVersion: 2
-        x: 323
-        y: 87
-        width: 23
-        height: 16
+        x: 326
+        y: 90
+        width: 17
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2432,10 +2423,10 @@ TextureImporter:
       name: KeyboardDelete
       rect:
         serializedVersion: 2
-        x: 357
-        y: 87
-        width: 23
-        height: 16
+        x: 360
+        y: 90
+        width: 17
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2454,10 +2445,10 @@ TextureImporter:
       name: KeyboardEnd
       rect:
         serializedVersion: 2
-        x: 391
-        y: 87
-        width: 23
-        height: 16
+        x: 394
+        y: 90
+        width: 17
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2476,10 +2467,10 @@ TextureImporter:
       name: KeyboardNum
       rect:
         serializedVersion: 2
-        x: 425
-        y: 87
-        width: 23
-        height: 16
+        x: 428
+        y: 90
+        width: 17
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2498,10 +2489,10 @@ TextureImporter:
       name: Keyboard.
       rect:
         serializedVersion: 2
-        x: 459
-        y: 87
-        width: 16
-        height: 16
+        x: 462
+        y: 90
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2520,10 +2511,10 @@ TextureImporter:
       name: Keyboard%
       rect:
         serializedVersion: 2
-        x: 493
-        y: 87
-        width: 16
-        height: 16
+        x: 496
+        y: 90
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2542,10 +2533,10 @@ TextureImporter:
       name: Keyboard^
       rect:
         serializedVersion: 2
-        x: 510
-        y: 87
-        width: 16
-        height: 16
+        x: 513
+        y: 90
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2564,10 +2555,10 @@ TextureImporter:
       name: Keyboard(
       rect:
         serializedVersion: 2
-        x: 544
-        y: 87
-        width: 16
-        height: 16
+        x: 547
+        y: 90
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2586,10 +2577,10 @@ TextureImporter:
       name: Keyboard)
       rect:
         serializedVersion: 2
-        x: 560
-        y: 87
-        width: 16
-        height: 16
+        x: 563
+        y: 90
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2608,10 +2599,10 @@ TextureImporter:
       name: KeyboardCtrl
       rect:
         serializedVersion: 2
-        x: 289
-        y: 70
-        width: 27
-        height: 16
+        x: 292
+        y: 73
+        width: 21
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2630,10 +2621,10 @@ TextureImporter:
       name: KeyboardCaps
       rect:
         serializedVersion: 2
-        x: 323
-        y: 70
-        width: 27
-        height: 16
+        x: 326
+        y: 73
+        width: 21
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2652,10 +2643,10 @@ TextureImporter:
       name: KeyboardHome
       rect:
         serializedVersion: 2
-        x: 357
-        y: 70
-        width: 27
-        height: 16
+        x: 360
+        y: 73
+        width: 21
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2674,10 +2665,10 @@ TextureImporter:
       name: KeyboardPgUp
       rect:
         serializedVersion: 2
-        x: 391
-        y: 70
-        width: 32
-        height: 16
+        x: 394
+        y: 73
+        width: 26
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2696,10 +2687,10 @@ TextureImporter:
       name: KeyboardPgDown
       rect:
         serializedVersion: 2
-        x: 425
-        y: 70
-        width: 32
-        height: 16
+        x: 428
+        y: 73
+        width: 26
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2718,10 +2709,10 @@ TextureImporter:
       name: Keyboard,
       rect:
         serializedVersion: 2
-        x: 459
-        y: 70
-        width: 16
-        height: 16
+        x: 462
+        y: 73
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2740,10 +2731,10 @@ TextureImporter:
       name: KeyboardSpace
       rect:
         serializedVersion: 2
-        x: 527
-        y: 70
-        width: 50
-        height: 16
+        x: 530
+        y: 73
+        width: 42
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2762,10 +2753,10 @@ TextureImporter:
       name: KeyboardShift
       rect:
         serializedVersion: 2
-        x: 289
-        y: 53
-        width: 32
-        height: 16
+        x: 292
+        y: 56
+        width: 26
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2784,10 +2775,10 @@ TextureImporter:
       name: KeyboardInsert
       rect:
         serializedVersion: 2
-        x: 323
-        y: 53
-        width: 32
-        height: 16
+        x: 326
+        y: 56
+        width: 26
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2806,10 +2797,10 @@ TextureImporter:
       name: KeyboardPrint
       rect:
         serializedVersion: 2
-        x: 357
-        y: 53
-        width: 32
-        height: 16
+        x: 360
+        y: 56
+        width: 26
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2828,10 +2819,10 @@ TextureImporter:
       name: KeyboardScroll
       rect:
         serializedVersion: 2
-        x: 391
-        y: 53
-        width: 32
-        height: 16
+        x: 394
+        y: 56
+        width: 26
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2850,10 +2841,10 @@ TextureImporter:
       name: KeyboardPause
       rect:
         serializedVersion: 2
-        x: 425
-        y: 53
-        width: 32
-        height: 16
+        x: 428
+        y: 56
+        width: 26
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2872,10 +2863,10 @@ TextureImporter:
       name: KeyboardPlay
       rect:
         serializedVersion: 2
-        x: 459
-        y: 53
-        width: 16
-        height: 16
+        x: 462
+        y: 56
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2894,10 +2885,10 @@ TextureImporter:
       name: KeyboardPauseMini
       rect:
         serializedVersion: 2
-        x: 476
-        y: 53
-        width: 16
-        height: 16
+        x: 479
+        y: 56
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2916,10 +2907,10 @@ TextureImporter:
       name: KeyboardStop
       rect:
         serializedVersion: 2
-        x: 493
-        y: 53
-        width: 16
-        height: 16
+        x: 496
+        y: 56
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2938,10 +2929,10 @@ TextureImporter:
       name: KeyboardRewind
       rect:
         serializedVersion: 2
-        x: 510
-        y: 53
-        width: 16
-        height: 16
+        x: 513
+        y: 56
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2960,10 +2951,10 @@ TextureImporter:
       name: KeyboardFastforward
       rect:
         serializedVersion: 2
-        x: 527
-        y: 53
-        width: 16
-        height: 16
+        x: 530
+        y: 56
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2982,10 +2973,10 @@ TextureImporter:
       name: KeyboardSkipBack
       rect:
         serializedVersion: 2
-        x: 544
-        y: 53
-        width: 16
-        height: 16
+        x: 547
+        y: 56
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -3004,10 +2995,10 @@ TextureImporter:
       name: KeyboardSkipForward
       rect:
         serializedVersion: 2
-        x: 561
-        y: 53
-        width: 16
-        height: 16
+        x: 564
+        y: 56
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -3026,10 +3017,10 @@ TextureImporter:
       name: KeyboardSpaceMini
       rect:
         serializedVersion: 2
-        x: 289
-        y: 104
-        width: 16
-        height: 16
+        x: 292
+        y: 107
+        width: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -3048,10 +3039,10 @@ TextureImporter:
       name: XBoxControllerB
       rect:
         serializedVersion: 2
-        x: 238
-        y: 172
-        width: 16
-        height: 16
+        x: 241
+        y: 175
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -3070,10 +3061,10 @@ TextureImporter:
       name: XBoxControllerA
       rect:
         serializedVersion: 2
-        x: 221
-        y: 172
-        width: 16
-        height: 16
+        x: 224
+        y: 175
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -3092,10 +3083,10 @@ TextureImporter:
       name: XBoxControllerX
       rect:
         serializedVersion: 2
-        x: 255
-        y: 172
-        width: 16
-        height: 16
+        x: 258
+        y: 175
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -3114,10 +3105,10 @@ TextureImporter:
       name: XBoxControllerY
       rect:
         serializedVersion: 2
-        x: 272
-        y: 172
-        width: 16
-        height: 16
+        x: 275
+        y: 175
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -3128,6 +3119,2118 @@ TextureImporter:
       bones: []
       spriteID: 153df6034c74cdb4eb2fa59f78cfe0f4
       internalID: -1084169096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_0
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 170
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1ac701ba3ab892498174a8003dc4051
+      internalID: -870492890
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_1
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 172
+        width: 8
+        height: 13
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d1474d2a66b51140985b76c512b6d12
+      internalID: 902502063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_2
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 157
+        width: 10
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 92c0b583bd186db41919fa586a9302bc
+      internalID: -870791395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_3
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 157
+        width: 12
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a08b9df17e9f835418c680676c232d10
+      internalID: -1517251226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_4
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 155
+        width: 10
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 455829556b290ea42b695eeb07faeb49
+      internalID: -427051544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_5
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 157
+        width: 12
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d1219b4ae799bb45bb5989ec8004896
+      internalID: 504746600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_6
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 157
+        width: 14
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b8d91b74aa2fd349b6b4e27c083759d
+      internalID: -1902529963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_7
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 155
+        width: 10
+        height: 14
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb51379ae3cfe4d4497948b53956880f
+      internalID: -1066548843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_8
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 155
+        width: 14
+        height: 14
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b8cd67cf2273b7244b4e58c869f9e6d1
+      internalID: -1351724081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_9
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 164
+        width: 6
+        height: 5
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a95f67e16ca9d64eaf84978931c0284
+      internalID: -1132505745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_10
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 156
+        width: 4
+        height: 4
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a8095801d3236749acd722f0521fe8f
+      internalID: -1399800190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_11
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 152
+        width: 4
+        height: 4
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c0253928098de549ac87f3648ee0aad
+      internalID: 1726943042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_12
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 156
+        width: 4
+        height: 4
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e39245293d2af54fb3108a7f7f6ece4
+      internalID: -1367877363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_13
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 156
+        width: 4
+        height: 4
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c0459c6b39674848a94e3cbf3d95fef
+      internalID: -461771910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_14
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 152
+        width: 4
+        height: 4
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: df782a2be75a836439bfd3bc99376be5
+      internalID: -1167950254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_15
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 156
+        width: 4
+        height: 4
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be38d9cd6801cc144b8b56747cc6eac6
+      internalID: -987739695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_16
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 156
+        width: 4
+        height: 4
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d002ded141982f488e77f6ea77a3782
+      internalID: 1801057914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_17
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 152
+        width: 4
+        height: 4
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2799bf1939db8c49b96a17644d3381e
+      internalID: -2092299983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_18
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 156
+        width: 4
+        height: 4
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 687cc2ad24bccb346890bbd63bc6be39
+      internalID: -4334239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_19
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 156
+        width: 4
+        height: 4
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7aa9b515ee6ca1f419f473ed8d82bbff
+      internalID: 1387080152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_20
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 152
+        width: 4
+        height: 4
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81345462daaa23c4fbaa473f439d7b0c
+      internalID: 1105877474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_21
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 156
+        width: 4
+        height: 4
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8babbcd406b10d840860604238d15c6a
+      internalID: -390485509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_22
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 139
+        width: 10
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: edc33dfe7ba30a24db82c895ce859b08
+      internalID: 377237484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_23
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 139
+        width: 12
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a599431a4e8aeae45b6b9136efaedde0
+      internalID: -1086101839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_24
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 137
+        width: 10
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 771869830945cda4291a9dc17cc763f0
+      internalID: -1674375506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_25
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 139
+        width: 12
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3c4b407f29d29c246802af3090068345
+      internalID: -521482622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_26
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 139
+        width: 14
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43dde456cbc2c4846970287655c9388e
+      internalID: -708934013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_27
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 137
+        width: 10
+        height: 14
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77e085726b6bfce4eb1c57f0c27d858e
+      internalID: -1947750313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_28
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 137
+        width: 14
+        height: 14
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: efa50bc471f5e2f458ca5c0a34ed6459
+      internalID: -709260901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_29
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 146
+        width: 6
+        height: 5
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1c759aad0a1da6644912466b97ed1fde
+      internalID: -2074999424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_30
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 120
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 12b7bb863ee106c4b951ca0a63126676
+      internalID: 496690367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_31
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 120
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 05832d5d4b894c04a900a82f4626ddbf
+      internalID: -1880247534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_32
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 120
+        width: 9
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6338394a3c908b44a7bb160c6ece68a
+      internalID: 1194440512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_33
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 120
+        width: 9
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a252da357251ccc448fc60e8d19ac974
+      internalID: -45822692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_34
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 121
+        width: 11
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b6f4427c04b13f4b80923b3bf1107c5
+      internalID: -1735240515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_35
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 121
+        width: 11
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed64758812da5e241917efb515497ed5
+      internalID: 967458931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_36
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 124
+        width: 9
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 500efb595d75c8d4c8cf00217dc55beb
+      internalID: 963802431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_37
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 95
+        width: 7
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eb22df8b3d113c9439d3bccc1ece247b
+      internalID: 1530727835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_38
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 97
+        width: 10
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 396257f657fd00246bff2dcaa039e026
+      internalID: -26242782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_39
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 97
+        width: 11
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 00d9a13f54e21e54eaaaa0989018be9a
+      internalID: -363898262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_40
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 97
+        width: 12
+        height: 8
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 54e13975ee7d20d4586c31062c18338e
+      internalID: -276983018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_41
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 97
+        width: 12
+        height: 8
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a95f30d5c61ed3348be55b5170eeebcb
+      internalID: 2113236326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_42
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 97
+        width: 12
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 37f10770aa64bc54bb89e890cf6795b2
+      internalID: -703806697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_43
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 97
+        width: 12
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82a72e084319736409372cc5874a91bd
+      internalID: 794551664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_44
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 97
+        width: 12
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 703ac1f2eaf495b4691677222961a953
+      internalID: -1417096773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_45
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 97
+        width: 12
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ab94591724a1cc4ca3877e5a00e8c6c
+      internalID: -1328234187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_46
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 96
+        width: 9
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ec9dbfb92ff39e4ca3f52ce2b6eb8d3
+      internalID: -621007496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_47
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 96
+        width: 9
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: abb1a6bdad1defb469041ae89bfcb50f
+      internalID: -1327214785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_48
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 90
+        width: 9
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd238a2d35996394d853e4a214a95ec0
+      internalID: -1762392990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_49
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 90
+        width: 9
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 872f96c3ca9a68c478274df66531ac19
+      internalID: -984681071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_50
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 77
+        width: 8
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 425675be29f093b47a7c7363d1f29b36
+      internalID: 1303650440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_51
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 77
+        width: 8
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5eefdee8698685a40906ec77ca0e3686
+      internalID: 686257587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_52
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 77
+        width: 9
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1adfd197d9db6d948b35de0eb12c30cb
+      internalID: -2092622285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_53
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 77
+        width: 9
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 268c5279cc9071b4ca65d28344c63dd5
+      internalID: 539810478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_54
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 79
+        width: 11
+        height: 7
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd353f9ddb8352a4ba7fb7de03393874
+      internalID: 501391054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_55
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 79
+        width: 11
+        height: 7
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 66ee15a84ab2ef54f9fa9d094b6d211c
+      internalID: 1896404941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_56
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 78
+        width: 9
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0013562496839ff43be130d121cf2a73
+      internalID: 1052625724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_57
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 78
+        width: 9
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 15c0ae1bfda25dd4a98dc9f3bdf5d647
+      internalID: -617261797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_58
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 78
+        width: 11
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d26c7d787591d5b47aaed83d41ad5e7c
+      internalID: -2120619847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_59
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 78
+        width: 11
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb254eccbaa5b054da35094bda996e8b
+      internalID: 387365180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_60
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 78
+        width: 11
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf83aac9cdd09f8489accf55f9039d98
+      internalID: 1690327052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_61
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 78
+        width: 11
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f7090c4b6b90b194fa93effb061d53ff
+      internalID: 1594791862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_63
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 73
+        width: 9
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1dc3fdb3f2c4d804795c5f98f56ad3a2
+      internalID: 2116542118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_64
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 73
+        width: 9
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b6a68c07a48a03c4d903103d14565fd0
+      internalID: 375896308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_65
+      rect:
+        serializedVersion: 2
+        x: 513
+        y: 73
+        width: 9
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 215a7c6f0a694b14e940398ec29413eb
+      internalID: 267949525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_66
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 31
+        width: 10
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a83844d1a1c44043b847219bceff5ff
+      internalID: -1315017617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_67
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 31
+        width: 10
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a09bc7359fc33647b481c04bea42a78
+      internalID: 696007538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_68
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 31
+        width: 10
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c60881086f314e4eae314b9294e3c88
+      internalID: -1419705941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_69
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 31
+        width: 10
+        height: 10
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58ddcc9762c066c46b13d25749fbe2d3
+      internalID: 2001377469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_70
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 32
+        width: 10
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 36d3b7962d7cfa843849360155929e58
+      internalID: -1923186956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_71
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 32
+        width: 10
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 74c97348dc8dd7c4baada00ad26f20ca
+      internalID: -2079361775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_72
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 32
+        width: 12
+        height: 8
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06d6e9a0d57165044bf38f5b68990083
+      internalID: 348665418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_73
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 32
+        width: 12
+        height: 8
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c9ceefaf5be33a46a924a59d0d629ed
+      internalID: 5867656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_74
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 33
+        width: 11
+        height: 7
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42c8ada5e356cac43aa9ad8a40b219b2
+      internalID: 2124850348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_75
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 33
+        width: 11
+        height: 7
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 921fd84030101c94483d58e680829745
+      internalID: 1719985900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_76
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 33
+        width: 12
+        height: 6
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c744ac66b16cce4ba345bd1876fcb9f
+      internalID: -816978844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_77
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 33
+        width: 12
+        height: 6
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81dd2561816a33740b4400e6c0e3cc3a
+      internalID: -847413284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_78
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 33
+        width: 12
+        height: 6
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 679051b6ef50f8841ad6958ae72b7be9
+      internalID: 660687571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_79
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 32
+        width: 12
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6f1447907b557d45b7144bf055ce9da
+      internalID: -1818405373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_80
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 32
+        width: 12
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 616d6a7933750bc4ebd48ed828011169
+      internalID: 465469705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_81
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 32
+        width: 12
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bbfd951e0153c8e44956681e122fe48c
+      internalID: 1463653738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_82
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 32
+        width: 12
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1a32171e136d0f438c64b65839d9537
+      internalID: -905704096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_83
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 32
+        width: 12
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 962d54a73c374a248a56265e16244655
+      internalID: -1326430113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_84
+      rect:
+        serializedVersion: 2
+        x: 374
+        y: 32
+        width: 12
+        height: 9
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c733374f02056c44a16ca192de6f38c
+      internalID: -423160505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_85
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 30
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9cd9cea4eecd0a4428913c9f1add10b4
+      internalID: 1222188760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_86
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 30
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b9d578cabded02149a0676faa17fce60
+      internalID: -464846621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_87
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 30
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9402f3ab1e9766d47be8e702ee788963
+      internalID: -295518279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_88
+      rect:
+        serializedVersion: 2
+        x: 442
+        y: 30
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c77e66b74f739a440b63d592a0502871
+      internalID: -2021068862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_89
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 30
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50f8cefb10af2fd479dc42f4fb835151
+      internalID: -2132938156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_90
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 30
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ff8c3288f1af2a41a0eb0c896027da2
+      internalID: -403154916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_91
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 13
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 368cea5fc409e7a44a3bc141566ab832
+      internalID: 508829578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_92
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 13
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51eb53b6c52edad46837dd80bbf45c02
+      internalID: -359405160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_93
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 13
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca52c2ab11c4f7a4c97e7643567cb0fc
+      internalID: -727810497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_94
+      rect:
+        serializedVersion: 2
+        x: 442
+        y: 13
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c12fe6a517d50948bf893b73fd010cd
+      internalID: -45197684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_95
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 13
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21d7adaf834edd64e86369c6e32945cb
+      internalID: 1780989642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InputPromptSheet2_96
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 13
+        width: 12
+        height: 12
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c1074ad6ee0f99143b035607fb05c14f
+      internalID: -185136419
       vertices: []
       indices: 
       edges: []
@@ -3146,7 +5249,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":16.0,"y":16.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":1.0,"y":1.0},"pivot":{"x":0.0,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":6,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":1,"spriteAlignment":6,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       GamepadButtonEast: 132832083
       GamepadButtonNorth: -880623750
@@ -3166,13 +5269,18 @@ TextureImporter:
       GamepadRightTrigger: -1482324281
       GamepadSelect: -1115969188
       GamepadStart: 598252476
+      InputPromptSheet2_0: -870492890
+      InputPromptSheet2_1: 902502063
+      InputPromptSheet2_10: -1399800190
       InputPromptSheet2_101: 593152379
       InputPromptSheet2_102: 1165931483
       InputPromptSheet2_103: -289374300
       InputPromptSheet2_104: -2041564289
+      InputPromptSheet2_11: 1726943042
       InputPromptSheet2_116: 27464238
       InputPromptSheet2_117: 143755561
       InputPromptSheet2_119: -1356293717
+      InputPromptSheet2_12: -1367877363
       InputPromptSheet2_121: -2009818172
       InputPromptSheet2_122: 1737513156
       InputPromptSheet2_123: 484773172
@@ -3182,6 +5290,7 @@ TextureImporter:
       InputPromptSheet2_127: 202977097
       InputPromptSheet2_128: -284337470
       InputPromptSheet2_129: -65878735
+      InputPromptSheet2_13: -461771910
       InputPromptSheet2_130: 1340355471
       InputPromptSheet2_131: -1393268
       InputPromptSheet2_132: -669647062
@@ -3208,10 +5317,12 @@ TextureImporter:
       InputPromptSheet2_164: 1235164740
       InputPromptSheet2_166: 198656860
       InputPromptSheet2_168: 1181634318
+      InputPromptSheet2_17: -2092299983
       InputPromptSheet2_170: -2103569084
       InputPromptSheet2_172: 2070189857
       InputPromptSheet2_174: -1285059344
       InputPromptSheet2_179: 1204205085
+      InputPromptSheet2_18: -4334239
       InputPromptSheet2_182: 476412764
       InputPromptSheet2_183: 1070780466
       InputPromptSheet2_184: -853985681
@@ -3220,6 +5331,7 @@ TextureImporter:
       InputPromptSheet2_187: -2064018534
       InputPromptSheet2_188: -994707487
       InputPromptSheet2_189: -1181651228
+      InputPromptSheet2_19: 1387080152
       InputPromptSheet2_190: -1692843322
       InputPromptSheet2_191: 147980909
       InputPromptSheet2_192: 1016028871
@@ -3227,20 +5339,25 @@ TextureImporter:
       InputPromptSheet2_195: 1820240733
       InputPromptSheet2_197: 1349072816
       InputPromptSheet2_199: 94534119
+      InputPromptSheet2_2: -870791395
+      InputPromptSheet2_20: 1105877474
       InputPromptSheet2_201: 848484784
       InputPromptSheet2_203: -1534097535
       InputPromptSheet2_205: -671980790
       InputPromptSheet2_206: -1128228650
       InputPromptSheet2_207: -316212986
       InputPromptSheet2_209: 2011033878
+      InputPromptSheet2_21: -390485509
       InputPromptSheet2_210: 682694203
       InputPromptSheet2_212: -1460530269
       InputPromptSheet2_214: -432386986
       InputPromptSheet2_216: 2053462651
       InputPromptSheet2_218: 140253358
+      InputPromptSheet2_22: 377237484
       InputPromptSheet2_220: -1810104892
       InputPromptSheet2_228: -196513510
       InputPromptSheet2_229: 270128384
+      InputPromptSheet2_23: -1086101839
       InputPromptSheet2_230: 894512212
       InputPromptSheet2_231: -1542185048
       InputPromptSheet2_232: 1206536528
@@ -3251,6 +5368,7 @@ TextureImporter:
       InputPromptSheet2_237: -1763722379
       InputPromptSheet2_238: 2031522634
       InputPromptSheet2_239: -1156509562
+      InputPromptSheet2_24: -1674375506
       InputPromptSheet2_240: 747378023
       InputPromptSheet2_241: -63269164
       InputPromptSheet2_242: -1432754541
@@ -3261,6 +5379,7 @@ TextureImporter:
       InputPromptSheet2_247: -1979527580
       InputPromptSheet2_248: 1990622275
       InputPromptSheet2_249: -1097508674
+      InputPromptSheet2_25: -521482622
       InputPromptSheet2_250: -576621638
       InputPromptSheet2_251: -985432499
       InputPromptSheet2_252: -260353407
@@ -3271,6 +5390,7 @@ TextureImporter:
       InputPromptSheet2_257: -1152899637
       InputPromptSheet2_258: 900689108
       InputPromptSheet2_259: -37571162
+      InputPromptSheet2_26: -708934013
       InputPromptSheet2_260: 24042627
       InputPromptSheet2_261: -348874333
       InputPromptSheet2_262: 2096267134
@@ -3281,6 +5401,7 @@ TextureImporter:
       InputPromptSheet2_267: 203596600
       InputPromptSheet2_268: -180527285
       InputPromptSheet2_269: -1042537946
+      InputPromptSheet2_27: -1947750313
       InputPromptSheet2_270: -1546095736
       InputPromptSheet2_271: -469630850
       InputPromptSheet2_272: 877837049
@@ -3291,12 +5412,25 @@ TextureImporter:
       InputPromptSheet2_277: -342985503
       InputPromptSheet2_278: -6710493
       InputPromptSheet2_279: 690374074
+      InputPromptSheet2_28: -709260901
       InputPromptSheet2_280: -1990893960
       InputPromptSheet2_281: -513713384
       InputPromptSheet2_282: 1761073345
       InputPromptSheet2_283: 918107396
       InputPromptSheet2_284: -666554728
+      InputPromptSheet2_29: -2074999424
+      InputPromptSheet2_3: -1517251226
+      InputPromptSheet2_30: 496690367
+      InputPromptSheet2_31: -1880247534
+      InputPromptSheet2_32: 1194440512
+      InputPromptSheet2_33: -45822692
+      InputPromptSheet2_34: -1735240515
+      InputPromptSheet2_35: 967458931
+      InputPromptSheet2_36: 963802431
+      InputPromptSheet2_37: 1530727835
       InputPromptSheet2_38: -26242782
+      InputPromptSheet2_39: -363898262
+      InputPromptSheet2_4: -427051544
       InputPromptSheet2_40: -276983018
       InputPromptSheet2_41: 2113236326
       InputPromptSheet2_42: -703806697
@@ -3304,13 +5438,32 @@ TextureImporter:
       InputPromptSheet2_44: -1417096773
       InputPromptSheet2_45: -1328234187
       InputPromptSheet2_46: -621007496
+      InputPromptSheet2_47: -1327214785
+      InputPromptSheet2_48: -1762392990
+      InputPromptSheet2_49: -984681071
       InputPromptSheet2_5: 504746600
+      InputPromptSheet2_50: 1303650440
+      InputPromptSheet2_51: 686257587
+      InputPromptSheet2_52: -2092622285
+      InputPromptSheet2_53: 539810478
+      InputPromptSheet2_54: 501391054
+      InputPromptSheet2_55: 1896404941
+      InputPromptSheet2_56: 1052625724
+      InputPromptSheet2_57: -617261797
+      InputPromptSheet2_58: -2120619847
+      InputPromptSheet2_59: 387365180
+      InputPromptSheet2_6: -1902529963
+      InputPromptSheet2_60: 1690327052
+      InputPromptSheet2_61: 1594791862
       InputPromptSheet2_62: -1533510223
+      InputPromptSheet2_63: 2116542118
       InputPromptSheet2_64: 375896308
       InputPromptSheet2_65: 267949525
       InputPromptSheet2_66: -1315017617
       InputPromptSheet2_67: 696007538
       InputPromptSheet2_68: -1419705941
+      InputPromptSheet2_69: 2001377469
+      InputPromptSheet2_7: -1066548843
       InputPromptSheet2_70: -1923186956
       InputPromptSheet2_71: -2079361775
       InputPromptSheet2_72: 348665418
@@ -3318,6 +5471,24 @@ TextureImporter:
       InputPromptSheet2_74: 2124850348
       InputPromptSheet2_75: 1719985900
       InputPromptSheet2_76: -816978844
+      InputPromptSheet2_77: -847413284
+      InputPromptSheet2_78: 660687571
+      InputPromptSheet2_79: -1818405373
+      InputPromptSheet2_8: -1351724081
+      InputPromptSheet2_80: 465469705
+      InputPromptSheet2_81: 1463653738
+      InputPromptSheet2_82: -905704096
+      InputPromptSheet2_83: -1326430113
+      InputPromptSheet2_84: -423160505
+      InputPromptSheet2_85: 1222188760
+      InputPromptSheet2_86: -464846621
+      InputPromptSheet2_87: -295518279
+      InputPromptSheet2_88: -2021068862
+      InputPromptSheet2_89: -2132938156
+      InputPromptSheet2_9: -1132505745
+      InputPromptSheet2_90: -403154916
+      InputPromptSheet2_91: 508829578
+      InputPromptSheet2_92: -359405160
       InputPromptSheet2_93: -727810497
       InputPromptSheet2_94: -45197684
       InputPromptSheet2_95: 1780989642

@@ -1389,7 +1389,7 @@ Escape closes a menu, Escape without a menu opens settings
     * Video-> Screen mode, resolution, fps, graphics quality
     * Audio
   * Exit
-  * Language 
+  * Language
   * *Leaderboard?*
   * Social links
 
