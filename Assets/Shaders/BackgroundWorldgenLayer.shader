@@ -10,17 +10,13 @@ Shader "Custom/BackgroundWorldGenLayer"
         _CameraPos ("Camera World Pos", Vector) = (0,0,0,0)
         _ParallaxFactor ("Parallax Factor", Float) = 0.5
         _BackgroundScaleFactor("Scale Factor", Float) = 1.0
-        // pixelization
-        _PixelSize ("Pixels per Unit (pixelization)", Float) = 8.0
-        _ScreenRatio ("Screen Ratio (H/W)", Float) = 1.0
         
         _EdgeThickness ("EdgeThickness", Float) = 0.1
         _TrenchEdgeSens ("TrenchEdgeSensitivity", Float) = 0.1
 
         _TextureTiling ("Backgroun Texture Tiling", Float) = 1.0
-        _DarkenMax ("_DarkenMax", Float) = 1.0
-        _DarkenCurve("_DarkenCurve", Float) = 1.0
         _EdgeTintColor ("EdgeColor", Color) = (1, 1, 1, 1)
+        _WorldBColor ("WorldBackgroundColor", Color) = (1, 1, 1, 1)
         // debug
         _DebugMode ("Debug Mode (0=off,1=mask,2=edge)", Float) = 0.0
         _TrenchBaseWiden ("Widen)", Float) = 0.0
@@ -54,16 +50,13 @@ Shader "Custom/BackgroundWorldGenLayer"
             float4 _CameraPos;
             float _ParallaxFactor;
             float _TextureTiling;
-            float _PixelSize;
-            float _ScreenRatio;
             float _DebugMode;   
             float _TrenchEdgeSens;   
             float _EdgeThickness;     
             float _EdgeInnerRim;            // 0 = off, 1 = on (if you want a rim inside hole)
             float _EdgeOuterRim;            // 0 = off, 1 = on (rim on the filled side)
             float4 _EdgeTintColor;
-            float _DarkenMax;
-            float _DarkenCurve;
+            float4 _WorldBColor;
             // Caves
             float _CaveNoiseScale;
             float _CaveAmp;
@@ -398,29 +391,27 @@ Shader "Custom/BackgroundWorldGenLayer"
                 //float3 nonEdgeDarkness = _ColorArray[biomeIndex].rgb * (1.0 - _ParallaxFactor*2);
                 //float3 nonEdgeDarkness = _ColorArray[biomeIndex].rgb;
                 // Scale parallax into [0,1]
-                // float t = saturate(_ParallaxFactor / 0.4); // Should be dividing by the MAX parralex effect that will results in fully black  if 
-                // t = pow(t, _DarkenCurve);
-                // t *= _DarkenMax;
-                //float t = saturate((_ParallaxFactor / 0.4) * _DarkenMax);
-                float t = saturate(_DarkenMax);
                 float4 backgroundColor;
                 if(biomeIndex < 1){
                     // This means its 0, so not in any biome
-                    backgroundColor = float4(0,0,0.007,1); // World color
+                    backgroundColor = _WorldBColor; // World color
                 } else {
                     backgroundColor = _ColorArray[biomeIndex-1]; // shifting BACK the index again, because first biome color is at position 0 
                 }
-                float3 nonEdgeDarkness = lerp(backgroundColor, float3(0,0,0), t);
                 //float3 nonEdgeDarkness = _NonEdgeDarkness.rgb; // This is pulled from the color array now
-                float3 darkenedColor =  nonEdgeDarkness * nonEdgeFilled; 
+                float3 darkenedColor =  backgroundColor * nonEdgeFilled; 
+                
+                 float3 nonEdgeColor = lerp(baseCol.rgb, backgroundColor.rgb,  backgroundColor.a);
                 
                 float3 darkenedBase = lerp(baseCol.rgb, _EdgeTintColor.rgb,_EdgeTintColor.a);
+                    
+                //float3 darkenedBase = lerp(nonEdgeColor, _EdgeTintColor.rgb,_EdgeTintColor.a);
                 //float nonEdgeFilled = fillMask * (1.0 - edgeMask);
                 //float darkened = baseCol * (1.0 - _NonEdgeDarkness * nonEdgeFilled); 
                 
                 // Edge color blending
                 //float4 edgeColor = _EdgeColor; // set in material
-                float3 finalColor = lerp(darkenedColor, darkenedBase, edgeMask_HighRes);
+                float3 finalColor = lerp(nonEdgeColor, darkenedBase, edgeMask_HighRes);
                 float4 result = float4(finalColor,fillMask);
                 
                 // Debugging modes

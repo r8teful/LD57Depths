@@ -14,7 +14,11 @@ public class UIUpgradeTree : MonoBehaviour {
     private Dictionary<ushort, List<ushort>> _adjacencyDict;
     private bool _closing;
     private int _upgradeBoughtThisVisit;
+    [SerializeField] private UIUpgradeNode BaseNode;
+    private UIUpgradeNode _lastSelectedNode;
+    private UIUpgradeNode _currentSelection;
 
+    public UIUpgradeNode LastSelectedNode() { if (_lastSelectedNode == null) return BaseNode; return _lastSelectedNode; }
     public bool IsClosing => _closing; // to fix a stupid bug where you get a popup because we squich the transform
     public static event Action OnUpgradeButtonPurchased; // this would break if we have several trees
     public Dictionary<ushort, UIUpgradeNode> GetNodeMap => _nodeMap;
@@ -70,14 +74,12 @@ public class UIUpgradeTree : MonoBehaviour {
         //}
         CreateConnectionLines(tree,nodes);
         _adjacencyDict = BuildUndirectedAdjacency(nodes);
-        UIUpgradeScreen.OnSelectedNodeChanged += SelectedChange;
         _player.UiManager.UpgradeScreen.OnPanelChanged += PanelChanged;
         _player.PlayerMovement.OnPlayerStateChanged += PlayerStateChanged;
         ItemTransferManager.OnTransferCompleteAll += UpdateNodeVisualData; // Fixes a bug where nodes don't update when you rush to the upgrade machine
 
     }
     private void OnDestroy() {
-        UIUpgradeScreen.OnSelectedNodeChanged -= SelectedChange;
         if (_player != null) {
             _player.UiManager.UpgradeScreen.OnPanelChanged -= PanelChanged;
             _player.PlayerMovement.OnPlayerStateChanged -= PlayerStateChanged;
@@ -92,15 +94,9 @@ public class UIUpgradeTree : MonoBehaviour {
         }
     }
 
-    private void SelectedChange(UpgradeNodeSO node) {
-        if(!_nodeMap.TryGetValue(node.ID, out var nodeUI)){
-            Debug.LogError("Could not find nodeUI of " + node.ID);
-            return;
-        }
-        nodeUI.SetSelected();
-        // Tell previous selected node that it is no longer sellected
-        //TODO
-        
+    internal void SetSelected(UIUpgradeNode uIUpgradeNode) {
+        _currentSelection = uIUpgradeNode;
+        _lastSelectedNode = _currentSelection;
     }
 
     private void CreateConnectionLines(UpgradeTreeDataSO treeData, List<UpgradeNodeSO> nodes) {
@@ -212,8 +208,8 @@ public class UIUpgradeTree : MonoBehaviour {
                 yield return node;
         }
     }
-    internal IEnumerator OnPanSelect(UIUpgradeNode uIUpgradeNode) {
-        yield return _player.UiManager.UpgradeScreen.PanAndZoom.FocusOnNode(uIUpgradeNode.Rect);
+    internal void OnPanSelect(UIUpgradeNode uIUpgradeNode) {
+        _player.UiManager.UpgradeScreen.PanAndZoom.FocusOnNode(uIUpgradeNode.Rect);
     }
 
     // Starts the simple serial ripple and returns the coroutine handle so caller can stop it.
@@ -296,5 +292,12 @@ public class UIUpgradeTree : MonoBehaviour {
 
     internal void OnTreeClose() {
         _closing = true;
+        _currentSelection = null;
+    }
+
+    internal void OnTreeOpen() {
+        if(LastSelectedNode() != null) {
+            LastSelectedNode().Select(moveView: false, showPopup: true);
+        }
     }
 }

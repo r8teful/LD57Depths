@@ -243,6 +243,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
 
         if (detected != CurrentDevice) {
             CurrentDevice = detected;
+            Debug.Log("Device change to: " + detected);
             OnDeviceChanged?.Invoke(CurrentDevice);
         }
     }
@@ -490,7 +491,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     private void OnPrimaryUIInteraction(InputAction.CallbackContext context) {
         // Just invoke an event? Right??
         // BTW this is not MB1, its enter, for when handling ui with keyboard only
-        OnUIInteraction.Invoke(context);
+        OnUIInteraction?.Invoke(context);
     }
 
 

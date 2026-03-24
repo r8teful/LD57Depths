@@ -61,17 +61,19 @@ public class UpgradeNodeVisualData {
 
     private void BuildConfigs() {
         _normalConfigs = new Dictionary<UpgradeNodeState, StateVisualConfig> {
-            [UpgradeNodeState.Purchased] = new()    { alpha = 1f, iconColor = _iconPurchasedColor, interactable = false },
+            [UpgradeNodeState.Purchased] = new()    { alpha = 1f, iconColor = _iconPurchasedColor, interactable = true },
             [UpgradeNodeState.Unlocked] = new()     { alpha = 1f, iconColor = _iconUnlockedColor, interactable = true },
             [UpgradeNodeState.Purchasable] = new()  { alpha = 1f, iconColor = _iconPurchasableColor, interactable = true },
             [UpgradeNodeState.Locked] = new()       { alpha = 0f, iconColor = Color.white, interactable = false, clearSprite = true },
+            [UpgradeNodeState.None] = new()       { alpha = 0f, iconColor = Color.white, interactable = false, clearSprite = true },
         };
 
         _coolConfigs = new Dictionary<UpgradeNodeState, StateVisualConfig> {
-            [UpgradeNodeState.Purchased] = new()    { alpha = 1f, iconColor = _iconPurchasedColor, interactable = false, killCoolAnimation = true },
+            [UpgradeNodeState.Purchased] = new()    { alpha = 1f, iconColor = _iconPurchasedColor, interactable = true, killCoolAnimation = true },
             [UpgradeNodeState.Unlocked] = new()     { alpha = 0.5f, iconColor = Color.white, interactable = true, useWhiteSprite = true, useCoolAnimation = true },
             [UpgradeNodeState.Purchasable] = new()  { alpha = 1f, iconColor = Color.white, interactable = true, useWhiteSprite = true, useCoolAnimation = true },
             [UpgradeNodeState.Locked] = new()       { alpha = 0f, iconColor = Color.white, interactable = false, clearSprite = true },
+            [UpgradeNodeState.None] = new()       { alpha = 0f, iconColor = Color.white, interactable = false, clearSprite = true },
         };
     }
     internal void OnDestroy() {

@@ -17,7 +17,12 @@ public class PopupManager : StaticInstance<PopupManager> {
         GetComponent<UIManager>().UpgradeScreen.OnPanelChanged += TryHidePopup;
         //EventSystem.current.onSelectedGameObjectChanged.AddListener(OnSelectedGameObjectChanged);
     }
-
+    private void LateUpdate() {
+        // If we have an active popup and a valid target, update the position every frame.
+        if (currentPopup != null && currentInfoProvider != null) {
+            PositionPopup(currentInfoProvider);
+        }
+    }
     private void TryHidePopup(bool isActive) {
         if (!isActive && currentPopup != null) {
             HidePopup();
@@ -34,24 +39,6 @@ public class PopupManager : StaticInstance<PopupManager> {
 
     public void OnExit(bool withFade = false) {
         HidePopup(withFade);
-    }
-
-
-    private void ShowPopup(IPopupInfo infoProvider) {
-        if (currentPopup != null && currentInfoProvider == infoProvider) {
-            if(currentPopup.CanvasGroup != null && currentPopup.CanvasGroup.DOKill() == 0)
-            return;
-        }
-        HidePopup();
-        currentInfoProvider = infoProvider;
-        PopupData data = infoProvider.GetPopupData(inventoryManager);
-        infoProvider.PopupDataChanged += PopupDataChange;
-        currentPopup = Instantiate(popupPrefab, transform);
-        currentPopup.SetData(data);
-        //currentPopup.CanvasGroup.DOKill();
-        //LayoutRebuilder.ForceRebuildLayoutImmediate(currentPopup.GetComponent<RectTransform>());
-        PositionPopup(infoProvider);
-        currentPopup.ShowAnimate();
     }
 
     private void PopupDataChange() {
@@ -77,40 +64,60 @@ public class PopupManager : StaticInstance<PopupManager> {
         }
     }
 
-   
+
+    private void ShowPopup(IPopupInfo infoProvider) {
+        if (currentPopup != null && currentInfoProvider == infoProvider) {
+            if (currentPopup.CanvasGroup != null && currentPopup.CanvasGroup.DOKill() == 0)
+                return;
+        }
+
+        HidePopup();
+        currentInfoProvider = infoProvider;
+        PopupData data = infoProvider.GetPopupData(inventoryManager);
+        infoProvider.PopupDataChanged += PopupDataChange;
+        currentPopup = Instantiate(popupPrefab, transform);
+        currentPopup.SetData(data);
+
+        // IMPORTANT: Force Layout Rebuild here, ONCE, right after setting data. 
+        // Do NOT put this inside PositionPopup if PositionPopup runs every frame.
+        Canvas.ForceUpdateCanvases(); // Alternatively use LayoutRebuilder.ForceRebuildLayoutImmediate
+        LayoutRebuilder.ForceRebuildLayoutImmediate(currentPopup.GetComponent<RectTransform>());
+
+        // Initial position
+        PositionPopup(infoProvider);
+        currentPopup.ShowAnimate();
+    }
+
     private void PositionPopup(IPopupInfo infoProvider) {
         var mb = infoProvider as MonoBehaviour;
-        if (mb == null) return;
+        // Check if mb is null, OR if the object got destroyed/deactivated
+        if (mb == null || !mb.gameObject.activeInHierarchy) {
+            HidePopup(); // Automatically hide if the target disappears
+            return;
+        }
+
         RectTransform itemRT = mb.GetComponent<RectTransform>();
-        RectTransform popupRT = currentPopup.gameObject.GetComponent<RectTransform>();
+        RectTransform popupRT = currentPopup.GetComponent<RectTransform>();
         if (itemRT == null || popupRT == null) return;
 
-        // Canvas (ScreenSpaceOverlay -> canvas.worldCamera is null)
         Canvas canvas = popupRT.GetComponentInParent<Canvas>();
         RectTransform popupParentRect = popupRT.parent as RectTransform;
-        Camera canvasCam = null; // overlay uses null camera in RectTransformUtility
+        Camera canvasCam = null;
 
-        // Ensure layout is updated so popupRT.rect is valid
-        LayoutRebuilder.ForceRebuildLayoutImmediate(popupRT);
+        // REMOVED: LayoutRebuilder.ForceRebuildLayoutImmediate(popupRT);
+        // It is bad for performance to call this every frame. It is now in ShowPopup().
+
         // Get item bottom-center and top-center in screen space
         Vector3[] itemCorners = new Vector3[4];
         itemRT.GetWorldCorners(itemCorners);
         Vector2 itemBottomScreen = RectTransformUtility.WorldToScreenPoint(canvasCam, (itemCorners[0] + itemCorners[3]) * 0.5f);
         Vector2 itemTopScreen = RectTransformUtility.WorldToScreenPoint(canvasCam, (itemCorners[1] + itemCorners[2]) * 0.5f);
-        
 
-        // Popup size in screen pixels (for ScreenSpaceOverlay this is reliable)
         float scaleFactor = (canvas != null) ? canvas.scaleFactor : 1f;
         float popupScreenH = popupRT.rect.height * scaleFactor;
         float popupScreenW = popupRT.rect.width * scaleFactor;
 
         float paddingPx = 6f;
-
-        // Compute fits using the *assumed* pivot for each placement:
-        // - placing below => popup pivot.y will be 1 (top of popup attaches to item bottom)
-        //   bottom of popup in screen = itemBottomScreen.y - popupScreenH
-        // - placing above => popup pivot.y will be 0 (bottom of popup attaches to item top)
-        //   top of popup in screen = itemTopScreen.y + popupScreenH
 
         bool fitsBelow = (itemBottomScreen.y - popupScreenH - paddingPx) >= 0f;
         bool fitsAbove = (itemTopScreen.y + popupScreenH + paddingPx) <= Screen.height;
@@ -119,34 +126,32 @@ public class PopupManager : StaticInstance<PopupManager> {
         if (fitsBelow) placeBelow = true;
         else if (fitsAbove) placeBelow = false;
         else {
-            // choose the side with more available space
             float spaceBelow = itemBottomScreen.y;
             float spaceAbove = Screen.height - itemTopScreen.y;
             placeBelow = spaceBelow >= spaceAbove;
         }
 
-        // Set pivot.y to match the chosen placement (leave pivot.x alone to respect your horizontal anchoring)
         Vector2 origPivot = popupRT.pivot;
-        popupRT.pivot = new Vector2(origPivot.x, placeBelow ? 1f : 0f);
+        // Only update pivot if it changes to avoid dirtying the transform unnecessarily
+        Vector2 targetPivot = new Vector2(origPivot.x, placeBelow ? 1f : 0f);
+        if (origPivot != targetPivot) {
+            popupRT.pivot = targetPivot;
+        }
 
-        // Build the anchor screen point where popup pivot should be located
         Vector2 anchorScreenPoint = placeBelow
             ? new Vector2(itemBottomScreen.x, itemBottomScreen.y - paddingPx)
             : new Vector2(itemTopScreen.x, itemTopScreen.y + paddingPx);
 
-        // Convert that screen point into a world point on the popup parent's plane and set popup position
         Vector3 worldPos;
         if (popupParentRect != null && RectTransformUtility.ScreenPointToWorldPointInRectangle(popupParentRect, anchorScreenPoint, canvasCam, out worldPos)) {
             popupRT.position = worldPos;
         } else {
-            // fallback: use canvas rect plane
             RectTransform canvasRect = (canvas != null) ? (canvas.transform as RectTransform) : popupRT;
             if (RectTransformUtility.ScreenPointToWorldPointInRectangle(canvasRect, anchorScreenPoint, canvasCam, out worldPos))
                 popupRT.position = worldPos;
         }
 
-        // Horizontal clamp: nudge anchorScreenPoint.x if popup overflows left/right
-        // Check popup world corners -> screen x positions
+        // Horizontal clamp
         Vector3[] popupWorldCorners = new Vector3[4];
         popupRT.GetWorldCorners(popupWorldCorners);
         float leftScreen = RectTransformUtility.WorldToScreenPoint(canvasCam, popupWorldCorners[0]).x;

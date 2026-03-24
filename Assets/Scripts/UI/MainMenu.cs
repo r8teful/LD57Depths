@@ -12,6 +12,8 @@ public class MainMenu : MonoBehaviour {
     [FoldoutGroup("Buttons")]
     [SerializeField] private  Button _buttonPlayBack;
     [FoldoutGroup("Buttons")]
+    [SerializeField] private  Button _buttonCharacterBack;
+    [FoldoutGroup("Buttons")]
     [SerializeField] private  Button _buttonNewGame;
     [FoldoutGroup("Buttons")]
     [SerializeField] private  Button _buttonContinueTab;
@@ -31,9 +33,14 @@ public class MainMenu : MonoBehaviour {
     [SerializeField] private UISettings _settings; 
     [SerializeField] private Transform _cameraTrans; 
     [SerializeField] private Transform _logoTrans;
-    
+    [FoldoutGroup("Containers")]
     [SerializeField] private GameObject _containerStartGame;
+    [FoldoutGroup("Containers")]
     [SerializeField] private GameObject _containerLanguage;
+    [FoldoutGroup("Containers")]
+    [SerializeField] private GameObject _containerChooseCharacter;
+    [FoldoutGroup("Containers")]
+    [SerializeField] private GameObject _containerMainPage;
 
     [SerializeField] private TMP_InputField _seedField;
     [FoldoutGroup("MenuCameraPositions")]
@@ -45,6 +52,7 @@ public class MainMenu : MonoBehaviour {
 
     private void OnEnable() {
         _buttonPlay.onClick.AddListener(OnPlayClicked);
+        _buttonCharacterBack.onClick.AddListener(OnCharacterBack);
         _buttonPlayBack.onClick.AddListener(OnPlayBackClicked);
         _buttonSettings.onClick.AddListener(OnSettingsClicked);
         _buttonNewGame.onClick.AddListener(OnStartNewGameClicked);
@@ -61,6 +69,7 @@ public class MainMenu : MonoBehaviour {
 
     private void OnDisable() {
         _buttonPlay.onClick.RemoveListener(OnPlayClicked);
+        _buttonCharacterBack.onClick.RemoveListener(OnCharacterBack);
         _buttonPlayBack.onClick.RemoveListener(OnPlayBackClicked);
         _buttonSettings.onClick.RemoveListener(OnSettingsClicked);
         _buttonNewGame.onClick.RemoveListener(OnStartNewGameClicked);
@@ -85,6 +94,7 @@ public class MainMenu : MonoBehaviour {
         StartCoroutine(App.Backdrop.Release());
         _settings.Hide();
         _containerStartGame.SetActive(false);
+        _containerChooseCharacter.SetActive(false);
         ButtonContinueState(App.SaveRunDataExists);
         _buttonChallenge.interactable = false;
         IntroAnimation();
@@ -143,9 +153,16 @@ public class MainMenu : MonoBehaviour {
     }
     public void OnPlayClicked() {
         Debug.Log("play cliked");
-        _containerStartGame.SetActive(true);
+        //_containerStartGame.SetActive(true);
+        _containerMainPage.SetActive(false);
+        _containerChooseCharacter.SetActive(true);
     }
     public void OnPlayBackClicked() {
+        _containerStartGame.SetActive(false);
+    }
+    public void OnCharacterBack() {
+        _containerMainPage.SetActive(true);
+        _containerChooseCharacter.SetActive(false);
         _containerStartGame.SetActive(false);
     }
     private void OnStartNewGameClicked() {

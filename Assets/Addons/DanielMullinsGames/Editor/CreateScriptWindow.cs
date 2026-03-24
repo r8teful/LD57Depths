@@ -24,7 +24,7 @@ public class CreateScriptWindow : EditorWindow
     private static void SetDestinationPath()
     {
         destinationPath = "Assets";
-        foreach (UnityEngine.Object obj in Selection.GetFiltered(typeof(UnityEngine.Object), SelectionMode.Assets))
+        foreach (UnityEngine.Object obj in Selection.GetFiltered(typeof(UnityEngine.Object), UnityEditor.SelectionMode.Assets))
         {
             destinationPath = AssetDatabase.GetAssetPath(obj);
             if (File.Exists(destinationPath))

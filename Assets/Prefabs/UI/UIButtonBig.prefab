@@ -118,6 +118,7 @@ GameObject:
   - component: {fileID: 2027460509503976638}
   - component: {fileID: 117847488861825101}
   - component: {fileID: 7149383785660547444}
+  - component: {fileID: 9102773657936102817}
   m_Layer: 5
   m_Name: UIButtonBig
   m_TagString: Untagged
@@ -290,6 +291,21 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &9102773657936102817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4739607249889882928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d10f5063de362f4a86f55569ec7909a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISelectable
+  _overrideMode: 0
+  _modeOverride: 0
+  _indicatorTarget: {fileID: 0}
 --- !u!1 &7905901170007017159
 GameObject:
   m_ObjectHideFlags: 0

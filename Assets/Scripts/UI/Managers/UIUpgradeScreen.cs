@@ -1,12 +1,12 @@
 using DG.Tweening;
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class UIUpgradeScreen : MonoBehaviour {
     [SerializeField] private GameObject _upgradePanel;
     private RectTransform _upgradePanelRect;
     [SerializeField] private GameObject _upgradePanelTree;
-    [SerializeField] private UpgradeTreeController _upgradeTreeController;
     //public UpgradePanAndZoom PanAndZoom;
     public PanAndZoomController PanAndZoom;
     private UIManager _UIManagerParent;
@@ -15,7 +15,6 @@ public class UIUpgradeScreen : MonoBehaviour {
     public bool IsOpen => _upgradePanel.activeSelf;
     
     public UIManager GetUIManager() => _UIManagerParent;
-    public static event Action<UpgradeNodeSO> OnSelectedNodeChanged; // Used to show correct stats 
     public event Action<bool> OnPanelChanged;
     private void Awake() {
         _upgradePanelRect = _upgradePanel.GetComponent<RectTransform>();
@@ -45,7 +44,6 @@ public class UIUpgradeScreen : MonoBehaviour {
         UpgradeTreeInstance = InstantiateTree(_treeData, _upgradePanelTree.transform, client);
         //PanAndZoom.Init(client.InputManager);
         PanAndZoom.Init(client.InputManager, UpgradeTreeInstance);
-        _upgradeTreeController.Init(client, UpgradeTreeInstance);    
     }
     private UIUpgradeTree InstantiateTree(UpgradeTreeDataSO treeData, Transform transformParent, PlayerManager player) {
         if (treeData == null) {
@@ -67,7 +65,8 @@ public class UIUpgradeScreen : MonoBehaviour {
         _upgradePanelRect.localScale = new(1, 0.2f, 1);
         // _upgradePanelRect.DOScaleY(1, 0.6f).SetEase(Ease.OutElastic);
         _upgradePanelRect.DOScaleY(1, 0.2f).SetEase(Ease.OutBack);
-        _upgradeTreeController.OnTreeOpen();
+        UpgradeTreeInstance.OnTreeOpen();
+        EventSystem.current.SetSelectedGameObject(UpgradeTreeInstance.LastSelectedNode() != null ? UpgradeTreeInstance.LastSelectedNode().gameObject : null);
         OnPanelChanged?.Invoke(true);
     }
 
@@ -78,8 +77,8 @@ public class UIUpgradeScreen : MonoBehaviour {
                 _upgradePanel.SetActive(false);
                 UpgradeTreeInstance.OnTreeCloseFinish();
             });
-        _upgradeTreeController.OnTreeClose();
         UpgradeTreeInstance.OnTreeClose();
+        if (UISelectionManager.Instance != null)UISelectionManager.Instance.ClearHighlight(true);
         OnPanelChanged?.Invoke(false);
     }
 }

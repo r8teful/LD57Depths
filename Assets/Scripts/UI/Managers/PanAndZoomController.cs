@@ -268,15 +268,14 @@ public class PanAndZoomController : MonoBehaviour {
     /// Smoothly pans the content so <paramref name="targetNode"/> is centered
     /// inside the viewport.  Controller-only: panning is never allowed directly.
     /// </summary>
-    public IEnumerator FocusOnNode(RectTransform targetNode) {
-        if (targetNode == null) yield break;
+    public void FocusOnNode(RectTransform targetNode) {
+        if (targetNode == null) return;
 
         if (focusCoroutine != null) {
             StopCoroutine(focusCoroutine);
         }
 
         focusCoroutine = StartCoroutine(FocusOnNodeInternal(targetNode));
-        yield return focusCoroutine;
     }
 
     private IEnumerator FocusOnNodeInternal(RectTransform targetNode) {

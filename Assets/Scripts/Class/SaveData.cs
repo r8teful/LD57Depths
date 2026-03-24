@@ -11,7 +11,7 @@ namespace r8teful {
         // Persistant progression
         public float playTimeHours = 0f;
         //public SettingsSave settings = new();
-
+        public StatData statisticsData = new();
         // Run specific (wiped when new run is started)
         public BobSaveData bobData = new();
         public WorldSaveData worldData = new();
@@ -22,6 +22,19 @@ namespace r8teful {
                 if (bobData.nodeSaveData == null || bobData.nodeSaveData.Count == 0) return false;
                 return true;
             } 
+        }
+    }
+    [System.Serializable]
+    public class StatData {
+        public Dictionary<string, int> characterWins;
+        public Dictionary<ushort, ulong> itemsGained;
+        public Dictionary<ushort, ulong> plantsDestroyed;
+        public Dictionary<ushort, ulong> blocksDestroyed;
+        public StatData() {
+            characterWins = new Dictionary<string, int>();
+            itemsGained = new Dictionary<ushort, ulong>();
+            plantsDestroyed = new Dictionary<ushort, ulong>();
+            blocksDestroyed = new Dictionary<ushort, ulong>();
         }
     }
     [System.Serializable]

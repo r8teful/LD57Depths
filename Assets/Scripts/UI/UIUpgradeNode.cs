@@ -9,8 +9,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Color = UnityEngine.Color;
 
-public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler,IPointerUpHandler {
+public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IPointerExitHandler, IPointerUpHandler, ISelectHandler {
     [SerializeField] private Button _button;
+    [SerializeField] private UISelectable _selectable;
     [SerializeField] private GameObject _buttonSmallVisual;
     [SerializeField] private GameObject _buttonBigVisual;
     [FoldoutGroup("State Sprites")]
@@ -102,6 +103,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         
         }
         _canvasGroup.alpha = 1;
+        _selectable.enabled = false;
         _coolBackground.SetActive(false);
         _lockedOverlayRect.SetActive(false);
         _button.onClick.AddListener(OnUpgradeButtonClicked);
@@ -184,16 +186,18 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
             _iconImage = _buttonSmallVisual.transform.GetChild(1).GetComponent<Image>();// Even worse
         }
     }
-    public void Select(bool usingPointer) {
+    public void Select(bool moveView, bool showPopup) {
         if (_visualData == null || _visualData.State == UpgradeNodeState.Locked) return;
         if (_treeParent.IsClosing) return;
         if (PlayerManager.Instance.UiManager.UpgradeScreen.PanAndZoom.IsDraggingOrZooming) return;
+        //EventSystem.current.SetSelectedGameObject(gameObject);
+        _treeParent.SetSelected(this);
         PlaySelectAnim();
-        if (usingPointer) {
-            // No coroutine movement, simply show the popup
+        if (moveView) {
+            SelectRoutine();
+        } 
+        if(showPopup){
             PopupManager.Instance.OnEnter(this);
-        } else {
-            StartCoroutine(SelectRoutine());
         }
     }
 
@@ -210,9 +214,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
     // A little bit stupid the popup position is not parented to the actual node, so we need to wait for the 
     // Panning to move towards the node we've selected, and then we will show the popup
-    private IEnumerator SelectRoutine() {
+    private void SelectRoutine() {
         // Simple solution, wait untill we've gotten to the target, and then we posision popup
-        yield return _treeParent.OnPanSelect(this);
+        _treeParent.OnPanSelect(this);
         PopupManager.Instance.OnEnter(this);
     }
     public void Deselect() {
@@ -221,7 +225,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        Select(usingPointer: true);
+        Select(moveView: false,showPopup: true);
     }
 
     public void OnPointerExit(PointerEventData eventData) {
@@ -230,6 +234,10 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
 
     public void OnPointerUp(PointerEventData eventData) {
         Debug.Log("On Pointer up!");
+    }
+    public void OnSelect(BaseEventData eventData) {
+        Debug.Log("SELECTED OBJECT: " + gameObject.name);
+        Select(moveView: true,showPopup:true);
     }
     private void OnUpgradeButtonClicked() {
         if (_visualData == null || _visualData.Node.stages.Count == 0) return; // Some nodes have any stages and it will give null
@@ -250,6 +258,9 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
         }
         if (_isSelected) {
             // Highlit it?? idk
+        }
+        if (_visualData.State != UpgradeNodeState.Locked) {
+            _selectable.enabled = true;
         }
         HandleParticles(state);
         //HandleShaderState(state);
@@ -287,7 +298,7 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
                 // we can set the icon here aswell
                 _lockedOverlayRect.SetActive(true);
                 _iconImage.color = Color.gray;
-                _button.interactable = false;
+                _button.interactable = true;
                 OnStateChange?.Invoke(state, _visualData.LevelCurrent > 0);
                 return true;
             }
@@ -410,10 +421,6 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
                 );
     }
 
-    internal void SetSelected() {
-        _isSelected = true;
-    }
-
     internal void OnPurchaseInput() {
         OnUpgradeButtonClicked();
     }
@@ -455,6 +462,4 @@ public class UIUpgradeNode : MonoBehaviour, IPopupInfo, IPointerEnterHandler, IP
                 _visualRect.rotation = Quaternion.identity;
             });
     }
-
 }
-

@@ -518,6 +518,7 @@ GameObject:
   - component: {fileID: 7335028447690740135}
   - component: {fileID: 2803952741905059460}
   - component: {fileID: 5934251044595511980}
+  - component: {fileID: 512166182093526374}
   m_Layer: 5
   m_Name: UpgradeNode
   m_TagString: Untagged
@@ -558,6 +559,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _button: {fileID: 5934251044595511980}
+  _selectable: {fileID: 512166182093526374}
   _buttonSmallVisual: {fileID: 4370920911576369740}
   _buttonBigVisual: {fileID: 4220687052311773109}
   _unlockedPurple: {fileID: -169607546, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
@@ -704,6 +706,21 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &512166182093526374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6133106930997684636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d10f5063de362f4a86f55569ec7909a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISelectable
+  _overrideMode: 1
+  _modeOverride: 0
+  _indicatorTarget: {fileID: 0}
 --- !u!1 &6220805998302837832
 GameObject:
   m_ObjectHideFlags: 0

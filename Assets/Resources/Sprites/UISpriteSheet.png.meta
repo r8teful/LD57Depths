@@ -4311,6 +4311,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UIIndicator
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 270
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 7, y: 7, z: 7, w: 7}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b772d0df446fa2409ea31618e75e587
+      internalID: -1710275787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -4453,6 +4475,7 @@ TextureImporter:
       UIButton: -1863908995
       UICompass: -916741622
       UIDivider: 1399374186
+      UIIndicator: -1710275787
       UILine: 511341760
       UISimpleBoarder: 1878530721
       UISliderBall: 401562208
