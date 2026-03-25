@@ -353,7 +353,7 @@ public class ResourceSystem {
             StatType.MiningRotationSpeed => "Movement Speed",
             StatType.PlayerSpeedMax => "Maximum Speed",
             StatType.PlayerAcceleration => "Acceleration",
-            StatType.PlayerOxygenMax => "Capacity (seconds)",
+            StatType.PlayerOxygenMax => "Oxygen Capacity",
             StatType.Knockback => "Knockback Force",
             StatType.MiningFalloff => "Falloff",
             StatType.MiningCombo => "Damage Falloff",
@@ -426,12 +426,12 @@ public class ResourceSystem {
         return new List<StatModifier>() {
             //new(0.2f, StatType.Size, StatModifyType.Add,null),
             //new(0.2f, StatType.Cooldown, StatModifyType.Add,null),
-            new(0.2f, StatType.MiningDamage, StatModifyType.PercentAdd,null),
-            new(0.2f, StatType.MiningRange, StatModifyType.PercentAdd,null),
-            new(0.2f, StatType.PlayerSpeedMax, StatModifyType.PercentAdd,null),
-            new(1f, StatType.MiningCritDamage, StatModifyType.PercentAdd,null),
-            new(0.02f, StatType.MiningCritChance, StatModifyType.Add,null),
-            new(20f, StatType.PlayerOxygenMax, StatModifyType.Add,null),
+            new(0.4f, StatType.MiningDamage, StatModifyType.PercentAdd,null),
+            new(0.4f, StatType.MiningRange, StatModifyType.PercentAdd,null),
+            new(0.4f, StatType.PlayerSpeedMax, StatModifyType.PercentAdd,null),
+            new(0.5f, StatType.MiningCritDamage, StatModifyType.PercentAdd,null),
+            new(0.01f, StatType.MiningCritChance, StatModifyType.Add,null),
+            new(10f, StatType.PlayerOxygenMax, StatModifyType.Add,null),
             //new(0.2f, StatType.Luck, StatModifyType.Add,null),
             //new(0.2f, StatType.ProjectileCount, StatModifyType.Add,null)
         };

@@ -69,7 +69,7 @@ public class PlayerStatsManager : MonoBehaviour, IPlayerModule {
     /// <summary>
     /// The primary way for other scripts to get a stat value.
     /// </summary>
-    public float GetStat(StatType stat) {
+    public float GetStat(StatType stat, StatModifier tempMod = null) {
         if (!_isInitialized) {
             Debug.LogWarning($"Attempted to GetStat({stat}) before PlayerStatsManager was initialized!");
             // Return a sensible default from the local SO if possible.
@@ -77,7 +77,8 @@ public class PlayerStatsManager : MonoBehaviour, IPlayerModule {
             return statDefault?.BaseValue ?? 0f;
         }
         if (_stats.TryGetValue(stat, out var StatClass)) {
-            return StatClass.Value;
+            return StatClass.CalculateFinalValue(tempMod);
+            //return StatClass.Value; // will return that if tempmod is nul
         } else {
             Debug.LogWarning($"Attempted to get stat '{stat}' but it was not initialized. Returning 0.");
             return 0f;

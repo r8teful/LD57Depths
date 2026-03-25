@@ -57,12 +57,12 @@ public class Interactable : MonoBehaviour, IInteractable {
     /// Called by an external manager (e.g., InputManager) when this becomes the
     /// closest interactable object.
     /// </summary>
-    public void SetInteractable(bool isInteractable, Sprite interactPrompt = null) {
+    public void SetInteractable(bool isInteractable) {
         if (isInteractable) {
             // Prevent creating duplicate popups
             if (instantiatedPopup == null) {
                 instantiatedPopup = Instantiate(App.ResourceSystem.GetPrefab<CanvasInputWorld>("CanvasInputWorld"), popupPosition.position, Quaternion.identity, transform);
-                instantiatedPopup.Init(this, interactPrompt);
+                instantiatedPopup.Init();
                 OnSetInteractable?.Invoke();
             }
             if (_useOutline && _outlineMat != null) {

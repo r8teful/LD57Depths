@@ -31,11 +31,15 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
             }
             safetyTries++;
         }
+        RewardCleanup();
+    }
+    private void RewardCleanup() {
         // clear hashsets
         pickedAbilityIDs.Clear();
         pickedAbilityUpgradeIDs.Clear();
         pickedUpgradeNodeIDs.Clear();
         pickedStats.Clear();
+
     }
 
     public void GenerateRewardsChest() {
@@ -47,6 +51,7 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
             }
             safetyTries++;
         }
+        RewardCleanup();
     }
 
     public void GenerateRewardsShrine() {
@@ -58,6 +63,7 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
             }
             safetyTries++;
         }
+        RewardCleanup();
     }
     internal void GenerateRewardCave() {
         int rewardsMade = 0;
@@ -68,6 +74,7 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
             }
             safetyTries++;
         }
+        RewardCleanup();
     }
 
    
@@ -76,7 +83,7 @@ public class PlayerRewardManager : MonoBehaviour, IPlayerModule {
         // Todo make some kind of function that calculates some reasonable resources 
         List<StatModifier> stats = ResourceSystem.GetStatRewards();
         var randomStat = stats.OrderBy(_ => UnityEngine.Random.value).First();
-        // Todo can't be same stat as already chosen
+        
         if (pickedStats.Contains(randomStat.Stat)) return false;
         int[] weights = ResourceSystem.GetRarityWeight;
         var i = RandomnessHelpers.PickIndexWithLuck(weights, _player.PlayerStats.GetStat(StatType.Luck));

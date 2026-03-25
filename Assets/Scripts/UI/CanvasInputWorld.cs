@@ -3,9 +3,8 @@ using UnityEngine.UI;
 
 public class CanvasInputWorld : MonoBehaviour {
     private InputPromptIcon _instantiatedPrompt;
-    public void Init(IInteractable interactable,Sprite interactPrompt) {
-        _instantiatedPrompt = Instantiate(App.ResourceSystem.GetPrefab("InteractIndicator"),transform).GetComponent<InputPromptIcon>();
-        _instantiatedPrompt.Init(interactable.InteractIcon, interactPrompt);
+    public void Init() {
+        _instantiatedPrompt = Instantiate(App.ResourceSystem.GetPrefab<InputPromptIcon>("InteractIndicator"),transform);
         GetComponent<Canvas>().sortingOrder = 99;
         GetComponent<Canvas>().sortingLayerName = "NoTilemapShadow";
     }

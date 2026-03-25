@@ -55,6 +55,9 @@ public class PanAndZoomController : MonoBehaviour {
         RecalculateContentBounds();
         InputManager.OnDeviceChanged += DeviceChange;
     }
+    private void OnDestroy() {
+        InputManager.OnDeviceChanged -= DeviceChange;
+    }
 
     private void DeviceChange(InputManager.DeviceType device) {
         if(device == InputManager.DeviceType.Gamepad) {

@@ -61,5 +61,4 @@ public enum ValueKey {
     ExplosiveCritRange= 42,
     BlockOxygenChance = 50,
     BlockOxygenAmount = 51
-
 }

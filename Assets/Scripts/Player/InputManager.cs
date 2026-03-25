@@ -305,12 +305,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
             _currentInteractable = closestInteractable;
             _previousInteractable = _currentInteractable;
 
-            if (_currentInteractable != null) {
-                // Show prompt on new one
-                // You can get the binding string here as you did before
-                string key = _playerInteractAction.GetBindingDisplayString(InputBinding.DisplayStringOptions.DontOmitDevice);
-                _currentInteractable.SetInteractable(true, App.ResourceSystem.GetSprite(FormatBindingDisplayString(key)));
-            }
+            _currentInteractable?.SetInteractable(true);
         }
     }
 

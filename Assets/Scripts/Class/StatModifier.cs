@@ -43,9 +43,15 @@ public class StatModifier {
     // could combine the two if we simply made an interface that was like "IStatHoldable" or something but eh cba
     internal StatChangeStatus GetStatus(PlayerStatsManager playerStats) {
         var statName = ResourceSystem.GetStatString(Stat);
-        var currentIncrease = playerStats.GetProcentStat(Stat) * 0.1f;
-        var nextIncrease = playerStats.GetProcentStat(Stat, this) * 0.1f;
-
+        float currentIncrease, nextIncrease;
+        DisplayType type = ResourceSystem.GetDisplayType(Stat);
+        if (type == DisplayType.Absolute) {
+            currentIncrease = playerStats.GetStat(Stat);
+            nextIncrease = playerStats.GetStat(Stat,this);
+        } else {
+            currentIncrease = playerStats.GetProcentStat(Stat) * 0.1f;
+            nextIncrease = playerStats.GetProcentStat(Stat, this) * 0.1f;
+        }
         int currentProcent = Mathf.RoundToInt(currentIncrease * 100f);
         int nextProcent = Mathf.RoundToInt(nextIncrease * 100f);
         bool isBadChange =
