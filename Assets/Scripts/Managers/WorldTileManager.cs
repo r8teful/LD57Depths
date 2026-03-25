@@ -77,9 +77,12 @@ public class WorldTileManager : StaticInstance<WorldTileManager> {
         if(drop.ID == ResourceSystem.StoneItemID && GameManager.Instance != null) {
             // Increase stone drop based on progrssion index
             var i = GameManager.Instance.WorldGenSettings.GetBiomeProgressionIndex(tileBiome);
-            // Do something with i
-            //Debug.Log("Progression index: " + i);
-            maxDropAmount *= (i + 1); // just multiply? lol first biome has index 1 so we add 1 to 
+            int layer = i / 3;
+            int withinLayer = i % 3;
+
+            float layerGrowth = 20f;   // layer 1 = 10x, layer 2 = 100x, layer 3 = 1000x
+            float linearStep = 0.2f;   // within a layer: 1.0x, 1.2x, 1.4x
+            maxDropAmount *= Mathf.FloorToInt(Mathf.Pow(layerGrowth, layer) * (1f + withinLayer * linearStep));
         }
         int dropAmount = 1;
         if (_tileUpgradeData.TryGetValue(tile.ID, out TileUpgradeData tileUpgradeData)) {

@@ -1131,10 +1131,10 @@ public partial class @Resurface_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""d50e8722-b57a-4628-9d46-bd142f9472fa"",
-                    ""path"": """",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""ZoomIn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1142,10 +1142,10 @@ public partial class @Resurface_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""53fce1c8-156a-49f6-b8ff-7b77a972850c"",
-                    ""path"": """",
+                    ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Gamepad"",
                     ""action"": ""ZoomOut"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false

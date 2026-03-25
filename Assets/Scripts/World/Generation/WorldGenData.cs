@@ -33,6 +33,14 @@ public class WorldGenData {
     [NonSerialized] public Material worldGenSquareSprite;
     [NonSerialized] public Vector3 runtimeCameraPosition; // for parallax
     public int GetBiomeProgressionIndex(BiomeType b) {
+        // biomes don't have biome data (yet) so just hard code it here lol
+        if (b == BiomeType.Trench1) {
+            return 3;
+        } else if ( b == BiomeType.Trench2) {
+            return 6;
+        } else if (b == BiomeType.Trench3) {
+            return 9;
+        }
         var biome = biomes.FirstOrDefault(s => s.BiomeType == b);
         if (biome == null) return 0;
         return biome.ProgressionIndex;
@@ -365,14 +373,23 @@ public class WorldGenOre {
         o.DebugColor = ore.DebugColor; 
         List<WorldGenBiomeData> biomes = settings.biomes;
         o.allowedBiomes = new BiomeType[6];
-        // Horribly hard coded right now, for stage 0 it makes sence to just have it in the trench
-        // But for stage 0 and 1 (if we are doing that one is within a biome. We should have it alteast randomize
-        // if it eather takes the first (left) or second (right) biome
+        // SO UGLY
         if (ore.oreStage == 0) {
             o.oreStart = new(0,settings.MaxDepth);
             o.allowedBiomes[0] = BiomeType.Trench;
         }
-        
+        if (ore.oreStage == 3) {
+            o.oreStart = new(0, settings.GetWorldLayerYPos(1));
+            o.allowedBiomes[0] = BiomeType.Trench1;
+        }
+        if (ore.oreStage == 6) {
+            o.oreStart = new(0, settings.GetWorldLayerYPos(2));
+            o.allowedBiomes[0] = BiomeType.Trench2;
+        }
+        if (ore.oreStage == 9) {
+            o.oreStart = new(0, settings.GetWorldLayerYPos(3));
+            o.allowedBiomes[0] = BiomeType.Trench3;
+        }
         return o;
     }
 

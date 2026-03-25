@@ -69,7 +69,7 @@ public class UISelectionManager : Singleton<UISelectionManager> {
         if (!force && _persistOnMouseExit) return;
 
         CurrentHighlight = null;
-        if (!force) CurrentSelection = null;
+        CurrentSelection = null;
         OnCleared?.Invoke(true);
     }
 

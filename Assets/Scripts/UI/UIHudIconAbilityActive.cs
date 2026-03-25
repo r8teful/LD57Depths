@@ -5,6 +5,7 @@ using UnityEngine.UI;
 // Shows active abilities with cooldown and active length
 public class UIHudIconAbilityActive : UIHudIconBase {
     [SerializeField] private Image _progressImage;
+    [SerializeField] private Image _promptImage;
     //[SerializeField] private TextMeshProUGUI timeText; // We won't really have a time text but just for now
     private AbilityInstance _ability;
 
@@ -16,6 +17,7 @@ public class UIHudIconAbilityActive : UIHudIconBase {
         ability.OnReady += OnAbilityReady;
         ability.OnUsed += OnAbilityUsed;
         _ability = ability;
+        _promptImage.enabled = true;
     }
     private void OnDestroy() {
         _ability.OnCooldownChanged += OnAbilityCooldownChanged;
@@ -26,8 +28,12 @@ public class UIHudIconAbilityActive : UIHudIconBase {
 
     private void OnAbilityReady() {
         //_iconImage.color = Color.green;
+
+        _promptImage.enabled = true;
     }
     private void OnAbilityUsed() {
+
+        _promptImage.enabled = false;
         //_iconImage.color = Color.white;
     }
 

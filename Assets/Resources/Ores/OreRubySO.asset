@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: OreRubySO
   m_EditorClassIdentifier: 
   oreTile: {fileID: 11400000, guid: 962f676e003a8d94d92f440b21638820, type: 2}
-  oreStage: 6
-  WorldDepthBandProcent: 0.8
-  maxChance: 0.2
-  widthPercent: 0.2
-  noiseScale: 0.3
-  noiseThreshold: 0.6
-  noiseOffset: {x: 353254, y: 1925}
-  DebugColor: {r: 0.9056604, g: 0.1851192, b: 0.1851192, a: 1}
+  oreStage: 3
+  WorldDepthBandProcent: 0.1
+  maxChance: 1
+  widthPercent: 0.41
+  noiseScale: 0.1
+  noiseThreshold: 0.45
+  noiseOffset: {x: 6414, y: 631}
+  DebugColor: {r: 1, g: 0, b: 0.10537243, a: 1}

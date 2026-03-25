@@ -32,6 +32,8 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     private InputAction _uiSubmitAction;   // e.g., Left Mouse / Gamepad A
     private InputAction _uiCancelAction;
     private InputAction _uiZoomAction;
+    private InputAction _uiZoomInAction;
+    private InputAction _uiZoomOutAction;
     private InputAction _uiPanHoldAction; 
     private InputAction _uiPointAction;       // Mouse position
     private InputAction _uiTabLeft;
@@ -102,7 +104,9 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         _uiPanMoveAction = _playerInput.actions.FindAction("UI/Pan",true); // Start Moving upgrade view
         _uiSubmitAction = _playerInput.actions.FindAction("UI/Submit",true); // LMB, X
         _uiCancelAction = _playerInput.actions.FindAction("UI/Cancel",true);
-        _uiZoomAction = _playerInput.actions.FindAction("UI/Zoom",true); // Zooming upgrade view
+        _uiZoomAction = _playerInput.actions.FindAction("UI/Zoom",true); // Zooming with mouse
+        _uiZoomInAction = _playerInput.actions.FindAction("UI/ZoomOut",true); // Zooming with controller
+        _uiZoomOutAction = _playerInput.actions.FindAction("UI/ZoomIn", true); // Zooming with controller
         _uiPanHoldAction = _playerInput.actions.FindAction("UI/PanHold", true); 
         _uiPointAction = _playerInput.actions.FindAction("UI/Point",true);
         _uiTabLeft = _playerInput.actions.FindAction("UI/TabLeft",true); 
@@ -137,6 +141,10 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         _uiPointAction.performed += OnMousePosChange;
         _uiZoomAction.performed += OnZoom;
         _uiZoomAction.canceled += OnZoom;
+        _uiZoomInAction.performed += OnZoomIn;
+        _uiZoomInAction.canceled += OnZoomIn;
+        _uiZoomOutAction.performed += OnZoomOut;
+        _uiZoomOutAction.canceled += OnZoomOut;
         _uiNavigateAction.performed += OnUINavigation;
         _uiNavigateAction.canceled += OnUINavigation;
         _playerInput.onControlsChanged += OnControlsChanged;
@@ -146,8 +154,6 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         InputSystem.onActionChange += HandleActionChange;
         UIManager.OnUIOpenChange += HandleActionMaps;
     }
-
-
     private void UnsubscribeFromEvents() {
         _uiCancelAction.performed -= OnCancel;
         _playerShootAction.performed -= OnPrimaryInteraction;
@@ -163,6 +169,10 @@ public class InputManager : MonoBehaviour, IPlayerModule {
         _uiPointAction.performed -= OnMousePosChange;
         _uiZoomAction.performed -= OnZoom;
         _uiZoomAction.canceled -= OnZoom;
+        _uiZoomInAction.performed -= OnZoomIn;
+        _uiZoomInAction.canceled -= OnZoomIn;
+        _uiZoomOutAction.performed -= OnZoomOut;
+        _uiZoomOutAction.canceled -= OnZoomOut;
         _uiNavigateAction.performed -= OnUINavigation;
         _uiNavigateAction.canceled -= OnUINavigation;
         _playerInput.onControlsChanged -= OnControlsChanged;
@@ -216,6 +226,22 @@ public class InputManager : MonoBehaviour, IPlayerModule {
     private void OnZoom(InputAction.CallbackContext context) {
        // _UIManager.UpgradeScreen.PanAndZoom.OnZoom(context.ReadValue<Vector2>().y);
         _UIManager.UpgradeScreen.PanAndZoom.OnZoom(context.ReadValue<Vector2>().y);
+    }
+    private void OnZoomOut(InputAction.CallbackContext context) {
+        if (context.canceled) { 
+            _UIManager.UpgradeScreen.PanAndZoom.OnPanEnd();
+        }else {
+            _UIManager.UpgradeScreen.PanAndZoom.OnZoomStart(isZoomIn: false);
+        }
+    }
+
+    private void OnZoomIn(InputAction.CallbackContext context) {
+        if (context.canceled) {
+            _UIManager.UpgradeScreen.PanAndZoom.OnPanEnd();
+        } else {
+            _UIManager.UpgradeScreen.PanAndZoom.OnZoomStart(isZoomIn: true);
+        }
+    
     }
 
     private void OnMousePosChange(InputAction.CallbackContext context) {

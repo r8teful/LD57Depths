@@ -21,22 +21,22 @@ public class PanAndZoomController : MonoBehaviour {
     [Header("Pan Settings")]
     [SerializeField] private float panSmoothSpeed = 12f;
 
-    [SerializeField] private float boundsPadding = 150f;   
+    [SerializeField] private float boundsPadding = 150f;
 
 
 
-    private InputManager _inputManager;          
-    private UIUpgradeTree _upgradeTree;          
+    private InputManager _inputManager;
+    private UIUpgradeTree _upgradeTree;
 
     private bool _isController = false;
     private bool _isDragging;
     private bool _isZooming;
-    
+
     public bool IsDraggingOrZooming => _isDragging || _isZooming;
 
     private Vector2 lastPointerPosition;
 
-    private float zoomAmount;                   
+    private float zoomAmount;
     private float _targetScale = 1f;
     private Vector2 _targetPosition;
 
@@ -44,7 +44,7 @@ public class PanAndZoomController : MonoBehaviour {
     private bool _initialized;
 
 
-    public void Init(InputManager input,UIUpgradeTree tree) {
+    public void Init(InputManager input, UIUpgradeTree tree) {
         viewportRect = GetComponent<RectTransform>();
         contentRect = transform.GetChild(0).GetComponent<RectTransform>();
         _inputManager = input;
@@ -60,10 +60,10 @@ public class PanAndZoomController : MonoBehaviour {
     }
 
     private void DeviceChange(InputManager.DeviceType device) {
-        if(device == InputManager.DeviceType.Gamepad) {
+        if (device == InputManager.DeviceType.Gamepad) {
             _isController = true;
             _isDragging = false; // stop dragging
-        } else if(device == InputManager.DeviceType.KeyboardMouse) {
+        } else if (device == InputManager.DeviceType.KeyboardMouse) {
             _isController = false;
         }
     }
@@ -102,7 +102,12 @@ public class PanAndZoomController : MonoBehaviour {
     public void OnZoom(float zoom) {
         zoomAmount = zoom;
     }
-
+    public void OnZoomStart(bool isZoomIn) {
+        zoomAmount = isZoomIn ? 1 : -1 ; // 
+    }
+    public void OnZoomEnd() {
+        zoomAmount = 0;
+    }
 
     private void HandleDragMouseKeyboard() {
         if (!_isDragging) return;
@@ -126,7 +131,7 @@ public class PanAndZoomController : MonoBehaviour {
     }
 
     private void HandleDragController() {
-        Vector2 panInput = _inputManager.GetPanVector();
+        Vector2 panInput = _inputManager.GetPanVector() * 3;
         _targetPosition += panInput;
         _targetPosition = ClampedPosition(_targetPosition, _targetScale);
     }

@@ -303,7 +303,7 @@ Shader "Custom/BackgroundWorldGenLayer"
                 {
                     float sCave = SampleCaveSigned(uv);
                     float sTrench = SampleTrenchSigned(uv, _TrenchBaseWiden, _TrenchBaseWidth, _TrenchNoiseScale, _TrenchEdgeAmp, 0.0, _GlobalSeed);
-                    return sCave;
+                    //return sCave;
                     s = min(sCave, sTrench);
                 }
                 else

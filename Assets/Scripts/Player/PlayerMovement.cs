@@ -148,7 +148,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
         );
 
         // Hard safety cap
-        rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, _swimSpeed);
+        rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, Mathf.Max(_swimSpeed,15));
     }
 
     private void HandleGroundedPhysics() {

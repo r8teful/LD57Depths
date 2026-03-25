@@ -1484,9 +1484,20 @@ Its so weird, because one changes the STATS, and one simply chances a VALUE. So 
 
 
 
+Everything seemed to go so quickly, it was fun though. But I just had to go to the biome once for the ores, and then I got all the ores I needed, you could have it atleast 2 trips to the biome. Also you should have some grind for the sub upgrades so they feel exiting, and they are kind of the only one left for you. And it should be like 1K stone stone ore something it should be quite easy to get because you'll be very strong and break all the blocks and stuff
 
 
 
+I like the alchemy ALOT. Its so friendly, and fun, and forgiving
+
+
+
+Okay I did it again and it was a lot better after fixing the bug that made me get about 2x the iron and gold. It was good this time. Real good. 10-15 minutes is the sweet spot. Put a lot of things in the next layer, because the tree gets quite messy quickly, and you have less of an overview of what you are working towards
+
+* Too much oxygen on first layer
+* Too much speed on first layer
+* Lock out crits, that is emerald thing
+* Make cable repair slightly grindy
 
 
 

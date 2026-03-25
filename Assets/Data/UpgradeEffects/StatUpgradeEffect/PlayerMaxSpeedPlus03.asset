@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c68dc6e67c048b344aa9b1b86f2093c3, type: 3}
-  m_Name: BasicTierDiamond
-  m_EditorClassIdentifier: 
-  Items:
-  - {fileID: 11400000, guid: 9db5c2e6265a0fc4989fa8d9c8bf4204, type: 2}
+  m_Script: {fileID: 11500000, guid: d283f47e58bd0e2429af7b3c6ea7dc9c, type: 3}
+  m_Name: PlayerMaxSpeedPlus03
+  m_EditorClassIdentifier: Assembly-CSharp::StatUpgradeEffect
+  upgradeType: 20
+  increaseType: 1
+  modificationValue: 0.3

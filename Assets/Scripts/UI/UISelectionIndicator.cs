@@ -76,20 +76,29 @@ public class UISelectionIndicator : MonoBehaviour {
 
 
     private void OnHighlighted(RectTransform target) {
+        Debug.Log("OnHighlight");
         _target = target;
         _hasTarget = true;
 
+        //_group.alpha = 1;
+         _group.DOFade(1, 0.2f);
+        return;
         if (_fadeWhenInactive) {
-            _group.DOFade(1, 0.2f);
         } else {
             _group.alpha = 1;
         }
     }
 
     private void OnCleared(bool forceNoFade) {
+        Debug.Log("OnCleared");
+        _group.DOKill();
+            _group.DOFade(0, 0.2f);
+        //_group.alpha = 0;
+        return;
         _target = null;
         _hasTarget = false;
         if (_fadeWhenInactive && !forceNoFade) {
+            _group.DOKill();
             _group.DOFade(0, 0.2f);
         } else {
             _group.alpha = 0;

@@ -47,6 +47,7 @@ FOR POLISED DEMO:
 * Make all plants have the moving shader
 * Environment should feel ALIVE, it feels DEAD. Make fish swim around, little blobs here and there. Make the plants move. MAKE IT LOOK ALIVE. POLISH THE ENVIRONMENT
 * Opening a chest should feel EXITING! WOOO DOPAMINE HIT THEM WITH IT, give it more particles, give it sounds give it everything. Make it THE BEST FEELING!!
+* Second layer should drop a shit load of stone
 
 For web build
 

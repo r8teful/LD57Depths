@@ -12,6 +12,8 @@ public class PlayerCameraController : MonoBehaviour {
     private Tweener _zoomTween;
     private Tweener _posTween;
 
+    private Vector3 velocity;
+    private Transform playerTarget;
     public bool IsMoving => _posTween.IsActive() || !_zoomTween.IsComplete();
 
     public void Awake() {
@@ -22,7 +24,16 @@ public class PlayerCameraController : MonoBehaviour {
     private void OnDisable() {
         PlayerLayerController.OnPlayerVisibilityChanged -= OnPlayerVisibilityLayerChanged;
     }
-
+    /* This doesn't work because we are a child of the player, but its a  lot nicer
+    private void LateUpdate() {
+        if(playerTarget == null) {
+            if (PlayerManager.Instance != null) playerTarget = PlayerManager.Instance.gameObject.transform;
+            return;
+        }
+        Vector3 desiredPosition = playerTarget.position + new Vector3(0f,0f, -10f);
+        transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, 0.1f);
+    }
+     */
     private void OnPlayerVisibilityLayerChanged(VisibilityLayerType layerType) {
         Debug.Log("OnPlayerVisibilityLayerChanged called with: " + layerType);
         float size = 11.25f;
