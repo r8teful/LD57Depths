@@ -957,13 +957,13 @@ I might just remove the entire RecipeiesUpgrade step because it is literally poi
 
 each stage is given an ID at runtime, this is then used to track state, much like your current logic, which is a bit fucked but does work. OMG
 
-Dictionary<ushort, UpgradeNodeState> IS PERFECT
+Dictionary ushort, UpgradeNodeState IS PERFECT
 
 
 
 UpgradeNodeSO holds DATA, how to construct the actual run instance
 
-UpgradeNode is where the public List<ItemQuantity> would live Idk though I like the upgrade data being in the UpgradeNodeSO, then we just dynamically calculate it every time it is nicee to balance it when you're balancing.
+UpgradeNode is where the public List ItemQuantity would live Idk though I like the upgrade data being in the UpgradeNodeSO, then we just dynamically calculate it every time it is nicee to balance it when you're balancing.
 
 
 
@@ -1475,4 +1475,24 @@ turnts woudl simply return the new string with the icon
 
 
 Its so weird, because one changes the STATS, and one simply chances a VALUE. So its not that weird. But if you wanted to buff that value stat, then you have a problem, but then just don't do that? lol. You could literally just have a rule where you don't allow that you buff non stat things.
+
+
+
+
+
+## Rik Playtest V0.0.4.5 -> basically almost 0.0.5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

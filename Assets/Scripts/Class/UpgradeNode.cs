@@ -112,7 +112,7 @@ public class UpgradeNode {
             }
             // Final count is min of need, availability, and percentage cap
             int take = Mathf.Min(maxNeeded, maxByPercentage);
-            if (take == 0) take = 1;
+            //if (take == 0) take = 1;
             if (take > 0) {
                 result.Add(new ItemQuantity {
                     item = item,

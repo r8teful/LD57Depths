@@ -1,5 +1,6 @@
 ﻿using r8teful;
 using System.Collections.Generic;
+using System.Resources;
 using UnityEngine;
 
 public class TileUpgradeData {
@@ -72,7 +73,9 @@ public class WorldTileManager : StaticInstance<WorldTileManager> {
         var drop = tile.drop;
         // We want to look what position this biome is in the biome sequence and then use that in the calculation
         int maxDropAmount = 1;
-        if(GameManager.Instance != null) {
+       
+        if(drop.ID == ResourceSystem.StoneItemID && GameManager.Instance != null) {
+            // Increase stone drop based on progrssion index
             var i = GameManager.Instance.WorldGenSettings.GetBiomeProgressionIndex(tileBiome);
             // Do something with i
             //Debug.Log("Progression index: " + i);
