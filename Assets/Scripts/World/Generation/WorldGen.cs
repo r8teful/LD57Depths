@@ -419,7 +419,7 @@ public class WorldGen : MonoBehaviour {
         // Entities
         List<ChunkPayload> clientPayload = new List<ChunkPayload>();
         foreach (var chunks in chunksToSend) {
-            var entityInChunk = SpawnEntitiesInChunk(chunks.Value, chunks.Key, chunkManager);
+            var entityInChunk = SpawnEntitiesInChunk2(chunks.Value, chunks.Key, chunkManager);
             yield return null; // Wait a frame
             // Now we have the enemy info, get the persistant IDs from EntityManager
             EntityManager.Instance.AddGeneratedEntityData(chunks.Key, entityInChunk);
@@ -825,6 +825,159 @@ public class WorldGen : MonoBehaviour {
             }
         }
         return entities;
+    }
+    private List<EntitySpawnInfo> SpawnEntitiesInChunk2(
+    ChunkData chunkData, Vector2Int chunkOriginCell, ChunkManager cm) {
+        var entities = new List<EntitySpawnInfo>();
+        var occupiedCells = new HashSet<Vector2Int>(); // Local-chunk coords blocked by placed entities
+
+        // Largest entities get first pick; ties broken randomly so placement varies each run.
+        var rng = new System.Random();
+        var sortedEntities = worldSpawnEntities
+            .OrderByDescending(e => e.GetBoundSize())
+            .ThenBy(_ => rng.Next())
+            .ToList();
+
+        for (int y = 0; y < CHUNK_TILE_DIMENSION; y++) {
+            for (int x = 0; x < CHUNK_TILE_DIMENSION; x++) {
+                if (!IsSolid(chunkData.tiles[x, y]))
+                    continue;
+
+
+                // NOTE: occupiedCells only tracks cells within this chunk.
+                // Entities straddling a chunk boundary may still overlap with
+                // entities spawned in the neighbouring chunk — a known limitation.
+                if (occupiedCells.Contains(new Vector2Int(x, y)))
+                    continue;
+
+                int worldX = chunkOriginCell.x * CHUNK_TILE_DIMENSION + x;
+                int worldY = chunkOriginCell.y * CHUNK_TILE_DIMENSION + y;
+
+                if (SampleNoise(worldX, worldY, 0.3f, new(seedOffsetX, seedOffsetY)) < 0.5f)
+                    continue;
+
+                foreach (var entityDef in sortedEntities) {
+                    if (entityDef.entityPrefab == null || entityDef.spawnConditions == null)
+                        continue;
+
+                    // Per-entity stochastic frequency
+                    float placementValue = SampleNoise(
+                        worldX, worldY, entityDef.placementFrequency, entityDef.PlacementOffset);
+                    if (placementValue < entityDef.placementThreshold)
+                        continue;
+
+                    // Y-range filter
+                    if (worldY < entityDef.spawnConditions.minY ||
+                        worldY > entityDef.spawnConditions.maxY)
+                        continue;
+
+                    // Biome filter
+                    byte biome = GetBiomeFromChunk(chunkData, CHUNK_TILE_DIMENSION, x, y);
+                    if (biome == byte.MaxValue ||
+                        !entityDef.spawnConditions.requiredBiomes.Contains((BiomeType)biome))
+                        continue;
+
+                    if (!TryFindValidAttachment(
+                            entityDef, chunkData, x, y, worldX, worldY, cm,
+                            out Quaternion spawnRot, out List<Vector2Int> newlyOccupied))
+                        continue;
+
+                    entities.Add(new EntitySpawnInfo(
+                        entityDef.entityID, new Vector3Int(worldX, worldY), spawnRot));
+                    occupiedCells.UnionWith(newlyOccupied);
+                    break; // One entity per anchor tile; move to the next tile
+                }
+            }
+        }
+
+        return entities;
+    }
+    private bool TryFindValidAttachment(
+    WorldSpawnEntitySO entityDef,
+    ChunkData chunkData,
+    int localX, int localY,
+    int worldX, int worldY,
+    ChunkManager cm,
+    out Quaternion spawnRot,
+    out List<Vector2Int> occupiedCells) {
+        spawnRot = Quaternion.identity;
+        occupiedCells = new List<Vector2Int>();
+
+        (Vector2Int min, Vector2Int max) = entityDef.BoundingOffset;
+        int anchorRow = min.y; // The canonical Y row that must be solid (the attachment surface)
+
+        foreach (var attachment in entityDef.allowedAttachmentTypes) {
+            // Determine rotation once per orientation  it is the same for every cell.
+            Quaternion candidateRot = attachment switch {
+                AttachmentType.Ground => Quaternion.Euler(0, 0, 0),
+                AttachmentType.Ceiling => Quaternion.Euler(0, 0, 180),
+                AttachmentType.WallRight => Quaternion.Euler(0, 0, 90),
+                AttachmentType.WallLeft => Quaternion.Euler(0, 0, -90),
+                _ => throw new ArgumentOutOfRangeException(
+                        nameof(attachment), $"Unknown AttachmentType: {attachment}")
+            };
+
+            var candidateCells = new List<Vector2Int>();
+            bool valid = true;
+
+            for (int lx = min.x; lx <= max.x && valid; lx++) {
+                for (int ly = min.y; ly <= max.y && valid; ly++) {
+                    int matX = lx + 4;
+                    int matY = -ly + 8;
+
+                    // Safety: skip if canonical coords fall outside the area matrix
+                    if (matX < 0 || matX >= entityDef.areaMatrix.GetLength(0) ||
+                        matY < 0 || matY >= entityDef.areaMatrix.GetLength(1)) {
+                        Debug.LogWarning(
+                            $"areaMatrix out of bounds for '{entityDef.name}': " +
+                            $"local({lx},{ly}) matrix({matX},{matY}). Cell skipped.");
+                        continue;
+                    }
+
+                    // Skip cells not occupied by this entitys shape
+                    if (!entityDef.areaMatrix[matX, matY])
+                        continue;
+
+                    // Rotate canonical local coords into world tile offsets
+                    (int checkLocalX, int checkLocalY) = attachment switch {
+                        AttachmentType.Ground => (localX + lx, localY + ly),
+                        AttachmentType.Ceiling => (localX - lx, localY - ly),
+                        AttachmentType.WallRight => (localX - ly, localY + lx),
+                        AttachmentType.WallLeft => (localX + ly, localY - lx),
+                        _ => throw new ArgumentOutOfRangeException(
+                                nameof(attachment), $"Unknown AttachmentType: {attachment}")
+                    };
+
+                    ushort tile = GetTileFromChunkOrWorld(
+                        chunkData, new Vector2Int(worldX, worldY),
+                        CHUNK_TILE_DIMENSION, checkLocalX, checkLocalY, cm);
+
+                    if (ly == anchorRow) {
+                        // Anchor row  must be solid (entitys attachment surface)
+                        if (!IsSolid(tile))
+                            valid = false;
+                    } else {
+                        // Volume cell  must be clear (entitys body must not overlap terrain)
+                        if (!IsEmptyOrNonBlocking(tile))
+                            valid = false;
+                    }
+
+                    if (valid)
+                        candidateCells.Add(new Vector2Int(checkLocalX, checkLocalY));
+                }
+            }
+
+            if (valid) {
+                spawnRot = candidateRot;
+                occupiedCells = candidateCells;
+                return true;
+            }
+
+            // This orientation failed  candidateCells is implicitly discarded
+            // try the next attachment type.
+        }
+
+        return false; // No valid orientation found for this tile
     }
     private bool IsSolid(ushort tileID) {
         return tileID != ResourceSystem.InvalidID && tileID != ResourceSystem.AirID;

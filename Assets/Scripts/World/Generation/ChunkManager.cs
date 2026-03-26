@@ -383,7 +383,7 @@ public class ChunkManager : StaticInstance<ChunkManager>, ISaveable {
                        //tileinstance = GetOrCreateTileInstance(t, tileID, chunkPayload.Bo[x, y]); // idk if getting biome data like this is correct
 
                     }
-                    tilesToSet[tileIndex] = tileinstance; // this is making it red?
+                    tilesToSet[tileIndex] = tileinstance; 
                     oresToSet[tileIndex] = App.ResourceSystem.GetTileByID(oreID);
                     tilesShadingToSet[tileIndex] = tileID != 0 ? App.ResourceSystem.GetTileByID(9999) : null;
 

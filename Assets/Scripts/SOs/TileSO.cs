@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class TileSO : RuleTile, IIdentifiable {
     [Header("Game Properties")]
     public float maxDurability = 10; // -1 is non solid, this is a multiplier for ores
-    [HideInInspector]  // We now set it dynamically based on biome ( so Y color value in the shader )
+    [Tooltip("Set dynamically based on biome, should be at -1 so ores don't get coloured")]
     public int textureIndex = -1; // Used in the shader to know what the texture should be, set as -1 only if not used by shader
     ushort IIdentifiable.ID => ID;
     public ushort ID; 
