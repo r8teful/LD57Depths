@@ -18,10 +18,7 @@ Steamdeck notes:
 UX:
 
 * Not sure what to do at the start, needs a bit more handholding. Arrow pointing at upgrade machine!?
-* Forget to use lazer blast \& what button it needs to activate
-* Need some kind of tutorial / reminder of using the brimstone ability -> Input prompt above icon
 * Exit buttons in menus
-* Control action hints
 
 Misc:
 

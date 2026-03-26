@@ -1505,5 +1505,16 @@ Okay I did it again and it was a lot better after fixing the bug that made me ge
 
 
 
+Okay boys and girls, we've got three months, and you want an entire fucking game. That is very ambitious, and it would never happen. But anyway. Here's what I think I should prioritise now:
+
+1. Steampage
+2. Public playtest
+
+
+
+Resurface needs to be dressed up nicely. Be in a nice suit, in its best condition. That is the steampage. It needs to look at its best. Make the environemtn look extra good, make the visual effects extra polished
+
+
+
 
 
