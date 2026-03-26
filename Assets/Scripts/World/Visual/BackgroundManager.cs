@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ public class BackgroundManager : MonoBehaviour {
     public ParticleSystem trashParticles;
     private Transform[] _parallaxLayers; // The four parallax layers
     public SpriteRenderer _blackSprite;
+    public SpriteRenderer _worldHighlightSprite; // also some shadows
 
     private List<BackgroundObjectSO> backgroundObjectDatas;
     private Transform player;
@@ -76,6 +78,11 @@ public class BackgroundManager : MonoBehaviour {
         // Create new
         if (App.ResourceSystem.TryGetPrefab($"Particles{prefabString}", out var particles)) {
             _instantiatedParticles = Instantiate(particles, trenchBackgroundContainer.transform);
+        }
+        var biomeData = App.ResourceSystem.GetBiomeData(biomeNew);
+        if(biomeData != null) {
+            _worldHighlightSprite.DOKill();
+            _worldHighlightSprite.DOColor(biomeData.BiomeHighlightColour, 7.3f);
         }
     }
 

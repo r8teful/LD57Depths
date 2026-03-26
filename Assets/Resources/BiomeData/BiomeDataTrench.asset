@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 38b2e6c671cd1ec4ebc7d98f7406d389, type: 3}
-  m_Name: BiomeDataBio
+  m_Name: BiomeDataTrench
   m_EditorClassIdentifier: 
-  BiomeType: 7
-  hasBuffs: 1
+  BiomeType: 1
+  hasBuffs: 0
   BiomeTempAbility: {fileID: 11400000, guid: 8ede2fa7c96f72141be0c224b1370670, type: 2}
   BiomeTempBuff: {fileID: 0}
   BiomePermanentAbility: {fileID: 11400000, guid: 8ede2fa7c96f72141be0c224b1370670, type: 2}
   BiomePermanentBuff: {fileID: 0}
   BiomeTextColour: {r: 0.7029412, g: 0.92663604, b: 0.98039216, a: 1}
-  BiomeHighlightColour: {r: 0, g: 0, b: 0, a: 0}
+  BiomeHighlightColour: {r: 0, g: 0.37254903, b: 0.5529412, a: 0.50980395}

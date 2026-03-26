@@ -8,7 +8,7 @@ public class BackgroundWorldTexturesHandler : StaticInstance<BackgroundWorldText
     public int numBiomes = 6;
     
     private void OnEnable() {
-        //worldGenSetting.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterials; });
+       // GameManager.Instance.WorldGenSettings.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterials; });
     }
        // GameSetupManager.LocalInstance.OnHostSettingsChanged += HostSettingsChanged;
     

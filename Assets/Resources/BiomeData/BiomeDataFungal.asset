@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: BiomeDataFungal
   m_EditorClassIdentifier: 
   BiomeType: 8
+  hasBuffs: 1
   BiomeTempAbility: {fileID: 0}
   BiomeTempBuff: {fileID: 11400000, guid: a66457901c8dc4244bc32ebd20ad270d, type: 2}
   BiomePermanentAbility: {fileID: 0}
   BiomePermanentBuff: {fileID: 11400000, guid: a66457901c8dc4244bc32ebd20ad270d, type: 2}
   BiomeTextColour: {r: 0.876, g: 0.43278572, b: 0.86557156, a: 1}
+  BiomeHighlightColour: {r: 0.582, g: 0.2870852, b: 0.57678026, a: 0.48235294}

@@ -45,6 +45,9 @@ public class WorldGenData {
         if (biome == null) return 0;
         return biome.ProgressionIndex;
     }
+    public WorldGenBiomeData GetBiome(BiomeType b) {
+        return biomes.FirstOrDefault(biome => biome.BiomeType == b);
+    }
     public float MaxDepth { 
         get { 
             // 90% of the max theoretical depth, shader also uses 90%
@@ -239,6 +242,8 @@ public class WorldGenBiomeData {
     public Color DarkenedColor;
     public int TextureIndex;
 
+    // DEBUG
+    //public Action OnDataChanged;
     public static WorldGenBiomeData FromSO(WorldGenBiomeSO so, bool shouldRandomize) {
         var b = new WorldGenBiomeData();
         b.BiomeType = so.biomeType;
@@ -271,6 +276,9 @@ public class WorldGenBiomeData {
         b.placed = false;
         b.YStart = so.YStart; 
         b.XOffset = so.XOffset;
+
+        // DEBUG
+        //b.OnDataChanged = so.onDataChanged;
         return b;
     }
     public bool IsPlacedLeft() {
