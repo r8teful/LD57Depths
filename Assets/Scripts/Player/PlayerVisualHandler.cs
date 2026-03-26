@@ -28,6 +28,7 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
     public int InitializationOrder => 2;
     private bool hasInitializedNonOwner; // Sometimes the init function gets called twice so this is just for that
     private bool _isGodMode;
+    private bool _shouldFlipNext;
 
     private bool HasCactus => _localPlayer.PlayerAbilities.HasAbility(ResourceSystem.CactusAbilityID);
     public void InitializeOnOwner(PlayerManager playerParent) {
@@ -77,7 +78,8 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
     }
 
     private void HandleSwimVisual(Vector2 currentInput) {
-
+        CheckFlipSprite(currentInput.x);
+        return;
         if (currentInput.magnitude != 0) {
             // So ugly, will break if we need more than just flippers on the actual animation but this works
             //ChangeAnimation(_hasFlippers ? "SwimFlippers" : "Swim");
@@ -87,7 +89,6 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
             ChangeAnimation(HasCactus ? "CactusSwimIdle" : "SwimIdle");
         }
         SetHandSprite();
-        CheckFlipSprite(currentInput.x);
     }
 
     private void SetHandSprite() {
@@ -175,19 +176,34 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
         FlipPlayer(next);
         OnFlipChange?.Invoke(next);  
     }
-    private void FlipPlayer(bool shouldFlip) {
-        if (shouldFlip) {
+    public void OnFlipFinished() {
+        Debug.Log("OnFlipFinsihed");
+        if (_shouldFlipNext) {
+            GetComponent<SpriteRenderer>().flipX = true;
             sprite.flipX = true;
             _bobHand.gameObject.transform.parent.localScale = new Vector3(-1, 1, 1);
             _bobBackVisual.localScale = new Vector3(-1, 1, 1);
-            playerSwimCollider.transform.localScale =  new Vector3(-1, 1, 1);
-        } else {             
+            playerSwimCollider.transform.localScale = new Vector3(-1, 1, 1);
+        } else {
             sprite.flipX = false;
+            GetComponent<SpriteRenderer>().flipX = false;
             _bobHand.gameObject.transform.parent.localScale = new Vector3(1, 1, 1);
             _bobBackVisual.localScale = new Vector3(1, 1, 1);
-            playerSwimCollider.transform.localScale =  new Vector3(1, 1, 1);
+            playerSwimCollider.transform.localScale = new Vector3(1, 1, 1);
+
         }
+        //ChangeAnimation(_nextAnimationAfterFlip);
     }
+    private void FlipPlayer(bool shouldFlip) {
+        _shouldFlipNext = shouldFlip;
+        if (shouldFlip)
+            ChangeAnimation("SwimFlip");
+        else
+            ChangeAnimation("SwimFlipReverse");
+
+        return;
+    }
+
     private void ChangeBackSprite() {
 
     }
