@@ -12,48 +12,33 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
     [SerializeField] private Sprite _bobHandCactus; 
     [SerializeField] private BobBackVisual _bobBackHandler; 
     [SerializeField] private Transform _bobBackVisual;
+    [SerializeField] private Transform _lazerStartPosition;
     [SerializeField] private Animator animator;
     private bool _hasFlippers;
     private string currentAnimation = "";
     public Collider2D playerSwimCollider;
     public Collider2D playerWalkCollider;
     public Light2D lightSpot;
-    // There could every only be two references for a player here, we are either owner, which would be the localPlayer reference
-    // Or we are not the owner, in which case it would be a remote.
-    public PlayerManager _remotePlayer;
-    public PlayerManager _localPlayer;
+    public PlayerState _state;
+    private PlayerManager _localPlayer; 
     private float lightIntensityOn;
-    private bool _isFlipped = false;
     public event Action<bool> OnFlipChange;
     public int InitializationOrder => 2;
     private bool hasInitializedNonOwner; // Sometimes the init function gets called twice so this is just for that
     private bool _isGodMode;
+    private bool _isFacingRight = false;
     private bool _shouldFlipNext;
 
     private bool HasCactus => _localPlayer.PlayerAbilities.HasAbility(ResourceSystem.CactusAbilityID);
+
+    public bool IsFacingRight =>  _isFacingRight;
+    public bool IsFlipping { get; internal set; }
+
     public void InitializeOnOwner(PlayerManager playerParent) {
-        InitCommon();
-        _localPlayer = playerParent;
-    }
-
-
-    private void InitCommon() {
         lightIntensityOn = lightSpot.intensity;
         _bobBackHandler.SetVisualNone();
-        // Surelly we have to subscribe to the upgrade purchase event here? For example, I purchase an upgrade. 
-        // now two things need to happen:
-        // 1. Player visual on MY system needs to recognise it so that it can add the flippers
-        // 2. Player visual on all REMOTE systems need to recognise it and add flippers to my character
+        _localPlayer = playerParent;
     }
-    public void InitializeOnNotOwner(PlayerManager remoteClient) {
-        if (hasInitializedNonOwner)
-            return;
-        InitCommon();
-        _remotePlayer = remoteClient;
-        // Subscribe to handle remote stat changes
-        hasInitializedNonOwner = true;
-    }
-  
 
     // Called every frame, handles approriate visuals depending on each state
     public void HandleVisualUpdate(PlayerState currentState, Vector2 currentInput) {
@@ -71,22 +56,20 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
         }
     }
 
-
     private void HandleGroundVisual(Vector2 currentInput) {
         CheckFlipSprite(currentInput.x);
         ChangeAnimation(Mathf.Abs(currentInput.x) > 0.01f ? "Walk" : "Idle");
     }
 
+
     private void HandleSwimVisual(Vector2 currentInput) {
         CheckFlipSprite(currentInput.x);
-        return;
         if (currentInput.magnitude != 0) {
-            // So ugly, will break if we need more than just flippers on the actual animation but this works
-            //ChangeAnimation(_hasFlippers ? "SwimFlippers" : "Swim");
-            ChangeAnimation(HasCactus ? "CactusSwim" : "Swim");
+            // swimming
+            animator.speed = 1;
         } else {
-            //ChangeAnimation(_hasFlippers ? "SwimIdleFlippers" : "SwimIdle");
-            ChangeAnimation(HasCactus ? "CactusSwimIdle" : "SwimIdle");
+            // slower swimming
+            animator.speed = 0.4f;            
         }
         SetHandSprite();
     }
@@ -97,11 +80,13 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
     }
 
     internal void OnStateEnter(PlayerState state) {
+        _state = state;
         SetHitbox(state);
         switch (state) {
             case PlayerState.Swimming:
                 SetLights(true);
                 SetBobHand(true);
+                ChangeAnimation("Swim");
                 _bobBackHandler.SetSpriteSwim();
                 break;
             case PlayerState.Grounded:
@@ -159,26 +144,29 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
     }
 
     public void CheckFlipSprite(float horizontalInput) {
-        var flippNow = _isFlipped;
+        var flippNow = _isFacingRight;
         if (horizontalInput > 0.01f) {
-            _isFlipped = false; // Flip to right
+            _isFacingRight = false; // Flip to right
         } else if (horizontalInput < -0.01f) {
-            _isFlipped = true; // Flip to left
+            _isFacingRight = true; // Flip to left
         }
-        if (flippNow != _isFlipped) {
-            OnFlipChanged(_isFlipped);
+        if (flippNow != _isFacingRight) {
+            if(_state == PlayerState.Swimming) {
+                FlipPlayerAnimation(_isFacingRight);
+            } else {
+                FlipNow(true, _isFacingRight);
+            }
         }
 
     }
-    private void OnFlipChanged(bool next) {
-        if (sprite == null)
-            return;
-        FlipPlayer(next);
-        OnFlipChange?.Invoke(next);  
-    }
-    public void OnFlipFinished() {
-        Debug.Log("OnFlipFinsihed");
-        if (_shouldFlipNext) {
+    // called from the animator clip event call
+    public void OnShouldFlip() {
+        FlipNow(); // will use _shouldFlipNext
+      }
+    private void FlipNow(bool useFlipOverride = false, bool flipOverwride = false) {
+        IsFlipping = false;
+        bool shouldFlip = useFlipOverride ? flipOverwride : _shouldFlipNext;
+        if (shouldFlip) {
             GetComponent<SpriteRenderer>().flipX = true;
             sprite.flipX = true;
             _bobHand.gameObject.transform.parent.localScale = new Vector3(-1, 1, 1);
@@ -192,10 +180,13 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
             playerSwimCollider.transform.localScale = new Vector3(1, 1, 1);
 
         }
-        //ChangeAnimation(_nextAnimationAfterFlip);
+        OnFlipChange?.Invoke(shouldFlip); // Now we actually call it because we've flipped (animation give it a delay)
+                                               //ChangeAnimation(_nextAnimationAfterFlip);
+
     }
-    private void FlipPlayer(bool shouldFlip) {
+    private void FlipPlayerAnimation(bool shouldFlip) {
         _shouldFlipNext = shouldFlip;
+        IsFlipping = true;
         if (shouldFlip)
             ChangeAnimation("SwimFlip");
         else
@@ -299,5 +290,9 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
     internal void DEBUGSetGodMode(bool v) {
         playerSwimCollider.enabled = !v;
         _isGodMode = v;
+    }
+
+    internal Vector3 GetLazerPos() {
+        return _lazerStartPosition.position;
     }
 }

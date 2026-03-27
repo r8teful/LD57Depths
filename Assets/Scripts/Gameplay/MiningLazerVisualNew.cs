@@ -56,6 +56,8 @@ public class MiningLazerVisualNew : MonoBehaviour {
         if (!_hasStarted) {
             StartVisual();
         }
+        // Fetch hand position 
+        transform.position = _player.PlayerVisuals.GetLazerPos();
         //Vector2 dir = _player.InputManager.GetDirFromPos(transform.position);
         Vector2 dir = _lazerLogic.CurrentDir; //  
         // Update visuals each frame when mining
@@ -71,6 +73,7 @@ public class MiningLazerVisualNew : MonoBehaviour {
     }
 
     public void StartVisual() {
+
         _hasStarted = true;
         // Update tool data
         lazerSound.volume = 0.2f;
