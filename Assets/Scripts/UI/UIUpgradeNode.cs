@@ -3,7 +3,6 @@ using Coffee.UIExtensions;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using System;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;

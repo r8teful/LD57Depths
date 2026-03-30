@@ -448,7 +448,7 @@ TextureImporter:
         width: 1
         height: 1
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -470,7 +470,7 @@ TextureImporter:
         width: 1
         height: 1
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -492,7 +492,7 @@ TextureImporter:
         width: 1
         height: 1
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -501,6 +501,28 @@ TextureImporter:
       bones: []
       spriteID: 21c62929da19bb447a372747670e73cf
       internalID: -974076166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: dropStone
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 4
+        width: 1
+        height: 1
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e1b950490ecf8649bff9d86cc8a1764
+      internalID: 383999325
       vertices: []
       indices: 
       edges: []
@@ -539,6 +561,7 @@ TextureImporter:
       Ore_8Zoisite: -1393645842
       Ore_9Rainbow: 1616890552
       Ore_PlaceHolder: 1832437333
+      dropStone: 383999325
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

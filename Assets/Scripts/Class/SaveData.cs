@@ -26,6 +26,7 @@ namespace r8teful {
     }
     [System.Serializable]
     public class StatData {
+        //public Dictionary<string, CharacterData> characterData;
         public Dictionary<string, int> characterWins;
         public Dictionary<ushort, ulong> itemsGained;
         public Dictionary<ushort, ulong> plantsDestroyed;
@@ -37,6 +38,20 @@ namespace r8teful {
             blocksDestroyed = new Dictionary<ushort, ulong>();
         }
     }
+    //[System.Serializable]
+    //public class CharacterData {
+    //    public int characterWins;
+    //    public Dictionary<ushort, ulong> itemsGained;
+    //    public Dictionary<ushort, ulong> plantsDestroyed;
+    //    public Dictionary<ushort, ulong> blocksDestroyed;
+    //    public CharacterData() {
+    //        characterWins = 0;
+    //        itemsGained = new Dictionary<ushort, ulong>();
+    //        plantsDestroyed = new Dictionary<ushort, ulong>();
+    //        blocksDestroyed = new Dictionary<ushort, ulong>();
+    //    }
+    //
+    //}
     [System.Serializable]
     public class  BobSaveData {
         public Dictionary<ushort, int> nodeSaveData;

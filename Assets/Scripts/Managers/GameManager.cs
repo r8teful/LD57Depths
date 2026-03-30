@@ -234,11 +234,11 @@ public class GameManager : PersistentSingleton<GameManager> {
 }
 
 [Serializable]
-public struct CharacterData {
-    public ushort CharacterId;
-    public ushort CosmeticId;
-    public ushort[] StartingEquipmentIds;
-}
+//public struct CharacterData {
+//    public ushort CharacterId;
+//    public ushort CosmeticId;
+//    public ushort[] StartingEquipmentIds;
+//}
 
 public enum Difficulty {
     Easy = 0,

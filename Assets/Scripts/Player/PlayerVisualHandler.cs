@@ -91,7 +91,8 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
                 break;
             case PlayerState.Grounded:
                 SetLights(false);
-                SetBobHand(false);
+                SetBobHand(false); 
+                animator.speed = 1;
                 _bobBackHandler.SetSpriteWalk();
                 break;
             case PlayerState.None:

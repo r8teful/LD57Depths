@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "CharacterInfoSO", menuName = "ScriptableObjects/Other/CharacterInfoSO")]
 public class CharacterDataSO : ScriptableObject {

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AdrenalinePlus : MonoBehaviour, IInitializableAbility {
     public AbilitySO AdrenalineAbility;

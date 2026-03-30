@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CompassSpawner : MonoBehaviour, IInitializableAbility {
     public bool IsPlus;

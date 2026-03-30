@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static UpgradeNodeVisualData;
 
 // Anything that can give information to the popup on the cursor
 public interface IPopupInfo {

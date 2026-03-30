@@ -1,7 +1,6 @@
 ﻿using Assets.SimpleLocalization.Scripts;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 [CreateAssetMenu(fileName = "ZoneSO", menuName = "ScriptableObjects/Other/ZoneSO", order = 2)]
 public class ZoneSO : ScriptableObject {

@@ -110,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: GamepadD-PadUp
+      name: gamepad_dpad_up
       rect:
         serializedVersion: 2
         x: 19
@@ -132,7 +132,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GamepadD-PadRight
+      name: gamepad_dpad_right
       rect:
         serializedVersion: 2
         x: 36
@@ -154,7 +154,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GamepadD-PadDown
+      name: gamepad_dpad_down
       rect:
         serializedVersion: 2
         x: 53
@@ -176,7 +176,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GamepadD-PadLeft
+      name: gamepad_dpad_left
       rect:
         serializedVersion: 2
         x: 70
@@ -198,7 +198,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MouseLeftButton
+      name: mousekeyboard_mouse_left
       rect:
         serializedVersion: 2
         x: 113
@@ -220,7 +220,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MouseRightButton
+      name: mousekeyboard_mouse_right
       rect:
         serializedVersion: 2
         x: 130
@@ -264,7 +264,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MouseScrollUp
+      name: mousekeyboard_mouse_wheel_up
       rect:
         serializedVersion: 2
         x: 164
@@ -308,7 +308,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MouseScroll
+      name: mousekeyboard_mouse_wheel
       rect:
         serializedVersion: 2
         x: 198
@@ -330,7 +330,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardEsc
+      name: mousekeyboard_key_escape
       rect:
         serializedVersion: 2
         x: 292
@@ -352,7 +352,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardF1
+      name: mousekeyboard_key_F1
       rect:
         serializedVersion: 2
         x: 309
@@ -374,7 +374,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardF2
+      name: mousekeyboard_key_F2
       rect:
         serializedVersion: 2
         x: 326
@@ -396,7 +396,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardF3
+      name: mousekeyboard_key_F3
       rect:
         serializedVersion: 2
         x: 343
@@ -418,7 +418,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardF4
+      name: mousekeyboard_key_F4
       rect:
         serializedVersion: 2
         x: 360
@@ -440,7 +440,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardF5
+      name: mousekeyboard_key_F5
       rect:
         serializedVersion: 2
         x: 377
@@ -462,7 +462,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardF6
+      name: mousekeyboard_key_F6
       rect:
         serializedVersion: 2
         x: 394
@@ -484,7 +484,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardF7
+      name: mousekeyboard_key_F7
       rect:
         serializedVersion: 2
         x: 411
@@ -506,7 +506,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardF8
+      name: mousekeyboard_key_F8
       rect:
         serializedVersion: 2
         x: 428
@@ -528,7 +528,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardF9
+      name: mousekeyboard_key_F9
       rect:
         serializedVersion: 2
         x: 445
@@ -550,7 +550,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardF10
+      name: mousekeyboard_key_F10
       rect:
         serializedVersion: 2
         x: 462
@@ -572,7 +572,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardF11
+      name: mousekeyboard_key_F11
       rect:
         serializedVersion: 2
         x: 479
@@ -594,7 +594,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardF12
+      name: mousekeyboard_key_F12
       rect:
         serializedVersion: 2
         x: 496
@@ -616,7 +616,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardTilde
+      name: mousekeyboard_key_tilda
       rect:
         serializedVersion: 2
         x: 513
@@ -638,7 +638,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard!
+      name: mousekeyboard_key_!
       rect:
         serializedVersion: 2
         x: 530
@@ -660,7 +660,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard@
+      name: mousekeyboard_key_@
       rect:
         serializedVersion: 2
         x: 547
@@ -682,7 +682,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard#
+      name: mousekeyboard_key_#
       rect:
         serializedVersion: 2
         x: 564
@@ -704,13 +704,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GamepadButtonNorth
+      name: gamepad_button_north
       rect:
         serializedVersion: 2
-        x: 6
-        y: 160
-        width: 4
-        height: 4
+        x: 2
+        y: 152
+        width: 12
+        height: 12
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -726,13 +726,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GamepadButtonEast
+      name: gamepad_button_east
       rect:
         serializedVersion: 2
-        x: 23
-        y: 160
-        width: 4
-        height: 4
+        x: 19
+        y: 152
+        width: 12
+        height: 12
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -748,13 +748,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GamepadButtonSouth
+      name: gamepad_button_south
       rect:
         serializedVersion: 2
-        x: 40
-        y: 160
-        width: 4
-        height: 4
+        x: 36
+        y: 152
+        width: 12
+        height: 12
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -770,13 +770,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GamepadButtonWest
+      name: gamepad_button_west
       rect:
         serializedVersion: 2
-        x: 57
-        y: 160
-        width: 4
-        height: 4
+        x: 53
+        y: 152
+        width: 12
+        height: 12
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -792,7 +792,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GamepadLeftStick
+      name: gamepad_stick_left
       rect:
         serializedVersion: 2
         x: 139
@@ -814,13 +814,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GamepadLeftStickPress
+      name: gamepad_stick_left_click
       rect:
         serializedVersion: 2
         x: 275
         y: 157
         width: 10
-        height: 8
+        height: 12
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -836,7 +836,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard1
+      name: mousekeyboard_key_1
       rect:
         serializedVersion: 2
         x: 292
@@ -858,7 +858,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard2
+      name: mousekeyboard_key_2
       rect:
         serializedVersion: 2
         x: 309
@@ -880,7 +880,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard3
+      name: mousekeyboard_key_3
       rect:
         serializedVersion: 2
         x: 326
@@ -902,7 +902,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard4
+      name: mousekeyboard_key_4
       rect:
         serializedVersion: 2
         x: 343
@@ -924,7 +924,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard5
+      name: mousekeyboard_key_5
       rect:
         serializedVersion: 2
         x: 360
@@ -946,7 +946,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard6
+      name: mousekeyboard_key_6
       rect:
         serializedVersion: 2
         x: 377
@@ -968,7 +968,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard7
+      name: mousekeyboard_key_7
       rect:
         serializedVersion: 2
         x: 394
@@ -990,7 +990,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard8
+      name: mousekeyboard_key_8
       rect:
         serializedVersion: 2
         x: 411
@@ -1012,7 +1012,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard9
+      name: mousekeyboard_key_9
       rect:
         serializedVersion: 2
         x: 428
@@ -1034,7 +1034,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard0
+      name: mousekeyboard_key_0
       rect:
         serializedVersion: 2
         x: 445
@@ -1056,7 +1056,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard-
+      name: mousekeyboard_key_-
       rect:
         serializedVersion: 2
         x: 462
@@ -1078,7 +1078,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard+
+      name: mousekeyboard_key_+
       rect:
         serializedVersion: 2
         x: 479
@@ -1100,7 +1100,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard=
+      name: mousekeyboard_key_=
       rect:
         serializedVersion: 2
         x: 496
@@ -1122,7 +1122,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard_
+      name: mousekeyboard_key__
       rect:
         serializedVersion: 2
         x: 513
@@ -1166,7 +1166,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardBackspace
+      name: mousekeyboard_key_Backspace
       rect:
         serializedVersion: 2
         x: 547
@@ -1188,7 +1188,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GamepadRightStick
+      name: gamepad_stick_right
       rect:
         serializedVersion: 2
         x: 139
@@ -1210,13 +1210,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: GamepadRightStickPress
+      name: gamepad_stick_right_click
       rect:
         serializedVersion: 2
         x: 275
         y: 139
         width: 10
-        height: 8
+        height: 12
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1232,7 +1232,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardQ
+      name: mousekeyboard_key_Q
       rect:
         serializedVersion: 2
         x: 292
@@ -1254,7 +1254,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardW
+      name: mousekeyboard_key_W
       rect:
         serializedVersion: 2
         x: 309
@@ -1276,7 +1276,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardE
+      name: mousekeyboard_key_E
       rect:
         serializedVersion: 2
         x: 326
@@ -1298,7 +1298,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardR
+      name: mousekeyboard_key_R
       rect:
         serializedVersion: 2
         x: 343
@@ -1320,7 +1320,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardT
+      name: mousekeyboard_key_T
       rect:
         serializedVersion: 2
         x: 360
@@ -1342,7 +1342,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardY
+      name: mousekeyboard_key_Y
       rect:
         serializedVersion: 2
         x: 377
@@ -1364,7 +1364,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardU
+      name: mousekeyboard_key_U
       rect:
         serializedVersion: 2
         x: 394
@@ -1386,7 +1386,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardI
+      name: mousekeyboard_key_I
       rect:
         serializedVersion: 2
         x: 411
@@ -1408,7 +1408,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardO
+      name: mousekeyboard_key_O
       rect:
         serializedVersion: 2
         x: 428
@@ -1430,7 +1430,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardP
+      name: mousekeyboard_key_P
       rect:
         serializedVersion: 2
         x: 445
@@ -1452,7 +1452,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard[
+      name: mousekeyboard_key_[
       rect:
         serializedVersion: 2
         x: 462
@@ -1474,7 +1474,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 'Keyboard]'
+      name: 'mousekeyboard_key_]'
       rect:
         serializedVersion: 2
         x: 479
@@ -1496,7 +1496,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard{
+      name: mousekeyboard_key_{
       rect:
         serializedVersion: 2
         x: 496
@@ -1518,7 +1518,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard}
+      name: mousekeyboard_key_}
       rect:
         serializedVersion: 2
         x: 513
@@ -1540,7 +1540,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard
+      name: mousekeyboard_key_
       rect:
         serializedVersion: 2
         x: 530
@@ -1650,7 +1650,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardA
+      name: mousekeyboard_key_A
       rect:
         serializedVersion: 2
         x: 309
@@ -1672,7 +1672,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardS
+      name: mousekeyboard_key_S
       rect:
         serializedVersion: 2
         x: 326
@@ -1694,7 +1694,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardD
+      name: mousekeyboard_key_D
       rect:
         serializedVersion: 2
         x: 343
@@ -1716,7 +1716,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardF
+      name: mousekeyboard_key_F
       rect:
         serializedVersion: 2
         x: 360
@@ -1738,7 +1738,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardG
+      name: mousekeyboard_key_G
       rect:
         serializedVersion: 2
         x: 377
@@ -1760,7 +1760,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardH
+      name: mousekeyboard_key_H
       rect:
         serializedVersion: 2
         x: 394
@@ -1782,7 +1782,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardJ
+      name: mousekeyboard_key_J
       rect:
         serializedVersion: 2
         x: 411
@@ -1804,7 +1804,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardK
+      name: mousekeyboard_key_K
       rect:
         serializedVersion: 2
         x: 428
@@ -1826,7 +1826,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardL
+      name: mousekeyboard_key_L
       rect:
         serializedVersion: 2
         x: 445
@@ -1848,7 +1848,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard'
+      name: mousekeyboard_key_'
       rect:
         serializedVersion: 2
         x: 462
@@ -1914,7 +1914,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard;
+      name: mousekeyboard_key_;
       rect:
         serializedVersion: 2
         x: 513
@@ -1958,7 +1958,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardEnter
+      name: mousekeyboard_key_Enter
       rect:
         serializedVersion: 2
         x: 547
@@ -1980,7 +1980,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardWindows
+      name: mousekeyboard_key_Windows
       rect:
         serializedVersion: 2
         x: 309
@@ -2002,7 +2002,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardZ
+      name: mousekeyboard_key_Z
       rect:
         serializedVersion: 2
         x: 326
@@ -2024,7 +2024,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardX
+      name: mousekeyboard_key_X
       rect:
         serializedVersion: 2
         x: 343
@@ -2046,7 +2046,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardC
+      name: mousekeyboard_key_C
       rect:
         serializedVersion: 2
         x: 360
@@ -2068,7 +2068,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardV
+      name: mousekeyboard_key_V
       rect:
         serializedVersion: 2
         x: 377
@@ -2090,7 +2090,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardB
+      name: mousekeyboard_key_B
       rect:
         serializedVersion: 2
         x: 394
@@ -2112,7 +2112,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardN
+      name: mousekeyboard_key_N
       rect:
         serializedVersion: 2
         x: 411
@@ -2134,7 +2134,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardM
+      name: mousekeyboard_key_M
       rect:
         serializedVersion: 2
         x: 428
@@ -2244,7 +2244,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardUp
+      name: mousekeyboard_key_Up
       rect:
         serializedVersion: 2
         x: 513
@@ -2266,7 +2266,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardRight
+      name: mousekeyboard_key_Right
       rect:
         serializedVersion: 2
         x: 530
@@ -2288,7 +2288,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardDown
+      name: mousekeyboard_key_Down
       rect:
         serializedVersion: 2
         x: 547
@@ -2310,7 +2310,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardLeft
+      name: mousekeyboard_key_Left
       rect:
         serializedVersion: 2
         x: 563
@@ -2335,8 +2335,8 @@ TextureImporter:
       name: GamepadSelect
       rect:
         serializedVersion: 2
-        x: 74
-        y: 96
+        x: 90
+        y: 156
         width: 10
         height: 10
       alignment: 6
@@ -2357,8 +2357,8 @@ TextureImporter:
       name: GamepadStart
       rect:
         serializedVersion: 2
-        x: 91
-        y: 96
+        x: 107
+        y: 156
         width: 10
         height: 10
       alignment: 6
@@ -2376,7 +2376,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardAlt
+      name: mousekeyboard_key_Alt
       rect:
         serializedVersion: 2
         x: 292
@@ -2398,7 +2398,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardTab
+      name: mousekeyboard_key_Tab
       rect:
         serializedVersion: 2
         x: 326
@@ -2420,7 +2420,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardDelete
+      name: mousekeyboard_key_Delete
       rect:
         serializedVersion: 2
         x: 360
@@ -2442,7 +2442,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardEnd
+      name: mousekeyboard_key_End
       rect:
         serializedVersion: 2
         x: 394
@@ -2464,7 +2464,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardNum
+      name: mousekeyboard_key_Num
       rect:
         serializedVersion: 2
         x: 428
@@ -2486,7 +2486,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard.
+      name: mousekeyboard_key_.
       rect:
         serializedVersion: 2
         x: 462
@@ -2508,7 +2508,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard%
+      name: mousekeyboard_key_%
       rect:
         serializedVersion: 2
         x: 496
@@ -2530,7 +2530,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard^
+      name: mousekeyboard_key_^
       rect:
         serializedVersion: 2
         x: 513
@@ -2552,7 +2552,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard(
+      name: mousekeyboard_key_(
       rect:
         serializedVersion: 2
         x: 547
@@ -2574,7 +2574,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard)
+      name: mousekeyboard_key_)
       rect:
         serializedVersion: 2
         x: 563
@@ -2596,7 +2596,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardCtrl
+      name: mousekeyboard_key_Ctrl
       rect:
         serializedVersion: 2
         x: 292
@@ -2618,7 +2618,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardCaps
+      name: mousekeyboard_key_Caps
       rect:
         serializedVersion: 2
         x: 326
@@ -2640,7 +2640,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardHome
+      name: mousekeyboard_key_Home
       rect:
         serializedVersion: 2
         x: 360
@@ -2662,7 +2662,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardPgUp
+      name: mousekeyboard_key_PgUp
       rect:
         serializedVersion: 2
         x: 394
@@ -2684,7 +2684,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardPgDown
+      name: mousekeyboard_key_PgDown
       rect:
         serializedVersion: 2
         x: 428
@@ -2706,7 +2706,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Keyboard,
+      name: mousekeyboard_key_,
       rect:
         serializedVersion: 2
         x: 462
@@ -2728,7 +2728,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardSpace
+      name: mousekeyboard_key_Space
       rect:
         serializedVersion: 2
         x: 530
@@ -2750,7 +2750,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardShift
+      name: mousekeyboard_key_Shift
       rect:
         serializedVersion: 2
         x: 292
@@ -2772,7 +2772,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardInsert
+      name: mousekeyboard_key_Insert
       rect:
         serializedVersion: 2
         x: 326
@@ -2794,7 +2794,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardPrint
+      name: mousekeyboard_key_Print
       rect:
         serializedVersion: 2
         x: 360
@@ -2816,7 +2816,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardScroll
+      name: mousekeyboard_key_Scroll
       rect:
         serializedVersion: 2
         x: 394
@@ -2838,7 +2838,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardPause
+      name: mousekeyboard_key_Pause
       rect:
         serializedVersion: 2
         x: 428
@@ -2860,7 +2860,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardPlay
+      name: mousekeyboard_key_Play
       rect:
         serializedVersion: 2
         x: 462
@@ -2882,7 +2882,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardPauseMini
+      name: mousekeyboard_key_PauseMini
       rect:
         serializedVersion: 2
         x: 479
@@ -2904,7 +2904,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardStop
+      name: mousekeyboard_key_Stop
       rect:
         serializedVersion: 2
         x: 496
@@ -2926,7 +2926,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardRewind
+      name: mousekeyboard_key_Rewind
       rect:
         serializedVersion: 2
         x: 513
@@ -2948,7 +2948,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardFastforward
+      name: mousekeyboard_key_Fastforward
       rect:
         serializedVersion: 2
         x: 530
@@ -2970,7 +2970,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardSkipBack
+      name: mousekeyboard_key_SkipBack
       rect:
         serializedVersion: 2
         x: 547
@@ -2992,7 +2992,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardSkipForward
+      name: mousekeyboard_key_SkipForward
       rect:
         serializedVersion: 2
         x: 564
@@ -3014,7 +3014,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: KeyboardSpaceMini
+      name: mousekeyboard_key_SpaceMini
       rect:
         serializedVersion: 2
         x: 292
@@ -3036,7 +3036,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: XBoxControllerB
+      name: xboxone_button_b
       rect:
         serializedVersion: 2
         x: 241
@@ -3058,7 +3058,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: XBoxControllerA
+      name: xboxone_button_a
       rect:
         serializedVersion: 2
         x: 224
@@ -3080,7 +3080,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: XBoxControllerX
+      name: xboxone_button_x
       rect:
         serializedVersion: 2
         x: 258
@@ -3102,7 +3102,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: XBoxControllerY
+      name: xboxone_button_y
       rect:
         serializedVersion: 2
         x: 275
@@ -3124,7 +3124,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InputPromptSheet2_0
+      name: gamepad_dpad
       rect:
         serializedVersion: 2
         x: 2
@@ -3146,7 +3146,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InputPromptSheet2_1
+      name: mousekeyboard_mouse_simple
       rect:
         serializedVersion: 2
         x: 96
@@ -3322,292 +3322,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InputPromptSheet2_9
-      rect:
-        serializedVersion: 2
-        x: 277
-        y: 164
-        width: 6
-        height: 5
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 5a95f67e16ca9d64eaf84978931c0284
-      internalID: -1132505745
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_10
-      rect:
-        serializedVersion: 2
-        x: 2
-        y: 156
-        width: 4
-        height: 4
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6a8095801d3236749acd722f0521fe8f
-      internalID: -1399800190
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_11
-      rect:
-        serializedVersion: 2
-        x: 6
-        y: 152
-        width: 4
-        height: 4
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7c0253928098de549ac87f3648ee0aad
-      internalID: 1726943042
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_12
-      rect:
-        serializedVersion: 2
-        x: 10
-        y: 156
-        width: 4
-        height: 4
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0e39245293d2af54fb3108a7f7f6ece4
-      internalID: -1367877363
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_13
-      rect:
-        serializedVersion: 2
-        x: 19
-        y: 156
-        width: 4
-        height: 4
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6c0459c6b39674848a94e3cbf3d95fef
-      internalID: -461771910
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_14
-      rect:
-        serializedVersion: 2
-        x: 23
-        y: 152
-        width: 4
-        height: 4
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: df782a2be75a836439bfd3bc99376be5
-      internalID: -1167950254
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_15
-      rect:
-        serializedVersion: 2
-        x: 27
-        y: 156
-        width: 4
-        height: 4
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: be38d9cd6801cc144b8b56747cc6eac6
-      internalID: -987739695
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_16
-      rect:
-        serializedVersion: 2
-        x: 36
-        y: 156
-        width: 4
-        height: 4
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1d002ded141982f488e77f6ea77a3782
-      internalID: 1801057914
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_17
-      rect:
-        serializedVersion: 2
-        x: 40
-        y: 152
-        width: 4
-        height: 4
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d2799bf1939db8c49b96a17644d3381e
-      internalID: -2092299983
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_18
-      rect:
-        serializedVersion: 2
-        x: 44
-        y: 156
-        width: 4
-        height: 4
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 687cc2ad24bccb346890bbd63bc6be39
-      internalID: -4334239
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_19
-      rect:
-        serializedVersion: 2
-        x: 53
-        y: 156
-        width: 4
-        height: 4
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7aa9b515ee6ca1f419f473ed8d82bbff
-      internalID: 1387080152
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_20
-      rect:
-        serializedVersion: 2
-        x: 57
-        y: 152
-        width: 4
-        height: 4
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 81345462daaa23c4fbaa473f439d7b0c
-      internalID: 1105877474
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_21
-      rect:
-        serializedVersion: 2
-        x: 61
-        y: 156
-        width: 4
-        height: 4
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8babbcd406b10d840860604238d15c6a
-      internalID: -390485509
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: InputPromptSheet2_22
       rect:
         serializedVersion: 2
@@ -3757,28 +3471,6 @@ TextureImporter:
       bones: []
       spriteID: efa50bc471f5e2f458ca5c0a34ed6459
       internalID: -709260901
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_29
-      rect:
-        serializedVersion: 2
-        x: 277
-        y: 146
-        width: 6
-        height: 5
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1c759aad0a1da6644912466b97ed1fde
-      internalID: -2074999424
       vertices: []
       indices: 
       edges: []
@@ -3938,13 +3630,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InputPromptSheet2_37
+      name: steamdeck_button_y
       rect:
         serializedVersion: 2
-        x: 59
-        y: 95
-        width: 7
-        height: 12
+        x: 60
+        y: 96
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -3960,13 +3652,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InputPromptSheet2_38
+      name: steamdeck_button_x
       rect:
         serializedVersion: 2
-        x: 40
-        y: 97
+        x: 43
+        y: 96
         width: 10
-        height: 9
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -3987,8 +3679,8 @@ TextureImporter:
         serializedVersion: 2
         x: 107
         y: 97
-        width: 11
-        height: 9
+        width: 12
+        height: 8
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -4007,7 +3699,7 @@ TextureImporter:
       name: InputPromptSheet2_40
       rect:
         serializedVersion: 2
-        x: 124
+        x: 75
         y: 97
         width: 12
         height: 8
@@ -4029,7 +3721,7 @@ TextureImporter:
       name: InputPromptSheet2_41
       rect:
         serializedVersion: 2
-        x: 141
+        x: 90
         y: 97
         width: 12
         height: 8
@@ -4048,13 +3740,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InputPromptSheet2_42
+      name: steamdeck_button_a
       rect:
         serializedVersion: 2
-        x: 158
-        y: 97
-        width: 12
-        height: 9
+        x: 9
+        y: 96
+        width: 10
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -4070,13 +3762,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: InputPromptSheet2_43
+      name: steamdeck_button_b
       rect:
         serializedVersion: 2
-        x: 175
-        y: 97
-        width: 12
-        height: 9
+        x: 25
+        y: 96
+        width: 11
+        height: 10
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -4095,10 +3787,10 @@ TextureImporter:
       name: InputPromptSheet2_44
       rect:
         serializedVersion: 2
-        x: 192
-        y: 97
-        width: 12
-        height: 9
+        x: 23
+        y: 82
+        width: 11
+        height: 7
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -4117,10 +3809,10 @@ TextureImporter:
       name: InputPromptSheet2_45
       rect:
         serializedVersion: 2
-        x: 209
-        y: 97
+        x: 5
+        y: 82
         width: 12
-        height: 9
+        height: 7
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -4131,50 +3823,6 @@ TextureImporter:
       bones: []
       spriteID: 9ab94591724a1cc4ca3877e5a00e8c6c
       internalID: -1328234187
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_46
-      rect:
-        serializedVersion: 2
-        x: 227
-        y: 96
-        width: 9
-        height: 10
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6ec9dbfb92ff39e4ca3f52ce2b6eb8d3
-      internalID: -621007496
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_47
-      rect:
-        serializedVersion: 2
-        x: 244
-        y: 96
-        width: 9
-        height: 10
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: abb1a6bdad1defb469041ae89bfcb50f
-      internalID: -1327214785
       vertices: []
       indices: 
       edges: []
@@ -4227,10 +3875,10 @@ TextureImporter:
       name: InputPromptSheet2_50
       rect:
         serializedVersion: 2
-        x: 40
-        y: 77
-        width: 8
-        height: 10
+        x: 42
+        y: 81
+        width: 9
+        height: 9
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -4249,10 +3897,10 @@ TextureImporter:
       name: InputPromptSheet2_51
       rect:
         serializedVersion: 2
-        x: 57
-        y: 77
-        width: 8
-        height: 10
+        x: 58
+        y: 81
+        width: 9
+        height: 9
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -4271,10 +3919,10 @@ TextureImporter:
       name: InputPromptSheet2_52
       rect:
         serializedVersion: 2
-        x: 73
-        y: 77
-        width: 9
-        height: 10
+        x: 74
+        y: 81
+        width: 12
+        height: 9
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -4293,10 +3941,10 @@ TextureImporter:
       name: InputPromptSheet2_53
       rect:
         serializedVersion: 2
-        x: 90
-        y: 77
-        width: 9
-        height: 10
+        x: 91
+        y: 81
+        width: 12
+        height: 9
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -4315,10 +3963,10 @@ TextureImporter:
       name: InputPromptSheet2_54
       rect:
         serializedVersion: 2
-        x: 106
-        y: 79
-        width: 11
-        height: 7
+        x: 108
+        y: 81
+        width: 12
+        height: 9
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -4329,160 +3977,6 @@ TextureImporter:
       bones: []
       spriteID: cd353f9ddb8352a4ba7fb7de03393874
       internalID: 501391054
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_55
-      rect:
-        serializedVersion: 2
-        x: 124
-        y: 79
-        width: 11
-        height: 7
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 66ee15a84ab2ef54f9fa9d094b6d211c
-      internalID: 1896404941
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_56
-      rect:
-        serializedVersion: 2
-        x: 141
-        y: 78
-        width: 9
-        height: 9
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0013562496839ff43be130d121cf2a73
-      internalID: 1052625724
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_57
-      rect:
-        serializedVersion: 2
-        x: 158
-        y: 78
-        width: 9
-        height: 9
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 15c0ae1bfda25dd4a98dc9f3bdf5d647
-      internalID: -617261797
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_58
-      rect:
-        serializedVersion: 2
-        x: 174
-        y: 78
-        width: 11
-        height: 9
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d26c7d787591d5b47aaed83d41ad5e7c
-      internalID: -2120619847
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_59
-      rect:
-        serializedVersion: 2
-        x: 191
-        y: 78
-        width: 11
-        height: 9
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fb254eccbaa5b054da35094bda996e8b
-      internalID: 387365180
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_60
-      rect:
-        serializedVersion: 2
-        x: 208
-        y: 78
-        width: 11
-        height: 9
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bf83aac9cdd09f8489accf55f9039d98
-      internalID: 1690327052
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_61
-      rect:
-        serializedVersion: 2
-        x: 225
-        y: 78
-        width: 11
-        height: 9
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f7090c4b6b90b194fa93effb061d53ff
-      internalID: 1594791862
       vertices: []
       indices: 
       edges: []
@@ -4795,446 +4289,6 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_77
-      rect:
-        serializedVersion: 2
-        x: 255
-        y: 33
-        width: 12
-        height: 6
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 81dd2561816a33740b4400e6c0e3cc3a
-      internalID: -847413284
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_78
-      rect:
-        serializedVersion: 2
-        x: 272
-        y: 33
-        width: 12
-        height: 6
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 679051b6ef50f8841ad6958ae72b7be9
-      internalID: 660687571
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_79
-      rect:
-        serializedVersion: 2
-        x: 289
-        y: 32
-        width: 12
-        height: 9
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a6f1447907b557d45b7144bf055ce9da
-      internalID: -1818405373
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_80
-      rect:
-        serializedVersion: 2
-        x: 306
-        y: 32
-        width: 12
-        height: 9
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 616d6a7933750bc4ebd48ed828011169
-      internalID: 465469705
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_81
-      rect:
-        serializedVersion: 2
-        x: 323
-        y: 32
-        width: 12
-        height: 9
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bbfd951e0153c8e44956681e122fe48c
-      internalID: 1463653738
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_82
-      rect:
-        serializedVersion: 2
-        x: 340
-        y: 32
-        width: 12
-        height: 9
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d1a32171e136d0f438c64b65839d9537
-      internalID: -905704096
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_83
-      rect:
-        serializedVersion: 2
-        x: 357
-        y: 32
-        width: 12
-        height: 9
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 962d54a73c374a248a56265e16244655
-      internalID: -1326430113
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_84
-      rect:
-        serializedVersion: 2
-        x: 374
-        y: 32
-        width: 12
-        height: 9
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6c733374f02056c44a16ca192de6f38c
-      internalID: -423160505
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_85
-      rect:
-        serializedVersion: 2
-        x: 391
-        y: 30
-        width: 12
-        height: 12
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9cd9cea4eecd0a4428913c9f1add10b4
-      internalID: 1222188760
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_86
-      rect:
-        serializedVersion: 2
-        x: 408
-        y: 30
-        width: 12
-        height: 12
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b9d578cabded02149a0676faa17fce60
-      internalID: -464846621
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_87
-      rect:
-        serializedVersion: 2
-        x: 425
-        y: 30
-        width: 12
-        height: 12
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9402f3ab1e9766d47be8e702ee788963
-      internalID: -295518279
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_88
-      rect:
-        serializedVersion: 2
-        x: 442
-        y: 30
-        width: 12
-        height: 12
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c77e66b74f739a440b63d592a0502871
-      internalID: -2021068862
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_89
-      rect:
-        serializedVersion: 2
-        x: 459
-        y: 30
-        width: 12
-        height: 12
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 50f8cefb10af2fd479dc42f4fb835151
-      internalID: -2132938156
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_90
-      rect:
-        serializedVersion: 2
-        x: 476
-        y: 30
-        width: 12
-        height: 12
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0ff8c3288f1af2a41a0eb0c896027da2
-      internalID: -403154916
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_91
-      rect:
-        serializedVersion: 2
-        x: 391
-        y: 13
-        width: 12
-        height: 12
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 368cea5fc409e7a44a3bc141566ab832
-      internalID: 508829578
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_92
-      rect:
-        serializedVersion: 2
-        x: 408
-        y: 13
-        width: 12
-        height: 12
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 51eb53b6c52edad46837dd80bbf45c02
-      internalID: -359405160
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_93
-      rect:
-        serializedVersion: 2
-        x: 425
-        y: 13
-        width: 12
-        height: 12
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ca52c2ab11c4f7a4c97e7643567cb0fc
-      internalID: -727810497
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_94
-      rect:
-        serializedVersion: 2
-        x: 442
-        y: 13
-        width: 12
-        height: 12
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2c12fe6a517d50948bf893b73fd010cd
-      internalID: -45197684
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_95
-      rect:
-        serializedVersion: 2
-        x: 459
-        y: 13
-        width: 12
-        height: 12
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 21d7adaf834edd64e86369c6e32945cb
-      internalID: 1780989642
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: InputPromptSheet2_96
-      rect:
-        serializedVersion: 2
-        x: 476
-        y: 13
-        width: 12
-        height: 12
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c1074ad6ee0f99143b035607fb05c14f
-      internalID: -185136419
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -5251,26 +4305,12 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":1,"spriteAlignment":6,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      GamepadButtonEast: 132832083
-      GamepadButtonNorth: -880623750
-      GamepadButtonSouth: 236584474
-      GamepadButtonWest: -565115389
-      GamepadD-PadDown: 676301874
-      GamepadD-PadLeft: 520427813
-      GamepadD-PadRight: -1450884326
-      GamepadD-PadUp: -1573273188
       GamepadLeftShoulder: -1895207802
-      GamepadLeftStick: 597831388
-      GamepadLeftStickPress: 1562240719
       GamepadLeftTrigger: -829779340
       GamepadRightShoulder: -920201492
-      GamepadRightStick: 1533271295
-      GamepadRightStickPress: 1037078367
       GamepadRightTrigger: -1482324281
       GamepadSelect: -1115969188
       GamepadStart: 598252476
-      InputPromptSheet2_0: -870492890
-      InputPromptSheet2_1: 902502063
       InputPromptSheet2_10: -1399800190
       InputPromptSheet2_101: 593152379
       InputPromptSheet2_102: 1165931483
@@ -5427,14 +4467,10 @@ TextureImporter:
       InputPromptSheet2_34: -1735240515
       InputPromptSheet2_35: 967458931
       InputPromptSheet2_36: 963802431
-      InputPromptSheet2_37: 1530727835
-      InputPromptSheet2_38: -26242782
       InputPromptSheet2_39: -363898262
       InputPromptSheet2_4: -427051544
       InputPromptSheet2_40: -276983018
       InputPromptSheet2_41: 2113236326
-      InputPromptSheet2_42: -703806697
-      InputPromptSheet2_43: 794551664
       InputPromptSheet2_44: -1417096773
       InputPromptSheet2_45: -1328234187
       InputPromptSheet2_46: -621007496
@@ -5493,119 +4529,137 @@ TextureImporter:
       InputPromptSheet2_94: -45197684
       InputPromptSheet2_95: 1780989642
       InputPromptSheet2_96: -185136419
-      Keyboard: 47027624
-      Keyboard!: -1855361375
-      Keyboard#: 64089211
-      Keyboard$: 860405835
-      Keyboard%: -633743933
-      Keyboard': 1180900221
-      Keyboard(: 399088065
-      Keyboard): 1506572617
-      Keyboard+: 515188703
-      Keyboard,: -1426762278
-      Keyboard-: -1080413929
-      Keyboard.: -1231428933
-      Keyboard0: 252835222
-      Keyboard1: 490244605
-      Keyboard2: 1974625014
-      Keyboard3: -1491384495
-      Keyboard4: -1928412192
-      Keyboard5: -573980441
-      Keyboard6: 1458474710
-      Keyboard7: 2074614818
-      Keyboard8: -1139639685
-      Keyboard9: -1887488576
-      Keyboard;: -1444434454
-      Keyboard=: -1351341114
-      Keyboard@: 424265768
-      KeyboardA: -1077043604
-      KeyboardAlt: -1856265880
-      KeyboardB: -1198802178
-      KeyboardBackspace: -663579424
-      KeyboardC: -3669778
-      KeyboardCaps: 172787991
-      KeyboardCtrl: 80201778
-      KeyboardD: 1926260035
-      KeyboardDelete: -455137098
-      KeyboardDown: 317552433
-      KeyboardE: -418324990
-      KeyboardEnd: 2007806882
-      KeyboardEnter: -179371182
-      KeyboardEsc: 1397141815
-      KeyboardF: -1601013856
-      KeyboardF1: 1778744814
-      KeyboardF10: -1245106664
-      KeyboardF11: 1704762421
-      KeyboardF12: 180786398
-      KeyboardF2: -377104270
-      KeyboardF3: 210798275
-      KeyboardF4: -431049939
-      KeyboardF5: 1548566237
-      KeyboardF6: -1521406982
-      KeyboardF7: 1568751750
-      KeyboardF8: -1008935383
-      KeyboardF9: 1427292265
-      KeyboardFastforward: 1424139933
-      KeyboardG: 2112113002
-      KeyboardH: 1800721256
-      KeyboardHome: -1634180076
-      KeyboardI: -1417457497
-      KeyboardInsert: 17049980
-      KeyboardJ: 1537847321
-      KeyboardK: 1900540806
-      KeyboardL: -268879890
-      KeyboardLeft: -1793572247
-      KeyboardM: -228873170
-      KeyboardN: -1173402051
-      KeyboardNum: 2012688076
-      KeyboardO: 701370247
-      KeyboardP: -610658191
-      KeyboardPause: -1439853469
-      KeyboardPauseMini: -381318229
-      KeyboardPgDown: -221762072
-      KeyboardPgUp: 1777310297
-      KeyboardPlay: -1266398386
-      KeyboardPrint: -307112307
-      KeyboardQ: 1849874261
-      KeyboardR: 715153393
-      KeyboardRewind: -122142518
-      KeyboardRight: 149174317
-      KeyboardS: 1230595009
-      KeyboardScroll: -573631718
-      KeyboardShift: -524057929
-      KeyboardSkipBack: -780190123
-      KeyboardSkipForward: 216289840
-      KeyboardSpace: 359017137
-      KeyboardSpaceMini: -2047894018
-      KeyboardStop: -558853646
-      KeyboardT: -1251890243
-      KeyboardTab: -1576299710
-      KeyboardTilde: 2041559924
-      KeyboardU: 1426290345
-      KeyboardUp: -1293849940
-      KeyboardV: -682048612
-      KeyboardW: -835953723
-      KeyboardWindows: 1041813477
-      KeyboardX: 1504484868
-      KeyboardY: 204209150
-      KeyboardZ: 2004880047
-      Keyboard[: 1281495543
-      'Keyboard]': -439188428
-      Keyboard^: -161586930
-      Keyboard_: 1113610158
-      Keyboard{: 2065474465
-      Keyboard}: -2126234716
-      MouseLeftButton: 161598523
       MouseMiddleButton: 255824734
-      MouseRightButton: -1943078577
-      MouseScroll: 1767213201
       MouseScrollDown: -1880486044
-      MouseScrollUp: 1230900531
-      XBoxControllerA: -7854558
-      XBoxControllerB: -862271864
-      XBoxControllerX: -1833656687
-      XBoxControllerY: -1084169096
       XboxA: 1643375281
+      gamepad_button_east: 132832083
+      gamepad_button_north: -880623750
+      gamepad_button_south: 236584474
+      gamepad_button_west: -565115389
+      gamepad_dpad: -870492890
+      gamepad_dpad_down: 676301874
+      gamepad_dpad_left: 520427813
+      gamepad_dpad_right: -1450884326
+      gamepad_dpad_up: -1573273188
+      gamepad_stick_left: 597831388
+      gamepad_stick_left_click: 1562240719
+      gamepad_stick_right: 1533271295
+      gamepad_stick_right_click: 1037078367
+      mousekeyboard_key_: 47027624
+      mousekeyboard_key_!: -1855361375
+      mousekeyboard_key_#: 64089211
+      mousekeyboard_key_$: 860405835
+      mousekeyboard_key_%: -633743933
+      mousekeyboard_key_': 1180900221
+      mousekeyboard_key_(: 399088065
+      mousekeyboard_key_): 1506572617
+      mousekeyboard_key_+: 515188703
+      mousekeyboard_key_,: -1426762278
+      mousekeyboard_key_-: -1080413929
+      mousekeyboard_key_.: -1231428933
+      mousekeyboard_key_0: 252835222
+      mousekeyboard_key_1: 490244605
+      mousekeyboard_key_2: 1974625014
+      mousekeyboard_key_3: -1491384495
+      mousekeyboard_key_4: -1928412192
+      mousekeyboard_key_5: -573980441
+      mousekeyboard_key_6: 1458474710
+      mousekeyboard_key_7: 2074614818
+      mousekeyboard_key_8: -1139639685
+      mousekeyboard_key_9: -1887488576
+      mousekeyboard_key_;: -1444434454
+      mousekeyboard_key_=: -1351341114
+      mousekeyboard_key_@: 424265768
+      mousekeyboard_key_A: -1077043604
+      mousekeyboard_key_Alt: -1856265880
+      mousekeyboard_key_B: -1198802178
+      mousekeyboard_key_Backspace: -663579424
+      mousekeyboard_key_C: -3669778
+      mousekeyboard_key_Caps: 172787991
+      mousekeyboard_key_Ctrl: 80201778
+      mousekeyboard_key_D: 1926260035
+      mousekeyboard_key_Delete: -455137098
+      mousekeyboard_key_Down: 317552433
+      mousekeyboard_key_E: -418324990
+      mousekeyboard_key_End: 2007806882
+      mousekeyboard_key_Enter: -179371182
+      mousekeyboard_key_F: -1601013856
+      mousekeyboard_key_F1: 1778744814
+      mousekeyboard_key_F10: -1245106664
+      mousekeyboard_key_F11: 1704762421
+      mousekeyboard_key_F12: 180786398
+      mousekeyboard_key_F2: -377104270
+      mousekeyboard_key_F3: 210798275
+      mousekeyboard_key_F4: -431049939
+      mousekeyboard_key_F5: 1548566237
+      mousekeyboard_key_F6: -1521406982
+      mousekeyboard_key_F7: 1568751750
+      mousekeyboard_key_F8: -1008935383
+      mousekeyboard_key_F9: 1427292265
+      mousekeyboard_key_Fastforward: 1424139933
+      mousekeyboard_key_G: 2112113002
+      mousekeyboard_key_H: 1800721256
+      mousekeyboard_key_Home: -1634180076
+      mousekeyboard_key_I: -1417457497
+      mousekeyboard_key_Insert: 17049980
+      mousekeyboard_key_J: 1537847321
+      mousekeyboard_key_K: 1900540806
+      mousekeyboard_key_L: -268879890
+      mousekeyboard_key_Left: -1793572247
+      mousekeyboard_key_M: -228873170
+      mousekeyboard_key_N: -1173402051
+      mousekeyboard_key_Num: 2012688076
+      mousekeyboard_key_O: 701370247
+      mousekeyboard_key_P: -610658191
+      mousekeyboard_key_Pause: -1439853469
+      mousekeyboard_key_PauseMini: -381318229
+      mousekeyboard_key_PgDown: -221762072
+      mousekeyboard_key_PgUp: 1777310297
+      mousekeyboard_key_Play: -1266398386
+      mousekeyboard_key_Print: -307112307
+      mousekeyboard_key_Q: 1849874261
+      mousekeyboard_key_R: 715153393
+      mousekeyboard_key_Rewind: -122142518
+      mousekeyboard_key_Right: 149174317
+      mousekeyboard_key_S: 1230595009
+      mousekeyboard_key_Scroll: -573631718
+      mousekeyboard_key_Shift: -524057929
+      mousekeyboard_key_SkipBack: -780190123
+      mousekeyboard_key_SkipForward: 216289840
+      mousekeyboard_key_Space: 359017137
+      mousekeyboard_key_SpaceMini: -2047894018
+      mousekeyboard_key_Stop: -558853646
+      mousekeyboard_key_T: -1251890243
+      mousekeyboard_key_Tab: -1576299710
+      mousekeyboard_key_U: 1426290345
+      mousekeyboard_key_Up: -1293849940
+      mousekeyboard_key_V: -682048612
+      mousekeyboard_key_W: -835953723
+      mousekeyboard_key_Windows: 1041813477
+      mousekeyboard_key_X: 1504484868
+      mousekeyboard_key_Y: 204209150
+      mousekeyboard_key_Z: 2004880047
+      mousekeyboard_key_[: 1281495543
+      'mousekeyboard_key_]': -439188428
+      mousekeyboard_key_^: -161586930
+      mousekeyboard_key__: 1113610158
+      mousekeyboard_key_escape: 1397141815
+      mousekeyboard_key_tilda: 2041559924
+      mousekeyboard_key_{: 2065474465
+      mousekeyboard_key_}: -2126234716
+      mousekeyboard_mouse_left: 161598523
+      mousekeyboard_mouse_right: -1943078577
+      mousekeyboard_mouse_simple: 902502063
+      mousekeyboard_mouse_wheel: 1767213201
+      mousekeyboard_mouse_wheel_up: 1230900531
+      steamdeck_button_a: -703806697
+      steamdeck_button_b: 794551664
+      steamdeck_button_x: -26242782
+      steamdeck_button_y: 1530727835
+      xboxone_button_a: -7854558
+      xboxone_button_b: -862271864
+      xboxone_button_x: -1833656687
+      xboxone_button_y: -1084169096
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

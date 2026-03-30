@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 // Use this later idk
 public class BobHandVisual : MonoBehaviour {

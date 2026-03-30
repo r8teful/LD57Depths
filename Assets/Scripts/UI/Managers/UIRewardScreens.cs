@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class UIRewardScreens : MonoBehaviour {
     [SerializeField] private UIShrineRewardScreen _shrineScreen;

@@ -43,6 +43,8 @@ public class ResourceSystem {
 
     private Dictionary<ushort, StructureSO> _structureLookupByID;
 
+    private Dictionary<ushort, MetaUnlockSO> _unlockLookupByID;
+
 
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
     public const ushort AirID = 0; // Air is ALWAYS 0 
@@ -111,6 +113,7 @@ public class ResourceSystem {
         InitializeLookup("AbilityData", out _abilityLookupByID, out _);
         InitializeLookup("EventCaveData", out _eventCaveLookupByID, out _);
         InitializeLookup("StructureData", out _structureLookupByID, out _);
+        InitializeLookup("UnlockData", out _unlockLookupByID, out _);
         InitializeLookup("BiomeData", out _biomeLookupByID, out _);
     }
 
@@ -229,6 +232,13 @@ public class ResourceSystem {
         }
         return structure;
     }
+    internal MetaUnlockSO GetUnlockByID(ushort id) {
+        if (id == InvalidID || !_unlockLookupByID.TryGetValue(id, out MetaUnlockSO unlock)) {
+            Debug.LogWarning($"unlock ID {id} not found in database.");
+            return null;
+        }
+        return unlock;
+    }
     public AbilitySO GetRandomAvailableAbility(HashSet<ushort> exluded) {
         var rnd = new System.Random();
         var available = GameManager.Instance.CurrentGameSettings.AvailableAbilityIDs;
@@ -316,7 +326,10 @@ public class ResourceSystem {
     public List<WorldSpawnEntitySO> GetAllWorldSpawnEntities() {
         return _entityLookupByID.Values.OfType<WorldSpawnEntitySO>().ToList();
     }
- 
+    public List<MetaUnlockSO> GetAllUnlocks() {
+        return _unlockLookupByID.Values.ToList();
+    }
+
     internal Dictionary<ushort,int> GetMaxItemPool() {
         var items = GetAllItems();
         var d = new Dictionary<ushort, int>();

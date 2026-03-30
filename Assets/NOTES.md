@@ -1518,3 +1518,5 @@ Resurface needs to be dressed up nicely. Be in a nice suit, in its best conditio
 
 
 
+For this new input prompt icon system you DONT need to match the icon name with anything, all you need to do is have the binding path (like "<Mouse>/rightButton") point to the sprite from the sprite sheet. We then search the text mesh pro assets with that sprite name, which should be the same because that's what happens when you make a sprite asset sheet. There is no other magic, that is simply it
+

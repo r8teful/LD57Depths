@@ -1,5 +1,4 @@
 using DG.Tweening;
-using HierarchyDecorator;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;

@@ -118,7 +118,8 @@ public class BackgroundWorldTexturesHandler : StaticInstance<BackgroundWorldText
 
 
         // global seed
-        mat.SetFloat("_GlobalSeed", settings.seed);
+        mat.SetFloat("_GlobalSeed", settings.seed * 1 + matIndex * 2352.124f);
+        //mat.SetFloat("_GlobalSeed", settings.seed);
 
         // Cave and trench
         mat.SetFloat("_CaveNoiseScale", settings.caveNoiseScale);

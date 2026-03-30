@@ -1,7 +1,6 @@
 using Assets.SimpleLocalization.Scripts;
 using InputSystemActionPrompts;
 using Sirenix.OdinInspector;
-using System;
 using TMPro;
 using UnityEngine;
 

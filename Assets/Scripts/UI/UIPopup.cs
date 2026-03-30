@@ -1,6 +1,5 @@
 ﻿using Coffee.UIExtensions;
 using DG.Tweening;
-using Sirenix.OdinInspector;
 using System.Collections;
 using TMPro;
 using UnityEngine;
