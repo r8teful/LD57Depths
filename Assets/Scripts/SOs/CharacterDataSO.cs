@@ -6,4 +6,5 @@ public class CharacterDataSO : ScriptableObject {
     public string characterDescriptionKey;
     public string characterToolKey;
     public Sprite characterSprite;
+    public MetaUnlockSO unlockSO;
 }

@@ -50,20 +50,22 @@ public class UICharacterSelect : MonoBehaviour {
 
     private void SetCharacterData(CharacterDataSO d) {
         // You'd localise here
-        if(d == null) {
+        if (d == null || MetaProgressionManager.Instance == null) {
             _textCharacter.text = "???";
             _textDescription.text = "???";
             _textTool.text = "???";
             _textWins.text = "";
             _characterSprite.sprite = _characterUnknownSprite;
-            return;
+        } else if (!MetaProgressionManager.Instance.IsUnlocked(d.unlockSO.ID)) {
+            // show question marks. Display progression details
+        } else {
+            _textCharacter.text = d.characterNameKey;
+            _textDescription.text = d.characterDescriptionKey;
+            _textTool.text = d.characterToolKey;
+            _textWins.text = "0"; // TODO fetch from stats manager
+            
+            _characterSprite.sprite = d.characterSprite;
         }
-        _textCharacter.text = d.characterNameKey;
-        _textDescription.text = d.characterDescriptionKey;
-        _textTool.text = d.characterToolKey;
-        _textWins.text = "0"; // TODO fetch from stats manager
-        
-        _characterSprite.sprite = d.characterSprite;
     }
 
     private void UpdateIndicatorPosition(int index) {
