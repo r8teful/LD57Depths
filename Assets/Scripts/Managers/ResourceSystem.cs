@@ -48,10 +48,12 @@ public class ResourceSystem {
 
     public const ushort InvalidID = ushort.MaxValue; // Reserve MaxValue for invalid/empty
     public const ushort AirID = 0; // Air is ALWAYS 0 
-    public const ushort StoneID = 1; // stone is ALWAYS 1 
+    public const ushort Stone0ID = 1; // stone is ALWAYS 1 
     public const ushort StoneItemID = 0;
-    public const ushort StoneToughID = 2; 
-    public const ushort StoneVeryToughID = 3; 
+    public const ushort Stone1ID = 2; 
+    public const ushort Stone2ID = 3; 
+    public const ushort Stone3ID = 4; 
+    public const ushort Stone4ID = 5; 
     public const ushort LadderID = 501; // Ladder is always 501, used in SubInterior.cs
     public const ushort ControlPanellRecipeID = 101; // FixRecipe.cs
     public const ushort BiomeEssenceID = 11; 
@@ -420,7 +422,7 @@ public class ResourceSystem {
             BiomeType.Deadzone => 4,
             BiomeType.Surface => InvalidID,
             BiomeType.AncientCaves => InvalidID,
-            BiomeType.Algea => InvalidID,
+            BiomeType.Beach => InvalidID,
             BiomeType.Reef => InvalidID,
             BiomeType.Ocean => InvalidID,
             BiomeType.LostCity => InvalidID,

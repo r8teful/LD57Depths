@@ -3,7 +3,7 @@ using UnityEngine;
 
 //[ExecuteAlways] // This is so cool it lets us call PushBiomesToMaterial when changing the asset
 public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
-    public static int NUM_BIOMES = 6; // MUST match shader's NUM_BIOMES
+    public static int NUM_BIOMES = 10; // MUST match shader's NUM_BIOMES
     // [OnValueChanged("DebugUpdate")]
    // public float DebugupdateMaterial = 10f;
     [SerializeField] SpriteRenderer worldSpriteRenderer;
@@ -47,12 +47,12 @@ public class BiomeMaterialUploader : StaticInstance<BiomeMaterialUploader> {
 
         // Rememver that colors are from 0 - 1
         var worldLayerColors = new Vector4[6] {
-            new(1f/255f, 1f / 255f,0f,1f), // BASIC 
-            new(2f/255f, 2f / 255f,0f,1f), // Harder
-            new(3f/255f, 3f / 255f,0f,1f), // Harder!
-            new(4f/255f, 4f / 255f,0f,1f),// harderr!!
-            Color.magenta,
-            Color.magenta
+            new(1f/255f, 1f / 255f,0f,1f), // BASIC  (0)
+            new(2f/255f, 2f / 255f,0f,1f), // Harder (1)
+            new(3f/255f, 3f / 255f,0f,1f), // Harder! (2)
+            new(4f/255f, 4f / 255f,0f,1f),// (3)
+            new(5f/255f, 5f / 255f,0f,1f),// (4)
+            new(6f/255f, 6f / 255f,0f,1f)// Not using 6 but could be a secret rock or whatever? Idk we could just make the array legnth of 5
         }; 
 
 

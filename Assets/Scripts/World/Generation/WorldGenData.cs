@@ -25,7 +25,7 @@ public class WorldGenData {
     public List<WorldGenOre> worldOres;
     public Dictionary<BiomeType, float> BiomeTileHardness;
 
-    public const int TotalLayers = 3;
+    public const int TotalLayers = 5;
     public float[] WorldLayerYPositions;
 
     public List<WorldGenBiomeData> biomes = new List<WorldGenBiomeData>();

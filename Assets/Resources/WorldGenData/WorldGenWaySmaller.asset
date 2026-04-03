@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be00040ac3102f841a04e2b78a008678, type: 3}
   m_Name: WorldGenWaySmaller
   m_EditorClassIdentifier: 
-  seed: 1918
+  editorSeed: 0
   associatedMaterial: {fileID: 2100000, guid: 47edbc30f335d7c49898dfd38c8683b4, type: 2}
   id: 1
-  trenchBaseWidth: 24.4
-  trenchWidenFactor: -0.04
+  trenchBaseWidth: 39.08
+  trenchWidenFactor: -0.03
   trenchEdgeNoiseFrequency: 0.14
   trenchEdgeNoiseAmplitude: 3.13
   caveNoiseScale: 0.03
@@ -31,3 +31,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 42ff9b5deefacb34d9c6f3fbe089caee, type: 2}
   - {fileID: 11400000, guid: b5686ffd4a4c4074081a25eafcf8170a, type: 2}
   - {fileID: 11400000, guid: a8b35a535230b3d499f2082bb35b3bf9, type: 2}
+  - {fileID: 11400000, guid: 089356da08450b6448e5ffae0c817add, type: 2}
+  - {fileID: 11400000, guid: 49137f55fb9a2bb4ca92fb833d5fbdad, type: 2}
+  - {fileID: 11400000, guid: b895b573dad1151469fb8d66a5637e09, type: 2}
+  - {fileID: 11400000, guid: cd9741eae2f4f5442855dc0aaa436b2b, type: 2}
+  - {fileID: 11400000, guid: d738ff943ff886040b454de681e6a0ce, type: 2}
+  - {fileID: 11400000, guid: 69922c5d7bee4ff4caf3dabe9a67df91, type: 2}

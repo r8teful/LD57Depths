@@ -2,18 +2,20 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-[InitializeOnLoad]
-public class ShaderOnLoadFix {
-    public static int NUM_BIOMES = 6; // MUST match shader's NUM_BIOMES
+//[InitializeOnLoad]
+public class ShaderOnLoadFix : MonoBehaviour {
+    public static int NUM_BIOMES = 10; // MUST match shader's NUM_BIOMES
 
-    public static WorldGenSettingSO WorldGenSettingEDITOR { get => ResourceSystem.GetMainMap(); }
-    static ShaderOnLoadFix() {
+    public WorldGenSettingSO WorldGenSettingEDITOR;
+    public void OnValidate() {
         if (Application.isPlaying) return;
         WorldGenSettingEDITOR.biomes.ForEach(biome => { biome.onDataChanged += PushBiomesToMaterialEditor; });
+        
         //EditorApplication.delayCall += Update;
-    }
+    } 
+    
 
-    private static void PushBiomesToMaterialEditor() {
+    private void PushBiomesToMaterialEditor() {
         Debug.Log("ONSHADERLOADFIX");
         var targetMaterial = WorldGenSettingEDITOR.associatedMaterial;
         if (targetMaterial == null) {

@@ -44,7 +44,7 @@ public enum BiomeType : byte {
     Forest = 9,
     Surface = 2,
     AncientCaves = 3,
-    Algea = 4,
+    Beach = 4,
     Reef = 5,
     Ocean = 6,
     Deadzone = 10,

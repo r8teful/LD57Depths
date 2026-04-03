@@ -1,4 +1,4 @@
-Shader "Custom/WorldGenSprite"
+Shader "Custom/FogOfWar"
 {
     Properties
     {

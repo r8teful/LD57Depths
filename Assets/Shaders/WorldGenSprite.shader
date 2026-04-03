@@ -46,7 +46,7 @@ Shader "Custom/WorldGenSprite"
             #include "RandomnesHelpers.hlsl"
 
             // ---- CONFIG ----
-            #define NUM_BIOMES 5
+            #define NUM_BIOMES 10
             #define MAX_LAYERS 6
             // ------------------
 

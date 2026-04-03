@@ -215,13 +215,17 @@ public class WorldGen : MonoBehaviour {
                         byte biomeID = 0;
                         // tileID determines durability and drops
                         if (IDData.x == 1) { 
-                            tileID = ResourceSystem.StoneID; 
+                            tileID = ResourceSystem.Stone0ID; 
                         } else if (IDData.x == 0 || IDData.x==255) {
                             tileID = ResourceSystem.AirID;
                         } else if (IDData.x == 2) {
-                            tileID = ResourceSystem.StoneToughID;
+                            tileID = ResourceSystem.Stone1ID;
                         } else if (IDData.x == 3) {
-                            tileID = ResourceSystem.StoneVeryToughID;
+                            tileID = ResourceSystem.Stone2ID;
+                        } else if (IDData.x == 4) {
+                            tileID = ResourceSystem.Stone3ID;
+                        } else if (IDData.x == 5) {
+                            tileID = ResourceSystem.Stone4ID;
                         }
                         // Biome determines visual and biome info for entities and bio buffs etc
                         if (IDData.y == 1) {
@@ -596,7 +600,7 @@ public class WorldGen : MonoBehaviour {
                     // We can either treat the tiles on the structure as ore (like an overlay). Or as the base. We can't currently have both 
                     ushort baseTileID;
                     if (structure.tileIsOreLayer) {
-                        baseTileID = ResourceSystem.StoneToughID; // Should be depending on what layer you're on but cba figuring that out here
+                        baseTileID = ResourceSystem.Stone1ID; // Should be depending on what layer you're on but cba figuring that out here
                         chunkData.oreID[chunkLocalX, chunkLocalY] = tile.ID;
                         chunkPayload.OreIds[payloadIndex] = tile.ID;
                     } else {
