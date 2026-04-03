@@ -126,6 +126,10 @@ public class PlayerCameraController : MonoBehaviour {
                        .SetEase(Ease.OutCubic)
                        .SetTarget(t);
     }
+    public void Shake(float length = 0.2f) {
+        // Note to self: Higher vibraro makes it more subtle
+        _playerMainCamera.DOShakePosition(length,0.1f,40);
+    }
 
     private TweenCallback CameraTransitionComplete(bool isEnterior) {
         if (isEnterior) {

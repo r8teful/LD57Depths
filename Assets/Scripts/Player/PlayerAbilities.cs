@@ -20,11 +20,12 @@ public class PlayerAbilities : MonoBehaviour, IPlayerModule {
 
     public void InitializeOnOwner(PlayerManager playerParent) {
         _player = playerParent;
-        AddAbility(App.ResourceSystem.GetAbilityByID(0)); // Lazer is ID 0 
-        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BiomeBuffID)); // Biome buffs
+        //AddAbility(App.ResourceSystem.GetAbilityByID(0)); // Lazer is ID 0 
+        //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.RPGID)); 
+        //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BiomeBuffID)); // Biome buffs
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.BrimstoneBuffID)); // Lazer blast
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.GraveStoneID));
-        //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.LazerChainID));
+        AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.LazerChainID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.CompassID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.CompassPlusID));
         //AddAbility(App.ResourceSystem.GetAbilityByID(ResourceSystem.Adrenaline));

@@ -180,6 +180,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
 
         InputSystem.onActionChange -= HandleActionChange;
     }
+    public bool ShootThisFrame => _playerShootAction.WasPressedThisFrame();
     private void HandleActionMaps(bool isUIOpen) {
         if (isUIOpen) {
             _uiActionMap.Enable();

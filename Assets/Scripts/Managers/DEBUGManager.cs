@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Linq;
+using DG.Tweening;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 public class DEBUGManager : StaticInstance<DEBUGManager> {
@@ -12,6 +13,8 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
 
     public UpgradeNodeSO SubCablesNode;
     public UpgradeNodeSO SubControlNode;
+
+    public GameObject explosionPrefab;
     public void RegisterOwningPlayer(PlayerManager player) {
         _player = player;
     }
@@ -53,8 +56,45 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
         //Console.RegisterCommand(this, "save", "save");
         //Console.RegisterCommand()
     }
-
-   // [ConsoleCommand("save")]
+    private void Update() {
+        if (_player == null) return;
+        if (_player.InputManager.ShootThisFrame) {
+            var p = _player.InputManager.GetAimWorldInput();
+            // spawn whatever you want here 
+            //SpawnExplosionEffect(p);
+            SpawnChainEffect(p);
+        }
+    }
+    private void SpawnChainEffect(Vector3 worldPos) {
+        var chain = _player.PlayerAbilities.GetAbilityInstance(ResourceSystem.LazerChainID).Object.GetComponent<LazerChainSpawner>();
+        var tile = WorldManager.Instance.WorldToCell(worldPos);
+        DamageContainer dmg = new(2000, false, tile, Vector2.one);
+        chain.SpawnChainOverride(dmg,length: 20);
+    }
+    private void SpawnExplosionEffect(Vector3 worldPos) {
+        var g = Instantiate(explosionPrefab, worldPos, Quaternion.identity);
+        var s = g.GetComponent<SpriteRenderer>();
+        g.transform.localScale = Vector3.one *0.01f;
+        var endColor = s.color;
+        s.color = Color.whiteSmoke;
+        Sequence seq = DOTween.Sequence();
+        float size = 0.5f;
+        float length = 0.5f;
+        g.transform.GetChild(0).localScale = Vector3.one * size;
+        //seq.Append(g.transform.DOScaleY(size*0.1f, 0.1f));
+        //g.transform.localScale = Vector3.one *size;
+        seq.Append(g.transform.DOScale(size, 0.1f));
+        seq.Append(g.transform.DOShakeScale(0.3f,0.1f,20,fadeOut:false));
+        
+        seq.InsertCallback(length*0.3f, () => s.color = endColor);
+        //seq.Insert(0.1f,s.DOFade(0.1f, 0.04f));
+        seq.Insert(0, g.transform.DORotate(new(0, 0, Random.Range(-20, 40)),2).SetEase(Ease.Linear));
+        
+        seq.Insert(length, s.DOFade(0, 0.2f));
+        _player.PlayerCamera.Shake();
+        seq.OnComplete(()=>Destroy(g));
+    }
+    // [ConsoleCommand("save")]
     private void save() {
         GameManager.Instance.TriggerSave();
     }

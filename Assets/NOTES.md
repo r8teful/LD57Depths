@@ -1516,6 +1516,22 @@ Resurface needs to be dressed up nicely. Be in a nice suit, in its best conditio
 
 
 
+Make the trailer look cool!! you need to show strength growing to crazy proportions!!! it is important. Add chain reactions or something. Some kind of explosive barrels? Make the special things feel IMPACTFULL, lazer chain should FEEL powerfull, lazer blast should FEEL powerfull. When you get a crit. It should FEEL like youre getting a crit
+
+
+
+For explosions:
+
+Fully black/white circle/rectangle for a few frames, then that turns into a transparent shape with it lighting up whatever is underneath, this shape also has particles around it. Display that for most of the duration, then it doesn't fade out it just flashes on and off and then disappears. Also the shape wobbles and rotates as this is all happening. And we do a subtle screen shake
+
+
+
+
+
+
+
+
+
 
 
 For this new input prompt icon system you DONT need to match the icon name with anything, all you need to do is have the binding path (like "Mouse/rightButton") point to the sprite from the sprite sheet. We then search the text mesh pro assets with that sprite name, which should be the same because that's what happens when you make a sprite asset sheet. There is no other magic, that is simply it

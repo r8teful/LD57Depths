@@ -50,7 +50,6 @@ For web build
 
 * Gain looping audio still a bit glitched
 * Can't fullscreen properly, might jst have to put the non simplified mode?
-* Make the stone one pixel or have the other drops have more detail
 
 
 

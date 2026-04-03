@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using static MineHelper;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class LazerChainSpawner : MonoBehaviour, IInitializableAbility{
     private ITileDamageable _lazer;
@@ -35,19 +37,25 @@ public class LazerChainSpawner : MonoBehaviour, IInitializableAbility{
     private void OnLazerTileDamaged(DamageContainer dmg) {
         var chance = _values.GetValueNow(ValueKey.LazerChainChance);
         if (Random.value > chance) return; // fail
+        SpawnChain(dmg);
+    }
+    public void SpawnChain(DamageContainer dmg) {
         float length = _values.GetValueNow(ValueKey.LazerChainLength);
         var damage = _values.GetValueNow(ValueKey.LazerChainDamage);
-
+        SpawnChainInternal(dmg, length, damage);
+    }
+    public void SpawnChainOverride(DamageContainer dmg,float length) {
+        SpawnChainInternal(dmg, length,dmg.damage);
+    }
+    private void SpawnChainInternal(DamageContainer dmg,float length, float damage) {
         var steps = Mathf.FloorToInt(length); // Length is just the steps for now
-        var stepLength = 1 ;
-        float deviationAngle = 60f;
-        var tiles = MineHelper.GetLightningBolt(WorldManager.Instance.MainTileMap, dmg.tile, dmg.hitDirection, steps, stepLength, deviationAngle,checkSolid:true);
+        var stepLength = 1;
+        float deviationAngle = 89f;
+        var tiles = MineHelper.GetLightningBolt(WorldManager.Instance.MainTileMap, dmg.tile, dmg.hitDirection, steps, stepLength, deviationAngle, checkSolid: true);
         _damageContainer.damage = damage;
-        foreach (var tile in tiles) {
-            _damageContainer.tile = tile.CellPos;
-            _player.RequestDamageTile(_damageContainer);
-        }
-        StartCoroutine(PlayLightningEffect(WorldManager.Instance.MainTileMap, tiles,dmg, LineRenderVisualPrefab));
+
+        _player.PlayerCamera.Shake(steps*0.02f);
+        StartCoroutine(PlayLightningEffect(WorldManager.Instance.MainTileMap, tiles, dmg, LineRenderVisualPrefab));
     }
     public IEnumerator PlayLightningEffect(
     Tilemap map,
@@ -74,7 +82,7 @@ public class LazerChainSpawner : MonoBehaviour, IInitializableAbility{
         for (int i = 0; i < damageData.Count; i++) {
             Vector3 worldPos;
             
-            if(i == 0 && sourceDamage.exactHitPoint != null) {
+            if(i == 0 && sourceDamage.exactHitPoint != null && sourceDamage.exactHitPoint != Vector2.zero) {
                 worldPos = sourceDamage.exactHitPoint;
             } else {
                 worldPos = map.GetCellCenterWorld(damageData[i].CellPos);
@@ -87,6 +95,12 @@ public class LazerChainSpawner : MonoBehaviour, IInitializableAbility{
             Color tinted = Color.Lerp(Color.clear, startColor, damageData[i].DamageRatio);
             lineRenderer.startColor = tinted;
             lineRenderer.endColor = Color.Lerp(Color.clear, endColor, damageData[i].DamageRatio);
+
+            // DAMAGE 
+            _damageContainer.tile = damageData[i].CellPos;
+            _player.RequestDamageTile(_damageContainer);
+            
+
 
             yield return new WaitForSeconds(segmentDelay);
         }
@@ -103,7 +117,6 @@ public class LazerChainSpawner : MonoBehaviour, IInitializableAbility{
         while (elapsed < fadeDuration) {
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / fadeDuration);
-
             lineRenderer.startColor = FadeAlpha(startColor, 1f - t);
             lineRenderer.endColor = FadeAlpha(endColor, 1f - t);
 
