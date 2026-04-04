@@ -95,4 +95,20 @@ public class PlayerManager : StaticInstance<PlayerManager> { // There is always 
     internal void RequestDamageTile(Vector3Int cellPos, float damage) {
         RequestDamageTile(new(damage, false, cellPos,Vector2.zero));
     }
+
+    // More helpers
+    public bool TryGetCurrentToolDir(out Vector2 dir) {
+        dir = Vector2.zero;
+        // Check the script of the current tool we are using (will depend on character)
+        if (PlayerAbilities.TryGetAbilityInstance(ResourceSystem.LazerEffectID, out var a)) {
+            if (a.Object != null) {
+                if (a.Object.TryGetComponent<MiningLazerNew>(out var c)) {
+                    dir = c.CurrentDir;
+                    return c.IsUsingLazer; // what a mess
+                }
+            }
+        }
+        return false;
+        
+    }
 }

@@ -58,5 +58,7 @@ public enum BiomeType : byte {
     Trench1 = 16, 
     Trench2 = 17,  
     Trench3 = 18,  
+    Trench4 = 19,  
+    Trench5 = 20,  // not using atm
     None = 0
 }

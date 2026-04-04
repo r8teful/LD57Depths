@@ -14,7 +14,6 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
     [SerializeField] private Transform _bobBackVisual;
     [SerializeField] private Transform _lazerStartPosition;
     [SerializeField] private Animator animator;
-    private bool _hasFlippers;
     private string currentAnimation = "";
     public Collider2D playerSwimCollider;
     public Collider2D playerWalkCollider;
@@ -24,7 +23,6 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
     private float lightIntensityOn;
     public event Action<bool> OnFlipChange;
     public int InitializationOrder => 2;
-    private bool hasInitializedNonOwner; // Sometimes the init function gets called twice so this is just for that
     private bool _isGodMode;
     private bool _isFacingRight = false;
     private bool _shouldFlipNext;
@@ -33,7 +31,7 @@ public class PlayerVisualHandler : MonoBehaviour, IPlayerModule {
 
     public bool IsFacingRight =>  _isFacingRight;
     public bool IsFlipping { get; internal set; }
-
+   
     public void InitializeOnOwner(PlayerManager playerParent) {
         lightIntensityOn = lightSpot.intensity;
         _bobBackHandler.SetVisualNone();

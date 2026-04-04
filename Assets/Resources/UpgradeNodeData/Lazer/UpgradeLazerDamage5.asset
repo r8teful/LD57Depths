@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
+  m_Name: UpgradeLazerDamage5
+  m_EditorClassIdentifier: 
+  nodeKey: U.Laser.Damage
+  nodeStageNum: 5
+  uniqueID: 14
+  icon: {fileID: 1054548254, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
+  IsCool: 0
+  prerequisiteNodesAny:
+  - {fileID: 11400000, guid: 5c0ccdbed75194a4c8ea3efc616da8b8, type: 2}
+  UnlockedAtFirstPrereqStage: 1
+  InfinateStages: 0
+  stages:
+  - effects:
+    - {fileID: 11400000, guid: 1f33a6a77c8456e48bb5b50b19c06d5e, type: 2}
+    costMultiplier: 1
+    costTier: 12
+    upgradeItemPool: {fileID: 11400000, guid: 22d7dd1ee16c1594c8114f87a2d7f2ae, type: 2}
+    extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
+  - effects:
+    - {fileID: 11400000, guid: 75d3c76bf49de2a44acd1d4b62e9ff54, type: 2}
+    costMultiplier: 1
+    costTier: 13
+    upgradeItemPool: {fileID: 11400000, guid: 22d7dd1ee16c1594c8114f87a2d7f2ae, type: 2}
+    extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
+  - effects:
+    - {fileID: 11400000, guid: 0fbcb5accc4c58d45b79935ef364a2da, type: 2}
+    costMultiplier: 1
+    costTier: 14
+    upgradeItemPool: {fileID: 11400000, guid: 22d7dd1ee16c1594c8114f87a2d7f2ae, type: 2}
+    extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []

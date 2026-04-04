@@ -17,9 +17,8 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, ITileDamagea
     private MiningLazerVisualNew _visual;
     private bool _firstShot;
     private DamageContainer _damageContainer;
-    private List<Vector3Int> _activeChainPath = new List<Vector3Int>();
     public event Action<DamageContainer> OnTileDamaged;
-
+    public bool IsUsingLazer { get; private set; } // hate this bool but we need it to move the player arm to face the aim direction
     public Vector2 CurrentDir => _currentDirection;
     public void Init(AbilityInstance instance, PlayerManager player) {
         _abilityInstance = instance;
@@ -42,14 +41,17 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, ITileDamagea
     private void Update() {
         UpdateCurDir();
         HandleShootStateTransition();
+        IsUsingLazer = false;
         if (!MineDelayCheck()) return;
         _isShooting = _player.InputManager.IsShooting();
         if (_player.PlayerAbilities.IsBrimstoneAbilityActive()) {
             MineAbility(); // Brimstone doesn't require shooting
             _visual.HandleVisualUpdate();
+            IsUsingLazer = true;
         } else if(_isShooting){
             Mine();
             _visual.HandleVisualUpdate();
+            IsUsingLazer = true;
         }
     }
 

@@ -15,12 +15,12 @@ MonoBehaviour:
   nodeKey: U.Magnetism.Range
   nodeStageNum: 0
   uniqueID: 720
-  description: 
   icon: {fileID: -1852799296, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 3fc0c9bd770644d448652616cf99fcec, type: 2}
   UnlockedAtFirstPrereqStage: 1
+  InfinateStages: 0
   stages:
   - effects:
     - {fileID: 11400000, guid: 7106597e3fec280478f1a99c322c1834, type: 2}
@@ -28,15 +28,21 @@ MonoBehaviour:
     costTier: 5
     upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
     extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
   - effects:
-    - {fileID: 11400000, guid: 7106597e3fec280478f1a99c322c1834, type: 2}
+    - {fileID: 11400000, guid: e4768e1a9b7e7e44ab5f5ce8d9d9cb0d, type: 2}
     costMultiplier: 1
     costTier: 6
     upgradeItemPool: {fileID: 11400000, guid: 03037dc5a5e9f5f40aacf2fb6909ccd9, type: 2}
     extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
   - effects:
     - {fileID: 11400000, guid: 7106597e3fec280478f1a99c322c1834, type: 2}
     costMultiplier: 1
     costTier: 7
     upgradeItemPool: {fileID: 11400000, guid: 1c4ba564623d4ac41b45114dae2812e5, type: 2}
     extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []

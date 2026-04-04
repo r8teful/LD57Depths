@@ -1536,3 +1536,40 @@ Fully black/white circle/rectangle for a few frames, then that turns into a tran
 
 For this new input prompt icon system you DONT need to match the icon name with anything, all you need to do is have the binding path (like "Mouse/rightButton") point to the sprite from the sprite sheet. We then search the text mesh pro assets with that sprite name, which should be the same because that's what happens when you make a sprite asset sheet. There is no other magic, that is simply it
 
+
+
+
+
+
+
+## Rik Playtest V0.0.4.6
+
+
+
+Its interesting that you have the alchemy early because you can literally just use it to get the ores you don't need. An easy solution would be to have the stone yield cost copper. Also biomes are fucked now the iron didn't spawn for some reason 
+
+* Add screenshake to brimstone, make it always start at cursor \& More knockback to make it feel powerfull
+* Biomes should be way closer to spawn, both horizontal and vertical
+* transfer speed non blue
+* Make crit be on second level
+* Yield is broken in the biome again …. (:
+* Lazer gets thick way to quickly
+* Too many speeds, just allow to number 2, number 3 should be ruby
+* Insta mining after first zone might be a bit too much
+* Make zone 2 drain oxygen quicker
+* More transfer speed
+* Tree starts to feel messy when it gets bigger and it doesn't expand in a unified way 
+* Biome layer brick is way to high HP 
+
+
+
+
+
+
+
+
+
+
+
+
+

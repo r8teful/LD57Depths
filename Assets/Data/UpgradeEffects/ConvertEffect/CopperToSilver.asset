@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05dc954bb776061429e026814412f906, type: 3}
   m_Name: CopperToSilver
   m_EditorClassIdentifier: Assembly-CSharp::ItemConvertUpgradeEffect
-  itemFrom: {fileID: 11400000, guid: 9f8c588612fb93047bf560201edf2e6f, type: 2}
-  amountFrom: 6
-  itemTo: {fileID: 11400000, guid: fba8153d7534bba43bcbf978298368bd, type: 2}
-  amountTo: 2
+  itemFrom: {fileID: 11400000, guid: fba8153d7534bba43bcbf978298368bd, type: 2}
+  amountFrom: 2
+  itemTo: {fileID: 11400000, guid: 9f8c588612fb93047bf560201edf2e6f, type: 2}
+  amountTo: 6

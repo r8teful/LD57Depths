@@ -62,7 +62,7 @@ public class MiningRPGVisual : MonoBehaviour, IToolVisual {
             if (data is Vector2 inputDir) {
                 dir = inputDir;
             } else {
-                dir = inputManager.GetDirFromPos(transform.position);
+                dir = inputManager.GetAimDirFromPos(transform.position);
             }
             RPGVisual(dir);
         } else {

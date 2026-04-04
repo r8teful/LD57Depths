@@ -664,7 +664,7 @@ Transform:
   m_GameObject: {fileID: 2444994988142146097}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.54, y: -0.67, z: 0}
+  m_LocalPosition: {x: -0.52, y: -0.167, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1382,6 +1382,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7269383724727597847}
+  - component: {fileID: 172532872399552182}
   m_Layer: 2
   m_Name: HandPivot
   m_TagString: Untagged
@@ -1398,7 +1399,7 @@ Transform:
   m_GameObject: {fileID: 8664934994935814639}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.014, y: -0.023, z: 0}
+  m_LocalPosition: {x: 0, y: -0.582, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1406,6 +1407,21 @@ Transform:
   - {fileID: 4887114098377301771}
   m_Father: {fileID: 7361887707154562350}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &172532872399552182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8664934994935814639}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d35f64793bacf9943999e8cddb814ace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BobHandVisual
+  _player: {fileID: 1329228130332512456}
+  _handRenderer: {fileID: 6053458303575230055}
+  _handPivot: {fileID: 7269383724727597847}
 --- !u!1 &8964401078132450866
 GameObject:
   m_ObjectHideFlags: 0
@@ -1501,7 +1517,7 @@ Transform:
   m_GameObject: {fileID: 9137998913019212994}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.299, y: -0.61, z: 0}
+  m_LocalPosition: {x: -0.715, y: -0.049, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

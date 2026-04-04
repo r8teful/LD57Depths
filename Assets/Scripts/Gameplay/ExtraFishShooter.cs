@@ -9,7 +9,7 @@ public class ExtraFishShooter : ShootableAbilityBase {
             var input = _player.InputManager;
             Vector2 dir;
             if (input.IsShooting()) {
-                dir = input.GetDirFromPos(transform.position);
+                dir = input.GetAimDirFromPos(transform.position);
             } else {
                 // random dir
                 dir = Random.insideUnitCircle.normalized;

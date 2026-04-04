@@ -419,7 +419,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
             return rawAimInput.normalized;
         }
     }
-    public Vector2 GetDirFromPos(Vector2 worldPos) {
+    public Vector2 GetAimDirFromPos(Vector2 worldPos) {
         Vector2 screenPos = rawAimInput;
         // Convert to world coordinates using main camera
         Vector3 worldMouse = Camera.main.ScreenToWorldPoint(screenPos);

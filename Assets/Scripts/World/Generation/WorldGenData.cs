@@ -141,7 +141,22 @@ public class WorldGenData {
         // Just use random placement for now
         if (randomizeBiomes) {
             System.Random rng = new System.Random(settings.seed);
-            settings.biomes = settings.biomes.OrderBy(e => rng.Next()).ToList(); // Randomize list
+            List<BiomeType> firstBiomeTypes = new List<BiomeType> { BiomeType.Deadzone, BiomeType.Bioluminescent, BiomeType.Forest,BiomeType.Fungal};
+            // The 4 special biomes, shuffled among themselves
+            List<WorldGenBiomeData> firstBiomes = settings.biomes
+                .Where(b => firstBiomeTypes.Contains(b.BiomeType))
+                .OrderBy(_ => rng.Next())
+                .ToList();
+
+            // Everything else, shuffled separately
+            List<WorldGenBiomeData> restBiomes = settings.biomes
+                .Where(b => !firstBiomeTypes.Contains(b.BiomeType))
+                .OrderBy(_ => rng.Next())
+                .ToList();
+
+            // Put the 4 first, then the rest
+            settings.biomes = firstBiomes.Concat(restBiomes).ToList();
+            //settings.biomes = settings.biomes.OrderBy(e => rng.Next()).ToList(); // Randomize list
         }
         var currentLayer = 0;
         var amountPlaced = 0;
@@ -380,7 +395,7 @@ public class WorldGenOre {
         o.noiseOffset = ore.noiseOffset;
         o.DebugColor = ore.DebugColor; 
         List<WorldGenBiomeData> biomes = settings.biomes;
-        o.allowedBiomes = new BiomeType[6];
+        o.allowedBiomes = new BiomeType[10];
         // SO UGLY
         if (ore.oreStage == 0) {
             o.oreStart = new(0,settings.MaxDepth);
@@ -397,6 +412,10 @@ public class WorldGenOre {
         if (ore.oreStage == 9) {
             o.oreStart = new(0, settings.GetWorldLayerYPos(3));
             o.allowedBiomes[0] = BiomeType.Trench3;
+        }
+        if (ore.oreStage == 12) {
+            o.oreStart = new(0, settings.GetWorldLayerYPos(4));
+            o.allowedBiomes[0] = BiomeType.Trench4;
         }
         return o;
     }

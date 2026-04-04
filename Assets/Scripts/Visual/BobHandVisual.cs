@@ -2,33 +2,32 @@
 
 // Use this later idk
 public class BobHandVisual : MonoBehaviour {
-    [SerializeField] private PlayerVisualHandler _player;
+    [SerializeField] private PlayerManager _player;
     [SerializeField] private SpriteRenderer _handRenderer;
     [SerializeField] private Transform _handPivot; // pivot at character's shoulder/hip
-
+    
     void Update() {
-        if (_player.IsFlipping) {
-            HandleFlippingState();
-            return;
+        if(_player.PlayerVisuals == null) return;
+        //if (_player.PlayerVisuals.IsFlipping) {
+        //    HandleFlippingState();
+        //    return;
+        //}
+        if (_player.TryGetCurrentToolDir(out var dir)) {
+            AimHandAtMouse(dir); // looks real bad
         }
-
-        AimHandAtMouse();
-        _handRenderer.flipX = !_player.IsFacingRight;
+        //_handRenderer.flipX = !_player.PlayerVisuals.IsFacingRight;
     }
 
-    void AimHandAtMouse() {
-        // Get aim direction in world space
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 dir = (mouseWorld - _handPivot.position);
-        dir.z = 0;
-
+    void AimHandAtMouse(Vector3 dir) {
+        dir.z = 0f;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
-        // If facing left, flip the angle so the arm doesn't cross the body
-        if (!_player.IsFacingRight)
-            angle += 180f;
+        bool flip = angle > 90f || angle < -90f;
 
-        _handPivot.rotation = Quaternion.Euler(0, 0, angle);
+        _handPivot.rotation = Quaternion.Euler(0f, 0f, angle);
+
+        // Usually this is flipY for a hand/arm sprite, but use flipX if your art faces the other way.
+        _handRenderer.flipY = flip;
     }
 
     void HandleFlippingState() {

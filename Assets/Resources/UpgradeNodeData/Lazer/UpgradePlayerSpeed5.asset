@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c615bb35fd1690f4aa82b2475aca6512, type: 3}
+  m_Name: UpgradePlayerSpeed5
+  m_EditorClassIdentifier: 
+  nodeKey: U.Speed
+  nodeStageNum: 3
+  uniqueID: 214
+  icon: {fileID: 868697242, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
+  IsCool: 0
+  prerequisiteNodesAny:
+  - {fileID: 11400000, guid: 4554f256e625c3446886e988b6f6b8b6, type: 2}
+  UnlockedAtFirstPrereqStage: 1
+  InfinateStages: 0
+  stages:
+  - effects:
+    - {fileID: 11400000, guid: a6277ba6419843a4aa0d4de68d6ecedc, type: 2}
+    costMultiplier: 1
+    costTier: 12
+    upgradeItemPool: {fileID: 11400000, guid: c8505d26704f39c49ad4623ac0fd7558, type: 2}
+    extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
+  - effects:
+    - {fileID: 11400000, guid: a54273edc7c53564ba520bac8eb633ed, type: 2}
+    costMultiplier: 1.51
+    costTier: 13
+    upgradeItemPool: {fileID: 11400000, guid: 34cd559b822b36f4fa14f4b77af71d0e, type: 2}
+    extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
+  - effects:
+    - {fileID: 11400000, guid: a54273edc7c53564ba520bac8eb633ed, type: 2}
+    costMultiplier: 1
+    costTier: 14
+    upgradeItemPool: {fileID: 11400000, guid: c8505d26704f39c49ad4623ac0fd7558, type: 2}
+    extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []

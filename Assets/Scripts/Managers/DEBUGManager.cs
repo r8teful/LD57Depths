@@ -62,7 +62,7 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
             var p = _player.InputManager.GetAimWorldInput();
             // spawn whatever you want here 
             //SpawnExplosionEffect(p);
-            SpawnChainEffect(p);
+            //SpawnChainEffect(p);
         }
     }
     private void SpawnChainEffect(Vector3 worldPos) {
@@ -102,6 +102,16 @@ public class DEBUGManager : StaticInstance<DEBUGManager> {
     [ConsoleCommand("give", value: "itemID, amount")]
     private void debugGive(int i, int j) {
         _player.InventoryN.DEBUGGIVE(i,j);
+    }
+    [ConsoleCommand("giveStage", value: "1")]
+    private void debugGiveStage(int i) {
+        if(i == 1) {
+            SubmarineManager.Instance.SubInventory.AddItem(0,900);
+            SubmarineManager.Instance.SubInventory.AddItem(1,150);
+            SubmarineManager.Instance.SubInventory.AddItem(2,100);
+            SubmarineManager.Instance.SubInventory.AddItem(3,100);
+
+        }
     }
     [ConsoleCommand("giveXP")]
     private void debugXP(int i) {

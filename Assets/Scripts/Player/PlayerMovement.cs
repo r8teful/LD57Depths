@@ -126,7 +126,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerModule {
         _swimSpeed = _playerStats.GetStat(StatType.PlayerSpeedMax);
 #if UNITY_EDITOR
         if (DEBUGIsGOD) {
-            rb.MovePosition(rb.position + 20 * Time.fixedDeltaTime * _currentInput.normalized);
+            rb.MovePosition(rb.position + 40 * Time.fixedDeltaTime * _currentInput.normalized);
             return;
         }
 #endif

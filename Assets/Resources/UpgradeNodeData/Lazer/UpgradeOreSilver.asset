@@ -15,22 +15,26 @@ MonoBehaviour:
   nodeKey: U.Ore.Silver
   nodeStageNum: 0
   uniqueID: 820
-  description: 
   icon: {fileID: 776407073, guid: 00e07589700e4824790fbd7d60bf9938, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 7fdeec9bef1fa684bb0af10415dffebe, type: 2}
   UnlockedAtFirstPrereqStage: 0
+  InfinateStages: 0
   stages:
   - effects:
     - {fileID: 11400000, guid: f7305a10782cd994ca37f70f847c1c66, type: 2}
     costMultiplier: 1
     costTier: 5
-    upgradeItemPool: {fileID: 11400000, guid: 1cd4b80218c52a14995e255b4a360102, type: 2}
+    upgradeItemPool: {fileID: 11400000, guid: 2578a8b93b92f144997963031306a875, type: 2}
     extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
   - effects:
     - {fileID: 11400000, guid: f7305a10782cd994ca37f70f847c1c66, type: 2}
     costMultiplier: 1
     costTier: 6
     upgradeItemPool: {fileID: 11400000, guid: 1cd4b80218c52a14995e255b4a360102, type: 2}
     extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []

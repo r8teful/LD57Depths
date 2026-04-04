@@ -77,9 +77,8 @@ Shader "Custom/BackgroundWorldGenLayer"
             float _FillMaskStep;
             float _BackgroundScaleFactor;
 
-            // ---------- Per-biome param arrays (set from C# like in your WorldGen) ----------
             // Make sure NUM_BIOMES here matches what your C# uploader uses.
-            #define NUM_BIOMES 6
+            #define NUM_BIOMES 10
 
             float _edgeNoiseScale[NUM_BIOMES];
             float _edgeNoiseAmp[NUM_BIOMES];

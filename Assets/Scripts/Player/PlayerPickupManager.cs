@@ -7,10 +7,6 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
     private float pickupRadius = 1f;
     [SerializeField] private LayerMask pickupLayerMask; // Set this to the layer your WorldItem prefabs are on
     private PlayerManager _player;
-    private float _magnetStrengthBase = 0.2f;
-    private float _magnetStrength;
-    private float _magnetRangeBase = 2;
-    private float _magnetRange;
     [SerializeField] private ValueModifiableComponent _values;
     public int InitializationOrder => 42;// Again no clue if this matters
 
@@ -19,8 +15,6 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
     public void InitializeOnOwner(PlayerManager playerParent) {
         _player = playerParent;
         _values.Register();
-        _magnetStrength = _magnetStrengthBase;
-        _magnetRange = _magnetRangeBase;
     }
 
 
@@ -40,7 +34,8 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
     }
 
     private void MagnetCheck() {
-        var results = Physics2D.OverlapCircleAll(transform.position, _magnetRange, pickupLayerMask);
+        var magnetRange = _values.GetValueNow(ValueKey.MagnetismPickup);
+        var results = Physics2D.OverlapCircleAll(transform.position, magnetRange, pickupLayerMask);
         // If nothing currently in range, stop magnetizing any previously magnetized items.
         if (results == null || results.Length == 0) {
             if (_currentlyMagnetized.Count > 0) {
@@ -51,6 +46,7 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
             }
             return;
         }
+        var magnetStrength = _values.GetValueNow(ValueKey.MagnetismStrength);
         Vector2 center = transform.position;
         // Build a set of items that are currently in range & valid this frame.
         var current = new HashSet<DropPooled>();
@@ -67,7 +63,7 @@ public class PlayerPickupManager : MonoBehaviour, IPlayerModule {
 
             current.Add(item);
             Vector2 toCenter = (center - (Vector2)item.transform.position);
-            item.OnStartMagnetizing(toCenter, _magnetStrength*6);
+            item.OnStartMagnetizing(toCenter, magnetStrength * 6);
         }
 
         // Any previously magnetized item that is not in the current set (or null) has been "lost"
