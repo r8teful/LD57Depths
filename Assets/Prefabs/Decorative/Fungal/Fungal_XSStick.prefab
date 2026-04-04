@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: -3384772447077890300}
   - component: {fileID: -4337400107092281026}
   m_Layer: 6
-  m_Name: Fungal_Mini
+  m_Name: Fungal_XSStick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,7 +93,7 @@ Transform:
   m_GameObject: {fileID: 4908480005588468802}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.038, y: 0.697, z: 0}
+  m_LocalPosition: {x: 0.01, y: 0.313, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -148,7 +148,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 4494726883159870927, guid: 9b8fedcc308e83f47aa68dd3262e9144, type: 3}
+  m_Sprite: {fileID: 1075810568, guid: 1775eb7abed89b54c84aab003b814806, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -183,9 +183,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spritesVariants:
-  - {fileID: 4494726883159870927, guid: 9b8fedcc308e83f47aa68dd3262e9144, type: 3}
-  - {fileID: -7087677859662243482, guid: 9b8fedcc308e83f47aa68dd3262e9144, type: 3}
-  - {fileID: -715328913296788755, guid: 9b8fedcc308e83f47aa68dd3262e9144, type: 3}
+  - {fileID: 1075810568, guid: 1775eb7abed89b54c84aab003b814806, type: 3}
+  - {fileID: -1245507180, guid: 1775eb7abed89b54c84aab003b814806, type: 3}
+  - {fileID: -1904880266, guid: 1775eb7abed89b54c84aab003b814806, type: 3}
   _spriteRenderer: {fileID: 3328544000559549426}
 --- !u!1 &6476897495741750321
 GameObject:
@@ -270,15 +270,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5972218270771911630, guid: 709091311b0984d428b367ca3f98a87e, type: 3}
       propertyPath: ShapeModule.m_Scale.x
-      value: 0.73
+      value: 1.28
       objectReference: {fileID: 0}
     - target: {fileID: 5972218270771911630, guid: 709091311b0984d428b367ca3f98a87e, type: 3}
       propertyPath: ShapeModule.m_Scale.y
-      value: 1.26
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5972218270771911630, guid: 709091311b0984d428b367ca3f98a87e, type: 3}
       propertyPath: ShapeModule.m_Position.y
-      value: -0.02
+      value: -0.44
       objectReference: {fileID: 0}
     - target: {fileID: 5972218270771911630, guid: 709091311b0984d428b367ca3f98a87e, type: 3}
       propertyPath: InitialModule.startColor.maxGradient.ctime0
@@ -366,7 +366,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5972218270771911630, guid: 709091311b0984d428b367ca3f98a87e, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
-      value: 15
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6515351290837264919, guid: 709091311b0984d428b367ca3f98a87e, type: 3}
       propertyPath: m_Name
@@ -404,22 +404,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ParticleColourSetter
   _spriteGradientList:
   - serializedVersion: 2
-    key0: {r: 0.52156866, g: 0.03529412, b: 0.3137255, a: 1}
-    key1: {r: 0.7254902, g: 0.054901965, b: 0.28627452, a: 1}
-    key2: {r: 0.9803922, g: 0.8862746, b: 0.8235295, a: 0}
-    key3: {r: 0.9803922, g: 0.85098046, b: 0.76470596, a: 0}
-    key4: {r: 0.9294118, g: 0.8078432, b: 0.7254902, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 22937
-    ctime1: 45875
-    ctime2: 52428
-    ctime3: 58596
+    key0: {r: 0.7254902, g: 0.054901965, b: 0.28627452, a: 1}
+    key1: {r: 0.9176471, g: 0.16078432, b: 0.3254902, a: 1}
+    key2: {r: 0.9960785, g: 0.8588236, b: 0.7490196, a: 0}
+    key3: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    key4: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    key5: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    key6: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    key7: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    ctime0: 21627
+    ctime1: 43908
+    ctime2: 65535
+    ctime3: 65535
     ctime4: 65535
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
+    ctime5: 65535
+    ctime6: 65535
+    ctime7: 65535
     atime0: 0
     atime1: 65535
     atime2: 0
@@ -430,25 +430,25 @@ MonoBehaviour:
     atime7: 0
     m_Mode: 1
     m_ColorSpace: 0
-    m_NumColorKeys: 5
+    m_NumColorKeys: 3
     m_NumAlphaKeys: 2
   - serializedVersion: 2
-    key0: {r: 0.039215688, g: 0.43137258, b: 0.39607847, a: 1}
-    key1: {r: 0.043137256, g: 0.6156863, b: 0.37254903, a: 1}
-    key2: {r: 0.9803922, g: 0.8862746, b: 0.8235295, a: 0}
-    key3: {r: 0.9803922, g: 0.85098046, b: 0.76470596, a: 0}
-    key4: {r: 0.9294118, g: 0.8078432, b: 0.7254902, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 22937
-    ctime1: 45875
-    ctime2: 52428
-    ctime3: 58982
+    key0: {r: 0.078431375, g: 0.20392159, b: 0.19215688, a: 1}
+    key1: {r: 0.15686275, g: 0.43137258, b: 0.39607847, a: 1}
+    key2: {r: 0.9960785, g: 0.8588236, b: 0.7490196, a: 0}
+    key3: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    key4: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    key5: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    key6: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    key7: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    ctime0: 21627
+    ctime1: 43819
+    ctime2: 65535
+    ctime3: 65535
     ctime4: 65535
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
+    ctime5: 65535
+    ctime6: 65535
+    ctime7: 65535
     atime0: 0
     atime1: 65535
     atime2: 0
@@ -459,25 +459,25 @@ MonoBehaviour:
     atime7: 0
     m_Mode: 1
     m_ColorSpace: 0
-    m_NumColorKeys: 5
+    m_NumColorKeys: 3
     m_NumAlphaKeys: 2
   - serializedVersion: 2
-    key0: {r: 0.043137256, g: 0.08627451, b: 0.27450982, a: 1}
-    key1: {r: 0.0627451, g: 0.19607845, b: 0.35686275, a: 1}
-    key2: {r: 0.9803922, g: 0.8862746, b: 0.8235295, a: 0}
-    key3: {r: 0.9803922, g: 0.85098046, b: 0.76470596, a: 0}
-    key4: {r: 0.9294118, g: 0.8078432, b: 0.7254902, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 22937
-    ctime1: 45875
-    ctime2: 52428
-    ctime3: 58982
+    key0: {r: 0.08627451, g: 0.1137255, b: 0.28627452, a: 1}
+    key1: {r: 0.14509805, g: 0.29803923, b: 0.40784317, a: 1}
+    key2: {r: 0.9960785, g: 0.8588236, b: 0.7490196, a: 0}
+    key3: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    key4: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    key5: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    key6: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    key7: {r: 0.9921569, g: 0.9450981, b: 0.75294125, a: 0}
+    ctime0: 21627
+    ctime1: 43908
+    ctime2: 65535
+    ctime3: 65535
     ctime4: 65535
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
+    ctime5: 65535
+    ctime6: 65535
+    ctime7: 65535
     atime0: 0
     atime1: 65535
     atime2: 0
@@ -488,7 +488,7 @@ MonoBehaviour:
     atime7: 0
     m_Mode: 1
     m_ColorSpace: 0
-    m_NumColorKeys: 5
+    m_NumColorKeys: 3
     m_NumAlphaKeys: 2
 --- !u!198 &8902897476633836421 stripped
 ParticleSystem:
