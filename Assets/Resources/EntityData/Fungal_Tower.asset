@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6cba2696d15a0aa4f8ca9bf747113acc, type: 3}
-  m_Name: Fungal_MiniTrio
+  m_Name: Fungal_Tower
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -30,7 +30,7 @@ MonoBehaviour:
       Data: UnityEngine.Vector2Int, UnityEngine.CoreModule
     - Name: 
       Entry: 3
-      Data: -1
+      Data: -2
     - Name: 
       Entry: 3
       Data: 0
@@ -42,7 +42,7 @@ MonoBehaviour:
       Data: UnityEngine.Vector2Int, UnityEngine.CoreModule
     - Name: 
       Entry: 3
-      Data: 1
+      Data: 2
     - Name: 
       Entry: 3
       Data: 2
@@ -150,43 +150,10 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
       Data: true
     - Name: 
       Entry: 5
       Data: true
-    - Name: 
-      Entry: 5
-      Data: true
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
     - Name: 
       Entry: 5
       Data: true
@@ -210,6 +177,27 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
       Data: false
     - Name: 
       Entry: 5
@@ -223,6 +211,18 @@ MonoBehaviour:
     - Name: 
       Entry: 5
       Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
     - Name: 
       Entry: 5
       Data: false
@@ -310,17 +310,18 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  entityID: 301
-  entityName: Fungal_MiniTrio
-  entityPrefab: {fileID: 401910264597585571, guid: 46f5e387dff0cef4ea7d74595b553a78, type: 3}
+  entityID: 317
+  entityName: Fungal_Tower
+  entityType: 0
+  entityPrefab: {fileID: 401910264597585571, guid: dcd2b45fecde8fc4f88a0c3a50134170, type: 3}
   spawnConditions:
     requiredBiomes: 08
     minY: -10000
     maxY: 2000
     specificSpawnTiles: []
   placementFrequency: 0.2
-  placementThreshold: 0.7
-  allowedAttachmentTypes: 0100000002000000
-  PlacementOffset: {x: -6024.9814, y: 7791.0347}
+  placementThreshold: 0.4
+  allowedAttachmentTypes: 01000000
+  PlacementOffset: {x: -8279.809, y: 5626.53}
   randomYRotation: 0
   scaleVariation: {x: 1, y: 1}

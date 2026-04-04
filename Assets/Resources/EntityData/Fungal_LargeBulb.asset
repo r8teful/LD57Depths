@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6cba2696d15a0aa4f8ca9bf747113acc, type: 3}
-  m_Name: Fungal_Mini
+  m_Name: Fungal_LargeBulb
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -30,7 +30,7 @@ MonoBehaviour:
       Data: UnityEngine.Vector2Int, UnityEngine.CoreModule
     - Name: 
       Entry: 3
-      Data: 0
+      Data: -2
     - Name: 
       Entry: 3
       Data: 0
@@ -156,13 +156,7 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
+      Data: true
     - Name: 
       Entry: 5
       Data: false
@@ -198,7 +192,10 @@ MonoBehaviour:
       Data: true
     - Name: 
       Entry: 5
-      Data: false
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
     - Name: 
       Entry: 5
       Data: false
@@ -211,6 +208,9 @@ MonoBehaviour:
     - Name: 
       Entry: 5
       Data: false
+    - Name: 
+      Entry: 5
+      Data: true
     - Name: 
       Entry: 5
       Data: false
@@ -310,9 +310,10 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  entityID: 300
-  entityName: Fungal_Mini
-  entityPrefab: {fileID: 401910264597585571, guid: 2bfa17af379c81b49b06cda7d1c9705d, type: 3}
+  entityID: 304
+  entityName: Fungal_LargeBulb
+  entityType: 0
+  entityPrefab: {fileID: 401910264597585571, guid: ce588aeb9c1fa4d469aa4739b8da0f5d, type: 3}
   spawnConditions:
     requiredBiomes: 08
     minY: -10000
@@ -321,6 +322,6 @@ MonoBehaviour:
   placementFrequency: 0.2
   placementThreshold: 0.7
   allowedAttachmentTypes: 01000000
-  PlacementOffset: {x: -8165.0527, y: 6908.5327}
+  PlacementOffset: {x: -7089.285, y: 6135.8213}
   randomYRotation: 0
   scaleVariation: {x: 1, y: 1}

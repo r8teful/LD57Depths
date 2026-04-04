@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6cba2696d15a0aa4f8ca9bf747113acc, type: 3}
-  m_Name: Fungal_WallStick
+  m_Name: Fungal_MiniPoint
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -42,10 +42,10 @@ MonoBehaviour:
       Data: UnityEngine.Vector2Int, UnityEngine.CoreModule
     - Name: 
       Entry: 3
-      Data: 0
+      Data: 2
     - Name: 
       Entry: 3
-      Data: 1
+      Data: 2
     - Name: 
       Entry: 8
       Data: 
@@ -138,58 +138,58 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
       Data: true
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: true
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
     - Name: 
       Entry: 5
       Data: true
@@ -310,17 +310,18 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  entityID: 305
-  entityName: Fungal_WallStick
-  entityPrefab: {fileID: 401910264597585571, guid: 1c55842d59d28ab449d578a3f3d630fa, type: 3}
+  entityID: 311
+  entityName: Fungal_MiniPoint
+  entityType: 0
+  entityPrefab: {fileID: 401910264597585571, guid: 2bfa17af379c81b49b06cda7d1c9705d, type: 3}
   spawnConditions:
     requiredBiomes: 08
     minY: -10000
     maxY: 2000
     specificSpawnTiles: []
   placementFrequency: 0.2
-  placementThreshold: 0.7
-  allowedAttachmentTypes: 04000000
-  PlacementOffset: {x: -7115.947, y: 8238.427}
+  placementThreshold: 0.4
+  allowedAttachmentTypes: 01000000
+  PlacementOffset: {x: -8279.809, y: 5626.53}
   randomYRotation: 0
   scaleVariation: {x: 1, y: 1}

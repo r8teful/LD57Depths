@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6cba2696d15a0aa4f8ca9bf747113acc, type: 3}
-  m_Name: Fungal_WallTrio
+  m_Name: Fungal_LargePoint
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -45,7 +45,7 @@ MonoBehaviour:
       Data: 0
     - Name: 
       Entry: 3
-      Data: 2
+      Data: 1
     - Name: 
       Entry: 8
       Data: 
@@ -126,18 +126,6 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: true
-    - Name: 
-      Entry: 5
       Data: true
     - Name: 
       Entry: 5
@@ -198,7 +186,28 @@ MonoBehaviour:
       Data: true
     - Name: 
       Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
       Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
     - Name: 
       Entry: 5
       Data: false
@@ -225,16 +234,7 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
+      Data: true
     - Name: 
       Entry: 5
       Data: false
@@ -310,9 +310,10 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  entityID: 304
-  entityName: Fungal_Mini
-  entityPrefab: {fileID: 401910264597585571, guid: ee0ef90e167638f439dab5aa4f2c1fa7, type: 3}
+  entityID: 305
+  entityName: Fungal_LargePoint
+  entityType: 0
+  entityPrefab: {fileID: 401910264597585571, guid: 9d341ab6817422543b1c04aee3179984, type: 3}
   spawnConditions:
     requiredBiomes: 08
     minY: -10000
@@ -320,7 +321,7 @@ MonoBehaviour:
     specificSpawnTiles: []
   placementFrequency: 0.2
   placementThreshold: 0.7
-  allowedAttachmentTypes: 04000000
-  PlacementOffset: {x: -7089.285, y: 6135.8213}
+  allowedAttachmentTypes: 01000000
+  PlacementOffset: {x: -7115.947, y: 8238.427}
   randomYRotation: 0
   scaleVariation: {x: 1, y: 1}

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6cba2696d15a0aa4f8ca9bf747113acc, type: 3}
-  m_Name: Fungal_BigOyster
+  m_Name: Fungal_XS
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -135,13 +135,22 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: true
+      Data: false
     - Name: 
       Entry: 5
-      Data: true
+      Data: false
     - Name: 
       Entry: 5
-      Data: true
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
     - Name: 
       Entry: 5
       Data: false
@@ -162,40 +171,7 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: true
-    - Name: 
-      Entry: 5
-      Data: true
-    - Name: 
-      Entry: 5
-      Data: true
-    - Name: 
-      Entry: 5
       Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: true
-    - Name: 
-      Entry: 5
-      Data: true
-    - Name: 
-      Entry: 5
-      Data: true
     - Name: 
       Entry: 5
       Data: false
@@ -222,7 +198,22 @@ MonoBehaviour:
       Data: true
     - Name: 
       Entry: 5
-      Data: true
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
     - Name: 
       Entry: 5
       Data: false
@@ -243,13 +234,22 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: true
+      Data: false
     - Name: 
       Entry: 5
-      Data: true
+      Data: false
     - Name: 
       Entry: 5
-      Data: true
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
     - Name: 
       Entry: 5
       Data: false
@@ -310,9 +310,10 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  entityID: 309
-  entityName: Fungal_BigOyster
-  entityPrefab: {fileID: 401910264597585571, guid: ac4ddcf7347ae2e4798d073b421f6d61, type: 3}
+  entityID: 319
+  entityName: Fungal_XS
+  entityType: 0
+  entityPrefab: {fileID: 401910264597585571, guid: 2c1e98e4cb48b644aaa75f7b33369f95, type: 3}
   spawnConditions:
     requiredBiomes: 08
     minY: -10000
@@ -320,7 +321,7 @@ MonoBehaviour:
     specificSpawnTiles: []
   placementFrequency: 0.2
   placementThreshold: 0.4
-  allowedAttachmentTypes: 01000000
+  allowedAttachmentTypes: 01000000020000000300000004000000
   PlacementOffset: {x: -8279.809, y: 5626.53}
   randomYRotation: 0
   scaleVariation: {x: 1, y: 1}

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6cba2696d15a0aa4f8ca9bf747113acc, type: 3}
-  m_Name: Fungal_MiniPurple
+  m_Name: Fungal_Grass
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -45,7 +45,7 @@ MonoBehaviour:
       Data: 0
     - Name: 
       Entry: 3
-      Data: 3
+      Data: 2
     - Name: 
       Entry: 8
       Data: 
@@ -186,10 +186,10 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: true
+      Data: false
     - Name: 
       Entry: 5
-      Data: true
+      Data: false
     - Name: 
       Entry: 5
       Data: true
@@ -310,9 +310,10 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  entityID: 306
-  entityName: Fungal_MiniPurple
-  entityPrefab: {fileID: 401910264597585571, guid: 1a9d267dc0f01684b89180b9ddfe819e, type: 3}
+  entityID: 300
+  entityName: Fungal_Grass
+  entityType: 0
+  entityPrefab: {fileID: 401910264597585571, guid: ec57e8cd66adc294ebe8beb2088b29a2, type: 3}
   spawnConditions:
     requiredBiomes: 08
     minY: -10000
@@ -321,6 +322,6 @@ MonoBehaviour:
   placementFrequency: 0.2
   placementThreshold: 0.7
   allowedAttachmentTypes: 01000000
-  PlacementOffset: {x: -7866.522, y: 7264.58}
+  PlacementOffset: {x: -8165.0527, y: 6908.5327}
   randomYRotation: 0
   scaleVariation: {x: 1, y: 1}

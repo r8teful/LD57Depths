@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6cba2696d15a0aa4f8ca9bf747113acc, type: 3}
-  m_Name: Fungal_Morrel
+  m_Name: Fungal_HangingGlow
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -30,7 +30,7 @@ MonoBehaviour:
       Data: UnityEngine.Vector2Int, UnityEngine.CoreModule
     - Name: 
       Entry: 3
-      Data: 0
+      Data: -1
     - Name: 
       Entry: 3
       Data: 0
@@ -42,7 +42,7 @@ MonoBehaviour:
       Data: UnityEngine.Vector2Int, UnityEngine.CoreModule
     - Name: 
       Entry: 3
-      Data: 0
+      Data: 1
     - Name: 
       Entry: 3
       Data: 2
@@ -189,7 +189,7 @@ MonoBehaviour:
       Data: false
     - Name: 
       Entry: 5
-      Data: true
+      Data: false
     - Name: 
       Entry: 5
       Data: true
@@ -310,9 +310,10 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  entityID: 302
-  entityName: Fungal_Morrel
-  entityPrefab: {fileID: 401910264597585571, guid: 3c50195a0b438d3408541874727d3d8c, type: 3}
+  entityID: 301
+  entityName: Fungal_HangingGlow
+  entityType: 0
+  entityPrefab: {fileID: 401910264597585571, guid: c1c713dcb42470846a15913abe1b7173, type: 3}
   spawnConditions:
     requiredBiomes: 08
     minY: -10000
@@ -320,7 +321,7 @@ MonoBehaviour:
     specificSpawnTiles: []
   placementFrequency: 0.2
   placementThreshold: 0.7
-  allowedAttachmentTypes: 0100000002000000
-  PlacementOffset: {x: -8726.542, y: 6693.8203}
+  allowedAttachmentTypes: 02000000
+  PlacementOffset: {x: -6024.9814, y: 7791.0347}
   randomYRotation: 0
   scaleVariation: {x: 1, y: 1}
