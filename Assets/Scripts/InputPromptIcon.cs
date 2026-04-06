@@ -44,7 +44,7 @@ public class InputPromptIcon : MonoBehaviour {
     }
     public void UpdateString() {
         var stringIcon = InputDevicePromptSystem.InsertPromptSprites("[Player/Interact]");
-        Debug.Log(stringIcon);
+        //Debug.Log(stringIcon);
         _interactIconText.text = stringIcon;
     }
     private void Start() {

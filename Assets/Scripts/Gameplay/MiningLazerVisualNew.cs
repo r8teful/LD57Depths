@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class MiningLazerVisualNew : MonoBehaviour {
     public LineRenderer lineRenderer;
@@ -53,7 +54,10 @@ public class MiningLazerVisualNew : MonoBehaviour {
     }
 
     public void HandleVisualUpdate() {
+        bool isAbility;
         if (!_hasStarted) {
+            isAbility = _player.PlayerAbilities.IsBrimstoneAbilityActive();
+            if (isAbility) _player.PlayerCamera.ShakeToggle(true);
             StartVisual();
         }
         // Fetch hand position 
@@ -64,10 +68,10 @@ public class MiningLazerVisualNew : MonoBehaviour {
         //bool isAbility = _player.InputManager.IsUsingAbility; // This is not really what we are wanting to know here
         // All we want to know if is the brimstone ability is active, so we can do those visuals. 
         // So maybe we just make a method in PlayerAbilities that is like
-        bool isAbility = _player.PlayerAbilities.IsBrimstoneAbilityActive();
-
-
+        isAbility = _player.PlayerAbilities.IsBrimstoneAbilityActive();
         _isUsingAbility = isAbility;
+
+
         //Debug.Log("IsAbility: " + isAbility);
         LaserVisual(dir, isAbility);
     }
@@ -97,6 +101,7 @@ public class MiningLazerVisualNew : MonoBehaviour {
         if (_lineLazerParticleSystem.isPlaying) {
             if (_isUsingAbility) {
                 _lineLazerParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                _player.PlayerCamera.ShakeToggle(false);
             } else {
                 _lineLazerParticleSystem.Stop();
 
@@ -140,7 +145,7 @@ public class MiningLazerVisualNew : MonoBehaviour {
     }
     void CreateLaserEffect(Vector3 start, Vector3 end, bool isAbility) {
         var dmg = _abilityInstance.GetEffectiveStat(StatType.MiningDamage);
-        var lineWidth = Mathf.Min(Mathf.Max(dmg * 0.04f,0.04f), 0.4f);
+        var lineWidth = Mathf.Min(Mathf.Max(dmg * 0.01f,0.04f), 0.4f);
         float whitening = Math.Min(dmg * 0.04f, 0.3f);
         lineRenderer.material.SetFloat("_Whitening", whitening); 
         lineRenderer.SetPosition(0, start);

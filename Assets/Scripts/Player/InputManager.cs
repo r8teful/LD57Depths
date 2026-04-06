@@ -478,7 +478,7 @@ public class InputManager : MonoBehaviour, IPlayerModule {
 
         // This should either use all the active, or it should depend on what we have equipped
         // Or it should depend on what button we pressed, so many options! Just always do ability for now
-        _playerAbilities.UseActive(ResourceSystem.BrimstoneBuffID);
+        _playerAbilities.UseActive(ResourceSystem.BrimstoneAbilityID);
         /* Old toolcontroller code, we're not using toolcontroller anymore
         var behaviour = _toolController.CurrentToolBehaviour;
         if (behaviour == null) return;

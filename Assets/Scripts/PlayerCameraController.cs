@@ -13,12 +13,23 @@ public class PlayerCameraController : MonoBehaviour {
 
     private Vector3 velocity;
     private Transform playerTarget;
+    private bool shouldShake;
+    private Tweener shakeTween;
+
     public bool IsMoving => _posTween.IsActive() || !_zoomTween.IsComplete();
 
     public void Awake() {
         _playerMainCamera = GetComponent<Camera>();
         PlayerLayerController.OnPlayerVisibilityChanged += OnPlayerVisibilityLayerChanged;
      }
+
+    void Update() {
+        if (shouldShake && shakeTween == null) {
+            StartShake();
+        } else if (!shouldShake && shakeTween != null) {
+            StopShake();
+        }
+    }
 
     private void OnDisable() {
         PlayerLayerController.OnPlayerVisibilityChanged -= OnPlayerVisibilityLayerChanged;
@@ -130,7 +141,22 @@ public class PlayerCameraController : MonoBehaviour {
         // Note to self: Higher vibraro makes it more subtle
         _playerMainCamera.DOShakePosition(length,0.1f,40);
     }
+    void StartShake() {
+        shakeTween = _playerMainCamera
+            .DOShakePosition(0.5f, 0.1f, 40, 90,false)
+            .SetLoops(-1, LoopType.Restart)
+            .SetEase(Ease.Linear);
+    }
 
+    void StopShake() {
+        shakeTween.Kill();
+        shakeTween = null;
+        //_playerMainCamera.transform.localPosition = Vector3.zero;
+    }
+
+    public void ShakeToggle(bool active) {
+        shouldShake = active;
+    }
     private TweenCallback CameraTransitionComplete(bool isEnterior) {
         if (isEnterior) {
             _playerCameraPixel.assetsPPU = 10;

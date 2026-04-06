@@ -20,7 +20,7 @@ public class GameSettings {
     public GameSettings(WorldGenSettingSO template, int seed) {
         GameStartMode = StartMode.NewGame;
         UnityEngine.Random.InitState(seed); // Important to get save results for each seed
-        WorldGenSettings = WorldGenData.FromSO(template, true, seed);
+        WorldGenSettings = WorldGenData.FromSO(template, seed);
         SaveToLoad = null;
     }
 

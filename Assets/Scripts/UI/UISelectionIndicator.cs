@@ -75,7 +75,7 @@ public class UISelectionIndicator : MonoBehaviour {
 
 
     private void OnHighlighted(RectTransform target) {
-        Debug.Log("OnHighlight");
+        //Debug.Log("OnHighlight");
         _target = target;
         _hasTarget = true;
 
@@ -89,7 +89,7 @@ public class UISelectionIndicator : MonoBehaviour {
     }
 
     private void OnCleared(bool forceNoFade) {
-        Debug.Log("OnCleared");
+        //Debug.Log("OnCleared");
         _group.DOKill();
             _group.DOFade(0, 0.2f);
         //_group.alpha = 0;

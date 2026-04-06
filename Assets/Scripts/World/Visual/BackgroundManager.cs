@@ -6,6 +6,7 @@ using UnityEngine;
 public class BackgroundManager : MonoBehaviour {
     public GameObject trenchBackgroundContainer;
     public GameObject parallaxObjectsContainer;
+    public GameObject wayBackBackgroundContainer;
     public ParticleSystem trashParticles;
     private Transform[] _parallaxLayers; // The four parallax layers
     public SpriteRenderer _blackSprite;
@@ -42,6 +43,7 @@ public class BackgroundManager : MonoBehaviour {
         biomeManager.OnNewPlayerBiome += NewClientBiome;
         // Spawn particle systems
         //SpawnTrashParticles();
+        wayBackBackgroundContainer.SetActive(true);
     }
     private void OnDestroy() {
         biomeManager.OnNewPlayerBiome -= NewClientBiome;

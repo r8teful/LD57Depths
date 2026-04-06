@@ -5,7 +5,13 @@ using static PlayerMovement;
 public class OxygenManager : MonoBehaviour, IPlayerModule {
 
     private float maxOxygen;
-    private float oxygenDepletionRate = 1f;   // Oxygen loss per second underwater
+    private float OxygenDepletionRate { 
+        // Oxygen loss per second underwater
+        get {
+            return _baseOxygenDepletion * _oxygenDrainMultiplier; 
+        } 
+    } 
+    private float _baseOxygenDepletion = 1f;   
     private float currentOxygen;
     private float maxHealth = 2.362f; // amount in seconds the player can survive with 0 oxygen 
     private float playerHealth;
@@ -17,6 +23,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     [SerializeField] private LowOxygenVisual _lowoxygenVisual;
     private LowOxygenVisual _lowoxygenVisualInstance;
     private bool _infOx;
+    private float _oxygenDrainMultiplier = 1f;
 
     public static event Action<float, float> OnOxygenChanged; // current, max
     public static event Action OnFlashStart;
@@ -43,10 +50,14 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
         _player = playerParent;
         playerParent.PlayerStats.OnStatChanged += OnStatChanged;
         playerParent.PlayerMovement.OnPlayerStateChanged += StateChanged;
+        PlayerWorldLayerController.OnPlayerWorldLayerChange += PlayerLayerChanged;
     }
+
+
     private void OnDestroy() {
         _player.PlayerStats.OnStatChanged -= OnStatChanged;
         _player.PlayerMovement.OnPlayerStateChanged -= StateChanged;
+        PlayerWorldLayerController.OnPlayerWorldLayerChange -= PlayerLayerChanged;
 
     }
 
@@ -56,6 +67,21 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
 
     private void StateChanged(PlayerState newState) {
         _cachedState = newState;
+    }
+     private void PlayerLayerChanged(int index) {
+        if(index == 0) {
+            _oxygenDrainMultiplier = 1; // We'll multiply it when draining oxygen
+        } else if(index == 1) {
+            _oxygenDrainMultiplier = 1.5f;
+        } else if (index ==2) {
+            _oxygenDrainMultiplier = 2f;
+        } else if (index ==3) {
+            _oxygenDrainMultiplier = 3f;
+        } else if (index == 3) {
+            _oxygenDrainMultiplier = 5f;
+        } else {
+            _oxygenDrainMultiplier = 1;
+        }
     }
 
     private void Update() {
@@ -82,9 +108,9 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
     }
 
     void DepleteOxygen() {
-        // Say warning is at 10 oxygen, that would give us 10 seconds to get to the ship. Assuming depletion is always at 1/s
-        var warningOxygen = maxOxygen * 0.2f * oxygenDepletionRate; 
-        CurrentOxygen -= oxygenDepletionRate * Time.deltaTime;
+        // Say warning is at 10 oxygen, that would give us 10 seconds to get to the ship.
+        var warningOxygen = maxOxygen * 0.2f * OxygenDepletionRate; 
+        CurrentOxygen -= OxygenDepletionRate * Time.deltaTime;
         OnOxygenChanged?.Invoke(CurrentOxygen, maxOxygen);
         if (CurrentOxygen <= warningOxygen && !peepPlayed) { // 20% max oxygen
             if (AudioController.Instance != null) AudioController.Instance.PlaySound2D("PeepPeep", 1f);
@@ -119,7 +145,7 @@ public class OxygenManager : MonoBehaviour, IPlayerModule {
             AudioController.Instance.UnMuffleLoop(0);
             AudioController.Instance.UnMuffleLoop(1); 
         }
-        CurrentOxygen += oxygenDepletionRate * 50 * Time.deltaTime;
+        CurrentOxygen += OxygenDepletionRate * 50 * Time.deltaTime;
         playerHealth = maxHealth;
         OnOxygenChanged?.Invoke(CurrentOxygen, maxOxygen);
     }

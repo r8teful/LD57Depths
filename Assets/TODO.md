@@ -2,17 +2,15 @@
 
 Steamdeck notes:
 
-* Icons not updating correctly for controller
+* todo
 
 **Smaller visual stuff:**
 
 * New color node with one upgrade but not getting one upgrade
 * Hitstop when buying a node!?
-* Add fog? Just some pixelated transparent noise, could add some more depth to the background
 * Make menu buttons pop in, like the stardewvalley menu
 * When an upgrade is maxed the popup could be looking cooler like bigger text where your current upgrade amount is shown or something like that
 * Icon for upgrade station node
-* Fog stops make it behave like the background stuff, following the player camera
 * Hide cursor when on controller and when you are inputing with keyboard in upgrade tree
 
 UX:
@@ -22,13 +20,13 @@ UX:
 
 Misc:
 
-* Cactus particle effect?? When you turn into one
 * Upgrade: Path lights up when you run out of time
 
 Coding:
 
 * The other upgrades, like the block oxygen, lazer blast, lazer chain, make them better, it feels wrong, it just costs like 2 iron to buy, its not satisfying, make it cost somewhat mored
 * Don't let submarine spawn inside a rock, or inside a cave
+* Make the layer fog get initialized with trench setting numbers for the current world
 
 Add more content:
 
@@ -38,9 +36,9 @@ Add more content:
 
 FOR POLISED DEMO:
 
+* Crash comic at the start
 * Add one more song
 * Make pitch more soothing
-* Add upgrades that you'll be able to get for level 2
 * Make all plants have the moving shader
 * Environment should feel ALIVE, it feels DEAD. Make fish swim around, little blobs here and there. Make the plants move. MAKE IT LOOK ALIVE. POLISH THE ENVIRONMENT
 * Opening a chest should feel EXITING! WOOO DOPAMINE HIT THEM WITH IT, give it more particles, give it sounds give it everything. Make it THE BEST FEELING!!
@@ -76,12 +74,42 @@ For index: Biomes, artifacts, ores?
 #### Lucy playtest V0.0.4
 
 * Title card for when entering a biome -> Give it a cool sound effect, like buh bih beh bah buhh or du di de da daaa
-* Make everything feel special - > More visual effects
 * Lots of nodes being upgraded feels like you are strong, you don't think about
-
-
-
-* I felt aimless like it didn't have a purpose -> Crash comic at the start
 * Would be great if exploration entities didn't spawn in the air
-* Not enough detail in the submarine
+
+#### Rik Playtest V0.0.4.6
+
+* More transfer speed
+
+#### Better steam trailer
+
+* Explosions
+* Background changes colour and spites depending on the biome
+* More nodes for level 2 and beyond 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

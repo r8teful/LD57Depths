@@ -555,6 +555,7 @@ public class ChunkManager : StaticInstance<ChunkManager>, ISaveable {
         if (tileBiome != BiomeType.None && tileBiome != BiomeType.Trench) {
             // Tile durability should depend on the biome tile durability set in the 
             if (GameManager.Instance.WorldGenSettings.BiomeTileHardness.TryGetValue(tileBiome, out var mult)) {
+                //Debug.Log($"BiomeHardness is {mult} for biome: {tileBiome}");
                 biomeExtraDurMult = mult;
             }
         }

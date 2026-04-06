@@ -30,7 +30,7 @@ MonoBehaviour:
       Data: UnityEngine.Vector2Int, UnityEngine.CoreModule
     - Name: 
       Entry: 3
-      Data: -2
+      Data: -1
     - Name: 
       Entry: 3
       Data: 0
@@ -42,7 +42,7 @@ MonoBehaviour:
       Data: UnityEngine.Vector2Int, UnityEngine.CoreModule
     - Name: 
       Entry: 3
-      Data: 2
+      Data: 1
     - Name: 
       Entry: 3
       Data: 2
@@ -168,33 +168,6 @@ MonoBehaviour:
       Data: true
     - Name: 
       Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: false
-    - Name: 
-      Entry: 5
-      Data: true
-    - Name: 
-      Entry: 5
-      Data: true
-    - Name: 
-      Entry: 5
       Data: true
     - Name: 
       Entry: 5
@@ -222,7 +195,34 @@ MonoBehaviour:
       Data: true
     - Name: 
       Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
       Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: false
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
+    - Name: 
+      Entry: 5
+      Data: true
     - Name: 
       Entry: 5
       Data: false
@@ -322,6 +322,6 @@ MonoBehaviour:
   placementFrequency: 0.2
   placementThreshold: 0.4
   allowedAttachmentTypes: 01000000030000000300000002000000
-  PlacementOffset: {x: -8279.809, y: 5626.53}
+  PlacementOffset: {x: -4971.4775, y: 4546.0254}
   randomYRotation: 0
   scaleVariation: {x: 1, y: 1}

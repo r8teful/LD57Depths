@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TileUpgradeData {
-    public int DropIncrease;
+    public int DropIncrease; // as multiplier 
     public float DurabilityIncrease; // as multiplier 
 
     public TileUpgradeData(int dropincrease) {
@@ -76,16 +76,19 @@ public class WorldTileManager : StaticInstance<WorldTileManager> {
         if(drop.ID == ResourceSystem.StoneItemID && GameManager.Instance != null) {
             // Increase stone drop based on progrssion index
             var i = GameManager.Instance.WorldGenSettings.GetBiomeProgressionIndex(tileBiome);
-            int layer = i / 3;
-            int withinLayer = i % 3;
+            var hardness = GameManager.Instance.WorldGenSettings.GetBiomeHardness(tileBiome);
+            //int layer = i / 3;
+            //int withinLayer = i % 3;
 
-            float layerGrowth = 20f;   // layer 1 = 10x, layer 2 = 100x, layer 3 = 1000x
-            float linearStep = 0.2f;   // within a layer: 1.0x, 1.2x, 1.4x
-            maxDropAmount *= Mathf.FloorToInt(Mathf.Pow(layerGrowth, layer) * (1f + withinLayer * linearStep));
+            //float layerGrowth = 20f;   // layer 1 = 10x, layer 2 = 100x, layer 3 = 1000x
+            //float linearStep = 0.2f;   // within a layer: 1.0x, 1.2x, 1.4x
+            //maxDropAmount *= Mathf.FloorToInt(Mathf.Pow(layerGrowth, layer) * (1f + withinLayer * linearStep));
+            maxDropAmount *= Mathf.FloorToInt(hardness);// Just multiply it with the extra hardness lol
+            Debug.Log($"Tile {tile.ID} in biome {tileBiome} (progression index {i}). Has max drop {maxDropAmount}");
         }
         int dropAmount = 1;
         if (_tileUpgradeData.TryGetValue(tile.ID, out TileUpgradeData tileUpgradeData)) {
-            maxDropAmount += tileUpgradeData.DropIncrease;
+            maxDropAmount *= tileUpgradeData.DropIncrease; // multiplier 
         }
         if(maxDropAmount > 1) {
             // We can possibly drop more than one, get the random drop amount based on luck

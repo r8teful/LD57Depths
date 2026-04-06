@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: BiomeFungal
   m_EditorClassIdentifier: 
   biomeType: 8
-  EdgeNoiseScale: 0.1
-  EdgeNoiseAmp: 8.26
+  EdgeNoiseScale: 0.16
+  EdgeNoiseAmp: 4.65
   BlockNoiseScale: 0.03
   BlockNoiseAmp: 0.05
   BlockCutoff: 0.008
@@ -23,8 +23,8 @@ MonoBehaviour:
   WarpAmp: 0.32
   WorleyWeight: 1.51
   CaveType: 1
-  HorSize: 110.2
-  YHeight: 85.1
+  HorSize: 116.3
+  YHeight: 94.4
   TileColor: {r: 0.37254903, g: 0.52156866, b: 0, a: 1}
   AirColor: {r: 1, g: 0.52156866, b: 1, a: 1}
   YStart: -698.1

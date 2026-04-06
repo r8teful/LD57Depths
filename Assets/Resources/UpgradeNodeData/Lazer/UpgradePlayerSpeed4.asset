@@ -25,24 +25,24 @@ MonoBehaviour:
   - effects:
     - {fileID: 11400000, guid: a6277ba6419843a4aa0d4de68d6ecedc, type: 2}
     costMultiplier: 1
-    costTier: 9
-    upgradeItemPool: {fileID: 11400000, guid: 22d7dd1ee16c1594c8114f87a2d7f2ae, type: 2}
-    extraData: {fileID: 0}
-    overrideCost: 0
-    overrideItemQuantities: []
-  - effects:
-    - {fileID: 11400000, guid: a54273edc7c53564ba520bac8eb633ed, type: 2}
-    costMultiplier: 1
-    costTier: 10
-    upgradeItemPool: {fileID: 11400000, guid: 22d7dd1ee16c1594c8114f87a2d7f2ae, type: 2}
-    extraData: {fileID: 0}
-    overrideCost: 0
-    overrideItemQuantities: []
-  - effects:
-    - {fileID: 11400000, guid: a54273edc7c53564ba520bac8eb633ed, type: 2}
-    costMultiplier: 1
-    costTier: 11
+    costTier: 16
     upgradeItemPool: {fileID: 11400000, guid: 34cd559b822b36f4fa14f4b77af71d0e, type: 2}
+    extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
+  - effects:
+    - {fileID: 11400000, guid: a54273edc7c53564ba520bac8eb633ed, type: 2}
+    costMultiplier: 1
+    costTier: 17
+    upgradeItemPool: {fileID: 11400000, guid: c8505d26704f39c49ad4623ac0fd7558, type: 2}
+    extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
+  - effects:
+    - {fileID: 11400000, guid: a54273edc7c53564ba520bac8eb633ed, type: 2}
+    costMultiplier: 1
+    costTier: 18
+    upgradeItemPool: {fileID: 11400000, guid: c8505d26704f39c49ad4623ac0fd7558, type: 2}
     extraData: {fileID: 0}
     overrideCost: 0
     overrideItemQuantities: []

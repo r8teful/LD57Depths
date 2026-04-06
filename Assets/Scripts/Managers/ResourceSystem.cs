@@ -66,6 +66,7 @@ public class ResourceSystem {
     public static ushort WORLD_MAP_ID = 1;
 
     public const ushort BrimstoneBuffID = 1; // There must be a better way
+    public const ushort BrimstoneAbilityID = 1; // There must be a better way
     public const ushort RPGID = 2; 
     public const ushort BiomeBuffID = 100; // There must be a better way
     public const ushort PlayerDashID = 10; 

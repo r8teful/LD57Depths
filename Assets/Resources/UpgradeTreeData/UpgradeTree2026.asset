@@ -13,45 +13,8 @@ MonoBehaviour:
   m_Name: UpgradeTree2026
   m_EditorClassIdentifier: 
   costsValues:
-    baseValue: 4
-    linearIncrease: 7
+    baseValue: 3
+    linearIncrease: 5
     expIncrease: 1.7
   treeName: DefaultTree
-  nodes:
-  - {fileID: 11400000, guid: 3fc0c9bd770644d448652616cf99fcec, type: 2}
-  - {fileID: 11400000, guid: 3de091d34e60f6b448456c2eef1617da, type: 2}
-  - {fileID: 11400000, guid: ed1a778afde390e4594c907d01455c33, type: 2}
-  - {fileID: 11400000, guid: 287c7b7c66cc5be498d1eea9de862007, type: 2}
-  - {fileID: 11400000, guid: 87bdf022cae5b9e40aaf9a007cdd5f3c, type: 2}
-  - {fileID: 11400000, guid: c7e2fb6abd0411f4d9d05e648a9370ab, type: 2}
-  - {fileID: 11400000, guid: 1ee68a3298f445b4c9aea6eed29e24c1, type: 2}
-  - {fileID: 11400000, guid: f91cba5791db2154ea00b5851acd13f1, type: 2}
-  - {fileID: 11400000, guid: fed1f9b2bc093ea44a61ac29407d90a9, type: 2}
-  - {fileID: 11400000, guid: 1c2a3b5e991a8dc4bafd8ed8e5a6ac78, type: 2}
-  - {fileID: 11400000, guid: 0a7a465d100abaa4d84949edae6ccb5b, type: 2}
-  - {fileID: 11400000, guid: 11281e9cb5bd8e8409bd26e9ec77010a, type: 2}
-  - {fileID: 11400000, guid: cbddcd439d0b03e4a920d49a2e1f0722, type: 2}
-  - {fileID: 11400000, guid: 75f811e878cadfd44bc415ff9c84cb8b, type: 2}
-  - {fileID: 11400000, guid: cdf389641a0aeef4bb3b6416de14163c, type: 2}
-  - {fileID: 11400000, guid: 052e893be143db04e8e7ba1f5b8320fb, type: 2}
-  - {fileID: 11400000, guid: f10ee396c06fd4446b2ebc359bb7404a, type: 2}
-  - {fileID: 11400000, guid: af3857e552e5f2e4495f4d7db9907b4e, type: 2}
-  - {fileID: 11400000, guid: 686f5a764242b2c41915e9f9955f1ace, type: 2}
-  - {fileID: 11400000, guid: 7df2eb582e9fdb64aa47295b0b9300cc, type: 2}
-  - {fileID: 11400000, guid: 3e35efeac4af63845b61ddb6dab4245a, type: 2}
-  - {fileID: 11400000, guid: 7fdeec9bef1fa684bb0af10415dffebe, type: 2}
-  - {fileID: 11400000, guid: d6d480d424e893c4fa34893fb8b37e60, type: 2}
-  - {fileID: 11400000, guid: aae5068873538734c98e5f1458a43eeb, type: 2}
-  - {fileID: 11400000, guid: f2266ccd8a0e6d64c94a903011ba3866, type: 2}
-  - {fileID: 11400000, guid: 36f7a8384bc3a494f8a9a74690b319f9, type: 2}
-  - {fileID: 11400000, guid: c8b8943fe4692a645902734d0c13ef6e, type: 2}
-  - {fileID: 11400000, guid: 9348d0b602d93da44aadd969b4c0a679, type: 2}
-  - {fileID: 11400000, guid: e8fa2fd387da1694d95c92b5f8d42c7a, type: 2}
-  - {fileID: 11400000, guid: 13e2c3f28a84ceb4f93532ece64ea809, type: 2}
-  - {fileID: 11400000, guid: 0476152a18d365146840335cc0f542e1, type: 2}
-  - {fileID: 11400000, guid: 2d77305c8800f78468bbf8cdfb68a316, type: 2}
-  - {fileID: 11400000, guid: 1c854624ced58d947a611ed9aac8d10d, type: 2}
-  - {fileID: 11400000, guid: 5c0ccdbed75194a4c8ea3efc616da8b8, type: 2}
-  - {fileID: 11400000, guid: 85fa1acd675cf5e408376ce0f0751dd9, type: 2}
-  - {fileID: 11400000, guid: eacf12173c6e275418e864a294f406dc, type: 2}
   prefab: {fileID: 4102176661086873485, guid: c93e4d609b751e846a139bb3a64d1f21, type: 3}

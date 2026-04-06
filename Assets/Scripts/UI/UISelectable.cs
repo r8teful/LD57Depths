@@ -55,7 +55,7 @@ public class UISelectable : MonoBehaviour,
     /// <summary>Mouse leaves the element.</summary>
     public void OnPointerExit(PointerEventData eventData) {
         _isPointerOver = false;
-        Debug.Log("OnPinterExit");
+        //Debug.Log("OnPinterExit");
         // Only clear if this element currently owns the highlight.
         if (UISelectionManager.Instance.CurrentHighlight == _indicatorTarget)
             UISelectionManager.Instance.ClearHighlight(force: false);

@@ -10,11 +10,12 @@ public class ParticleColourSetter : MonoBehaviour {
         _particleSystem = GetComponent<ParticleSystem>();
         _spriteSetter = transform.parent.GetComponentInChildren<RandomSpriteSetter>();
         if (_particleSystem == null || _spriteSetter == null) {
-            Debug.LogError("Can't find component!");
+            Debug.LogError("Can't find component on: " + gameObject.name);
             return;
         }
     }
     private void Start() {
+        if (_particleSystem == null || _spriteSetter == null) return;
         var i = _spriteSetter.RandomIndex;
         if(i == -1) {
             Debug.LogError("Index invalid!");

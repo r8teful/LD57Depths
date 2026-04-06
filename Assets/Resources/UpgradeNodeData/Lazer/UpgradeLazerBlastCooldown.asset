@@ -15,28 +15,34 @@ MonoBehaviour:
   nodeKey: U.LaserBlast.Cooldown
   nodeStageNum: 0
   uniqueID: 90
-  descriptionKey: 
   icon: {fileID: -1955116903, guid: cde62cbd0f1c128489f3e490f44c665b, type: 3}
   IsCool: 0
   prerequisiteNodesAny:
   - {fileID: 11400000, guid: 87bdf022cae5b9e40aaf9a007cdd5f3c, type: 2}
   UnlockedAtFirstPrereqStage: 0
+  InfinateStages: 0
   stages:
   - effects:
     - {fileID: 11400000, guid: f9fd23b2e235369488309f7d0befb64f, type: 2}
     costMultiplier: 1
     costTier: 6
-    upgradeItemPool: {fileID: 11400000, guid: c8505d26704f39c49ad4623ac0fd7558, type: 2}
+    upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}
     extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
   - effects:
     - {fileID: 11400000, guid: f9fd23b2e235369488309f7d0befb64f, type: 2}
     costMultiplier: 1
     costTier: 7
     upgradeItemPool: {fileID: 11400000, guid: 6001c39acab6c54408dc8caa3ee2d81a, type: 2}
     extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []
   - effects:
     - {fileID: 11400000, guid: f9fd23b2e235369488309f7d0befb64f, type: 2}
     costMultiplier: 1
     costTier: 8
     upgradeItemPool: {fileID: 11400000, guid: 29f367e82be84e84aa1af9c8dd6f8436, type: 2}
     extraData: {fileID: 0}
+    overrideCost: 0
+    overrideItemQuantities: []

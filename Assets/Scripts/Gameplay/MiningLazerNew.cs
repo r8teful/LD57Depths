@@ -27,7 +27,26 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, ITileDamagea
         _visual.Init(player,instance,this);
         _damageContainer = new DamageContainer();
         _abilityInstance.OnBuffExpired += OnBuffExpire;
+        _player.PlayerAbilities.OnAbilityAdd += OnAbilityAdd;
+        _player.PlayerAbilities.OnabilityRemove += OnAbilityRemove;
+        // TODO, Get brimstone ability, subscribe to onActivated, then boom
+    
     }
+
+    private void OnAbilityRemove(AbilityInstance ability) {
+        if (ability.Data.ID != ResourceSystem.BrimstoneAbilityID) return;
+        // Brimstone added, subscribe to OnActivated
+        ability.OnActivated -= OnLazerAbilityActivated;
+
+    }
+
+    private void OnAbilityAdd(AbilityInstance ability) {
+        if (ability.Data.ID != ResourceSystem.BrimstoneAbilityID) return;
+        // Brimstone added, subscribe to OnActivated
+        ability.OnActivated += OnLazerAbilityActivated;
+    }
+
+
     private void OnDestroy() {
         _abilityInstance.OnBuffExpired -= OnBuffExpire;
     }
@@ -37,6 +56,11 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, ITileDamagea
             OnEndShoot();
         }
     }
+    private void OnLazerAbilityActivated() {
+        // Set the current dir to where we are aiming for it to bypass the delay
+        _currentDirection = _player.InputManager.GetAimDirFromPos(transform.position);
+        _lastKnownDirection = _currentDirection;
+    }
 
     private void Update() {
         UpdateCurDir();
@@ -45,10 +69,10 @@ public class MiningLazerNew : MonoBehaviour, IInitializableAbility, ITileDamagea
         if (!MineDelayCheck()) return;
         _isShooting = _player.InputManager.IsShooting();
         if (_player.PlayerAbilities.IsBrimstoneAbilityActive()) {
-            MineAbility(); // Brimstone doesn't require shooting
+             MineAbility(); // Brimstone doesn't require shooting
             _visual.HandleVisualUpdate();
             IsUsingLazer = true;
-        } else if(_isShooting){
+        } else if(_isShooting) {
             Mine();
             _visual.HandleVisualUpdate();
             IsUsingLazer = true;

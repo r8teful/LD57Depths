@@ -94,7 +94,7 @@ public class BiomeManager : StaticInstance<BiomeManager>
 
                 // TODO the client wont have access to server data, so this wont work on non host clients!!!!!
                 var newBiome = GetBiomeInfo(clientCurrentChunkCoord);
-                Debug.Log("checking biome...");
+                //Debug.Log("checking biome...");
                 if (newBiome == null) {
                     yield return new WaitForSeconds(checkInterval);
                     continue;

@@ -45,6 +45,11 @@ public class WorldGenData {
         if (biome == null) return 0;
         return biome.ProgressionIndex;
     }
+    public float GetBiomeHardness(BiomeType b) {
+        var sucess = BiomeTileHardness.TryGetValue(b, out var hardness);
+        if (!sucess) return 1;
+        return hardness;
+    }
     public WorldGenBiomeData GetBiome(BiomeType b) {
         return biomes.FirstOrDefault(biome => biome.BiomeType == b);
     }
@@ -82,7 +87,7 @@ public class WorldGenData {
    
     public WorldGenData() { }
 
-    public static WorldGenData FromSO(WorldGenSettingSO so, bool randomizeBiomes = true, int seed = 1) {
+    public static WorldGenData FromSO(WorldGenSettingSO so, int seed = 1) {
         Debug.Log("generating runinstance of worldSettings!"); 
         var s = new WorldGenData();
         s.seed = seed;
@@ -104,9 +109,9 @@ public class WorldGenData {
         s.worldOres = new List<WorldGenOre>();
         s.BiomeTileHardness = new Dictionary<BiomeType, float>();
         foreach (var bSO in so.biomes)
-            s.biomes.Add(WorldGenBiomeData.FromSO(bSO,randomizeBiomes));
+            s.biomes.Add(WorldGenBiomeData.FromSO(bSO));
         // Each biome has set their size, so now we need to place them properly
-        PlaceBiomes(s, randomizeBiomes);
+        PlaceBiomes(s);
 
         if (so.associatedMaterial != null) {
             s.worldGenSquareSprite = new Material(so.associatedMaterial); // Don't want to change original 
@@ -135,11 +140,12 @@ public class WorldGenData {
         }
     }
 
-    private static void PlaceBiomes(WorldGenData settings, bool randomizeBiomes = true) {
+    private static void PlaceBiomes(WorldGenData settings) {
         // Start from the bottom, using the pool (or weighted chance based) of that layer, (if we are having that some biomes appear at the top)
         //var placedBiomes = new List<WorldGenBiomeData>();
         // Just use random placement for now
-        if (randomizeBiomes) {
+        // Randomizes first, if you want to edit ores in  edit mode, don't do this because it would be a nightmare
+        if (true) {
             System.Random rng = new System.Random(settings.seed);
             List<BiomeType> firstBiomeTypes = new List<BiomeType> { BiomeType.Deadzone, BiomeType.Bioluminescent, BiomeType.Forest,BiomeType.Fungal};
             // The 4 special biomes, shuffled among themselves
@@ -161,8 +167,6 @@ public class WorldGenData {
         var currentLayer = 0;
         var amountPlaced = 0;
         bool indexIncrease = false; // We radnomize this bool each layer to determine what progression side shoulg go one
-        float startingHardness = 3f;
-        float hardnessIncrease = 3f; // how much the hardness increases each biome. Should be modifiable by the player 
         foreach (var biome in settings.biomes) {
             // Place biomes one by one, selecting either left or right side of trench
             bool firstLayerPlacement = amountPlaced % 2 == 0;
@@ -170,19 +174,23 @@ public class WorldGenData {
             var edgePos = firstLayerPlacement ? -biome.HorSize : biome.HorSize; // Place it on the very edge
 
             float OFFSET_TO_TRENCH = 0;
-            if (randomizeBiomes) {
+            if (currentLayer == 0) {
+                OFFSET_TO_TRENCH = 40f; //testing out with biome distances
+            } else {
                 OFFSET_TO_TRENCH = Random.Range(25,35); 
             }
             biome.XOffset = firstLayerPlacement ? edgePos - OFFSET_TO_TRENCH : edgePos + OFFSET_TO_TRENCH; // Shift it by offsetToTrench
             
             // Y placement
             var yPos = settings.GetWorldLayerYPos(currentLayer);
-            if (randomizeBiomes) {
-                biome.YStart = Random.Range(yPos*0.95f, yPos* 1.05f);
+            if (currentLayer == 0) {
+                Debug.Log("currentlayer 0! " + currentLayer + biome.BiomeType);
+                biome.YStart = yPos - (biome.YHeight * 0.5f); // Place first two biomes in the center of the layer pos, this way, players can go up and down and still discover the biome
             } else {
-                biome.YStart = Random.Range(yPos, yPos);
-            }
-            
+                Debug.Log("currentlayer " + currentLayer);
+                biome.YStart = Random.Range(yPos * 0.96f, yPos); // No lower bound because that could lead to some of the biome generate in the layer below 
+            } 
+
             // Progression
             int layerProgression = (currentLayer * 3) + 1;
             if (firstLayerPlacement) {
@@ -197,13 +205,18 @@ public class WorldGenData {
                 biome.isSecondProgression = !indexIncrease;
             }
             float thisHardness = 1;
-            layerProgression = currentLayer * 2; // we now change it to current layer x 2 because we don't count the middle as a progression for hardness
+            
+            //layerProgression = currentLayer * 2; // we now change it to current layer x 2 because we don't count the middle as a progression for hardness
+            // biome hardness will be multiplied ontop of the current layer hardness, meaning, first biome is 3 times as hard as the 
+            // layer, and second biome is 7 times as hard
             if (!biome.isSecondProgression) {
                 // first layer
-                thisHardness = startingHardness + (layerProgression * hardnessIncrease);
+                thisHardness = 3;
+                //thisHardness = startingHardness + (layerProgression * hardnessIncrease);
             } else {
                 // second layer
-                thisHardness = startingHardness + ((layerProgression + 1)* hardnessIncrease);
+                thisHardness = 7;
+                //thisHardness = startingHardness + ((layerProgression + 1) * hardnessIncrease);
             }
             settings.BiomeTileHardness.Add(biome.BiomeType, thisHardness);
 
@@ -259,7 +272,7 @@ public class WorldGenBiomeData {
 
     // DEBUG
     //public Action OnDataChanged;
-    public static WorldGenBiomeData FromSO(WorldGenBiomeSO so, bool shouldRandomize) {
+    public static WorldGenBiomeData FromSO(WorldGenBiomeSO so) {
         var b = new WorldGenBiomeData();
         b.BiomeType = so.biomeType;
         b.EdgeNoiseScale = so.EdgeNoiseScale;
@@ -277,14 +290,11 @@ public class WorldGenBiomeData {
         b.TextureIndex = so.TextureIndex;
         // Biome placement rules
         // Generate size of biome first
-        if (shouldRandomize) {
-           b.HorSize = UnityEngine.Random.Range(so.HorSize * 0.8f, so.HorSize * 1.2f); // Using 80 to 120% of biome size right now but could also just have a set size
-           b.YHeight = UnityEngine.Random.Range(so.YHeight* 0.8f, so.YHeight* 1.2f); // Using 80 to 120% of biome size right now but could also just have a set size
-
-        } else {
-            b.HorSize = so.HorSize; 
-            b.YHeight = so.YHeight; 
-        }
+        b.HorSize = UnityEngine.Random.Range(so.HorSize * 0.8f, so.HorSize * 1.2f); // Using 80 to 120% of biome size right now but could also just have a set size
+        b.YHeight = UnityEngine.Random.Range(so.YHeight* 0.8f, so.YHeight* 1.2f); // Using 80 to 120% of biome size right now but could also just have a set size
+        //b.HorSize = so.HorSize; 
+        //b.YHeight = so.YHeight; 
+        
 
         // Set for now, will be overwritten by the random placement
         b.TileColor = so.TileColor; // hardness of tile (so also color) is determined by the biomes placement
